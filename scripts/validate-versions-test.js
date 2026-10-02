@@ -29,7 +29,7 @@ function readManifestVersions(manifestPath) {
 test("all plugin manifests use the latest release tag", () => {
   const expectedVersion = execFileSync(
     "git",
-    ["describe", "--tags", "--abbrev=0"],
+    ["describe", "--tags", "--abbrev=0", "--match", "[0-9]*.[0-9]*.[0-9]*"],
     { encoding: "utf8" },
   ).trim();
 

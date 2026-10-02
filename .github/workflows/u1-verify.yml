@@ -1,34 +1,32 @@
 # U1 verifier workflow — independent read-back, digest-class comparison, decision + seal.
 # Contract: U1-contract-2026-09-29.md sha256:8d5f849cf22f6662f17c2502142e354d82f8f5604d64b511250abc72157df9d5
-# Amendments: U1-8-closure-amendments-2026-10-01.md (A-U1.8.01..16) — this rewrite closes
-# F-1..F-17 (verifier side) per the ratified deltas; it is the A-U1.8.16 re-pin subject.
+# Amendments: U1-8-closure-amendments-2026-10-01.md (A-U1.8.01..16) and
+# U1-8-closure2-amendments-2026-10-02.md (A-U1.8.17..27); this revision is the A-U1.8.27 re-pin subject.
 #
 # DIGEST CLASSES (A-U1.8.01, never conflated):
 #   byte digest   = sha256 over the exact retained file bytes (Artifact.digest / read-back)
 #   document dig. = IA-2 wrapper digest sha256 over canonical {domain, apiVersion, payload}
-# A byte digest is never compared to a wrapper digest; the conflation regression self-test
-# (pin-check job) fails the run if the two classes can ever compare equal.
+# A byte digest is never compared to a wrapper digest; the self-test in pin-check drives the
+# shared compare_classes function extracted from this file's own text.
 #
 # NAMESPACES (A-U1.8.07/A-U1.8.08, enforced at the storage layer by ABAC prefix conditions):
 #   producer  objects ONLY u1/m0r6an/agent-skills/runs/<runId>/p<NN>/...
 #   verifier  objects ONLY u1/m0r6an/agent-skills/verifications/<promotionRequestId>/a<K>/...
 #   ledger    rows    ONLY u1/m0r6an/agent-skills/attempt-ledger/<promotionRequestId>/...
 #   a<K> = IA-8.5 ledger attempt number K (01..03); a00 is reserved for NON-AUTHORITATIVE
-#   signal runs (option (b), A-U1.8.02) which consume no attempt and write no ledger row.
+#   signal runs which consume no attempt, write no blob and no ledger row.
 #
-# AUTHORITY (A-U1.8.02, owner-ratified option (b)): only a workflow_dispatch run executing
-# refs/tags/u1-verifier-pin at the pinned full commit SHA, with the pin record fetched by
-# commit SHA through the API (never the mutable main head), is authoritative and may ACCEPT.
-# workflow_run (event-driven) runs are non-authoritative by construction: authoritative
-# false in verifier-context, decision and seal; never ACCEPT (all-pass -> INCOMPLETE /
-# U1_REQUIRED_EVIDENCE_MISSING); FK-P19 consumes nothing from them. PIN_DRIFT is checked in
-# pin-check BEFORE resolve-request and claim-attempt; a drifted or non-authoritative run
-# writes no attempt record and consumes no attempt.
+# AUTHORITY (A-U1.8.02 option (b), A-U1.8.17, A-U1.8.22): only a workflow_dispatch run executing
+# refs/tags/u1-verifier-pin at commit R (tag target = dispatch input; workflowCommit R or an
+# ancestor; bytes at R = pinned digest; active tag ruleset) is authoritative and may ACCEPT.
+# workflow_run runs are non-authoritative by construction: they authenticate only as the
+# read-only u1-reader-mi, write nothing, never ACCEPT, and FK-P19 consumes nothing from them.
+# PIN_DRIFT is checked in pin-check BEFORE resolve-request and claim-attempt.
 #
-# LANE: u1-verifier-mi (create-only u1-verifier-evidence-creator + Blob Data Reader over
-# verifications/* and attempt-ledger/*). The attempt ledger is written only by the verifier
-# identity (A-U1.8.07 clause 4: ledger rows are never producer-written). candidate-sandbox
-# holds NO credentials and its output is untrusted data, never a verdict.
+# IDENTITIES: u1-verifier-mi (create-only role over verifications/*, attempt-ledger/*,
+# revocations/*) is used only by jobs under environment u1-verifier (tag policy only): claim,
+# persist, retention-observation, close. The evaluate job holds no environment and no write role.
+# candidate-sandbox holds NO credentials and its output is untrusted data, never a verdict.
 # FORBIDDEN: executing candidate/producer code in verifier jobs; accepting a producer-authored
 # status as the decision (3.1.3); any blob delete; any write outside verifications/* and
 # attempt-ledger/*; any secrets.* reference; attestation requests (F-14 named gap).
@@ -71,11 +69,13 @@ permissions: {}
 
 jobs:
   pin-check:
-    # F-3: pin + PIN_DRIFT gate FIRST, before resolve-request and claim-attempt. The pin
-    # record is fetched by commit SHA through the contents API (immutable), never from the
-    # main head. Runs: job-level outputs map (F-1) and the two regression self-tests
-    # (A-U1.8.01 conflation test, A-U1.8.06 resolver grammar test) whose results are
-    # recorded for the A-U1.8.16 dry-run record.
+    # F-3 / A-U1.8.17: pin + PIN_DRIFT gate FIRST, before resolve-request and claim-attempt.
+    # The pin record and the workflow bytes are fetched by the executed commit R through the
+    # contents API (immutable), never from the main head and never from the checkout alone.
+    # An authoritative run requires all of: bytes at R hash to the recorded digest; the
+    # recorded workflowCommit is R or an ancestor (compare API); R is the target of the tag
+    # AND equals the dispatch input; the tag is protected by an active tag ruleset.
+    # Self-tests (A-U1.8.01 conflation, A-U1.8.06 grammar) run against the workflow's own text.
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     permissions:
@@ -84,6 +84,9 @@ jobs:
       authority-class: ${{ steps.pin.outputs.authority-class }}
       pin-read-path: ${{ steps.pin.outputs.pin-read-path }}
       pinned-commit: ${{ steps.pin.outputs.pinned-commit }}
+      run-commit: ${{ steps.pin.outputs.run-commit }}
+      tag-target: ${{ steps.pin.outputs.tag-target }}
+      tag-ruleset-observation: ${{ steps.pin.outputs.tag-ruleset-observation }}
       workflow-file-digest: ${{ steps.pin.outputs.workflow-file-digest }}
       pin-record-byte-digest: ${{ steps.pin.outputs.pin-record-byte-digest }}
     steps:
@@ -98,138 +101,203 @@ jobs:
           EXPECTED_PINNED_COMMIT: ${{ inputs.pinned-commit-sha }}
         run: |
           python3 - <<'PYEOF'
-          import base64, hashlib, json, os, subprocess, sys
+          import base64, hashlib, json, os, re, subprocess, sys
 
+          REPO = "m0r6aN/agent-skills"
           PIN_PATH = "plugins/foreman-line/docs/goals/foreman-kernel/U1-verifier-pin.json"
+          WF_PATH = ".github/workflows/u1-verify.yml"
+          TAG_NAME = "u1-verifier-pin"
+          TAG_REF = "refs/tags/" + TAG_NAME
 
-          def sh(*args):
-              return subprocess.run(args, capture_output=True, text=True, check=True).stdout
+          def drift(msg):
+              print("::error::PIN_DRIFT: %s" % msg)
+              sys.exit(1)
+
+          def api(path, jq=None):
+              args = ["gh", "api", path] + (["--jq", jq] if jq else [])
+              out = subprocess.run(args, capture_output=True, text=True)
+              if out.returncode != 0:
+                  raise RuntimeError(out.stderr.strip()[:300])
+              return out.stdout
+
+          def contents(path, ref):
+              return base64.b64decode(api("repos/%s/contents/%s?ref=%s" % (REPO, path, ref), ".content"))
+
+          def tag(b):
+              return "sha256:" + hashlib.sha256(b).hexdigest()
 
           run_sha = os.environ["GITHUB_SHA"]
           ref = os.environ["GITHUB_REF"]
           event = os.environ["GITHUB_EVENT_NAME"]
+          if not re.match(r"^[0-9a-f]{40}\Z", run_sha):
+              drift("GITHUB_SHA is not a full commit SHA")
 
-          # Pin record fetched BY COMMIT SHA through the API - never the mutable main head.
+          # One pin record and one workflow, fetched BY COMMIT SHA through the API.
           try:
-              enc = sh("gh", "api",
-                       "repos/m0r6aN/agent-skills/contents/%s?ref=%s" % (PIN_PATH, run_sha),
-                       "--jq", ".content")
-              raw = base64.b64decode(enc)
-          except subprocess.CalledProcessError as e:
-              print("::error::PIN_DRIFT: pin record unreadable at commit %s via API: %s" % (run_sha, e.stderr))
-              sys.exit(1)
-          with open("pin-record.json", "wb") as f:
-              f.write(raw)
-          try:
-              record = json.loads(raw.decode("utf-8"))
+              pin_raw = contents(PIN_PATH, run_sha)
+              wf_raw = contents(WF_PATH, run_sha)
           except Exception as e:
-              print("::error::PIN_DRIFT: pin record unparsable: %s" % e)
-              sys.exit(1)
+              drift("pin record or workflow unreadable at commit %s via API: %s" % (run_sha, e))
+          if wf_raw != open(WF_PATH, "rb").read():
+              drift("checkout bytes of %s differ from the API bytes at %s" % (WF_PATH, run_sha))
+          try:
+              record = json.loads(pin_raw.decode("utf-8"))
+          except Exception as e:
+              drift("pin record unparsable: %s" % e)
           recorded_commit = record.get("workflowCommit")
           recorded_file_digest = record.get("workflowFileSha256")
-          if not isinstance(recorded_commit, str) or not isinstance(recorded_file_digest, str):
-              print("::error::PIN_DRIFT: pin record missing workflowCommit/workflowFileSha256")
-              sys.exit(1)
-          actual = "sha256:" + hashlib.sha256(open(".github/workflows/u1-verify.yml", "rb").read()).hexdigest()
+          if not isinstance(recorded_commit, str) or not isinstance(recorded_file_digest, str) \
+                  or not re.match(r"^[0-9a-f]{40}\Z", recorded_commit):
+              drift("pin record missing or malformed workflowCommit/workflowFileSha256")
+          actual = tag(wf_raw)
           if actual != recorded_file_digest:
-              print("::error::PIN_DRIFT: running workflow bytes %s != pinned %s" % (actual, recorded_file_digest))
-              sys.exit(1)
-          pin_read_path = "api-by-sha:" + run_sha
+              drift("workflow bytes %s != pinned %s" % (actual, recorded_file_digest))
+
+          tag_target = ""
+          observation = {"checked": [], "ok": False, "bypassNotRuntimeGated": True}
           if event == "workflow_dispatch":
-              expected = os.environ.get("EXPECTED_PINNED_COMMIT", "")
-              if ref != "refs/tags/u1-verifier-pin":
-                  print("::error::PIN_DRIFT: run ref %s is not the protected pin ref" % ref)
-                  sys.exit(1)
-              # F-19: the pin record cannot embed its own commit's SHA (self-reference
-              # paradox), so recorded_commit names the commit that INTRODUCED the pinned
-              # bytes. The binding is transitive: the byte-equality check above proves the
-              # running bytes are the pinned bytes, and here we prove recorded_commit is an
-              # ancestor of the run commit — so the recorded full-SHA identity (contract
-              # 3.1.1) transitively names this run's revision. A drifted workflow at any
-              # descendant commit still fails the byte check.
-              # Ancestry is checked through the API, never git merge-base: the runner's
-              # shallow clone cannot see deep history and would false-refuse.
+              if ref != TAG_REF:
+                  drift("run ref %s is not the protected pin ref" % ref)
+              # (c) R is the target of the tag at run start AND the dispatch input.
               try:
-                  cmp_raw = sh("gh", "api",
-                               "repos/m0r6aN/agent-skills/compare/%s...%s" % (recorded_commit, run_sha),
-                               "--jq", ".status")
-                  cmp_status = cmp_raw.strip()
-              except subprocess.CalledProcessError as e:
-                  print("::error::PIN_DRIFT: ancestry compare failed for %s...%s: %s"
-                        % (recorded_commit, run_sha, e.stderr))
-                  sys.exit(1)
+                  typ, sha = api("repos/%s/git/ref/tags/%s" % (REPO, TAG_NAME),
+                                 '.object.type + " " + .object.sha').split()
+                  if typ == "tag":
+                      sha = api("repos/%s/git/tags/%s" % (REPO, sha), ".object.sha").strip()
+              except Exception as e:
+                  drift("tag target unreadable: %s" % e)
+              tag_target = sha
+              if tag_target != run_sha:
+                  drift("tag %s targets %s, not the run commit %s" % (TAG_REF, tag_target, run_sha))
+              expected = os.environ.get("EXPECTED_PINNED_COMMIT", "")
+              if expected != run_sha:
+                  drift("run commit %s != dispatch input pinned-commit-sha %s" % (run_sha, expected))
+              # (b) F-19/A-U1.8.17: the record cannot embed its own commit SHA, so workflowCommit
+              # names the commit that INTRODUCED the pinned bytes; it must be R or an ancestor.
+              # Checked through the API (a shallow clone cannot see deep history).
+              try:
+                  cmp_status = api("repos/%s/compare/%s...%s" % (REPO, recorded_commit, run_sha),
+                                   ".status").strip()
+              except Exception as e:
+                  drift("ancestry compare failed for %s...%s: %s" % (recorded_commit, run_sha, e))
               if cmp_status not in ("ahead", "identical"):
-                  print("::error::PIN_DRIFT: pinned commit %s is not an ancestor of run commit %s (compare status %s)"
+                  drift("workflowCommit %s is not an ancestor of the run commit %s (compare status %s)"
                         % (recorded_commit, run_sha, cmp_status))
-                  sys.exit(1)
-              if expected and run_sha != expected:
-                  print("::error::PIN_DRIFT: run commit %s != dispatch-pinned %s" % (run_sha, expected))
-                  sys.exit(1)
+              # (d) the tag ref is protected at run start: an active tag-target ruleset that
+              # covers the tag and carries update, deletion and non_fast_forward. The bypass
+              # list is recorded when visible but is not a runtime gate (A-U1.8.17 clause 2).
+              try:
+                  rulesets = json.loads(api("repos/%s/rulesets?per_page=100" % REPO))
+                  custodian_id = None
+                  login = (record.get("custodian") or {}).get("login")
+                  if login and re.match(r"^[A-Za-z0-9-]{1,39}\Z", login):
+                      custodian_id = api("users/%s" % login, ".id").strip()
+                  for rs in rulesets:
+                      if rs.get("target") != "tag":
+                          continue
+                      d = json.loads(api("repos/%s/rulesets/%s" % (REPO, rs["id"])))
+                      include = ((d.get("conditions") or {}).get("ref_name") or {}).get("include") or []
+                      rule_types = sorted({x.get("type") for x in (d.get("rules") or [])})
+                      bypass = d.get("bypass_actors")
+                      entry = {"id": d.get("id"), "name": d.get("name"), "enforcement": d.get("enforcement"),
+                               "include": include, "rules": rule_types,
+                               "bypassVisible": bypass is not None}
+                      observation["checked"].append(entry)
+                      if d.get("enforcement") == "active" and TAG_REF in include and \
+                              {"update", "deletion", "non_fast_forward"} <= set(rule_types):
+                          if bypass is not None:
+                              extra = [b for b in bypass if str(b.get("actor_id")) != str(custodian_id)]
+                              if extra:
+                                  drift("tag ruleset %s lists a bypass actor other than the custodian: %s"
+                                        % (d.get("id"), extra))
+                          observation["ok"] = True
+                          observation["rulesetId"] = d.get("id")
+              except SystemExit:
+                  raise
+              except Exception as e:
+                  drift("tag ruleset unreadable: %s" % e)
+              if not observation["ok"]:
+                  drift("no active tag ruleset protects %s with update/deletion/non_fast_forward" % TAG_REF)
               authority = "authoritative"
           else:
               # Event-driven run: non-authoritative by construction (A-U1.8.02 option (b)).
-              # Byte-level pin binding above still applies; a drifted run produces no decision.
+              # The byte-level binding above still applies; it has no verifier credentials.
               authority = "non-authoritative"
+          pin_read_path = "api-by-sha:" + run_sha
           out = os.environ["GITHUB_OUTPUT"]
           with open(out, "a", encoding="utf-8") as f:
               f.write("authority-class=%s\n" % authority)
               f.write("pin-read-path=%s\n" % pin_read_path)
               f.write("pinned-commit=%s\n" % recorded_commit)
+              f.write("run-commit=%s\n" % run_sha)
+              f.write("tag-target=%s\n" % tag_target)
+              f.write("tag-ruleset-observation=%s\n" % json.dumps(observation, sort_keys=True))
               f.write("workflow-file-digest=%s\n" % actual)
-              f.write("pin-record-byte-digest=%s\n" % ("sha256:" + hashlib.sha256(raw).hexdigest()))
-          print("pin check: %s via %s (run %s)" % (authority, pin_read_path, run_sha))
+              f.write("pin-record-byte-digest=%s\n" % tag(pin_raw))
+          print("pin check: %s via %s (run %s, tag target %s)" % (authority, pin_read_path, run_sha, tag_target))
           PYEOF
-      - name: Digest-class conflation regression self-test (A-U1.8.01)
+      - name: Digest-class conflation regression self-test (A-U1.8.01, A-U1.8.26 item 2)
         id: selftest-conflation
         run: |
           python3 - <<'PYEOF'
-          import hashlib, json, os, sys
+          import base64, hashlib, json, os, re, sys
 
-          API_VERSION = "0.1.0"
-
-          def canon(o):
-              def esc(s):
-                  return json.dumps(s, ensure_ascii=False)[1:-1]
-              def enc(x):
-                  if x is None: return "null"
-                  if x is True: return "true"
-                  if x is False: return "false"
-                  if isinstance(x, int) and not isinstance(x, bool):
-                      if x < 0 or x > 2**53 - 1: raise ValueError("SafeInt bound")
-                      return str(x)
-                  if isinstance(x, str): return '"' + esc(x) + '"'
-                  if isinstance(x, list): return "[" + ",".join(enc(i) for i in x) + "]"
-                  if isinstance(x, dict):
-                      it = sorted(x.items(), key=lambda kv: kv[0].encode("utf-16-be"))
-                      return "{" + ",".join('"' + esc(k) + '":' + enc(v) for k, v in it) + "}"
-                  raise TypeError(type(x))
-              return enc(o).encode("utf-8")
-
-          def tag(b):
-              return "sha256:" + hashlib.sha256(b).hexdigest()
-
+          # The shared blocks are extracted from THIS workflow's own text. Every copy of a
+          # block must be byte-identical, and the copy that is executed here is the one the
+          # decision and read-back jobs run, so the test drives the real comparison function.
+          src = open(".github/workflows/u1-verify.yml", encoding="utf-8").read()
+          pat = re.compile(r"^([ ]*)# BEGIN SHARED:([a-z0-9-]+)\n(.*?)^\1# END SHARED:\2\n", re.S | re.M)
+          blocks = {}
+          for m in pat.finditer(src):
+              indent, name, body = m.group(1), m.group(2), m.group(3)
+              lines = [l[len(indent):] if l.startswith(indent) else l for l in body.split("\n")]
+              blocks.setdefault(name, []).append("\n".join(lines))
+          EXPECT = {"canon-core": 5, "strict-core": 4, "compare-classes": 2, "oidc-claims": 3}
+          for name, want in EXPECT.items():
+              got = blocks.get(name, [])
+              if len(got) != want:
+                  print("::error::shared block %s has %d copies, expected %d" % (name, len(got), want))
+                  sys.exit(1)
+              if len(set(got)) != 1:
+                  print("::error::shared block %s has %d distinct copies" % (name, len(set(got))))
+                  sys.exit(1)
+          ns = {"hashlib": hashlib, "json": json, "base64": base64, "os": os, "re": re,
+                "API_VERSION": "0.1.0"}
+          for name in ("canon-core", "strict-core", "compare-classes"):
+              exec(blocks[name][0], ns)
+          domain = "foreman-line.u1.decision"
           doc = {"schemaVersion": "u1/0.1.0", "status": "ACCEPT", "n": 1}
-          doc_bytes = canon(doc)
-          byte_digest = tag(doc_bytes)
-          wrapper_digest = tag(canon({"domain": "foreman-line.u1.decision",
-                                      "apiVersion": API_VERSION, "payload": doc}))
-          # The two classes MUST differ for any document; conflation must be detectable.
-          if byte_digest == wrapper_digest:
-              print("::error::conflation regression: byte digest equals wrapper digest")
+          raw = ns["canon"](doc)
+          byte_digest = ns["tag"](raw)
+          wrapper_digest = ns["doc_digest"](domain, doc)
+          cc = ns["compare_classes"]
+          cases = [
+              ("matching classes", cc(raw, byte_digest, wrapper_digest, domain), "match"),
+              ("wrapper digest offered as byte digest", cc(raw, wrapper_digest, None, domain), "byte-mismatch"),
+              ("byte digest offered as document digest", cc(raw, None, byte_digest, domain), "doc-mismatch"),
+              ("both swapped", cc(raw, wrapper_digest, byte_digest, domain), "byte-mismatch"),
+              ("unparsable document", cc(b"{not json", None, wrapper_digest, domain), "doc-unparsable"),
+          ]
+          bad = [c for c in cases if c[1] != c[2]]
+          if byte_digest == wrapper_digest or bad:
+              print("::error::conflation regression: %r" % bad)
               sys.exit(1)
-          # The conflation check under test: comparing a recorded wrapper digest to a
-          # read-back byte digest must report mismatch, never match.
-          if byte_digest == wrapper_digest:
-              print("::error::conflation regression: conflated comparison passed")
+          # Strict parser refusals (F-16): duplicate key, NaN, excessive depth.
+          sl = ns["strict_loads"]
+          refusals = [b'{"a":1,"a":2}', b'{"a":NaN}', b"[" * 17 + b"]" * 17]
+          for r in refusals:
+              try:
+                  sl(r)
+              except Exception:
+                  continue
+              print("::error::strict parser accepted %r" % r)
               sys.exit(1)
-          # Independent determinism: canonical bytes are stable under key reordering.
-          reordered = {"n": 1, "status": "ACCEPT", "schemaVersion": "u1/0.1.0"}
-          if canon(reordered) != doc_bytes:
-              print("::error::conflation regression: canonicalization not deterministic")
+          if ns["canon"]({"n": 1, "status": "ACCEPT", "schemaVersion": "u1/0.1.0"}) != raw:
+              print("::error::canonicalization not deterministic")
               sys.exit(1)
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
               f.write("conflation-self-test=pass\n")
-          print("conflation self-test: pass (byte %s != wrapper %s)" % (byte_digest, wrapper_digest))
+          print("conflation self-test: pass (%d cases, %d shared blocks identical)" % (len(cases), len(EXPECT)))
           PYEOF
       - name: Resolver grammar self-test (A-U1.8.06 / F-17)
         id: selftest-grammar
@@ -238,7 +306,7 @@ jobs:
           import os, re, sys
 
           GRAMMAR = re.compile(r"^[a-z0-9-]{1,64}\Z")
-          accept = ["a", "0", "-", "fk-p18-prime-r1", "x" * 64, "u1-req-01"]
+          accept = ["a", "0", "-", "fk-p18-prime-r1", "x" * 64, "u1-req-01", "u1-fixture-positive"]
           reject = ["", "x" * 65, "UPPER", "a/b", "a.b", "a b", "a_b", "a:b",
                     "a;id", "$(id)", "`id`", "a\n", "a\tb", "fk-p18-prime-r1\n"]
           bad = [v for v in accept if not GRAMMAR.match(v)]
@@ -252,20 +320,26 @@ jobs:
           PYEOF
 
   candidate-sandbox:
-    # 3.1.2 slot: the ONLY place candidate code may ever run. Isolated: no environment,
-    # no Azure login, permissions {} - its artifact is untrusted input to the verifier.
+    # 3.1.2 slot: the ONLY place candidate code may ever run. Isolated: no environment, no
+    # Azure login, contents:read only - its artifact is untrusted input to the verifier
+    # (A-U1.8.20). It checks out the candidate commit (head_sha of the selected producer run)
+    # and runs the fixed entrypoint under a wrapper whose recorded exit status is the
+    # authoritative one; a copy/harness failure is recorded, never swallowed.
     # F-11: per-run unique random artifact name (a fixed name shared with verifier
     # artifacts is forbidden so candidate pre-creation cannot collide).
-    if: ${{ inputs.candidate-reexec }}
+    needs: [pin-check, resolve-request]
+    if: ${{ inputs.candidate-reexec && needs.resolve-request.result == 'success' && needs.resolve-request.outputs.producer-head-sha != '' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    permissions: {}
+    permissions:
+      contents: read
     outputs:
       sandbox-artifact-name: ${{ steps.rand.outputs.sandbox-artifact-name }}
     steps:
-      - name: Check out candidate source as data
+      - name: Check out the candidate commit as data
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
+          ref: ${{ needs.resolve-request.outputs.producer-head-sha }}
           persist-credentials: false
       - name: Generate unique sandbox artifact name
         id: rand
@@ -273,14 +347,22 @@ jobs:
           set -euo pipefail
           SUFFIX="$(openssl rand -hex 8)"
           echo "sandbox-artifact-name=u1-sandbox-${GITHUB_RUN_ID}-${SUFFIX}" >> "$GITHUB_OUTPUT"
-      - name: Execute candidate surface in throwaway workspace (untrusted output only)
+      - name: Run the candidate entrypoint under the wrapper (untrusted output only)
+        env:
+          U1_REQUEST_ID: ${{ needs.resolve-request.outputs.promotion-request-id }}
         run: |
-          set -euo pipefail
+          set -u
           mkdir -p sandbox-out
-          cp -r plugins/foreman-line/bypass-outage-harness "$RUNNER_TEMP/harness" || true
-          ( cd "$RUNNER_TEMP/harness" && npm test ) > sandbox-out/raw-output.txt 2>&1 \
-            && echo 0 > sandbox-out/exit-status.txt \
-            || echo $? > sandbox-out/exit-status.txt
+          ENTRY="plugins/foreman-line/bypass-outage-harness/u1-sandbox.mjs"
+          set +e
+          if [ -f "$ENTRY" ]; then
+            node "$ENTRY" --out sandbox-out/sandbox-result.json > sandbox-out/raw-output.txt 2>&1
+            echo $? > sandbox-out/harness-exit.txt
+          else
+            echo "entrypoint $ENTRY absent at the candidate commit" > sandbox-out/raw-output.txt
+            echo 127 > sandbox-out/harness-exit.txt
+          fi
+          set -e
           echo "untrusted=true" > sandbox-out/PROVENANCE.txt
       - name: Upload untrusted sandbox output
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -311,6 +393,7 @@ jobs:
       producer-run-id: ${{ steps.resolve.outputs.producer-run-id }}
       subject-and-selection-digest: ${{ steps.resolve.outputs.subject-and-selection-digest }}
       oracle-digest: ${{ steps.resolve.outputs.oracle-digest }}
+      producer-head-sha: ${{ steps.resolve.outputs.producer-head-sha }}
       configuration-checklist-digest: ${{ steps.resolve.outputs.configuration-checklist-digest }}
     steps:
       - name: Resolve and digest-bind the promotion request
@@ -345,6 +428,7 @@ jobs:
                        "promotedRefusalClassIds", "oracleDigest", "configurationChecklistDigest",
                        "requestDigest"]
 
+          # BEGIN SHARED:canon-core
           def canon(o):
               def esc(s):
                   return json.dumps(s, ensure_ascii=False)[1:-1]
@@ -368,7 +452,9 @@ jobs:
 
           def doc_digest(domain, payload):
               return tag(canon({"domain": domain, "apiVersion": API_VERSION, "payload": payload}))
+          # END SHARED:canon-core
 
+          # BEGIN SHARED:strict-core
           def text_depth(raw):
               depth = 0
               max_depth = 0
@@ -393,7 +479,7 @@ jobs:
               return max_depth
 
           def strict_loads(raw):
-              # F-16: depth-limited, duplicate-key-rejecting, NaN/Infinity-rejecting parse.
+              # F-16: depth-limited (16), duplicate-key-rejecting, NaN/Infinity-rejecting.
               if text_depth(raw) > 16:
                   raise ValueError("U1_EVIDENCE_LIMIT_EXCEEDED: JSON depth > 16")
               def reject_constant(name):
@@ -409,6 +495,7 @@ jobs:
                   return out
               return json.loads(raw.decode("utf-8"), parse_constant=reject_constant,
                                 object_pairs_hook=reject_dupes)
+          # END SHARED:strict-core
 
           def gh_content(path, ref):
               out = subprocess.run(["gh", "api",
@@ -420,13 +507,31 @@ jobs:
 
           event = os.environ["GITHUB_EVENT_NAME"]
           commit = os.environ.get("REQUEST_COMMIT_SHA") or os.environ["GITHUB_SHA"]
+          if not re.match(r"^[0-9a-f]{40}\Z", commit):
+              print("::error::U1_ARTIFACT_INVALID: promotion-request-commit-sha is not a full commit SHA")
+              sys.exit(1)
           candidates = []
           if event == "workflow_dispatch":
               req_id = os.environ.get("PROMOTION_REQUEST_ID", "")
               if not GRAMMAR.match(req_id):
                   print("::error::U1_ARTIFACT_INVALID: promotionRequestId violates closed grammar [a-z0-9-]{1,64}")
                   sys.exit(1)
-              raw = gh_content("%s/%s.json" % (DIR, req_id), commit)
+              # A-U1.8.24: the request must come from protected history - the request commit is
+              # identical to, or an ancestor of, the default-branch head (compare API).
+              head_sha = subprocess.run(["gh", "api", "repos/m0r6aN/agent-skills/branches/main",
+                                         "--jq", ".commit.sha"], capture_output=True, text=True)
+              cmp_status = None
+              if head_sha.returncode == 0 and re.match(r"^[0-9a-f]{40}\Z", head_sha.stdout.strip()):
+                  cmp_run = subprocess.run(["gh", "api", "repos/m0r6aN/agent-skills/compare/%s...%s"
+                                            % (commit, head_sha.stdout.strip()), "--jq", ".status"],
+                                           capture_output=True, text=True)
+                  if cmp_run.returncode == 0:
+                      cmp_status = cmp_run.stdout.strip()
+              if cmp_status not in ("identical", "ahead"):
+                  print("::error::U1_PROVENANCE_INVALID: promotion request commit %s is not in the default-branch history (compare status %s)"
+                        % (commit, cmp_status))
+                  sys.exit(1)
+              raw = gh_content("%s/%s/promotion-request.json" % (DIR, req_id), commit)
               if raw is None:
                   print("::error::U1_REQUIRED_EVIDENCE_MISSING: zero promotion requests match id %s at %s"
                         % (req_id, commit))
@@ -435,12 +540,13 @@ jobs:
           else:
               listing = subprocess.run(["gh", "api",
                                         "repos/m0r6aN/agent-skills/contents/%s?ref=%s" % (DIR, commit),
-                                        "--jq", ".[].name"], capture_output=True, text=True)
+                                        "--jq", '.[] | select(.type == "dir") | .name'],
+                                       capture_output=True, text=True)
               if listing.returncode == 0:
                   for n in listing.stdout.splitlines():
-                      if not n.endswith(".json"):
+                      if not GRAMMAR.match(n):
                           continue
-                      raw = gh_content("%s/%s" % (DIR, n), commit)
+                      raw = gh_content("%s/%s/promotion-request.json" % (DIR, n), commit)
                       if raw is None:
                           continue
                       try:
@@ -530,6 +636,13 @@ jobs:
           sas = canon({"expectedSubjectDigest": req["expectedSubjectDigest"],
                        "selectedExecution": sel})
           byte_digest = tag(raw)
+          # The candidate commit the sandbox checks out is the head_sha of the selected
+          # producer run (A-U1.8.20 clause 5), read through the API; empty if unreadable.
+          head_run = subprocess.run(["gh", "api", "repos/m0r6aN/agent-skills/actions/runs/%s" % str(sel.get("runId")),
+                                     "--jq", ".head_sha"], capture_output=True, text=True)
+          producer_head = head_run.stdout.strip() if head_run.returncode == 0 else ""
+          if not re.match(r"^[0-9a-f]{40}\Z", producer_head):
+              producer_head = ""
           out = os.environ["GITHUB_OUTPUT"]
           with open(out, "a", encoding="utf-8") as f:
               f.write("promotion-request-id=%s\n" % req["promotionRequestId"])
@@ -537,6 +650,7 @@ jobs:
               f.write("request-byte-digest=%s\n" % byte_digest)
               f.write("request-commit-sha=%s\n" % commit)
               f.write("producer-run-id=%s\n" % str(sel.get("runId")))
+              f.write("producer-head-sha=%s\n" % producer_head)
               f.write("subject-and-selection-digest=%s\n" % tag(sas))
               f.write("oracle-digest=%s\n" % req["oracleDigest"])
               f.write("configuration-checklist-digest=%s\n" % req["configurationChecklistDigest"])
@@ -564,6 +678,7 @@ jobs:
       attempt-number: ${{ steps.ledger.outputs.attempt-number }}
       dispatch-row-doc-digest: ${{ steps.ledger.outputs.dispatch-row-doc-digest }}
       dispatch-row-byte-digest: ${{ steps.ledger.outputs.dispatch-row-byte-digest }}
+      probe-record: ${{ steps.ledger.outputs.probe-record }}
     steps:
       - name: Azure login (OIDC -> u1-verifier-mi)
         uses: azure/login@7184910d9eb2b1c5e48f7073824a90609bb9b6d6 # v2
@@ -578,7 +693,7 @@ jobs:
           SUBJECT_AND_SELECTION_DIGEST: ${{ needs.resolve-request.outputs.subject-and-selection-digest }}
         run: |
           python3 - <<'PYEOF'
-          import datetime, hashlib, json, os, re, subprocess, sys
+          import base64, datetime, hashlib, json, os, re, subprocess, sys
 
           API_VERSION = "0.1.0"
           GRAMMAR = re.compile(r"^[a-z0-9-]{1,64}\Z")
@@ -592,6 +707,7 @@ jobs:
           def sh(*args):
               return subprocess.run(args, capture_output=True, text=True, check=True).stdout
 
+          # BEGIN SHARED:canon-core
           def canon(o):
               def esc(s):
                   return json.dumps(s, ensure_ascii=False)[1:-1]
@@ -615,6 +731,72 @@ jobs:
 
           def doc_digest(domain, payload):
               return tag(canon({"domain": domain, "apiVersion": API_VERSION, "payload": payload}))
+          # END SHARED:canon-core
+
+          # BEGIN SHARED:strict-core
+          def text_depth(raw):
+              depth = 0
+              max_depth = 0
+              in_str = False
+              esc = False
+              for ch in raw.decode("utf-8", "strict"):
+                  if in_str:
+                      if esc:
+                          esc = False
+                      elif ch == "\\":
+                          esc = True
+                      elif ch == '"':
+                          in_str = False
+                  elif ch == '"':
+                      in_str = True
+                  elif ch in "[{":
+                      depth += 1
+                      if depth > max_depth:
+                          max_depth = depth
+                  elif ch in "]}":
+                      depth -= 1
+              return max_depth
+
+          def strict_loads(raw):
+              # F-16: depth-limited (16), duplicate-key-rejecting, NaN/Infinity-rejecting.
+              if text_depth(raw) > 16:
+                  raise ValueError("U1_EVIDENCE_LIMIT_EXCEEDED: JSON depth > 16")
+              def reject_constant(name):
+                  raise ValueError("NaN/Infinity literal refused: " + name)
+              def reject_dupes(pairs):
+                  seen = set()
+                  out = {}
+                  for k, v in pairs:
+                      if k in seen:
+                          raise ValueError("duplicate key refused: " + k)
+                      seen.add(k)
+                      out[k] = v
+                  return out
+              return json.loads(raw.decode("utf-8"), parse_constant=reject_constant,
+                                object_pairs_hook=reject_dupes)
+          # END SHARED:strict-core
+
+          # BEGIN SHARED:oidc-claims
+          def observed_oidc_claims():
+              # A-U1.8.26 item 4: the federated subject is observed from the job's own GitHub
+              # OIDC token claims, never a literal.
+              import urllib.request
+              url = os.environ.get("ACTIONS_ID_TOKEN_REQUEST_URL")
+              bearer = os.environ.get("ACTIONS_ID_TOKEN_REQUEST_TOKEN")
+              if not url or not bearer:
+                  return None
+              req_t = urllib.request.Request(url + "&audience=api://AzureADTokenExchange",
+                                             headers={"Authorization": "bearer " + bearer})
+              try:
+                  jwt = json.loads(urllib.request.urlopen(req_t, timeout=30).read())["value"]
+                  payload = jwt.split(".")[1]
+                  payload += "=" * (-len(payload) % 4)
+                  c = json.loads(base64.urlsafe_b64decode(payload))
+              except Exception:
+                  return None
+              return {k: c.get(k) for k in ("sub", "repository", "repository_id",
+                                            "job_workflow_ref", "ref", "environment", "event_name")}
+          # END SHARED:oidc-claims
 
           def upload(name, body):
               with open("row.tmp", "wb") as f:
@@ -634,7 +816,7 @@ jobs:
                   out = fh.read()
               if not out:
                   raise ValueError("U1_ARTIFACT_INVALID: empty ledger object %s" % name)
-              return json.loads(out)
+              return strict_loads(out)
 
           listing = sh("az", "storage", "blob", "list", "--account-name", "bs2jhgwvduljfdwdp",
                        "--container-name", "u1-evidence", "--prefix", PREFIX + "/",
@@ -691,26 +873,86 @@ jobs:
               {k2: v for k2, v in row.items() if k2 != "recordDigest"})
           raw = canon(row)
           upload("%s/a%02d-dispatch.json" % (PREFIX, attempt_no), raw)
+
+          # ---- A-U1.8.23 verifier probes (after the durable claim; attempt-scoped). The denial
+          #      is classified by HTTP status and x-ms-error-code, never by CLI message text. ----
+          import secrets
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          ACCOUNT = "bs2jhgwvduljfdwdp"
+          VERIFIER_NS = "u1/m0r6an/agent-skills/verifications/%s/a%02d" % (req, attempt_no)
+
+          def storage_token():
+              return sh("az", "account", "get-access-token", "--resource", "https://storage.azure.com/",
+                        "--query", "accessToken", "-o", "tsv").strip()
+
+          def put_blob(name, body, token, create_only):
+              url = "https://%s.blob.core.windows.net/u1-evidence/%s" % (ACCOUNT, urllib.parse.quote(name))
+              headers = {"Authorization": "Bearer " + token, "x-ms-version": "2023-11-03",
+                         "x-ms-blob-type": "BlockBlob", "Content-Type": "application/octet-stream"}
+              if create_only:
+                  headers["If-None-Match"] = "*"
+              request = urllib.request.Request(url, data=body, method="PUT", headers=headers)
+              try:
+                  response = urllib.request.urlopen(request, timeout=60)
+                  return response.status, None
+              except urllib.error.HTTPError as ex:
+                  return ex.code, ex.headers.get("x-ms-error-code")
+
+          def now_iso():
+              return datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0) \
+                        .isoformat().replace("+00:00", "Z")
+
+          probe_principal = "u1-verifier-mi (ec2d02e3-904c-4ce2-9771-cd518d711e3f)"
+          probes = []
+          try:
+              token = storage_token()
+              out_name = "u1/m0r6an/agent-skills/runs/probe-%s-%s.json" % (
+                  os.environ.get("GITHUB_RUN_ID", "0"), secrets.token_hex(6))
+              status, code = put_blob(out_name, canon({"probe": "verifier-out-of-prefix-create"}), token, True)
+              probes.append({"operation": "verifier-out-of-prefix-create", "principal": probe_principal,
+                             "targetPrefix": "u1/m0r6an/agent-skills/runs/probe-",
+                             "expectedDenial": "403 AuthorizationPermissionMismatch (ABAC prefix condition)",
+                             "observedHttpStatus": status, "observedErrorCode": code, "timestamp": now_iso()})
+              target = VERIFIER_NS + "/evidence/separation-probe/overwrite-target.json"
+              cstatus, ccode = put_blob(target, canon({"probe": "overwrite-target"}), token, True)
+              ostatus, ocode = put_blob(target, canon({"probe": "overwrite-attempt"}), token, False)
+              probes.append({"operation": "verifier-overwrite", "principal": probe_principal,
+                             "targetPrefix": VERIFIER_NS + "/evidence/separation-probe/",
+                             "expectedDenial": "403 AuthorizationPermissionMismatch (create-only role has no blobs/write)",
+                             "setupHttpStatus": cstatus, "setupErrorCode": ccode,
+                             "observedHttpStatus": ostatus, "observedErrorCode": ocode,
+                             "timestamp": now_iso()})
+          except Exception as ex:
+              probes.append({"operation": "probe-error", "principal": probe_principal,
+                             "observedHttpStatus": None, "observedErrorCode": str(ex)[:200],
+                             "timestamp": now_iso()})
+          probe_record = {"probes": probes, "oidcClaims": observed_oidc_claims()}
+
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
               f.write("attempt-number=%d\n" % attempt_no)
               f.write("dispatch-row-doc-digest=%s\n" % row["recordDigest"])
               f.write("dispatch-row-byte-digest=%s\n" % tag(raw))
+              f.write("probe-record=%s\n" % json.dumps(probe_record, sort_keys=True))
           print("recorded attempt %d/3 (window closes %s)" % (attempt_no, row["deadlineUtc"]))
           PYEOF
 
-  verify:
+  evaluate:
     # F-2/F-4/F-5/F-6/F-7/F-10/F-11/F-13/F-16: independent evaluation over read-back bytes.
-    # Runs for authoritative and non-authoritative runs alike (the signal lane evaluates but
-    # can never ACCEPT); runs only when the attempt was claimed OR the run is
-    # non-authoritative (no attempt to claim).
+    # A-U1.8.22 clause 4: this job holds NO environment and NO write role. It authenticates as
+    # u1-reader-mi (container data Reader + account Reader) through credentials bound to the
+    # run ref, reads, and uploads only a workflow artifact; the persist job (environment
+    # u1-verifier, tag only) writes the stored objects. The workflow_run lane evaluates here
+    # too but can never ACCEPT and has no later write job.
     needs: [pin-check, resolve-request, claim-attempt, candidate-sandbox]
     if: ${{ !cancelled() && needs.resolve-request.result == 'success' && (needs.claim-attempt.result == 'success' || needs.claim-attempt.result == 'skipped') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    environment: u1-verifier
     permissions:
       id-token: write
       contents: read
+      actions: read
     outputs:
       status: ${{ steps.decide.outputs.status }}
       decision-doc-digest: ${{ steps.decide.outputs.decision-doc-digest }}
@@ -718,6 +960,7 @@ jobs:
       producer-run-id: ${{ steps.decide.outputs.producer-run-id }}
       promotion-request-id: ${{ steps.decide.outputs.promotion-request-id }}
       attempt-outcome: ${{ steps.decide.outputs.attempt-outcome }}
+      reason-codes: ${{ steps.decide.outputs.reason-codes }}
       sandbox-consumed: ${{ steps.decide.outputs.sandbox-consumed }}
     steps:
       - name: Check out repository data (no persisted credentials)
@@ -731,10 +974,10 @@ jobs:
         with:
           name: ${{ needs.candidate-sandbox.outputs.sandbox-artifact-name }}
           path: sandbox-in
-      - name: Azure login (OIDC -> u1-verifier-mi)
+      - name: Azure login (OIDC -> u1-reader-mi; read-only)
         uses: azure/login@7184910d9eb2b1c5e48f7073824a90609bb9b6d6 # v2
         with:
-          client-id: ec2d02e3-904c-4ce2-9771-cd518d711e3f
+          client-id: 92737cbb-0a55-4355-b1fe-c6169eb0df4b
           tenant-id: ac08e2fd-34bf-4c87-a34f-c8c853ffc5e2
           subscription-id: 909e0322-c3c0-4bce-ae53-b3d2ed735bd4
       - name: Independent verification (section 7) over read-back bytes
@@ -750,15 +993,19 @@ jobs:
           CONFIGURATION_CHECKLIST_DIGEST: ${{ needs.resolve-request.outputs.configuration-checklist-digest }}
           PRODUCER_RUN_ID: ${{ needs.resolve-request.outputs.producer-run-id }}
           ATTEMPT_NUMBER: ${{ needs.claim-attempt.outputs.attempt-number }}
+          PROBE_RECORD: ${{ needs.claim-attempt.outputs.probe-record }}
           AUTHORITY_CLASS: ${{ needs.pin-check.outputs.authority-class }}
           PIN_READ_PATH: ${{ needs.pin-check.outputs.pin-read-path }}
           PINNED_COMMIT: ${{ needs.pin-check.outputs.pinned-commit }}
+          RUN_COMMIT: ${{ needs.pin-check.outputs.run-commit }}
+          TAG_TARGET: ${{ needs.pin-check.outputs.tag-target }}
+          TAG_RULESET_OBSERVATION: ${{ needs.pin-check.outputs.tag-ruleset-observation }}
           WORKFLOW_FILE_DIGEST: ${{ needs.pin-check.outputs.workflow-file-digest }}
           PIN_RECORD_BYTE_DIGEST: ${{ needs.pin-check.outputs.pin-record-byte-digest }}
           SANDBOX_ARTIFACT_NAME: ${{ needs.candidate-sandbox.outputs.sandbox-artifact-name }}
         run: |
           python3 - <<'PYEOF'
-          import base64, datetime, hashlib, json, os, re, subprocess, sys, traceback
+          import base64, datetime, hashlib, io, json, os, re, subprocess, sys, traceback, zipfile
 
           API_VERSION = "0.1.0"
           SCHEMA = "u1/0.1.0"
@@ -789,7 +1036,7 @@ jobs:
           KINDS = {"enforcement-environment", "producer-identity", "code-input", "action-inputs",
                    "toolchain", "image", "configuration", "independence-model",
                    "execution-provenance", "observation", "negative-control", "retention-plan",
-                   "verifier-context", "retrieval-check", "retention-observation"}
+                   "verifier-context", "retrieval-check", "retention-observation", "separation-probe"}
           OUTCOME_MAP = {"ACCEPT": "accept", "INVALID": "invalid", "INCOMPLETE": "incomplete",
                          "UNSUPPORTED": "unsupported", "UNAVAILABLE": "unavailable"}
           STATUS_ORDER = {"ACCEPT": 1, "INCOMPLETE": 2, "INVALID": 3, "UNSUPPORTED": 4,
@@ -798,6 +1045,7 @@ jobs:
           class PinDrift(Exception):
               pass
 
+          # BEGIN SHARED:canon-core
           def canon(o):
               def esc(s):
                   return json.dumps(s, ensure_ascii=False)[1:-1]
@@ -821,10 +1069,12 @@ jobs:
 
           def doc_digest(domain, payload):
               return tag(canon({"domain": domain, "apiVersion": API_VERSION, "payload": payload}))
+          # END SHARED:canon-core
 
           def detached_digest(domain, doc, field):
               return doc_digest(domain, {k: v for k, v in doc.items() if k != field})
 
+          # BEGIN SHARED:strict-core
           def text_depth(raw):
               depth = 0
               max_depth = 0
@@ -865,6 +1115,46 @@ jobs:
                   return out
               return json.loads(raw.decode("utf-8"), parse_constant=reject_constant,
                                 object_pairs_hook=reject_dupes)
+          # END SHARED:strict-core
+
+          # BEGIN SHARED:compare-classes
+          def compare_classes(raw, recorded_byte, recorded_doc, domain):
+              # A-U1.8.01: a byte digest is compared only to a byte digest and a document
+              # digest only to a document digest; one class is never offered to the other.
+              # Returns match | byte-mismatch | doc-mismatch | doc-unparsable.
+              if recorded_byte is not None and tag(raw) != recorded_byte:
+                  return "byte-mismatch"
+              if recorded_doc is not None:
+                  try:
+                      parsed_doc = strict_loads(raw)
+                      if doc_digest(domain, parsed_doc) != recorded_doc:
+                          return "doc-mismatch"
+                  except Exception:
+                      return "doc-unparsable"
+              return "match"
+          # END SHARED:compare-classes
+
+          # BEGIN SHARED:oidc-claims
+          def observed_oidc_claims():
+              # A-U1.8.26 item 4: the federated subject is observed from the job's own GitHub
+              # OIDC token claims, never a literal.
+              import urllib.request
+              url = os.environ.get("ACTIONS_ID_TOKEN_REQUEST_URL")
+              bearer = os.environ.get("ACTIONS_ID_TOKEN_REQUEST_TOKEN")
+              if not url or not bearer:
+                  return None
+              req_t = urllib.request.Request(url + "&audience=api://AzureADTokenExchange",
+                                             headers={"Authorization": "bearer " + bearer})
+              try:
+                  jwt = json.loads(urllib.request.urlopen(req_t, timeout=30).read())["value"]
+                  payload = jwt.split(".")[1]
+                  payload += "=" * (-len(payload) % 4)
+                  c = json.loads(base64.urlsafe_b64decode(payload))
+              except Exception:
+                  return None
+              return {k: c.get(k) for k in ("sub", "repository", "repository_id",
+                                            "job_workflow_ref", "ref", "environment", "event_name")}
+          # END SHARED:oidc-claims
 
           def check_package_path(p):
               if not p.isascii() or "\\" in p or p.startswith("/") or p.endswith("/"):
@@ -931,17 +1221,30 @@ jobs:
           attempt_pos = "a%02d" % K
           verifier_prefix = "u1/m0r6an/agent-skills/verifications/%s/%s" % (req_id, attempt_pos)
           ledger_prefix = "u1/m0r6an/agent-skills/attempt-ledger/%s" % req_id
+          run_commit = os.environ.get("RUN_COMMIT", "")
+          REPO = "m0r6aN/agent-skills"
+          GOALS = "plugins/foreman-line/docs/goals/foreman-kernel"
+          PIN_PATH = GOALS + "/U1-verifier-pin.json"
+          CHECKLIST_PATH = GOALS + "/U1-configuration-checklist.json"
+          REQ_DIR = GOALS + "/promotion-requests"
+          WF_PATH = ".github/workflows/u1-verify.yml"
+          PROVENANCE_WORKFLOWS = {".github/workflows/u1-produce.yml"}
 
           try:
-              # ---- pin binding re-check at the decision point (F-3) ----
-              actual = "sha256:" + hashlib.sha256(open(".github/workflows/u1-verify.yml", "rb").read()).hexdigest()
-              if actual != os.environ["WORKFLOW_FILE_DIGEST"]:
-                  raise PinDrift("running workflow bytes changed since pin-check: %s" % actual)
+              # ---- one pin record and one workflow, fetched by API at the executed commit R
+              #      (A-U1.8.17/.18); nothing is read from the checkout or from main ----
+              wf_api = gh_content(WF_PATH, run_commit)
+              if wf_api is None or tag(wf_api) != os.environ["WORKFLOW_FILE_DIGEST"]:
+                  raise PinDrift("workflow bytes at executed commit %s differ from the pin-check digest" % run_commit)
+              raw_pin = gh_content(PIN_PATH, run_commit)
+              if raw_pin is None or tag(raw_pin) != os.environ["PIN_RECORD_BYTE_DIGEST"]:
+                  raise PinDrift("pin record at executed commit %s differs from the pin-check digest" % run_commit)
+              pin_record = strict_loads(raw_pin)
 
               # ---- promotion request re-fetch + digest recompute (F-7: every consumer) ----
               req = None
-              raw_req = gh_content("plugins/foreman-line/docs/goals/foreman-kernel/promotion-requests/%s.json"
-                                   % req_id, os.environ["REQUEST_COMMIT_SHA"])
+              raw_req = gh_content("%s/%s/promotion-request.json" % (REQ_DIR, req_id),
+                                   os.environ["REQUEST_COMMIT_SHA"])
               if raw_req is None:
                   fail("INCOMPLETE", "U1_REQUIRED_EVIDENCE_MISSING",
                        "promotion request absent at recorded commit " + os.environ["REQUEST_COMMIT_SHA"])
@@ -961,21 +1264,14 @@ jobs:
                   os.environ.get("PRODUCER_RUN_ID") or sel.get("runId"),
                   int(sel.get("attempt", 1)))
 
-              # ---- expected-outcome oracle (A-U1.8.04) and configuration checklist (A-U1.8.03) ----
+              # ---- expected-outcome oracle (A-U1.8.19): per request, at the request commit ----
               oracle = None
               checklist = None
-              pin_record = json.loads(open("pin-record.json", "rb").read().decode("utf-8")) \
-                  if os.path.exists("pin-record.json") else None
-              if pin_record is None:
-                  raw_pin = gh_content("plugins/foreman-line/docs/goals/foreman-kernel/U1-verifier-pin.json",
-                                       os.environ["PINNED_COMMIT"])
-                  if raw_pin is not None:
-                      pin_record = json.loads(raw_pin.decode("utf-8"))
-              raw_oracle = gh_content("plugins/foreman-line/docs/goals/foreman-kernel/U1-expected-outcome-oracle.json",
-                                      os.environ["PINNED_COMMIT"])
+              raw_oracle = gh_content("%s/%s/expected-outcome-oracle.json" % (REQ_DIR, req_id),
+                                      os.environ["REQUEST_COMMIT_SHA"])
               if raw_oracle is None:
                   fail("INCOMPLETE", "U1_REQUIRED_EVIDENCE_MISSING",
-                       "expected-outcome oracle record absent at pinned commit")
+                       "expected-outcome oracle record absent at request commit")
               else:
                   try:
                       oracle = strict_loads(raw_oracle)
@@ -993,15 +1289,17 @@ jobs:
                           fail("INVALID", "U1_SUBJECT_MISMATCH", "oracle promotionRequestId mismatch")
                   except Exception as e:
                       fail("INVALID", "U1_ARTIFACT_INVALID", "oracle record unparsable: %s" % e)
-              raw_checklist = gh_content("plugins/foreman-line/docs/goals/foreman-kernel/U1-configuration-checklist.json",
-                                         os.environ["PINNED_COMMIT"])
+              # ---- configuration checklist (A-U1.8.03), read at the executed commit R ----
+              raw_checklist = gh_content(CHECKLIST_PATH, run_commit)
               if raw_checklist is None:
                   fail("INCOMPLETE", "U1_CONFIGURATION_INCOMPLETE",
-                       "configuration checklist record absent at pinned commit")
+                       "configuration checklist record absent at executed commit")
               else:
                   checklist_byte = tag(raw_checklist)
-                  bound_sha = (pin_record or {}).get("configurationChecklistSha256")
-                  if bound_sha is not None and bound_sha != checklist_byte:
+                  bound_sha = pin_record.get("configurationChecklistSha256")
+                  if bound_sha is None:
+                      raise PinDrift("pin record lacks configurationChecklistSha256")
+                  if bound_sha != checklist_byte:
                       raise PinDrift("checklist byte digest %s != pin-record configurationChecklistSha256 %s"
                                      % (checklist_byte, bound_sha))
                   try:
@@ -1021,19 +1319,16 @@ jobs:
                   except Exception as e:
                       fail("INVALID", "U1_ARTIFACT_INVALID", "checklist record unparsable: %s" % e)
 
-              # ---- trust-policy binding (3.2.3): reviewed trust policy = the pin record
-              #      read at the pinned commit plus the protected tag ruleset (A-U1.8.14). ----
-              if req is not None and pin_record is not None:
-                  trust_expected = tag(open("pin-record.json", "rb").read()) \
-                      if os.path.exists("pin-record.json") else os.environ["PIN_RECORD_BYTE_DIGEST"]
-                  if req.get("trustPolicyDigest") not in (trust_expected, os.environ["PIN_RECORD_BYTE_DIGEST"]):
-                      fail("INVALID", "U1_SUBJECT_MISMATCH",
-                           "trustPolicyDigest %s != reviewed trust-root record digest %s"
-                           % (req.get("trustPolicyDigest"), os.environ["PIN_RECORD_BYTE_DIGEST"]))
-                  if checklist is not None and isinstance(checklist.get("trustPolicyDigest"), str):
-                      if checklist["trustPolicyDigest"] != req.get("trustPolicyDigest"):
-                          fail("INVALID", "U1_SUBJECT_MISMATCH",
-                               "checklist trustPolicyDigest != promotion-request trustPolicyDigest")
+              # ---- trust-policy binding (A-U1.8.18): IA-2.11 digest of the closed projection of
+              #      the one pin record read at the executed commit ----
+              TRUST_FIELDS = ("workflow", "workflowCommit", "workflowFileSha256", "tag",
+                              "producerWorkflow", "custodian")
+              trust_digest = doc_digest("foreman-line.u1.trust-policy",
+                                        {k: pin_record.get(k) for k in TRUST_FIELDS})
+              if req is not None and req.get("trustPolicyDigest") != trust_digest:
+                  fail("INVALID", "U1_SUBJECT_MISMATCH",
+                       "trustPolicyDigest %s != recomputed trust-policy digest %s"
+                       % (req.get("trustPolicyDigest"), trust_digest))
 
               # ---- attempt claim check (IA-8) — authoritative runs only ----
               if authoritative and K:
@@ -1048,7 +1343,7 @@ jobs:
                           claim_bytes = fh.read()
                       if not claim_bytes:
                           fail("INVALID", "U1_ARTIFACT_INVALID", "empty ledger claim row")
-                      claim = json.loads(claim_bytes)
+                      claim = strict_loads(claim_bytes)
                       if claim.get("attemptNumber") != K or claim.get("promotionRequestId") != req_id:
                           fail("INVALID", "U1_SUBJECT_MISMATCH", "ledger claim row mismatch")
                       if claim.get("subjectAndSelectionDigest") != os.environ["SUBJECT_AND_SELECTION_DIGEST"]:
@@ -1062,30 +1357,26 @@ jobs:
                       fail("INVALID", "U1_SUBJECT_MISMATCH",
                            "no durable attempt claim for attempt %d: %s" % (K, e))
 
-              # ---- candidate-sandbox consumption (3.4.5, IA-7.9) — untrusted data ----
-              sandbox_consumed = False
-              sandbox_record = {"consumed": False, "artifactName": None, "byteDigest": None}
+              # ---- candidate-sandbox artifact: untrusted data, parsed only (A-U1.8.20) ----
+              sandbox_blobs = None
+              sandbox_record = {"artifactName": os.environ.get("SANDBOX_ARTIFACT_NAME") or None,
+                                "files": [], "byteDigests": {}, "treatedAs": "untrusted data (never a verdict)"}
               if os.path.isdir("sandbox-in"):
                   try:
-                      names = sorted(os.listdir("sandbox-in"))
-                      blobs = {}
-                      for n in names:
-                          with open(os.path.join("sandbox-in", n), "rb") as f:
-                              blobs[n] = f.read()
-                      exit_raw = blobs.get("exit-status.txt", b"").strip()
-                      sandbox_record = {
-                          "consumed": True,
-                          "artifactName": os.environ.get("SANDBOX_ARTIFACT_NAME") or None,
-                          "files": sorted(blobs),
-                          "byteDigests": {n: tag(b) for n, b in sorted(blobs.items())},
-                          "exitStatus": int(exit_raw) if exit_raw.isdigit() else None,
-                          "treatedAs": "untrusted data (never a verdict)"}
-                      sandbox_consumed = True
+                      sandbox_blobs = {}
+                      for n in sorted(os.listdir("sandbox-in")):
+                          pth = os.path.join("sandbox-in", n)
+                          if os.path.isfile(pth):
+                              with open(pth, "rb") as f:
+                                  data = f.read()
+                              if len(data) > LIMITS["artifact"]:
+                                  raise ValueError("U1_EVIDENCE_LIMIT_EXCEEDED: sandbox file %s > 8 MiB" % n)
+                              sandbox_blobs[n] = data
+                      sandbox_record["files"] = sorted(sandbox_blobs)
+                      sandbox_record["byteDigests"] = {n: tag(b) for n, b in sorted(sandbox_blobs.items())}
                   except Exception as e:
-                      fail("INVALID", "U1_ARTIFACT_INVALID", "sandbox output unparsable: %s" % e)
-              if not sandbox_consumed:
-                  fail("INCOMPLETE", "U1_INDEPENDENCE_UNPROVEN",
-                       "candidate-sandbox output not consumed: required invariants are not independently derived")
+                      sandbox_blobs = None
+                      fail("INVALID", "U1_ARTIFACT_INVALID", "sandbox output unreadable: %s" % e)
 
               # ---- producer package read-back (7.1/7.2/7.3) with early limits (F-16) ----
               listing = json.loads(sh("az", "storage", "blob", "list",
@@ -1155,24 +1446,23 @@ jobs:
                           fail("INVALID", "U1_ARTIFACT_INVALID", "unlisted file in package: " + rel)
                           continue
                       recorded_byte = entry.get("byteDigest", entry.get("digest"))
-                      if recorded_byte != tag(raw) or entry.get("byteLength") != len(raw):
+                      cmp_result = compare_classes(raw, recorded_byte, entry.get("docDigest"),
+                                                   entry.get("docDomain", "foreman-line.u1.bundle"))
+                      if cmp_result != "match" or entry.get("byteLength") != len(raw):
+                          observed_doc = None
+                          if cmp_result == "doc-mismatch":
+                              try:
+                                  observed_doc = doc_digest(entry.get("docDomain", "foreman-line.u1.bundle"),
+                                                            strict_loads(raw))
+                              except Exception:
+                                  observed_doc = None
                           mismatches.append({"objectName": producer_prefix + "/" + rel,
-                                             "recordedDigest": recorded_byte, "observedDigest": tag(raw)})
-                          fail("INVALID", "U1_ARTIFACT_INVALID", "digest/byteLength mismatch: " + rel)
-                      if entry.get("docDigest"):
-                          # Document-class check under the entry's own IA-2 domain row (A-U1.8.01).
-                          try:
-                              doc = strict_loads(raw)
-                              recomputed = doc_digest(entry.get("docDomain", "foreman-line.u1.bundle"), doc)
-                              if recomputed != entry.get("docDigest"):
-                                  mismatches.append({"objectName": producer_prefix + "/" + rel,
-                                                     "recordedDigest": entry.get("docDigest"),
-                                                     "observedDigest": recomputed})
-                                  fail("INVALID", "U1_ARTIFACT_INVALID",
-                                       "document-digest mismatch: " + rel)
-                          except Exception as e:
-                              fail("INVALID", "U1_ARTIFACT_INVALID",
-                                   "document unparsable at read-back: %s (%s)" % (rel, e))
+                                             "recordedDigest": entry.get("docDigest") if cmp_result.startswith("doc")
+                                                               else recorded_byte,
+                                             "observedDigest": observed_doc if cmp_result.startswith("doc")
+                                                               else tag(raw)})
+                          fail("INVALID", "U1_ARTIFACT_INVALID",
+                               "digest comparison %s / byteLength: %s" % (cmp_result, rel))
                   for rel, entry in inventory.items():
                       if rel not in files:
                           fail("INVALID", "U1_ARTIFACT_INVALID", "inventory entry not retained: " + rel)
@@ -1180,20 +1470,23 @@ jobs:
 
               # ---- subject/selection equality (7.4) — ALWAYS runs (F-7) ----
               subject_digest = None
+              subject_commit = None
               bundle_byte_digest = tag(files["bundle.json"]) if "bundle.json" in files else None
               bundle_doc_digest = None
               if bundle is not None:
                   subject = bundle.get("subject", {})
+                  subject_commit = ((subject.get("candidate") or {}).get("commit"))
                   subject_digest = tag(canon(subject))
                   try:
                       bundle_doc_digest = doc_digest("foreman-line.u1.bundle", bundle)
                   except Exception:
                       bundle_doc_digest = None
-                  if bundle.get("execution") != {k: sel.get(k) for k in
-                                                 ("provider", "repositoryId", "workflowId", "runId",
-                                                  "attempt", "jobId", "event")}:
+                  # A-U1.8.18 clause 4: exactly the seven contract fields, each present in both.
+                  EXEC7 = ("provider", "repositoryId", "workflowId", "runId", "attempt", "jobId", "event")
+                  bex = bundle.get("execution") or {}
+                  if any(k not in bex or k not in sel or bex[k] != sel[k] for k in EXEC7):
                       fail("INVALID", "U1_SUBJECT_MISMATCH",
-                           "execution identity != promotion-request selection")
+                           "execution identity (7 fields) != promotion-request selection")
                   if req is not None:
                       if subject_digest != req.get("expectedSubjectDigest"):
                           fail("INVALID", "U1_SUBJECT_MISMATCH",
@@ -1227,7 +1520,49 @@ jobs:
                               rows.append(r)
                   return rows
 
+              prov_cache = {}
+
+              def branch_head():
+                  if "head" not in prov_cache:
+                      j = gh_json("repos/%s/branches/main" % REPO)
+                      prov_cache["head"] = ((j or {}).get("commit") or {}).get("sha")
+                  return prov_cache["head"]
+
+              def on_default_branch(commit):
+                  key = ("anc", commit)
+                  if key not in prov_cache:
+                      head = branch_head()
+                      c = gh_json("repos/%s/compare/%s...%s" % (REPO, commit, head)) if head and commit else None
+                      prov_cache[key] = bool(c) and c.get("status") in ("identical", "ahead")
+                  return prov_cache[key]
+
+              def row_identity(row):
+                  if row.get("controlId"):
+                      return ("controlId", row.get("controlId"))
+                  return ("caseId", row.get("caseId"))
+
+              def row_core(row):
+                  # A-U1.8.20 clause 6: the producer adds only executionProvenance.
+                  return {k: v for k, v in row.items() if k not in ("executionProvenance", "_source")}
+
+              def find_entries(doc, row):
+                  kname, kval = row_identity(row)
+                  seqs = [doc] if isinstance(doc, list) else \
+                      [doc.get(k) for k in ("cases", "rows", "controls") if isinstance(doc.get(k), list)]
+                  out = []
+                  for seq in seqs:
+                      out.extend(x for x in seq if isinstance(x, dict) and x.get(kname) == kval)
+                  return out
+
+              def cached_content(path, commit):
+                  key = ("content", commit, path)
+                  if key not in prov_cache:
+                      prov_cache[key] = gh_content(path, commit)
+                  return prov_cache[key]
+
               def confirm_provenance(row):
+                  # A-U1.8.20 clause 4: identity confirmation alone is not provenance; the row
+                  # must be bound by bytes to its cited source.
                   entries = row.get("executionProvenance")
                   if not isinstance(entries, list) or not entries:
                       fail("INVALID", "U1_PROVENANCE_INVALID",
@@ -1240,8 +1575,11 @@ jobs:
                           ok = False
                           continue
                       kind = e.get("originKind")
+                      if e.get("repositoryId") != REPO:
+                          fail("INVALID", "U1_PROVENANCE_INVALID", "provenance repositoryId != %s" % REPO)
+                          ok = False
                       if kind == "github-run":
-                          run = gh_json("repos/m0r6aN/agent-skills/actions/runs/%s" % e.get("runId"))
+                          run = gh_json("repos/%s/actions/runs/%s" % (REPO, e.get("runId")))
                           if run is None:
                               fail("INVALID", "U1_PROVENANCE_INVALID",
                                    "run %s not confirmed through the GitHub API" % e.get("runId"))
@@ -1249,29 +1587,71 @@ jobs:
                               continue
                           checks = [
                               (run.get("head_sha") == e.get("headSha"), "headSha"),
+                              (bool(subject_commit) and run.get("head_sha") == subject_commit,
+                               "headSha == subject commit"),
                               (run.get("event") == e.get("event"), "event"),
-                              (run.get("conclusion") == e.get("conclusion"), "conclusion"),
-                              (str(run.get("path", "")).split("@")[0] ==
-                               str(e.get("workflowRef", "")).split("@")[0].split("/", 2)[-1], "workflowRef")]
-                          jobs = gh_json("repos/m0r6aN/agent-skills/actions/runs/%s/jobs" % e.get("runId")) or {}
+                              (run.get("conclusion") == "success" and e.get("conclusion") == "success",
+                               "conclusion"),
+                              (run.get("path") in PROVENANCE_WORKFLOWS, "workflow allowlist")]
+                          jobs = gh_json("repos/%s/actions/runs/%s/jobs" % (REPO, e.get("runId"))) or {}
                           job_ids = {str(j.get("id")) for j in jobs.get("jobs", [])}
-                          checks.append((str(e.get("jobId")) in job_ids, "jobId"))
+                          checks.append((str(e.get("jobId")) in job_ids or
+                                         any(j.get("name") == e.get("jobId") for j in jobs.get("jobs", [])),
+                                         "jobId"))
                           for good, label in checks:
                               if not good:
                                   fail("INVALID", "U1_PROVENANCE_INVALID",
                                        "execution identity mismatch (%s) for run %s" % (label, e.get("runId")))
                                   ok = False
+                          bound = False
+                          arts = gh_json("repos/%s/actions/runs/%s/artifacts" % (REPO, e.get("runId"))) or {}
+                          for art in arts.get("artifacts", []):
+                              if art.get("expired"):
+                                  continue
+                              try:
+                                  zbytes = shb("gh", "api", "repos/%s/actions/artifacts/%s/zip" % (REPO, art["id"]))
+                                  with zipfile.ZipFile(io.BytesIO(zbytes)) as zf:
+                                      for member in zf.namelist():
+                                          mraw = zf.read(member)
+                                          if tag(mraw) != e.get("artifactByteDigest"):
+                                              continue
+                                          found = find_entries(strict_loads(mraw), row)
+                                          if len(found) == 1 and canon(row_core(found[0])) == canon(row_core(row)):
+                                              bound = True
+                              except Exception:
+                                  continue
+                          if not bound:
+                              fail("INVALID", "U1_PROVENANCE_INVALID",
+                                   "no artifact of run %s has digest %s and contains the row"
+                                   % (e.get("runId"), e.get("artifactByteDigest")))
+                              ok = False
                       elif kind == "committed-source":
                           commit = e.get("headSha")
                           path = e.get("committedPath")
-                          raw = gh_content(path, commit) if commit and path else None
+                          raw = cached_content(path, commit) if commit and path else None
                           if raw is None or tag(raw) != e.get("artifactByteDigest"):
                               fail("INVALID", "U1_PROVENANCE_INVALID",
                                    "committed-source identity unconfirmed at %s:%s" % (commit, path))
                               ok = False
-                          if e.get("evidenceOrigin") not in ("fk-p17-committed", "ci-run-generated"):
+                          elif not on_default_branch(commit):
                               fail("INVALID", "U1_PROVENANCE_INVALID",
-                                   "evidenceOrigin literal false or absent")
+                                   "committed-source commit %s is not in the default-branch history" % commit)
+                              ok = False
+                          else:
+                              try:
+                                  found = find_entries(strict_loads(raw), row)
+                                  if len(found) != 1 or canon(row_core(found[0])) != canon(row_core(row)):
+                                      fail("INVALID", "U1_PROVENANCE_INVALID",
+                                           "row %s does not equal the entry of %s at %s"
+                                           % (row_identity(row)[1], path, commit))
+                                      ok = False
+                              except Exception as ex:
+                                  fail("INVALID", "U1_PROVENANCE_INVALID",
+                                       "committed-source entry unreadable: %s" % ex)
+                                  ok = False
+                          if e.get("evidenceOrigin") != "fk-p17-committed":
+                              fail("INVALID", "U1_PROVENANCE_INVALID",
+                                   "evidenceOrigin literal false or absent for committed-source")
                               ok = False
                       else:
                           fail("INVALID", "U1_PROVENANCE_INVALID", "unknown executionProvenance kind")
@@ -1438,6 +1818,107 @@ jobs:
                                         "exercisedRows": exercised,
                                         "evidence": evidence})
 
+              # ---- candidate-sandbox derivation (A-U1.8.20): a comparison, never a flag ----
+              sandbox_cmp = {"ran": False, "rowsCompared": 0, "rowsExpected": 0, "oracleFloor": 0,
+                             "mismatches": []}
+              sandbox_cleared = False
+              sres, sb_note = None, None
+              if sandbox_blobs is None:
+                  sb_note = ("candidate-sandbox did not run or its artifact is absent "
+                             "(candidate-reexec=false, job failure, or unreadable artifact)")
+              else:
+                  try:
+                      sres = strict_loads(sandbox_blobs.get("sandbox-result.json", b""))
+                      wexit = sandbox_blobs.get("harness-exit.txt", b"").strip()
+                      if sres.get("schema") != "u1-sandbox-result/v1":
+                          raise ValueError("sandbox result schema literal mismatch")
+                      if not wexit.isdigit():
+                          raise ValueError("wrapper exit status absent")
+                      if int(wexit) != 0:
+                          raise ValueError("harness exit status %s is non-zero" % wexit.decode())
+                      if sres.get("harnessExitStatus") != int(wexit):
+                          raise ValueError("reported harnessExitStatus != wrapper exit status")
+                      subj_commit = (((bundle or {}).get("subject") or {}).get("candidate") or {}).get("commit")
+                      if not subj_commit or sres.get("candidateCommit") != subj_commit:
+                          raise ValueError("candidateCommit != subject candidate commit")
+                      if not isinstance(sres.get("invariantResults"), list) or \
+                              not isinstance(sres.get("controlResults"), list):
+                          raise ValueError("invariantResults/controlResults absent")
+                  except Exception as e:
+                      sres = None
+                      sb_note = "sandbox result unusable: %s" % e
+              if sres is None:
+                  fail("INCOMPLETE", "U1_REQUIRED_EVIDENCE_MISSING", sb_note)
+                  fail("INCOMPLETE", "U1_INDEPENDENCE_UNPROVEN",
+                       "sandbox derivation did not run: " + sb_note)
+              else:
+                  c_res = {x.get("controlId"): x for x in sres["controlResults"] if isinstance(x, dict)}
+                  i_res = {(x.get("invariantId"), x.get("rowId")): x
+                           for x in sres["invariantResults"] if isinstance(x, dict)}
+                  mism, compared, expected_rows = [], 0, 0
+                  for r in control_rows:
+                      if is_gap_row(r):
+                          continue
+                      cid = r.get("controlId")
+                      exp = oracle_controls.get(cid)
+                      if exp is None:
+                          continue
+                      expected_rows += 1
+                      s = c_res.get(cid)
+                      if s is None:
+                          mism.append("control %s absent from the sandbox result" % cid)
+                          continue
+                      compared += 1
+                      if s.get("exitStatus") != r.get("exitStatus") or \
+                              s.get("observedResult") != r.get("observedResult"):
+                          mism.append("control %s: sandbox exit/result %s/%s != producer %s/%s"
+                                      % (cid, s.get("exitStatus"), s.get("observedResult"),
+                                         r.get("exitStatus"), r.get("observedResult")))
+                      sig = " ".join(str(x) for x in (s.get("signals") or []))
+                      miss = [x for x in (exp.get("requiredSignals") or []) if x not in sig]
+                      if miss:
+                          mism.append("control %s: sandbox signals lack %s" % (cid, miss))
+                  for inv_id in required_ids:
+                      exp = oracle_invariants.get(inv_id)
+                      if exp is None:
+                          continue
+                      classes = exp.get("expectedRefusalClassIds") or []
+                      for r in obs_rows:
+                          if not (r.get("invariantId") == inv_id or inv_id in (r.get("invariantIds") or [])):
+                              continue
+                          if is_gap_row(r):
+                              continue
+                          expected_rows += 1
+                          s = i_res.get((inv_id, r.get("caseId")))
+                          if s is None:
+                              mism.append("invariant %s row %s absent from the sandbox result"
+                                          % (inv_id, r.get("caseId")))
+                              continue
+                          compared += 1
+                          if s.get("exitStatus") != r.get("exitStatus") or \
+                                  s.get("observedResult") != r.get("observedResult"):
+                              mism.append("invariant %s row %s: sandbox exit/result %s/%s != producer %s/%s"
+                                          % (inv_id, r.get("caseId"), s.get("exitStatus"),
+                                             s.get("observedResult"), r.get("exitStatus"),
+                                             r.get("observedResult")))
+                          sig = " ".join(str(x) for x in (s.get("signals") or []))
+                          if classes and not any(c in sig for c in classes):
+                              mism.append("invariant %s row %s: sandbox signals show no expected refusal class"
+                                          % (inv_id, r.get("caseId")))
+                  floor = sum(int((oracle_invariants.get(i) or {}).get("minExercisedRows", 1))
+                              for i in required_ids)
+                  sandbox_cmp = {"ran": True, "rowsCompared": compared, "rowsExpected": expected_rows,
+                                 "oracleFloor": floor, "mismatches": mism}
+                  if mism:
+                      fail("INVALID", "U1_CONTROL_FAILED",
+                           "sandbox/producer mismatch: %s" % "; ".join(mism[:5]))
+                  elif compared < expected_rows or compared < floor:
+                      fail("INCOMPLETE", "U1_INDEPENDENCE_UNPROVEN",
+                           "sandbox compared %d of %d exercised rows (oracle floor %d)"
+                           % (compared, expected_rows, floor))
+                  else:
+                      sandbox_cleared = True
+
               # ---- 7.7 configuration: checklist gate + live management-plane read (F-4) ----
               immutability = {"state": None, "intervalDays": None, "policyEtag": None,
                               "observedAt": now_iso(),
@@ -1484,31 +1965,53 @@ jobs:
                       fail("INCOMPLETE", "U1_CONFIGURATION_INCOMPLETE",
                            "checklist immutabilityExpectation != locked/400")
 
-              # ---- F-8 separation self-probe: out-of-prefix verifier write must be denied ----
-              probe = {"operation": "blob create (verifier identity) outside verifications/* and attempt-ledger/*",
-                       "principal": "u1-verifier-mi (ec2d02e3-904c-4ce2-9771-cd518d711e3f)",
-                       "targetPrefix": "u1/m0r6an/agent-skills/runs/0000000000/p00/",
-                       "expectedDenial": "ABAC prefix condition denies create outside verifications/* and attempt-ledger/*",
-                       "observedStatus": None, "observedError": None,
-                       "timestamp": now_iso()}
-              with open("probe.tmp", "wb") as f:
-                  f.write(canon({"probe": "verifier-out-of-prefix-write", "at": probe["timestamp"]}))
-              probe_run = subprocess.run(
-                  ["az", "storage", "blob", "upload", "--account-name", "bs2jhgwvduljfdwdp",
-                   "--container-name", "u1-evidence",
-                   "--name", "u1/m0r6an/agent-skills/runs/0000000000/p00/evidence/separation-probe/out-of-prefix-probe.json",
-                   "--file", "probe.tmp", "--auth-mode", "login", "--overwrite", "false",
-                   "--output", "none"], capture_output=True, text=True)
-              probe["observedStatus"] = probe_run.returncode
-              probe["observedError"] = (probe_run.stderr or "")[:400]
-              if probe_run.returncode == 0:
-                  fail("INCOMPLETE", "U1_INDEPENDENCE_UNPROVEN",
-                       "out-of-prefix verifier write was ALLOWED: prefix separation unproven")
-              elif "AuthorizationPermissionMismatch" not in (probe_run.stderr or "") \
-                      and "AuthorizationFailure" not in (probe_run.stderr or ""):
-                  fail("INCOMPLETE", "U1_INDEPENDENCE_UNPROVEN",
-                       "out-of-prefix probe denial not evidenced (unexpected error): "
-                       + (probe_run.stderr or "")[:200])
+              # ---- F-8 separation probes (A-U1.8.23): denial classified by HTTP status + error code ----
+              DENY_CREATE = {(403, "AuthorizationPermissionMismatch"), (403, "AuthorizationFailure")}
+              DENY_EXISTING = DENY_CREATE | {(409, "BlobImmutableDueToPolicy"),
+                                             (409, "BlobImmutableDueToLegalHold")}
+
+              def probe_denied(p):
+                  allowed = DENY_EXISTING if p.get("operation") in ("verifier-overwrite", "producer-delete") \
+                      else DENY_CREATE
+                  return (p.get("observedHttpStatus"), p.get("observedErrorCode")) in allowed
+
+              def check_probes(record, expected_ops, who):
+                  plist = (record or {}).get("probes")
+                  if not isinstance(plist, list):
+                      fail("INCOMPLETE", "U1_INDEPENDENCE_UNPROVEN", "%s probe record has no probes[]" % who)
+                      return
+                  ops = sorted(str(p.get("operation")) for p in plist if isinstance(p, dict))
+                  if ops != sorted(expected_ops):
+                      fail("INCOMPLETE", "U1_INDEPENDENCE_UNPROVEN",
+                           "%s probe set %s != expected %s" % (who, ops, sorted(expected_ops)))
+                  for p in plist:
+                      if isinstance(p, dict) and not probe_denied(p):
+                          fail("INCOMPLETE", "U1_INDEPENDENCE_UNPROVEN",
+                               "%s probe %s not denied: status=%s code=%s"
+                               % (who, p.get("operation"), p.get("observedHttpStatus"),
+                                  p.get("observedErrorCode")))
+
+              verifier_probes = None
+              if authoritative:
+                  try:
+                      verifier_probes = strict_loads(os.environ.get("PROBE_RECORD", "").encode("utf-8"))
+                      check_probes(verifier_probes, ["verifier-out-of-prefix-create", "verifier-overwrite"],
+                                   "verifier")
+                  except Exception as e:
+                      verifier_probes = None
+                      fail("INCOMPLETE", "U1_INDEPENDENCE_UNPROVEN",
+                           "verifier probe record absent or unparsable: %s" % e)
+              producer_probes = None
+              pp_raw = files.get("evidence/separation-probe/producer-probes.json")
+              if pp_raw is None:
+                  fail("INCOMPLETE", "U1_INDEPENDENCE_UNPROVEN", "producer probe record absent from the bundle")
+              else:
+                  try:
+                      producer_probes = strict_loads(pp_raw)
+                      check_probes(producer_probes, ["producer-create-under-verifications", "producer-delete"],
+                                   "producer")
+                  except Exception as e:
+                      fail("INVALID", "U1_ARTIFACT_INVALID", "producer probe record unparsable: %s" % e)
 
               # ---- runner/toolchain identity (F-13) ----
               az_version = None
@@ -1516,12 +2019,35 @@ jobs:
                   az_version = json.loads(sh("az", "version")).get("azure-cli")
               except Exception:
                   az_version = None
-              runner = {"imageOS": os.environ.get("IMAGEOS", ""),
-                        "imageVersion": os.environ.get("IMAGEVERSION", ""),
+              runner = {"imageOS": os.environ.get("ImageOS", ""),
+                        "imageVersion": os.environ.get("ImageVersion", ""),
                         "runnerName": os.environ.get("RUNNER_NAME", ""),
                         "runnerOs": os.environ.get("RUNNER_OS", ""),
                         "runnerArch": os.environ.get("RUNNER_ARCH", ""),
                         "azCliVersion": az_version}
+              # A-U1.8.25: an empty compensating field is a configuration refusal, in the
+              # verifier's own record and in the producer's toolchain record.
+              for rk, rv in sorted(runner.items()):
+                  if not rv:
+                      fail("INCOMPLETE", "U1_CONFIGURATION_INCOMPLETE",
+                           "verifier runner field empty: " + rk)
+              tc_raw = files.get("evidence/toolchain/toolchain.json")
+              if tc_raw is None:
+                  fail("INCOMPLETE", "U1_REQUIRED_EVIDENCE_MISSING", "producer toolchain record absent")
+              else:
+                  try:
+                      tc = strict_loads(tc_raw)
+                      trunner = tc.get("runner") or {}
+                      tvals = {"imageOS": trunner.get("imageOS"), "imageVersion": trunner.get("imageVersion"),
+                               "runnerName": trunner.get("runnerName"), "runnerOs": trunner.get("runnerOs"),
+                               "runnerArch": trunner.get("runnerArch"),
+                               "azCliVersion": (tc.get("runtime") or {}).get("azCliVersion")}
+                      for rk, rv in sorted(tvals.items()):
+                          if not rv:
+                              fail("INCOMPLETE", "U1_CONFIGURATION_INCOMPLETE",
+                                   "producer runner field empty: " + rk)
+                  except Exception as e:
+                      fail("INVALID", "U1_ARTIFACT_INVALID", "producer toolchain record unparsable: %s" % e)
               limitations = [
                   "hosted-runner identity is label + ImageOS/ImageVersion level only "
                   "(INF-4 exception per 3.3.4; image digests unavailable to jobs)",
@@ -1539,14 +2065,18 @@ jobs:
                   "logicalId": "verifier-context",
                   "authoritative": authoritative,
                   "authorityClass": os.environ.get("AUTHORITY_CLASS"),
+                  "executedCommit": os.environ.get("RUN_COMMIT", ""),
                   "pinRecordReadPath": os.environ.get("PIN_READ_PATH"),
                   "pinnedWorkflowCommit": os.environ.get("PINNED_COMMIT"),
                   "pinnedWorkflowFileDigest": os.environ.get("WORKFLOW_FILE_DIGEST"),
                   "pinRecordByteDigest": os.environ.get("PIN_RECORD_BYTE_DIGEST"),
+                  "tagRulesetObservation": os.environ.get("TAG_RULESET_OBSERVATION"),
+                  "tagTarget": os.environ.get("TAG_TARGET"),
                   "selectedEvent": os.environ.get("GITHUB_EVENT_NAME", ""),
-                  "verifierIdentity": {"clientId": "ec2d02e3-904c-4ce2-9771-cd518d711e3f",
-                                       "federatedSubject": "repo:m0r6aN/agent-skills:environment:u1-verifier",
-                                       "roleAssignment": "Storage Blob Data Reader + create-only u1-verifier-evidence-creator"},
+                  "evaluatorIdentity": {"clientId": "92737cbb-0a55-4355-b1fe-c6169eb0df4b",
+                                        "name": "u1-reader-mi",
+                                        "oidcClaims": observed_oidc_claims()},
+                  "verifierClaimIdentity": (verifier_probes or {}).get("oidcClaims") if verifier_probes else None,
                   "runIdentity": {"runId": os.environ.get("GITHUB_RUN_ID", ""),
                                   "attempt": int(os.environ.get("GITHUB_RUN_ATTEMPT", "1")),
                                   "jobId": os.environ.get("GITHUB_JOB", ""),
@@ -1554,9 +2084,10 @@ jobs:
                                   "headSha": os.environ.get("GITHUB_SHA", ""),
                                   "event": os.environ.get("GITHUB_EVENT_NAME", "")},
                   "runnerIdentity": runner,
+                  "sandboxComparison": sandbox_cmp,
                   "sandboxOutput": sandbox_record,
                   "immutabilityObservation": immutability,
-                  "separationProbe": probe,
+                  "separationProbes": {"verifier": verifier_probes, "producer": producer_probes},
                   "attestation": {"attestationIssued": False, "issuer": "none",
                                   "gap": "INCOMPLETE-U1-18 not issued by the selected workflows"},
                   "limitations": limitations}
@@ -1573,8 +2104,9 @@ jobs:
 
               verifier_inventory = [
                   verifier_entry("verifier-context", verifier_context),
-                  verifier_entry("retrieval-check", retrieval_check),
-                  verifier_entry("separation-probe", probe)]
+                  verifier_entry("retrieval-check", retrieval_check)]
+              if verifier_probes is not None:
+                  verifier_inventory.append(verifier_entry("separation-probe", verifier_probes))
               producer_inventory = [
                   {"namespace": "producer", "logicalId": e.get("relativePath", ""),
                    "byteLength": e.get("byteLength"), "byteDigest": e.get("byteDigest", e.get("digest")),
@@ -1603,6 +2135,7 @@ jobs:
                   "bundleDocDigest": bundle_doc_digest,
                   "trustPolicyDigest": (req or {}).get("trustPolicyDigest"),
                   "verifierCodeDigest": os.environ.get("WORKFLOW_FILE_DIGEST"),
+                  "executedCommit": os.environ.get("RUN_COMMIT", ""),
                   "verifierContext": verifier_inventory[0],
                   "authoritative": authoritative,
                   "checkedAt": now_iso(),
@@ -1621,15 +2154,16 @@ jobs:
               os.makedirs("out/audit", exist_ok=True)
               os.makedirs("out/evidence/verifier-context", exist_ok=True)
               os.makedirs("out/evidence/retrieval-check", exist_ok=True)
-              os.makedirs("out/evidence/separation-probe", exist_ok=True)
               with open("out/audit/decision.json", "wb") as f:
                   f.write(decision_raw)
               with open("out/evidence/verifier-context/verifier-context.json", "wb") as f:
                   f.write(canon(verifier_context))
               with open("out/evidence/retrieval-check/retrieval-check.json", "wb") as f:
                   f.write(canon(retrieval_check))
-              with open("out/evidence/separation-probe/separation-probe.json", "wb") as f:
-                  f.write(canon(probe))
+              if verifier_probes is not None:
+                  os.makedirs("out/evidence/separation-probe", exist_ok=True)
+                  with open("out/evidence/separation-probe/separation-probe.json", "wb") as f:
+                      f.write(canon(verifier_probes))
               with open("decision-digests.json", "w", encoding="utf-8") as f:
                   json.dump({"decisionDocDigest": decision_doc, "decisionByteDigest": decision_byte,
                              "status": status, "authoritative": authoritative}, f, sort_keys=True)
@@ -1640,7 +2174,8 @@ jobs:
                   f.write("producer-run-id=%s\n" % str(sel.get("runId") or os.environ.get("PRODUCER_RUN_ID")))
                   f.write("promotion-request-id=%s\n" % req_id)
                   f.write("attempt-outcome=%s\n" % OUTCOME_MAP.get(status, "nonreturning"))
-                  f.write("sandbox-consumed=%s\n" % str(sandbox_consumed).lower())
+                  f.write("reason-codes=%s\n" % json.dumps(sorted(reason_codes)))
+                  f.write("sandbox-consumed=%s\n" % str(sandbox_cleared).lower())
               print("verdict:", status, sorted(reason_codes))
           except PinDrift as e:
               print("::error::PIN_DRIFT: %s" % e)
@@ -1662,6 +2197,10 @@ jobs:
               decision_raw = canon(decision)
               decision_doc = doc_digest("foreman-line.u1.decision", decision)
               decision_byte = tag(decision_raw)
+              decision["executedCommit"] = os.environ.get("RUN_COMMIT", "")
+              decision_raw = canon(decision)
+              decision_doc = doc_digest("foreman-line.u1.decision", decision)
+              decision_byte = tag(decision_raw)
               os.makedirs("out/audit", exist_ok=True)
               with open("out/audit/decision.json", "wb") as f:
                   f.write(decision_raw)
@@ -1672,25 +2211,89 @@ jobs:
                   f.write("producer-run-id=%s\n" % str(os.environ.get("PRODUCER_RUN_ID")))
                   f.write("promotion-request-id=%s\n" % req_id)
                   f.write("attempt-outcome=%s\n" % OUTCOME_MAP.get(status, "nonreturning"))
+                  f.write("reason-codes=%s\n" % json.dumps(sorted(reason_codes)))
                   f.write("sandbox-consumed=false\n")
               print("verdict (error path):", status, sorted(reason_codes))
           PYEOF
-      - name: Write decision + verifier evidence DIRECTLY (create-only, overwrite refused)
+      - name: Upload decision bundle for the persist job (transport only, unique name)
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: u1-decision-${{ github.run_id }}
+          path: out
+          if-no-files-found: error
+      - name: Summary
+        env:
+          STATUS: ${{ steps.decide.outputs.status }}
+          DECISION_DOC_DIGEST: ${{ steps.decide.outputs.decision-doc-digest }}
+          DECISION_BYTE_DIGEST: ${{ steps.decide.outputs.decision-byte-digest }}
+          PINNED_COMMIT: ${{ needs.pin-check.outputs.pinned-commit }}
+          RUN_COMMIT: ${{ needs.pin-check.outputs.run-commit }}
+          AUTHORITY_CLASS: ${{ needs.pin-check.outputs.authority-class }}
+        run: |
+          {
+            echo '### u1-verify decision (evaluate; no blob written by this job)'
+            echo "- status: $STATUS"
+            echo "- authority class: $AUTHORITY_CLASS"
+            echo "- decision doc digest: $DECISION_DOC_DIGEST"
+            echo "- decision byte digest: $DECISION_BYTE_DIGEST"
+            echo "- pinned workflow commit: $PINNED_COMMIT"
+            echo "- executed commit: $RUN_COMMIT"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  persist:
+    # A-U1.8.22 clause 4: the only job that writes the decision and verifier evidence. It runs
+    # only for authoritative (tag-dispatched) runs, under environment u1-verifier (tag policy
+    # only), and writes exactly the objects the evaluate job produced after checking the
+    # decision bytes against the evaluate job's recorded byte digest. Create-only.
+    needs: [pin-check, resolve-request, claim-attempt, evaluate]
+    if: ${{ !cancelled() && needs.pin-check.outputs.authority-class == 'authoritative' && needs.evaluate.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment: u1-verifier
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Download decision bundle from the evaluate job
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: u1-decision-${{ github.run_id }}
+          path: out
+      - name: Azure login (OIDC -> u1-verifier-mi)
+        uses: azure/login@7184910d9eb2b1c5e48f7073824a90609bb9b6d6 # v2
+        with:
+          client-id: ec2d02e3-904c-4ce2-9771-cd518d711e3f
+          tenant-id: ac08e2fd-34bf-4c87-a34f-c8c853ffc5e2
+          subscription-id: 909e0322-c3c0-4bce-ae53-b3d2ed735bd4
+      - name: Write decision + verifier evidence (create-only, overwrite refused)
         id: persist
         env:
           PROMOTION_REQUEST_ID: ${{ needs.resolve-request.outputs.promotion-request-id }}
           VERIFIER_ATTEMPT_NUMBER: ${{ needs.claim-attempt.outputs.attempt-number }}
-          DECISION_DOC_DIGEST: ${{ steps.decide.outputs.decision-doc-digest }}
+          DECISION_DOC_DIGEST: ${{ needs.evaluate.outputs.decision-doc-digest }}
+          DECISION_BYTE_DIGEST: ${{ needs.evaluate.outputs.decision-byte-digest }}
         run: |
           set -euo pipefail
-          if [ -n "$VERIFIER_ATTEMPT_NUMBER" ]; then
-            ATTEMPT_POS="$(printf 'a%02d' "$VERIFIER_ATTEMPT_NUMBER")"
-          else
-            ATTEMPT_POS="a00"
+          case "$PROMOTION_REQUEST_ID" in
+            ''|*[!a-z0-9-]*) echo "::error::U1_ARTIFACT_INVALID: promotionRequestId violates closed grammar" >&2; exit 1 ;;
+          esac
+          if [ -z "$VERIFIER_ATTEMPT_NUMBER" ]; then
+            echo "::error::U1_SUBJECT_MISMATCH: no durable attempt for an authoritative run" >&2
+            exit 1
           fi
+          ACTUAL="sha256:$(sha256sum out/audit/decision.json | cut -d' ' -f1)"
+          if [ "$ACTUAL" != "$DECISION_BYTE_DIGEST" ]; then
+            echo "::error::U1_ARTIFACT_INVALID: decision bytes changed between evaluate and persist" >&2
+            exit 1
+          fi
+          ATTEMPT_POS="$(printf 'a%02d' "$VERIFIER_ATTEMPT_NUMBER")"
           PREFIX="u1/m0r6an/agent-skills/verifications/${PROMOTION_REQUEST_ID}/${ATTEMPT_POS}"
           while IFS= read -r -d '' f; do
             rel="${f#out/}"
+            case "$rel" in
+              audit/decision.json|evidence/verifier-context/verifier-context.json|evidence/retrieval-check/retrieval-check.json|evidence/separation-probe/separation-probe.json) ;;
+              *) echo "::error::U1_ARTIFACT_INVALID: unexpected object in decision bundle: $rel" >&2; exit 1 ;;
+            esac
             az storage blob upload \
               --account-name bs2jhgwvduljfdwdp --container-name u1-evidence \
               --name "$PREFIX/$rel" --file "$f" --auth-mode login --overwrite false \
@@ -1701,36 +2304,14 @@ jobs:
             echo "- verifier prefix: $PREFIX/"
             echo "- decision document digest: $DECISION_DOC_DIGEST"
           } >> "$GITHUB_STEP_SUMMARY"
-      - name: Upload corroborating decision artifact (audit copy only, unique name)
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: u1-verifier-decision-${{ github.run_id }}
-          path: out
-          if-no-files-found: error
-      - name: Summary
-        env:
-          STATUS: ${{ steps.decide.outputs.status }}
-          DECISION_DOC_DIGEST: ${{ steps.decide.outputs.decision-doc-digest }}
-          DECISION_BYTE_DIGEST: ${{ steps.decide.outputs.decision-byte-digest }}
-          PINNED_COMMIT: ${{ needs.pin-check.outputs.pinned-commit }}
-          AUTHORITY_CLASS: ${{ needs.pin-check.outputs.authority-class }}
-        run: |
-          {
-            echo '### u1-verify decision'
-            echo "- status: $STATUS"
-            echo "- authority class: $AUTHORITY_CLASS"
-            echo "- decision doc digest: $DECISION_DOC_DIGEST"
-            echo "- decision byte digest: $DECISION_BYTE_DIGEST"
-            echo "- pinned verifier revision: $PINNED_COMMIT"
-          } >> "$GITHUB_STEP_SUMMARY"
 
   retention-observation:
     # F-2/F-10: read back the decision candidate bytes, compare BOTH digest classes to
     # their recorded counterparts, observe the immutability policy live, write the
     # retention-observation artifact (IA-2.4), then write seal.json LAST (create-only).
     # FK-P19 consumes only the seal (A-U1.8.09 clause 3).
-    needs: [pin-check, resolve-request, claim-attempt, verify]
-    if: ${{ !cancelled() && needs.verify.result == 'success' }}
+    needs: [pin-check, resolve-request, claim-attempt, evaluate, persist]
+    if: ${{ !cancelled() && needs.persist.result == 'success' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     environment: u1-verifier
@@ -1760,9 +2341,11 @@ jobs:
           PROMOTION_REQUEST_DIGEST: ${{ needs.resolve-request.outputs.promotion-request-digest }}
           REQUEST_COMMIT_SHA: ${{ needs.resolve-request.outputs.request-commit-sha }}
           VERIFIER_ATTEMPT_NUMBER: ${{ needs.claim-attempt.outputs.attempt-number }}
-          DECISION_DOC_DIGEST: ${{ needs.verify.outputs.decision-doc-digest }}
-          DECISION_BYTE_DIGEST: ${{ needs.verify.outputs.decision-byte-digest }}
-          DECISION_STATUS: ${{ needs.verify.outputs.status }}
+          DECISION_DOC_DIGEST: ${{ needs.evaluate.outputs.decision-doc-digest }}
+          DECISION_BYTE_DIGEST: ${{ needs.evaluate.outputs.decision-byte-digest }}
+          DECISION_STATUS: ${{ needs.evaluate.outputs.status }}
+          DECISION_REASON_CODES: ${{ needs.evaluate.outputs.reason-codes }}
+          RUN_COMMIT: ${{ needs.pin-check.outputs.run-commit }}
           AUTHORITY_CLASS: ${{ needs.pin-check.outputs.authority-class }}
           PINNED_COMMIT: ${{ needs.pin-check.outputs.pinned-commit }}
         run: |
@@ -1774,6 +2357,7 @@ jobs:
           OUTCOME_MAP = {"ACCEPT": "accept", "INVALID": "invalid", "INCOMPLETE": "incomplete",
                          "UNSUPPORTED": "unsupported", "UNAVAILABLE": "unavailable"}
 
+          # BEGIN SHARED:canon-core
           def canon(o):
               def esc(s):
                   return json.dumps(s, ensure_ascii=False)[1:-1]
@@ -1797,6 +2381,89 @@ jobs:
 
           def doc_digest(domain, payload):
               return tag(canon({"domain": domain, "apiVersion": API_VERSION, "payload": payload}))
+          # END SHARED:canon-core
+
+          # BEGIN SHARED:strict-core
+          def text_depth(raw):
+              depth = 0
+              max_depth = 0
+              in_str = False
+              esc = False
+              for ch in raw.decode("utf-8", "strict"):
+                  if in_str:
+                      if esc:
+                          esc = False
+                      elif ch == "\\":
+                          esc = True
+                      elif ch == '"':
+                          in_str = False
+                  elif ch == '"':
+                      in_str = True
+                  elif ch in "[{":
+                      depth += 1
+                      if depth > max_depth:
+                          max_depth = depth
+                  elif ch in "]}":
+                      depth -= 1
+              return max_depth
+
+          def strict_loads(raw):
+              # F-16: depth-limited (16), duplicate-key-rejecting, NaN/Infinity-rejecting.
+              if text_depth(raw) > 16:
+                  raise ValueError("U1_EVIDENCE_LIMIT_EXCEEDED: JSON depth > 16")
+              def reject_constant(name):
+                  raise ValueError("NaN/Infinity literal refused: " + name)
+              def reject_dupes(pairs):
+                  seen = set()
+                  out = {}
+                  for k, v in pairs:
+                      if k in seen:
+                          raise ValueError("duplicate key refused: " + k)
+                      seen.add(k)
+                      out[k] = v
+                  return out
+              return json.loads(raw.decode("utf-8"), parse_constant=reject_constant,
+                                object_pairs_hook=reject_dupes)
+          # END SHARED:strict-core
+
+          # BEGIN SHARED:compare-classes
+          def compare_classes(raw, recorded_byte, recorded_doc, domain):
+              # A-U1.8.01: a byte digest is compared only to a byte digest and a document
+              # digest only to a document digest; one class is never offered to the other.
+              # Returns match | byte-mismatch | doc-mismatch | doc-unparsable.
+              if recorded_byte is not None and tag(raw) != recorded_byte:
+                  return "byte-mismatch"
+              if recorded_doc is not None:
+                  try:
+                      parsed_doc = strict_loads(raw)
+                      if doc_digest(domain, parsed_doc) != recorded_doc:
+                          return "doc-mismatch"
+                  except Exception:
+                      return "doc-unparsable"
+              return "match"
+          # END SHARED:compare-classes
+
+          # BEGIN SHARED:oidc-claims
+          def observed_oidc_claims():
+              # A-U1.8.26 item 4: the federated subject is observed from the job's own GitHub
+              # OIDC token claims, never a literal.
+              import urllib.request
+              url = os.environ.get("ACTIONS_ID_TOKEN_REQUEST_URL")
+              bearer = os.environ.get("ACTIONS_ID_TOKEN_REQUEST_TOKEN")
+              if not url or not bearer:
+                  return None
+              req_t = urllib.request.Request(url + "&audience=api://AzureADTokenExchange",
+                                             headers={"Authorization": "bearer " + bearer})
+              try:
+                  jwt = json.loads(urllib.request.urlopen(req_t, timeout=30).read())["value"]
+                  payload = jwt.split(".")[1]
+                  payload += "=" * (-len(payload) % 4)
+                  c = json.loads(base64.urlsafe_b64decode(payload))
+              except Exception:
+                  return None
+              return {k: c.get(k) for k in ("sub", "repository", "repository_id",
+                                            "job_workflow_ref", "ref", "environment", "event_name")}
+          # END SHARED:oidc-claims
 
           def sh(*args):
               return subprocess.run(args, capture_output=True, text=True, check=True).stdout
@@ -1824,11 +2491,11 @@ jobs:
 
           # F-7: every consumer recomputes the request digest over the fetched bytes.
           enc = subprocess.run(["gh", "api",
-                                "repos/m0r6aN/agent-skills/contents/plugins/foreman-line/docs/goals/foreman-kernel/promotion-requests/%s.json?ref=%s"
+                                "repos/m0r6aN/agent-skills/contents/plugins/foreman-line/docs/goals/foreman-kernel/promotion-requests/%s/promotion-request.json?ref=%s"
                                 % (req_id, os.environ["REQUEST_COMMIT_SHA"]), "--jq", ".content"],
                                capture_output=True, text=True, check=True).stdout
           req_raw = base64.b64decode(enc)
-          req = json.loads(req_raw.decode("utf-8"))
+          req = strict_loads(req_raw)
           req_recomputed = doc_digest("foreman-line.u1.promotion-request",
                                       {k: v for k, v in req.items() if k != "requestDigest"})
           if req_recomputed != os.environ["PROMOTION_REQUEST_DIGEST"]:
@@ -1845,17 +2512,16 @@ jobs:
               raw = open("decision.readback.json", "rb").read()
               readback_byte = tag(raw)
               try:
-                  parsed = json.loads(raw.decode("utf-8"))
+                  parsed = strict_loads(raw)
                   readback_doc = doc_digest("foreman-line.u1.decision", parsed)
               except Exception:
                   readback_doc = None
-              # A-U1.8.01: both digest classes must match their recorded counterparts.
-              if readback_byte != os.environ["DECISION_BYTE_DIGEST"]:
-                  result = "mismatch"
-              elif readback_doc is None or readback_doc != os.environ["DECISION_DOC_DIGEST"]:
-                  result = "mismatch"
-              else:
-                  result = "match"
+              # A-U1.8.01: both digest classes must match their recorded counterparts, through
+              # the shared comparison function (the one the pin-check self-test exercises).
+              cmp_result = compare_classes(raw, os.environ["DECISION_BYTE_DIGEST"],
+                                           os.environ["DECISION_DOC_DIGEST"],
+                                           "foreman-line.u1.decision")
+              result = "match" if cmp_result == "match" else "mismatch"
 
           immutability = {"immutabilityState": None, "intervalDays": None, "policyEtag": None,
                           "observedAt": now_iso(),
@@ -1882,20 +2548,21 @@ jobs:
           elif result == "unreadable":
               outcome = "incomplete"
 
+          claims = observed_oidc_claims()
           observation = {
               "logicalId": "retention-observation",
               "schema": "u1-retention-observation/v1",
               "promotionRequestId": req_id,
               "attemptNumber": K,
               "authoritative": authoritative,
+              "executedCommit": os.environ["RUN_COMMIT"],
               "decisionBlobName": decision_blob,
               "decisionDocDigest": os.environ["DECISION_DOC_DIGEST"],
               "decisionByteDigest": os.environ["DECISION_BYTE_DIGEST"],
               "decisionReadBackByteDigest": readback_byte,
               "decisionReadBackDocDigest": readback_doc,
               "retrievedBy": {"clientId": "ec2d02e3-904c-4ce2-9771-cd518d711e3f",
-                              "federatedSubject": "repo:m0r6aN/agent-skills:environment:u1-verifier",
-                              "roleAssignment": "Storage Blob Data Reader + create-only u1-verifier-evidence-creator"},
+                              "oidcClaims": claims},
               "retrievedAt": now_iso(),
               "immutabilityState": immutability["immutabilityState"],
               "intervalDays": immutability["intervalDays"],
@@ -1938,16 +2605,24 @@ jobs:
                   entry["docDigest"] = doc_digest("foreman-line.u1.retention-observation", observation)
               inventory.append(entry)
 
+          claims = observed_oidc_claims()
+          try:
+              seal_reason_codes = json.loads(os.environ.get("DECISION_REASON_CODES") or "[]")
+          except Exception:
+              seal_reason_codes = None
           seal = {
               "schema": "u1-seal/v1",
               "promotionRequestId": req_id,
               "attemptNumber": K,
               "decisionDigest": os.environ["DECISION_DOC_DIGEST"],
               "decisionByteDigest": os.environ["DECISION_BYTE_DIGEST"],
+              "decisionStatus": os.environ.get("DECISION_STATUS", ""),
+              "reasonCodes": seal_reason_codes,
               "retentionObservationDigest": doc_digest("foreman-line.u1.retention-observation", observation),
               "retentionObservationResult": result,
               "verifierIdentity": {"clientId": "ec2d02e3-904c-4ce2-9771-cd518d711e3f",
-                                   "federatedSubject": "repo:m0r6aN/agent-skills:environment:u1-verifier"},
+                                   "oidcClaims": claims},
+              "executedCommit": os.environ["RUN_COMMIT"],
               "authoritative": authoritative,
               "sealedAt": now_iso(),
               "inventory": inventory}
@@ -1987,7 +2662,7 @@ jobs:
           OBSERVATION_DOC_DIGEST: ${{ steps.observe.outputs.observation-doc-digest }}
           SEAL_DOC_DIGEST: ${{ steps.observe.outputs.seal-doc-digest }}
           ATTEMPT_OUTCOME: ${{ steps.observe.outputs.attempt-outcome }}
-          DECISION_DOC_DIGEST: ${{ needs.verify.outputs.decision-doc-digest }}
+          DECISION_DOC_DIGEST: ${{ needs.evaluate.outputs.decision-doc-digest }}
         run: |
           {
             echo '### u1-verify retention-observation and seal'
@@ -2001,7 +2676,7 @@ jobs:
     # IA-8.7 terminal ledger row, written only by the verifier identity. Runs whenever the
     # attempt was claimed, even if verification or read-back failed - a consumed attempt
     # always reaches its terminal row. Never runs for non-authoritative runs (no attempt).
-    needs: [pin-check, resolve-request, claim-attempt, verify, retention-observation]
+    needs: [pin-check, resolve-request, claim-attempt, evaluate, persist, retention-observation]
     if: ${{ !cancelled() && needs.claim-attempt.result == 'success' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
@@ -2025,7 +2700,7 @@ jobs:
           VERIFIER_ATTEMPT_NUMBER: ${{ needs.claim-attempt.outputs.attempt-number }}
           DISPATCH_ROW_BYTE_DIGEST: ${{ needs.claim-attempt.outputs.dispatch-row-byte-digest }}
           DISPATCH_ROW_DOC_DIGEST: ${{ needs.claim-attempt.outputs.dispatch-row-doc-digest }}
-          ATTEMPT_OUTCOME: ${{ needs.retention-observation.outputs.attempt-outcome || needs.verify.outputs.attempt-outcome || 'interrupted' }}
+          ATTEMPT_OUTCOME: ${{ needs.retention-observation.outputs.attempt-outcome || needs.evaluate.outputs.attempt-outcome || 'interrupted' }}
         run: |
           python3 - <<'PYEOF'
           import datetime, hashlib, json, os, re, subprocess, sys
@@ -2035,6 +2710,7 @@ jobs:
           CLOSED = {"accept", "invalid", "incomplete", "unsupported", "unavailable",
                     "timed-out", "cancelled", "interrupted", "nonreturning"}
 
+          # BEGIN SHARED:canon-core
           def canon(o):
               def esc(s):
                   return json.dumps(s, ensure_ascii=False)[1:-1]
@@ -2058,6 +2734,7 @@ jobs:
 
           def doc_digest(domain, payload):
               return tag(canon({"domain": domain, "apiVersion": API_VERSION, "payload": payload}))
+          # END SHARED:canon-core
 
           req = os.environ.get("PROMOTION_REQUEST_ID", "")
           k = os.environ.get("VERIFIER_ATTEMPT_NUMBER", "")
@@ -2089,6 +2766,6 @@ jobs:
       - name: Summary
         env:
           VERIFIER_ATTEMPT_NUMBER: ${{ needs.claim-attempt.outputs.attempt-number }}
-          ATTEMPT_OUTCOME: ${{ needs.retention-observation.outputs.attempt-outcome || needs.verify.outputs.attempt-outcome || 'interrupted' }}
+          ATTEMPT_OUTCOME: ${{ needs.retention-observation.outputs.attempt-outcome || needs.evaluate.outputs.attempt-outcome || 'interrupted' }}
         run: |
           echo "### u1-verify close-attempt: attempt $VERIFIER_ATTEMPT_NUMBER outcome $ATTEMPT_OUTCOME" >> "$GITHUB_STEP_SUMMARY"
