@@ -21,6 +21,7 @@ import { fileURLToPath } from 'node:url'
 import { test } from 'node:test'
 import {
   CHECKS,
+  COST_TABLE,
   EXPECTED_SKIPS,
   ForemanCiError,
   MAX_SHARDS,
@@ -950,8 +951,9 @@ test('the shipped WAIVED_EXCLUSIONS bind identity + location + value for every r
     assert.equal(entry.location, `plugins/foreman-line/${entry.identity}/`)
     assert.ok(Object.keys(entry.checks).length >= 1)
     for (const [check, pin] of Object.entries(entry.checks)) {
-      // shape v3 well-formedness (the R7 value layers)
-      assert.ok(pin.markers.length >= 1)
+      // shape v3 well-formedness (the R7 value layers); markers may be empty
+      // only when the failing-set identity carries the value axis (R15)
+      assert.ok(pin.markers.length >= 1 || pin.failingSet.length + pin.flaky.length > 0)
       assert.equal(typeof pin.counts, 'object')
       assert.ok(Array.isArray(pin.failTotal) && pin.failTotal.length === 2)
       assert.ok(Array.isArray(pin.failingSet))
@@ -1531,4 +1533,148 @@ test('R13: the hostile-name fixture is a real failing-NAME line and sanitizeFiel
   assert.equal(/[\u0000-\u001F\u007F]/.test(parsed[0]), false, 'control chars are stripped')
   assert.equal(/[\u202A-\u202E\u2066-\u2069]/.test(parsed[0]), false, 'bidi overrides are neutralized')
   assert.ok(parsed[0].startsWith('evil name with : :error'), 'the sanitized shape is deterministic')
+})
+
+// ─── R14: the CI-era flake universes (variance-base correction) ────────────
+
+test('R14: kernel-lease flake combinations all waive (75..78 = the named-flake closure)', () => {
+  const entry = WAIVED_EXCLUSIONS.find((e) => e.identity === 'kernel-lease')
+  const pin = entry.checks.test
+  assert.equal(pin.failingSet.length, 75)
+  assert.deepEqual(pin.flaky.map((n) => n.slice(0, 5)).sort(), ['CN-01', 'CN-02', 'CN-05'])
+  assert.deepEqual(pin.failTotal, [75, 78])
+  // every combination of the three named flakes is measured-variance waivable
+  for (let mask = 0; mask < 8; mask += 1) {
+    const present = pin.flaky.filter((_, i) => (mask >> i) % 2 === 1)
+    const names = [...pin.failingSet, ...present]
+    const out = `${names.map((n) => `\u2716 ${n} (1.0ms)`).join('\n')}\n\u2139 fail ${names.length}\n`
+    const w = waiverFor(entry.identity, entry.location, 'test', out, [entry])
+    assert.ok(w !== null, `mask ${mask} (${present.length} flakes in) must waive`)
+    assert.equal(w.fail_total, names.length)
+  }
+})
+
+test('R14: an unmeasured failure identity in the kernel era still refuses (intruder)', () => {
+  const entry = WAIVED_EXCLUSIONS.find((e) => e.identity === 'kernel-lease')
+  const pin = entry.checks.test
+  const names = [...pin.failingSet, ...pin.flaky, 'CN-99 an unmeasured race appears']
+  const out = `${names.map((n) => `\u2716 ${n} (1.0ms)`).join('\n')}\n\u2139 fail ${names.length}\n`
+  assert.equal(waiverFor(entry.identity, entry.location, 'test', out, [entry]), null)
+})
+
+test('R15: cross-environment-unstable markers are dropped; names carry the axis', () => {
+  const kernel = WAIVED_EXCLUSIONS.find((e) => e.identity === 'kernel-lease').checks.test
+  assert.deepEqual(kernel.markers, [], 'the local-only error-text markers are gone (CI fails with a different class)')
+  assert.ok(kernel.failingSet.length > 0, 'the failing-set identity carries the value axis')
+  const authority = WAIVED_EXCLUSIONS.find((e) => e.identity === 'authority-registry').checks.test
+  assert.deepEqual(authority.markers, ['R31 reviewed source mapping drift: M02-note'], 'R31 is present in both environments — kept')
+})
+
+// ─── R16: every refusal records its exact layer (never silent) ─────────────
+
+for (const [label, mutate, expectedLayer] of [
+  ['kind-gate', (o) => o, 'kind-gate'],
+  ['marker-missing', (o) => o.split('PIN-MARKER-B').join('PIN-MARKER-C'), 'marker-missing'],
+  ['count-mismatch', (o) => `${o} PIN-MARKER-A`, 'count-mismatch'],
+  ['range', (o) => `${o}\n\u2139 fail 1`, 'range'],
+  ['set-subset', (o) => `${o.split('\n').filter((l) => !l.includes('flaky member')).join('\n')}\n\u2716 an intruder (1.0ms)`, 'set-subset'],
+  ['set-supersede', (o) => o.split('\n').filter((l) => !l.includes('failing two')).join('\n').split('fail 3').join('fail 2'), 'set-supersede'],
+  ['equality', (o) => o.split('\n').filter((l) => !l.includes('flaky member')).join('\n'), 'equality'],
+]) {
+  test(`R16: a ${label} refusal is recorded with its layer and echoed`, () => {
+    const echoed = []
+    const kind = label === 'kind-gate' ? 'signal' : 'exit'
+    const result = runShard({
+      root,
+      npmCli,
+      spawn: (cmd, args, options) => {
+        if (args.includes('test') && basename(options.cwd) === 'alpha') {
+          return kind === 'signal'
+            ? { status: 0, signal: 'SIGTERM', stdout: mutate(pinnedOutput(PINNED.checks.test, { total: 3 })) }
+            : { status: 1, stdout: mutate(pinnedOutput(PINNED.checks.test, { total: 3 })) }
+        }
+        return { status: 0 }
+      },
+      shardIndex: 0,
+      shardCount: 2,
+      discover: () => [...NAMES],
+      waivers: [PINNED],
+      echo: (name, check, text) => echoed.push([name, check, text]),
+    })
+    const alpha = result.outcomes.find((o) => o.name === 'alpha')
+    assert.equal(alpha.checks.test, 'fail')
+    assert.equal(alpha.waiver_rejected.test, expectedLayer, `the ${label} layer must be recorded`)
+    assert.ok(echoed.some(([, check]) => check.includes(`[rejected: ${expectedLayer}]`)), 'the layer is echoed')
+  })
+}
+
+// ─── R17: cost-aware assignment (A2 placement 11b) ─────────────────────────
+
+test('R17: cost-aware LPT assigns by measured cost desc to the least-loaded shard', () => {
+  const costs = { a: 10, b: 8, c: 6, d: 4 }
+  // a->s0(10); b->s1(8); c->s1(14); d->s0(14)
+  assert.deepEqual(assignShards(['a', 'b', 'c', 'd'], 2, costs), [['a', 'd'], ['b', 'c']])
+  // tie-breaks: equal costs order by name; equal loads take the lowest index
+  assert.deepEqual(assignShards(['a', 'b', 'c', 'd'], 2, { a: 5, b: 5, c: 5, d: 5 }), [['a', 'c'], ['b', 'd']])
+})
+
+test('R17: cost-unknown inputs fall back to round-robin (documented fallback, total)', () => {
+  // 'e' is absent from the table -> the whole input set is cost-unknown
+  assert.deepEqual(assignShards(['a', 'b', 'c', 'd', 'e'], 2, { a: 9, b: 1, c: 1, d: 1 }), [['a', 'c', 'e'], ['b', 'd']])
+  // no table at all -> round-robin
+  assert.deepEqual(assignShards(['a', 'b', 'c'], 2, null), [['a', 'c'], ['b']])
+  // empty table -> round-robin
+  assert.deepEqual(assignShards(['a', 'b', 'c'], 2, {}), [['a', 'c'], ['b']])
+})
+
+test('R17: the pinned cost table is measured data (golden)', () => {
+  assert.deepEqual({ ...COST_TABLE }, {
+    'approval': 14.3,
+    'authority-registry': 1407.8,
+    'bypass-outage-harness': 36.9,
+    'contract-readers': 7.7,
+    'contracts': 3.2,
+    'dispatch': 33.6,
+    'foreman-config': 9.5,
+    'hybrid-routing': 17.2,
+    'integration': 7.8,
+    'jev-decisions': 1.6,
+    'kernel-contracts': 3.8,
+    'kernel-lease': 67.0,
+    'kernel-state': 8.1,
+    'mutation-scope-guard': 33.9,
+    'permission-profiles': 13.7,
+    'projection': 4.8,
+    'receipts': 12.4,
+    'registration': 18.0,
+    'role-authority': 3.6,
+    'routing-policy': 17.2,
+    'schema-scaffold': 2.8,
+    'shaping': 4.2,
+    'skill-injection': 13.9,
+    'spec-body-compiler': 3.4,
+    'spec-linter': 19.8,
+    'verification': 375.2,
+    'worker-envelopes': 3.2,
+  })
+})
+
+test('R17: the real table balances the 27-package sweep (partition + determinism + balance)', () => {
+  const names = Object.keys(COST_TABLE).sort()
+  const shards = assignShards(names, 4)
+  // partition
+  assert.deepEqual(shards.flat().slice().sort(), names)
+  assert.equal(new Set(shards.flat()).size, names.length)
+  // determinism
+  assert.deepEqual(assignShards(names, 4), shards)
+  // cost balance: the LPT bound — no shard exceeds the mean + the largest cost
+  const loads = shards.map((s) => s.reduce((a, n) => a + COST_TABLE[n], 0))
+  const total = loads.reduce((a, b) => a + b, 0)
+  const maxCost = Math.max(...Object.values(COST_TABLE))
+  for (const load of loads) assert.ok(load <= total / 4 + maxCost, `load ${load} exceeds the LPT bound`)
+  // and the round-robin imbalance this replaces is gone: authority-registry and
+  // verification must NOT share a shard
+  for (const s of shards) {
+    assert.ok(!(s.includes('authority-registry') && s.includes('verification')), 'the two heaviest suites are separated')
+  }
 })
