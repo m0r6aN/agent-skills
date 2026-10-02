@@ -116,7 +116,13 @@ const ENUMERATED_CODE_BASENAMES = Object.freeze(['tsconfig.json', 'biome.json'])
  * Measured, not asserted (A3-C9); pinned by regression fixtures. Exact
  * repo-relative paths; a trailing '/' marks an excluded subtree. Such paths are
  * never ordinary (A3-R1) and always fall back (`test-relevant-change`, E2).
- * Shrink-only under CI-P2: new readers are added, never removed (C9).
+ * Shrink-only under CI-P2: new readers are added, never removed (C9). The
+ * CI-P2 additions (A2 placements 5/7) are the measured read-sweep inventory of
+ * the newly-swept packages: the foreman-kernel goal corpus (read by
+ * `authority-registry` corpus/generate/validate and pinned by
+ * `bypass-outage-harness` surface refs — excluded as a subtree), the three
+ * jev-p0 goal docs (`jev-decisions` replay PATHS), and `defects_lessons.md`
+ * (`authority-registry` provenance evidence pins).
  */
 export const READER_SET = Object.freeze([
   'plugins/foreman-line/approval/README.md',
@@ -124,10 +130,15 @@ export const READER_SET = Object.freeze([
   'plugins/foreman-line/contracts/README.md',
   'plugins/foreman-line/dispatch/README.md',
   'plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md',
+  'plugins/foreman-line/docs/goals/foreman-kernel/',
+  'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-contract.md',
+  'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-evidence-boundary.md',
+  'plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit/rcm-p0-catalog-snapshot.v1.json',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/openrouter-rcm-v1-conservative-projection-20260926.json',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/pmc-binding-coverage-openrouter-20260926-v4.json',
   'plugins/foreman-line/docs/kickstarters/foreman-shaping-template.md',
+  'plugins/foreman-line/docs/transcripts/defects_lessons.md',
   'plugins/foreman-line/foreman-config/README.md',
   'plugins/foreman-line/hybrid-routing/README.md',
   'plugins/foreman-line/permission-profiles/README.md',
@@ -187,7 +198,7 @@ export function classifyPath(path, readers = READER_SET) {
   if (path.endsWith('.md')) {
     if (path.startsWith('plugins/foreman-line/docs/goals/')) return CLASS.ORDINARY
     if (path.startsWith('plugins/foreman-line/docs/transcripts/')) return CLASS.ORDINARY
-    if (segs[0] === 'docs' && segs.length > 1 && !segs[1].startsWith('specs')) return CLASS.ORDINARY
+    if (segs[0] === 'docs' && segs.length > 1 && !segs[1].toLowerCase().startsWith('specs')) return CLASS.ORDINARY
   }
   // 5 code: default-deny bucket, including unknown paths
   return CLASS.CODE
@@ -206,9 +217,9 @@ function isNamedCodeShape(path, segs, base, readers = READER_SET) {
   const underOrdinaryRule =
     path.startsWith('plugins/foreman-line/docs/goals/') ||
     path.startsWith('plugins/foreman-line/docs/transcripts/') ||
-    (segs[0] === 'docs' && segs.length > 1 && !segs[1].startsWith('specs'))
+    (segs[0] === 'docs' && segs.length > 1 && !segs[1].toLowerCase().startsWith('specs'))
   if (underOrdinaryRule && !path.endsWith('.md')) return true // A3-R1 non-Markdown fall-through
-  if (segs[0] === 'docs' && segs.length > 1 && segs[1].startsWith('specs')) return true // A1-E1 near-miss
+  if (segs[0] === 'docs' && segs.length > 1 && segs[1].toLowerCase().startsWith('specs')) return true // A1-E1 near-miss (D-Q2: case-insensitive)
   return false
 }
 
