@@ -14,20 +14,25 @@
 // launches npm.
 
 import assert from 'node:assert/strict'
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { basename, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { test } from 'node:test'
 import {
   CHECKS,
   EXPECTED_SKIPS,
   ForemanCiError,
+  MAX_SHARDS,
   OUTCOMES_SCHEMA,
   WAIVED_EXCLUSIONS,
   assignShards,
   discoverPackages,
+  effectiveDecision,
   reconcile,
+  runCli,
   runShard,
+  verdict,
   waiverFor,
 } from './foreman-line-ci.mjs'
 
@@ -98,8 +103,17 @@ test('per-shard barrier: every discovered install completes before any check in 
     assert.ok(['alpha', 'delta'].includes(basename(options.cwd)), 'checks only run for shard-assigned packages')
   }
   assert.deepEqual(
-    checkCalls.map(([, [, , check]]) => check),
-    ['test', 'typecheck', 'lint', 'test', 'typecheck', 'lint'],
+    installCalls.map(([, args]) => args.slice(1)),
+    NAMES.map(() => ['ci', '--ignore-scripts', '--no-audit', '--no-fund']),
+    'R3 exact argv: installs are ci --ignore-scripts --no-audit --no-fund (kept verbatim, AC8)',
+  )
+  assert.deepEqual(
+    checkCalls.map(([, args]) => args.slice(1)),
+    [
+      ['run', 'test', '--ignore-scripts'], ['run', 'typecheck', '--ignore-scripts'], ['run', 'lint', '--ignore-scripts'],
+      ['run', 'test', '--ignore-scripts'], ['run', 'typecheck', '--ignore-scripts'], ['run', 'lint', '--ignore-scripts'],
+    ],
+    'R3 exact argv: checks are run <check> --ignore-scripts (kept verbatim, AC8)',
   )
   assert.deepEqual(result.outcomes.map((o) => o.name), NAMES)
   assert.equal(result.exitCode, 0)
@@ -143,12 +157,17 @@ test('offline installs never retry online: --offline rides the install args only
     shardCount: 2,
     discover: () => [...NAMES],
   })
-  for (const [, [, ...args]] of calls.slice(0, 4)) {
-    assert.ok(args.includes('--offline'), 'install args carry --offline')
+  for (const [, args] of calls.slice(0, 4)) {
+    assert.deepEqual(
+      args.slice(1),
+      ['ci', '--ignore-scripts', '--no-audit', '--no-fund', '--offline'],
+      'R3 exact argv: the offline install variant, verbatim',
+    )
   }
-  for (const [, [, ...args]] of calls.slice(4)) {
+  for (const [, args] of calls.slice(4)) {
     assert.ok(!args.includes('--offline'), 'check args never carry --offline')
-    assert.ok(args.includes('--ignore-scripts'))
+    assert.deepEqual(args.slice(1).slice(0, 2), ['run', args[2]], 'checks stay run <check> --ignore-scripts')
+    assert.equal(args[3], '--ignore-scripts')
   }
 })
 
@@ -305,7 +324,7 @@ test('shard-outcomes artifact carries the pinned schema shape', () => {
 
 // ─── A2 placement 9: run-then-waive (waived-exclusion set) ─────────────────
 
-test('run-then-waive: a pinned failing check is recorded waived with matched markers and output hash', () => {
+test('run-then-waive: a pinned failing check is recorded waived with matched markers, counts and output hash', () => {
   const result = runShard({
     root,
     npmCli,
@@ -319,7 +338,17 @@ test('run-then-waive: a pinned failing check is recorded waived with matched mar
     shardCount: 2,
     discover: () => [...NAMES],
     waivers: [
-      { identity: 'alpha', location: 'plugins/foreman-line/alpha/', checks: { test: ['STORAGE_CONSTRAINT_VIOLATION', 'foreign-key'] } },
+      {
+        identity: 'alpha',
+        location: 'plugins/foreman-line/alpha/',
+        checks: {
+          test: {
+            markers: ['STORAGE_CONSTRAINT_VIOLATION', 'foreign-key'],
+            counts: { STORAGE_CONSTRAINT_VIOLATION: 1, 'foreign-key': 1 },
+            failTotal: 0,
+          },
+        },
+      },
     ],
   })
   const alpha = result.outcomes.find((o) => o.name === 'alpha')
@@ -327,6 +356,8 @@ test('run-then-waive: a pinned failing check is recorded waived with matched mar
   assert.equal(alpha.waivers.length, 1)
   assert.equal(alpha.waivers[0].check, 'test')
   assert.deepEqual(alpha.waivers[0].markers_matched, ['STORAGE_CONSTRAINT_VIOLATION', 'foreign-key'])
+  assert.deepEqual(alpha.waivers[0].counts_verified, { STORAGE_CONSTRAINT_VIOLATION: 1, 'foreign-key': 1 })
+  assert.equal(alpha.waivers[0].fail_total, 0)
   assert.match(alpha.waivers[0].output_sha256, /^[0-9a-f]{64}$/)
   assert.equal(result.exitCode, 0, 'a fully-waived shard is green')
 })
@@ -345,7 +376,13 @@ test('run-then-waive: a DIFFERENT red on a waived identity re-gates as fail (nev
     shardCount: 2,
     discover: () => [...NAMES],
     waivers: [
-      { identity: 'alpha', location: 'plugins/foreman-line/alpha/', checks: { test: ['STORAGE_CONSTRAINT_VIOLATION'] } },
+      {
+        identity: 'alpha',
+        location: 'plugins/foreman-line/alpha/',
+        checks: {
+          test: { markers: ['STORAGE_CONSTRAINT_VIOLATION'], counts: { STORAGE_CONSTRAINT_VIOLATION: 1 }, failTotal: 0 },
+        },
+      },
     ],
   })
   const alpha = result.outcomes.find((o) => o.name === 'alpha')
@@ -362,7 +399,13 @@ test('run-then-waive: a green pass on a waived identity is recorded pass (the wa
     shardCount: 2,
     discover: () => [...NAMES],
     waivers: [
-      { identity: 'alpha', location: 'plugins/foreman-line/alpha/', checks: { test: ['STORAGE_CONSTRAINT_VIOLATION'] } },
+      {
+        identity: 'alpha',
+        location: 'plugins/foreman-line/alpha/',
+        checks: {
+          test: { markers: ['STORAGE_CONSTRAINT_VIOLATION'], counts: { STORAGE_CONSTRAINT_VIOLATION: 1 }, failTotal: 0 },
+        },
+      },
     ],
   })
   const alpha = result.outcomes.find((o) => o.name === 'alpha')
@@ -370,25 +413,126 @@ test('run-then-waive: a green pass on a waived identity is recorded pass (the wa
   assert.deepEqual(alpha.waivers, [])
 })
 
+// ─── R2: value pins bind counts and failure totals (never substring-only) ───
+
+const PINNED = {
+  identity: 'alpha',
+  location: 'plugins/foreman-line/alpha/',
+  checks: {
+    test: { markers: ['PIN-MARKER-A', 'PIN-MARKER-B'], counts: { 'PIN-MARKER-A': 2, 'PIN-MARKER-B': 1 }, failTotal: 2 },
+  },
+}
+
+test('R2 count-bound waiver: exact markers + counts + failTotal waives (positive control)', () => {
+  const output = 'PIN-MARKER-A PIN-MARKER-A PIN-MARKER-B\n# fail 2\n'
+  const w = waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', output, [PINNED])
+  assert.ok(w !== null)
+  assert.equal(w.fail_total, 2)
+})
+
+test('R2 count-bound waiver: an occurrence-count mismatch re-gates', () => {
+  // one PIN-MARKER-A instead of the pinned two
+  const output = 'PIN-MARKER-A PIN-MARKER-B\n# fail 2\n'
+  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', output, [PINNED]), null)
+  // and an extra repeat (a co-occurring same-shape failure) also re-gates
+  const extra = 'PIN-MARKER-A PIN-MARKER-A PIN-MARKER-A PIN-MARKER-B\n# fail 2\n'
+  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', extra, [PINNED]), null)
+})
+
+test('R2 count-bound waiver: a co-occurring NEW failure re-gates (failure total)', () => {
+  // markers + counts exact, but the suite total is the reviewers' probe shape:
+  // a new failure bumped the failure count past the pinned total
+  const output = 'PIN-MARKER-A PIN-MARKER-A PIN-MARKER-B\n# fail 300\n'
+  assert.equal(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', output, [PINNED]), null)
+  // multiple summary streams must SUM to the pinned total
+  const split = 'PIN-MARKER-A PIN-MARKER-A PIN-MARKER-B\n# fail 1\n# fail 1\n'
+  assert.ok(waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', split, [PINNED]) !== null)
+})
+
+for (const [label, failure] of [
+  ['throw', () => { throw new Error('untrusted') }],
+  ['spawn error', () => ({ status: 0, error: new Error('ENOENT'), stdout: 'PIN-MARKER-A PIN-MARKER-A PIN-MARKER-B\n# fail 2\n' })],
+  ['signal', () => ({ status: 0, signal: 'SIGTERM', stdout: 'PIN-MARKER-A PIN-MARKER-A PIN-MARKER-B\n# fail 2\n' })],
+  ['null status', () => ({ status: null, stdout: 'PIN-MARKER-A PIN-MARKER-A PIN-MARKER-B\n# fail 2\n' })],
+  ['missing result', () => undefined],
+]) {
+  test(`R2 waiver refusal: a ${label} failure NEVER waives even when the output carries the pinned value`, () => {
+    const result = runShard({
+      root,
+      npmCli,
+      spawn: (cmd, args, options) => {
+        if (args.includes('test') && basename(options.cwd) === 'alpha') return failure()
+        return { status: 0 }
+      },
+      shardIndex: 0,
+      shardCount: 2,
+      discover: () => [...NAMES],
+      waivers: [PINNED],
+    })
+    const alpha = result.outcomes.find((o) => o.name === 'alpha')
+    assert.equal(alpha.checks.test, 'fail', `${label} must re-gate`)
+    assert.deepEqual(alpha.waivers, [])
+    assert.equal(result.exitCode, 1)
+  })
+}
+
+test('R2 count-bound waiver: a malformed pin never waives (fail closed)', () => {
+  for (const malformed of [
+    { markers: ['PIN-A'], counts: null, failTotal: 0 },
+    { markers: ['PIN-A'], counts: { 'PIN-A': 1 } },
+    { markers: 'PIN-A', counts: { 'PIN-A': 1 }, failTotal: 0 },
+    { markers: ['PIN-A'], counts: { 'PIN-A': 1 }, failTotal: '0' },
+  ]) {
+    const w = waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', 'PIN-A', [
+      { identity: 'alpha', location: 'plugins/foreman-line/alpha/', checks: { test: malformed } },
+    ])
+    assert.equal(w, null, JSON.stringify(malformed))
+  }
+})
+
+test('R2: waived output is echoed to the log (sanitized audit trail, never silent)', () => {
+  const echoed = []
+  const result = runShard({
+    root,
+    npmCli,
+    spawn: (cmd, args, options) => {
+      if (args.includes('test') && basename(options.cwd) === 'alpha') {
+        return { status: 1, stdout: 'PIN-MARKER-A PIN-MARKER-A PIN-MARKER-B\n# fail 2\n::error::spoofed annotation\n' }
+      }
+      return { status: 0 }
+    },
+    shardIndex: 0,
+    shardCount: 2,
+    discover: () => [...NAMES],
+    waivers: [PINNED],
+    echo: (name, check, text) => echoed.push([name, check, text]),
+  })
+  assert.equal(result.outcomes.find((o) => o.name === 'alpha').checks.test, 'waived')
+  const waivedEcho = echoed.find(([, check]) => check === 'test [waived]')
+  assert.ok(waivedEcho, 'the waived output must be echoed')
+  assert.ok(waivedEcho[2].includes('PIN-MARKER-A'), 'echo carries the output')
+  assert.equal(waivedEcho[2].includes('::error::'), false, 'echo is sanitized (SC #4)')
+})
+
 // ─── SC #13: three refusal tests bind the waiver axes independently ────────
 
 test('waiver axis refusal: same identity + different location is NOT excluded', () => {
-  const w = waiverFor('alpha', 'plugins/foreman-line/elsewhere/', 'test', 'STORAGE_CONSTRAINT_VIOLATION', [
-    { identity: 'alpha', location: 'plugins/foreman-line/alpha/', checks: { test: ['STORAGE_CONSTRAINT_VIOLATION'] } },
+  const w = waiverFor('alpha', 'plugins/foreman-line/elsewhere/', 'test', 'PIN-A', [
+    { identity: 'alpha', location: 'plugins/foreman-line/alpha/', checks: { test: { markers: ['PIN-A'], counts: { 'PIN-A': 1 }, failTotal: 0 } } },
   ])
   assert.equal(w, null)
 })
 
 test('waiver axis refusal: different identity + same location is NOT excluded', () => {
-  const w = waiverFor('impostor', 'plugins/foreman-line/alpha/', 'test', 'STORAGE_CONSTRAINT_VIOLATION', [
-    { identity: 'alpha', location: 'plugins/foreman-line/alpha/', checks: { test: ['STORAGE_CONSTRAINT_VIOLATION'] } },
+  const w = waiverFor('impostor', 'plugins/foreman-line/alpha/', 'test', 'PIN-A', [
+    { identity: 'alpha', location: 'plugins/foreman-line/alpha/', checks: { test: { markers: ['PIN-A'], counts: { 'PIN-A': 1 }, failTotal: 0 } } },
   ])
   assert.equal(w, null)
 })
 
 test('waiver axis refusal: same identity + same location + non-matching value is NOT excluded', () => {
   const w = waiverFor('alpha', 'plugins/foreman-line/alpha/', 'test', 'completely unrelated output', [
-    { identity: 'alpha', location: 'plugins/foreman-line/alpha/', checks: { test: ['STORAGE_CONSTRAINT_VIOLATION'] } },
+    { identity: 'alpha', location: 'plugins/foreman-line/alpha/', checks: { test: { markers: ['PIN-A'], counts: { 'PIN-A': 1 }, failTotal: 0 } } },
   ])
   assert.equal(w, null)
 })
@@ -683,12 +827,24 @@ test('reconcile failure: a schema-invalid artifact fails', () => {
 // ─── A2 placement 9: reconcile verifies run-then-waive ─────────────────────
 
 const waiverFixtures = [
-  { identity: 'alpha', location: 'plugins/foreman-line/alpha/', checks: { test: ['PIN-MARKER-A', 'PIN-MARKER-B'] } },
+  {
+    identity: 'alpha',
+    location: 'plugins/foreman-line/alpha/',
+    checks: {
+      test: { markers: ['PIN-MARKER-A', 'PIN-MARKER-B'], counts: { 'PIN-MARKER-A': 1, 'PIN-MARKER-B': 1 }, failTotal: 1 },
+    },
+  },
 ]
 
 function waivedPackage(name, location, markers) {
   const record = pkg(name, { ...passChecks(), test: 'waived' }, [
-    { check: 'test', markers_matched: markers, output_sha256: 'c'.repeat(64) },
+    {
+      check: 'test',
+      markers_matched: markers,
+      counts_verified: { 'PIN-MARKER-A': 1, 'PIN-MARKER-B': 1 },
+      fail_total: 1,
+      output_sha256: 'c'.repeat(64),
+    },
   ])
   record.location = location
   return record
@@ -739,12 +895,198 @@ test('the shipped WAIVED_EXCLUSIONS bind identity + location + value for every r
     assert.equal(typeof entry.identity, 'string')
     assert.equal(entry.location, `plugins/foreman-line/${entry.identity}/`)
     assert.ok(Object.keys(entry.checks).length >= 1)
-    for (const [check, markers] of Object.entries(entry.checks)) {
-      assert.ok(markers.length >= 1)
-      // positive control: the pinned markers waive exactly their own check
-      const w = waiverFor(entry.identity, entry.location, check, markers.join(' and '), WAIVED_EXCLUSIONS)
+    for (const [check, pin] of Object.entries(entry.checks)) {
+      assert.ok(pin.markers.length >= 1)
+      assert.equal(typeof pin.failTotal, 'number')
+      // positive control: a captured output carrying exactly the pinned value
+      // (markers at their pinned counts + presence-only markers + the pinned
+      // failure total) waives...
+      const counted = Object.entries(pin.counts).flatMap(([needle, n]) => Array(n).fill(needle)).join(' ')
+      const presenceOnly = pin.markers.filter((m) => !(m in pin.counts))
+      const exact = `${[...counted.split(' ').filter(Boolean), ...presenceOnly].join(' ')}\n# fail ${pin.failTotal}\n`
+      const w = waiverFor(entry.identity, entry.location, check, exact, WAIVED_EXCLUSIONS)
       assert.ok(w !== null, `${entry.identity}/${check}`)
-      assert.deepEqual(w.markers_matched, markers)
+      assert.deepEqual(w.markers_matched, pin.markers)
+      assert.deepEqual(w.counts_verified, { ...pin.counts })
+      assert.equal(w.fail_total, pin.failTotal)
+      // the presence layer is load-bearing on its own: a missing presence-only
+      // marker re-gates even with counts and total exact
+      for (const m of presenceOnly) {
+        assert.equal(
+          waiverFor(entry.identity, entry.location, check, `${counted}\n# fail ${pin.failTotal}\n`, WAIVED_EXCLUSIONS),
+          null,
+          `${entry.identity}/${check} must re-gate without the presence marker ${m}`,
+        )
+      }
+      // ...and a count drift on any pinned literal never waives (R2)
+      for (const needle of Object.keys(pin.counts)) {
+        assert.equal(
+          waiverFor(entry.identity, entry.location, check, `${exact} ${needle}`, WAIVED_EXCLUSIONS),
+          null,
+          `${entry.identity}/${check} must re-gate on an extra ${needle}`,
+        )
+      }
+      // ...and a bumped failure total never waives (R2)
+      assert.equal(
+        waiverFor(entry.identity, entry.location, check, `${exact}\n# fail 999\n`, WAIVED_EXCLUSIONS),
+        null,
+        `${entry.identity}/${check} must re-gate on a bumped failure total`,
+      )
     }
   }
+})
+
+// ─── R1: effective decision resolution — NO fallthrough, fail closed ───────
+
+test('R1: decide reuse + verify success/reuse resolves reuse (the only green reuse path)', () => {
+  assert.equal(effectiveDecision({ decide: 'reuse', verifyConclusion: 'success', verifyOutput: 'reuse' }), 'reuse')
+})
+
+test('R1: a verify flip resolves fallback (verify owns the reuse branch)', () => {
+  assert.equal(effectiveDecision({ decide: 'reuse', verifyConclusion: 'success', verifyOutput: 'fallback' }), 'fallback')
+})
+
+test('R1: a CRASHED verify resolves fallback — never decide reuse (reviewers probe)', () => {
+  assert.equal(effectiveDecision({ decide: 'reuse', verifyConclusion: 'failure', verifyOutput: undefined }), 'fallback')
+  assert.equal(effectiveDecision({ decide: 'reuse', verifyConclusion: 'cancelled', verifyOutput: '' }), 'fallback')
+  assert.equal(effectiveDecision({ decide: 'reuse', verifyConclusion: 'timed_out', verifyOutput: '' }), 'fallback')
+})
+
+test('R1: an EMPTY verify output resolves fallback even when the step exits success (no fallthrough)', () => {
+  assert.equal(effectiveDecision({ decide: 'reuse', verifyConclusion: 'success', verifyOutput: '' }), 'fallback')
+  assert.equal(effectiveDecision({ decide: 'reuse', verifyConclusion: 'success', verifyOutput: undefined }), 'fallback')
+})
+
+test('R1: decide fallback passes through; absent/garbage decide resolves empty (fail closed downstream)', () => {
+  assert.equal(effectiveDecision({ decide: 'fallback', verifyConclusion: 'skipped', verifyOutput: undefined }), 'fallback')
+  assert.equal(effectiveDecision({ decide: '', verifyConclusion: 'skipped', verifyOutput: undefined }), '')
+  assert.equal(effectiveDecision({ decide: 'garbage', verifyConclusion: 'success', verifyOutput: 'reuse' }), '')
+})
+
+// ─── R1 layer 2: the aggregation fails closed unless the gate succeeded ────
+
+test('R1: a gate FAILURE is a red verdict even with decision reuse and a clean reconcile (a failed verify can never green)', () => {
+  for (const gateResult of ['failure', 'cancelled', 'skipped', '']) {
+    const v = verdict({ gateResult, decision: 'reuse', reconcileResult: { ok: true } })
+    assert.equal(v.ok, false, `gateResult=${gateResult}`)
+    assert.equal(v.code, 'gate-failed')
+    const v2 = verdict({ gateResult, decision: 'fallback', reconcileResult: { ok: true } })
+    assert.equal(v2.ok, false, `gateResult=${gateResult} fallback`)
+  }
+})
+
+test('R1: gate success + reuse is green from the evidence verdict', () => {
+  const v = verdict({ gateResult: 'success', decision: 'reuse', reconcileResult: { ok: true } })
+  assert.equal(v.ok, true)
+  assert.equal(v.code, 'reuse-verdict')
+})
+
+test('R1: gate success + fallback binds the reconciliation result', () => {
+  assert.equal(verdict({ gateResult: 'success', decision: 'fallback', reconcileResult: { ok: true } }).ok, true)
+  const bad = verdict({ gateResult: 'success', decision: 'fallback', reconcileResult: { ok: false, failures: [] } })
+  assert.equal(bad.ok, false)
+  assert.equal(bad.code, 'aggregate-failed')
+})
+
+test('R1: an unknown/absent effective decision is never green', () => {
+  assert.equal(verdict({ gateResult: 'success', decision: '', reconcileResult: { ok: true } }).ok, false)
+  assert.equal(verdict({ gateResult: 'success', decision: 'reuse?', reconcileResult: { ok: true } }).ok, false)
+})
+
+test('R1 CLI: aggregate is the single verdict authority (reuse/fallback/unknown all resolve there)', async () => {
+  const out = []
+  const emptyDir = mkdtempSync(join(tmpdir(), 'fl-agg-empty-'))
+  try {
+    const env = { GATE_RESULT: 'success', DECISION: 'reuse' }
+    assert.equal(await runCli(['aggregate', '4', emptyDir], env, { stdout: (t) => out.push(t) }), 0)
+    assert.equal(await runCli(['aggregate', '4', emptyDir], { ...env, DECISION: 'fallback' }, { stdout: (t) => out.push(t) }), 1)
+    assert.equal(await runCli(['aggregate', '4', emptyDir], { ...env, DECISION: '' }, { stdout: (t) => out.push(t) }), 1)
+    assert.equal(
+      await runCli(['aggregate', '4', emptyDir], { GATE_RESULT: 'failure', DECISION: 'reuse' }, { stdout: (t) => out.push(t) }),
+      1,
+      'gate failure reds even the reuse branch',
+    )
+  } finally {
+    rmSync(emptyDir, { recursive: true, force: true })
+  }
+})
+
+// ─── R1 + R6: the resolve step output (no fallthrough; one shard source) ───
+
+test('R1/R6 CLI: resolve writes the effective decision (no fallthrough) and derives the shard layout from MAX_SHARDS', async () => {
+  const target = join(tmpdir(), `fl-resolve-${process.pid}.out`)
+  writeFileSync(target, '')
+  try {
+    const code = await runCli(['resolve'], {
+      GITHUB_OUTPUT: target,
+      DECIDE_DECISION: 'reuse',
+      VERIFY_CONCLUSION: 'failure',
+      VERIFY_DECISION: '',
+    }, { stdout: () => {} })
+    assert.equal(code, 0)
+    const written = readFileSync(target, 'utf8')
+    assert.ok(written.includes('decision=fallback'), 'crashed verify resolves fallback, never decide reuse')
+    assert.ok(written.includes(`shard_count=${MAX_SHARDS}`))
+    assert.ok(written.includes(`shards=${JSON.stringify(Array.from({ length: MAX_SHARDS }, (_, i) => i))}`))
+  } finally {
+    rmSync(target, { force: true })
+  }
+})
+
+// ─── R4: discovery fail-closed (never vacuous green) ───────────────────────
+
+test('R4: a non-ENOENT stat failure is a typed discovery error (EACCES is NOT a non-package)', () => {
+  const dir = fixtureTree({ alpha: '{}' })
+  try {
+    assert.throws(
+      () => discoverPackages({
+        root: dir,
+        stat: () => {
+          const err = new Error('permission denied')
+          err.code = 'EACCES'
+          throw err
+        },
+      }),
+      (e) => e instanceof ForemanCiError && /unstatable entry/.test(e.message),
+    )
+  } finally {
+    rmSync(dir, { recursive: true, force: true })
+  }
+})
+
+test('R4: zero discovered packages is a discovery error, never a green vacuous pass', () => {
+  const dir = fixtureTree({ docs: null, empty: null })
+  try {
+    assert.throws(
+      () => discoverPackages({ root: dir }),
+      (e) => e instanceof ForemanCiError && /no packages found/.test(e.message),
+    )
+  } finally {
+    rmSync(dir, { recursive: true, force: true })
+  }
+})
+
+test('R4: reconcile refuses an empty discovered set (empty-artifacts path included)', () => {
+  const verdictEmpty = reconcile({ root, shardCount: 2, artifacts: [], discover: () => [] })
+  assert.equal(verdictEmpty.ok, false)
+  assert.deepEqual(codes(verdictEmpty), ['discovery-error'])
+})
+
+// ─── R6: one shard-count source, wired through the workflow ────────────────
+
+test('R6 wiring: the workflow derives the matrix and both arguments from the single gate source (no second constant)', () => {
+  const workflowPath = fileURLToPath(new URL('../.github/workflows/foreman-line-ci.yml', import.meta.url))
+  const text = readFileSync(workflowPath, 'utf8')
+  assert.ok(!text.includes('SHARD_COUNT'), 'the dead SHARD_COUNT env is gone')
+  assert.ok(!/matrix:\s*\n\s*shard: \[/.test(text), 'no literal shard matrix')
+  assert.ok(text.includes('shard: ${{ fromJSON(needs.gate.outputs.shards) }}'), 'matrix derives from the gate source')
+  assert.equal(text.split('${{ needs.gate.outputs.shard_count }}').length - 1, 2, 'both arguments derive from the gate source')
+})
+
+// ─── sweep: a legitimately empty shard is not a failure ────────────────────
+
+test('sweep edge: when discovered < shardCount, empty shards pass reconciliation', () => {
+  const artifacts = [artifact(0, 4, [pkg('alpha')]), artifact(1, 4, [pkg('beta')]), artifact(2, 4, []), artifact(3, 4, [])]
+  const v = reconcile({ root, shardCount: 4, artifacts, discover: () => ['alpha', 'beta'] })
+  assert.equal(v.ok, true, JSON.stringify(v.failures))
 })
