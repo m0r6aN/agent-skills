@@ -5,8 +5,17 @@
 it names. Triage and coordinator reproduction: `U1-8-closure2-verdict-triage-2026-10-03.md`.
 **Base documents amended:** `U1-contract-2026-09-29.md` as amended by A-U1.8.01 … A-U1.8.27
 (`U1-8-closure-amendments-2026-10-01.md`, `U1-8-closure2-amendments-2026-10-02.md`).
-**Status:** DRAFT — owner rulings R-1 … R-5 (2026-10-03) are recorded at their amendments;
-the text of every delta binds only after owner ratification of this document.
+
+**Status:** RATIFIED
+
+**Coordinator record of the ratification (2026-10-03).** The owner set the Status line above
+to RATIFIED and answered the coordinator's stop-report items: "1. Ratified" (the whole document,
+including the round-2 A-U1.8.23 clause-4 extension of H-13 named at A-U1.8.37 clause 1);
+"2. Hold for now" (the A-U1.8.35 clause-1 `u1-fixture` provisioning — ratified text, unexecuted
+act); "3. Authorized" (the round-3 builder); "4. openai/gpt-6-astra" (the A-U1.8.38 clause-4
+closure reviewer identity). Ratification of text is not execution: nothing here authorizes a
+push, PR, ruleset or environment change, or any Azure/GitHub live mutation.
+
 **Write boundary:** this document only.
 **Pin consequence (standing #34):** every workflow delta below lands in **one** re-pin,
 A-U1.8.38, superseding `workflowCommit 88da567530e7924ebea7246e9a372db2e819bdb2`
@@ -53,7 +62,7 @@ appends later `status=` / `request-commit-sha=` lines.
 4. **Hostile input:** a dry-run request whose `runId` carries `"\nstatus=ACCEPT"` is refused at
    resolve-request with `U1_ARTIFACT_INVALID`, no decision, no attempt.
 
-**Authority basis:** [PENDING ratification.]
+**Authority basis:** [RATIFIED 2026-10-03 (owner).]
 
 ---
 
@@ -68,7 +77,7 @@ its `(id, caseId, obligation)` equals one entry exactly; any other gap or `not-e
 → `INVALID`/`U1_ARTIFACT_INVALID`. Producer-authored reason text is never matched.
 **Hostile input:** a fixture bundle that relabels a failing row as a gap is refused.
 
-**Authority basis:** [PENDING ratification.]
+**Authority basis:** [RATIFIED 2026-10-03 (owner).]
 
 ---
 
@@ -84,7 +93,7 @@ recorded digests are absent, and `unbound` is a failure at every call site; the 
 self-test includes that case. **Hostile input:** a fixture bundle with one digest-less entry is
 refused.
 
-**Authority basis:** [PENDING ratification.]
+**Authority basis:** [RATIFIED 2026-10-03 (owner).]
 
 ---
 
@@ -121,8 +130,8 @@ refused.
 5. **Hostile input:** a candidate whose committed rows claim a pass that re-execution fails is
    refused with `INVALID`/`U1_CONTROL_FAILED`.
 
-**Authority basis:** [R-1 RULED 2026-10-03 (owner, verbatim above); delta text PENDING
-ratification.]
+**Authority basis:** [R-1 RULED 2026-10-03 (owner, verbatim above); delta text RATIFIED
+2026-10-03.]
 
 ---
 
@@ -158,8 +167,8 @@ interpolated into API paths (H-6).
    `github-run` row confirmed end-to-end, plus negatives: wrong branch, wrong `runId`,
    artifact digest mismatch, non-SHA `headSha`.
 
-**Authority basis:** [R-2 RULED 2026-10-03 (owner, verbatim above); delta text PENDING
-ratification.]
+**Authority basis:** [R-2 RULED 2026-10-03 (owner, verbatim above); delta text RATIFIED
+2026-10-03.]
 
 ---
 
@@ -179,7 +188,7 @@ ratification.]
 4. close-attempt's terminal outcome is the retention-observation output or `interrupted`; the
    evaluate fallback is removed (H-8).
 
-**Authority basis:** [PENDING ratification.]
+**Authority basis:** [RATIFIED 2026-10-03 (owner).]
 
 ---
 
@@ -201,8 +210,8 @@ ratification.]
    environment reviewer role, `prevent_self_review = true`, and A-U1.8.11 P2/P3 are restored —
    each recorded as a live GET. FK-P19 dispatch is refused until then.
 
-**Authority basis:** [R-3 RULED 2026-10-03 (owner, verbatim above); delta text PENDING
-ratification.]
+**Authority basis:** [R-3 RULED 2026-10-03 (owner, verbatim above); delta text RATIFIED
+2026-10-03.]
 
 ---
 
@@ -229,8 +238,9 @@ ratification.]
    `u1-fixture`, plus a seal/decision disagreement case and the FK-P19 consumer-gate fixture
    (A-U1.8.21 clause 3), which must refuse the `consumable: false` ACCEPT seal.
 
-**Authority basis:** [R-4 RULED 2026-10-03 (owner, verbatim above); provisioning is the ruled
-act; delta text PENDING ratification.]
+**Authority basis:** [R-4 RULED 2026-10-03 (owner, verbatim above); delta text RATIFIED
+2026-10-03; **provisioning HELD by owner 2026-10-03** — clause 1 is unexecuted, and clauses
+3-4 (fixture ACCEPT, fixture hostile runs) cannot be exercised until it is released.]
 
 ---
 
@@ -251,7 +261,7 @@ act; delta text PENDING ratification.]
    `U1_SUBJECT_MISMATCH` as A-U1.8.19 states; unused variables are removed; the sandbox job
    result is checked.
 
-**Authority basis:** [PENDING ratification.]
+**Authority basis:** [RATIFIED 2026-10-03 (owner).]
 
 ---
 
@@ -269,7 +279,8 @@ act; delta text PENDING ratification.]
    `u1-lint` enforces shared-block identity, action SHA pinning and the producer FORBIDDEN list
    and runs on `push` to the default branch as well as `pull_request`.
 
-**Authority basis:** [PENDING ratification.]
+**Authority basis:** [RATIFIED 2026-10-03 (owner), including the round-2 A-U1.8.23 clause-4
+extension (`UnauthorizedBlobOverwrite`) named at clause 1.]
 
 ---
 
@@ -292,7 +303,8 @@ act; delta text PENDING ratification.]
 
 **Owner ruling R-5 (2026-10-03):** "Different provider model".
 
-**Authority basis:** [R-5 RULED 2026-10-03; delta text PENDING ratification.]
+**Authority basis:** [R-5 RULED 2026-10-03; delta text RATIFIED 2026-10-03. Closure reviewer
+identity named by the owner 2026-10-03: **`openai/gpt-6-astra`**.]
 
 ---
 
