@@ -1,8 +1,8 @@
 {
   "schema": "u1-verifier-pin/v3",
   "workflow": ".github/workflows/u1-verify.yml",
-  "workflowCommit": "fcb5afdfda05369c837be50f1e26084e1690de12",
-  "workflowFileSha256": "sha256:a5576d3451651d3451821cacb9d95aca389e9bd04cf87cbd9440d04d8f781208",
+  "workflowCommit": "88da567530e7924ebea7246e9a372db2e819bdb2",
+  "workflowFileSha256": "sha256:11e021e3e37408f361f62ef8b9ff1ef987bfc50e4cad1806fa20487bd79c0c26",
   "tag": "refs/tags/u1-verifier-pin",
   "producerWorkflow": ".github/workflows/u1-produce.yml",
   "custodian": {
@@ -26,14 +26,90 @@
     }
   },
   "amendment": "U1-8-closure2-amendments-2026-10-02.md",
-  "configurationChecklistSha256": "sha256:0e723585cc43b7b8c156eb271fde3e9bbb8796c1ff6545dadc6f4f5834f4f168",
+  "configurationChecklistSha256": "sha256:97b43dd9c09d4021ed657a7b7926e2092dff4260ff2fd679d6ab8301d0b1ff43",
   "actionlint": {
     "result": "pass",
     "version": "1.7.12",
-    "runId": "37060090384",
-    "commit": "fcb5afdfda05369c837be50f1e26084e1690de12",
+    "runId": "37062860174",
+    "commit": "88da567530e7924ebea7246e9a372db2e819bdb2",
     "workflow": ".github/workflows/u1-lint.yml"
   },
-  "recordedAt": "2026-10-02T20:22:16Z",
-  "note": "workflowCommit is the commit that INTRODUCED the pinned bytes (a record cannot embed its own commit SHA). An authoritative run executes at commit R = tag target = dispatch input, with workflowCommit R or an ancestor, workflow bytes at R equal to workflowFileSha256, and an active tag ruleset (A-U1.8.17). The trust-policy digest (IA-2.11) projects only workflow, workflowCommit, workflowFileSha256, tag, producerWorkflow and custodian, so record-only edits (dryRun, actionlint, recordedAt, note, supersedes) never move it. configurationChecklistSha256 is the checklist BYTE digest. The oracle is per request (A-U1.8.19), not in this record."
+  "recordedAt": "2026-10-02T21:16:09Z",
+  "note": "workflowCommit is the commit that INTRODUCED the pinned bytes (a record cannot embed its own commit SHA). An authoritative run executes at commit R = tag target = dispatch input, with workflowCommit R or an ancestor, workflow bytes at R equal to workflowFileSha256, and an active tag ruleset (A-U1.8.17). The trust-policy digest (IA-2.11) projects only workflow, workflowCommit, workflowFileSha256, tag, producerWorkflow and custodian, so record-only edits (dryRun, actionlint, recordedAt, note, supersedes) never move it. configurationChecklistSha256 is the checklist BYTE digest. The oracle is per request (A-U1.8.19), not in this record.",
+  "dryRun": {
+    "recordedAt": "2026-10-02T21:16:09Z",
+    "executedCommit": "1e3baf20a43748bffab24c5855a9e0eca4c0574a",
+    "producerRun": {
+      "runId": "37048104083",
+      "headSha": "77e0d9e34f8f2530828e526e78a6adb13131ea91",
+      "evidenceDir": "plugins/foreman-line/bypass-outage-harness/u1-fixture/evidence",
+      "note": "fixture feed; producer probes both denied (403 AuthorizationPermissionMismatch; 409 BlobImmutableDueToPolicy); imageOS/imageVersion recorded"
+    },
+    "runs": [
+      {
+        "case": "positive",
+        "promotionRequestId": "u1-fixture-positive-r3",
+        "runId": "37062999919",
+        "outcome": "INCOMPLETE [U1_CONFIGURATION_INCOMPLETE] (notes: immutability Unlocked + unrecorded checklist rows only)",
+        "sealDecisionDigest": "sha256:f96f3ec27c889c9336690f6d98906298d33bb4906210220913d86a857a974970",
+        "sealDigest": "sha256:15fa6324dd62878542003343e3c2aba1f2f5370fc4f4cd11c629c6728696786b"
+      },
+      {
+        "case": "negative-oracle-id",
+        "promotionRequestId": "u1-fixture-neg-oracle-id-r3",
+        "runId": "37064078616",
+        "outcome": "INVALID/U1_SUBJECT_MISMATCH (oracle promotionRequestId mismatch)",
+        "sealDecisionDigest": "sha256:321246662d1436a875683522a0905dee617c09d2e21221e82f095564521cb20a",
+        "sealDigest": "sha256:efb850d243f8aab8ecbc2ae3d0ff10d8b539f997b598c45aaa0acaaaef35aae8"
+      },
+      {
+        "case": "negative-trust-policy",
+        "promotionRequestId": "u1-fixture-neg-trust-policy-r3",
+        "runId": "37064527871",
+        "outcome": "INVALID/U1_SUBJECT_MISMATCH (trustPolicyDigest != recomputed IA-2.11 digest)",
+        "sealDecisionDigest": "sha256:988bacfbd4b2d6e0d553eca7c3409864f86a400f8af47204255bf4cf55bb8752",
+        "sealDigest": "sha256:59f3d8853e86e0a0a10567b401834e8008da7d97e7ddb4b3c6f0e7a32db30f71"
+      },
+      {
+        "case": "negative-execution-field",
+        "promotionRequestId": "u1-fixture-neg-execution-r3",
+        "runId": "37064834479",
+        "outcome": "INVALID/U1_SUBJECT_MISMATCH (execution identity, 7 fields)",
+        "sealDecisionDigest": "sha256:58cfdb14bd864aeb720bb58f8a4f5d978bda81320a5512e177ba41d7ade1fd18",
+        "sealDigest": "sha256:239fb2050758cfa6a681c70663d1d75037212cca4d2bde46e28da3d6b9627fd8"
+      },
+      {
+        "case": "negative-sandbox-mismatch",
+        "promotionRequestId": "u1-fixture-neg-sandbox-mismatch-r3",
+        "runId": "37065130461",
+        "outcome": "INVALID/U1_CONTROL_FAILED (sandbox NC-U1-02 exit 0 != producer 1)",
+        "sealDecisionDigest": "sha256:e9c3d75cdf42dc82be1ba913db5c0b047c77cd6713c950fc917b114d018f00c0",
+        "sealDigest": "sha256:eee9875cd155116a0325217ce75ddd2f15bae9795301ac4481a5765be2501c96"
+      },
+      {
+        "case": "negative-request-commit",
+        "promotionRequestId": "u1-fixture-neg-commit-r3",
+        "runId": "37065583439",
+        "outcome": "resolve-request refusal U1_PROVENANCE_INVALID (request commit 5457d9d5 not in default-branch history, compare status behind); no decision, no attempt"
+      }
+    ],
+    "defectsFoundAndFixed": [
+      {
+        "defect": "claim job probe-record output contained the masked azure/login client id; GitHub dropped the output; evaluate saw an empty verifier probe record",
+        "foundBy": "run 37048507764 (positive, candidate 03263dfe)",
+        "fixedBy": "fcb5afdf (PR #132)"
+      },
+      {
+        "defect": "Azure returns 403 UnauthorizedBlobOverwrite (not AuthorizationPermissionMismatch) when a create-only role overwrites an existing blob; the probe classifier rejected a genuine denial",
+        "foundBy": "run 37060187040 (positive r2, candidate 13d29b13)",
+        "fixedBy": "88da5675 (PR #135); A-U1.8.23 clause 4 extended"
+      },
+      {
+        "defect": "fixture request builder replaced the whole selectedExecution for the execution-field case, so that negative tested a missing selection, not a field mismatch",
+        "foundBy": "run 37062023366 (negative r1)",
+        "fixedBy": "coordinator tooling; r3 request regenerated before the final run"
+      }
+    ],
+    "note": "Runs execute at the candidate pin commit executedCommit; the tag moves to the later commit that carries this dryRun record. dryRun/recordedAt are outside the IA-2.11 trust-policy projection, so requests and the checklist stay valid. The first-round runs (positive 37048507764 at 03263dfe; r2 runs at 13d29b13, workflowCommit fcb5afdf) were superseded by the workflow fixes above and are listed here, not re-claimed."
+  }
 }

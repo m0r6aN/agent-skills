@@ -310,10 +310,12 @@ succeed. Only 1 of A-U1.8.07 clause 6's 4 probes exists.
    (run in the verifier job); producer delete and producer create under `verifications/`
    (run in the producer job, recorded in its bundle). All four recorded at INCOMPLETE-U1-09.
 
-4. **Denial classes (R1):** for a create the denial is HTTP 403 with `AuthorizationPermissionMismatch`
-   or `AuthorizationFailure`. For a delete or overwrite of an existing object, HTTP 409 with
-   `BlobImmutableDueToPolicy` or `BlobImmutableDueToLegalHold` is also a denial (the immutability
-   policy, not RBAC, refuses). Anything else is recorded verbatim and is not a denial.
+4. **Denial classes (R1, extended R2 by the first positive-path dry run):** for a create the denial is
+   HTTP 403 with `AuthorizationPermissionMismatch` or `AuthorizationFailure`. For a delete or overwrite
+   of an existing object, HTTP 403 `UnauthorizedBlobOverwrite` (the role has `add` but no `write`;
+   observed from Azure Storage in run 37060187040) and HTTP 409 with `BlobImmutableDueToPolicy` or
+   `BlobImmutableDueToLegalHold` (the immutability policy, not RBAC, refuses) are also denials.
+   Anything else is recorded verbatim and is not a denial.
 5. **Producer probes in the bundle (R1):** a `producer-probe` job (environment `u1-producer`)
    runs before `assemble`; its record is packaged as
    `evidence/separation-probe/producer-probes.json` (kind `separation-probe`) and checked by the

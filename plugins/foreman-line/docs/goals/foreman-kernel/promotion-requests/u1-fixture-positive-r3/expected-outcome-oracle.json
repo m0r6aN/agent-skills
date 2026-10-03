@@ -1,0 +1,209 @@
+{
+  "schema": "u1-expected-outcome-oracle/v1",
+  "contractDigest": "sha256:8d5f849cf22f6662f17c2502142e354d82f8f5604d64b511250abc72157df9d5",
+  "promotionRequestId": "u1-fixture-positive-r3",
+  "controlExpectations": [
+    {
+      "controlId": "NC-U1-01",
+      "expectedExitStatus": 0,
+      "expectedRefusalClassId": "PATH_OUTSIDE_ALLOWED_FILES",
+      "expectedClassification": "detected",
+      "requiredSignals": [
+        "effectLanded",
+        "detectionObserved",
+        "refusalObserved: false",
+        "PATH_OUTSIDE_ALLOWED_FILES"
+      ]
+    },
+    {
+      "controlId": "NC-U1-02",
+      "expectedExitStatus": 1,
+      "expectedRefusalClassId": "STATE_REVISION_STALE",
+      "expectedClassification": "mechanical",
+      "requiredSignals": [
+        "STATE_REVISION_STALE",
+        "REVIEW_WORKTREE_DIRTY",
+        "WORKTREE_MISMATCH"
+      ]
+    },
+    {
+      "controlId": "NC-U1-03",
+      "expectedExitStatus": 0,
+      "expectedRefusalClassId": "PATH_OUTSIDE_ALLOWED_FILES",
+      "expectedClassification": "detected",
+      "requiredSignals": [
+        "PATH_OUTSIDE_ALLOWED_FILES",
+        "detectionObserved",
+        "independent derivation"
+      ]
+    },
+    {
+      "controlId": "NC-U1-04",
+      "expectedExitStatus": 1,
+      "expectedRefusalClassId": "POLICY_SELF_MODIFICATION",
+      "expectedClassification": "mechanical",
+      "requiredSignals": [
+        "POLICY_SELF_MODIFICATION"
+      ]
+    },
+    {
+      "controlId": "NC-U1-05",
+      "expectedExitStatus": 1,
+      "expectedRefusalClassId": "none",
+      "expectedClassification": "mechanical",
+      "requiredSignals": [
+        "U1_SUBJECT_MISMATCH"
+      ]
+    },
+    {
+      "controlId": "NC-U1-06",
+      "expectedExitStatus": 1,
+      "expectedRefusalClassId": "none",
+      "expectedClassification": "mechanical",
+      "requiredSignals": [
+        "U1_PROVENANCE_INVALID"
+      ]
+    },
+    {
+      "controlId": "NC-U1-07",
+      "expectedExitStatus": 1,
+      "expectedRefusalClassId": "none",
+      "expectedClassification": "mechanical",
+      "requiredSignals": [
+        "U1_ARTIFACT_INVALID"
+      ]
+    },
+    {
+      "controlId": "NC-U1-08",
+      "expectedExitStatus": 1,
+      "expectedRefusalClassId": "none",
+      "expectedClassification": "mechanical",
+      "requiredSignals": [
+        "U1_REQUIRED_EVIDENCE_MISSING"
+      ]
+    },
+    {
+      "controlId": "NC-U1-09",
+      "expectedExitStatus": 1,
+      "expectedRefusalClassId": "none",
+      "expectedClassification": "mechanical",
+      "requiredSignals": [
+        "U1_PROVENANCE_INVALID"
+      ]
+    },
+    {
+      "controlId": "NC-U1-10",
+      "expectedExitStatus": 1,
+      "expectedRefusalClassId": "none",
+      "expectedClassification": "mechanical",
+      "requiredSignals": [
+        "U1_CONTEXT_UNSUPPORTED",
+        "U1_AVAILABILITY_EXHAUSTED"
+      ]
+    },
+    {
+      "controlId": "NC-U1-11",
+      "expectedExitStatus": 1,
+      "expectedRefusalClassId": "none",
+      "expectedClassification": "mechanical",
+      "requiredSignals": [
+        "U1_RETENTION_UNPROVEN"
+      ]
+    },
+    {
+      "controlId": "NC-U1-12",
+      "expectedExitStatus": 0,
+      "expectedRefusalClassId": "none",
+      "expectedClassification": "mechanical",
+      "requiredSignals": [
+        "ACCEPT"
+      ]
+    },
+    {
+      "controlId": "NC-U1-13",
+      "expectedExitStatus": 1,
+      "expectedRefusalClassId": "none",
+      "expectedClassification": "mechanical",
+      "requiredSignals": [
+        "U1_ARTIFACT_INVALID"
+      ]
+    }
+  ],
+  "invariantExpectations": [
+    {
+      "invariantId": "INV-U1-01",
+      "expectedRefusalClassIds": [
+        "PATH_OUTSIDE_ALLOWED_FILES",
+        "FROZEN_SURFACE_MUTATION"
+      ],
+      "minExercisedRows": 1
+    },
+    {
+      "invariantId": "INV-U1-02",
+      "expectedRefusalClassIds": [
+        "WORKTREE_MISMATCH",
+        "BRANCH_MISMATCH"
+      ],
+      "minExercisedRows": 1
+    },
+    {
+      "invariantId": "INV-U1-03",
+      "expectedRefusalClassIds": [
+        "REVIEWER_MUTATION_FORBIDDEN",
+        "REVIEW_WORKTREE_DIRTY"
+      ],
+      "minExercisedRows": 1
+    },
+    {
+      "invariantId": "INV-U1-04",
+      "expectedRefusalClassIds": [
+        "POLICY_SELF_MODIFICATION",
+        "MEDIATED_BYPASS_MODE_FORBIDDEN"
+      ],
+      "minExercisedRows": 1
+    },
+    {
+      "invariantId": "INV-U1-05",
+      "expectedRefusalClassIds": [
+        "OWNER_LEASE_MISMATCH",
+        "STATE_REVISION_STALE",
+        "GATE_NOT_SATISFIED"
+      ],
+      "minExercisedRows": 1
+    },
+    {
+      "invariantId": "INV-U1-06",
+      "expectedRefusalClassIds": [],
+      "minExercisedRows": 1
+    }
+  ],
+  "permittedGaps": [
+    {
+      "gapId": "file-symlink-privilege-case",
+      "caseIds": [
+        "BYP-LK-01"
+      ],
+      "reasonPrefix": "blocked:",
+      "obligationContains": "file-symlink privilege",
+      "description": "PIN-09 inherited gap: file-symlink write-through case skipped-and-recorded where link materialization privilege is unavailable (junction cases hard-fail otherwise)"
+    },
+    {
+      "gapId": "ctrl-01",
+      "caseIds": [
+        "CTRL-01"
+      ],
+      "reasonPrefix": "blocked:",
+      "obligationContains": null,
+      "description": "PIN-09 inherited gap: FK-P9 CTRL-01 real non-WAL filesystem refusal unavailable in the selected environment"
+    },
+    {
+      "gapId": "outage-ts-realpath-sweep",
+      "caseIds": [],
+      "reasonPrefix": "blocked:",
+      "obligationContains": "realpath sweep",
+      "description": "PIN-09 inherited gap: the outage.ts realpath sweep (matched by gap-record obligation/reason naming the sweep)"
+    }
+  ],
+  "oracleDigestNote": "Fixture oracle (A-U1.8.20 clause 7): coordinator-owned expectations for the u1-fixture feed; never a promotion subject. oracleDigest is the detached IA-2.8 document digest (the oracleDigest field omitted).",
+  "oracleDigest": "sha256:55b991ce1eeb59b94ec03a916ea3ea36e62a362ff088f9ebd87c9339bd6b66e9"
+}
