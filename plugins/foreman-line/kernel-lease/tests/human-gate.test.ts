@@ -3,7 +3,7 @@
  * rows GTW-01..12 and the AC6 residual statement check.
  */
 import assert from 'node:assert/strict'
-import { readFileSync, mkdtempSync, rmSync } from 'node:fs'
+import { mkdtempSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
@@ -14,8 +14,10 @@ import {
   insertGoal,
   insertLease,
   insertTransition,
-  openStorage,
   type OpenStorageConfig,
+  openStorage,
+  type Storage,
+  updateGoalRow,
 } from '@foreman-line/kernel-state'
 import {
   applyTransition,
@@ -24,6 +26,8 @@ import {
   EngineError,
   getGoalState,
 } from '../src/index.js'
+import { CLAIM_BOUNDARY, scanForBannedClaims } from '../src/measure.js'
+import { removeRoot } from './helpers/child-worker.js'
 
 const T0 = 1_700_000_000_000_000
 const FIXTURES = join(import.meta.dirname, 'fixtures')
@@ -47,6 +51,39 @@ const parsedFixture: unknown = JSON.parse(
 )
 const fixtureTable = parsedFixture as { records: FixtureRow[] }
 const GTW = fixtureTable.records
+
+/**
+ * Read-path defense seam (standing #2: rows are `unknown` until normalized).
+ * FK-P9's DB-level status CHECKs (A1a/A1b) make a genuinely out-of-vocabulary
+ * `goals.status` row unwritable, so the engine's `GOAL_STATUS_UNKNOWN` read
+ * refusal is exercised by patching the row at the driver boundary — the shape
+ * of a legacy row arriving through an otherwise trusted substrate.
+ */
+function poisonGoalStatus(storage: Storage, goalId: string, status: string): Storage {
+  const driver = storage.driver
+  const patch = (row: unknown): unknown => {
+    const record = row as Record<string, unknown> | null
+    if (record !== null && record.goal_id === goalId && 'status' in record) {
+      return { ...record, status }
+    }
+    return row
+  }
+  const poisoned = {
+    exec: (sql: string) => {
+      driver.exec(sql)
+    },
+    prepare: (sql: string) => {
+      const statement = driver.prepare(sql)
+      return {
+        run: (...args: unknown[]) => statement.run(...args),
+        get: (...args: unknown[]) => patch(statement.get(...args)),
+        all: (...args: unknown[]) => (statement.all(...args) as unknown[]).map(patch),
+      }
+    },
+    pragma: (source: string) => driver.pragma(source),
+  }
+  return { ...storage, driver: poisoned } as unknown as Storage
+}
 
 function configFor(root: string): OpenStorageConfig {
   return {
@@ -76,11 +113,14 @@ for (const row of GTW.filter(
         goalId: 'goal-1',
         revision: goal.revision,
         status: goal.status,
-        pendingTransitionId: row.setup.pendingTransitionId ?? null,
         updatedAtMicros: T0,
       })
       if (row.setup.lease !== null && row.setup.lease !== undefined) {
-        insertLease(storage, { ...(row.setup.lease as object), acquiredAtMicros: T0 - 10 } as never)
+        insertLease(storage, {
+          goalId: 'goal-1',
+          ...(row.setup.lease as object),
+          acquiredAtMicros: T0 - 10,
+        } as never)
       }
       for (const transition of row.setup.transitions ?? []) {
         insertTransition(storage, {
@@ -93,6 +133,16 @@ for (const row of GTW.filter(
           createdAtMicros: T0 - 10,
           decidedAtMicros: transition.decidedAtMicros,
         })
+      }
+      // The goal's pending pointer FKs the transitions table: set it only once
+      // the transition rows exist (an inline value at insertGoal violates the FK).
+      if (row.setup.pendingTransitionId != null) {
+        updateGoalRow(
+          storage,
+          'goal-1',
+          { revision: goal.revision },
+          { pendingTransitionId: row.setup.pendingTransitionId },
+        )
       }
       const engine = createEngine({
         storage,
@@ -113,13 +163,13 @@ for (const row of GTW.filter(
       )
     } finally {
       // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-      // and turns rmSync's EPERM into the reported failure, masking the real one.
+      // and removeRoot retries EPERM without ever masking the test verdict (R3).
       try {
         closeStorage(storage)
       } catch {
         // Best-effort close; cleanup proceeds.
       }
-      rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+      removeRoot(root)
     }
   })
 }
@@ -130,8 +180,15 @@ test('GTW-10 substrate-seeded gate-ish status refuses on read (defense in depth)
   const root = mkdtempSync(join(tmpdir(), 'fk-p10-gtw-'))
   const storage = openStorage(configFor(root))
   try {
-    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'gate.satisfied', updatedAtMicros: T0 })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    // FK-P9's DB-level status CHECK (A1a) makes an out-of-vocabulary status
+    // row unwritable; the engine's read-path refusal (T1 defense in depth) is
+    // exercised by poisoning the row at the driver boundary (standing #2).
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
+    const engine = createEngine({
+      storage: poisonGoalStatus(storage, 'goal-1', 'gate.satisfied'),
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     assert.throws(
       () => getGoalState(engine, row.input.goalId),
       (error: unknown) => {
@@ -142,13 +199,13 @@ test('GTW-10 substrate-seeded gate-ish status refuses on read (defense in depth)
     )
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -174,13 +231,13 @@ test('GTW-11 a wider-than-ceiling consumer policy refuses at construction', () =
     )
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -198,7 +255,11 @@ test('AC6: supplied refs are bound into the recorded event (satisfaction derivab
       expiresAtMicros: T0 + 5_000_000,
       releasedAtMicros: null,
     })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     const refs = [
       { evidenceKind: 'commit-ref', gitIdentity: 'HEAD', digest: `sha256:${'11'.repeat(32)}` },
       { evidenceKind: 'signature', gitIdentity: 'sig-abc', digest: `sha256:${'22'.repeat(32)}` },
@@ -225,25 +286,44 @@ test('AC6: supplied refs are bound into the recorded event (satisfaction derivab
     assert.deepEqual(record.gateEvidenceRefs, refs)
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
 test('AC6 residual statement is present and no genuineness claim exists in shipped text', () => {
-  const readme = readFileSync(join(FIXTURES, '..', 'README.md'), 'utf8')
+  const readme = readFileSync(join(FIXTURES, '..', '..', 'README.md'), 'utf8')
   assert.match(readme, /fabricated/i)
   assert.match(readme, /BY DESIGN/i)
   // The claim-honesty sweep: shipped text never claims refs are verified genuine.
-  const banned = ['verified genuine', 'genuineness verified', 'gate verified', 'gate verification passed']
+  const banned = [
+    'verified genuine',
+    'genuineness verified',
+    'gate verified',
+    'gate verification passed',
+  ]
   for (const phrase of banned) {
     assert.ok(!readme.toLowerCase().includes(phrase), `README must not claim: ${phrase}`)
   }
+})
+
+test('AC13: the banned-claim scan flags claim-shaped phrases', () => {
+  const flagged = scanForBannedClaims(['the baseline shows a speedup'])
+  assert.equal(flagged.result, 'FAIL')
+  assert.ok(flagged.bannedMatches >= 1)
+})
+
+test('AC13: the shipped claim-boundary prose is itself scan-clean', () => {
+  // The scan is literal-substring based and cannot see negation, so the
+  // boundary statement must name its limits without the banned substrings.
+  const clean = scanForBannedClaims([CLAIM_BOUNDARY])
+  assert.equal(clean.bannedMatches, 0)
+  assert.equal(clean.result, 'PASS')
 })
 
 test('gate rejection does not write anything (a refusal is not an effect)', () => {
@@ -260,7 +340,11 @@ test('gate rejection does not write anything (a refusal is not an effect)', () =
       expiresAtMicros: T0 + 5_000_000,
       releasedAtMicros: null,
     })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     assert.throws(() =>
       applyTransition(engine, {
         goalId: 'goal-1',
@@ -282,12 +366,12 @@ test('gate rejection does not write anything (a refusal is not an effect)', () =
     assert.equal(snapshot.exportDocument.payload.tables.idempotency_keys.length, 0)
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })

@@ -71,7 +71,11 @@ function requireRequestRecord(
   return record
 }
 
-function requestMembers(op: string, value: unknown, base: readonly string[]): Record<string, unknown> {
+function requestMembers(
+  op: string,
+  value: unknown,
+  base: readonly string[],
+): Record<string, unknown> {
   const members =
     value !== null && typeof value === 'object' && 'gateEvidenceRefs' in value
       ? [...base, 'gateEvidenceRefs']
@@ -130,14 +134,15 @@ export function requestTransition(
     engine,
     'requestTransition',
     { expectedRevision, idempotencyKey: record.idempotencyKey },
-    goalId,
     ({ now, binding }) => {
       const goal = readGoalChecked(engine.storage, goalId)
       const lease = requireStateWriteLease(engine.storage, goalId, binding, now)
-      checkCas(goal, expectedRevision)
+      // T7's at-most-one-pending rule fires for a SECOND request before the
+      // CAS layer (T10 CN-07 names the loser code TRANSITION_PENDING_EXISTS).
       if (goal.pendingTransitionId !== null) {
         throw engineError('TRANSITION_PENDING_EXISTS', {})
       }
+      checkCas(goal, expectedRevision)
       const edge = findEdge(goal.status, targetStatus)
       if (edge.verdict !== 'LEGAL') {
         throw engineError('ILLEGAL_TRANSITION', { fromStatus: goal.status, toStatus: targetStatus })
@@ -240,14 +245,14 @@ export function decideTransition(
     engine,
     'decideTransition',
     { expectedRevision, idempotencyKey: record.idempotencyKey },
-    goalId,
     ({ now, binding }) => {
       const goal = readGoalChecked(engine.storage, goalId)
       const lease = requireStateWriteLease(engine.storage, goalId, binding, now)
       checkCas(goal, expectedRevision)
       const transition = guardingStorage(() => getTransition(engine.storage, transitionId))
       if (transition === null) throw engineError('TRANSITION_ABSENT', { transitionId })
-      if (transition.goalId !== goalId) throw engineError('TRANSITION_NOT_PENDING', { transitionId })
+      if (transition.goalId !== goalId)
+        throw engineError('TRANSITION_NOT_PENDING', { transitionId })
       if (transition.decidedAtMicros !== null) {
         throw engineError('TRANSITION_ALREADY_DECIDED', { transitionId })
       }
@@ -308,7 +313,13 @@ export function decideTransition(
         engine.toolVersion,
         binding,
         revision,
-        { goalId, transitionId, fromStatus: goal.status, targetStatus, resultingRevision: revision },
+        {
+          goalId,
+          transitionId,
+          fromStatus: goal.status,
+          targetStatus,
+          resultingRevision: revision,
+        },
         applied ? 'transition.applied' : 'transition.rejected',
         payloadFields,
         now,
@@ -351,14 +362,15 @@ export function applyTransition(
     engine,
     'applyTransition',
     { expectedRevision, idempotencyKey: record.idempotencyKey },
-    goalId,
     ({ now, binding }) => {
       const goal = readGoalChecked(engine.storage, goalId)
       const lease = requireStateWriteLease(engine.storage, goalId, binding, now)
-      checkCas(goal, expectedRevision)
+      // T7's at-most-one-pending rule fires for a SECOND request before the
+      // CAS layer (the request half of this atomic operation).
       if (goal.pendingTransitionId !== null) {
         throw engineError('TRANSITION_PENDING_EXISTS', {})
       }
+      checkCas(goal, expectedRevision)
       const edge = findEdge(goal.status, targetStatus)
       if (edge.verdict !== 'LEGAL') {
         throw engineError('ILLEGAL_TRANSITION', { fromStatus: goal.status, toStatus: targetStatus })
@@ -408,7 +420,13 @@ export function applyTransition(
         engine.toolVersion,
         binding,
         revision,
-        { goalId, transitionId, fromStatus: goal.status, targetStatus, resultingRevision: revision },
+        {
+          goalId,
+          transitionId,
+          fromStatus: goal.status,
+          targetStatus,
+          resultingRevision: revision,
+        },
         'transition.applied',
         payloadFields,
         now,

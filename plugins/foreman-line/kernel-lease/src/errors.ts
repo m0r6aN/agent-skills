@@ -42,6 +42,7 @@ export interface EngineErrorDiagnostics {
   GATE_STATE_NOT_WRITABLE: { fieldPath: string }
   IDEMPOTENCY_CONFLICT: { principalRef: string; operationId: string }
   IDEMPOTENCY_IN_FLIGHT: { principalRef: string; operationId: string }
+  IDEMPOTENCY_RESULT_UNAVAILABLE: { principalRef: string; operationId: string }
   STATE_REVISION_STALE: { expectedRevision: number; actualRevision: number }
   CLOCK_REGRESSION: Record<string, never>
   CLOCK_UNTRUSTED: Record<string, never>
@@ -117,6 +118,11 @@ export const ENGINE_ERROR_REGISTRY = {
     invariant: 'an incomplete binding is never re-executed',
     diagnosticMembers: ['principalRef', 'operationId'],
   },
+  IDEMPOTENCY_RESULT_UNAVAILABLE: {
+    invariant:
+      'a completed binding without a safely replayable record is never invented and never re-executed',
+    diagnosticMembers: ['principalRef', 'operationId'],
+  },
   STATE_REVISION_STALE: {
     invariant: 'every effectful operation is CAS-guarded on goals.revision',
     diagnosticMembers: ['expectedRevision', 'actualRevision'],
@@ -175,6 +181,7 @@ export const ENGINE_ERROR_DISPOSITIONS: Record<
   GATE_STATE_NOT_WRITABLE: 'REFUSE',
   IDEMPOTENCY_CONFLICT: 'CONFLICT',
   IDEMPOTENCY_IN_FLIGHT: 'CONFLICT',
+  IDEMPOTENCY_RESULT_UNAVAILABLE: 'CONFLICT',
   STATE_REVISION_STALE: 'CONFLICT',
   CLOCK_REGRESSION: 'KERNEL_FAILURE',
   CLOCK_UNTRUSTED: 'KERNEL_FAILURE',
@@ -187,22 +194,29 @@ export class EngineError extends Error {
   readonly code: EngineErrorCode
   readonly diagnostic: Readonly<Record<string, string | number>>
 
-  constructor(code: EngineErrorCode, diagnostic: Record<string, string | number> = {}) {
+  constructor(
+    code: EngineErrorCode,
+    diagnostic: Record<string, string | number> = {},
+    options?: { cause?: unknown },
+  ) {
     const allowed: readonly string[] = ENGINE_ERROR_REGISTRY[code].diagnosticMembers
-  const keys = Object.keys(diagnostic)
-  if (keys.length !== allowed.length || keys.some((key) => !allowed.includes(key))) {
-    throw new Error(`diagnostic shape mismatch for ${code}`)
-  }
+    const keys = Object.keys(diagnostic)
+    if (keys.length !== allowed.length || keys.some((key) => !allowed.includes(key))) {
+      throw new Error(`diagnostic shape mismatch for ${code}`)
+    }
     for (const member of allowed) {
       if (!(member in diagnostic)) throw new Error(`diagnostic member '${member}' missing`)
     }
     if (code === 'LEASE_NOT_ACTIVE') {
       const reason = diagnostic.reason
-      if (typeof reason !== 'string' || !(LEASE_NOT_ACTIVE_REASONS as readonly string[]).includes(reason)) {
+      if (
+        typeof reason !== 'string' ||
+        !(LEASE_NOT_ACTIVE_REASONS as readonly string[]).includes(reason)
+      ) {
         throw new Error(`'${String(reason)}' is not a closed lease-not-active reason`)
       }
     }
-    super(`${code}${keys.length > 0 ? ` ${JSON.stringify(diagnostic)}` : ''}`)
+    super(`${code}${keys.length > 0 ? ` ${JSON.stringify(diagnostic)}` : ''}`, options)
     this.name = 'EngineError'
     this.code = code
     this.diagnostic = Object.freeze({ ...diagnostic })
@@ -213,8 +227,70 @@ export class EngineError extends Error {
 export function engineError(
   code: EngineErrorCode,
   diagnostic: Record<string, string | number> = {},
+  options?: { cause?: unknown },
 ): EngineError {
-  return new EngineError(code, diagnostic)
+  return new EngineError(code, diagnostic, options)
+}
+
+/**
+ * R2 transient substrate classes: lock contention and OS-level I/O hiccups
+ * that a clean rollback makes safely retryable. Everything else (constraint
+ * violations, argument errors, corruption, engine refusals) is a TRUE failure
+ * and is never retried — a retry must never mask one.
+ */
+const TRANSIENT_STORAGE_CODES: Record<string, true> = { STORAGE_LOCK_TIMEOUT: true }
+const TRANSIENT_DRIVER_CODES: Record<string, true> = {
+  SQLITE_BUSY: true,
+  SQLITE_LOCKED: true,
+  SQLITE_IOERR: true,
+  'os-error': true,
+}
+
+/**
+ * True only for transient lock/OS-class substrate failures (R2). Recognizes
+ * the raw driver/kernel-state shapes AND the `STORAGE_FAILURE` wrapper the
+ * engine's typed boundary produces — whose `cause` preserves the underlying
+ * class so true failures (corruption, constraints) are never retried.
+ */
+export function isTransientSubstrateFailure(error: unknown): boolean {
+  if (error instanceof EngineError) {
+    return error.code === 'STORAGE_FAILURE' && isTransientSubstrateFailure(error.cause)
+  }
+  if (!(error instanceof StorageErrorClass)) {
+    const code = (error as { code?: unknown } | null)?.code
+    return typeof code === 'string' && TRANSIENT_DRIVER_CODES[code] === true
+  }
+  if (TRANSIENT_STORAGE_CODES[error.code] === true) return true
+  if (error.code === 'STORAGE_IO_FAILURE') {
+    const diagnostic = error.diagnostic as { driverCode?: unknown }
+    return (
+      typeof diagnostic.driverCode === 'string' &&
+      TRANSIENT_DRIVER_CODES[diagnostic.driverCode] === true
+    )
+  }
+  return false
+}
+
+/**
+ * Bounded retry for transient substrate failures only (R2). The wrapped call
+ * must be a single rolled-back-on-error attempt (one `withTransaction`), so a
+ * retry can never repeat a committed effect. The backoff is a real OS wait —
+ * lock release is OS state and no fake clock can advance it.
+ */
+export function withTransientRetry<T>(fn: () => T, limit = 3): T {
+  let lastError: unknown
+  for (let attempt = 0; attempt <= limit; attempt += 1) {
+    try {
+      return fn()
+    } catch (error) {
+      if (!isTransientSubstrateFailure(error)) throw error
+      lastError = error
+    }
+    // Real backoff: OS lock release is not fake-clock advanceable.
+    const parking = new Int32Array(new SharedArrayBuffer(4))
+    Atomics.wait(parking, 0, 0, 10 * 2 ** attempt)
+  }
+  throw lastError
 }
 
 /**
@@ -223,10 +299,11 @@ export function engineError(
  * `StorageErrorCode` literal only — never driver text.
  */
 export function wrapStorageFailure(error: unknown): EngineError {
+  if (error instanceof EngineError) return error
   if (error instanceof StorageErrorClass) {
-    return engineError('STORAGE_FAILURE', { storageCode: error.code })
+    return engineError('STORAGE_FAILURE', { storageCode: error.code }, { cause: error })
   }
-  return engineError('STORAGE_FAILURE', { storageCode: 'STORAGE_IO_FAILURE' })
+  return engineError('STORAGE_FAILURE', { storageCode: 'STORAGE_IO_FAILURE' }, { cause: error })
 }
 
 /** Run `fn`, converting any substrate throw into `STORAGE_FAILURE`. */

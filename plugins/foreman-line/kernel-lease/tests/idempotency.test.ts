@@ -3,7 +3,7 @@
  * replay-verbatim zero-delta assertions (risk (c); standing #32).
  */
 import assert from 'node:assert/strict'
-import { readFileSync, mkdtempSync, rmSync } from 'node:fs'
+import { mkdtempSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
@@ -15,8 +15,9 @@ import {
   insertIdempotencyKey,
   insertLease,
   insertTransition,
-  openStorage,
   type OpenStorageConfig,
+  openStorage,
+  updateGoalRow,
 } from '@foreman-line/kernel-state'
 import {
   applyTransition,
@@ -28,6 +29,7 @@ import {
   renewLease,
   requestTransition,
 } from '../src/index.js'
+import { removeRoot } from './helpers/child-worker.js'
 
 const T0 = 1_700_000_000_000_000
 const FIXTURES = join(import.meta.dirname, 'fixtures')
@@ -68,11 +70,14 @@ function seedRow(storage: ReturnType<typeof openStorage>, row: FixtureRow): void
     goalId: 'goal-1',
     revision: row.setup.goal.revision,
     status: row.setup.goal.status,
-    pendingTransitionId: row.setup.pendingTransitionId ?? null,
     updatedAtMicros: T0,
   })
   if (row.setup.lease !== null && row.setup.lease !== undefined) {
-    insertLease(storage, { ...(row.setup.lease as object), acquiredAtMicros: T0 - 10 } as never)
+    insertLease(storage, {
+      goalId: 'goal-1',
+      ...(row.setup.lease as object),
+      acquiredAtMicros: T0 - 10,
+    } as never)
   }
   for (const transition of row.setup.transitions ?? []) {
     insertTransition(storage, {
@@ -86,12 +91,26 @@ function seedRow(storage: ReturnType<typeof openStorage>, row: FixtureRow): void
       decidedAtMicros: transition.decidedAtMicros,
     })
   }
+  // The goal's pending pointer FKs the transitions table: set it only once the
+  // transition rows exist (an inline value at insertGoal time violates the FK).
+  if (row.setup.pendingTransitionId != null) {
+    updateGoalRow(
+      storage,
+      'goal-1',
+      { revision: row.setup.goal.revision },
+      { pendingTransitionId: row.setup.pendingTransitionId },
+    )
+  }
   if (row.setup.bindingRow !== undefined) {
     insertIdempotencyKey(storage, row.setup.bindingRow as never)
   }
 }
 
-function runOp(engine: ReturnType<typeof createEngine>, op: string, input: Record<string, unknown>): unknown {
+function runOp(
+  engine: ReturnType<typeof createEngine>,
+  op: string,
+  input: Record<string, unknown>,
+): unknown {
   switch (op) {
     case 'claimLease':
       return claimLease(engine, input as never)
@@ -122,7 +141,11 @@ for (const row of IDP.filter((candidate) => candidate.expectedCode !== undefined
     const storage = openStorage(configFor(root))
     try {
       seedRow(storage, row)
-      const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+      const engine = createEngine({
+        storage,
+        clock: fixedClock(T0),
+        toolVersion: 'kernel-lease-test',
+      })
       assert.throws(
         () => runOp(engine, row.op, row.input),
         (error: unknown) => {
@@ -133,13 +156,13 @@ for (const row of IDP.filter((candidate) => candidate.expectedCode !== undefined
       )
     } finally {
       // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-      // and turns rmSync's EPERM into the reported failure, masking the real one.
+      // and removeRoot retries EPERM without ever masking the test verdict (R3).
       try {
         closeStorage(storage)
       } catch {
         // Best-effort close; cleanup proceeds.
       }
-      rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+      removeRoot(root)
     }
   })
 }
@@ -159,7 +182,8 @@ function tableDeltas(
   const deltas: Record<string, number> = {}
   for (const name of names) {
     deltas[name] =
-      after.exportDocument.payload.tables[name].length - before.exportDocument.payload.tables[name].length
+      after.exportDocument.payload.tables[name].length -
+      before.exportDocument.payload.tables[name].length
   }
   return deltas
 }
@@ -170,7 +194,11 @@ for (const row of IDP.filter((candidate) => candidate.expectedOutcome === 'repla
     const storage = openStorage(configFor(root))
     try {
       seedRow(storage, row)
-      const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+      const engine = createEngine({
+        storage,
+        clock: fixedClock(T0),
+        toolVersion: 'kernel-lease-test',
+      })
       const first = runOp(engine, row.op, row.input) as {
         effect: unknown
         result: unknown
@@ -215,16 +243,74 @@ for (const row of IDP.filter((candidate) => candidate.expectedOutcome === 'repla
       )
     } finally {
       // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-      // and turns rmSync's EPERM into the reported failure, masking the real one.
+      // and removeRoot retries EPERM without ever masking the test verdict (R3).
       try {
         closeStorage(storage)
       } catch {
         // Best-effort close; cleanup proceeds.
       }
-      rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+      removeRoot(root)
     }
   })
 }
+
+test('R5: replay returns the recorded outcome VERBATIM across an intervening revision change', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fk-p10-idp-'))
+  const storage = openStorage(configFor(root))
+  try {
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
+    const bind = (op: string, digest: string) => ({
+      principalRef: 'principal-a',
+      operationId: op,
+      repositoryRef: 'repo-1',
+      worktreeRef: 'wt-1',
+      payloadDigest: `sha256:${digest}`,
+    })
+    const first = claimLease(engine, {
+      goalId: 'goal-1',
+      leaseId: 'lease-1',
+      durationMicros: 5_000_000,
+      expectedRevision: 0,
+      idempotencyKey: bind('r5-claim', '11'.repeat(32)),
+    })
+    // Intervening revision-bumping operation (renew bumps to revision 2).
+    const renewed = renewLease(engine, {
+      goalId: 'goal-1',
+      leaseId: 'lease-1',
+      durationMicros: 5_000_000,
+      expectedRevision: 1,
+      idempotencyKey: bind('r5-renew', '22'.repeat(32)),
+    })
+    assert.equal(renewed.effect.goalRevision, 2)
+    const replay = claimLease(engine, {
+      goalId: 'goal-1',
+      leaseId: 'lease-1',
+      durationMicros: 5_000_000,
+      expectedRevision: 0,
+      idempotencyKey: bind('r5-claim', '11'.repeat(32)),
+    })
+    assert.equal(replay.replay, true)
+    // VERBATIM against the originally captured values — including
+    // goalRevision as ORIGINALLY recorded (1), never the current revision (2).
+    assert.deepEqual(replay.effect, first.effect, 'effect verbatim across intervening change')
+    assert.deepEqual(replay.result, first.result, 'result verbatim across intervening change')
+    assert.equal(replay.effect.goalRevision, 1)
+  } finally {
+    // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
+    try {
+      closeStorage(storage)
+    } catch {
+      // Best-effort close; cleanup proceeds.
+    }
+    removeRoot(root)
+  }
+})
 
 test('IDP precedence: same-key/different-payload conflicts even for an in-flight record shape', () => {
   // T6's conflict rule is "regardless of completion state": a completed row
@@ -235,7 +321,11 @@ test('IDP precedence: same-key/different-payload conflicts even for an in-flight
   const storage = openStorage(configFor(root))
   try {
     seedRow(storage, row)
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     assert.throws(
       () => runOp(engine, row.op, row.input),
       (error: unknown) => {
@@ -250,13 +340,13 @@ test('IDP precedence: same-key/different-payload conflicts even for an in-flight
     )
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -265,7 +355,11 @@ test('a refused operation records no binding row (a refusal is not an effect)', 
   const storage = openStorage(configFor(root))
   try {
     insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     assert.throws(() =>
       claimLease(engine, {
         goalId: 'goal-1',
@@ -300,12 +394,12 @@ test('a refused operation records no binding row (a refusal is not an effect)', 
     assert.equal(retry.effect.code, 'EFFECT_APPLIED')
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })

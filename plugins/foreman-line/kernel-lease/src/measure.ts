@@ -29,12 +29,7 @@ import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import {
-  closeStorage,
-  insertGoal,
-  openStorage,
-  systemClock,
-} from '@foreman-line/kernel-state'
+import { closeStorage, insertGoal, openStorage, systemClock } from '@foreman-line/kernel-state'
 import { digestBytes } from './canonical.js'
 import { elapsedMicros, monotonicStartMicros } from './clock.js'
 import { EngineError, engineError } from './errors.js'
@@ -84,8 +79,8 @@ export interface ContentionSummary {
     | { status: 'REFUSED'; reason: 'MEASUREMENT_INCOMPLETE' }
 }
 
-const CLAIM_BOUNDARY =
-  'contention records only — no INF-6 baseline, no bottleneck ranking, no cost or comparative claim; these records feed the deferred INF-6 baseline (FK-P21 stranded fragment)'
+export const CLAIM_BOUNDARY =
+  'contention records only — these records feed the deferred INF-6 baseline (FK-P21 stranded fragment); no baseline figure, ranking, or comparative claim is made here'
 
 /** Banned claim phrases (D13/RS-2.2 scan target; claim-shaped patterns only). */
 const BANNED_CLAIM_PHRASES = [
@@ -265,7 +260,14 @@ export async function measureContention(engine: Engine): Promise<ContentionSumma
     contentionJsonlDigest,
     bannedClaimScan: {
       performed: true,
-      scope: ['evidence/contention.jsonl', 'evidence/contention-summary.json'],
+      // What the scan actually reads: the record bytes and the claim-bearing
+      // prose. The `bannedPhrases` registry below is the scanner's own
+      // vocabulary and is exempt by construction.
+      scope: [
+        'evidence/contention.jsonl records',
+        'claim-boundary prose',
+        'harness failure causes',
+      ],
       bannedMatches: 0,
       result: 'PASS',
       bannedPhrases: BANNED_CLAIM_PHRASES,
@@ -275,8 +277,8 @@ export async function measureContention(engine: Engine): Promise<ContentionSumma
       : { status: 'REFUSED', reason: 'MEASUREMENT_INCOMPLETE' },
   }
 
-  // The scan runs over the emitted bytes (jsonl + the summary's own text), and
-  // its result is recorded in the summary (AC13).
+  // The scan runs over the record bytes and the claim-bearing prose (AC13),
+  // and its result is recorded in the summary and the CLI output.
   const scan = scanForBannedClaims([jsonl, CLAIM_BOUNDARY, JSON.stringify(harnessFailures)])
   summary.bannedClaimScan.bannedMatches = scan.bannedMatches
   summary.bannedClaimScan.result = scan.result

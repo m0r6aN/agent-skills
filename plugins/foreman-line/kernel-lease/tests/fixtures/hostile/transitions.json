@@ -669,7 +669,7 @@
         "decision": "apply",
         "expectedRevision": 0,
         "idempotencyKey": {
-          "principalRef": "principal-b",
+          "principalRef": "principal-a",
           "operationId": "op-tr-04",
           "repositoryRef": "repo-1",
           "worktreeRef": "wt-1",

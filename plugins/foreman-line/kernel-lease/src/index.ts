@@ -17,66 +17,7 @@
  * evidence refs pass the shape gate BY DESIGN (AC6 residual; genuineness is
  * downstream, FK-P12/deferred).
  */
-export {
-  claimLease,
-  type ClaimLeaseRequest,
-  createEngine,
-  type CreateEngineOptions,
-  type Engine,
-  getLeaseCasDescriptor,
-  LEASE_DURATION_MIN_MICROS,
-  LEASE_MAX_DURATION_MICROS,
-  GOAL_STATE_PROJECTION_ID,
-  releaseLease,
-  type ReleaseLeaseRequest,
-  renewLease,
-  type RenewLeaseRequest,
-} from './leases.js'
-export {
-  applyTransition,
-  type ApplyTransitionRequest,
-  decideTransition,
-  type DecideTransitionRequest,
-  getGoalState,
-  requestTransition,
-  type RequestTransitionRequest,
-  type StopReportRecord,
-} from './transitions.js'
-export {
-  type DecidedTransitionResult,
-  type EffectResult,
-  type EngineResult,
-  type GitGateEvidenceRef,
-  type GoalStateView,
-  type IdempotencyBinding,
-  type LeaseCasDescriptor,
-  type OperationName,
-  OPERATION_NAMES,
-  type PendingTransition,
-} from './idempotency.js'
-export {
-  type Edge,
-  type EdgeMode,
-  EDGES,
-  EVIDENCE_KINDS,
-  type EvidenceKind,
-  type EvidenceKindNarrowing,
-  type GoalStatus,
-  GOAL_STATUSES,
-  isGoalStatus,
-  isReservedGateLiteral,
-  isTerminalStatus,
-  TERMINAL_STATUSES,
-} from './state-machine.js'
-export {
-  EngineError,
-  ENGINE_ERROR_CODES,
-  ENGINE_ERROR_CODE_COUNT,
-  ENGINE_ERROR_DISPOSITIONS,
-  ENGINE_ERROR_REGISTRY,
-  type EngineErrorCode,
-  engineError,
-} from './errors.js'
+
 export {
   CanonicalEncodeError,
   canonicalBytes,
@@ -91,3 +32,63 @@ export {
   operationInputDigest,
 } from './canonical.js'
 export { elapsedMicros, monotonicStartMicros, TrustedClock } from './clock.js'
+export {
+  ENGINE_ERROR_CODE_COUNT,
+  ENGINE_ERROR_CODES,
+  ENGINE_ERROR_DISPOSITIONS,
+  ENGINE_ERROR_REGISTRY,
+  EngineError,
+  type EngineErrorCode,
+  engineError,
+} from './errors.js'
+export {
+  type DecidedTransitionResult,
+  type EffectResult,
+  type EngineResult,
+  type GitGateEvidenceRef,
+  type GoalStateView,
+  type IdempotencyBinding,
+  type LeaseCasDescriptor,
+  OPERATION_NAMES,
+  type OperationName,
+  type PendingTransition,
+} from './idempotency.js'
+export {
+  type ClaimLeaseRequest,
+  type CreateEngineOptions,
+  claimLease,
+  createEngine,
+  type Engine,
+  GOAL_STATE_PROJECTION_ID,
+  getLeaseCasDescriptor,
+  LEASE_DURATION_MIN_MICROS,
+  LEASE_MAX_DURATION_MICROS,
+  type ReleaseLeaseRequest,
+  type RenewLeaseRequest,
+  releaseLease,
+  renewLease,
+} from './leases.js'
+export {
+  EDGES,
+  type Edge,
+  type EdgeMode,
+  EVIDENCE_KINDS,
+  type EvidenceKind,
+  type EvidenceKindNarrowing,
+  GOAL_STATUSES,
+  type GoalStatus,
+  isGoalStatus,
+  isReservedGateLiteral,
+  isTerminalStatus,
+  TERMINAL_STATUSES,
+} from './state-machine.js'
+export {
+  type ApplyTransitionRequest,
+  applyTransition,
+  type DecideTransitionRequest,
+  decideTransition,
+  getGoalState,
+  type RequestTransitionRequest,
+  requestTransition,
+  type StopReportRecord,
+} from './transitions.js'

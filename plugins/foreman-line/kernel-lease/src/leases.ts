@@ -23,16 +23,16 @@
  */
 import {
   type Clock,
+  type GoalRow,
   getGoal,
   getLease,
   getUnreleasedLease,
-  type GoalRow,
-  type LeaseRow,
   insertEvent,
   insertLease,
+  type LeaseRow,
   queryEvents,
-  setProjectionCursor,
   type Storage,
+  setProjectionCursor,
   updateGoalRow,
   updateLeaseRow,
   withTransaction,
@@ -44,6 +44,14 @@ import {
   digestBytes,
   eventPayloadDigest,
 } from './canonical.js'
+import { TrustedClock } from './clock.js'
+import {
+  EngineError,
+  engineError,
+  guardingStorage,
+  withTransientRetry,
+  wrapStorageFailure,
+} from './errors.js'
 import {
   buildEffectCore,
   type EffectResult,
@@ -53,15 +61,13 @@ import {
   type LeaseCasDescriptor,
   lookupBinding,
   type OperationName,
-  recordCompletedBinding,
   reconstructRecordedOutcome,
+  recordCompletedBinding,
   requireExactMembers,
   requireIdValue,
   requireSafeIntValue,
   validateBinding,
 } from './idempotency.js'
-import { TrustedClock } from './clock.js'
-import { EngineError, engineError, guardingStorage, wrapStorageFailure } from './errors.js'
 import {
   type EvidenceKind,
   type EvidenceKindNarrowing,
@@ -100,13 +106,28 @@ export function createEngine(options: CreateEngineOptions): Engine {
   if (options === null || typeof options !== 'object') {
     throw engineError('ENGINE_ARGUMENT_INVALID', { fieldPath: 'createEngine' })
   }
+  const members = options as unknown as Record<string, unknown>
+  // R7: fail closed on unknown option members (exact set; evidenceKindPolicy
+  // optional) like every other input surface.
+  for (const key of Object.keys(members)) {
+    if (!['storage', 'clock', 'toolVersion', 'evidenceKindPolicy'].includes(key)) {
+      throw engineError('ENGINE_ARGUMENT_INVALID', { fieldPath: `createEngine.${key}` })
+    }
+  }
+  for (const key of ['storage', 'clock', 'toolVersion']) {
+    if (!(key in members)) {
+      throw engineError('ENGINE_ARGUMENT_INVALID', { fieldPath: `createEngine.${key}` })
+    }
+  }
   const toolVersion = options.toolVersion
+  const toolVersionBytes =
+    typeof toolVersion === 'string' ? new TextEncoder().encode(toolVersion) : null
   if (
-    typeof toolVersion !== 'string' ||
+    toolVersionBytes === null ||
     toolVersion.length === 0 ||
-    new TextEncoder().encode(toolVersion).length > 128 ||
-    // Bytes<128> ASCII (F05.11).
-    /^[\x00-\x7f]*$/.test(toolVersion) === false
+    toolVersionBytes.length > 128 ||
+    // Bytes<128> ASCII (F05.11): every UTF-8 byte below 0x80.
+    toolVersionBytes.some((byte) => byte > 0x7f)
   ) {
     throw engineError('ENGINE_ARGUMENT_INVALID', { fieldPath: 'toolVersion' })
   }
@@ -217,7 +238,8 @@ export function writeEvent(
   })
   const events = guardingStorage(() => queryEvents(storage, { goalId: payload.goalId as string }))
   const last = events[events.length - 1]
-  if (last === undefined) throw engineError('STORAGE_FAILURE', { storageCode: 'STORAGE_IO_FAILURE' })
+  if (last === undefined)
+    throw engineError('STORAGE_FAILURE', { storageCode: 'STORAGE_IO_FAILURE' })
   return { seq: last.eventSeq, effectDigest }
 }
 
@@ -248,8 +270,8 @@ export interface Executed<T> {
  * The shared effectful pipeline (T6/T7). First-failure order, pinned by the
  * precedence tests and the README: structural input → idempotency (replay /
  * `IDEMPOTENCY_CONFLICT` / `IDEMPOTENCY_IN_FLIGHT`) → trusted clock → the
- * operation's preconditions (goal → lease → CAS → transition/gate) → write
- * set. Exactly one `withTransaction` per operation; the binding is re-checked
+ * operation's preconditions (goal → lease → the operation's state guards —
+ * pending/transition — then CAS → edge/gate) → write set. Exactly one `withTransaction` per operation; the binding is re-checked
  * inside it so same-binding racers converge on one applied effect and one
  * replay.
  */
@@ -257,10 +279,11 @@ export function runEffectful<T>(
   engine: Engine,
   operation: OperationName,
   request: { expectedRevision: number; idempotencyKey: unknown },
-  goalId: string,
   execute: (context: { now: number; binding: IdempotencyBinding }) => Executed<T>,
 ): EngineResult<T> {
-  const expectedRevision = requireSafeIntValue(request.expectedRevision, 'expectedRevision')
+  // Structural validation runs first even for pure replays (first-failure
+  // order); the operations re-derive their own typed copy from the request.
+  requireSafeIntValue(request.expectedRevision, 'expectedRevision')
   const binding = validateBinding(request.idempotencyKey, 'idempotencyKey')
 
   const wrap = (executed: Executed<T>, replay: boolean): EngineResult<T> => ({
@@ -274,15 +297,9 @@ export function runEffectful<T>(
   const replayOf = (executedFromRow: Executed<T>): EngineResult<T> => wrap(executedFromRow, true)
 
   // Idempotency pre-check (read-only; pure replays never reach the clock).
-  const preState = lookupBinding(engine.storage, binding)
+  const preState = withTransientRetry(() => lookupBinding(engine.storage, binding))
   if (preState.state === 'completed') {
-    const outcome = reconstructRecordedOutcome(
-      engine.storage,
-      binding,
-      preState.row,
-      engine.toolVersion,
-      goalId,
-    )
+    const outcome = reconstructRecordedOutcome(binding, preState.row)
     return replayOf({ effect: outcome.effect, result: outcome.result as T })
   }
 
@@ -294,41 +311,46 @@ export function runEffectful<T>(
   // its callback into a `StorageError` (fromDriverError fallback), which would
   // destroy the typed refusal code. So the refusal is stashed here and
   // re-raised after the substrate has rolled the transaction back; genuine
-  // substrate failures are wrapped as `STORAGE_FAILURE` (standing #1).
-  let refusal: EngineError | null = null
+  // substrate failures are wrapped as `STORAGE_FAILURE` (standing #1), and
+  // transient lock/OS classes are retried (R2) — a typed refusal always wins
+  // and is never retried.
   let outcome: { executed: Executed<T>; replay: boolean }
   try {
-    outcome = withTransaction(engine.storage, () => {
+    outcome = withTransientRetry(() => {
+      let refusal: EngineError | null = null
       try {
-        // In-transaction binding re-check: the correctness gate for same-binding
-        // racers (CN-04/CN-05) and for retries after a committed-but-unreturned
-        // result (CR-04 replay).
-        const state = lookupBinding(engine.storage, binding)
-        if (state.state === 'completed') {
-          const replayed = reconstructRecordedOutcome(
-            engine.storage,
-            binding,
-            state.row,
-            engine.toolVersion,
-            goalId,
-          )
-          return { executed: { effect: replayed.effect, result: replayed.result as T }, replay: true }
-        }
-        return { executed: execute({ now, binding }), replay: false }
+        return withTransaction(engine.storage, () => {
+          try {
+            // In-transaction binding re-check: the correctness gate for
+            // same-binding racers (CN-04/CN-05) and for retries after a
+            // committed-but-unreturned result (CR-04 replay).
+            const state = lookupBinding(engine.storage, binding)
+            if (state.state === 'completed') {
+              const replayed = reconstructRecordedOutcome(binding, state.row)
+              return {
+                executed: { effect: replayed.effect, result: replayed.result as T },
+                replay: true,
+              }
+            }
+            return { executed: execute({ now, binding }), replay: false }
+          } catch (error) {
+            if (error instanceof EngineError) {
+              refusal = error
+              // Sentinel throw: the substrate rolls the transaction back, then
+              // converts this into a StorageError that is discarded in favor of
+              // the stashed typed refusal.
+              throw new Error('fk-p10-transaction-abort')
+            }
+            throw error
+          }
+        })
       } catch (error) {
-        if (error instanceof EngineError) {
-          refusal = error
-          // Sentinel throw: the substrate rolls the transaction back, then
-          // converts this into a StorageError that is discarded below in favor
-          // of the stashed typed refusal.
-          throw new Error('fk-p10-transaction-abort')
-        }
+        if (refusal !== null) throw refusal
         throw error
       }
     })
   } catch (error) {
-    if (refusal !== null) throw refusal
-    throw wrapStorageFailure(error)
+    throw error instanceof EngineError ? error : wrapStorageFailure(error)
   }
 
   return wrap(outcome.executed, outcome.replay)
@@ -348,9 +370,10 @@ export function commitEffectApplied<T>(
   const core = buildEffectCore(toolVersion, 'APPLIED', binding, goalRevision)
   const payload = { ...payloadFields, effect: core }
   const written = writeEvent(storage, eventKind, payload, binding, now)
-  recordCompletedBinding(storage, binding, written.effectDigest, now)
+  const effect = finalizeEffect(core, written.effectDigest)
+  recordCompletedBinding(storage, binding, written.effectDigest, { effect, result }, now)
   advanceGoalStateCursor(storage, payloadFields.goalId as string, written.seq, now)
-  return { effect: finalizeEffect(core, written.effectDigest), result }
+  return { effect, result }
 }
 
 /** Assemble a NOOP outcome (OQ-6: same-principal re-claim only). */
@@ -363,9 +386,11 @@ export function commitEffectNoop<T>(
   now: number,
 ): Executed<T> {
   const core = buildEffectCore(toolVersion, 'NOOP', binding, goalRevision)
-  // T7 claim (no-op): the completed binding row is the only write.
-  recordCompletedBinding(storage, binding, null, now)
-  return { effect: finalizeEffect(core, null), result }
+  const effect = finalizeEffect(core, null)
+  // T7 claim (no-op): the completed binding row (with its recorded outcome) is
+  // the only write.
+  recordCompletedBinding(storage, binding, null, { effect, result }, now)
+  return { effect, result }
 }
 
 // --- T3 lease operations ---------------------------------------------------
@@ -386,7 +411,11 @@ function requireDuration(value: unknown, fieldPath: string): number {
   return duration
 }
 
-function requireRequestRecord(value: unknown, members: readonly string[], op: string): Record<string, unknown> {
+function requireRequestRecord(
+  value: unknown,
+  members: readonly string[],
+  op: string,
+): Record<string, unknown> {
   if (value === null || typeof value !== 'object' || Array.isArray(value)) {
     throw engineError('ENGINE_ARGUMENT_INVALID', { fieldPath: op })
   }
@@ -400,7 +429,10 @@ function requireRequestRecord(value: unknown, members: readonly string[], op: st
  * the trusted reading — stamped `released_at_micros` under a guarded update),
  * or NOOP (same principal already holds an unexpired lease).
  */
-export function claimLease(engine: Engine, request: ClaimLeaseRequest): EngineResult<LeaseCasDescriptor> {
+export function claimLease(
+  engine: Engine,
+  request: ClaimLeaseRequest,
+): EngineResult<LeaseCasDescriptor> {
   const record = requireRequestRecord(
     request,
     ['goalId', 'leaseId', 'durationMicros', 'expectedRevision', 'idempotencyKey'],
@@ -415,7 +447,6 @@ export function claimLease(engine: Engine, request: ClaimLeaseRequest): EngineRe
     engine,
     'claimLease',
     { expectedRevision, idempotencyKey: record.idempotencyKey },
-    goalId,
     ({ now, binding }) => {
       const goal = readGoalChecked(engine.storage, goalId)
       if (isTerminalStatus(goal.status)) throw engineError('GOAL_TERMINAL', { goalId })
@@ -454,7 +485,11 @@ export function claimLease(engine: Engine, request: ClaimLeaseRequest): EngineRe
             { revision: goal.revision },
             { revision, updatedAtMicros: now },
           )
-          if (changed !== 1) throw engineError('STATE_REVISION_STALE', { expectedRevision, actualRevision: goal.revision })
+          if (changed !== 1)
+            throw engineError('STATE_REVISION_STALE', {
+              expectedRevision,
+              actualRevision: goal.revision,
+            })
         })
         return commitEffectApplied<LeaseCasDescriptor>(
           engine.storage,
@@ -526,7 +561,11 @@ export function claimLease(engine: Engine, request: ClaimLeaseRequest): EngineRe
           { revision: goal.revision },
           { revision, updatedAtMicros: now },
         )
-        if (changed !== 1) throw engineError('STATE_REVISION_STALE', { expectedRevision, actualRevision: goal.revision })
+        if (changed !== 1)
+          throw engineError('STATE_REVISION_STALE', {
+            expectedRevision,
+            actualRevision: goal.revision,
+          })
       })
       return commitEffectApplied<LeaseCasDescriptor>(
         engine.storage,
@@ -590,7 +629,10 @@ function requireNamedLease(
 }
 
 /** `renewLease` (T4): extends the owner's unexpired lease. */
-export function renewLease(engine: Engine, request: RenewLeaseRequest): EngineResult<LeaseCasDescriptor> {
+export function renewLease(
+  engine: Engine,
+  request: RenewLeaseRequest,
+): EngineResult<LeaseCasDescriptor> {
   const record = requireRequestRecord(
     request,
     ['goalId', 'leaseId', 'durationMicros', 'expectedRevision', 'idempotencyKey'],
@@ -605,7 +647,6 @@ export function renewLease(engine: Engine, request: RenewLeaseRequest): EngineRe
     engine,
     'renewLease',
     { expectedRevision, idempotencyKey: record.idempotencyKey },
-    goalId,
     ({ now, binding }) => {
       const goal = readGoalChecked(engine.storage, goalId)
       const lease = requireNamedLease(engine.storage, goalId, leaseId, binding, now)
@@ -627,7 +668,10 @@ export function renewLease(engine: Engine, request: RenewLeaseRequest): EngineRe
           { revision, updatedAtMicros: now },
         )
         if (goalChanged !== 1) {
-          throw engineError('STATE_REVISION_STALE', { expectedRevision, actualRevision: goal.revision })
+          throw engineError('STATE_REVISION_STALE', {
+            expectedRevision,
+            actualRevision: goal.revision,
+          })
         }
       })
       return commitEffectApplied<LeaseCasDescriptor>(
@@ -674,7 +718,6 @@ export function releaseLease(
     engine,
     'releaseLease',
     { expectedRevision, idempotencyKey: record.idempotencyKey },
-    goalId,
     ({ now, binding }) => {
       const goal = readGoalChecked(engine.storage, goalId)
       const lease = requireNamedLease(engine.storage, goalId, leaseId, binding, now)
@@ -695,7 +738,10 @@ export function releaseLease(
           { revision, updatedAtMicros: now },
         )
         if (goalChanged !== 1) {
-          throw engineError('STATE_REVISION_STALE', { expectedRevision, actualRevision: goal.revision })
+          throw engineError('STATE_REVISION_STALE', {
+            expectedRevision,
+            actualRevision: goal.revision,
+          })
         }
       })
       return commitEffectApplied<LeaseCasDescriptor>(
@@ -722,11 +768,15 @@ export function releaseLease(
  * FK-P12 — the goal's unreleased lease row projected into the F05.4 shape, or
  * null when no active lease exists. Reads take no binding and no CAS.
  */
-export function getLeaseCasDescriptor(engine: Engine, goalIdValue: unknown): LeaseCasDescriptor | null {
+export function getLeaseCasDescriptor(
+  engine: Engine,
+  goalIdValue: unknown,
+): LeaseCasDescriptor | null {
   const goalId = requireIdValue(goalIdValue, 'goalId')
-  const goal = readGoalChecked(engine.storage, goalId)
+  // Read-checks the goal first (GOAL_ABSENT / GOAL_STATUS_UNKNOWN defense).
+  readGoalChecked(engine.storage, goalId)
   const lease = guardingStorage(() => getUnreleasedLease(engine.storage, goalId))
   return lease === null ? null : descriptorFromLeaseRow(lease)
 }
 
-export type { EngineResult, EffectResult, IdempotencyBinding, LeaseCasDescriptor }
+export type { EffectResult, EngineResult, IdempotencyBinding, LeaseCasDescriptor }
