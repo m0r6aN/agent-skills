@@ -10,7 +10,6 @@
  *
  * `parseFrontmatter` extracts and parses YAML frontmatter from a spec .md file.
  */
-
 import { posix } from 'node:path'
 import { Ajv, type SchemaObject } from 'ajv'
 import { parse } from 'yaml'

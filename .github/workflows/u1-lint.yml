@@ -1,0 +1,84 @@
+# U1 workflow lint (A-U1.8.26 item 2): pinned actionlint over the U1 workflows plus a syntax
+# and pyflakes check of every embedded `python3 - <<'PYEOF'` block. The run id, actionlint
+# version and result are recorded in the re-pin record (U1-verifier-pin.json `actionlint`).
+# Read-only: no credentials, no secrets, no environment.
+name: u1-lint
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/u1-*.yml"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/u1-*.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  actionlint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository data (no persisted credentials)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Install pinned actionlint (sha256-verified)
+        run: |
+          set -euo pipefail
+          VERSION=1.7.12
+          SHA256=8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
+          curl -fsSL -o actionlint.tgz "https://github.com/rhysd/actionlint/releases/download/v${VERSION}/actionlint_${VERSION}_linux_amd64.tar.gz"
+          echo "${SHA256}  actionlint.tgz" | sha256sum -c -
+          tar xzf actionlint.tgz actionlint
+          ./actionlint -version
+      - name: actionlint over the U1 workflows
+        run: ./actionlint -no-color .github/workflows/u1-verify.yml .github/workflows/u1-produce.yml .github/workflows/u1-lint.yml
+      - name: Embedded python blocks - syntax and pyflakes
+        run: |
+          python3 -m pip install --quiet pyflakes==3.4.0
+          python3 - <<'PYEOF'
+          import os, re, subprocess, sys, tempfile
+
+          failures = 0
+          checked = 0
+          for wf in (".github/workflows/u1-verify.yml", ".github/workflows/u1-produce.yml"):
+              lines = open(wf, encoding="utf-8").read().split("\n")
+              i = 0
+              while i < len(lines):
+                  m = re.match(r"^(\s*)python3 - <<'PYEOF'$", lines[i])
+                  if not m:
+                      i += 1
+                      continue
+                  indent = len(m.group(1))
+                  j = i + 1
+                  body = []
+                  while not re.match(r"^\s*PYEOF$", lines[j]):
+                      body.append(lines[j])
+                      j += 1
+                  code = "\n".join(l[indent:] if len(l) >= indent else l for l in body) + "\n"
+                  label = "%s:%d" % (wf, i + 1)
+                  try:
+                      compile(code, label, "exec")
+                  except SyntaxError as e:
+                      print("::error::syntax error in embedded python at %s: %s (line %s)" % (label, e.msg, e.lineno))
+                      failures += 1
+                  else:
+                      with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False, encoding="utf-8") as tf:
+                          tf.write(code)
+                      res = subprocess.run([sys.executable, "-m", "pyflakes", tf.name], capture_output=True, text=True)
+                      os.unlink(tf.name)
+                      # Unused imports are tolerated; undefined names and the like are not.
+                      bad = [l for l in (res.stdout + res.stderr).splitlines()
+                             if l.strip() and "imported but unused" not in l]
+                      for l in bad:
+                          print("::error::pyflakes at %s: %s" % (label, l.split(":", 3)[-1].strip()))
+                      failures += len(bad)
+                  checked += 1
+                  i = j + 1
+          print("embedded python blocks checked: %d, failures: %d" % (checked, failures))
+          sys.exit(1 if failures else 0)
+          PYEOF

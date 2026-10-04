@@ -42,11 +42,10 @@ export interface ClassEntry {
 }
 
 /**
- * Gateway-level routing constraints the consumer MUST apply to every request
- * made under a classification. The policy names model ids; on a multi-provider
- * gateway (OpenRouter) the same id can be served by many upstream hosts with
- * different retention and training policies, and provider selection is a
- * request parameter this repository never sends. Declaring the requirement
+ * The gateway transport obligations a classification tier declares. On a
+ * multi-provider gateway (OpenRouter) the same id can be served by many upstream
+ * hosts with different retention and training policies, and provider selection is
+ * a request parameter this repository never sends. Declaring the requirement
  * here makes the consumer's obligation explicit and machine-readable; it does
  * not enforce it. Field names mirror OpenRouter's `provider` request object.
  */
@@ -62,7 +61,7 @@ export interface TransportRequirements {
  * from `public` -> `internal` -> `restricted` (D6: classification gates eligibility
  * before cost optimization) — a semantic invariant, not expressible in this shape.
  * `internal` and `restricted` must require `data_collection: 'deny'` and
- * `zdr: true` (invariant g), also enforced by the validator.
+ * `zdr: true` (invariant g), enforced by the validator.
  */
 export interface DataClassificationRule {
   readonly eligible_models: readonly string[]
@@ -79,6 +78,20 @@ export interface RoleAssignment {
   readonly coordinator: 'frontier'
   readonly verifier: 'frontier'
   readonly builder: 'per-class'
+}
+
+/**
+ * The full routing policy document. `model_tiers` resolves each tier name used
+ * in `classes[*].allowlist` and `roles` to concrete July-2026 model ids; `'frontier'`
+ * is the one tier name the validator's invariants depend on literally — every
+ * other tier name is v0 policy content, revisable without touching the validator.
+ */
+export interface RoutingPolicy {
+  readonly classes: Readonly<Record<ClassName, ClassEntry>>
+  readonly data_classification: Readonly<Record<DataClassificationTier, DataClassificationRule>>
+  readonly roles: RoleAssignment
+  readonly model_tiers: Readonly<Record<string, readonly string[]>>
+  readonly shadow_routes?: Readonly<Record<string, ShadowRoute>>
 }
 
 export type ShadowTaskType = 'spec_lint' | 'evidence_index' | 'review_triage'
@@ -103,18 +116,4 @@ export interface ShadowRoute {
   readonly tools_granted: readonly []
   readonly effect_capability: 'none'
   readonly prohibited_roles: ProhibitedShadowRoles
-}
-
-/**
- * The full routing policy document. `model_tiers` resolves each tier name used
- * in `classes[*].allowlist` and `roles` to concrete August-2026 model ids; `'frontier'`
- * is the one tier name the validator's invariants depend on literally — every
- * other tier name is v0.1 policy content, revisable without touching the validator.
- */
-export interface RoutingPolicy {
-  readonly classes: Readonly<Record<ClassName, ClassEntry>>
-  readonly data_classification: Readonly<Record<DataClassificationTier, DataClassificationRule>>
-  readonly roles: RoleAssignment
-  readonly model_tiers: Readonly<Record<string, readonly string[]>>
-  readonly shadow_routes: Readonly<Record<string, ShadowRoute>>
 }

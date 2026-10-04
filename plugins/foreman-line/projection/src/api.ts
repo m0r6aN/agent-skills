@@ -8,9 +8,11 @@ import { projectShapingResult } from './project.js'
 import { type WriteResult, writeProjectedArtifact } from './write.js'
 
 export interface WriteProjectedResultOptions {
-  /** Absolute TARGET repo root. Required (P2b-i/R3, extending P2a/D19). */
-  readonly repoRoot: string
-  /** Specs dir relative to `repoRoot` (P2b-i/R2); foreign default applies. */
+  readonly repoRoot?: string
+  /**
+   * Repo-relative POSIX directory the artifact is written beneath. Defaults to
+   * the legacy `ACTIVE_SPECS_DIR` value when omitted (see `WriteOptions`).
+   */
   readonly specsDir?: string
 }
 
@@ -23,7 +25,7 @@ export interface WriteProjectedResultOptions {
 export function writeProjectedResult(
   inputPath: string,
   epicTitle: string,
-  options: WriteProjectedResultOptions,
+  options: WriteProjectedResultOptions = {},
 ): WriteResult {
   const slug = slugFromInputPath(inputPath)
   const input = readShapingResult(inputPath)

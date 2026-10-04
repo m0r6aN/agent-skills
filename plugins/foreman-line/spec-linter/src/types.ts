@@ -1,5 +1,5 @@
 /**
- * Spec frontmatter shapes (W0-P2): TypeScript types for SPEC-CONVENTION §4 v0.3.
+ * Spec frontmatter shapes (W0-P2): TypeScript types for SPEC-CONVENTION §4 v0.2.
  * The SpecFrontmatter interface has a matching hand-authored JSON Schema in
  * `schemas/spec-frontmatter.schema.json` — the two representations are proven to
  * agree by `tests/parity.test.ts`, never by generating one from the other

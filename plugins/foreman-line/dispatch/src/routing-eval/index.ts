@@ -29,25 +29,6 @@ import {
   validatePolicy,
 } from '../../../routing-policy/src/index.js'
 
-export type {
-  ParcelShadowAuthorization,
-  ResolvedParcelShadowAuthorization,
-  ShadowCandidateResult,
-  ShadowInvocationRequest,
-  ShadowRoutingDependencies,
-  ShadowRoutingInput,
-  ShadowRoutingOptions,
-  ShadowRoutingResult,
-  ShadowSkippedResult,
-} from './shadow.js'
-export {
-  executeShadowRoute,
-  hashShadowPublicInput,
-  SHADOW_LIMITS,
-  ShadowRoutingError,
-} from './shadow.js'
-export type { TransportRequirements }
-
 // ─── Error class ──────────────────────────────────────────────────────────────
 
 export class RoutingError extends Error {
@@ -79,22 +60,14 @@ export interface RoutingInput {
 }
 
 export interface RoutingResult {
-  /** The single resolved concrete model ID (an OpenRouter slug, e.g. 'anthropic/claude-sonnet-5'). */
+  /** The single resolved concrete model ID (e.g. 'claude-sonnet-5'). */
   readonly resolvedModelId: string
   /** The policy tier that produced the resolved model (e.g. 'standard'). */
   readonly resolvedTier: string
-  /**
-   * Gateway routing constraints the caller MUST apply to every request made
-   * for this task (policy `data_classification.<tier>.transport_requirements`,
-   * mirroring OpenRouter's `provider` object). A model id names a model, not a
-   * host; on a multi-provider gateway these two fields are what keep
-   * non-public prompts off providers that store or train on inputs. This
-   * package selects the model and hands the obligation on — it does not send
-   * requests.
-   */
-  readonly transportRequirements: TransportRequirements
   /** Repo-relative path to the written routing receipt JSON. */
   readonly routingDecisionRef: string
+  /** The resolved data tier's declared gateway transport obligations. */
+  readonly transportRequirements: TransportRequirements
 }
 
 export interface RoutingOptions {
@@ -202,6 +175,7 @@ export function evaluateRouting(input: RoutingInput, options: RoutingOptions): R
     )
   }
   const eligible = new Set(dataClassRule.eligible_models)
+  const transportRequirements: TransportRequirements = dataClassRule.transport_requirements
 
   // 7. Walk allowlist tiers in policy order; find first eligible model
   let resolvedModelId: string | undefined
@@ -230,11 +204,6 @@ export function evaluateRouting(input: RoutingInput, options: RoutingOptions): R
   // Write routing receipt — mkdirSync with recursive:true handles pre-existing dirs;
   // both calls are wrapped so ENOSPC/EACCES/ENAMETOOLONG surface as RoutingError
   const receiptDir = join(repoRoot, 'docs', 'receipts', input.workflowId)
-  const transportRequirements: TransportRequirements = {
-    data_collection: dataClassRule.transport_requirements.data_collection,
-    zdr: dataClassRule.transport_requirements.zdr,
-  }
-
   const receipt = {
     workflowId: input.workflowId,
     routing_class: input.routing_class,
@@ -258,7 +227,25 @@ export function evaluateRouting(input: RoutingInput, options: RoutingOptions): R
   return {
     resolvedModelId,
     resolvedTier,
-    transportRequirements,
     routingDecisionRef: `docs/receipts/${input.workflowId}/routing-decision.json`,
+    transportRequirements,
   }
 }
+
+export type {
+  ParcelShadowAuthorization,
+  ResolvedParcelShadowAuthorization,
+  ShadowInvocationRequest,
+  ShadowRoutingDependencies,
+  ShadowRoutingInput,
+  ShadowRoutingOptions,
+  ShadowRoutingResult,
+} from './shadow.js'
+// Shadow-route execution lives in ./shadow.js; re-exported here so consumers of
+// the routing-eval seam reach it through one entry (identity-stable bindings).
+export {
+  executeShadowRoute,
+  hashShadowPublicInput,
+  SHADOW_LIMITS,
+  ShadowRoutingError,
+} from './shadow.js'

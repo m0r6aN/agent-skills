@@ -5,8 +5,7 @@
     "classes",
     "data_classification",
     "roles",
-    "model_tiers",
-    "shadow_routes"
+    "model_tiers"
   ],
   "properties": {
     "classes": {

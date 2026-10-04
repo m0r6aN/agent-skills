@@ -21,25 +21,16 @@ import { basename, isAbsolute, join } from 'node:path'
 import type { ShapingResult } from '../../contracts/src/index.js'
 import { writeProjectedResult } from '../../projection/src/index.js'
 import { readShapingResult } from '../../shaping/src/index.js'
-import { assertAbsoluteRoot } from './errors.js'
+import { ApprovalRootUnresolvedError } from './errors.js'
+import { ACTIVE_SPECS_DIR, DEFAULT_REPO_ROOT } from './paths.js'
 import { assertSafeSlug } from './slug-guard.js'
 
 export const PROJECTED_SUFFIX = '.projected.shaping-result.json'
 export const SHAPING_RESULT_SUFFIX = '.shaping-result.json'
 
-/**
- * Foreign-repo default for the specs `active/` directory, RELATIVE to the
- * caller-supplied `repoRoot` (P2b-i ruling R2 / A1.3). NOT a class-1 root
- * fallback: a relative path within a root the caller supplied explicitly. The
- * home repo passes `plugins/foreman-line/docs/specs/active` explicitly at
- * call sites. Declared per-package by ruling — no shared constant.
- */
-const DEFAULT_SPECS_DIR = 'docs/specs/active'
-
 export interface ResolveOptions {
-  /** Absolute TARGET repo root. Required (P2b-i/R3, extending P2a/D19). */
-  readonly repoRoot: string
-  /** Specs dir relative to `repoRoot` (P2b-i/R2); foreign default applies. */
+  readonly repoRoot?: string
+  /** Specs dir relative to `repoRoot` (P2b-i/R2); the legacy default applies when absent. */
   readonly specsDir?: string
   /** Used ONLY on the project-then-present path (Q7). */
   readonly epicTitle?: string
@@ -77,7 +68,7 @@ function slugFromArg(arg: string): string {
 function projectedArtifactLocation(
   slug: string,
   repoRoot: string,
-  specsDir: string,
+  specsDir: string = ACTIVE_SPECS_DIR,
 ): { readonly abs: string; readonly ref: string } {
   assertSafeSlug(slug)
   const activeDir = join(repoRoot, ...specsDir.split('/'))
@@ -89,7 +80,7 @@ function toAbs(arg: string, repoRoot: string): string {
   return isAbsolute(arg) ? arg : join(repoRoot, ...arg.split('/'))
 }
 
-function loadExisting(slug: string, repoRoot: string, specsDir: string): ResolvedArtifact {
+function loadExisting(slug: string, repoRoot: string, specsDir?: string): ResolvedArtifact {
   const { abs, ref } = projectedArtifactLocation(slug, repoRoot, specsDir)
   return {
     slug,
@@ -105,9 +96,8 @@ function projectThenPresent(
   inputAbs: string,
   epicTitle: string,
   repoRoot: string,
-  specsDir: string,
 ): ResolvedArtifact {
-  const written = writeProjectedResult(inputAbs, epicTitle, { repoRoot, specsDir })
+  const written = writeProjectedResult(inputAbs, epicTitle, { repoRoot })
   return {
     slug,
     artifactPath: written.artifactPath,
@@ -122,10 +112,15 @@ function projectThenPresent(
  * a bare slug) to the artifact actually presented to the human. Throws if no
  * projected artifact exists and no `epicTitle` was supplied to project one.
  */
-export function resolveArtifact(arg: string, options: ResolveOptions): ResolvedArtifact {
-  const repoRoot = options.repoRoot
-  const specsDir = options.specsDir ?? DEFAULT_SPECS_DIR
-  assertAbsoluteRoot(repoRoot, 'resolveArtifact')
+export function resolveArtifact(arg: string, options: ResolveOptions = {}): ResolvedArtifact {
+  const repoRoot = options.repoRoot ?? DEFAULT_REPO_ROOT
+  const specsDir = options.specsDir
+  if (!isAbsolute(repoRoot)) {
+    throw new ApprovalRootUnresolvedError(
+      'root-not-absolute',
+      `resolveArtifact: repoRoot ${JSON.stringify(repoRoot)} must be absolute — a relative root would silently anchor derived paths to process.cwd() (mechanism class 5)`,
+    )
+  }
 
   if (arg.endsWith(PROJECTED_SUFFIX)) {
     const slug = slugFromArg(arg)
@@ -152,7 +147,7 @@ export function resolveArtifact(arg: string, options: ResolveOptions): ResolvedA
         `resolveArtifact: no projected artifact exists for '${slug}' and no --epic-title was provided to project one`,
       )
     }
-    return projectThenPresent(slug, toAbs(arg, repoRoot), options.epicTitle, repoRoot, specsDir)
+    return projectThenPresent(slug, toAbs(arg, repoRoot), options.epicTitle, repoRoot)
   }
 
   // Bare slug (rework item 1, argument-acceptance point): validated before
@@ -167,7 +162,7 @@ export function resolveArtifact(arg: string, options: ResolveOptions): ResolvedA
       `resolveArtifact: no projected artifact exists for '${slug}' and no --epic-title was provided to project one`,
     )
   }
-  const activeDir = join(repoRoot, ...specsDir.split('/'))
+  const activeDir = join(repoRoot, ...(specsDir ?? ACTIVE_SPECS_DIR).split('/'))
   const inputAbs = join(activeDir, `${slug}${SHAPING_RESULT_SUFFIX}`)
-  return projectThenPresent(slug, inputAbs, options.epicTitle, repoRoot, specsDir)
+  return projectThenPresent(slug, inputAbs, options.epicTitle, repoRoot)
 }

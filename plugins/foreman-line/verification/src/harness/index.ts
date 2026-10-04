@@ -116,9 +116,9 @@ export interface HarnessInput {
   readonly specPath: string
   readonly testResults: TestResults
   readonly matrixChecks: MatrixCheckSet
-  /** Explicit repository root; never inferred from the process directory. */
-  readonly repoRoot: string
-  /** Explicit plugin root; never inferred from a project identity literal. */
+  /** Defaults to process.cwd(); tests pass a tmp dir. */
+  readonly repoRoot?: string
+  /** Explicit plugin root for plugin-local contracts and templates. */
   readonly pluginRoot: string
 }
 
@@ -132,11 +132,11 @@ export interface HarnessResult {
 }
 
 /** Repo-relative path of the named-test convention doc this parcel delivers. */
-export const AC_CONVENTION_PATH = 'verification/AC-CONVENTION.md'
+export const AC_CONVENTION_PATH = 'plugins/foreman-line/verification/AC-CONVENTION.md'
 
 // ─── Constants / module-level setup ──────────────────────────────────────────
 
-const MATRIX_REPO_PATH = 'skill-injection/skill-injection.yaml'
+const MATRIX_REPO_PATH = 'plugins/foreman-line/skill-injection/skill-injection.yaml'
 
 const ajv = new Ajv()
 const validateBuildResultSubject = ajv.compile(buildResultSchema)
@@ -304,7 +304,7 @@ function scanChainTip(workflowId: string, repoRoot: string): ChainTip {
  */
 export function allocateSequence(
   workflowId: string,
-  repoRoot: string,
+  repoRoot: string = process.cwd(),
 ): { sequence: number; prevHash: string | null } {
   assertValidWorkflowId(workflowId)
   const tip = scanChainTip(workflowId, repoRoot)
@@ -418,7 +418,7 @@ export function recordBuildResult(
   branch: string,
   commitShas: readonly string[],
   touchedSurfaces: readonly string[],
-  repoRoot: string,
+  repoRoot: string = process.cwd(),
 ): string {
   assertValidWorkflowId(workflowId)
   const absPath = join(repoRoot, ...dispatchReceiptLocator.split('/'))
@@ -600,10 +600,10 @@ function mapAcClaim(ac: AcEntry, testResults: TestResults): HarnessClaimResult {
 
 // ─── Verifier-side matrix resolution (frozen path-segment glob rule) ──────────
 
-function loadMatrix(pluginRoot: string): SkillInjectionMatrix {
+function loadMatrix(repoRoot: string): SkillInjectionMatrix {
   let rawYaml: string
   try {
-    rawYaml = readFileSync(join(pluginRoot, ...MATRIX_REPO_PATH.split('/')), 'utf8')
+    rawYaml = readFileSync(join(repoRoot, ...MATRIX_REPO_PATH.split('/')), 'utf8')
   } catch (err) {
     throw new VerificationError(
       'MATRIX_UNREADABLE',
@@ -684,7 +684,7 @@ function resolveRequiredChecks(
  */
 export async function runHarness(input: HarnessInput): Promise<HarnessResult> {
   assertValidWorkflowId(input.workflowId)
-  const repoRoot = input.repoRoot
+  const repoRoot = input.repoRoot ?? process.cwd()
 
   // 1. Spec read + AC extraction
   let specText: string
@@ -708,7 +708,7 @@ export async function runHarness(input: HarnessInput): Promise<HarnessResult> {
   const claims: HarnessClaimResult[] = acs.map((ac) => mapAcClaim(ac, input.testResults))
 
   // 3. Verifier-side matrix resolution + injected check invocation
-  const matrix = loadMatrix(input.pluginRoot)
+  const matrix = loadMatrix(repoRoot)
   const requiredChecks = resolveRequiredChecks(matrix, input.buildResult.touchedSurfaces)
   for (const checkName of requiredChecks) {
     if (input.matrixChecks[checkName] === undefined) {

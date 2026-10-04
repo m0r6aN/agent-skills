@@ -7,12 +7,29 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
-  test:
-    name: test
+  # Pre-shard decision seam (spec C12 / AC7(1)): decide (and verify on reuse)
+  # complete before any shard work; the shard matrix is gated on the EFFECTIVE
+  # decision == 'fallback'. The gate invokes verify WITHOUT a sweep source —
+  # the shard matrix is the single fallback branch (no hidden non-matrix sweep).
+  # R1: the effective decision is resolved in ONE step (resolve) with no `||`
+  # fallthrough — an empty/failed verify resolves to `fallback`, never decide's
+  # `reuse`. R6: the shard count has ONE source (MAX_SHARDS in the harness);
+  # resolve derives the matrix and both arguments from it.
+  gate:
+    name: gate
     runs-on: windows-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
+    outputs:
+      decision: ${{ steps.effective.outputs.decision }}
+      fallback_reason: ${{ steps.effective.outputs.fallback_reason }}
+      base_sha: ${{ steps.effective.outputs.base_sha }}
+      head_sha: ${{ steps.effective.outputs.head_sha }}
+      evidence_record: ${{ steps.effective.outputs.evidence_record }}
+      shard_count: ${{ steps.effective.outputs.shard_count }}
+      shards: ${{ steps.effective.outputs.shards }}
     steps:
       - name: Preserve repository LF bytes
         shell: pwsh
@@ -27,15 +44,152 @@ jobs:
         with:
           node-version: '24.19.0'
 
-      - name: Test the package runner without subprocess effects
-        run: node --test scripts/foreman-line-ci.test.mjs
-
-      - name: Install all 19 packages, then aggregate every check
+      # CI-P1: sole reuse-decision point (spec C12). Outputs: decision,
+      # fallback_reason, base_sha, head_sha, evidence_record.
+      - name: Decide reuse or fallback from Actions-API evidence
+        id: decide
         if: ${{ success() || failure() }}
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/ci-reuse.mjs decide
+
+      # Reused head: re-verify the evidence (no sweep source here — AC7 seam).
+      # Any flip emits decision: fallback and exits 0; the matrix sweeps.
+      - name: Verify reuse evidence (no sweep source — the matrix is the only fallback branch)
+        id: verify
+        if: ${{ (success() || failure()) && steps.decide.outputs.decision == 'reuse' }}
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CI_REUSE_EVIDENCE: ${{ steps.decide.outputs.evidence_record }}
+        run: node scripts/ci-reuse.mjs verify
+
+      # R1: one resolution point, no fallthrough. A crashed/empty verify can
+      # never inherit decide's reuse; the shard layout derives from MAX_SHARDS.
+      - name: 'Resolve the effective decision (R1: no fallthrough) and the shard layout (R6)'
+        id: effective
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        env:
+          DECIDE_DECISION: ${{ steps.decide.outputs.decision }}
+          DECIDE_FALLBACK_REASON: ${{ steps.decide.outputs.fallback_reason }}
+          DECIDE_BASE_SHA: ${{ steps.decide.outputs.base_sha }}
+          DECIDE_HEAD_SHA: ${{ steps.decide.outputs.head_sha }}
+          DECIDE_EVIDENCE_RECORD: ${{ steps.decide.outputs.evidence_record }}
+          VERIFY_CONCLUSION: ${{ steps.verify.conclusion }}
+          VERIFY_DECISION: ${{ steps.verify.outputs.decision }}
+          VERIFY_FALLBACK_REASON: ${{ steps.verify.outputs.fallback_reason }}
+          VERIFY_BASE_SHA: ${{ steps.verify.outputs.base_sha }}
+          VERIFY_HEAD_SHA: ${{ steps.verify.outputs.head_sha }}
+          VERIFY_EVIDENCE_RECORD: ${{ steps.verify.outputs.evidence_record }}
+        run: |
+          node scripts/foreman-line-ci.mjs resolve
+          exit $LASTEXITCODE
+
+  # AC4: one shard job per matrix entry; each shard installs dependencies for
+  # ALL discovered packages (the per-shard barrier: every install completes
+  # before any check in the shard — relative sibling imports load sibling
+  # source), then runs exactly test/typecheck/lint for its assigned packages.
+  # R6: the matrix and the shard argument derive from the gate's single source.
+  sweep:
+    name: sweep
+    needs: gate
+    if: ${{ (needs.gate.result == 'success' || needs.gate.result == 'failure') && needs.gate.outputs.decision == 'fallback' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.gate.outputs.shards) }}
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - name: Preserve repository LF bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24.19.0'
+
+      - name: Run shard ${{ matrix.shard }} — install all packages, then the shard's checks
         shell: pwsh
         run: |
           $npmCli = Join-Path (Split-Path (Get-Command node).Source) 'node_modules/npm/bin/npm-cli.js'
-          node scripts/foreman-line-ci.mjs "$npmCli"
+          node scripts/foreman-line-ci.mjs shard ${{ matrix.shard }} ${{ needs.gate.outputs.shard_count }} "$npmCli" shard-outcomes
+          exit $LASTEXITCODE
+
+      - name: Upload shard outcomes
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: shard-outcomes-${{ matrix.shard }}
+          path: shard-outcomes/shard-outcomes.json
+          if-no-files-found: error
+
+  # AC5: ONE aggregation verdict surfaces through the required `test` context.
+  # The aggregate CLI is the single verdict authority (R1): on fallback it
+  # re-derives discovery+assignment and reconciles the shard artifacts (AC3);
+  # on reuse the evidence record IS the passing verdict (AC5/AC7) and zero
+  # shard jobs run. The verdict fails closed unless the gate job succeeded
+  # (R1 layer 2) — a failed verify step can never green the head. The evidence
+  # record is re-emitted verbatim from the gate output on EVERY run (never
+  # log-scraped).
+  test:
+    name: test
+    needs: [gate, sweep]
+    if: ${{ !cancelled() }}
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - name: Preserve repository LF bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24.19.0'
+
+      - name: Test the package runner and reuse core without subprocess effects
+        run: |
+          node --test scripts/foreman-line-ci.test.mjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node --test scripts/ci-reuse.test.mjs
+          exit $LASTEXITCODE
+
+      - name: Download shard outcomes
+        if: ${{ !cancelled() && needs.gate.outputs.decision == 'fallback' }}
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: shard-outcomes-*
+          path: shard-outcomes
+
+      - name: Aggregate shard outcomes or report the reuse verdict
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        env:
+          DECISION: ${{ needs.gate.outputs.decision }}
+          EVIDENCE_RECORD: ${{ needs.gate.outputs.evidence_record }}
+          GATE_RESULT: ${{ needs.gate.result }}
+        run: |
+          # AC7(2): emit the evidence record verbatim on every run — from the
+          # gate output, never log-scraped.
+          if ($env:EVIDENCE_RECORD) {
+            Write-Output $env:EVIDENCE_RECORD
+            $env:EVIDENCE_RECORD >> $env:GITHUB_STEP_SUMMARY
+          }
+          # Single verdict authority (R1): reuse/fallback/unknown all resolve
+          # here; gate failure is a red verdict before any branch is trusted.
+          node scripts/foreman-line-ci.mjs aggregate ${{ needs.gate.outputs.shard_count }} shard-outcomes
           exit $LASTEXITCODE
 
   integration-report:

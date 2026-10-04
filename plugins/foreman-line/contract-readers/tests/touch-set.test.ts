@@ -527,6 +527,13 @@ test('A2(b)(2)/(4) Contract B — every surfaced file is adjudicated; both signa
   //   spec-linter/src/types.ts         — LOCKSTEP: restates ROUTING_CLASSES in full, and is also
   //                                      a Contract A reader (VERIFICATION_CLASSES). ADD a class
   //                                      and this file must change.
+  //   dispatch/src/pmc-launch/controller.ts — LOCKSTEP: validates the complete literal
+  //                                      routing vocabulary; an added class changes its membership list.
+  //   dispatch/src/pmc-launch/intent-custody.ts — LOCKSTEP: validates routingClass
+  //                                      against the full literal vocabulary; adding a class
+  //                                      requires changing this owner's membership list.
+  //   hybrid-routing/src/consumer-compatibility.ts — LOCKSTEP: validates routing_class against a
+  //                                      local membership set. ADD a class and this file must change.
   //   dispatch/src/routing-eval/index.ts — A5(b), RE-ADJUDICATED and UNDECLARED (review E B1, the
   //                                      BLOCKER): imports `CLASS_NAMES` from the home package
   //                                      (`:30`) and builds a Set from it (`:552,556`) but holds no
@@ -564,6 +571,29 @@ test('A2(b)(2)/(4) Contract B — every surfaced file is adjudicated; both signa
   //                                      only inside a prose status-line string ("the routing
   //                                      policy's boilerplate class"); nothing reads or branches on
   //                                      the value, so it need not change if a class is added/removed.
+  //   authority-registry/src/generate.ts — NOT declared (LOCKSTEP-negative): the value signal matches
+  //                                      only inside a frozen normalized-excerpt locator key
+  //                                      ('coordinator-pattern:md-block:...table-row:Builder
+  //                                      (architecture/risk)', `:2087`) — generated audit-inventory
+  //                                      data quoting a source document's prose, never read as a live
+  //                                      vocabulary. ADD a class and this file is unchanged (the same
+  //                                      frozen-data basis that ruled out Contract A's
+  //                                      verification/src/d19-audit.ts).
+  //   authority-registry/src/validate.ts — NOT declared (LOCKSTEP-negative): the value signal matches
+  //                                      only inside a frozen `normalizedExcerpt` reconciliation
+  //                                      string (`:779`) — inventoried evidence data, not a
+  //                                      vocabulary consumer. ADD a class and this file is unchanged
+  //                                      (identical frozen-data basis).
+  //   verification/src/pipeline/stage-d-finalization.ts — NOT declared (LOCKSTEP-negative): 'routing_class'
+  //                                      appears only as a FIELD name — the structural `exact()` key
+  //                                      list of the routing-decision capture (`:1213`) and a
+  //                                      cross-artifact field-value comparison (`:1240`) — no class
+  //                                      literal, no ROUTING_CLASSES import. ADD a class and this file
+  //                                      is unchanged — fails the additive counterfactual under the
+  //                                      same reading that ruled out dispatch/src/routing-eval/index.ts
+  //                                      (A5(b)) and spec-linter/src/validate.ts. A5(c)'s field-level
+  //                                      reading was explicitly left open and NOT adopted (the
+  //                                      grandfather.ts ruling above states this too).
   //
   // A3(a)/A4(a) also re-adjudicated (outside the sweep's pathspec, absent from
   // `surfaced`, not asserted against here): shaping/tests/helpers.ts,
@@ -572,6 +602,8 @@ test('A2(b)(2)/(4) Contract B — every surfaced file is adjudicated; both signa
   // Contract A ruling table above for the identical reasoning; the same four
   // files were reconsidered for both contracts).
   const expectedUndeclared = [
+    'plugins/foreman-line/authority-registry/src/generate.ts',
+    'plugins/foreman-line/authority-registry/src/validate.ts',
     'plugins/foreman-line/dispatch/src/approval-cli/index.ts',
     'plugins/foreman-line/dispatch/src/routing-eval/index.ts',
     'plugins/foreman-line/skill-injection/src/cli.ts',
@@ -579,6 +611,7 @@ test('A2(b)(2)/(4) Contract B — every surfaced file is adjudicated; both signa
     'plugins/foreman-line/spec-linter/src/index.ts',
     'plugins/foreman-line/spec-linter/src/testing.ts',
     'plugins/foreman-line/verification/src/pipeline/index.ts',
+    'plugins/foreman-line/verification/src/pipeline/stage-d-finalization.ts',
   ].sort()
   assert.deepEqual(
     undeclared,
@@ -698,9 +731,52 @@ test('A4(c) MUTATION: appending a spurious out-of-scope reader to contractB.read
   )
 })
 
+test('Contract B MUTATION: deleting the genuine consumer reader is detected by the sweep', () => {
+  const genuine = 'plugins/foreman-line/hybrid-routing/src/consumer-compatibility.ts'
+  assert.ok(
+    contractB.readers.includes(genuine),
+    'the additive lockstep consumer must remain declared in the real Contract B registry',
+  )
+  const mutatedReaders = contractB.readers.filter((reader) => reader !== genuine)
+  const declared = new Set(mutatedReaders.flatMap((reader) => readerFiles(reader)))
+  const surfaced = new Set([...contractBFieldSignal, ...contractBValueSignal])
+  const surfacedButUndeclared = [...surfaced].filter((file) => !declared.has(file))
+  assert.ok(
+    surfacedButUndeclared.includes(genuine),
+    'deleting the real consumer reader must leave its on-disk lockstep surface surfaced but undeclared',
+  )
+})
+
 // ---------------------------------------------------------------------------
 // F1 (A2(d)): every REAL registry entry, not only fixtures, is schema-valid.
 // ---------------------------------------------------------------------------
+
+test('Contract B: intent custody is an additive LOCKSTEP reader with exact touch set', () => {
+  const genuine = 'plugins/foreman-line/dispatch/src/pmc-launch/intent-custody.ts'
+  assert.deepEqual(
+    [...contractB.readers].sort(),
+    [
+      genuine,
+      'plugins/foreman-line/dispatch/src/pmc-launch/controller.ts',
+      'plugins/foreman-line/hybrid-routing/src/consumer-compatibility.ts',
+      'plugins/foreman-line/spec-linter/src/schemas.ts',
+      'plugins/foreman-line/spec-linter/src/types.ts',
+      'plugins/foreman-line/spec-linter/schemas/spec-frontmatter.schema.json',
+    ].sort(),
+  )
+  assert.ok(new Set([...contractBFieldSignal, ...contractBValueSignal]).has(genuine))
+  const mutatedReaders = contractB.readers.filter((reader) => reader !== genuine)
+  const declared = new Set(mutatedReaders.flatMap(readerFiles))
+  const surfaced = new Set([...contractBFieldSignal, ...contractBValueSignal])
+  assert.ok([...surfaced].filter((file) => !declared.has(file)).includes(genuine))
+  assert.deepEqual(
+    deriveTouchSet(
+      registry.flatMap((entry) => entry.readers.flatMap(readerFiles)),
+      repoRoot,
+    ).files,
+    [...contractB.readers].sort(),
+  )
+})
 
 test('A2(d)/F1: every entry in the real registry validates against contractReaderEntrySchema', () => {
   const ajv = new Ajv({ allErrors: true })
@@ -712,4 +788,35 @@ test('A2(d)/F1: every entry in the real registry validates against contractReade
       `registry entry '${entry.contract}' failed schema validation: ${JSON.stringify(validate.errors)}`,
     )
   }
+})
+
+test('PMC controller reader: exact Contract B membership and real touch-set provenance', () => {
+  const path = 'plugins/foreman-line/dispatch/src/pmc-launch/controller.ts'
+  const check = (a: readonly ContractReader[], b: readonly ContractReader[]) => {
+    assert.equal(a.flatMap(readerFiles).filter((v) => v === path).length, 0)
+    assert.equal(b.flatMap(readerFiles).filter((v) => v === path).length, 1)
+    const resolved = deriveTouchSet(b.flatMap(readerFiles), repoRoot)
+    assert.ok(hasResolutionProvenance(resolved))
+    assert.equal(resolved.files.filter((v) => v === path).length, 1)
+  }
+  check(contractA.readers, contractB.readers)
+  assert.ok(contractBValueSignal.includes(path))
+  const without = contractB.readers.filter((v) => v !== path)
+  for (const [name, a, b] of [
+    ['deleted', contractA.readers, without],
+    ['wrong contract', [...contractA.readers, path], without],
+    ['duplicated', contractA.readers, [...contractB.readers, path]],
+    [
+      'renamed',
+      contractA.readers,
+      [...without, path.replace('controller.ts', 'controller-other.ts')],
+    ],
+    [
+      'substituted',
+      contractA.readers,
+      [...without, 'plugins/foreman-line/dispatch/src/pmc-launch/intent-custody.ts'],
+    ],
+    ['also in Contract A', [...contractA.readers, path], contractB.readers],
+  ] as const)
+    assert.throws(() => check(a, b), assert.AssertionError, name)
 })

@@ -1,0 +1,24 @@
+# Gate 1 — Charter Ratification (2026-09-30)
+
+**Ratification act:** the developer's explicit directive **"Read and implement charter.md"** (this session). This is an explicit instruction to implement the named charter, not silence from which consent is inferred. The charter as written is the decision list ratified below. Factual identifier corrections made at coordinator lint (see `ci-optimization-lint-2026-09-30.md`) are recorded corrections of claims that were false on disk (`plugins.yml` exists in no ref; the repo's historical name), not design changes — the developer may veto them; nothing downstream depends on the old names.
+
+## Decisions ratified (charter as written)
+
+- **D1 — Objective:** reduce unnecessary test execution and full-sweep wall time while preserving merge-gate integrity and complete package coverage; measure against a recorded baseline; no assumed savings figure.
+- **D2 — Invariants (5):** PR-wide classification semantics (ordinary docs = docs-only; governed specs keep validation); reuse only on verified-equivalent evidence (docs-only push alone insufficient); missing/stale/incompatible/unverifiable evidence → normal validation; required check identity preserved + branch-protection compatibility verified; both parcels elevated risk → **two independent reviews each**.
+- **D3 — Parcel set and order:** shape both parcels together; build and merge **CI-P1 first**, rebase, then **CI-P2** (shared workflow file → serialization).
+- **D4 — CI-P1 scope:** classification + evidence-based reuse within the existing workflow; its five acceptance criteria as written.
+- **D5 — CI-P2 scope:** dynamic package discovery (excluding dependency directories), deterministic bounded sharding, discovered-vs-executed reconciliation, dependency install + lint coverage preserved (full install per shard acceptable initially), single final required check failing on discovery errors/missing coverage/shard failures/cancellations/unexpected skips, live CI demo + elapsed/runner-minutes comparison; its six acceptance criteria as written.
+- **D6 — Closure:** each parcel closes with workflow validation, targeted behavioral checks, two resolved reviews, live CI evidence, completion report; CI-P2 additionally proves CI-P1 reuse behavior survives sharding.
+
+## Standing authorizations (granted by the developer directing implementation of this charter; scoped to this goal only)
+
+1. **Gate 2 — dispatch approval** for exactly parcels CI-P1 and CI-P2 as chartered, including rework dispatches on those parcels. Any third parcel idea is a stop-and-report.
+2. **Gate 3 — merge** (corrected 2026-09-30 after grounding RS-2.1; supersedes the first draft of this item): **main/PR merges are human-owned** per the developer's own standing ruling RS-2.1 ("Gate 3 remains human-owned for main/PR merges, repository-settings changes, deployment, and destructive cleanup. The coordinator may perform the merge git step of a fully-green verification chain into the goal's integration branch… any red step voids the delegation for that chain", recorded in `docs/goals/foreman-kernel/FK-P0-corpus-amendment-R32-2026-09-27.md` §R32.3) and SPEC-CONVENTION §8.4's fail-closed rule (ruleset bypass actor is a User id 35229880, not a distinct agent identity; the coordinator session is human-authenticated). Operationally: the coordinator performs the merge **git step** of a fully-green parcel into the goal's integration branch `ci-optimization/integration`, prepares the PR to `main` with its paper trail, and **stops with a report** for the human main-merge. Green chain for the git step: coordinator closure check against disk, deterministic pass (PowerShell only, `node -v` first), two independent adversarial reviews with all findings triaged and resolved, live CI evidence, required checks (`test`, `integration-report`) green on the head. Any red step voids the delegation. If the developer wishes to extend delegation to main merges, one explicit directive does it and this record is amended — it is never inferred.
+3. **Push, PR, and Stage F closure commits** authorized within `m0r6aN/agent-skills` only. Branches/PRs named in the loop directive; parcel PRs target `main`.
+4. **Out of authorization (stop-and-report):** repo settings and rulesets, branch protection, force pushes, other repositories, merging into `main` (human Gate 3), merging around a red step, modifying frozen contracts.
+
+## Notes carried into the loop
+
+- Branch protection compatibility (Invariant 4) is grounded as ruleset `main-pr-gate` required contexts `test` + `integration-report` (strict, default branch). Job names are contract.
+- Baseline and boundary facts (red live-CI history, queue-vs-run separation, sibling PR #123) recorded in the lint record; CI-P1's live reuse demo sequence must account for them.

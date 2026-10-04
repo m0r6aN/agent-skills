@@ -29,11 +29,10 @@ export function assertSafeSlug(slug: string): void {
  * resolved path.
  */
 export function assertContainedPath(repoRoot: string, absPath: string, ref: string): void {
-  // P2b-i AC6 (mechanism class 5): `resolve()` of a possibly-relative
-  // `repoRoot` silently re-anchors the containment comparison base to
-  // `process.cwd()`, letting a path outside the TRUE root pass containment
-  // when invoked from a chosen cwd. The root must arrive absolute; a
-  // relative one is refused with a typed error before any comparison.
+  // P2b-i AC6 seam refusal: a non-absolute repoRoot would silently re-anchor
+  // the containment comparison base to process.cwd() (mechanism class 5), so
+  // it is refused with the typed error BEFORE any comparison - closing the
+  // mis-comparison demonstrated in root-conflation.test.ts.
   assertAbsoluteRoot(repoRoot, 'assertContainedPath')
   const rel = relative(resolve(repoRoot), resolve(absPath))
   // `..` (or a leading `..` segment) means the target climbed out of repoRoot;

@@ -4,11 +4,9 @@
  * `tests/parity.test.ts` proves each schema agrees with its `types.ts` counterpart
  * via a canonical sample, and that the committed `schemas/*.json` files never drift.
  *
- * Seven of the eight invariants (classification-gates-before-cost, coordinator/
- * verifier frontier pinning, the security override and derived name-guard,
- * frontier anchoring, tier-models-are-classification-eligible, non-public
- * transport requirements, and shadow-route containment) are intentionally NOT
- * encoded here — they are cross-field business rules
+ * The four semantic invariants (classification-gates-before-cost, coordinator/
+ * verifier frontier pinning, the security override, and its derived name-guard)
+ * are intentionally NOT encoded here — they are cross-field business rules
  * enforced by `validator.ts`, kept distinct from pure structural shape so a
  * schema-valid-but-semantically-wrong document is distinguishable from a
  * structurally invalid one (both classes of rejecting fixture are needed
@@ -55,17 +53,6 @@ export const dataClassificationRuleSchema: SchemaObject = {
   },
 }
 
-export const roleAssignmentSchema: SchemaObject = {
-  type: 'object',
-  additionalProperties: false,
-  required: ['coordinator', 'verifier', 'builder'],
-  properties: {
-    coordinator: { type: 'string', minLength: 1 },
-    verifier: { type: 'string', minLength: 1 },
-    builder: { type: 'string', minLength: 1 },
-  },
-}
-
 export const shadowRouteSchema: SchemaObject = {
   type: 'object',
   additionalProperties: false,
@@ -104,10 +91,21 @@ export const shadowRouteSchema: SchemaObject = {
   },
 }
 
+export const roleAssignmentSchema: SchemaObject = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['coordinator', 'verifier', 'builder'],
+  properties: {
+    coordinator: { type: 'string', minLength: 1 },
+    verifier: { type: 'string', minLength: 1 },
+    builder: { type: 'string', minLength: 1 },
+  },
+}
+
 export const routingPolicySchema: SchemaObject = {
   type: 'object',
   additionalProperties: false,
-  required: ['classes', 'data_classification', 'roles', 'model_tiers', 'shadow_routes'],
+  required: ['classes', 'data_classification', 'roles', 'model_tiers'],
   properties: {
     classes: {
       type: 'object',
@@ -142,8 +140,6 @@ export const routingPolicySchema: SchemaObject = {
       },
     },
     shadow_routes: {
-      // May be empty. Any route present must satisfy `shadowRouteSchema` and
-      // the validator's containment invariant; no provider name is required.
       type: 'object',
       additionalProperties: shadowRouteSchema,
     },

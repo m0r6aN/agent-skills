@@ -13,7 +13,7 @@ export {
   emitShapingResult,
   toPosixRelative,
 } from './emit.js'
-export { assertAbsoluteRoot, ShapingRootUnresolvedError } from './errors.js'
+export { ShapingRootUnresolvedError } from './errors.js'
 export {
   ARTIFACT_SUFFIX,
   discoverShapingResults,
