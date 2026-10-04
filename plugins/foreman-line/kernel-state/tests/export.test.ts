@@ -31,6 +31,7 @@ import {
   type NewLeaseRow,
   type NewTransitionRow,
   type NewWakeupHandoffRow,
+  recordCompletedBinding,
   type SetProjectionCursorRow,
   setProjectionCursor,
   updateGoalRow,
@@ -54,6 +55,19 @@ interface GoldenOperation {
   patch?: Record<string, unknown>
   wakeupId?: string
   consumedAtMicros?: number
+}
+
+/** Fixture-side completed binding: result bytes travel as base64. */
+interface FixtureCompletedBinding {
+  principalRef: string
+  operationId: string
+  repositoryRef: string
+  worktreeRef: string
+  payloadDigest: string
+  effectDigest?: string | null
+  recordedResultBase64: string
+  recordedAtMicros?: number
+  completedAtMicros?: number
 }
 
 const GOLDEN = JSON.parse(
@@ -346,6 +360,21 @@ function replay(storage: Storage, operations: GoldenOperation[]): void {
       case 'insertIdempotencyKey':
         insertIdempotencyKey(storage, step.row as NewIdempotencyKeyRow)
         break
+      case 'recordCompletedBinding': {
+        const binding = step.row as FixtureCompletedBinding
+        recordCompletedBinding(storage, {
+          principalRef: binding.principalRef,
+          operationId: binding.operationId,
+          repositoryRef: binding.repositoryRef,
+          worktreeRef: binding.worktreeRef,
+          payloadDigest: binding.payloadDigest,
+          effectDigest: binding.effectDigest,
+          recordedResult: Uint8Array.from(Buffer.from(binding.recordedResultBase64, 'base64')),
+          recordedAtMicros: binding.recordedAtMicros,
+          completedAtMicros: binding.completedAtMicros,
+        })
+        break
+      }
       case 'insertArtifact':
         insertArtifact(storage, step.row as NewArtifactRow)
         break

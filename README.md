@@ -46,7 +46,7 @@ Skills also activate automatically based on what you're doing — designing an A
 **Fastest path — any agent, one command.** The open [skills CLI](https://github.com/vercel-labs/skills) installs into 70+ agents (Claude Code, Cursor, Codex, Copilot, Cline, and more):
 
 ```bash
-npx skills add addyosmani/agent-skills            # install all 25 skills
+npx skills add addyosmani/agent-skills            # install all 26 skills
 npx skills add addyosmani/agent-skills --list     # browse before installing
 ```
 
@@ -219,9 +219,9 @@ Already installed? How you roll the pack out depends on your codebase. The **[Ad
 
 ---
 
-## All 24 Skills
+## All 25 Skills
 
-The commands above are entry points. The pack includes 25 skills total — 24 lifecycle skills plus the `using-agent-skills` meta-skill. Each skill is a structured workflow with steps, verification gates, and anti-rationalization tables. You can also reference any skill directly.
+The commands above are entry points. The pack includes 26 skills total — 25 lifecycle skills plus the `using-agent-skills` meta-skill. Each skill is a structured workflow with steps, verification gates, and anti-rationalization tables. You can also reference any skill directly.
 
 ### Meta - Discover which skill applies
 
@@ -277,6 +277,7 @@ The commands above are entry points. The pack includes 25 skills total — 24 li
 | Skill | What It Does | Use When |
 |-------|-------------|----------|
 | [git-workflow-and-versioning](skills/git-workflow-and-versioning/SKILL.md) | Trunk-based development, atomic commits, change sizing (~100 lines), the commit-as-save-point pattern | Making any code change (always) |
+| [lumber-jack](skills/lumber-jack/SKILL.md) | Recover stranded work from leftover worktrees into PRs against dev, then delete the worktrees and branches until only the base repo and main remain | Cleaning up stale worktrees, or uncommitted/unpushed code stranded in worktrees |
 | [ci-cd-and-automation](skills/ci-cd-and-automation/SKILL.md) | Shift Left, Faster is Safer, feature flags, quality gate pipelines, failure feedback loops | Setting up or modifying build and deploy pipelines |
 | [deprecation-and-migration](skills/deprecation-and-migration/SKILL.md) | Code-as-liability mindset, compulsory vs advisory deprecation, migration patterns, zombie code removal | Removing old systems, migrating users, or sunsetting features |
 | [documentation-and-adrs](skills/documentation-and-adrs/SKILL.md) | Architecture Decision Records, API docs, inline documentation standards - document the *why* | Making architectural decisions, changing APIs, or shipping features |
@@ -351,7 +352,7 @@ Every skill follows a consistent anatomy:
 
 ```
 agent-skills/
-├── skills/                            # 25 skills (24 lifecycle + 1 meta)
+├── skills/                            # 26 skills (25 lifecycle + 1 meta)
 │   ├── interview-me/                  #   Define
 │   ├── idea-refine/                   #   Define
 │   ├── spec-driven-development/       #   Define
@@ -371,6 +372,7 @@ agent-skills/
 │   ├── security-and-hardening/        #   Review
 │   ├── performance-optimization/      #   Review
 │   ├── git-workflow-and-versioning/   #   Ship
+│   ├── lumber-jack/                   #   Ship
 │   ├── ci-cd-and-automation/          #   Ship
 │   ├── deprecation-and-migration/     #   Ship
 │   ├── documentation-and-adrs/        #   Ship

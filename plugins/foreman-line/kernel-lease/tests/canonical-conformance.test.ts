@@ -9,8 +9,8 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { test } from 'node:test'
 import {
-  canonicalEncode,
   CanonicalEncodeError,
+  canonicalEncode,
   digestBytes,
   digestDocument,
   eventPayloadDigest,
@@ -90,10 +90,7 @@ test('domain wrappers bind the T11 domains and the apiVersion literal', () => {
   const operationDigest = operationInputDigest(request)
   const payloadDigest = eventPayloadDigest(request)
   assert.notEqual(operationDigest, payloadDigest, 'domains separate the preimages')
-  assert.equal(
-    operationDigest,
-    digestDocument(KERNEL_LEASE_DIGEST_DOMAINS.operationInput, request),
-  )
+  assert.equal(operationDigest, digestDocument(KERNEL_LEASE_DIGEST_DOMAINS.operationInput, request))
   assert.equal(payloadDigest, digestDocument(KERNEL_LEASE_DIGEST_DOMAINS.eventPayload, request))
 })
 

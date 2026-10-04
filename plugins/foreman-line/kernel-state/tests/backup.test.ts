@@ -45,6 +45,9 @@ const PACKAGED_0002 = readFileSync(join(PKG_ROOT, 'migrations', '0002-goal-statu
 const PACKAGED_0003 = readFileSync(
   join(PKG_ROOT, 'migrations', '0003-transitions-status-checks.sql'),
 )
+const PACKAGED_0004 = readFileSync(
+  join(PKG_ROOT, 'migrations', '0004-idempotency-recorded-result.sql'),
+)
 const T0 = 1_700_000_000_000_000
 
 interface ConcRecord {
@@ -108,7 +111,7 @@ test('POS-04: backupTo -> verifyBackup -> operator restore sequence in-process',
   closeStorage(storage)
   // (b) verify the chosen backup independently of the producing process.
   const verified = verifyBackup(join(backupRoot, 'restore-point.db'))
-  assert.equal(verified.schemaVersion, 3)
+  assert.equal(verified.schemaVersion, 4)
   // (c) checkpoint the live database and move the prior file aside
   //     (never overwrite without a retained prior copy).
   const live = openStorage(configFor(root, backupRoot))
@@ -228,14 +231,15 @@ test('verifyBackup: a backup newer than the packaged maximum refuses like STORAG
   writeFileSync(join(set, '0001-a.sql'), PACKAGED_0001)
   writeFileSync(join(set, '0002-b.sql'), PACKAGED_0002)
   writeFileSync(join(set, '0003-c.sql'), PACKAGED_0003)
-  writeFileSync(join(set, '0004-d.sql'), 'CREATE TABLE t_four (x INTEGER NOT NULL)')
+  writeFileSync(join(set, '0004-d.sql'), PACKAGED_0004)
+  writeFileSync(join(set, '0005-e.sql'), 'CREATE TABLE t_five (x INTEGER NOT NULL)')
   const storage = openStorageWithDriver(configFor(root, backupRoot), undefined, {
     migrationDir: set,
   })
   const manifest = await backupTo(storage, 'future.db')
-  assert.equal(manifest.schemaVersion, 4)
+  assert.equal(manifest.schemaVersion, 5)
   closeStorage(storage)
-  // The packaged maximum is 3: this backup refuses exactly like SCHEMA_AHEAD.
+  // The packaged maximum is 4: this backup refuses exactly like SCHEMA_AHEAD.
   assert.throws(
     () => verifyBackup(join(backupRoot, 'future.db')),
     (error: unknown) => {

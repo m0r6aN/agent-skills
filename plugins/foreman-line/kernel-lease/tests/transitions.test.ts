@@ -3,7 +3,7 @@
  * check (AC9), and the L3 stop-report record.
  */
 import assert from 'node:assert/strict'
-import { readFileSync, mkdtempSync, rmSync } from 'node:fs'
+import { mkdtempSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
@@ -14,18 +14,20 @@ import {
   insertGoal,
   insertLease,
   insertTransition,
-  openStorage,
   type OpenStorageConfig,
+  openStorage,
+  updateGoalRow,
 } from '@foreman-line/kernel-state'
 import {
   applyTransition,
   claimLease,
   createEngine,
   decideTransition,
-  type EngineResult,
   EngineError,
+  type EngineResult,
   requestTransition,
 } from '../src/index.js'
+import { removeRoot } from './helpers/child-worker.js'
 
 const T0 = 1_700_000_000_000_000
 const FIXTURES = join(import.meta.dirname, 'fixtures')
@@ -63,21 +65,25 @@ function configFor(root: string): OpenStorageConfig {
 function withSeeded(row: FixtureRow, fn: (engine: ReturnType<typeof createEngine>) => void): void {
   const root = mkdtempSync(join(tmpdir(), 'fk-p10-tr-'))
   const storage = openStorage(configFor(root))
+  const seedGoalId = row.input.goalId === 'goal-absent' ? 'goal-1' : (row.input.goalId as string)
   try {
     insertGoal(storage, {
-      goalId: row.input.goalId === 'goal-absent' ? 'goal-1' : (row.input.goalId as string),
+      goalId: seedGoalId,
       revision: row.setup.goal.revision,
       status: row.setup.goal.status,
-      pendingTransitionId: row.setup.pendingTransitionId ?? null,
       updatedAtMicros: T0,
     })
     if (row.setup.lease !== null && row.setup.lease !== undefined) {
-      insertLease(storage, { ...(row.setup.lease as object), acquiredAtMicros: T0 - 10 } as never)
+      insertLease(storage, {
+        goalId: seedGoalId,
+        ...(row.setup.lease as object),
+        acquiredAtMicros: T0 - 10,
+      } as never)
     }
     for (const transition of row.setup.transitions ?? []) {
       insertTransition(storage, {
         transitionId: transition.transitionId,
-        goalId: 'goal-1',
+        goalId: seedGoalId,
         status: transition.status,
         requestedBy: 'principal-a',
         operationId: `op-seed-${transition.transitionId}`,
@@ -86,20 +92,34 @@ function withSeeded(row: FixtureRow, fn: (engine: ReturnType<typeof createEngine
         decidedAtMicros: transition.decidedAtMicros,
       })
     }
+    // The goal's pending pointer FKs the transitions table: set it only once
+    // the transition rows exist (an inline value at insertGoal violates the FK).
+    if (row.setup.pendingTransitionId != null) {
+      updateGoalRow(
+        storage,
+        seedGoalId,
+        { revision: row.setup.goal.revision },
+        { pendingTransitionId: row.setup.pendingTransitionId },
+      )
+    }
     fn(createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' }))
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 }
 
-function runOp(engine: ReturnType<typeof createEngine>, op: string, input: Record<string, unknown>): unknown {
+function runOp(
+  engine: ReturnType<typeof createEngine>,
+  op: string,
+  input: Record<string, unknown>,
+): unknown {
   switch (op) {
     case 'requestTransition':
       return requestTransition(engine, input as never)
@@ -189,7 +209,11 @@ function validateAgainst(node: SchemaNode, value: unknown, root: SchemaNode): st
     }
   }
   if (node.type === 'string' && typeof value !== 'string') failures.push('type string')
-  if (typeof value === 'string' && node.pattern !== undefined && !new RegExp(node.pattern).test(value)) {
+  if (
+    typeof value === 'string' &&
+    node.pattern !== undefined &&
+    !new RegExp(node.pattern).test(value)
+  ) {
     failures.push(`pattern ${node.pattern}`)
   }
   if (typeof value === 'string' && node.minLength !== undefined && value.length < node.minLength) {
@@ -223,25 +247,38 @@ function validateEffect(schemaText: string, effect: unknown): string[] {
     const record = effect as Record<string, unknown>
     const probe = validateAgainst({ ...condition, type: 'object' }, record, root)
     if (probe.length === 0) {
-      failures.push(...validateAgainst({ ...consequent, type: 'object', additionalProperties: true }, record, root))
+      failures.push(
+        ...validateAgainst(
+          { ...consequent, type: 'object', additionalProperties: true },
+          record,
+          root,
+        ),
+      )
     }
   }
   return failures
 }
 
 test('AC9: every emitted effect validates against schemas/effect-result.schema.json', () => {
-  const schemaText = readFileSync(join(FIXTURES, '..', 'schemas', 'effect-result.schema.json'), 'utf8')
+  const schemaText = readFileSync(
+    join(FIXTURES, '..', '..', 'schemas', 'effect-result.schema.json'),
+    'utf8',
+  )
   const root = mkdtempSync(join(tmpdir(), 'fk-p10-tr-'))
   const storage = openStorage(configFor(root))
   try {
     insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     const bind = (op: string) => ({
       principalRef: 'principal-a',
       operationId: op,
       repositoryRef: 'repo-1',
       worktreeRef: 'wt-1',
-      payloadDigest: `sha256:${op.replace(/[^0-9a-z]/g, '').padEnd(64, '0').slice(0, 64)}`,
+      payloadDigest: `sha256:${Buffer.from(op).toString('hex').padEnd(64, '0').slice(0, 64)}`,
     })
     const claimed = claimLease(engine, {
       goalId: 'goal-1',
@@ -271,13 +308,13 @@ test('AC9: every emitted effect validates against schemas/effect-result.schema.j
     assert.ok(validateEffect(schemaText, broken).length > 0)
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -286,7 +323,20 @@ test('L3 record: a transition toward awaiting-human carries the F05.8 stop-repor
   const storage = openStorage(configFor(root))
   try {
     insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    insertLease(storage, {
+      leaseId: 'lease-1',
+      goalId: 'goal-1',
+      ownerPrincipalRef: 'principal-a',
+      casRevision: 0,
+      acquiredAtMicros: T0 - 10,
+      expiresAtMicros: T0 + 60_000_000,
+      releasedAtMicros: null,
+    })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     requestTransition(engine, {
       goalId: 'goal-1',
       targetStatus: 'awaiting-human',
@@ -310,13 +360,13 @@ test('L3 record: a transition toward awaiting-human carries the F05.8 stop-repor
     assert.equal(typeof stopReport.transitionDescription, 'string')
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -328,7 +378,6 @@ test('decide re-validates the edge from the CURRENT status at decide time (scena
       goalId: 'goal-1',
       revision: 2,
       status: 'awaiting-human',
-      pendingTransitionId: 'tr-1',
       updatedAtMicros: T0,
     })
     insertLease(storage, {
@@ -350,7 +399,14 @@ test('decide re-validates the edge from the CURRENT status at decide time (scena
       createdAtMicros: T0 - 10,
       decidedAtMicros: null,
     })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    // The goal's pending pointer FKs the transitions table: set it only once
+    // the transition row exists (an inline value at insertGoal violates the FK).
+    updateGoalRow(storage, 'goal-1', { goalId: 'goal-1' }, { pendingTransitionId: 'tr-1' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     // active→completed (L4) was legal when requested; awaiting-human→completed
     // (X08) is illegal from the current status.
     assert.throws(
@@ -360,7 +416,11 @@ test('decide re-validates the edge from the CURRENT status at decide time (scena
           transitionId: 'tr-1',
           decision: 'apply',
           gateEvidenceRefs: [
-            { evidenceKind: 'commit-ref', gitIdentity: 'HEAD', digest: `sha256:${'11'.repeat(32)}` },
+            {
+              evidenceKind: 'commit-ref',
+              gitIdentity: 'HEAD',
+              digest: `sha256:${'11'.repeat(32)}`,
+            },
           ],
           expectedRevision: 2,
           idempotencyKey: {
@@ -379,13 +439,13 @@ test('decide re-validates the edge from the CURRENT status at decide time (scena
     )
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -397,7 +457,6 @@ test('decide reject records transition.rejected and leaves status unchanged', ()
       goalId: 'goal-1',
       revision: 1,
       status: 'active',
-      pendingTransitionId: 'tr-1',
       updatedAtMicros: T0,
     })
     insertLease(storage, {
@@ -419,7 +478,14 @@ test('decide reject records transition.rejected and leaves status unchanged', ()
       createdAtMicros: T0 - 10,
       decidedAtMicros: null,
     })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    // The goal's pending pointer FKs the transitions table: set it only once
+    // the transition row exists (an inline value at insertGoal violates the FK).
+    updateGoalRow(storage, 'goal-1', { goalId: 'goal-1' }, { pendingTransitionId: 'tr-1' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     const result = decideTransition(engine, {
       goalId: 'goal-1',
       transitionId: 'tr-1',
@@ -442,12 +508,12 @@ test('decide reject records transition.rejected and leaves status unchanged', ()
     void (result as EngineResult<unknown>)
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })

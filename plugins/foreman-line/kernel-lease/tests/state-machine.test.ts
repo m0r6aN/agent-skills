@@ -4,7 +4,7 @@
  * legal-edge controls (T2 bound to one source: src/state-machine.ts).
  */
 import assert from 'node:assert/strict'
-import { readFileSync, mkdtempSync, rmSync } from 'node:fs'
+import { mkdtempSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
@@ -13,18 +13,23 @@ import {
   fixedClock,
   insertGoal,
   insertLease,
-  openStorage,
+  insertTransition,
   type OpenStorageConfig,
+  openStorage,
+  updateGoalRow,
 } from '@foreman-line/kernel-state'
 import {
   applyTransition,
   createEngine,
+  decideTransition,
   EDGES,
-  EVIDENCE_KINDS,
   EngineError,
+  EVIDENCE_KINDS,
   GOAL_STATUSES,
   type GoalStatus,
+  requestTransition,
 } from '../src/index.js'
+import { removeRoot } from './helpers/child-worker.js'
 
 const T0 = 1_700_000_000_000_000
 const FIXTURES = join(import.meta.dirname, 'fixtures')
@@ -143,10 +148,7 @@ test('AC1: the 25-edge product is complete and single-sourced in state-machine.t
 test('AC1: every illegal edge has exactly one X fixture row and every legal edge a control', () => {
   assert.equal(X_ROWS.length, 18)
   const illegalIds = EDGES.filter((edge) => edge.verdict === 'ILLEGAL').map((edge) => edge.edgeId)
-  assert.deepEqual(
-    X_ROWS.map((row) => row.id).sort(),
-    illegalIds.slice().sort(),
-  )
+  assert.deepEqual(X_ROWS.map((row) => row.id).sort(), illegalIds.slice().sort())
   assert.equal(CTL_ROWS.length, 7)
   assert.deepEqual(
     CTL_ROWS.map((row) => row.edgeId).sort(),
@@ -162,8 +164,8 @@ function runEdge(row: FixtureRow, engine: ReturnType<typeof createEngine>): void
 
 function withSeeded(row: FixtureRow, fn: (engine: ReturnType<typeof createEngine>) => void): void {
   const root = mkdtempSync(join(tmpdir(), 'fk-p10-sm-'))
+  const storage = openStorage(configFor(root))
   try {
-    const storage = openStorage(configFor(root))
     insertGoal(storage, {
       goalId: 'goal-1',
       revision: row.setup.goal.revision,
@@ -171,12 +173,22 @@ function withSeeded(row: FixtureRow, fn: (engine: ReturnType<typeof createEngine
       updatedAtMicros: T0,
     })
     if (row.setup.lease !== null) {
-      insertLease(storage, { ...(row.setup.lease as object), acquiredAtMicros: T0 - 10 } as never)
+      insertLease(storage, {
+        goalId: 'goal-1',
+        ...(row.setup.lease as object),
+        acquiredAtMicros: T0 - 10,
+      } as never)
     }
     fn(createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' }))
-    closeStorage(storage)
   } finally {
-    rmSync(root, { recursive: true, force: true })
+    // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
+    try {
+      closeStorage(storage)
+    } catch {
+      // Best-effort close; cleanup proceeds.
+    }
+    removeRoot(root)
   }
 }
 
@@ -204,6 +216,86 @@ for (const row of CTL_ROWS) {
     })
   })
 }
+
+// R6 (review F4): ILLEGAL_TRANSITION is pinned on EVERY write path —
+// requestTransition and decideTransition as well as applyTransition.
+for (const row of X_ROWS.slice(0, 3)) {
+  test(`${row.id} illegal edge also refuses ILLEGAL_TRANSITION through requestTransition`, () => {
+    withSeeded(row, (engine) => {
+      assert.throws(
+        () => requestTransition(engine, row.input as never),
+        (error: unknown) => {
+          assert.ok(error instanceof EngineError, row.id)
+          assert.equal(error.code, 'ILLEGAL_TRANSITION', row.id)
+          return true
+        },
+      )
+    })
+  })
+}
+
+test('X05 illegal edge refuses ILLEGAL_TRANSITION through decideTransition (edge re-validated at decide)', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fk-p10-sm-'))
+  const storage = openStorage(configFor(root))
+  try {
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
+    insertLease(storage, {
+      leaseId: 'lease-1',
+      goalId: 'goal-1',
+      ownerPrincipalRef: 'principal-a',
+      casRevision: 0,
+      acquiredAtMicros: T0 - 10,
+      expiresAtMicros: T0 + 60_000_000,
+      releasedAtMicros: null,
+    })
+    insertTransition(storage, {
+      transitionId: 'tr-illegal',
+      goalId: 'goal-1',
+      status: 'proposed',
+      requestedBy: 'principal-a',
+      operationId: 'op-r6-decide',
+      payloadDigest: `sha256:${'5e'.repeat(32)}`,
+      createdAtMicros: T0 - 10,
+      decidedAtMicros: null,
+    })
+    updateGoalRow(storage, 'goal-1', { goalId: 'goal-1' }, { pendingTransitionId: 'tr-illegal' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
+    assert.throws(
+      () =>
+        decideTransition(engine, {
+          goalId: 'goal-1',
+          transitionId: 'tr-illegal',
+          decision: 'apply',
+          expectedRevision: 0,
+          idempotencyKey: {
+            principalRef: 'principal-a',
+            operationId: 'op-r6-decide-apply',
+            repositoryRef: 'repo-1',
+            worktreeRef: 'wt-1',
+            payloadDigest: `sha256:${'66'.repeat(32)}`,
+          },
+        }),
+      (error: unknown) => {
+        assert.ok(error instanceof EngineError)
+        assert.equal(error.code, 'ILLEGAL_TRANSITION')
+        return true
+      },
+    )
+  } finally {
+    // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
+    try {
+      closeStorage(storage)
+    } catch {
+      // Best-effort close; cleanup proceeds.
+    }
+    removeRoot(root)
+  }
+})
 
 test('every status literal is reachable as a from-status and a to-status across the product', () => {
   for (const status of GOAL_STATUSES) {
