@@ -4,7 +4,7 @@
  * proving no driver text/host path/credential can leak (AC11).
  */
 import assert from 'node:assert/strict'
-import { mkdtempSync, rmSync } from 'node:fs'
+import { mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
@@ -15,8 +15,8 @@ import {
   insertIdempotencyKey,
   insertLease,
   insertTransition,
-  openStorage,
   type OpenStorageConfig,
+  openStorage,
   type Storage,
 } from '@foreman-line/kernel-state'
 import {
@@ -24,8 +24,8 @@ import {
   claimLease,
   createEngine,
   decideTransition,
-  ENGINE_ERROR_CODES,
   ENGINE_ERROR_CODE_COUNT,
+  ENGINE_ERROR_CODES,
   ENGINE_ERROR_DISPOSITIONS,
   ENGINE_ERROR_REGISTRY,
   EngineError,
@@ -36,8 +36,42 @@ import {
   requestTransition,
   TrustedClock,
 } from '../src/index.js'
+import { removeRoot } from './helpers/child-worker.js'
 
 const T0 = 1_700_000_000_000_000
+
+/**
+ * Read-path defense seam (standing #2: rows are `unknown` until normalized).
+ * FK-P9's DB-level status CHECKs (A1a/A1b) make a genuinely out-of-vocabulary
+ * `goals.status` row unwritable, so the engine's `GOAL_STATUS_UNKNOWN` read
+ * refusal is exercised by patching the row at the driver boundary — the shape
+ * of a legacy row arriving through an otherwise trusted substrate.
+ */
+function poisonGoalStatus(storage: Storage, goalId: string, status: string): Storage {
+  const driver = storage.driver
+  const patch = (row: unknown): unknown => {
+    const record = row as Record<string, unknown> | null
+    if (record !== null && record.goal_id === goalId && 'status' in record) {
+      return { ...record, status }
+    }
+    return row
+  }
+  const poisoned = {
+    exec: (sql: string) => {
+      driver.exec(sql)
+    },
+    prepare: (sql: string) => {
+      const statement = driver.prepare(sql)
+      return {
+        run: (...args: unknown[]) => statement.run(...args),
+        get: (...args: unknown[]) => patch(statement.get(...args)),
+        all: (...args: unknown[]) => (statement.all(...args) as unknown[]).map(patch),
+      }
+    },
+    pragma: (source: string) => driver.pragma(source),
+  }
+  return { ...storage, driver: poisoned } as unknown as Storage
+}
 
 function configFor(root: string): OpenStorageConfig {
   return {
@@ -57,6 +91,8 @@ const bind = (op: string, who = 'principal-a') => ({
   payloadDigest: `sha256:${Buffer.from(op).toString('hex').padEnd(64, '0').slice(0, 64)}`,
 })
 
+const observedRefusalCodes = new Set<string>()
+
 function expectCode(fn: () => unknown, code: string): EngineError {
   let caught: unknown
   try {
@@ -66,12 +102,13 @@ function expectCode(fn: () => unknown, code: string): EngineError {
   }
   assert.ok(caught instanceof EngineError, `expected EngineError ${code}, got ${String(caught)}`)
   assert.equal(caught.code, code)
+  observedRefusalCodes.add(caught.code)
   return caught
 }
 
-test('registry is closed by derivation: 22 codes, type/table agreement, dispositions complete', () => {
-  assert.equal(ENGINE_ERROR_CODE_COUNT, 22)
-  assert.equal(ENGINE_ERROR_CODES.length, 22)
+test('registry is closed by derivation: 23 codes, type/table agreement, dispositions complete', () => {
+  assert.equal(ENGINE_ERROR_CODE_COUNT, 23)
+  assert.equal(ENGINE_ERROR_CODES.length, 23)
   for (const code of ENGINE_ERROR_CODES) {
     assert.ok(ENGINE_ERROR_REGISTRY[code].invariant.length > 0)
     assert.ok(code in ENGINE_ERROR_DISPOSITIONS)
@@ -93,15 +130,27 @@ test('one tested refusal per code (fault-injection matrix)', () => {
   const storage = openStorage(configFor(root))
   try {
     insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
-    insertGoal(storage, { goalId: 'goal-term', revision: 0, status: 'completed', updatedAtMicros: T0 })
-    insertGoal(storage, { goalId: 'goal-weird', revision: 0, status: 'gate.satisfied', updatedAtMicros: T0 })
+    insertGoal(storage, {
+      goalId: 'goal-term',
+      revision: 0,
+      status: 'completed',
+      updatedAtMicros: T0,
+    })
+    // The A1a CHECK makes an invalid status unwritable; seeded valid and
+    // poisoned at the driver seam below (GOAL_STATUS_UNKNOWN case).
+    insertGoal(storage, {
+      goalId: 'goal-weird',
+      revision: 0,
+      status: 'active',
+      updatedAtMicros: T0,
+    })
     insertLease(storage, {
       leaseId: 'lease-1',
       goalId: 'goal-1',
       ownerPrincipalRef: 'principal-a',
       casRevision: 0,
       acquiredAtMicros: T0 - 10,
-      expiresAtMicros: T0 - 1,
+      expiresAtMicros: T0 + 60_000_000,
       releasedAtMicros: null,
     })
     insertLease(storage, {
@@ -113,13 +162,15 @@ test('one tested refusal per code (fault-injection matrix)', () => {
       expiresAtMicros: T0 + 60_000_000,
       releasedAtMicros: T0 - 5,
     })
+    // goal-exp carries the expired-but-unreleased lease (LEASE_EXPIRED).
+    insertGoal(storage, { goalId: 'goal-exp', revision: 0, status: 'active', updatedAtMicros: T0 })
     insertLease(storage, {
-      leaseId: 'lease-other',
-      goalId: 'goal-1',
-      ownerPrincipalRef: 'principal-b',
+      leaseId: 'lease-exp',
+      goalId: 'goal-exp',
+      ownerPrincipalRef: 'principal-a',
       casRevision: 0,
       acquiredAtMicros: T0 - 10,
-      expiresAtMicros: T0 + 60_000_000,
+      expiresAtMicros: T0 - 1,
       releasedAtMicros: null,
     })
     insertTransition(storage, {
@@ -147,7 +198,7 @@ test('one tested refusal per code (fault-injection matrix)', () => {
       operationId: 'op-inflight',
       repositoryRef: 'repo-1',
       worktreeRef: 'wt-1',
-      payloadDigest: `sha256:${'if'.repeat(32)}`,
+      payloadDigest: `sha256:${'1f'.repeat(32)}`,
       effectDigest: null,
       recordedAtMicros: T0 - 10,
       completedAtMicros: null,
@@ -162,7 +213,11 @@ test('one tested refusal per code (fault-injection matrix)', () => {
       recordedAtMicros: T0 - 10,
       completedAtMicros: T0 - 10,
     })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
 
     // 1 LEASE_HELD
     expectCode(
@@ -180,8 +235,8 @@ test('one tested refusal per code (fault-injection matrix)', () => {
     expectCode(
       () =>
         renewLease(engine, {
-          goalId: 'goal-1',
-          leaseId: 'lease-1',
+          goalId: 'goal-exp',
+          leaseId: 'lease-exp',
           durationMicros: 5_000_000,
           expectedRevision: 0,
           idempotencyKey: bind('err-02'),
@@ -193,7 +248,7 @@ test('one tested refusal per code (fault-injection matrix)', () => {
       () =>
         releaseLease(engine, {
           goalId: 'goal-1',
-          leaseId: 'lease-other',
+          leaseId: 'lease-1',
           expectedRevision: 0,
           idempotencyKey: bind('err-03', 'principal-c'),
         }),
@@ -244,8 +299,14 @@ test('one tested refusal per code (fault-injection matrix)', () => {
         }),
       'GOAL_TERMINAL',
     )
-    // 7 GOAL_STATUS_UNKNOWN
-    expectCode(() => getGoalState(engine, 'goal-weird'), 'GOAL_STATUS_UNKNOWN')
+    // 7 GOAL_STATUS_UNKNOWN (read-path defense; the poisoned row stands in for
+    // a legacy row the A1a CHECK can no longer admit).
+    const weirdEngine = createEngine({
+      storage: poisonGoalStatus(storage, 'goal-weird', 'gate.satisfied'),
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
+    expectCode(() => getGoalState(weirdEngine, 'goal-weird'), 'GOAL_STATUS_UNKNOWN')
     // 8 TRANSITION_ABSENT
     expectCode(
       () =>
@@ -277,6 +338,15 @@ test('one tested refusal per code (fault-injection matrix)', () => {
       status: 'active',
       pendingTransitionId: 'tr-side',
       updatedAtMicros: T0,
+    })
+    insertLease(storage, {
+      leaseId: 'lease-p',
+      goalId: 'goal-pending',
+      ownerPrincipalRef: 'principal-a',
+      casRevision: 0,
+      acquiredAtMicros: T0 - 10,
+      expiresAtMicros: T0 + 60_000_000,
+      releasedAtMicros: null,
     })
     expectCode(
       () =>
@@ -356,7 +426,8 @@ test('one tested refusal per code (fault-injection matrix)', () => {
         }),
       'IDEMPOTENCY_CONFLICT',
     )
-    // 17 IDEMPOTENCY_IN_FLIGHT
+    // 17 IDEMPOTENCY_IN_FLIGHT (same key AND same payloadDigest: an incomplete
+    // binding is never re-executed; a differing digest would conflict first)
     expectCode(
       () =>
         claimLease(engine, {
@@ -364,7 +435,10 @@ test('one tested refusal per code (fault-injection matrix)', () => {
           leaseId: 'lease-x',
           durationMicros: 5_000_000,
           expectedRevision: 0,
-          idempotencyKey: bind('op-inflight'),
+          idempotencyKey: {
+            ...bind('op-inflight'),
+            payloadDigest: `sha256:${'1f'.repeat(32)}`,
+          },
         }),
       'IDEMPOTENCY_IN_FLIGHT',
     )
@@ -408,27 +482,197 @@ test('one tested refusal per code (fault-injection matrix)', () => {
       'ENGINE_ARGUMENT_INVALID',
     )
     // 22 STORAGE_FAILURE (a closed substrate handle wrapped at the seam)
-    const closedError = expectCode(
+    const closedRoot = mkdtempSync(join(tmpdir(), 'fk-p10-err-'))
+    const closedStorage = openStorage(configFor(closedRoot))
+    closeStorage(closedStorage)
+    const closedEngine = createEngine({
+      storage: closedStorage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
+    try {
+      const closedError = expectCode(
+        () =>
+          claimLease(closedEngine, {
+            goalId: 'goal-1',
+            leaseId: 'lease-x',
+            durationMicros: 5_000_000,
+            expectedRevision: 0,
+            idempotencyKey: bind('err-22'),
+          }),
+        'STORAGE_FAILURE',
+      )
+      assert.deepEqual(closedError.diagnostic, { storageCode: 'STORAGE_CLOSED' })
+    } finally {
+      removeRoot(closedRoot)
+    }
+    // 23 IDEMPOTENCY_RESULT_UNAVAILABLE (legacy completed binding without
+    // recorded bytes: never invented, never re-executed)
+    insertIdempotencyKey(storage, {
+      principalRef: 'principal-a',
+      operationId: 'op-legacy',
+      repositoryRef: 'repo-1',
+      worktreeRef: 'wt-1',
+      payloadDigest: `sha256:${Buffer.from('op-legacy').toString('hex').padEnd(64, '0').slice(0, 64)}`,
+      effectDigest: `sha256:${'ab'.repeat(32)}`,
+      recordedAtMicros: T0 - 10,
+      completedAtMicros: T0 - 10,
+    })
+    expectCode(
       () =>
         claimLease(engine, {
           goalId: 'goal-1',
           leaseId: 'lease-x',
           durationMicros: 5_000_000,
           expectedRevision: 0,
-          idempotencyKey: bind('err-22'),
+          idempotencyKey: bind('op-legacy'),
         }),
-      'STORAGE_FAILURE',
+      'IDEMPOTENCY_RESULT_UNAVAILABLE',
     )
-    assert.deepEqual(closedError.diagnostic, { storageCode: 'STORAGE_CLOSED' })
+    // R8 (review F7): mechanical per-code coverage map — every registry code
+    // is observed here (AC1 inventory-map pattern).
+    assert.deepEqual([...observedRefusalCodes].sort(), [...ENGINE_ERROR_CODES].sort())
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
+  }
+})
+
+test('R2: one transient substrate failure mid-operation is retried (the operation still lands)', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fk-p10-err-'))
+  const storage = openStorage(configFor(root))
+  try {
+    insertGoal(storage, { goalId: 'goal-1', revision: 2, status: 'active', updatedAtMicros: T0 })
+    insertLease(storage, {
+      leaseId: 'lease-1',
+      goalId: 'goal-1',
+      ownerPrincipalRef: 'principal-a',
+      casRevision: 2,
+      acquiredAtMicros: T0 - 10,
+      expiresAtMicros: T0 + 60_000_000,
+      releasedAtMicros: null,
+    })
+    // The first UPDATE goals trips a SQLITE_BUSY-class driver error; the
+    // rolled-back attempt is retried (R2), so the operation still applies with
+    // its named outcome instead of a degraded STORAGE_FAILURE.
+    let attempts = 0
+    const driver = storage.driver
+    const flaky = {
+      exec: (sql: string) => {
+        driver.exec(sql)
+      },
+      prepare: (sql: string) => {
+        const statement = driver.prepare(sql)
+        return {
+          run: (...args: unknown[]) => {
+            if (sql.includes('UPDATE goals')) {
+              attempts += 1
+              if (attempts === 1) {
+                const busy = new Error('database is locked') as Error & { code: string }
+                busy.code = 'SQLITE_BUSY'
+                throw busy
+              }
+            }
+            return statement.run(...args)
+          },
+          get: (...args: unknown[]) => statement.get(...args),
+          all: (...args: unknown[]) => statement.all(...args),
+        }
+      },
+      pragma: (source: string) => driver.pragma(source),
+    }
+    const engine = createEngine({
+      storage: { ...storage, driver: flaky } as unknown as Storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
+    const applied = applyTransition(engine, {
+      goalId: 'goal-1',
+      targetStatus: 'cancelled',
+      expectedRevision: 2,
+      idempotencyKey: bind('r2-transient'),
+    })
+    assert.equal(applied.effect.code, 'EFFECT_APPLIED')
+    assert.equal(attempts, 2, 'exactly one transient failure, one retry')
+  } finally {
+    try {
+      closeStorage(storage)
+    } catch {
+      // Best-effort close; cleanup proceeds.
+    }
+    removeRoot(root)
+  }
+})
+
+test('R2: non-transient substrate failures are never retried (true failures surface)', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fk-p10-err-'))
+  const storage = openStorage(configFor(root))
+  try {
+    insertGoal(storage, { goalId: 'goal-1', revision: 2, status: 'active', updatedAtMicros: T0 })
+    insertLease(storage, {
+      leaseId: 'lease-1',
+      goalId: 'goal-1',
+      ownerPrincipalRef: 'principal-a',
+      casRevision: 2,
+      acquiredAtMicros: T0 - 10,
+      expiresAtMicros: T0 + 60_000_000,
+      releasedAtMicros: null,
+    })
+    let attempts = 0
+    const driver = storage.driver
+    const corrupt = {
+      exec: (sql: string) => {
+        driver.exec(sql)
+      },
+      prepare: (sql: string) => {
+        const statement = driver.prepare(sql)
+        return {
+          run: (...args: unknown[]) => {
+            if (sql.includes('UPDATE goals')) {
+              attempts += 1
+              const broken = new Error('database disk image is malformed') as Error & {
+                code: string
+              }
+              broken.code = 'SQLITE_CORRUPT'
+              throw broken
+            }
+            return statement.run(...args)
+          },
+          get: (...args: unknown[]) => statement.get(...args),
+          all: (...args: unknown[]) => statement.all(...args),
+        }
+      },
+      pragma: (source: string) => driver.pragma(source),
+    }
+    const engine = createEngine({
+      storage: { ...storage, driver: corrupt } as unknown as Storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
+    expectCode(
+      () =>
+        applyTransition(engine, {
+          goalId: 'goal-1',
+          targetStatus: 'cancelled',
+          expectedRevision: 2,
+          idempotencyKey: bind('r2-corrupt'),
+        }),
+      'STORAGE_FAILURE',
+    )
+    assert.equal(attempts, 1, 'a true failure is attempted exactly once')
+  } finally {
+    try {
+      closeStorage(storage)
+    } catch {
+      // Best-effort close; cleanup proceeds.
+    }
+    removeRoot(root)
   }
 })
 
@@ -437,7 +681,20 @@ test('safe diagnostics carry only declared shapes (ids/revision/field paths — 
   const storage = openStorage(configFor(root))
   try {
     insertGoal(storage, { goalId: 'goal-1', revision: 2, status: 'active', updatedAtMicros: T0 })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    insertLease(storage, {
+      leaseId: 'lease-1',
+      goalId: 'goal-1',
+      ownerPrincipalRef: 'principal-a',
+      casRevision: 2,
+      acquiredAtMicros: T0 - 10,
+      expiresAtMicros: T0 + 60_000_000,
+      releasedAtMicros: null,
+    })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     const stale = expectCode(
       () =>
         applyTransition(engine, {
@@ -468,13 +725,13 @@ test('safe diagnostics carry only declared shapes (ids/revision/field paths — 
     }
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -521,13 +778,13 @@ test('fault injection: a driver error carrying secrets surfaces STORAGE_FAILURE 
     assert.ok(!failure.message.includes('hunter2'))
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 

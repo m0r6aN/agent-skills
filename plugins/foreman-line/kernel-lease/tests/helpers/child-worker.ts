@@ -13,26 +13,27 @@
  * never kill a racer; every participant's output is printed before the parent
  * asserts anything.
  */
-import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { pathToFileURL } from 'node:url'
 import {
+  type Clock,
   closeStorage,
   fixedClock,
   openStorage,
   systemClock,
-  type Clock,
 } from '@foreman-line/kernel-state'
 import {
   applyTransition,
   claimLease,
   createEngine,
   decideTransition,
+  type Engine,
   EngineError,
   getGoalState,
   releaseLease,
   renewLease,
   requestTransition,
-  type Engine,
 } from '../../src/index.js'
 
 const T0 = 1_700_000_000_000_000
@@ -159,12 +160,15 @@ function crashMode(argv: string[]): void {
   const [dbRoot, faultJson, markerDir] = argv
   const plan = JSON.parse(readFileSync(faultJson as string, 'utf8')) as FaultPlan
   plan.markerDir = markerDir as string
+  // Fixture scenarios name the OPERATION in fixture vocabulary; the engine
+  // surface names it in API vocabulary ('claim' is claimLease).
+  const op = plan.scenario === 'claim' ? 'claimLease' : plan.scenario
   try {
     const storage = openStorage({
       storageRoot: dbRoot as string,
       databaseFileName: 'state.db',
       createIfMissing: false,
-      clock: systemClock(),
+      clock: fixedSeam(),
       backupPolicy: { root: dbRoot as string, retentionDescriptor: null },
     })
     const engine = createEngine({
@@ -172,18 +176,18 @@ function crashMode(argv: string[]): void {
         ...storage,
         driver: wrapDriverForFault(storage.driver, plan),
       } as Engine['storage'],
-      clock: systemClock(),
+      clock: fixedSeam(),
       toolVersion: 'child-worker-0.1.0',
     })
     if (plan.kill === 'post-commit-pre-result') {
       // CR-04: the transaction commits; the process dies before the result
       // returns to the caller.
-      runOperation(engine, plan.scenario, plan.request)
+      runOperation(engine, op, plan.request)
       writeFileSync(join(plan.markerDir, 'fault-reached'), 'post-commit\n')
       process.stdout.write('fault-reached\n')
       blockForever()
     }
-    runOperation(engine, plan.scenario, plan.request)
+    runOperation(engine, op, plan.request)
     // No fault fired — the scenario is misconfigured; say so loudly.
     writeFileSync(join(plan.markerDir, 'fault-missed'), plan.afterStatement)
   } catch (error) {
@@ -345,7 +349,10 @@ function contentionMode(argv: string[]): void {
       } catch (error) {
         if (error instanceof EngineError) {
           outcomeCode = error.code
-          if (error.code === 'STORAGE_FAILURE' && error.diagnostic.storageCode === 'STORAGE_LOCK_TIMEOUT') {
+          if (
+            error.code === 'STORAGE_FAILURE' &&
+            error.diagnostic.storageCode === 'STORAGE_LOCK_TIMEOUT'
+          ) {
             busyTimeoutsObserved += 1
           }
         } else {
@@ -405,20 +412,46 @@ function skewGrantMode(argv: string[]): void {
   }
 }
 
-const [, , mode, ...rest] = process.argv
-switch (mode) {
-  case 'crash':
-    crashMode(rest)
-    break
-  case 'race':
-    raceMode(rest)
-    break
-  case 'contention':
-    contentionMode(rest)
-    break
-  case 'skew-grant':
-    skewGrantMode(rest)
-    break
-  default:
-    harnessFault('dispatch', new Error(`unknown mode ${String(mode)}`))
+/**
+ * Windows-safe test cleanup (R3): EPERM on a just-closed SQLite tree is
+ * transient — retry with backoff; a cleanup failure is reported, never thrown,
+ * so it can never mask the test verdict.
+ */
+export function removeRoot(root: string): void {
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    try {
+      rmSync(root, { recursive: true, force: true })
+      return
+    } catch {
+      // Transient lock; back off below and retry.
+    }
+    // Real backoff: Windows file-lock release is OS state; fake timers cannot
+    // advance it.
+    const parking = new Int32Array(new SharedArrayBuffer(4))
+    Atomics.wait(parking, 0, 0, 25 * 2 ** attempt)
+  }
+  console.error(`cleanup: could not remove ${root} after retries`)
+}
+
+// Dispatch only when executed as the worker; importing the module for helpers
+// must never run a mode.
+const entry = process.argv[1]
+if (entry !== undefined && import.meta.url === pathToFileURL(entry).href) {
+  const [, , mode, ...rest] = process.argv
+  switch (mode) {
+    case 'crash':
+      crashMode(rest)
+      break
+    case 'race':
+      raceMode(rest)
+      break
+    case 'contention':
+      contentionMode(rest)
+      break
+    case 'skew-grant':
+      skewGrantMode(rest)
+      break
+    default:
+      harnessFault('dispatch', new Error(`unknown mode ${String(mode)}`))
+  }
 }

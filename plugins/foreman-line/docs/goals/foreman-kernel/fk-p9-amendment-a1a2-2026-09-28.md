@@ -85,3 +85,64 @@ stands.
 `HARNESS_*`-branded seam errors now rethrow across the seam boundary unwrapped
 (`readAppliedMigrations` catch): harness failures never launder into
 product-shaped errors on either racer path.
+
+---
+
+# Amendment A1d — recorded-result persistence (2026-09-28)
+
+**Scope:** `migrations/0004-idempotency-recorded-result.sql` + write/read
+primitives in `rows.ts` (exported from `index.ts`). The A1-family record now
+covers A1/A2/A1b/A1c/A1d.
+
+**Why (ruling on FK-P10 review finding F2).** FK-P10 T6 (spec lines 301–312)
+requires completed same-key bindings to replay their recorded result
+**verbatim**: "Returns the recorded result verbatim — the original
+`EffectResult` (same `code`, `decision`, `effectDigest`, `goalRevision` as
+originally recorded) with `replay: true`", and each accepted call writes
+"exactly one completed binding row in the same transaction as the effect".
+T7 (line 326ff) composes every effectful op as exactly one FK-P9
+`withTransaction`, and its `claim (no-op)` row writes **`insertIdempotencyKey`
+only (completed, `effect_digest` null)** — T7 forbids persisting NOOP events.
+A completed NOOP binding therefore had **no recorded bytes** to replay from,
+and the engine re-derived values (probe-proven: a recorded `goalRevision` of 1
+replayed as 2 after an intervening renew). **RULING: fix at the substrate,
+never weaken T6** — persist the recorded `EffectResult`'s canonical bytes with
+the binding at completion time.
+
+**Design (recorded decisions).**
+- **Unified completion write:** `recordCompletedBinding(storage, input)`
+  stores the binding row together with `recorded_result` (the canonical bytes,
+  required) — BOTH APPLIED and NOOP completions store their result, so the
+  re-derivation class is eliminated entirely. Read path:
+  `getRecordedResult(storage, bindingKey): Uint8Array | null` (normalized,
+  `readOne` pattern). `null` means **"no recorded result"** (legacy row or
+  absent binding) — the consumer must treat null as absence and must NOT
+  invent one.
+- **Lighter path (preferred per the amendment brief):** `idempotency_keys` is
+  not foreign-key-referenced and `recorded_result` is a NULL-able BLOB, so a
+  pure additive `ALTER TABLE idempotency_keys ADD COLUMN recorded_result BLOB`
+  suffices — no table rebuild / 12-step cycle (unlike 0002/0003, whose targets
+  are FK-referenced). The established migration wrapper still runs it in one
+  `BEGIN IMMEDIATE` with the ledger insert and the pre-commit
+  `foreign_key_check` gate.
+- **Export encoding:** BLOB columns serialize as base64 strings in export rows
+  (deterministic; compatible with the export schema's ColumnRow `string`); the
+  golden vector pins the encoding.
+- The existing `insertIdempotencyKey` remains the request-time binding write
+  (no result bytes); `recordCompletedBinding` is the completion-time write.
+
+**Verification (kernel-state chain, direct exits):** `node -v` → 0; `npm ci`
+(lockfile unchanged) → 0; `npm run typecheck` → 0; `npm test` → 0 (167/167);
+`npm run lint` → 0. Named tests: `A1d: recordCompletedBinding stores result
+bytes and getRecordedResult returns them exactly` (failing-when-broken:
+mutating the stored bytes changes exactly what the read returns — bytes bind
+literally, never re-derived); `A1d: legacy bindings without stored results
+read null; consumers must not invent one`; `A1d: APPLIED and NOOP completions
+both store their result (unified invariant)`; `A1d: prior-schema (v3)
+databases migrate forward transactionally to v4` (row preserved; new column
+reads null). **Golden export re-derived** (4-row ledger + `recorded_result`
+column): `sha256:cf9bc7e2f3ff4b5f385f85fdd14b6d1e5f2aa8b08a2a356e9f60f2b6639e67f3`
+(delta paths: `tests/fixtures/golden/export-golden.json` — including a
+`recordCompletedBinding` fixture op pinning the base64 encoding;
+`migrations/0004-idempotency-recorded-result.sql`; `src/export.ts` BLOB
+encoding; `src/rows.ts`).

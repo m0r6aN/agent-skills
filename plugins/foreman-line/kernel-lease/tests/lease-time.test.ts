@@ -4,7 +4,7 @@
  */
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { readFileSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
@@ -13,8 +13,8 @@ import {
   fixedClock,
   insertGoal,
   insertLease,
-  openStorage,
   type OpenStorageConfig,
+  openStorage,
 } from '@foreman-line/kernel-state'
 import {
   claimLease,
@@ -24,6 +24,7 @@ import {
   renewLease,
   TrustedClock,
 } from '../src/index.js'
+import { removeRoot } from './helpers/child-worker.js'
 
 const T0 = 1_700_000_000_000_000
 const FIXTURES = join(import.meta.dirname, 'fixtures')
@@ -44,7 +45,9 @@ interface ClockRow {
   expectedOutcome?: string
 }
 
-const parsedFixture: unknown = JSON.parse(readFileSync(join(FIXTURES, 'hostile', 'clock.json'), 'utf8'))
+const parsedFixture: unknown = JSON.parse(
+  readFileSync(join(FIXTURES, 'hostile', 'clock.json'), 'utf8'),
+)
 const fixtureTable = parsedFixture as { records: ClockRow[] }
 const CLK = fixtureTable.records
 
@@ -109,13 +112,13 @@ test('CLK-01 regressing reading refuses CLOCK_REGRESSION and never proceeds', ()
     )
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -139,13 +142,13 @@ for (const id of ['CLK-02', 'CLK-03', 'CLK-04']) {
       )
     } finally {
       // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-      // and turns rmSync's EPERM into the reported failure, masking the real one.
+      // and removeRoot retries EPERM without ever masking the test verdict (R3).
       try {
         closeStorage(storage)
       } catch {
         // Best-effort close; cleanup proceeds.
       }
-      rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+      removeRoot(root)
     }
   })
 }
@@ -172,16 +175,53 @@ for (const id of ['CLK-05', 'CLK-06']) {
       )
     } finally {
       // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-      // and turns rmSync's EPERM into the reported failure, masking the real one.
+      // and removeRoot retries EPERM without ever masking the test verdict (R3).
       try {
         closeStorage(storage)
       } catch {
         // Best-effort close; cleanup proceeds.
       }
-      rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+      removeRoot(root)
     }
   })
 }
+
+test('R7: createEngine refuses unknown option members (exact set; evidenceKindPolicy optional)', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fk-p10-clk-'))
+  const storage = openStorage(configFor(root))
+  try {
+    for (const smuggled of ['nowMicros', 'expiresAtMicros', 'now', 'timestamp']) {
+      assert.throws(
+        () =>
+          createEngine({
+            storage,
+            clock: sequenceClock([T0]),
+            toolVersion: 'kernel-lease-test',
+            [smuggled]: 1,
+          } as never),
+        (error: unknown) => {
+          assert.ok(error instanceof EngineError, smuggled)
+          assert.equal(error.code, 'ENGINE_ARGUMENT_INVALID', smuggled)
+          assert.deepEqual(error.diagnostic, { fieldPath: `createEngine.${smuggled}` }, smuggled)
+          return true
+        },
+      )
+    }
+    // Positive control: the exact member set (optional member omitted) works.
+    assert.ok(
+      createEngine({ storage, clock: sequenceClock([T0]), toolVersion: 'kernel-lease-test' }),
+    )
+  } finally {
+    // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
+    try {
+      closeStorage(storage)
+    } catch {
+      // Best-effort close; cleanup proceeds.
+    }
+    removeRoot(root)
+  }
+})
 
 test('CLK-07 forward-skewed child-process grant is judged from stored micros vs local trusted now', () => {
   const root = mkdtempSync(join(tmpdir(), 'fk-p10-clk-'))
@@ -238,7 +278,7 @@ test('CLK-07 forward-skewed child-process grant is judged from stored micros vs 
       }
     }
   } finally {
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -270,13 +310,13 @@ test('CLK-08 backward-skewed renew cannot resurrect an expired lease', () => {
     )
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -312,13 +352,13 @@ test('AC4: every lease-time decision reads the seam exactly once per operation',
     assert.equal(seam.reads, 2, 'renew must read the seam exactly once')
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 

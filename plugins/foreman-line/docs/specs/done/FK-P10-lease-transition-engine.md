@@ -388,13 +388,14 @@ linear-time and typed (standing #19/#2).
 | `GATE_STATE_NOT_WRITABLE` | gate-satisfaction write attempt (reserved status namespace `gate.*`/`human.*`, reserved input fields) | REFUSE | field path only |
 | `IDEMPOTENCY_CONFLICT` | same key, different `payloadDigest` (F05.12 literal) | CONFLICT (F05.12 code verbatim) | binding ids only |
 | `IDEMPOTENCY_IN_FLIGHT` | completed binding row absent (`completed_at_micros` NULL) | CONFLICT | binding ids only |
+| `IDEMPOTENCY_RESULT_UNAVAILABLE` | completed binding without a safely replayable recorded result (legacy row) — never invented, never re-executed (23rd code; coordinator ruling 2026-09-28, rework R4 flag 1) | CONFLICT | binding ids only |
 | `STATE_REVISION_STALE` | CAS mismatch (F05.12 literal) | CONFLICT (F05.12 code verbatim) | revision numbers only |
 | `CLOCK_REGRESSION` | trusted-clock reading below a prior reading | kernel failure family (`KERNEL_INTERNAL_FAILURE` at the boundary) | none |
 | `CLOCK_UNTRUSTED` | trusted-clock reading malformed | kernel failure family | none |
 | `ENGINE_ARGUMENT_INVALID` | structural input failure (unknown field, bad Id/Digest/Micros shapes, bad duration, malformed binding) | protocol-error family (`INVALID_REQUEST` at the boundary) | field path only |
 | `STORAGE_FAILURE` | wrapped FK-P9 `StorageError` at a substrate seam | kernel failure family | FK-P9 `StorageErrorCode` literal only |
 
-22 codes, closed. No driver message text, host path, row content, credential, or
+23 codes, closed. No driver message text, host path, row content, credential, or
 unbounded value can reach a caller (fault-injection test per code). The F05.12 column
 is a consuming-surface annotation in the FK-P17 T4 pattern: exact literals are used
 verbatim where F05.12 names them (`IDEMPOTENCY_CONFLICT`, `STATE_REVISION_STALE`,

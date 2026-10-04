@@ -6,7 +6,7 @@
  */
 import assert from 'node:assert/strict'
 import { type ChildProcess, spawn } from 'node:child_process'
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync, mkdirSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
@@ -16,10 +16,11 @@ import {
   fixedClock,
   insertGoal,
   insertLease,
-  openStorage,
   type OpenStorageConfig,
+  openStorage,
 } from '@foreman-line/kernel-state'
 import { applyTransition, claimLease, createEngine, requestTransition } from '../src/index.js'
+import { removeRoot } from './helpers/child-worker.js'
 
 const T0 = 1_700_000_000_000_000
 const FIXTURES = join(import.meta.dirname, 'fixtures')
@@ -32,7 +33,9 @@ interface CrashRow {
   expectedOutcome: { state: string; retry: string }
 }
 
-const parsedFixture: unknown = JSON.parse(readFileSync(join(FIXTURES, 'hostile', 'crash.json'), 'utf8'))
+const parsedFixture: unknown = JSON.parse(
+  readFileSync(join(FIXTURES, 'hostile', 'crash.json'), 'utf8'),
+)
 const fixtureTable = parsedFixture as { records: CrashRow[] }
 const CR = fixtureTable.records
 
@@ -121,7 +124,11 @@ function snapshotTables(root: string): Record<string, number> {
 function retryInParent(row: CrashRow, root: string): { replay: boolean; code: string } {
   const storage = openStorage(configFor(root))
   try {
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     const request = requestFor(row)
     const result =
       row.scenario === 'claim'
@@ -194,7 +201,10 @@ for (const row of CR) {
     try {
       seedFor(row.scenario, root)
       const planPath = join(root, 'fault-plan.json')
-      writeFileSync(planPath, JSON.stringify({ ...row.fault, scenario: row.scenario, request: requestFor(row) }))
+      writeFileSync(
+        planPath,
+        JSON.stringify({ ...row.fault, scenario: row.scenario, request: requestFor(row) }),
+      )
       const child = spawn(
         process.execPath,
         ['--import', 'tsx', WORKER, 'crash', root, planPath, markerDir],
@@ -223,7 +233,7 @@ for (const row of CR) {
             goals: 1,
             goalRevision: 0,
             transitions: 0,
-            leases: 0,
+            leases: row.scenario === 'requestTransition' ? 1 : 0,
             idempotency_keys: 0,
             projection_cursors: 0,
             cursorSeq: -1,
@@ -260,14 +270,10 @@ for (const row of CR) {
         assert.equal(retry.replay, true, `${row.id}: CR-04 retry must replay, not re-execute`)
         assert.equal(retry.code, 'EFFECT_APPLIED')
         const afterRetry = snapshotTables(root)
-        assert.deepEqual(
-          afterRetry,
-          afterKill,
-          `${row.id}: replay writes nothing (zero deltas)`,
-        )
+        assert.deepEqual(afterRetry, afterKill, `${row.id}: replay writes nothing (zero deltas)`)
       }
     } finally {
-      rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+      removeRoot(root)
     }
   })
 }

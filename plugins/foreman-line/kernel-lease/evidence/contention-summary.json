@@ -1,0 +1,63 @@
+{
+  "plan": {
+    "racerProcesses": 4,
+    "attemptsPerRacer": 50,
+    "goals": 1,
+    "repeats": 3
+  },
+  "claimBoundary": "contention records only — these records feed the deferred INF-6 baseline (FK-P21 stranded fragment); no baseline figure, ranking, or comparative claim is made here",
+  "feedsDeferredInf6Baseline": true,
+  "populations": {
+    "expectedRecords": 600,
+    "observedRecords": 600,
+    "complete": true
+  },
+  "outcomeCounts": {
+    "LEASE_HELD": 437,
+    "EFFECT_APPLIED": 159,
+    "EFFECT_NOOP": 2,
+    "STATE_REVISION_STALE": 2
+  },
+  "percentiles": {
+    "elapsedMicros": {
+      "p50": 232,
+      "p90": 1950,
+      "p99": 111746,
+      "p100": 268033
+    },
+    "lockWaitMicros": {
+      "p50": 8,
+      "p90": 19,
+      "p99": 109166,
+      "p100": 264306
+    }
+  },
+  "contentionJsonlDigest": "sha256:b434d3f4a8b5e54f5c0a05e60b92db73797bea9198c1b1a4d13badc39f6aa2a7",
+  "bannedClaimScan": {
+    "performed": true,
+    "scope": [
+      "evidence/contention.jsonl records",
+      "claim-boundary prose",
+      "harness failure causes"
+    ],
+    "bannedMatches": 0,
+    "result": "PASS",
+    "bannedPhrases": [
+      "we prove",
+      "we establish",
+      "guarantees",
+      "baseline shows",
+      "baseline proves",
+      "bottleneck",
+      "cost claim",
+      "faster than",
+      "slower than",
+      "verified genuine",
+      "clean-room proof",
+      "split-brain proof"
+    ]
+  },
+  "measurementClaim": {
+    "status": "RECORDS_ONLY"
+  }
+}

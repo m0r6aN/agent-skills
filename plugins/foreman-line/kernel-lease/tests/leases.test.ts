@@ -3,7 +3,7 @@
  * the failing-when-broken invariant probes (AC2/AC3, standing #32).
  */
 import assert from 'node:assert/strict'
-import { readFileSync, mkdtempSync, rmSync } from 'node:fs'
+import { mkdtempSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { test } from 'node:test'
@@ -13,17 +13,21 @@ import {
   fixedClock,
   insertGoal,
   insertLease,
-  openStorage,
   type OpenStorageConfig,
+  openStorage,
 } from '@foreman-line/kernel-state'
 import {
+  applyTransition,
   claimLease,
   createEngine,
+  decideTransition,
   EngineError,
   getLeaseCasDescriptor,
   releaseLease,
   renewLease,
+  requestTransition,
 } from '../src/index.js'
+import { removeRoot } from './helpers/child-worker.js'
 
 const T0 = 1_700_000_000_000_000
 const FIXTURES = join(import.meta.dirname, 'fixtures')
@@ -46,7 +50,9 @@ interface FixtureRow {
   expectedReasonCode?: string
 }
 
-const parsedFixture: unknown = JSON.parse(readFileSync(join(FIXTURES, 'hostile', 'leases.json'), 'utf8'))
+const parsedFixture: unknown = JSON.parse(
+  readFileSync(join(FIXTURES, 'hostile', 'leases.json'), 'utf8'),
+)
 const fixtureTable = parsedFixture as { records: FixtureRow[] }
 const LSE = fixtureTable.records
 
@@ -60,10 +66,7 @@ function configFor(root: string): OpenStorageConfig {
   }
 }
 
-function withSeeded(
-  row: FixtureRow,
-  fn: (engine: ReturnType<typeof createEngine>) => void,
-): void {
+function withSeeded(row: FixtureRow, fn: (engine: ReturnType<typeof createEngine>) => void): void {
   const root = mkdtempSync(join(tmpdir(), 'fk-p10-lse-'))
   const storage = openStorage(configFor(root))
   try {
@@ -83,17 +86,21 @@ function withSeeded(
     fn(createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' }))
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 }
 
-function runOp(engine: ReturnType<typeof createEngine>, op: string, input: Record<string, unknown>): unknown {
+function runOp(
+  engine: ReturnType<typeof createEngine>,
+  op: string,
+  input: Record<string, unknown>,
+): unknown {
   switch (op) {
     case 'claimLease':
       return claimLease(engine, input as never)
@@ -101,6 +108,12 @@ function runOp(engine: ReturnType<typeof createEngine>, op: string, input: Recor
       return renewLease(engine, input as never)
     case 'releaseLease':
       return releaseLease(engine, input as never)
+    case 'requestTransition':
+      return requestTransition(engine, input as never)
+    case 'decideTransition':
+      return decideTransition(engine, input as never)
+    case 'applyTransition':
+      return applyTransition(engine, input as never)
     default:
       throw new Error(`unsupported op ${op}`)
   }
@@ -139,7 +152,11 @@ test('CTL-08 claim→renew→release cycle applies cleanly with one event per op
   const storage = openStorage(configFor(root))
   try {
     insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     const bind = (op: string) => ({
       principalRef: 'principal-a',
       operationId: op,
@@ -185,13 +202,13 @@ test('CTL-08 claim→renew→release cycle applies cleanly with one event per op
     assert.equal(snapshot.exportDocument.payload.tables.idempotency_keys.length, 3)
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -209,7 +226,11 @@ test('CTL-09 expired-lease takeover stamps the prior row and inserts the new lea
       expiresAtMicros: T0 - 1,
       releasedAtMicros: null,
     })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     const taken = claimLease(engine, {
       goalId: 'goal-1',
       leaseId: 'lease-new',
@@ -232,13 +253,13 @@ test('CTL-09 expired-lease takeover stamps the prior row and inserts the new lea
     assert.equal(snapshot.exportDocument.payload.tables.events[0]?.kind, 'lease.takeover')
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -247,7 +268,11 @@ test('CTL-10 same-principal re-claim is EFFECT_NOOP with null effectDigest and n
   const storage = openStorage(configFor(root))
   try {
     insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     const bind = (op: string) => ({
       principalRef: 'principal-a',
       operationId: op,
@@ -278,13 +303,13 @@ test('CTL-10 same-principal re-claim is EFFECT_NOOP with null effectDigest and n
     assert.equal(snapshot.exportDocument.payload.tables.goals[0]?.revision, 1)
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -323,13 +348,13 @@ test('AC3 mutation probe: the substrate single-active index refuses a second act
     )
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -347,7 +372,11 @@ test('AC2 mutation probe: stale expectedRevision never silently writes (guard is
       expiresAtMicros: T0 + 5_000_000,
       releasedAtMicros: null,
     })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     assert.throws(
       () =>
         renewLease(engine, {
@@ -375,13 +404,13 @@ test('AC2 mutation probe: stale expectedRevision never silently writes (guard is
     assert.equal(snapshot.exportDocument.payload.tables.events.length, 0)
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })
 
@@ -390,7 +419,11 @@ test('precedence: structural input beats idempotency beats clock beats goal beat
   const storage = openStorage(configFor(root))
   try {
     insertGoal(storage, { goalId: 'goal-1', revision: 5, status: 'active', updatedAtMicros: T0 })
-    const engine = createEngine({ storage, clock: fixedClock(T0), toolVersion: 'kernel-lease-test' })
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
     const goodBind = {
       principalRef: 'principal-a',
       operationId: 'op-prec-1',
@@ -449,12 +482,12 @@ test('precedence: structural input beats idempotency beats clock beats goal beat
     )
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
-    // and turns rmSync's EPERM into the reported failure, masking the real one.
+    // and removeRoot retries EPERM without ever masking the test verdict (R3).
     try {
       closeStorage(storage)
     } catch {
       // Best-effort close; cleanup proceeds.
     }
-    rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+    removeRoot(root)
   }
 })

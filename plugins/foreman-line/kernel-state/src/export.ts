@@ -76,6 +76,10 @@ function toExportRow(row: unknown): ExportRow {
   for (const [column, value] of Object.entries(row)) {
     if (value === null || typeof value === 'string' || typeof value === 'number') {
       out[column] = value
+    } else if (value instanceof Uint8Array) {
+      // BLOB columns (A1d `recorded_result`) serialize as base64 strings —
+      // deterministic and schema-compatible (ColumnRow: string).
+      out[column] = Buffer.from(value).toString('base64')
     } else {
       throw storageError('EXPORT_FAILED', {})
     }

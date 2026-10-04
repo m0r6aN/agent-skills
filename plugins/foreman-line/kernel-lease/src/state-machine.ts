@@ -20,7 +20,13 @@
 import { engineError } from './errors.js'
 
 /** T1 status vocabulary — closed, five values. */
-export const GOAL_STATUSES = ['proposed', 'active', 'awaiting-human', 'completed', 'cancelled'] as const
+export const GOAL_STATUSES = [
+  'proposed',
+  'active',
+  'awaiting-human',
+  'completed',
+  'cancelled',
+] as const
 export type GoalStatus = (typeof GOAL_STATUSES)[number]
 
 /** Terminal statuses (T1). */
