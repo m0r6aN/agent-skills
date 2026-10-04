@@ -31,7 +31,7 @@ const here = dirname(fileURLToPath(import.meta.url))
 const evidence = join(here, 'u1-fixture', 'evidence')
 const controls = JSON.parse(readFileSync(join(evidence, 'controls.json'), 'utf8')).controls
 const matrix = JSON.parse(readFileSync(join(evidence, 'matrix.json'), 'utf8')).rows
-const candidateCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim()
+const candidateCommit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: here, encoding: 'utf8' }).trim()
 
 const controlResults = controls.map((c) => ({
   controlId: c.controlId,

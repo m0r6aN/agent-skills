@@ -17,6 +17,7 @@ import {
   insertTransition,
   type OpenStorageConfig,
   openStorage,
+  recordCompletedBinding,
   updateGoalRow,
 } from '@foreman-line/kernel-state'
 import {
@@ -395,6 +396,136 @@ test('a refused operation records no binding row (a refusal is not an effect)', 
   } finally {
     // Close BEFORE cleanup: an open SQLite handle locks the tree on Windows
     // and removeRoot retries EPERM without ever masking the test verdict (R3).
+    try {
+      closeStorage(storage)
+    } catch {
+      // Best-effort close; cleanup proceeds.
+    }
+    removeRoot(root)
+  }
+})
+
+test('malformed persisted outcomes fail closed before replay', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fk-p10-idp-'))
+  const storage = openStorage(configFor(root))
+  const binding = {
+    principalRef: 'principal-a',
+    repositoryRef: 'repo-a',
+    worktreeRef: 'worktree-a',
+    payloadDigest: `sha256:${'0f'.repeat(32)}`,
+  }
+  const rowDigest = `sha256:${'a'.repeat(64)}`
+  const otherDigest = `sha256:${'b'.repeat(64)}`
+  const malformedCases = [
+    {
+      name: 'missing result member',
+      operationId: 'op-corrupt-missing-result',
+      rowEffectDigest: null,
+      corruption: 'missing-result',
+    },
+    {
+      name: 'missing EffectResult member',
+      operationId: 'op-corrupt-missing-effect-member',
+      rowEffectDigest: null,
+      corruption: 'missing-tool-version',
+    },
+    {
+      name: 'idempotency key does not match the binding row',
+      operationId: 'op-corrupt-key-mismatch',
+      rowEffectDigest: null,
+      corruption: 'binding-mismatch',
+    },
+    {
+      name: 'effect digest does not match the binding row',
+      operationId: 'op-corrupt-digest-mismatch',
+      rowEffectDigest: rowDigest,
+      corruption: 'digest-mismatch',
+    },
+    {
+      name: 'unexpected outcome member',
+      operationId: 'op-corrupt-extra-member',
+      rowEffectDigest: null,
+      corruption: 'extra-member',
+    },
+  ] as const
+
+  try {
+    const engine = createEngine({
+      storage,
+      clock: fixedClock(T0),
+      toolVersion: 'kernel-lease-test',
+    })
+    const encoder = new TextEncoder()
+    for (const testCase of malformedCases) {
+      const idempotencyKey = { ...binding, operationId: testCase.operationId }
+      const effect: Record<string, unknown> = {
+        resultKind: 'effect-result',
+        apiVersion: '0.1.0',
+        toolVersion: 'kernel-lease-test',
+        decision: 'NOOP',
+        code: 'EFFECT_NOOP',
+        idempotencyKey,
+        effectDigest: null,
+        goalRevision: 0,
+      }
+      const outcome: Record<string, unknown> = { effect, result: {} }
+      switch (testCase.corruption) {
+        case 'missing-result':
+          delete outcome.result
+          break
+        case 'missing-tool-version':
+          delete effect.toolVersion
+          break
+        case 'binding-mismatch':
+          effect.idempotencyKey = { ...idempotencyKey, operationId: 'different-operation' }
+          break
+        case 'digest-mismatch':
+          effect.effectDigest = otherDigest
+          effect.decision = 'APPLIED'
+          effect.code = 'EFFECT_APPLIED'
+          break
+        case 'extra-member':
+          outcome.unexpected = true
+          break
+      }
+      recordCompletedBinding(storage, {
+        ...idempotencyKey,
+        effectDigest: testCase.rowEffectDigest,
+        recordedResult: encoder.encode(JSON.stringify(outcome)),
+        recordedAtMicros: T0,
+        completedAtMicros: T0 + 1,
+      })
+      const before = exportStorage(storage)
+      assert.throws(
+        () =>
+          claimLease(engine, {
+            goalId: 'goal-1',
+            leaseId: 'lease-1',
+            durationMicros: 1_000_000,
+            expectedRevision: 0,
+            idempotencyKey,
+          }),
+        (error: unknown) => {
+          assert.ok(error instanceof EngineError, testCase.name)
+          assert.equal(error.code, 'STORAGE_FAILURE', testCase.name)
+          assert.deepEqual(error.diagnostic, { storageCode: 'STORAGE_IO_FAILURE' }, testCase.name)
+          return true
+        },
+      )
+      assert.deepEqual(
+        tableDeltas(before, exportStorage(storage)),
+        {
+          events: 0,
+          goals: 0,
+          transitions: 0,
+          leases: 0,
+          idempotency_keys: 0,
+          projection_cursors: 0,
+        },
+        testCase.name,
+      )
+    }
+  } finally {
     try {
       closeStorage(storage)
     } catch {

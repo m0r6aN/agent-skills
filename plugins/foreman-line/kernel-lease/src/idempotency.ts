@@ -86,6 +86,15 @@ export interface EffectResult {
   goalRevision: number
 }
 
+/** FK-P1 toolVersion constraint shared by creation and persisted-result validation. */
+export function isValidToolVersion(value: unknown): value is string {
+  if (typeof value !== 'string' || value.length === 0 || value.length > 128) return false
+  for (let index = 0; index < value.length; index += 1) {
+    if (value.charCodeAt(index) > 0x7f) return false
+  }
+  return true
+}
+
 /** The EffectResult document minus `effectDigest` — what the event embeds (F01). */
 export type EffectCore = Omit<EffectResult, 'effectDigest'>
 
@@ -361,6 +370,37 @@ export interface RecordedOutcome {
   effect: EffectResult
   result: unknown
 }
+const RECORDED_OUTCOME_MEMBERS = ['effect', 'result']
+const EFFECT_RESULT_MEMBERS = [
+  'resultKind',
+  'apiVersion',
+  'toolVersion',
+  'decision',
+  'code',
+  'idempotencyKey',
+  'effectDigest',
+  'goalRevision',
+]
+const IDEMPOTENCY_BINDING_MEMBERS = [
+  'principalRef',
+  'operationId',
+  'repositoryRef',
+  'worktreeRef',
+  'payloadDigest',
+]
+
+function hasExactRecordMembers(
+  value: unknown,
+  members: readonly string[],
+): value is Record<string, unknown> {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return false
+  const keys = Object.keys(value)
+  if (keys.length !== members.length) return false
+  for (const member of members) {
+    if (!Object.hasOwn(value, member)) return false
+  }
+  return true
+}
 
 /**
  * Decode the recorded outcome from its stored canonical bytes (R4/A1d:
@@ -368,30 +408,58 @@ export interface RecordedOutcome {
  * decoded linear-time and shape-checked (standing #19/#2) and never
  * re-derived.
  */
-function decodeRecordedOutcome(bytes: Uint8Array): RecordedOutcome {
+function decodeRecordedOutcome(
+  bytes: Uint8Array,
+  binding: IdempotencyBinding,
+  row: IdempotencyKeyRow,
+): RecordedOutcome {
   let parsed: unknown
   try {
     parsed = JSON.parse(new TextDecoder().decode(bytes))
   } catch (error) {
     throw engineError('STORAGE_FAILURE', { storageCode: 'STORAGE_IO_FAILURE' }, { cause: error })
   }
-  const doc = parsed as { effect?: unknown; result?: unknown } | null
-  const effect = doc?.effect as EffectResult | null | undefined
+  if (!hasExactRecordMembers(parsed, RECORDED_OUTCOME_MEMBERS)) {
+    throw engineError('STORAGE_FAILURE', { storageCode: 'STORAGE_IO_FAILURE' })
+  }
+  const rawEffect = parsed.effect
+  if (!hasExactRecordMembers(rawEffect, EFFECT_RESULT_MEMBERS)) {
+    throw engineError('STORAGE_FAILURE', { storageCode: 'STORAGE_IO_FAILURE' })
+  }
+  const rawBinding = rawEffect.idempotencyKey
+  if (!hasExactRecordMembers(rawBinding, IDEMPOTENCY_BINDING_MEMBERS)) {
+    throw engineError('STORAGE_FAILURE', { storageCode: 'STORAGE_IO_FAILURE' })
+  }
+  const effect = rawEffect as unknown as EffectResult
   if (
-    effect === null ||
-    effect === undefined ||
-    typeof effect !== 'object' ||
     effect.resultKind !== 'effect-result' ||
     effect.apiVersion !== '0.1.0' ||
+    !isValidToolVersion(effect.toolVersion) ||
     (effect.decision !== 'APPLIED' && effect.decision !== 'NOOP') ||
     (effect.code !== 'EFFECT_APPLIED' && effect.code !== 'EFFECT_NOOP') ||
     (effect.decision === 'APPLIED') !== (effect.code === 'EFFECT_APPLIED') ||
     !isSafeInt(effect.goalRevision) ||
-    (effect.effectDigest !== null && !isDigestLiteral(effect.effectDigest))
+    (effect.effectDigest !== null && !isDigestLiteral(effect.effectDigest)) ||
+    effect.effectDigest !== row.effectDigest ||
+    row.principalRef !== binding.principalRef ||
+    row.operationId !== binding.operationId ||
+    row.repositoryRef !== binding.repositoryRef ||
+    row.worktreeRef !== binding.worktreeRef ||
+    row.payloadDigest !== binding.payloadDigest ||
+    rawBinding.principalRef !== binding.principalRef ||
+    rawBinding.principalRef !== row.principalRef ||
+    rawBinding.operationId !== binding.operationId ||
+    rawBinding.operationId !== row.operationId ||
+    rawBinding.repositoryRef !== binding.repositoryRef ||
+    rawBinding.repositoryRef !== row.repositoryRef ||
+    rawBinding.worktreeRef !== binding.worktreeRef ||
+    rawBinding.worktreeRef !== row.worktreeRef ||
+    rawBinding.payloadDigest !== binding.payloadDigest ||
+    rawBinding.payloadDigest !== row.payloadDigest
   ) {
     throw engineError('STORAGE_FAILURE', { storageCode: 'STORAGE_IO_FAILURE' })
   }
-  return { effect, result: doc?.result }
+  return { effect, result: parsed.result }
 }
 
 /**
@@ -413,5 +481,5 @@ export function reconstructRecordedOutcome(
       operationId: binding.operationId,
     })
   }
-  return decodeRecordedOutcome(bytes)
+  return decodeRecordedOutcome(bytes, binding, row)
 }
