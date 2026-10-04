@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Verification package: pinned U1 candidate-sandbox's module-relative fixture
+  lookup and made its Git identity read use the script's explicit directory;
+  the D19 audit passes on the live tree.
+
 - Verification package: ratified the six FK packages (`authority-registry`,
   `bypass-outage-harness`, `kernel-contracts`, `kernel-lease`, `kernel-state`,
   `spec-body-compiler`) into the D19 allowlist (STANDING #34), and adjudicated

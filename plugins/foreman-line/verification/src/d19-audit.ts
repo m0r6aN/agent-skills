@@ -343,6 +343,7 @@ const E4_PINNED_COUNTS: Record<string, number> = {
   // E4_SELF_URL precedent) or module-relative lookup of shipped read-only
   // inputs (the E4_GATE_ALLOWLIST/E4_SHIPPED_REGISTRY precedent).
   'authority-registry/src/generate.ts': 2,
+  'bypass-outage-harness/u1-sandbox.mjs': 1,
   'bypass-outage-harness/src/channels/fixtures.ts': 1,
   'bypass-outage-harness/src/channels/gate.ts': 1,
   'bypass-outage-harness/src/channels/outage.ts': 1,
@@ -384,6 +385,8 @@ const E4_PINNED: ReadonlyMap<string, readonly string[]> = new Map([
   // the harness entries locate shipped read-only inputs (hook, control spec,
   // fixtures) relative to the module — never a discovered root.
   ['authority-registry/src/generate.ts', E4_GENERATE_FORMS],
+  // U1 candidate-sandbox reads the committed fixture evidence beside this module.
+  ['bypass-outage-harness/u1-sandbox.mjs', [E4_SELF_DIR]],
   [
     'bypass-outage-harness/src/channels/fixtures.ts',
     [`join(${E4_PLUGIN_ROOT_DIRNAME},'tests','fixtures','link-trees.json',)`],
