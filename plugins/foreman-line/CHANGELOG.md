@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Verification package: pinned U1 candidate-sandbox's module-relative fixture
+  lookup and made its Git identity read use the script's explicit directory;
+  the D19 audit passes on the live tree.
 - Kernel lease: replay rejects persisted outcomes unless the outer result and
   complete `EffectResult` are well-formed and match the completed row's
   idempotency key and effect digest.
