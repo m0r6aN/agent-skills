@@ -19,7 +19,7 @@
 import { existsSync } from 'node:fs'
 import { basename, isAbsolute, join } from 'node:path'
 import type { ShapingResult } from '../../contracts/src/index.js'
-import { writeProjectedResult } from '../../projection/src/index.js'
+import { assertContainedPath, writeProjectedResult } from '../../projection/src/index.js'
 import { readShapingResult } from '../../shaping/src/index.js'
 import { assertAbsoluteRoot } from './errors.js'
 import { assertSafeSlug } from './slug-guard.js'
@@ -126,10 +126,16 @@ export function resolveArtifact(arg: string, options: ResolveOptions): ResolvedA
   const repoRoot = options.repoRoot
   const specsDir = options.specsDir ?? DEFAULT_SPECS_DIR
   assertAbsoluteRoot(repoRoot, 'resolveArtifact')
+  // Path containment (D1): the caller-supplied specsDir must resolve beneath
+  // repoRoot before any branch derives a path under it.
+  assertContainedPath(repoRoot, join(repoRoot, ...specsDir.split('/')), specsDir)
 
   if (arg.endsWith(PROJECTED_SUFFIX)) {
     const slug = slugFromArg(arg)
     const abs = toAbs(arg, repoRoot)
+    // Path containment (D1): a caller-supplied artifact arg must resolve
+    // beneath repoRoot — refused before any existence probe or read.
+    assertContainedPath(repoRoot, abs, arg)
     if (!existsSync(abs)) {
       throw new Error(`resolveArtifact: projected artifact not found at ${abs}`)
     }
@@ -145,6 +151,10 @@ export function resolveArtifact(arg: string, options: ResolveOptions): ResolvedA
 
   if (arg.endsWith(SHAPING_RESULT_SUFFIX)) {
     const slug = slugFromArg(arg)
+    const inputAbs = toAbs(arg, repoRoot)
+    // Path containment (D1): a caller-supplied artifact arg must resolve
+    // beneath repoRoot — refused before any existence probe or read.
+    assertContainedPath(repoRoot, inputAbs, arg)
     const { abs } = projectedArtifactLocation(slug, repoRoot, specsDir)
     if (existsSync(abs)) return loadExisting(slug, repoRoot, specsDir)
     if (options.epicTitle === undefined) {
@@ -152,7 +162,7 @@ export function resolveArtifact(arg: string, options: ResolveOptions): ResolvedA
         `resolveArtifact: no projected artifact exists for '${slug}' and no --epic-title was provided to project one`,
       )
     }
-    return projectThenPresent(slug, toAbs(arg, repoRoot), options.epicTitle, repoRoot, specsDir)
+    return projectThenPresent(slug, inputAbs, options.epicTitle, repoRoot, specsDir)
   }
 
   // Bare slug (rework item 1, argument-acceptance point): validated before

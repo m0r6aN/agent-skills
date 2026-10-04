@@ -1,12 +1,17 @@
-# Copy to <repo-root>/foreman/config.yaml and replace identity values.
-# This file is a template only; it intentionally contains no customer identity.
+# Rendered into <repo-root>/foreman/config.yaml by the Foreman Line project
+# scaffold from its typed arguments. This file is a template only; it
+# intentionally contains no customer identity — every value below is a
+# declared placeholder the scaffold substitutes, or an explicit null.
 identity:
-  project_key: null
-  base_branch: main
-  branch_prefix: work/
-  worktree_root: .worktrees
-  dispatch_queue: null
+  project_key: {{PROJECT_KEY}}
+  base_branch: {{BASE_BRANCH}}
+  branch_prefix: {{BRANCH_PREFIX}}
+  worktree_root: {{WORKTREE_ROOT}}
+  dispatch_queue: {{DISPATCH_QUEUE}}
 stack:
+  # Explicit declaration, never an omission: `none` means "no UI stack
+  # declared yet". A project with a UI declares its profile and layout here
+  # under review (foreman/config.yaml is project-owned, PR-reviewed data).
   profile: none
 capabilities: {}
 policy:

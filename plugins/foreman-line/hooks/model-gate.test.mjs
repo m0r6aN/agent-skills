@@ -10,6 +10,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
+import { readFileSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -115,4 +116,34 @@ test('malformed input never traps a developer', () => {
     const r = run(mode, {})
     assert.notEqual(r.code, 2, `${mode} must not block on empty payload`)
   }
+})
+
+test('D6 THINNESS: the policy is session-roster data only - no routing, provider, fallback, or approval keys', () => {
+  // D6: hooks report or block a host-visible violation; they must never become
+  // a second routing or approval engine. If a steering key ever appears in
+  // this policy, the hook has grown a surface that belongs to routing-policy
+  // (and a fallbackModels-style key would also be the hidden fallback path D9
+  // forbids). Refuse that growth mechanically rather than by review memory.
+  const policy = JSON.parse(readFileSync(join(HERE, 'model-gate.policy.json'), 'utf8'))
+  assert.ok(
+    Object.keys(policy.approved ?? {}).length > 0,
+    'membership pin: the scan must see a real roster, not an emptied document',
+  )
+  const banned =
+    /^(routing|route|routes|lane|lanes|fallback|fallbacks|fallbackModels|provider|providers|approval|approvals|approve|budget)$/i
+  const offenders = []
+  const walk = (node, path) => {
+    if (Array.isArray(node)) {
+      node.forEach((value, i) => walk(value, `${path}[${i}]`))
+      return
+    }
+    if (node !== null && typeof node === 'object') {
+      for (const [key, value] of Object.entries(node)) {
+        if (banned.test(key)) offenders.push(`${path}.${key}`)
+        walk(value, `${path}.${key}`)
+      }
+    }
+  }
+  walk(policy, '$')
+  assert.deepEqual(offenders, [], `policy carries steering keys: ${offenders.join(', ')}`)
 })

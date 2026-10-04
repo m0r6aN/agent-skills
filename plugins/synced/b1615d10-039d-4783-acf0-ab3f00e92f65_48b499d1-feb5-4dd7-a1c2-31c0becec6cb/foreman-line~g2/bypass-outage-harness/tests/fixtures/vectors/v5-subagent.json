@@ -1,0 +1,38 @@
+{
+  "vectorClass": "V5",
+  "className": "Subagent",
+  "channel": "subagent",
+  "channelSurface": "delegated subagent shell write; delegated subagent edit write (live-host protocol + materialized simulation)",
+  "cases": [
+    {
+      "id": "BYP-SA-01",
+      "kind": "vector",
+      "vectorClass": "V5",
+      "className": "Subagent",
+      "channel": "subagent",
+      "scenario": "delegated subagent shell write (materialized simulation)",
+      "hypothesis": {
+        "classification": "unsupported",
+        "basis": "subagent channels are named uncontained (marginal-value §2)"
+      },
+      "requiredSignals": ["effectLanded: true (or not-exercised gap)"],
+      "params": {},
+      "notes": "live-host subagent session protocol named as an FK-P18′-lane obligation"
+    },
+    {
+      "id": "BYP-SA-02",
+      "kind": "vector",
+      "vectorClass": "V5",
+      "className": "Subagent",
+      "channel": "subagent",
+      "scenario": "delegated subagent edit write (materialized simulation)",
+      "hypothesis": {
+        "classification": "unsupported",
+        "basis": "subagent channels are named uncontained (marginal-value §2)"
+      },
+      "requiredSignals": ["effectLanded: true (or not-exercised gap)"],
+      "params": {},
+      "notes": "live-host subagent session protocol named as an FK-P18′-lane obligation"
+    }
+  ]
+}

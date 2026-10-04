@@ -1,10 +1,10 @@
 # @foreman-line/spec-linter
 
-Validates a spec's YAML frontmatter against SPEC-CONVENTION §4's schema v0.2 — the machine enforcement behind "a convention without a validator is a suggestion" (SPEC-CONVENTION §7). Self-contained: no dependency on any sibling `plugins/foreman-line/*` package.
+Validates a spec's YAML frontmatter against SPEC-CONVENTION §4's schema (v0.4) — the machine enforcement behind "a convention without a validator is a suggestion" (SPEC-CONVENTION §7). Self-contained: no dependency on any sibling `plugins/foreman-line/*` package.
 
 ## Schema shape
 
-`schemas/spec-frontmatter.schema.json` (JSON Schema draft-07, `additionalProperties: false`) covers all thirteen frontmatter fields. Required: `ticket`, `title`, `status`, `owner`, `created`, `updated`, `risk`, `surfaces`, `routing_class`. Optional: `supersedes`, `superseded_by`, `permission_profile`, `data_classification`.
+`schemas/spec-frontmatter.schema.json` (JSON Schema draft-07, `additionalProperties: false`) covers all nineteen frontmatter fields. Required: `ticket`, `title`, `status`, `owner`, `created`, `updated`, `risk`, `surfaces`, `routing_class`, `verification_class`. Optional: `supersedes`, `superseded_by`, `permission_profile`, `data_classification`, `involves`, `expertise`, `inputs`, `min_context`, `thinking_level`.
 
 ## The four v0.2 fields
 
@@ -17,6 +17,19 @@ Validates a spec's YAML frontmatter against SPEC-CONVENTION §4's schema v0.2 �
 | `data_classification:` | No | If present: non-empty, non-whitespace-only string (observed corpus value: `internal`). No controlled vocabulary yet — schematized by CLOSE-P2 per the W4-P5 ruling; enum validation is a future non-breaking additive change (same pattern as `permission_profile`). `''` and `null` are rejected. |
 
 **`permission_profile:` interim behavior.** The permission-profile registry is a deferred parcel. Until it ships, this field is optional and unconstrained beyond "non-empty string if present." Every spec missing it gets one advisory warning per validation — not a failure. Once the registry lands, it will add enum validation as a non-breaking additive change.
+
+## The four v0.4 fields (added RCM-P2, 2026-09-27)
+
+All four are **optional** (SPEC-CONVENTION §4.6 additive pattern) with their value registries
+already ratified, so enum/shape validation ships now (SPEC-CONVENTION §4.9). Omission is legal
+and meaningful — it never emits an advisory.
+
+| Field | Required | Allowed values |
+|---|---|---|
+| `expertise:` | No | One of `engineering \| architecture \| security \| legal \| finance \| writing \| research \| data` — the closed `foreman-config` vocabulary (`foreman-config/src/expertise.ts`, lockstep-tested). Anything else is a schema rejection; free text is a charter stop condition. |
+| `inputs:` | No, non-empty unique array | `text \| image` only (RCM D8). Omitted = text-only. `[]` and any other modality are schema rejections. |
+| `min_context:` | No | Positive integer (tokens) — the context floor; shaping may only override it upward (RCM OQ6). |
+| `thinking_level:` | No | `off \| minimal \| low \| medium \| high \| xhigh \| max` (Pi `ThinkingLevel` names, RCM D8). Omitted = the routing-class thinking default (OQ5). |
 
 ## Semantic invariants beyond the schema
 

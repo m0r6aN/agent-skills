@@ -28,7 +28,9 @@ test('all 19 installs precede all 57 checks, using explicit Node/npm without a s
   assert.equal(calls.length, 76)
   for (const [index, [pkg, args]] of expected.entries()) {
     assert.deepEqual(calls[index], [process.execPath, [npmCli, ...args], {
-      cwd: join(root, 'plugins', 'foreman-line', pkg), stdio: 'inherit', shell: false,
+      cwd: join(root, 'plugins', 'foreman-line', pkg),
+      stdio: ['inherit', 'pipe', 'pipe'], shell: false,
+      encoding: 'utf8', maxBuffer: 256 * 1024 * 1024,
     }])
   }
   assert.equal(result.exitCode, 0)
@@ -102,4 +104,32 @@ test('multiple failures are all retained rather than overwritten by later succes
   assert.equal(result.outcomes[1].typecheck, 'fail')
   assert.equal(result.outcomes[2].lint, 'fail')
   assert.equal(result.outcomes.at(-1).lint, 'pass')
+})
+
+test('a failing check re-emits its complete captured stdout and stderr in a failure section', () => {
+  let calls = 0
+  const chunks = []
+  const stderrWrite = process.stderr.write
+  const stdoutWrite = process.stdout.write
+  process.stderr.write = (chunk) => { chunks.push(String(chunk)); return true }
+  process.stdout.write = (chunk) => { chunks.push(String(chunk)); return true }
+  let result
+  try {
+    result = run({ root, npmCli, spawn: () => (++calls === 20 ? {
+      status: 1,
+      stdout: '✖ named failing assertion\nAssertionError: boom\n    at tests/example.test.ts:7:3\n',
+      stderr: 'stderr tail\n',
+    } : { status: 0 }) })
+  } finally {
+    process.stderr.write = stderrWrite
+    process.stdout.write = stdoutWrite
+  }
+  assert.equal(result.exitCode, 1)
+  const emitted = chunks.join('')
+  assert.match(emitted, /--- approval\/test failed \(exit code 1\) ---/)
+  assert.match(emitted, /✖ named failing assertion/)
+  assert.match(emitted, /AssertionError: boom/)
+  assert.match(emitted, / {4}at tests\/example\.test\.ts:7:3/)
+  assert.match(emitted, /stderr tail/)
+  assert.deepEqual(result.failures, [{ package: 'approval', check: 'test', detail: 'exit code 1' }])
 })

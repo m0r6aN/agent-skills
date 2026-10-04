@@ -32,7 +32,7 @@ import type {
 } from '../../contracts/src/index.js'
 import type { ReceiptDocument } from '../../receipts/src/index.js'
 import { receiptPath, validateReceiptDocument } from '../../receipts/src/index.js'
-import { IntegrationError } from './errors.js'
+import { assertAbsoluteRoot, IntegrationError } from './errors.js'
 
 /** Injected write seam — default is the real `writeReceiptDocument`. */
 export type WriteReceiptFn = (
@@ -117,6 +117,8 @@ function inheritCorrelation(
  * Q2) — this function never bakes a placeholder trigger.
  */
 export function emitIntegrationReceipt(args: EmitIntegrationReceiptArgs): ReceiptDocument {
+  // Root refusal (P2b-i / D19) first, before any fs/subprocess/path use.
+  assertAbsoluteRoot(args.repoRoot, 'emitIntegrationReceipt repoRoot')
   const { prRef, ciJobs, auditTrigger, priorReceipt, repoRoot } = args
 
   const sessionId = randomUUID()

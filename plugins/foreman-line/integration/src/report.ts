@@ -14,6 +14,7 @@
 import { execFileSync } from 'node:child_process'
 import { pathToFileURL } from 'node:url'
 import type { AuditTriggerDecision } from './audit-trigger.js'
+import { assertAbsoluteRoot } from './errors.js'
 import {
   type ActiveSpecDescriptor,
   evaluateChangeSet,
@@ -66,6 +67,9 @@ export function runReport(
   pluginRoot: string,
   seams: ReportSeams = {},
 ): ReportResult {
+  // Root refusals (P2b-i / D19) first, before any fs/subprocess/path use.
+  assertAbsoluteRoot(repoRoot, 'runReport repoRoot')
+  assertAbsoluteRoot(pluginRoot, 'runReport pluginRoot')
   const getChangedPaths = seams.getChangedPaths ?? (() => realGetChangedPaths(repoRoot))
   const loadActiveSpecs = seams.loadActiveSpecs ?? (() => realLoadActiveSpecs(repoRoot, pluginRoot))
 

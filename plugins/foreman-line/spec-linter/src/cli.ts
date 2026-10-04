@@ -4,7 +4,9 @@
  * Exit-code contract (frozen by this parcel, no CI wiring):
  *   0  all specs valid (advisory warnings do not affect exit code)
  *   1  at least one schema or semantic-invariant violation (every violation on stderr)
- *   2  usage error: missing/unreadable path, bad invocation, or directory with no .md files
+ *   2  usage error: missing/unreadable path, bad invocation, a non-absolute
+ *      --repo-root (root-not-absolute — boundary-routing D1 / D19), or a
+ *      directory with no .md files
  *
  * Advisory warnings (stderr, exit 0 unchanged):
  *   - permission_profile absent in a spec
@@ -20,6 +22,10 @@
  *   contract, D15 reasoning): a config that fails ITS schema is a usage error
  *   (exit 2) — a bad ARGUMENT, distinct from D14's rule that an unknown or
  *   unresolvable `involves:` VALUE can never change an exit code.
+ * --repo-root <path>  EXPLICIT target-repository root (boundary-routing D1).
+ *   Must be an ABSOLUTE path (root-not-absolute refusal otherwise — a relative
+ *   root would silently anchor to the process cwd). A candidate file outside
+ *   the supplied root is refused (`is outside the supplied --repo-root`).
  */
 import { readdirSync, readFileSync, realpathSync, statSync } from 'node:fs'
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
@@ -221,6 +227,16 @@ function toDocumentRef(repoRoot: string, filePath: string): string | undefined {
 }
 
 function resolveRepoRoot(repoRootPath: string): string | undefined {
+  // Boundary-routing D1 / D19 (root-not-absolute): a relative --repo-root
+  // would silently re-anchor to the process cwd below (resolve() call — the
+  // class-5 mechanism). Refuse it as a typed usage error before any path is
+  // constructed. Exit-2 is this CLI's typed refusal contract.
+  if (!isAbsolute(repoRootPath)) {
+    process.stderr.write(
+      `error: --repo-root '${sanitizeStderrValue(repoRootPath)}' is not an absolute path (root-not-absolute): a relative root would silently anchor to the process cwd and is refused (boundary-routing D1 / D19)\n`,
+    )
+    return undefined
+  }
   try {
     const resolvedRoot = realpathSync(resolve(repoRootPath))
     if (!statSync(resolvedRoot).isDirectory()) {

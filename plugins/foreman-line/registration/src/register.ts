@@ -15,7 +15,7 @@
  * (search-first guarantees no duplicate creates).
  */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { dirname, isAbsolute, join } from 'node:path'
+import { dirname, join } from 'node:path'
 import { Ajv, type SchemaObject } from 'ajv'
 import type { ApprovalRecord } from '../../approval/src/index.js'
 import { approvalRecordPath } from '../../approval/src/index.js'
@@ -27,7 +27,7 @@ import type {
 } from '../../contracts/src/index.js'
 import { registrationResultSchema } from '../../contracts/src/index.js'
 import type { ForemanConfig } from '../../foreman-config/src/index.js'
-import { specFilenameStem } from '../../projection/src/index.js'
+import { assertContainedPath, specFilenameStem } from '../../projection/src/index.js'
 import { backfillTicketLine, type FileSnapshot, restoreSnapshots } from './backfill.js'
 import { GatedTransport } from './gated-transport.js'
 import * as git from './git.js'
@@ -42,10 +42,10 @@ import {
 } from './prior-registration.js'
 import { mintStageBReceipt } from './receipt.js'
 import {
+  assertAbsoluteRoot,
   type IssueCreatePayload,
   type JiraTransport,
   RegistrationError,
-  RegistrationRootUnresolvedError,
 } from './types.js'
 
 /** Slug charset guard applied at the entry point (^[a-z0-9-]+$) - linear-time, no backtracking. */
@@ -125,15 +125,7 @@ function resolveProjectKey(
   return resolved
 }
 
-/** Assert `root` is absolute (P2b-i path-guard ruling) — typed refusal, mechanism class 5. */
-function assertAbsoluteRoot(root: string, seam: string): void {
-  if (!isAbsolute(root)) {
-    throw new RegistrationRootUnresolvedError(
-      'root-not-absolute',
-      `${seam}: repoRoot '${root}' is not an absolute path; a relative root would silently anchor to the process cwd and is refused (P2b-i / D19)`,
-    )
-  }
-}
+/** Assert `root` is absolute (P2b-i path-guard ruling) — typed refusal, mechanism class 5. See types.ts. */
 
 const ajv = new Ajv({ allErrors: true })
 const validateRegistrationResult = ajv.compile(registrationResultSchema as SchemaObject)
@@ -169,6 +161,14 @@ function bindSpecsToStories(
 
 function sidecarPathFor(slug: string, repoRoot: string, specsDir: string): string {
   return join(repoRoot, ...specsDir.split('/'), `${slug}.registration.json`)
+}
+
+/**
+ * Out-of-root refusal (boundary-routing D1): a caller-supplied repo-relative
+ * ref must resolve inside `repoRoot` before any read or write is attempted.
+ */
+function assertContainedRef(repoRoot: string, ref: string): void {
+  assertContainedPath(repoRoot, join(repoRoot, ...ref.split('/')), ref)
 }
 
 function writeJsonFile(absPath: string, value: unknown): void {
@@ -237,6 +237,7 @@ export async function register(opts: RegisterOptions): Promise<RegisterOutcome> 
   // Step 0/1: entry guard + load approval record.
   assertRegistrationSlug(slug)
   assertAbsoluteRoot(repoRoot, 'register')
+  assertContainedRef(repoRoot, specsDir)
   const record = JSON.parse(
     readFileSync(approvalRecordPath(slug, repoRoot, specsDir), 'utf8'),
   ) as ApprovalRecord
@@ -249,6 +250,9 @@ export async function register(opts: RegisterOptions): Promise<RegisterOutcome> 
   }
   const epic = projected.epics[0] as EpicNode
   const bindings = bindSpecsToStories(projected.parcelSpecRefs, epic)
+  // Out-of-root refusal (boundary-routing D1): the back-fill, commit, and
+  // permalink steps resolve every binding ref against repoRoot.
+  for (const binding of bindings) assertContainedRef(repoRoot, binding.ref)
 
   // Step 2: prior-registration detection (keys off the Stage-B receipt).
   const mode = detectRegistrationMode(record, repoRoot)
@@ -311,6 +315,7 @@ export function preview(opts: {
   const projectKey = resolveProjectKey(declaredProjectKey, foremanConfig)
   assertRegistrationSlug(slug)
   assertAbsoluteRoot(repoRoot, 'preview')
+  assertContainedRef(repoRoot, specsDir)
   const record = JSON.parse(
     readFileSync(approvalRecordPath(slug, repoRoot, specsDir), 'utf8'),
   ) as ApprovalRecord

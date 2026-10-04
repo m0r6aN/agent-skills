@@ -1,0 +1,30 @@
+{
+  "name": "@foreman-line/project-scaffold",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Project scaffolder for the Foreman Line (charter P5/P6): gap-driven, deterministic scaffold generation with typed CLI arguments, byte-exact template copy, managed-block splicing, and explicit collision handling.",
+  "engines": {
+    "node": ">=22"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "bin": {
+    "project-scaffold": "./src/cli.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "lint": "biome check ."
+  },
+  "dependencies": {
+    "yaml": "2.9.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.14",
+    "@types/node": "26.6.2",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
+  }
+}

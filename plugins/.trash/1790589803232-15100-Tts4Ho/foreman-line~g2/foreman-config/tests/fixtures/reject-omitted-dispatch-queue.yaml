@@ -1,0 +1,16 @@
+# Q4 ruling reject half: OMITTING the `dispatch_queue` KEY is a validation
+# failure — the nullable twin of reject-omitted-project-key.yaml.
+identity:
+  project_key: null
+  base_branch: main
+  branch_prefix: feat/
+  worktree_root: ../worktrees
+
+stack:
+  profile: none
+
+capabilities: {}
+
+policy:
+  audit:
+    require_security_audit_at: [elevated]

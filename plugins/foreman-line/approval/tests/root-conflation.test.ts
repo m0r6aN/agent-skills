@@ -16,6 +16,9 @@ import { writeApprovalRecord } from '../src/approval-record.js'
 import { generateCorrelationContext } from '../src/correlation.js'
 import { ApprovalRootUnresolvedError } from '../src/errors.js'
 import * as api from '../src/index.js'
+import { mintGenesisReceipt } from '../src/receipt.js'
+import { writeReceiptDocument } from '../src/receipt-writer.js'
+import { writeRejectionRecord } from '../src/rejection-record.js'
 import { resolveArtifact } from '../src/resolve-input.js'
 import { computeApprovalSubject, computeSpecSet } from '../src/subject.js'
 import {
@@ -127,4 +130,89 @@ test('P2b-AC6b: the projected fixture default location still resolves under the 
   writeProjectedFixture(repoRoot, 'example', sampleShapingResult())
   const resolved = resolveArtifact('example', { repoRoot })
   assert.equal(resolved.artifactRef, 'docs/specs/active/example.projected.shaping-result.json')
+})
+
+// --- D1: out-of-root containment at every path-resolving seam ---
+
+test('D1: writeApprovalRecord refuses a specsDir that resolves outside repoRoot', () => {
+  const repoRoot = makeTempRepoRoot()
+  writeSpecDraft(repoRoot, 'plugins/foreman-line/docs/specs/active/example.md', 'Example')
+  const { subject, approvedHash } = computeApprovalSubject(sampleShapingResult(), repoRoot)
+  const record = {
+    approvedHash,
+    artifactRef: 'docs/specs/active/example.projected.shaping-result.json',
+    subject,
+    decision: 'approved' as const,
+    timestamp: '2026-08-27T00:00:00.000Z',
+    approver: 'clinton.morgan',
+    correlation: generateCorrelationContext(),
+    receipt: { hash: '0'.repeat(64), locator: 'docs/receipts/x/000000-A-shaping-result.json' },
+  }
+  assert.throws(
+    () => writeApprovalRecord('example', record, repoRoot, '../../foreman-escape-probe'),
+    /resolves outside repoRoot/,
+  )
+})
+
+test('D1: writeRejectionRecord refuses a specsDir that resolves outside repoRoot', () => {
+  const repoRoot = makeTempRepoRoot()
+  assert.throws(
+    () =>
+      writeRejectionRecord(
+        'example',
+        {
+          decision: 'rejected',
+          reason: 'not ready',
+          timestamp: '2026-08-27T00:00:00.000Z',
+          referenceHash: '0'.repeat(64),
+        },
+        repoRoot,
+        '../../foreman-escape-probe',
+      ),
+    /resolves outside repoRoot/,
+  )
+})
+
+test('D1: writeReceiptDocument refuses a locator that resolves outside repoRoot', () => {
+  const repoRoot = makeTempRepoRoot()
+  const { document } = mintGenesisReceipt(
+    generateCorrelationContext(),
+    { approvedHash: '0'.repeat(64) },
+    '2026-08-27T00:00:00.000Z',
+  )
+  assert.throws(
+    () => writeReceiptDocument(document, '../../foreman-escape-probe/000000-A.json', repoRoot),
+    /resolves outside repoRoot/,
+  )
+})
+
+test('D1: resolveArtifact refuses a specsDir that resolves outside repoRoot', () => {
+  const repoRoot = makeTempRepoRoot()
+  assert.throws(
+    () => resolveArtifact('example', { repoRoot, specsDir: '../../foreman-escape-probe' }),
+    /resolves outside repoRoot/,
+  )
+})
+
+test('D1: resolveArtifact refuses a projected-artifact argument that resolves outside repoRoot', () => {
+  const repoRoot = makeTempRepoRoot()
+  assert.throws(
+    () =>
+      resolveArtifact('../../foreman-escape-probe/evil.projected.shaping-result.json', {
+        repoRoot,
+      }),
+    /resolves outside repoRoot/,
+  )
+})
+
+test('D1: resolveArtifact refuses an input-artifact argument that resolves outside repoRoot', () => {
+  const repoRoot = makeTempRepoRoot()
+  assert.throws(
+    () =>
+      resolveArtifact('../../foreman-escape-probe/evil.shaping-result.json', {
+        repoRoot,
+        epicTitle: 'My Epic',
+      }),
+    /resolves outside repoRoot/,
+  )
 })

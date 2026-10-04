@@ -35,6 +35,35 @@ export type {
   KompressResult,
 } from './kompress-adapter/index.js'
 export { KompressError, kompressContext } from './kompress-adapter/index.js'
+// MRC-06 HRO-P4: the supported Pi/parcel entry point (additive; existing exports untouched)
+export type {
+  CarriedParcel,
+  ConfigCheckState,
+  HostConfigVerdict,
+  HostSelectionObservation,
+  PiEntryErrorCode,
+  PiEntryIdentity,
+  PiEntryInput,
+  PiEntryOptions,
+  PiEntryPackage,
+  PiEntryParcel,
+  PiEntryRecord,
+  PiEntryRefusalName,
+  PiEntryResult,
+  ResolvedThinkingLevel,
+  RouteUnavailableOutcome,
+  SelectionVerdict,
+  SessionRequest,
+} from './pi-entry/index.js'
+export {
+  PI_ENTRY_REFUSALS,
+  PiEntryError,
+  POLICY_REF_PIN,
+  preparePiEntry,
+  useDeclaredFallback,
+  verifyHostModelSelection,
+  writePiEntryRecord,
+} from './pi-entry/index.js'
 export type {
   CandidateRecord,
   DispatchIdentity,

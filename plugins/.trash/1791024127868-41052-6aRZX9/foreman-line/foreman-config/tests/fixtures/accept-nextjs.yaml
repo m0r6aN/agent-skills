@@ -1,0 +1,24 @@
+# AC10 accept: a nextjs-app-router document (D20's second named profile).
+identity:
+  project_key: WEB
+  base_branch: main
+  branch_prefix: feature/
+  worktree_root: ../wt
+  dispatch_queue: web-dispatch
+
+stack:
+  profile: nextjs-app-router
+  layout:
+    route_roots: ["app"]
+    style_roots: ["app", "styles"]
+    component_roots: ["components"]
+    theme_files: ["app/globals.css"]
+    ui_primitives: ["components/ui"]
+  surfaces_present: ["forms"]
+
+capabilities:
+  ticketing: [jira-workflow]
+
+policy:
+  audit:
+    require_security_audit_at: [critical]

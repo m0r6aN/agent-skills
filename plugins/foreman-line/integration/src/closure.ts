@@ -46,6 +46,7 @@ import {
   emitHalfClosedClosureReceipt,
   HALF_CLOSED_CLAIM_REF,
 } from './closure-receipt.js'
+import { assertAbsoluteRoot } from './errors.js'
 import type { WriteReceiptFn } from './receipt.js'
 
 // ─── Error class (this module's own; shipped unions untouched) ───────────────
@@ -663,6 +664,9 @@ export async function prepareClosure(
   }
   // 1. workflowId before any filesystem access.
   assertValidWorkflowId(input.workflowId)
+  // Root refusal (P2b-i / D19) before any chain read: repoRoot must be
+  // absolute — never derived from the process cwd.
+  assertAbsoluteRoot(input.repoRoot, 'prepareClosure repoRoot')
   const repoRoot = input.repoRoot
   // 2. Input shape guards.
   assertNonEmptyString(input.ticketKey, 'ClosureInput.ticketKey')
@@ -726,6 +730,8 @@ export async function executeClosure(
   pkg: ClosurePackage,
   deps: ExecuteClosureDeps,
 ): Promise<ClosureResult> {
+  // Root refusal (P2b-i / D19) first, before any fs/subprocess/path use.
+  assertAbsoluteRoot(pkg.repoRoot, 'executeClosure repoRoot')
   assertValidPackage(pkg)
   if (typeof deps !== 'object' || deps === null || deps.transport === undefined) {
     throw new ClosureError(
@@ -785,6 +791,8 @@ export async function retryHalfClosedClosure(
   workflowId: string,
   deps: ExecuteClosureDeps & { readonly repoRoot: string },
 ): Promise<ClosureResult> {
+  // Root refusal (P2b-i / D19) first, before any fs/subprocess/path use.
+  assertAbsoluteRoot(deps.repoRoot, 'retryHalfClosedClosure repoRoot')
   assertValidWorkflowId(workflowId)
   if (typeof deps !== 'object' || deps === null || deps.transport === undefined) {
     throw new ClosureError(

@@ -1,0 +1,27 @@
+{
+  "name": "tripwire-fired",
+  "description": "R1 tripwire: the goal queue item records a fired tripwire (its own alert kind downstream).",
+  "now": "2026-09-26T12:00:00.000Z",
+  "goal": {
+    "slug": "goal-trip",
+    "queue": ["1. **P1** build loop unstable; tripwire fired after repeat failure."]
+  },
+  "specs": [{ "name": "P1-alpha.md", "location": "active", "updated": "2026-09-26" }],
+  "chains": [
+    {
+      "workflowId": "00000000-0000-4000-8000-000000000005",
+      "parcel": "P1",
+      "stages": ["A"],
+      "timestampOffsetHours": [-1]
+    }
+  ],
+  "expected": [
+    {
+      "parcel": "P1",
+      "state": "failed",
+      "rule": "R1",
+      "failureCode": "tripwire",
+      "chainEvidence": "present"
+    }
+  ]
+}

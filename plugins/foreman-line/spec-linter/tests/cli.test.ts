@@ -323,6 +323,22 @@ test('GSO-P1 CLI rejects an explicitly blank --repo-root from repository-root cw
   assert.ok(!stderr.includes('grandfathered'), stderr)
 })
 
+// Boundary-routing D1 / D19 negative control (2026-09-26): a relative
+// --repo-root would silently anchor every derived path to the process cwd.
+// The guard in src/cli.ts refuses it as a typed usage error (exit 2,
+// root-not-absolute) before any path is constructed.
+test('boundary-routing D1: a relative --repo-root is refused with typed exit 2 (root-not-absolute)', () => {
+  const { status, stderr } = runCli([
+    'validate',
+    '--repo-root',
+    join('some', 'relative', 'root'),
+    join(fixturesDir, 'valid-spec.md'),
+  ])
+  assert.equal(status, 2, stderr)
+  assert.ok(stderr.includes('root-not-absolute'), stderr)
+  assert.ok(stderr.includes('not an absolute path'), stderr)
+})
+
 // P1a: involves — advisory vocabulary, hard shape (AC2/AC3/AC4) ----------------
 
 const telemetryConfig = join(fixturesDir, 'foreman-config-telemetry.yaml')

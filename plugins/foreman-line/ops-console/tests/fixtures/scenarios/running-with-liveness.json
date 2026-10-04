@@ -1,0 +1,29 @@
+{
+  "name": "running-with-liveness",
+  "description": "R5 running: the canonical live pattern — active spec, recent receipt progress, live worktree/branch.",
+  "now": "2026-09-26T12:00:00.000Z",
+  "goal": {
+    "slug": "goal-run",
+    "queue": ["1. **P1** builder actively working."]
+  },
+  "specs": [{ "name": "P1-alpha.md", "location": "active", "updated": "2026-09-26" }],
+  "chains": [
+    {
+      "workflowId": "00000000-0000-4000-8000-000000000011",
+      "parcel": "P1",
+      "stages": ["A", "B", "C"],
+      "timestampOffsetHours": [-2, -1.5, -0.5]
+    }
+  ],
+  "worktrees": [{ "name": "p1-worktree", "branch": "feat/p1", "fresh": true }],
+  "expected": [
+    {
+      "parcel": "P1",
+      "state": "running",
+      "rule": "R5",
+      "chainEvidence": "present",
+      "thresholdMs": 21600000,
+      "thresholdSource": "default"
+    }
+  ]
+}

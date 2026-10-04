@@ -107,7 +107,7 @@ const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..',
 function collectParseableDoneSpecs(directory: string): string[] {
   const results: string[] = []
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
-    if (entry.name === '.git' || entry.name === 'node_modules') continue
+    if (entry.name === '.git' || entry.name === '.trash' || entry.name === 'node_modules') continue
     const path = join(directory, entry.name)
     if (entry.isDirectory()) {
       results.push(...collectParseableDoneSpecs(path))

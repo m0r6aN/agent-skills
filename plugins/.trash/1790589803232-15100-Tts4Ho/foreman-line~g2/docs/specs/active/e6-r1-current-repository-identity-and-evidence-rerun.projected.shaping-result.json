@@ -1,0 +1,17 @@
+{
+  "parcelSpecRefs": [
+    "plugins/foreman-line/docs/specs/active/E6-R1-current-repository-identity-and-evidence-rerun.md"
+  ],
+  "epics": [
+    {
+      "key": "epic-e6-r1-current-repository-identity-and-evidence-rerun",
+      "title": "E6-R1 Current-repository identity and evidence rerun",
+      "stories": [
+        {
+          "key": "E6-R1-current-repository-identity-and-evidence-rerun",
+          "title": "Current-repository identity normalization and observable A-to-F evidence rerun"
+        }
+      ]
+    }
+  ]
+}

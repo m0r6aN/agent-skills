@@ -1,39 +1,360 @@
-# Rejecting fixture (AC5d): `boilerplate.ceiling_usd` is present but zero.
-# Enforced structurally (`exclusiveMinimum: 0`) — a technically-present but
-# non-positive ceiling is not a valid ceiling.
+# Rejecting fixture: `boilerplate` carries `ceiling_usd: 0` — a non-positive ceiling is
+# not a valid ceiling. (Migrated at CUTOVER-P4.)
 classes:
   boilerplate:
-    allowlist: [economy]
+    allowlist:
+      - economy
     ceiling_usd: 0
   standard-feature:
-    allowlist: [standard]
-    ceiling_usd: 5.00
+    allowlist:
+      - standard
+    ceiling_usd: 5
   architecture/risk:
-    allowlist: [frontier]
-    ceiling_usd: 25.00
+    allowlist:
+      - frontier
+    ceiling_usd: 25
   implementation/standard:
-    allowlist: [standard]
-    ceiling_usd: 5.00
-
+    allowlist:
+      - standard
+    ceiling_usd: 5
 data_classification:
   public:
-    transport_requirements: { data_collection: allow, zdr: false }
-    eligible_models: [anthropic/claude-haiku-4.5, anthropic/claude-sonnet-5, anthropic/claude-opus-5.5]
+    transport_requirements:
+      data_collection: allow
+      zdr: false
   internal:
-    transport_requirements: { data_collection: deny, zdr: true }
-    eligible_models: [anthropic/claude-haiku-4.5, anthropic/claude-sonnet-5, anthropic/claude-opus-5.5]
+    transport_requirements:
+      data_collection: deny
+      zdr: true
   restricted:
-    transport_requirements: { data_collection: deny, zdr: true }
-    eligible_models: [anthropic/claude-haiku-4.5, anthropic/claude-sonnet-5, anthropic/claude-opus-5.5]
-
-roles:
-  coordinator: frontier
-  verifier: frontier
-  builder: per-class
-
-model_tiers:
-  frontier: [anthropic/claude-opus-5.5]
-  standard: [anthropic/claude-sonnet-5]
-  economy: [anthropic/claude-haiku-4.5]
-
+    transport_requirements:
+      data_collection: deny
+      zdr: true
+selection_order:
+  frontier:
+    - claude-opus-5-5
+  standard:
+    - claude-sonnet-5
+  economy:
+    - claude-haiku-4.5
 shadow_routes: {}
+compatibility:
+  representation: provider-neutral-fallback-contract
+  version: 1
+  legacy_representation:
+    blocks:
+      - model_tiers
+      - roles
+      - data_classification.eligible_models
+    id_vocabulary: openrouter-slug-only
+    status: deprecated
+    removal_serialized_into: PMC-P4
+ranking_contract:
+  inputs:
+    R1: data-class eligibility
+    R2: required capability
+    R3: independence obligation
+    R4: available context
+    R5: remaining budget
+    R6: verified availability
+    R7: recorded quality score
+  eligibility_filters:
+    - R1
+    - R2
+    - R3
+    - R4
+    - R6
+  budget_ordering_lane: L5
+  quality_ordering_key: R7
+  stable_order:
+    - declared-matrix-role
+    - provider
+    - model-id
+  evidence_threshold:
+    rankable_requires: R1-R6-definite-true-from-a-named-source-and-R7-recorded-for-this-lane
+    on_unknown: refuse
+  attested_states:
+    - static-conformance
+    - live-availability
+    - model-quality
+lane_map:
+  L1:
+    role_family: coordinator
+    subroles:
+      - coordinator
+      - shaper
+      - architect
+    routing_classes:
+      - architecture/risk
+    authority_cap:
+      - coordinate
+      - shape
+      - propose-amendment
+    authority_prohibited:
+      - ratify
+      - grant-gate
+      - merge
+      - release
+      - self-verify
+    frontier_only: true
+    independence: coordinator-is-never-its-own-verifier
+    human_gates:
+      - gate-1
+      - gate-2
+      - gate-3
+      - break-glass-owner-only
+    provider_rule:
+      kind: pinned-provider
+      pinned_provider:
+        state: unavailable
+        residual: L1_PINNED_PROVIDER_UNSET
+    quality_tolerance:
+      state: unavailable
+      residual: DELTA_L_UNSET
+  L2:
+    role_family: verifier
+    subroles:
+      - adversarial-reviewer
+      - verifier
+      - security-auditor
+    routing_classes:
+      - architecture/risk
+      - review/security
+    authority_cap:
+      - verdict
+      - findings-recommendation
+    authority_prohibited:
+      - approve
+      - merge
+      - release
+      - edit-artifact
+      - accept-own-findings
+    frontier_only: true
+    independence: independent-family-from-builder-applies-to-primary-and-fallback
+    human_gates:
+      - coordinator-acceptance
+      - gate-3
+    provider_rule:
+      kind: pinned-provider
+      pinned_provider:
+        state: unavailable
+        residual: L2_PINNED_PROVIDER_UNSET
+    quality_tolerance:
+      state: unavailable
+      residual: DELTA_L_UNSET
+  L3:
+    role_family: builder
+    subroles:
+      - builder-complex
+    routing_classes:
+      - implementation/complex
+    authority_cap:
+      - execution-within-allowed-files
+    authority_prohibited:
+      - approve
+      - merge
+      - release
+      - policy-bypass
+      - self-review
+    frontier_only: false
+    independence: reviewer-must-be-independent-family
+    human_gates:
+      - gate-2
+    provider_rule:
+      kind: declared-preference
+      preference:
+        state: unavailable
+        residual: L3_PROVIDER_PREFERENCE_UNSET
+    quality_tolerance:
+      state: unavailable
+      residual: DELTA_L_UNSET
+  L4:
+    role_family: builder
+    subroles:
+      - builder-standard
+    routing_classes:
+      - standard-feature
+      - implementation/standard
+    authority_cap:
+      - execution-within-allowed-files
+    authority_prohibited:
+      - approve
+      - merge
+      - release
+      - policy-bypass
+      - self-review
+    frontier_only: false
+    independence: reviewer-independent-where-parcel-risk-requires
+    human_gates:
+      - gate-2
+    provider_rule:
+      kind: declared-preference
+      preference:
+        state: unavailable
+        residual: L4_PROVIDER_PREFERENCE_UNSET
+    quality_tolerance:
+      state: unavailable
+      residual: DELTA_L_UNSET
+  L5:
+    role_family: builder
+    subroles:
+      - builder-economy
+    routing_classes:
+      - boilerplate
+    authority_cap:
+      - execution-within-allowed-files
+    authority_prohibited:
+      - security
+      - approve
+      - merge
+      - release
+      - final-verification
+    frontier_only: false
+    independence: never-a-verifier
+    human_gates:
+      - gate-2
+    provider_rule:
+      kind: cheapest-eligible
+    quality_tolerance:
+      state: unavailable
+      residual: DELTA_L_UNSET
+  L6:
+    role_family: classifier
+    subroles:
+      - routing-classifier
+    routing_classes:
+      - routing/classification
+    authority_cap:
+      - recommend-only
+    authority_prohibited:
+      - prose
+      - implementation
+      - review
+      - approve
+      - merge
+      - verification
+      - control-plane
+      - promotion
+      - cross-provider-fallback
+    frontier_only: false
+    independence: not-applicable
+    human_gates:
+      - reattestation-by-ratified-amendment
+    provider_rule:
+      kind: none
+      refusal: LANE_DISABLED_REFUSED
+    quality_tolerance:
+      state: unavailable
+      residual: DELTA_L_UNSET
+    status: disabled-refused
+    re_enablement: ratified-amendment-required
+    re_enablement_candidates:
+      - opencode/qwen3.8-flash
+      - opencode/glm-5.3-flash
+candidates:
+  claude-opus-5-5:
+    family: anthropic
+    bindings:
+      - id: openrouter/anthropic/claude-opus-5.5
+        provider: openrouter
+        model: anthropic/claude-opus-5.5
+        family: anthropic
+        identity:
+          state: resolved
+          source: synthetic-fixture (CUTOVER-P4 migration)
+        endpoint:
+          registered: https://openrouter.ai/api/v1
+          catalogue: null
+          alignment: unknown
+        data_classes: &a1
+          state: declared
+          value:
+            - public
+            - internal
+            - restricted
+          source: synthetic-fixture (CUTOVER-P4 migration)
+        capabilities:
+          tool-use: unverified
+          structured-output: unverified
+        context_window_tokens:
+          state: unknown
+          residual: CONTEXT_UNKNOWN
+        max_output_tokens:
+          state: unknown
+          residual: CONTEXT_UNKNOWN
+        cost:
+          state: unknown
+          residual: COST_UNKNOWN
+        availability:
+          state: unproven
+          residual: AVAILABILITY_UNVERIFIED
+        quality:
+          state: unproven
+          residual: QUALITY_UNRECORDED
+  claude-sonnet-5:
+    family: anthropic
+    bindings:
+      - id: openrouter/anthropic/claude-sonnet-5
+        provider: openrouter
+        model: anthropic/claude-sonnet-5
+        family: anthropic
+        identity:
+          state: resolved
+          source: synthetic-fixture (CUTOVER-P4 migration)
+        endpoint:
+          registered: https://openrouter.ai/api/v1
+          catalogue: null
+          alignment: unknown
+        data_classes: *a1
+        capabilities:
+          tool-use: unverified
+          structured-output: unverified
+        context_window_tokens:
+          state: unknown
+          residual: CONTEXT_UNKNOWN
+        max_output_tokens:
+          state: unknown
+          residual: CONTEXT_UNKNOWN
+        cost:
+          state: unknown
+          residual: COST_UNKNOWN
+        availability:
+          state: unproven
+          residual: AVAILABILITY_UNVERIFIED
+        quality:
+          state: unproven
+          residual: QUALITY_UNRECORDED
+  claude-haiku-4.5:
+    family: anthropic
+    bindings:
+      - id: openrouter/anthropic/claude-haiku-4.5
+        provider: openrouter
+        model: anthropic/claude-haiku-4.5
+        family: anthropic
+        identity:
+          state: resolved
+          source: synthetic-fixture (CUTOVER-P4 migration)
+        endpoint:
+          registered: https://openrouter.ai/api/v1
+          catalogue: null
+          alignment: unknown
+        data_classes: *a1
+        capabilities:
+          tool-use: unverified
+          structured-output: unverified
+        context_window_tokens:
+          state: unknown
+          residual: CONTEXT_UNKNOWN
+        max_output_tokens:
+          state: unknown
+          residual: CONTEXT_UNKNOWN
+        cost:
+          state: unknown
+          residual: COST_UNKNOWN
+        availability:
+          state: unproven
+          residual: AVAILABILITY_UNVERIFIED
+        quality:
+          state: unproven
+          residual: QUALITY_UNRECORDED
+lane_routes: []

@@ -1,0 +1,156 @@
+{
+  "verifiedUtc": "2026-09-07T18:58:12.061252+00:00",
+  "resultSha256": "08ab3ded079d2b96d72325e880a09b285081cce2266721ba68eec5fc751f98d3",
+  "commands": [
+    {
+      "metadata": "0001-before-symbolic.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:55:45.262319+00:00",
+      "endUtc": "2026-09-07T18:55:45.311554+00:00"
+    },
+    {
+      "metadata": "0002-before-refs.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:55:45.313819+00:00",
+      "endUtc": "2026-09-07T18:55:45.370793+00:00"
+    },
+    {
+      "metadata": "0003-git-version.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:55:45.374268+00:00",
+      "endUtc": "2026-09-07T18:55:45.422135+00:00"
+    },
+    {
+      "metadata": "0004-main-type.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:55:45.424089+00:00",
+      "endUtc": "2026-09-07T18:55:45.493076+00:00"
+    },
+    {
+      "metadata": "0005-r31-type.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:55:45.495080+00:00",
+      "endUtc": "2026-09-07T18:55:45.676069+00:00"
+    },
+    {
+      "metadata": "0006-source_commit-type.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:55:45.680443+00:00",
+      "endUtc": "2026-09-07T18:55:45.801773+00:00"
+    },
+    {
+      "metadata": "0007-source-tree.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:55:45.807126+00:00",
+      "endUtc": "2026-09-07T18:55:45.887956+00:00"
+    },
+    {
+      "metadata": "0008-source-ancestor.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:55:45.892868+00:00",
+      "endUtc": "2026-09-07T18:55:45.947364+00:00"
+    },
+    {
+      "metadata": "0009-accepted-inventory.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:55:45.956953+00:00",
+      "endUtc": "2026-09-07T18:55:46.035540+00:00"
+    },
+    {
+      "metadata": "0010-source-inventory.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:55:46.052113+00:00",
+      "endUtc": "2026-09-07T18:55:46.162893+00:00"
+    },
+    {
+      "metadata": "0011-main-inventory.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:55:46.174083+00:00",
+      "endUtc": "2026-09-07T18:55:46.232433+00:00"
+    },
+    {
+      "metadata": "0012-merge-tree.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:55:46.241096+00:00",
+      "endUtc": "2026-09-07T18:55:46.307232+00:00"
+    },
+    {
+      "metadata": "0013-merge-type.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:55:46.309058+00:00",
+      "endUtc": "2026-09-07T18:55:46.354812+00:00"
+    },
+    {
+      "metadata": "0014-merge-inventory.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:55:46.357440+00:00",
+      "endUtc": "2026-09-07T18:55:46.409355+00:00"
+    },
+    {
+      "metadata": "0015-accepted-registry.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:55:46.424710+00:00",
+      "endUtc": "2026-09-07T18:55:46.513334+00:00"
+    },
+    {
+      "metadata": "0016-read-alternate-index.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:55:46.653952+00:00",
+      "endUtc": "2026-09-07T18:55:46.706706+00:00"
+    },
+    {
+      "metadata": "0017-fixture-root.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:55:46.708418+00:00",
+      "endUtc": "2026-09-07T18:55:46.769857+00:00"
+    },
+    {
+      "metadata": "0018-raw-blobs.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:55:46.772585+00:00",
+      "endUtc": "2026-09-07T18:55:46.979707+00:00"
+    },
+    {
+      "metadata": "0019-node-version.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:55:59.146154+00:00",
+      "endUtc": "2026-09-07T18:55:59.243082+00:00"
+    },
+    {
+      "metadata": "0020-validate.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:55:59.246046+00:00",
+      "endUtc": "2026-09-07T18:56:05.900578+00:00"
+    },
+    {
+      "metadata": "0021-sweep.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:56:05.904066+00:00",
+      "endUtc": "2026-09-07T18:56:15.413516+00:00"
+    },
+    {
+      "metadata": "0022-generate-idempotence.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:56:15.416532+00:00",
+      "endUtc": "2026-09-07T18:56:24.336973+00:00"
+    },
+    {
+      "metadata": "0023-after-symbolic.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:56:29.608099+00:00",
+      "endUtc": "2026-09-07T18:56:29.708394+00:00"
+    },
+    {
+      "metadata": "0024-after-refs.json",
+      "directExit": 0,
+      "startUtc": "2026-09-07T18:56:29.713007+00:00",
+      "endUtc": "2026-09-07T18:56:29.773643+00:00"
+    }
+  ],
+  "allDirectExitsZero": true,
+  "validateAndSweepValid": true,
+  "postCommandFileDeltas": {},
+  "rawHeadAndRefsUnchanged": true,
+  "protectedInputCount": 398,
+  "treeDeltaCount": 153
+}

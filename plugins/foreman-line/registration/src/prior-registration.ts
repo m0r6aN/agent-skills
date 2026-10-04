@@ -16,7 +16,9 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import type { ApprovalRecord } from '../../approval/src/index.js'
+import { assertContainedPath } from '../../projection/src/index.js'
 import { type ReceiptDocument, receiptPath, validateChain } from '../../receipts/src/index.js'
+import { assertAbsoluteRoot } from './types.js'
 
 export type RegistrationMode = 'first' | 'reconcile'
 
@@ -37,9 +39,14 @@ function readJsonIfExists(absPath: string): unknown {
  * runs F7 and (on changed content) refuses, never silently reconciling.
  */
 export function detectRegistrationMode(record: ApprovalRecord, repoRoot: string): RegistrationMode {
+  assertAbsoluteRoot(repoRoot, 'detectRegistrationMode')
   const workflowId = record.correlation.workflowId
   const stageBAbs = join(repoRoot, ...stageBReceiptLocator(workflowId).split('/'))
   const genesisAbs = join(repoRoot, ...record.receipt.locator.split('/'))
+  // Out-of-root refusal (boundary-routing D1): the receipt locator arrives
+  // inside the on-disk approval record and must resolve inside repoRoot.
+  // (`stageBReceiptLocator` is UUID-validated inside `receiptPath`.)
+  assertContainedPath(repoRoot, genesisAbs, record.receipt.locator)
 
   const stageB = readJsonIfExists(stageBAbs)
   const genesis = readJsonIfExists(genesisAbs)

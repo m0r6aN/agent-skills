@@ -9,6 +9,7 @@
  */
 import assert from 'node:assert/strict'
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { test } from 'node:test'
 import type { ReceiptDocument } from '../../receipts/src/index.js'
@@ -41,6 +42,10 @@ import {
 
 const TICKET = 'KONE-23210'
 const STAGE_E_LOCATOR = receiptPath(WORKFLOW_ID, 4, 'E', 'IntegrationResult')
+// Absolute (P2b-i / D19): the root guards refuse a relative root before any
+// fs/subprocess work, so every seam fixture must pass an absolute root even
+// when all effects are injected. This one is never touched on disk.
+const VIRTUAL_REPO_ROOT = join(tmpdir(), 'w4p4-virtual-repo-root')
 
 function makePackage(over: Partial<ClosurePackage> = {}): ClosurePackage {
   const chain = makeStageEChain()
@@ -52,7 +57,7 @@ function makePackage(over: Partial<ClosurePackage> = {}): ClosurePackage {
     mergeSha: VALID_MERGE_SHA,
     specLifecycleMove: SPEC_MOVE,
     stageETip: chain[chain.length - 1] as ReceiptDocument,
-    repoRoot: 'virtual-repo-root',
+    repoRoot: VIRTUAL_REPO_ROOT,
     ...over,
   }
 }
@@ -115,7 +120,7 @@ test('AC8: prepareClosure over a valid Stage-E-tipped chain yields a package car
       currentStatus: 'In Review',
       mergeSha: VALID_MERGE_SHA,
       specLifecycleMove: SPEC_MOVE,
-      repoRoot: 'virtual-repo-root',
+      repoRoot: VIRTUAL_REPO_ROOT,
     },
     { loadReceiptChainFn: () => toLoaded(makeStageEChain()) },
   )
@@ -145,7 +150,7 @@ test('AC8: prepareClosure raises CHAIN_INVALID on a correlation-perturbed chain'
           currentStatus: 'In Review',
           mergeSha: VALID_MERGE_SHA,
           specLifecycleMove: SPEC_MOVE,
-          repoRoot: 'virtual-repo-root',
+          repoRoot: VIRTUAL_REPO_ROOT,
         },
         { loadReceiptChainFn: () => toLoaded(perturbed) },
       ),
@@ -165,7 +170,7 @@ test('AC8: prepareClosure raises STAGE_E_TIP_INVALID when the tip is not stage E
           currentStatus: 'In Review',
           mergeSha: VALID_MERGE_SHA,
           specLifecycleMove: SPEC_MOVE,
-          repoRoot: 'virtual-repo-root',
+          repoRoot: VIRTUAL_REPO_ROOT,
         },
         { loadReceiptChainFn: () => toLoaded(chain) },
       ),
@@ -185,7 +190,7 @@ test('AC8: prepareClosure raises WORKFLOW_ID_INVALID before any chain read', asy
           currentStatus: 'In Review',
           mergeSha: VALID_MERGE_SHA,
           specLifecycleMove: SPEC_MOVE,
-          repoRoot: 'virtual-repo-root',
+          repoRoot: VIRTUAL_REPO_ROOT,
         },
         {
           loadReceiptChainFn: () => {
@@ -205,7 +210,7 @@ test('AC8: prepareClosure raises MERGE_SHA_INVALID / SPEC_MOVE_INVALID on bad in
     ticketKey: TICKET,
     targetStatus: 'Done',
     currentStatus: 'In Review',
-    repoRoot: 'virtual-repo-root',
+    repoRoot: VIRTUAL_REPO_ROOT,
   }
   const deps = { loadReceiptChainFn: () => toLoaded(makeStageEChain()) }
   await assert.rejects(
@@ -278,7 +283,7 @@ test('AC8: prepareClosure raises WORKFLOW_ID_INVALID on a workflowId containing 
             from: 'docs/specs/active/test.md',
             to: 'docs/specs/done/test.md',
           },
-          repoRoot: 'virtual-repo-root',
+          repoRoot: VIRTUAL_REPO_ROOT,
         },
         {
           loadReceiptChainFn: () => {
@@ -474,7 +479,7 @@ test('AC12a: retry from a half-closed state seals without re-merging', async () 
     transport,
     writeFn: fn,
     loadReceiptChainFn: () => toLoaded(chain),
-    repoRoot: 'virtual-repo-root',
+    repoRoot: VIRTUAL_REPO_ROOT,
   })
   assert.equal(result.kind, 'closed')
   const seal = written[0] as ReceiptDocument
@@ -492,7 +497,7 @@ test('AC12b: retry with failedStep=comment does NOT re-fire the transition', asy
     transport,
     writeFn: fn,
     loadReceiptChainFn: () => toLoaded(chain),
-    repoRoot: 'virtual-repo-root',
+    repoRoot: VIRTUAL_REPO_ROOT,
   })
   assert.equal(result.kind, 'closed')
   assert.equal(transport.calls.transitionIssue.length, 0)
@@ -508,7 +513,7 @@ test('AC12c: retry after a seal exists returns closed with zero transport calls 
     transport,
     writeFn: fn,
     loadReceiptChainFn: () => toLoaded(chain),
-    repoRoot: 'virtual-repo-root',
+    repoRoot: VIRTUAL_REPO_ROOT,
   })
   assert.equal(result.kind, 'closed')
   if (result.kind !== 'closed') throw new Error('unreachable')
@@ -530,7 +535,7 @@ test('AC12d: retry with no half-closed and no seal raises CLOSURE_STATE_MISSING'
       retryHalfClosedClosure(WORKFLOW_ID, {
         transport,
         loadReceiptChainFn: () => toLoaded(makeStageEChain()),
-        repoRoot: 'virtual-repo-root',
+        repoRoot: VIRTUAL_REPO_ROOT,
       }),
     (err: unknown) => err instanceof ClosureError && err.code === 'CLOSURE_STATE_MISSING',
   )
@@ -567,7 +572,7 @@ test('AC12e: a retry that fails again emits a further half-closed receipt and re
     transport,
     writeFn: fn,
     loadReceiptChainFn: () => toLoaded(chain),
-    repoRoot: 'virtual-repo-root',
+    repoRoot: VIRTUAL_REPO_ROOT,
   })
   assert.equal(result.kind, 'half-closed')
   const further = written[0] as ReceiptDocument

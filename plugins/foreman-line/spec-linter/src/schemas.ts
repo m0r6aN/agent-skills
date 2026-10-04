@@ -76,5 +76,33 @@ export const specFrontmatterSchema: SchemaObject = {
       type: 'array',
       items: { type: 'string', pattern: '\\S' },
     },
+    // RCM D7/D8 (SPEC-CONVENTION §4.9, schema v0.4): all four OPTIONAL (the
+    // §4.6 additive pattern) with their value registries already ratified, so
+    // enum/shape validation ships now. Restated enum literals here are proven
+    // equal to their owning vocabularies by tests/rcm-fields.test.ts.
+    expertise: {
+      type: 'string',
+      enum: [
+        'engineering',
+        'architecture',
+        'security',
+        'legal',
+        'finance',
+        'writing',
+        'research',
+        'data',
+      ],
+    },
+    inputs: {
+      type: 'array',
+      items: { type: 'string', enum: ['text', 'image'] },
+      minItems: 1,
+      uniqueItems: true,
+    },
+    min_context: { type: 'integer', minimum: 1 },
+    thinking_level: {
+      type: 'string',
+      enum: ['off', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max'],
+    },
   },
 }

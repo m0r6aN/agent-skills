@@ -1,0 +1,25 @@
+{
+  "name": "@foreman-line/ops-console",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Read-only Foreman Ops Console (FOC-P1–FOC-P4): the single projection authority over goal/receipt/spec disk truth (derived parcel states, receipt-chain walk, gate proxy presentation, alerts) plus a localhost-only API/UI. It never mutates goal, receipt, spec, or contract data (charter D2, D4, D6).",
+  "engines": {
+    "node": ">=22"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "start": "tsx src/server.ts",
+    "lint": "biome check ."
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.14",
+    "@types/node": "26.6.2",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
+  }
+}

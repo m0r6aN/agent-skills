@@ -1,0 +1,12 @@
+{
+  "recordedUtc": "2026-09-07T16:12:03.7568354Z",
+  "testedCheckpoint": "f8093410cead451f204d08ae25f3a70b34208213",
+  "initialTrackedFiles": 1071,
+  "changedInitialTrackedFiles": 11,
+  "packageChanges": 9,
+  "coordinatorMetadataChanges": 2,
+  "sourceFilesUnchanged": 18,
+  "packageDiffFromTestedCheckpoint": [],
+  "directExit": 1,
+  "diagnostic": "git diff --check flagged CRLF trailing whitespace in updated evidence JSON only; package and all18source checks passed. Corrected serialization before final scope check."
+}

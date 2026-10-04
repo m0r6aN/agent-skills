@@ -31,22 +31,18 @@ test('classification-gates-before-cost: shipped policy passes', () => {
 })
 
 test('classification-gates-before-cost: shipped policy admits no free, :free, or contributor-tier model anywhere', () => {
+  // CUTOVER-P4 (C3.3 re-anchor): the scanned sources are now the binding-level
+  // `model` fields (the only home for model ids) and the reviewed registry.
   const doc = validPolicy as {
-    data_classification: Record<'public' | 'internal' | 'restricted', { eligible_models: string[] }>
-    model_tiers: Record<string, string[]>
+    candidates: Record<string, { bindings: { model: string }[] }>
   }
   const suspicious = /contributor|:free|-free$/
-  for (const tier of ['public', 'internal', 'restricted'] as const) {
-    for (const id of doc.data_classification[tier].eligible_models) {
+  for (const [candidate, entry] of Object.entries(doc.candidates)) {
+    for (const binding of entry.bindings) {
       assert.ok(
-        !suspicious.test(id),
-        `${tier} admits '${id}', which may train on inputs or be rate-capped`,
+        !suspicious.test(binding.model),
+        `candidates.${candidate} admits '${binding.model}', which may train on inputs or be rate-capped`,
       )
-    }
-  }
-  for (const [tier, ids] of Object.entries(doc.model_tiers)) {
-    for (const id of ids) {
-      assert.ok(!suspicious.test(id), `model_tiers.${tier} lists '${id}'`)
     }
   }
   for (const id of KNOWN_FRONTIER_MODELS) {
@@ -55,14 +51,17 @@ test('classification-gates-before-cost: shipped policy admits no free, :free, or
 })
 
 test('classification-gates-before-cost: shipped policy uses OpenRouter vendor/model slugs throughout', () => {
+  // CUTOVER-P4 (C3.3 re-anchor): the OpenRouter model vocabulary lives in
+  // binding `model` fields; the provider-neutral candidate keys are the other
+  // vocabulary and are not slugs by design.
   const doc = validPolicy as {
-    data_classification: Record<string, { eligible_models: string[] }>
-    model_tiers: Record<string, string[]>
+    candidates: Record<string, { bindings: { provider: string; model: string }[] }>
   }
   const slug = /^[a-z0-9-]+\/[a-z0-9.-]+$/
   const all = [
-    ...Object.values(doc.data_classification).flatMap((r) => r.eligible_models),
-    ...Object.values(doc.model_tiers).flat(),
+    ...Object.values(doc.candidates).flatMap((entry) =>
+      entry.bindings.filter((b) => b.provider === 'openrouter').map((b) => b.model),
+    ),
     ...KNOWN_FRONTIER_MODELS,
   ]
   for (const id of all) {
@@ -83,11 +82,17 @@ test('coordinator/verifier frontier pinning: shipped policy passes', () => {
   assert.equal(validatePolicy(validPolicy).valid, true)
 })
 
-test('coordinator/verifier frontier pinning: rejects a non-frontier coordinator', () => {
+test('coordinator/verifier frontier pinning: rejects unpinning the coordinator lane from frontier', () => {
+  // CUTOVER-P4 (C3.3 re-anchor): the structural D4 pin lived in the removed
+  // `roles` block; the frozen role/lane/authority map carries it now.
   const doc = loadYaml(join(fixturesDir, 'reject-role-pinning.yaml'))
   const result = validatePolicy(doc)
   assert.equal(result.valid, false)
-  assert.ok(result.errors.some((e) => e.includes('roles.coordinator')))
+  assert.ok(
+    result.errors.some(
+      (e) => e.includes('lane_map.L1.frontier_only') && e.includes('ROLE_LANE_MAP_VIOLATION'),
+    ),
+  )
 })
 
 // c. Security override (+ derived name-guard) ---------------------------------
@@ -138,7 +143,9 @@ test('frontier-tier anchoring: shipped policy passes unchanged', () => {
   assert.equal(validatePolicy(validPolicy).valid, true)
 })
 
-test('frontier-tier anchoring: rejects a model_tiers.frontier not in KNOWN_FRONTIER_MODELS, naming the offending id', () => {
+test('frontier-tier anchoring: rejects a selection_order.frontier entry not in KNOWN_FRONTIER_MODELS, naming the offending id', () => {
+  // CUTOVER-P4 (C3.3 re-anchor): the check now anchors the ordered source's
+  // frontier group through each entry's OpenRouter binding `model`.
   assert.ok(
     !KNOWN_FRONTIER_MODELS.includes('anthropic/claude-haiku-4.5'),
     'fixture assumes anthropic/claude-haiku-4.5 is not a known frontier model',
@@ -148,7 +155,7 @@ test('frontier-tier anchoring: rejects a model_tiers.frontier not in KNOWN_FRONT
   assert.equal(result.valid, false)
   assert.ok(
     result.errors.some(
-      (e) => e.includes('model_tiers.frontier') && e.includes("'anthropic/claude-haiku-4.5'"),
+      (e) => e.includes('selection_order.frontier') && e.includes("'anthropic/claude-haiku-4.5'"),
     ),
     `expected an error naming the offending model id, got: ${JSON.stringify(result.errors)}`,
   )
@@ -167,7 +174,10 @@ test('tier eligibility: shipped policy lists every tier model under data_classif
   assert.equal(validatePolicy(validPolicy).valid, true)
 })
 
-test('tier eligibility: rejects a model_tiers entry absent from data_classification.public, naming the tier and id', () => {
+test('tier eligibility: rejects a selection_order entry absent from data_classification.public, naming the group and id', () => {
+  // CUTOVER-P4 (C3.3 re-anchor): invariant (f) now checks each ordered-source
+  // entry's OpenRouter binding for public eligibility (binding-level
+  // `data_classes`, A5.2).
   assert.ok(
     KNOWN_FRONTIER_MODELS.includes('openai/gpt-5.6-sol'),
     'fixture assumes openai/gpt-5.6-sol is a known frontier model so only invariant (f) fires',
@@ -181,10 +191,10 @@ test('tier eligibility: rejects a model_tiers entry absent from data_classificat
     `expected exactly one error, got: ${JSON.stringify(result.errors)}`,
   )
   assert.ok(
-    result.errors[0]?.includes('model_tiers.frontier') &&
+    result.errors[0]?.includes('selection_order.frontier') &&
       result.errors[0]?.includes("'openai/gpt-5.6-sol'") &&
       result.errors[0]?.includes('data_classification.public'),
-    `expected an error naming the tier and offending model id, got: ${JSON.stringify(result.errors)}`,
+    `expected an error naming the group and offending model id, got: ${JSON.stringify(result.errors)}`,
   )
 })
 
@@ -251,26 +261,31 @@ test('transport requirements: missing block is a structural error, not a silent 
 const SHADOW_ROUTE_KEY = 'example-shadow'
 const shadowPolicy = loadYaml(join(fixturesDir, 'accept-shadow-route.yaml'))
 
-test('Pi/OpenRouter config uses the verified base URL and exact Jev model id', () => {
+test('Pi/OpenRouter config uses the verified base URL and nonempty live model ids', () => {
   assert.equal(PI_OPENROUTER_ROUTING.baseUrl, 'https://openrouter.ai/api/v1')
-  assert.ok(PI_OPENROUTER_ROUTING.enabledModels.includes('typesafe/jev-1.13'))
-  assert.ok(PI_OPENROUTER_ROUTING.models['typesafe/jev-1.13'])
+  assert.ok(PI_OPENROUTER_ROUTING.enabledModels.length > 0)
+  for (const id of PI_OPENROUTER_ROUTING.enabledModels) {
+    assert.match(id, /^~?[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.:+-]+$/)
+  }
 })
 
 test('Jev is limited to fast structured routing/classification recommendations', () => {
-  const jev = PI_OPENROUTER_ROUTING.models['typesafe/jev-1.13']
-  assert.ok(jev)
-  assert.deepEqual(jev.capabilities, ['routing', 'classification', 'structured-decision'])
-  assert.deepEqual(jev.allowedLanes, ['routing', 'classification'])
-  assert.equal(jev.authority, 'recommend-only')
-  for (const lane of [
-    'prose-generation',
-    'implementation',
-    'approval',
-    'merge',
-    'policy-bypass',
-  ] as const) {
-    assert.ok(jev.prohibitedLanes.includes(lane), `Jev must prohibit ${lane}`)
+  // Retirement must not force a disappeared model to remain enabled.
+  // The negative contract fixture in pi-openrouter.test.ts always tests this boundary.
+  for (const [id, jev] of Object.entries(PI_OPENROUTER_ROUTING.models)) {
+    if (!id.startsWith('typesafe/jev')) continue
+    assert.deepEqual(jev.capabilities, ['routing', 'classification', 'structured-decision'])
+    assert.deepEqual(jev.allowedLanes, ['routing', 'classification'])
+    assert.equal(jev.authority, 'recommend-only')
+    for (const lane of [
+      'prose-generation',
+      'implementation',
+      'approval',
+      'merge',
+      'policy-bypass',
+    ] as const) {
+      assert.ok(jev.prohibitedLanes.includes(lane), `Jev must prohibit ${lane}`)
+    }
   }
 })
 

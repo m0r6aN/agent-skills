@@ -1,0 +1,2242 @@
+{
+  "request": {
+    "version": "pmc/v1",
+    "workflowId": "workflow",
+    "taskId": "task",
+    "episodeId": "episode",
+    "requestId": "request",
+    "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "lane": "L4",
+    "subRole": "builder-standard",
+    "routingClass": "implementation/standard",
+    "dataClass": "public",
+    "requirements": {
+      "toolUse": true,
+      "structuredOutput": true,
+      "reasoning": true,
+      "thinkingLevel": "high",
+      "inputModalities": [
+        "text"
+      ],
+      "requiredContextTokens": 100,
+      "requiredOutputTokens": 20,
+      "maximumInputTokens": 1000,
+      "maximumOutputTokens": 200,
+      "rankingTokens": {
+        "input": 100,
+        "output": 20
+      }
+    },
+    "attempt": {
+      "kind": "initial"
+    }
+  },
+  "context": {
+    "projection": {
+      "schemaVersion": "pmc-provider-binding-projection/v1",
+      "evidenceOnly": true,
+      "policy": {
+        "schemaVersion": "pmc-provider-binding-policy/v1",
+        "compatibility": "additive-v0-preserved",
+        "provenance": {
+          "sourceRef": "host-owner-export/catalog-projection.json",
+          "sourceRevision": "PMC-P0-reviewed-static-baseline-2026-09-25",
+          "contentSha256": "b0c2dc8cf1412773b4ed4f17fcba10634a997f3b2b2b960d6dca200bdbb171fe",
+          "catalogVersion": {
+            "status": "recorded",
+            "value": "projectionVersion:1",
+            "evidenceRef": "pmc-p0-capability-baseline.md#1"
+          },
+          "mappingVersion": "PMC-P0-ratified-2026-09-25",
+          "policySchemaVersion": "pmc-provider-binding-policy/v1",
+          "roleMapVersion": "PMC-P0-section-4-2026-09-25",
+          "foremanRevision": "ad878b310763609205a0e80ed631c0da76e1e833",
+          "piRuntimeVersion": {
+            "status": "recorded",
+            "value": "0.86.1",
+            "evidenceRef": "pmc-p0-capability-baseline.md#8-holds"
+          },
+          "acquiredAtUtc": {
+            "status": "recorded",
+            "value": "2026-09-20T17:01:26.485Z",
+            "evidenceRef": "pmc-p0-capability-baseline.md#1"
+          },
+          "evidenceState": "static-conformance",
+          "freshnessAcceptance": "not-accepted"
+        },
+        "candidates": [
+          {
+            "logicalCandidateId": "candidate-0",
+            "family": {
+              "status": "unknown",
+              "reason": "synthetic unknown"
+            }
+          },
+          {
+            "logicalCandidateId": "candidate-1",
+            "family": {
+              "status": "unknown",
+              "reason": "synthetic unknown"
+            }
+          },
+          {
+            "logicalCandidateId": "candidate-2",
+            "family": {
+              "status": "unknown",
+              "reason": "synthetic unknown"
+            }
+          },
+          {
+            "logicalCandidateId": "candidate-3",
+            "family": {
+              "status": "unknown",
+              "reason": "synthetic unknown"
+            }
+          }
+        ],
+        "bindings": [
+          {
+            "bindingId": "binding-0",
+            "logicalCandidateId": "candidate-0",
+            "provider": "opencode",
+            "providerModelId": "model-0",
+            "piHostModelId": "opencode/model-0",
+            "protocol": {
+              "status": "unknown",
+              "reason": "synthetic unknown"
+            },
+            "catalogBaseUrl": {
+              "status": "unknown",
+              "reason": "synthetic unknown"
+            },
+            "identityState": "catalog-recorded",
+            "identityRefusalCodes": [],
+            "eligibility": {
+              "dataClasses": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "transportRequirements": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "toolUse": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "structuredOutput": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "reasoning": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "inputModalities": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "thinkingLevels": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "contextWindow": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "maxTokens": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "rates": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "enabled": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "availability": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "qualityByLane": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              }
+            }
+          },
+          {
+            "bindingId": "binding-1",
+            "logicalCandidateId": "candidate-1",
+            "provider": "opencode",
+            "providerModelId": "model-1",
+            "piHostModelId": "opencode/model-1",
+            "protocol": {
+              "status": "unknown",
+              "reason": "synthetic unknown"
+            },
+            "catalogBaseUrl": {
+              "status": "unknown",
+              "reason": "synthetic unknown"
+            },
+            "identityState": "catalog-recorded",
+            "identityRefusalCodes": [],
+            "eligibility": {
+              "dataClasses": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "transportRequirements": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "toolUse": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "structuredOutput": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "reasoning": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "inputModalities": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "thinkingLevels": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "contextWindow": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "maxTokens": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "rates": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "enabled": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "availability": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "qualityByLane": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              }
+            }
+          },
+          {
+            "bindingId": "binding-2",
+            "logicalCandidateId": "candidate-2",
+            "provider": "openrouter",
+            "providerModelId": "model-2",
+            "piHostModelId": "openrouter/model-2",
+            "protocol": {
+              "status": "unknown",
+              "reason": "synthetic unknown"
+            },
+            "catalogBaseUrl": {
+              "status": "unknown",
+              "reason": "synthetic unknown"
+            },
+            "identityState": "catalog-recorded",
+            "identityRefusalCodes": [],
+            "eligibility": {
+              "dataClasses": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "transportRequirements": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "toolUse": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "structuredOutput": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "reasoning": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "inputModalities": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "thinkingLevels": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "contextWindow": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "maxTokens": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "rates": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "enabled": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "availability": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "qualityByLane": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              }
+            }
+          },
+          {
+            "bindingId": "binding-3",
+            "logicalCandidateId": "candidate-3",
+            "provider": "openrouter",
+            "providerModelId": "model-3",
+            "piHostModelId": "openrouter/model-3",
+            "protocol": {
+              "status": "unknown",
+              "reason": "synthetic unknown"
+            },
+            "catalogBaseUrl": {
+              "status": "unknown",
+              "reason": "synthetic unknown"
+            },
+            "identityState": "catalog-recorded",
+            "identityRefusalCodes": [],
+            "eligibility": {
+              "dataClasses": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "transportRequirements": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "toolUse": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "structuredOutput": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "reasoning": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "inputModalities": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "thinkingLevels": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "contextWindow": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "maxTokens": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "rates": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "enabled": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "availability": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              },
+              "qualityByLane": {
+                "status": "unknown",
+                "reason": "synthetic unknown"
+              }
+            }
+          }
+        ],
+        "lanes": [
+          {
+            "lane": "L1",
+            "roleFamily": "coordinator",
+            "subRoles": [
+              "coordinator",
+              "shaper",
+              "architect"
+            ],
+            "routingClasses": [
+              "architecture/risk"
+            ],
+            "authorityCap": "coordinate-shape-no-ratification-gates-self-review-approval-merge-release-bypass",
+            "frontierOnly": true,
+            "independence": "distinct-instance-family-where-required-unknown-refuses",
+            "humanGates": [
+              "owner-gate-1",
+              "dispatch-gate-2",
+              "owner-gate-3",
+              "owner-only-break-glass"
+            ],
+            "providerRule": {
+              "mode": "pin",
+              "providers": [
+                "opencode"
+              ],
+              "offPin": "historical-nonselectable"
+            },
+            "qualityTolerance": 0,
+            "enabled": true,
+            "rankingRequirements": {
+              "hardFilters": [
+                "R1",
+                "R2",
+                "R3",
+                "R4",
+                "R6"
+              ],
+              "budgetFilter": "R5",
+              "qualityEvidence": "R7-per-lane",
+              "unknownRequiredFacts": "refuse",
+              "missingEstimates": "unit-price-comparison-does-not-waive-budget",
+              "order": [
+                "pinned-provider-partition",
+                "quality-descending",
+                "primary-before-fallback",
+                "provider-code-point",
+                "model-id-code-point"
+              ]
+            },
+            "budgetPolicyRef": [
+              {
+                "routingClass": "architecture/risk",
+                "status": "existing-policy",
+                "sourceRef": "routing-policy.yaml#classes.architecture/risk"
+              }
+            ]
+          },
+          {
+            "lane": "L2",
+            "roleFamily": "verifier",
+            "subRoles": [
+              "adversarial-reviewer",
+              "verifier",
+              "security-auditor"
+            ],
+            "routingClasses": [
+              "architecture/risk",
+              "review/security"
+            ],
+            "authorityCap": "verdict-recommendation-no-edit-self-acceptance-approval-merge-release-bypass",
+            "frontierOnly": true,
+            "independence": "distinct-instance-family-where-required-unknown-refuses-primary-and-fallback",
+            "humanGates": [
+              "owner-gate-1",
+              "dispatch-gate-2",
+              "owner-gate-3",
+              "owner-only-break-glass",
+              "coordinator-acceptance"
+            ],
+            "providerRule": {
+              "mode": "pin",
+              "providers": [
+                "opencode"
+              ],
+              "offPin": "historical-nonselectable"
+            },
+            "qualityTolerance": 0,
+            "enabled": true,
+            "rankingRequirements": {
+              "hardFilters": [
+                "R1",
+                "R2",
+                "R3",
+                "R4",
+                "R6"
+              ],
+              "budgetFilter": "R5",
+              "qualityEvidence": "R7-per-lane",
+              "unknownRequiredFacts": "refuse",
+              "missingEstimates": "unit-price-comparison-does-not-waive-budget",
+              "order": [
+                "pinned-provider-partition",
+                "quality-descending",
+                "primary-before-fallback",
+                "provider-code-point",
+                "model-id-code-point"
+              ]
+            },
+            "budgetPolicyRef": [
+              {
+                "routingClass": "architecture/risk",
+                "status": "existing-policy",
+                "sourceRef": "routing-policy.yaml#classes.architecture/risk"
+              },
+              {
+                "routingClass": "review/security",
+                "status": "unresolved-non-dispatching",
+                "sourceRef": "PMC-P2-approved-budget-required"
+              }
+            ]
+          },
+          {
+            "lane": "L3",
+            "roleFamily": "builder",
+            "subRoles": [
+              "builder-complex"
+            ],
+            "routingClasses": [
+              "implementation/complex"
+            ],
+            "authorityCap": "scoped-execution-no-self-review-approval-merge-release-bypass",
+            "frontierOnly": false,
+            "independence": "independent-reviewer-family-required-unknown-refuses",
+            "humanGates": [
+              "owner-gate-1",
+              "dispatch-gate-2",
+              "owner-gate-3",
+              "owner-only-break-glass"
+            ],
+            "providerRule": {
+              "mode": "prefer",
+              "providers": [
+                "openrouter",
+                "opencode"
+              ]
+            },
+            "qualityTolerance": 0,
+            "enabled": true,
+            "rankingRequirements": {
+              "hardFilters": [
+                "R1",
+                "R2",
+                "R3",
+                "R4",
+                "R6"
+              ],
+              "budgetFilter": "R5",
+              "qualityEvidence": "R7-per-lane",
+              "unknownRequiredFacts": "refuse",
+              "missingEstimates": "unit-price-comparison-does-not-waive-budget",
+              "order": [
+                "provider-preference",
+                "quality-descending",
+                "primary-before-fallback",
+                "provider-code-point",
+                "model-id-code-point"
+              ]
+            },
+            "budgetPolicyRef": [
+              {
+                "routingClass": "implementation/complex",
+                "status": "unresolved-non-dispatching",
+                "sourceRef": "PMC-P2-approved-budget-required"
+              }
+            ]
+          },
+          {
+            "lane": "L4",
+            "roleFamily": "builder",
+            "subRoles": [
+              "builder-standard"
+            ],
+            "routingClasses": [
+              "standard-feature",
+              "implementation/standard"
+            ],
+            "authorityCap": "scoped-execution-no-self-review-approval-merge-release-bypass",
+            "frontierOnly": false,
+            "independence": "independent-reviewer-where-risk-requires-unknown-refuses",
+            "humanGates": [
+              "owner-gate-1",
+              "dispatch-gate-2",
+              "owner-gate-3",
+              "owner-only-break-glass"
+            ],
+            "providerRule": {
+              "mode": "prefer",
+              "providers": [
+                "openrouter",
+                "opencode"
+              ]
+            },
+            "qualityTolerance": 0,
+            "enabled": true,
+            "rankingRequirements": {
+              "hardFilters": [
+                "R1",
+                "R2",
+                "R3",
+                "R4",
+                "R6"
+              ],
+              "budgetFilter": "R5",
+              "qualityEvidence": "R7-per-lane",
+              "unknownRequiredFacts": "refuse",
+              "missingEstimates": "unit-price-comparison-does-not-waive-budget",
+              "order": [
+                "provider-preference",
+                "quality-descending",
+                "primary-before-fallback",
+                "provider-code-point",
+                "model-id-code-point"
+              ]
+            },
+            "budgetPolicyRef": [
+              {
+                "routingClass": "standard-feature",
+                "status": "existing-policy",
+                "sourceRef": "routing-policy.yaml#classes.standard-feature"
+              },
+              {
+                "routingClass": "implementation/standard",
+                "status": "existing-policy",
+                "sourceRef": "routing-policy.yaml#classes.implementation/standard"
+              }
+            ]
+          },
+          {
+            "lane": "L5",
+            "roleFamily": "builder",
+            "subRoles": [
+              "builder-economy"
+            ],
+            "routingClasses": [
+              "boilerplate"
+            ],
+            "authorityCap": "scoped-execution-no-security-self-review-approval-merge-release-final-verification-bypass",
+            "frontierOnly": false,
+            "independence": "parcel-review-required-never-verifier",
+            "humanGates": [
+              "owner-gate-1",
+              "dispatch-gate-2",
+              "owner-gate-3",
+              "owner-only-break-glass"
+            ],
+            "providerRule": {
+              "mode": "cheapest",
+              "providers": [
+                "opencode",
+                "openrouter"
+              ]
+            },
+            "qualityTolerance": 0,
+            "enabled": true,
+            "rankingRequirements": {
+              "hardFilters": [
+                "R1",
+                "R2",
+                "R3",
+                "R4",
+                "R6"
+              ],
+              "budgetFilter": "R5",
+              "qualityEvidence": "R7-per-lane",
+              "unknownRequiredFacts": "refuse",
+              "missingEstimates": "unit-price-comparison-does-not-waive-budget",
+              "order": [
+                "projected-cost-ascending-or-output-then-input-unit-price",
+                "quality-descending",
+                "primary-before-fallback",
+                "provider-code-point",
+                "model-id-code-point"
+              ]
+            },
+            "budgetPolicyRef": [
+              {
+                "routingClass": "boilerplate",
+                "status": "existing-policy",
+                "sourceRef": "routing-policy.yaml#classes.boilerplate"
+              }
+            ]
+          },
+          {
+            "lane": "L6",
+            "roleFamily": "classifier",
+            "subRoles": [
+              "routing-classifier"
+            ],
+            "routingClasses": [
+              "routing/classification"
+            ],
+            "authorityCap": "recommend-only-no-prose-execution-review-approval-merge-release-verification-control-plane-promotion",
+            "frontierOnly": false,
+            "independence": "no-authority",
+            "humanGates": [
+              "owner-gate-1",
+              "dispatch-gate-2",
+              "owner-gate-3",
+              "owner-only-break-glass",
+              "ratified-amendment-before-reenablement"
+            ],
+            "providerRule": {
+              "mode": "disabled-before-filters-no-hop",
+              "providers": [
+                "opencode"
+              ]
+            },
+            "qualityTolerance": 0,
+            "enabled": false,
+            "rankingRequirements": {
+              "hardFilters": [
+                "R1",
+                "R2",
+                "R3",
+                "R4",
+                "R6"
+              ],
+              "budgetFilter": "R5",
+              "qualityEvidence": "R7-per-lane",
+              "unknownRequiredFacts": "refuse",
+              "missingEstimates": "unit-price-comparison-does-not-waive-budget",
+              "order": []
+            },
+            "budgetPolicyRef": [
+              {
+                "routingClass": "routing/classification",
+                "status": "unresolved-non-dispatching",
+                "sourceRef": "PMC-P2-approved-budget-required"
+              }
+            ]
+          }
+        ],
+        "laneBindings": [
+          {
+            "lane": "L1",
+            "bindingId": "binding-0",
+            "matrixRole": "primary",
+            "fallbackBindingId": "binding-1"
+          },
+          {
+            "lane": "L1",
+            "bindingId": "binding-1",
+            "matrixRole": "fallback",
+            "fallbackBindingId": null
+          },
+          {
+            "lane": "L1",
+            "bindingId": "binding-2",
+            "matrixRole": "primary",
+            "fallbackBindingId": "binding-3"
+          },
+          {
+            "lane": "L1",
+            "bindingId": "binding-3",
+            "matrixRole": "fallback",
+            "fallbackBindingId": null
+          },
+          {
+            "lane": "L2",
+            "bindingId": "binding-0",
+            "matrixRole": "primary",
+            "fallbackBindingId": "binding-1"
+          },
+          {
+            "lane": "L2",
+            "bindingId": "binding-1",
+            "matrixRole": "fallback",
+            "fallbackBindingId": null
+          },
+          {
+            "lane": "L2",
+            "bindingId": "binding-2",
+            "matrixRole": "primary",
+            "fallbackBindingId": "binding-3"
+          },
+          {
+            "lane": "L2",
+            "bindingId": "binding-3",
+            "matrixRole": "fallback",
+            "fallbackBindingId": null
+          },
+          {
+            "lane": "L3",
+            "bindingId": "binding-0",
+            "matrixRole": "primary",
+            "fallbackBindingId": "binding-1"
+          },
+          {
+            "lane": "L3",
+            "bindingId": "binding-1",
+            "matrixRole": "fallback",
+            "fallbackBindingId": null
+          },
+          {
+            "lane": "L3",
+            "bindingId": "binding-2",
+            "matrixRole": "primary",
+            "fallbackBindingId": "binding-3"
+          },
+          {
+            "lane": "L3",
+            "bindingId": "binding-3",
+            "matrixRole": "fallback",
+            "fallbackBindingId": null
+          },
+          {
+            "lane": "L4",
+            "bindingId": "binding-0",
+            "matrixRole": "primary",
+            "fallbackBindingId": "binding-1"
+          },
+          {
+            "lane": "L4",
+            "bindingId": "binding-1",
+            "matrixRole": "fallback",
+            "fallbackBindingId": null
+          },
+          {
+            "lane": "L4",
+            "bindingId": "binding-2",
+            "matrixRole": "primary",
+            "fallbackBindingId": "binding-3"
+          },
+          {
+            "lane": "L4",
+            "bindingId": "binding-3",
+            "matrixRole": "fallback",
+            "fallbackBindingId": null
+          },
+          {
+            "lane": "L5",
+            "bindingId": "binding-0",
+            "matrixRole": "primary",
+            "fallbackBindingId": "binding-1"
+          },
+          {
+            "lane": "L5",
+            "bindingId": "binding-1",
+            "matrixRole": "fallback",
+            "fallbackBindingId": null
+          },
+          {
+            "lane": "L5",
+            "bindingId": "binding-2",
+            "matrixRole": "primary",
+            "fallbackBindingId": "binding-3"
+          },
+          {
+            "lane": "L5",
+            "bindingId": "binding-3",
+            "matrixRole": "fallback",
+            "fallbackBindingId": null
+          }
+        ]
+      }
+    },
+    "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "evaluationTimeUtc": "2026-09-26T12:00:00.000Z",
+    "evidenceMode": "synthetic-offline",
+    "catalog": {
+      "source": {
+        "status": "supplied",
+        "value": {
+          "profileId": "synthetic-profile",
+          "profileVersion": "v1",
+          "profileDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "snapshotDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "configAuthorityRef": "synthetic-config"
+        },
+        "evidence": {
+          "receiptId": "synthetic-receipt",
+          "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "sourceRef": "synthetic-offline-only",
+          "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "lane": "L4",
+          "bindingId": null,
+          "evidenceState": "static-conformance",
+          "observedAtUtc": "2026-09-26T12:00:00.000Z",
+          "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+        }
+      },
+      "provenance": {
+        "digestSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sourceRef": "synthetic-offline-only",
+        "sourceTimeUtc": "2026-09-26T12:00:00.000Z",
+        "evaluationTimeUtc": "2026-09-26T12:00:00.000Z",
+        "ageMs": 0,
+        "maxAgeMs": 86400000,
+        "approvedConfigRef": "synthetic-config"
+      },
+      "results": [
+        {
+          "provider": "opencode",
+          "providerModelId": "model-0",
+          "outcome": "facts",
+          "facts": {
+            "provider": "opencode",
+            "id": "model-0",
+            "baseUrl": "https://synthetic.invalid/v1",
+            "api": "openai-completions",
+            "reasoning": true,
+            "contextWindow": 10000,
+            "maxTokens": 2000,
+            "inputModalities": [
+              "text",
+              "image"
+            ],
+            "rates": {
+              "input": {
+                "value": 1,
+                "unit": "USD per 1M tokens"
+              },
+              "output": {
+                "value": 2,
+                "unit": "USD per 1M tokens"
+              }
+            },
+            "thinkingLevels": {
+              "status": "declared",
+              "levels": [
+                {
+                  "level": "off",
+                  "providerValue": "none"
+                },
+                {
+                  "level": "high",
+                  "providerValue": "high"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "provider": "opencode",
+          "providerModelId": "model-1",
+          "outcome": "facts",
+          "facts": {
+            "provider": "opencode",
+            "id": "model-1",
+            "baseUrl": "https://synthetic.invalid/v1",
+            "api": "openai-completions",
+            "reasoning": true,
+            "contextWindow": 10000,
+            "maxTokens": 2000,
+            "inputModalities": [
+              "text",
+              "image"
+            ],
+            "rates": {
+              "input": {
+                "value": 1,
+                "unit": "USD per 1M tokens"
+              },
+              "output": {
+                "value": 2,
+                "unit": "USD per 1M tokens"
+              }
+            },
+            "thinkingLevels": {
+              "status": "declared",
+              "levels": [
+                {
+                  "level": "off",
+                  "providerValue": "none"
+                },
+                {
+                  "level": "high",
+                  "providerValue": "high"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "provider": "openrouter",
+          "providerModelId": "model-2",
+          "outcome": "facts",
+          "facts": {
+            "provider": "openrouter",
+            "id": "model-2",
+            "baseUrl": "https://synthetic.invalid/v1",
+            "api": "openai-completions",
+            "reasoning": true,
+            "contextWindow": 10000,
+            "maxTokens": 2000,
+            "inputModalities": [
+              "text",
+              "image"
+            ],
+            "rates": {
+              "input": {
+                "value": 1,
+                "unit": "USD per 1M tokens"
+              },
+              "output": {
+                "value": 2,
+                "unit": "USD per 1M tokens"
+              }
+            },
+            "thinkingLevels": {
+              "status": "declared",
+              "levels": [
+                {
+                  "level": "off",
+                  "providerValue": "none"
+                },
+                {
+                  "level": "high",
+                  "providerValue": "high"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "provider": "openrouter",
+          "providerModelId": "model-3",
+          "outcome": "facts",
+          "facts": {
+            "provider": "openrouter",
+            "id": "model-3",
+            "baseUrl": "https://synthetic.invalid/v1",
+            "api": "openai-completions",
+            "reasoning": true,
+            "contextWindow": 10000,
+            "maxTokens": 2000,
+            "inputModalities": [
+              "text",
+              "image"
+            ],
+            "rates": {
+              "input": {
+                "value": 1,
+                "unit": "USD per 1M tokens"
+              },
+              "output": {
+                "value": 2,
+                "unit": "USD per 1M tokens"
+              }
+            },
+            "thinkingLevels": {
+              "status": "declared",
+              "levels": [
+                {
+                  "level": "off",
+                  "providerValue": "none"
+                },
+                {
+                  "level": "high",
+                  "providerValue": "high"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "episode": {
+      "status": "supplied",
+      "value": {
+        "episodeId": "episode",
+        "workflowId": "workflow",
+        "taskId": "task",
+        "lane": "L4",
+        "version": "pmc/v1",
+        "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "attempts": []
+      },
+      "evidence": {
+        "receiptId": "synthetic-receipt",
+        "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sourceRef": "synthetic-offline-only",
+        "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "lane": "L4",
+        "bindingId": null,
+        "evidenceState": "static-conformance",
+        "observedAtUtc": "2026-09-26T12:00:00.000Z",
+        "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+      }
+    },
+    "freshness": {
+      "status": "supplied",
+      "value": {
+        "maximumAgeMs": 3600000
+      },
+      "evidence": {
+        "receiptId": "synthetic-receipt",
+        "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sourceRef": "synthetic-offline-only",
+        "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "lane": "L4",
+        "bindingId": null,
+        "evidenceState": "static-conformance",
+        "observedAtUtc": "2026-09-26T12:00:00.000Z",
+        "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+      }
+    },
+    "independence": {
+      "status": "supplied",
+      "value": {
+        "policyAuthorityRef": "synthetic-policy",
+        "policyAuthorityDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "determination": {
+          "status": "supplied",
+          "value": {
+            "determinationId": "determination",
+            "determinationDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "artifactDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reviewedLane": "L4",
+            "differentFamilyRequired": false
+          },
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": null,
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "artifactDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "subjects": []
+      },
+      "evidence": {
+        "receiptId": "synthetic-receipt",
+        "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sourceRef": "synthetic-offline-only",
+        "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "lane": "L4",
+        "bindingId": null,
+        "evidenceState": "static-conformance",
+        "observedAtUtc": "2026-09-26T12:00:00.000Z",
+        "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+      }
+    },
+    "budget": {
+      "status": "supplied",
+      "value": {
+        "ledgerId": "ledger",
+        "epoch": "epoch",
+        "scopeId": "scope",
+        "workflowId": "workflow",
+        "accountId": "account",
+        "routingClass": "implementation/standard",
+        "currency": "USD",
+        "authorizedLimitMicroUsd": 10000000,
+        "classCeilingMicroUsd": 1000000,
+        "settledMicroUsd": 0,
+        "outstandingMicroUsd": 0,
+        "frozen": false,
+        "ceilingAuthorityRef": "synthetic-ceiling",
+        "ceilingAuthorityDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "snapshotDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "evidence": {
+        "receiptId": "synthetic-receipt",
+        "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sourceRef": "synthetic-offline-only",
+        "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "lane": "L4",
+        "bindingId": null,
+        "evidenceState": "static-conformance",
+        "observedAtUtc": "2026-09-26T12:00:00.000Z",
+        "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+      }
+    },
+    "bindings": [
+      {
+        "bindingId": "binding-0",
+        "protocol": {
+          "status": "supplied",
+          "value": "openai-completions",
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-0",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "catalogBaseUrl": {
+          "status": "supplied",
+          "value": "https://synthetic.invalid/v1",
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-0",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "family": {
+          "status": "supplied",
+          "value": "family-0",
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-0",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "instanceId": {
+          "status": "supplied",
+          "value": "instance-0",
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-0",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "frontier": {
+          "status": "supplied",
+          "value": true,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-0",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "dataClasses": {
+          "status": "supplied",
+          "value": [
+            "public",
+            "internal",
+            "restricted"
+          ],
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-0",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "transport": {
+          "status": "supplied",
+          "value": {
+            "data_collection": "deny",
+            "zdr": true
+          },
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-0",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "toolUse": {
+          "status": "supplied",
+          "value": true,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-0",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "structuredOutput": {
+          "status": "supplied",
+          "value": true,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-0",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "enabled": {
+          "status": "supplied",
+          "value": true,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-0",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "available": {
+          "status": "supplied",
+          "value": true,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-0",
+            "evidenceState": "live-availability",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "quality": {
+          "status": "supplied",
+          "value": 0.8,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-0",
+            "evidenceState": "model-quality",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "cost": {
+          "status": "supplied",
+          "value": {
+            "currency": "USD",
+            "maximumMicroUsd": 1000,
+            "maximumInputTokens": 1000,
+            "maximumOutputTokens": 200,
+            "sourceProfileId": "synthetic-profile",
+            "sourceProfileVersion": "v1",
+            "sourceProfileDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "tariffDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "priceEvidenceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "costValueDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ranking": {
+              "kind": "projected",
+              "inputTokens": 100,
+              "outputTokens": 20,
+              "usd": {
+                "numerator": "1",
+                "denominator": "10000"
+              }
+            }
+          },
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-0",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        }
+      },
+      {
+        "bindingId": "binding-1",
+        "protocol": {
+          "status": "supplied",
+          "value": "openai-completions",
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-1",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "catalogBaseUrl": {
+          "status": "supplied",
+          "value": "https://synthetic.invalid/v1",
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-1",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "family": {
+          "status": "supplied",
+          "value": "family-1",
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-1",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "instanceId": {
+          "status": "supplied",
+          "value": "instance-1",
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-1",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "frontier": {
+          "status": "supplied",
+          "value": true,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-1",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "dataClasses": {
+          "status": "supplied",
+          "value": [
+            "public",
+            "internal",
+            "restricted"
+          ],
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-1",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "transport": {
+          "status": "supplied",
+          "value": {
+            "data_collection": "deny",
+            "zdr": true
+          },
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-1",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "toolUse": {
+          "status": "supplied",
+          "value": true,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-1",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "structuredOutput": {
+          "status": "supplied",
+          "value": true,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-1",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "enabled": {
+          "status": "supplied",
+          "value": true,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-1",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "available": {
+          "status": "supplied",
+          "value": true,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-1",
+            "evidenceState": "live-availability",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "quality": {
+          "status": "supplied",
+          "value": 0.8,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-1",
+            "evidenceState": "model-quality",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "cost": {
+          "status": "supplied",
+          "value": {
+            "currency": "USD",
+            "maximumMicroUsd": 1000,
+            "maximumInputTokens": 1000,
+            "maximumOutputTokens": 200,
+            "sourceProfileId": "synthetic-profile",
+            "sourceProfileVersion": "v1",
+            "sourceProfileDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "tariffDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "priceEvidenceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "costValueDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ranking": {
+              "kind": "projected",
+              "inputTokens": 100,
+              "outputTokens": 20,
+              "usd": {
+                "numerator": "1",
+                "denominator": "10000"
+              }
+            }
+          },
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-1",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        }
+      },
+      {
+        "bindingId": "binding-2",
+        "protocol": {
+          "status": "supplied",
+          "value": "openai-completions",
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-2",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "catalogBaseUrl": {
+          "status": "supplied",
+          "value": "https://synthetic.invalid/v1",
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-2",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "family": {
+          "status": "supplied",
+          "value": "family-2",
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-2",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "instanceId": {
+          "status": "supplied",
+          "value": "instance-2",
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-2",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "frontier": {
+          "status": "supplied",
+          "value": true,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-2",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "dataClasses": {
+          "status": "supplied",
+          "value": [
+            "public",
+            "internal",
+            "restricted"
+          ],
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-2",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "transport": {
+          "status": "supplied",
+          "value": {
+            "data_collection": "deny",
+            "zdr": true
+          },
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-2",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "toolUse": {
+          "status": "supplied",
+          "value": true,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-2",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "structuredOutput": {
+          "status": "supplied",
+          "value": true,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-2",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "enabled": {
+          "status": "supplied",
+          "value": true,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-2",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "available": {
+          "status": "supplied",
+          "value": true,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-2",
+            "evidenceState": "live-availability",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "quality": {
+          "status": "supplied",
+          "value": 0.8,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-2",
+            "evidenceState": "model-quality",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "cost": {
+          "status": "supplied",
+          "value": {
+            "currency": "USD",
+            "maximumMicroUsd": 1000,
+            "maximumInputTokens": 1000,
+            "maximumOutputTokens": 200,
+            "sourceProfileId": "synthetic-profile",
+            "sourceProfileVersion": "v1",
+            "sourceProfileDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "tariffDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "priceEvidenceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "costValueDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ranking": {
+              "kind": "projected",
+              "inputTokens": 100,
+              "outputTokens": 20,
+              "usd": {
+                "numerator": "1",
+                "denominator": "10000"
+              }
+            }
+          },
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-2",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        }
+      },
+      {
+        "bindingId": "binding-3",
+        "protocol": {
+          "status": "supplied",
+          "value": "openai-completions",
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-3",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "catalogBaseUrl": {
+          "status": "supplied",
+          "value": "https://synthetic.invalid/v1",
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-3",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "family": {
+          "status": "supplied",
+          "value": "family-3",
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-3",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "instanceId": {
+          "status": "supplied",
+          "value": "instance-3",
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-3",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "frontier": {
+          "status": "supplied",
+          "value": true,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-3",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "dataClasses": {
+          "status": "supplied",
+          "value": [
+            "public",
+            "internal",
+            "restricted"
+          ],
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-3",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "transport": {
+          "status": "supplied",
+          "value": {
+            "data_collection": "deny",
+            "zdr": true
+          },
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-3",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "toolUse": {
+          "status": "supplied",
+          "value": true,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-3",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "structuredOutput": {
+          "status": "supplied",
+          "value": true,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-3",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "enabled": {
+          "status": "supplied",
+          "value": true,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-3",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "available": {
+          "status": "supplied",
+          "value": true,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-3",
+            "evidenceState": "live-availability",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "quality": {
+          "status": "supplied",
+          "value": 0.8,
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-3",
+            "evidenceState": "model-quality",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        },
+        "cost": {
+          "status": "supplied",
+          "value": {
+            "currency": "USD",
+            "maximumMicroUsd": 1000,
+            "maximumInputTokens": 1000,
+            "maximumOutputTokens": 200,
+            "sourceProfileId": "synthetic-profile",
+            "sourceProfileVersion": "v1",
+            "sourceProfileDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "tariffDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "priceEvidenceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "costValueDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "ranking": {
+              "kind": "projected",
+              "inputTokens": 100,
+              "outputTokens": 20,
+              "usd": {
+                "numerator": "1",
+                "denominator": "10000"
+              }
+            }
+          },
+          "evidence": {
+            "receiptId": "synthetic-receipt",
+            "receiptDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "sourceRef": "synthetic-offline-only",
+            "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "policyDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "configDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "requestDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "lane": "L4",
+            "bindingId": "binding-3",
+            "evidenceState": "static-conformance",
+            "observedAtUtc": "2026-09-26T12:00:00.000Z",
+            "expiresAtUtc": "2026-09-26T13:00:00.000Z"
+          }
+        }
+      }
+    ]
+  }
+}

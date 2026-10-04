@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "foreman-line.kernel-state/schemas/storage-export.schema.json",
+  "title": "Foreman Line kernel-state storage export document",
+  "description": "Consumer contract for deterministic storage exports (FK-P9). The export document is the digest preimage; provenance is excluded-transport metadata and is described separately in StorageExportProvenance. Import, restore-from-export, and projection are FK-P11 territory.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["domain", "apiVersion", "payload"],
+  "properties": {
+    "domain": { "const": "foreman-line.kernel-state.storage-export" },
+    "apiVersion": { "const": "0.1.0" },
+    "payload": { "$ref": "#/$defs/ExportPayload" }
+  },
+  "$defs": {
+    "Digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "SafeInt": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "ColumnRow": {
+      "type": "object",
+      "additionalProperties": {
+        "type": ["string", "number", "null"]
+      }
+    },
+    "ExportPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "migrationHistoryDigest", "tables"],
+      "properties": {
+        "schemaVersion": { "$ref": "#/$defs/SafeInt" },
+        "migrationHistoryDigest": { "$ref": "#/$defs/Digest" },
+        "tables": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_migrations",
+            "goals",
+            "events",
+            "transitions",
+            "leases",
+            "idempotency_keys",
+            "artifacts",
+            "projection_cursors",
+            "wakeup_handoffs"
+          ],
+          "properties": {
+            "schema_migrations": { "type": "array", "items": { "$ref": "#/$defs/ColumnRow" } },
+            "goals": { "type": "array", "items": { "$ref": "#/$defs/ColumnRow" } },
+            "events": { "type": "array", "items": { "$ref": "#/$defs/ColumnRow" } },
+            "transitions": { "type": "array", "items": { "$ref": "#/$defs/ColumnRow" } },
+            "leases": { "type": "array", "items": { "$ref": "#/$defs/ColumnRow" } },
+            "idempotency_keys": { "type": "array", "items": { "$ref": "#/$defs/ColumnRow" } },
+            "artifacts": { "type": "array", "items": { "$ref": "#/$defs/ColumnRow" } },
+            "projection_cursors": { "type": "array", "items": { "$ref": "#/$defs/ColumnRow" } },
+            "wakeup_handoffs": { "type": "array", "items": { "$ref": "#/$defs/ColumnRow" } }
+          }
+        }
+      }
+    },
+    "StorageExportProvenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exportedAtMicros", "exporterToolVersion", "sourceDatabaseBytesDigest"],
+      "properties": {
+        "exportedAtMicros": { "$ref": "#/$defs/SafeInt" },
+        "exporterToolVersion": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "sourceDatabaseBytesDigest": { "$ref": "#/$defs/Digest" }
+      }
+    }
+  }
+}

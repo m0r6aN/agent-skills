@@ -8,6 +8,7 @@
  * All types are local mirrors of DocSpine's output contracts — no direct
  * import from DocSpine. The live seam is wired in `docspine-report.ts`.
  */
+import { assertAbsoluteRoot } from './errors.js'
 
 // ─── Annotation field sanitizer ───────────────────────────────────────────────
 
@@ -93,8 +94,12 @@ function buildClaimAnnotation(docId: string, finding: DocSpineClaimFinding): str
  *
  * Returns annotation strings (GitHub Actions format) and `exitCode: 0`.
  * Never throws. Always exits 0 — report-only / non-blocking invariant.
+ * (The P2b-i / D19 root guard is a caller precondition and throws BEFORE the
+ * seam runs — a relative root is refused, never silently cwd-anchored.)
  */
 export async function runDocSpineHook(seams: DocSpineHookSeams): Promise<DocSpineHookResult> {
+  // Root refusal (P2b-i / D19) first, before any fs/subprocess/path use.
+  assertAbsoluteRoot(seams.repoRoot, 'runDocSpineHook repoRoot')
   try {
     const report = await seams.runVerifyFn(seams.repoRoot, undefined)
 

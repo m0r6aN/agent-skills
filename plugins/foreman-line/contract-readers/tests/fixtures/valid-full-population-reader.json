@@ -1,0 +1,11 @@
+{
+  "contract": "test-fixture-contract",
+  "description": "Fully-populated ContractReaderEntry: every field, both reader shapes.",
+  "readers": [
+    "plugins/foreman-line/contract-readers/src/schema.ts",
+    {
+      "parcelId": "GSO-P2",
+      "files": ["plugins/foreman-line/contract-readers/src/touch-set.ts"]
+    }
+  ]
+}

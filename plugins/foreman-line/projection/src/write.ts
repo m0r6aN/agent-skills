@@ -7,7 +7,7 @@ import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import type { ShapingResult } from '../../contracts/src/index.js'
 import { assertAbsoluteRoot } from './errors.js'
-import { assertSafeSlug } from './path-guard.js'
+import { assertContainedPath, assertSafeSlug } from './path-guard.js'
 
 export const PROJECTED_ARTIFACT_SUFFIX = '.projected.shaping-result.json'
 
@@ -54,6 +54,9 @@ export function writeProjectedArtifact(
   const specsDir = options.specsDir ?? DEFAULT_SPECS_DIR
   assertAbsoluteRoot(repoRoot, 'writeProjectedArtifact')
   const activeDir = join(repoRoot, ...specsDir.split('/'))
+  // Path containment (D1): the caller-supplied specsDir must resolve beneath
+  // repoRoot — refused before any existence probe or write.
+  assertContainedPath(repoRoot, activeDir, specsDir)
   const fileName = `${slug}${PROJECTED_ARTIFACT_SUFFIX}`
   const artifactPath = join(activeDir, fileName)
   const artifactRef = `${specsDir}/${fileName}`

@@ -1,0 +1,202 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "role_family",
+    "subroles",
+    "routing_classes",
+    "authority_cap",
+    "authority_prohibited",
+    "frontier_only",
+    "independence",
+    "human_gates",
+    "provider_rule",
+    "quality_tolerance"
+  ],
+  "properties": {
+    "role_family": {
+      "enum": [
+        "coordinator",
+        "verifier",
+        "builder",
+        "classifier"
+      ]
+    },
+    "subroles": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "routing_classes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "authority_cap": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "authority_prohibited": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "frontier_only": {
+      "type": "boolean"
+    },
+    "independence": {
+      "type": "string",
+      "minLength": 1
+    },
+    "human_gates": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "provider_rule": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "pinned_provider"
+          ],
+          "properties": {
+            "kind": {
+              "const": "pinned-provider"
+            },
+            "pinned_provider": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "state",
+                "residual"
+              ],
+              "properties": {
+                "state": {
+                  "const": "unavailable"
+                },
+                "residual": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "preference"
+          ],
+          "properties": {
+            "kind": {
+              "const": "declared-preference"
+            },
+            "preference": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "state",
+                "residual"
+              ],
+              "properties": {
+                "state": {
+                  "const": "unavailable"
+                },
+                "residual": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "const": "cheapest-eligible"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "refusal"
+          ],
+          "properties": {
+            "kind": {
+              "const": "none"
+            },
+            "refusal": {
+              "const": "LANE_DISABLED_REFUSED"
+            }
+          }
+        }
+      ]
+    },
+    "quality_tolerance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "residual"
+      ],
+      "properties": {
+        "state": {
+          "const": "unavailable"
+        },
+        "residual": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "status": {
+      "const": "disabled-refused"
+    },
+    "re_enablement": {
+      "const": "ratified-amendment-required"
+    },
+    "re_enablement_candidates": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  }
+}

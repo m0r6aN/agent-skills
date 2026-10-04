@@ -14,7 +14,39 @@ the replacement decisions and non-locked queue corrections are now ratified or
 accepted as recorded in the charter. JEV-P0 and JEV-P1 are accepted through
 Gate 3 at their recorded merged commits. JEV-P2 is accepted at Gate 3 at
 merged commit `34fc2f5` after post-merge verification. Gate 2 is granted for
-JEV-P2–P5 in strict sequence, with JEV-P3 PR #44 open and awaiting merge/Gate 3.
+JEV-P2–P5 in strict sequence. JEV-P3 PR #44 is **MERGED 2026-09-22**
+(recorded in `docs/goals/goal-status-report-2026-09-26.md`); its predecessor
+gate disposition is recorded in the charter as a coordinator decision
+2026-09-26 under owner blanket authority, and JEV-P4/JEV-P5 are dispatched
+under that disposition and the existing Gate 2 strict-sequence grant.
+JEV-P4 scenario suite is green on disk (observed 2026-09-26):
+`jev-decisions/tests/p4-boundary-scenarios.test.ts` 17/17 pass (6 core,
+7 `[env:runtime-adapter]`, 4 `[env:container-launcher]`), full
+`jev-decisions` `npm test` 44/44 pass; spec-linter exit 0 on the JEV-P4 spec
+(one advisory only). JEV-P5 is dispositioned in
+`jev-container-release-checklist.md` (coordinator decision 2026-09-26 under
+owner blanket authority): offline checks CHECKED with citations (credential
+preflight R06, launcher stdin-framing contract, injected-fake refusal matrix,
+parent-surface non-change proof across JEV commits `cf6c553`, `bd9707a`,
+`34fc2f5`, `2440aba`, `a2c2971`). Docker-reachable rows CHECKED with real
+local Docker evidence 2026-09-26 (JevP5Docker builder session): **P5-01a,
+P5-01b, P5-02a, P5-02b, P5-03a, P5-03b, P5-05a, P5-05b** — evidence
+`jev-p5-docker-evidence-2026-09-26.md` (image `jev-decisions-container:
+prototype` = `sha256:a480f6cbdae7…`, local cache only; base
+`node:22.14.0-bookworm-slim@sha256:1c18d9ab3af4…`). Remaining BLOCKED:
+P5-07a, P5-07b, P5-08a, P5-08b, P5-09b (parent half), plus the
+SBOM/provenance-attestation, CVE-scan, registry, and source-candidate
+release-identity rows and the human-gate rows (reviews A/B, merge, local
+refresh, Gate 3). Carried findings: empty-string API key refuses
+pre-transport (`evidence:R06`); whitespace/malformed keys pass the presence
+guard and provider-side usability is offline-unverifiable; F1 image digests
+are not byte-reproducible across clean builds (only the `/app` dir-entry
+mtime varies — re-pin at candidate cut); F2 the container has no graceful
+SIGTERM shutdown (SIGKILL required).
+**GOAL state: JEV-P5 remains OPEN** — no item is PENDING; the exact remaining
+set is the BLOCKED items (attestation and CVE-scan receipts, registry rows,
+evidence manifest P5-07a/07b, rollback/quarantine P5-08a/08b, parent-suite
+half P5-09b, reviews A and B, human merge, local refresh, human Gate 3).
 No live provider call, spend, host/Pi mutation, or parent-goal surface change
 is authorized outside the current parcel scope.
 
@@ -52,7 +84,9 @@ is authorized outside the current parcel scope.
    accepted at Gate 3 at merged commit `34fc2f5`; P2 is closed.
 4. **JEV-P3** — `support-triage-advisory-v1` consumer contract; recommendation-only
    data, application-owned effects, no general routing integration; architecture/
-   risk, dual review; PR #44 open, Gate 3 pending.
+   risk, dual review; PR #44 **MERGED 2026-09-22** (recorded in
+   `docs/goals/goal-status-report-2026-09-26.md`); predecessor gate disposition
+   recorded 2026-09-26 in the charter under owner blanket authority.
 5. **JEV-P4** — environment-specific positive, negative, timeout, auth, privacy,
    cost, refusal, and provider-boundary scenarios; architecture/risk, dual review.
 6. **JEV-P5** — release closure, operational documentation, evidence index, and

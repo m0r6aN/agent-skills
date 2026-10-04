@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "C:\\Program Files\\Git\\cmd\\git.EXE",
+    "--git-dir=C:\\Users\\clint\\AppData\\Local\\Temp\\fk-remote-verify-20260907.git",
+    "--version"
+  ],
+  "cwd": null,
+  "ended_utc": "2026-09-07T18:55:45.422135+00:00",
+  "exit": 0,
+  "pid": 490160,
+  "seconds": 0.047856700024567544,
+  "started_utc": "2026-09-07T18:55:45.374268+00:00",
+  "stderr": "0003-git-version.stderr",
+  "stdout": "0003-git-version.stdout"
+}

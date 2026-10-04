@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "foreman-line.kernel-lease/measurement-record.schema.json",
+  "title": "INF-6 contention measurement record (records only; closed literals and numbers)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "op",
+    "racer",
+    "sequence",
+    "repeat",
+    "outcomeCode",
+    "elapsedMicros",
+    "lockWaitMicros",
+    "busyTimeoutsObserved",
+    "hostClockNote"
+  ],
+  "properties": {
+    "op": { "enum": ["claimLease", "renewLease", "releaseLease"] },
+    "racer": { "type": "integer", "minimum": 0 },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "repeat": { "type": "integer", "minimum": 0 },
+    "outcomeCode": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]{1,128}$"
+    },
+    "elapsedMicros": { "type": "integer", "minimum": 0 },
+    "lockWaitMicros": { "type": "integer", "minimum": 0 },
+    "busyTimeoutsObserved": { "type": "integer", "minimum": 0 },
+    "hostClockNote": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["wallMicros", "seamMicros"],
+      "properties": {
+        "wallMicros": { "type": "integer", "minimum": 0 },
+        "seamMicros": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

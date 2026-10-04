@@ -1,0 +1,28 @@
+{
+  "name": "g3-pending-tip-e",
+  "description": "R3 G3-pending: chain tip is E awaiting the human merge, old timestamps, no worktree.",
+  "now": "2026-09-26T12:00:00.000Z",
+  "goal": {
+    "slug": "goal-g3",
+    "queue": ["1. **P1** integrated; awaiting human merge."]
+  },
+  "specs": [{ "name": "P1-alpha.md", "location": "active", "updated": "2026-08-01" }],
+  "chains": [
+    {
+      "workflowId": "00000000-0000-4000-8000-000000000008",
+      "parcel": "P1",
+      "stages": ["A", "B", "C", "D", "E"],
+      "timestampOffsetHours": [-720, -710, -700, -690, -680],
+      "verdict": "pass"
+    }
+  ],
+  "expected": [
+    {
+      "parcel": "P1",
+      "state": "awaiting-gate",
+      "rule": "R3",
+      "chainEvidence": "present",
+      "gates": { "G3": "pending" }
+    }
+  ]
+}

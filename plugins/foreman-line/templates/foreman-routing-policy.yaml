@@ -1,0 +1,38 @@
+# Rendered into <repo-root>/foreman/routing-policy.yaml by the Foreman Line
+# project scaffold. This file is a template only — it carries no model ids and
+# no customer identity. Model ids belong in the single `models:` block below,
+# filled in under review; they are config data, never code literals.
+#
+# `foreman/routing-policy.yaml` is authoritative for the legal
+# `routing_class` values, the tier→model mapping, and review counts (see the
+# repo's AGENTS.md glossary). The four classes below are the SPEC-CONVENTION
+# §4 routing classes; a project edits tiers, models, and counts under review.
+
+# Single home for model ids (one id per line under its tier). Empty at
+# scaffold time — a project names its own models deliberately.
+models: {}
+
+classes:
+  boilerplate:
+    allowlist: [economy]
+    ceiling_usd: 0.50
+  standard-feature:
+    allowlist: [standard]
+    ceiling_usd: 5.00
+  architecture/risk:
+    allowlist: [frontier]
+    ceiling_usd: 25.00
+  implementation/standard:
+    allowlist: [standard]
+    ceiling_usd: 5.00
+
+model_tiers:
+  economy:
+    eligible_models: []
+  standard:
+    eligible_models: []
+  frontier:
+    eligible_models: []
+
+roles: {}
+shadow_routes: {}

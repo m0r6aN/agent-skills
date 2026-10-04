@@ -1,5 +1,5 @@
 /**
- * Permission-profile registry shapes (permission-profile-registry goal, P1):
+ * Permission-profile registry shapes (P1, shipped `permission-profiles` package):
  * TypeScript types for `permission-profiles.yaml`. Each type has a matching
  * hand-authored JSON Schema in `schemas.ts` — the two representations are
  * proven to agree by `tests/parity.test.ts`, never by generating one from the

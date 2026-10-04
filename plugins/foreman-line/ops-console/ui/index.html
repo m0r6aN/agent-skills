@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Foreman Ops Console — localhost only, read-only</title>
+  <style>
+    :root {
+      --bg: #0f1420; --panel: #171e2e; --panel2: #1d2639; --text: #e6ecf7; --muted: #93a1b8;
+      --line: #2a3550; --accent: #5aa2ff; --ok: #37c978; --warn: #f2b63d; --bad: #f2545b; --gate: #b98cff;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 system-ui, sans-serif; }
+    header { display: flex; gap: 16px; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--line); }
+    header h1 { font-size: 18px; margin: 0; }
+    header .posture { color: var(--muted); font-size: 12px; }
+    select, button, input { background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; font: inherit; }
+    button { cursor: pointer; }
+    button:hover { border-color: var(--accent); }
+    main { padding: 18px 20px; }
+    .board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .col { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px; min-height: 120px; }
+    .col h2 { font-size: 13px; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .col.running h2 { color: var(--ok); } .col.hung h2 { color: var(--warn); }
+    .col.awaiting-gate h2 { color: var(--gate); } .col.failed h2 { color: var(--bad); }
+    .col.complete h2 { color: var(--accent); }
+    .card { background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; margin-bottom: 8px; cursor: pointer; }
+    .card:hover { border-color: var(--accent); }
+    .card .key { font-weight: 600; }
+    .card .meta { color: var(--muted); font-size: 12px; }
+    .flags { color: var(--warn); font-size: 11px; }
+    section { margin-top: 22px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+    section h2 { margin: 0 0 10px; font-size: 15px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; }
+    pre { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px; overflow: auto; max-height: 320px; font-size: 12px; }
+    a { color: var(--accent); text-decoration: none; }
+    .pill { display: inline-block; border-radius: 999px; padding: 1px 9px; font-size: 11px; border: 1px solid var(--line); }
+    .pill.evidenced { color: var(--ok); border-color: var(--ok); }
+    .pill.pending { color: var(--warn); border-color: var(--warn); }
+    .pill.unknown { color: var(--muted); }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .muted { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Foreman Ops Console</h1>
+    <span class="posture">localhost-only · read-only over goals/receipts/specs · writes only console-local state</span>
+    <label class="muted">goal
+      <select id="goal-select"></select>
+    </label>
+    <button id="refresh">Refresh</button>
+    <span class="muted" id="clock"></span>
+  </header>
+  <main>
+    <div class="board" id="board"></div>
+    <section id="detail"><h2>Parcel detail</h2><div class="muted">Select a parcel card to walk its receipt chain, gates, routing, and logs.</div></section>
+    <section id="alerts"><h2>Alerts &amp; notifications</h2><div id="alerts-body" class="muted">—</div></section>
+    <section id="routing"><h2>Routing (read-only policy view)</h2><div id="routing-body" class="muted">—</div></section>
+    <section id="invoke"><h2>Invoke existing flows (allowlisted)</h2>
+      <div class="row">
+        <select id="flow-select">
+          <option value="approval-show">approval-show (execute)</option>
+          <option value="receipts-validate">receipts-validate (execute)</option>
+          <option value="approval-approve">approval-approve (present only)</option>
+          <option value="approval-reject">approval-reject (present only)</option>
+          <option value="dispatch-execute">dispatch-execute (present only)</option>
+        </select>
+        <input id="flow-arg1" placeholder="arg 1 (slug / verb)" size="28" />
+        <input id="flow-arg2" placeholder="arg 2" size="28" />
+        <input id="flow-arg3" placeholder="arg 3" size="18" />
+        <input id="flow-arg4" placeholder="arg 4" size="28" />
+        <button id="flow-run">Run / present</button>
+      </div>
+      <pre id="flow-result" class="muted">Human-gate mutating flows are presented as copy-pasteable commands only — the console never fabricates a TTY and never auto-approves.</pre>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>

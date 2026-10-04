@@ -29,13 +29,30 @@
  */
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { isAbsolute, join } from 'node:path'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import type { SchemaObject } from 'ajv'
 import { Ajv } from 'ajv'
 import type { ForemanIdentity } from '../../../foreman-config/src/index.js'
 import { assertJqlSafeQuotedLiteral, assertJqlSafeToken } from '../../../registration/src/jql.js'
+import { DispatchError } from '../approval-cli/index.js'
+
+// ─── Root guard (P2b-i / D1) ──────────────────────────────────────────────────
+
+/**
+ * Refuse a non-absolute repoRoot BEFORE any fs/subprocess work (D1): a
+ * relative root would silently anchor to the process cwd. Typed
+ * ROOT_NOT_ABSOLUTE, mirroring routing-eval / skill-resolver's message style.
+ */
+function assertAbsoluteRoot(seam: string, name: string, root: string): void {
+  if (!isAbsolute(root)) {
+    throw new DispatchError(
+      'ROOT_NOT_ABSOLUTE',
+      `${seam}: ${name} '${root}' is not an absolute path; a relative root would silently anchor to the process cwd and is refused (P2b-i / D19)`,
+    )
+  }
+}
 
 // ─── Public types ──────────────────────────────────────────────────────────────
 
@@ -243,6 +260,8 @@ function findHighestSequenceFile(dirPath: string, workflowId: string): string | 
  * unaffected by a null tracker identity) — not a supported API surface.
  */
 export function scanReceiptsForResolution(repoRoot: string): Map<string, ReceiptResolution> {
+  // D1 guard runs FIRST — before any receipt fs scanning below.
+  assertAbsoluteRoot('scanReceiptsForResolution', 'repoRoot', repoRoot)
   const receiptsDir = join(repoRoot, 'docs', 'receipts')
   const result = new Map<string, ReceiptResolution>()
   if (!existsSync(receiptsDir)) return result
@@ -335,6 +354,8 @@ interface JiraSearchResult {
  * getAccessibleAtlassianResources. No mutating tools are reachable.
  */
 export async function queryAndRankCandidates(options: QueryOptions): Promise<RankedCandidateList> {
+  // D1 guard runs FIRST — before any MCP client/subprocess or receipt fs scan.
+  assertAbsoluteRoot('queryAndRankCandidates', 'repoRoot', options.repoRoot)
   // P1b Constraint 4: refuse a null identity BEFORE any MCP client exists —
   // a refusal after establishing a client has already produced side effects.
   const { project_key: projectKey, dispatch_queue: dispatchQueue } = options.identity

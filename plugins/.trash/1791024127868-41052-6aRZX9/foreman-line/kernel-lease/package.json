@@ -1,0 +1,25 @@
+{
+  "name": "@foreman-line/kernel-lease",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "FK-P10 lease and transition engine: trusted lease time, CAS revisions, P1-S09 idempotency binding, transactional state/event/cursor updates, and the closed goal-status transition machine on the FK-P9 substrate.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "lint": "biome check .",
+    "measure-contention": "tsx src/measure.ts"
+  },
+  "dependencies": {
+    "@foreman-line/kernel-state": "file:../kernel-state"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.14",
+    "@types/node": "26.6.2",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
+  }
+}

@@ -22,7 +22,7 @@
       "type": "array",
       "items": {
         "type": "string",
-        "pattern": "^[a-z0-9-]+/[a-z0-9.-]+$"
+        "pattern": "^~?[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.:+-]+$"
       },
       "minItems": 1,
       "uniqueItems": true
@@ -40,6 +40,11 @@
           "authority"
         ],
         "properties": {
+          "opencodeId": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9_.:+-]+$"
+          },
           "capabilities": {
             "type": "array",
             "items": {
@@ -93,6 +98,58 @@
               "recommend-only",
               "execution"
             ]
+          },
+          "providerLocalId": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9_.:/+-]+$"
+          },
+          "protocol": {
+            "enum": [
+              "openai-chat-completions",
+              "zen-systemone"
+            ]
+          },
+          "provenance": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "state",
+              "value",
+              "source"
+            ],
+            "properties": {
+              "state": {
+                "const": "declared"
+              },
+              "value": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "fetched_at",
+                  "valid_until",
+                  "content_hash"
+                ],
+                "properties": {
+                  "fetched_at": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "valid_until": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "content_hash": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  }
+                }
+              },
+              "source": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
           }
         }
       }

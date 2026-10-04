@@ -1,0 +1,102 @@
+{
+  "schema": "spec-body-compiler/hostile-fixtures/v1",
+  "note": "H7 ambiguity. kind=entry: input is the entry content. kind=spec: full spec text.",
+  "cases": [
+    {
+      "id": "AMBIG-01",
+      "kind": "spec",
+      "input": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- a.ts\n\n## Allowed Files\n- b.ts\n",
+      "expectedCode": "SPEC_SECTION_DUPLICATE",
+      "repaired": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- a.ts\n\n",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AMBIG-02",
+      "kind": "spec",
+      "input": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- a.ts\n\n## Intent\ny\n",
+      "expectedCode": "SPEC_SECTION_DUPLICATE",
+      "repaired": "---\nticket: FK-T0\nstatus: active\nsurfaces: [plugins/]\n---\n## Intent\nx\n\n## Constraints\nx\n\n## Acceptance Criteria\nx\n\n## Out of Scope\nx\n\n## Context & References\nx\n\n## Allowed Files\n- a.ts\n\n",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AMBIG-03",
+      "kind": "entry",
+      "input": "src/**",
+      "expectedCode": "GLOB_ENTRY",
+      "repaired": "src/a",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AMBIG-04",
+      "kind": "entry",
+      "input": "*",
+      "expectedCode": "GLOB_ENTRY",
+      "repaired": "a",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AMBIG-05",
+      "kind": "entry",
+      "input": "?.ts",
+      "expectedCode": "GLOB_ENTRY",
+      "repaired": "a.ts",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AMBIG-06",
+      "kind": "entry",
+      "input": "[a-z]/x",
+      "expectedCode": "GLOB_ENTRY",
+      "repaired": "a/x",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AMBIG-07",
+      "kind": "entry",
+      "input": "{a,b}/x",
+      "expectedCode": "GLOB_ENTRY",
+      "repaired": "a/x",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AMBIG-08",
+      "kind": "entry",
+      "input": "",
+      "expectedCode": "ENTRY_EMPTY",
+      "repaired": "a",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AMBIG-09",
+      "kind": "entry",
+      "input": "   ",
+      "expectedCode": "ENTRY_WHITESPACE",
+      "repaired": "a",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AMBIG-10",
+      "kind": "entry",
+      "input": " src/a.ts ",
+      "expectedCode": "ENTRY_WHITESPACE",
+      "repaired": "src/a.ts",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AMBIG-11",
+      "kind": "entry",
+      "input": "https://example.com/x",
+      "expectedCode": "MALFORMED_ENTRY",
+      "repaired": "src/x",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "AMBIG-12",
+      "kind": "entry",
+      "input": "`**src/a.ts**`",
+      "expectedCode": "MALFORMED_ENTRY",
+      "repaired": "src/a.ts",
+      "repairedOutcome": "ok"
+    }
+  ]
+}

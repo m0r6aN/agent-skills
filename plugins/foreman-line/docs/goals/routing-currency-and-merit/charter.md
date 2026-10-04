@@ -46,6 +46,8 @@ learning… and production default-route promotion" as out of scope so that "V1 
 lane before generalizing the exchange." This goal is the deferred capability/cost routing
 work, claimed on its own evidence. **No MF evidence is credited automatically.**
 
+*(Amendment 2026-09-27 — ruling F, `../goal-status-report-2026-09-27.md` §6: mandate boundary recorded. The deferred-work claim above is bounded to this goal's share — RCM = selection policy/merit/replay; `hybrid-routing-optimization` = cache/mapping/recovery/measurement. Stream consolidation, not a goal merge; both goal records keep their own gates. Original wording above retained for history.)*
+
 `heterogeneous-agent-worker-fabric` is marked SUPERSEDED by `foreman-line-boundary-routing`
 in its own charter, but `docs/goals/INDEX.md` still lists it in the **coordinator pickup
 queue** as `awaiting_coordinator_claim`. Per INDEX's own update rule, a conflict between
@@ -56,6 +58,14 @@ ownership conflict over routing.
 `governed-model-fleet` owns receipt, envelope, and settlement contracts (P0/P1 landed).
 This goal consumes those contracts for its evidence manifests and merit corpus. It does
 not amend them. If both goals claim the same file, both stop until sequenced.
+
+*(2026-09-26 audit note: the `model-fleet-v1`, `heterogeneous-agent-worker-fabric`, and
+`governed-model-fleet` records were deleted from `docs/goals/` as external/superseded — see
+`goal-status-report-2026-09-26.md` §6. The HAWF/INDEX ownership conflict above is **resolved**
+by that audit; external contract consumption continues by external pointer, unchanged.
+Update 2026-09-27: `governed-model-fleet` was restored to `docs/goals/` by explicit owner
+directive and is active again as an external goal; the ownership and consumption rules
+above are unchanged.)*
 
 ---
 
@@ -175,7 +185,7 @@ Ratified at Gate 1 on 2026-09-20, with the scoped plan-review amendments below.
 |---|---|---|
 | D1 | `plugins/foreman-line/routing-policy/routing-policy.yaml` remains the **sole** routing authority. `models-store.json` is an untrusted upstream input read only during proposal refresh. Pi's `settings.json` / `enabledModels` is a derived, one-way projection artifact or patch; no Foreman component reads it back for routing, and no Foreman component writes routing authority into Pi's shared host file. | Preserves boundary-routing's ruling and removes the diagnosed two-writer race. F6 is the empirical case: the governed file stayed current while the harness file went 80% phantom. |
 | D2 | **Eligibility and merit are separate inputs and never conflate.** Eligibility (modality, context floor, thinking level, availability, explicitly declared catalog price rates, and classification transport) is mechanical and derived from a versioned catalog snapshot. Merit is judged, cited, dated, and human-ratified. Catalog rate predicates are distinct from the existing per-parcel `ceiling_usd` budget; unknown rates refuse. | The cache carries zero quality fields, and rate units cannot establish a per-parcel budget breach. |
-| D3 | **Order remains the selection rule.** No dispatch-time price comparison, no dispatch-time sort, no dispatch-time network or MCP call. New predicates filter within a tier and never reorder it. Expertise bindings narrow the already eligible tier; missing bindings do not invent a preference, and an unsatisfiable binding refuses rather than silently falling back. | Preserves the ratified v0.3 dispatch contract and receipt replay. The proposed sort returns `openrouter/auto` at a `-1000000` sentinel. |
+| D3 | **Order remains the selection rule.** No dispatch-time price comparison, no dispatch-time sort, no dispatch-time network or MCP call. New predicates filter within a tier and never reorder it. Expertise bindings narrow the already eligible tier; missing bindings do not invent a preference, and an unsatisfiable binding refuses rather than silently falling back. *(Clarification 2026-09-27 — ruling C, `../goal-status-report-2026-09-27.md` §6: an exact cache hit whose key includes policy/catalog/mapping versions and whose value is the deterministic evaluator's own output is a memo of this order rule — permitted with HRO-P2's cold/warm parity proof — not a dispatch-time reorder.)* | Preserves the ratified v0.3 dispatch contract and receipt replay. The proposed sort returns `openrouter/auto` at a `-1000000` sentinel. |
 | D4 | Evaluation order is fixed and unchanged: **classification → capability → tier order.** Capability predicates may only narrow a classification-eligible set. They may never widen it, never reorder across it, and never promote a model into a classification it is not already eligible for. | D6 of the existing policy. Capability must not become a back door around data policy. |
 | D5 | The scheduled refresh is a **proposer, not a writer**. It emits a digest-bound proposal document, diff, RCM-owned evidence manifest, and change class. It never mutates `routing-policy.yaml`, merges a branch, writes `settings.json`, or changes live dispatch authority automatically. **A** — a pinned model vanished, lost a declared capability, or breached its declared catalog-rate predicate → proposal plus typed preflight refusal until a human Gate 3 merge. **B** — promote a model, change a tier primary, or add/change an expertise binding → proposal plus human gate. **C** — no eligible candidate → stop condition, never silent downgrade. | Every routing change is reviewable, attributable, revertable, and explicitly gated at the irreversible step. |
 | D6 | **Automatic promotion is never permitted.** No automatic mutation changes live routing authority. A Class-A withdrawal may be generated automatically as a proposal and refusal, but the policy change itself requires human Gate 3 merge. | A pipeline must not automatically route work to an unapproved identity, even when the change appears safer. |
@@ -228,7 +238,7 @@ review, and an explicit Gate 2 naming exact parcel IDs.
 
 | Parcel | Scope | Risk / routing class |
 |---|---|---|
-| **RCM-P8A** | Receipt/replay contract and verifier evidence. Binds effective requirements, policy digest, catalog-snapshot digest, vocabulary version, derived context floor, predicate set, selected identity, and refusal-on-mismatch behavior. Owns the receipt enrichment and replay negative controls; downstream corpus work consumes this contract. | `architecture/risk` |
+| **RCM-P8A** | Receipt/replay contract and verifier evidence. Binds effective requirements, policy digest, catalog-snapshot digest, vocabulary version, derived context floor, predicate set, selected identity, and refusal-on-mismatch behavior. Owns the receipt enrichment and replay negative controls; downstream corpus work consumes this contract. *(Fold note 2026-09-27 — ruling F, `../goal-status-report-2026-09-27.md` §6: this receipt/replay scope folds into the HRO-P3 events stream as one sequenced stream when both dispatch — stream consolidation, not a goal merge; this goal's record keeps its own gates. Acceptance evidence for the folded scope rides the MRC-02 receipt/replay review via an MRC-01-class handoff into this record — `docs/goals/model-routing-chain-wrapper/charter.md:55`.)* | `architecture/risk` |
 | **RCM-P8** | Receipt-derived merit corpus using only admissible independently accepted receipts: extract `(routing_class × expertise × model) → first-pass rate, repair count, settled cost per accepted parcel`, with legacy/pending/estimated/unlabeled records excluded or separately reported and repairs attributed to the executing model. Read-only analysis; no policy change. | `standard-feature` |
 | **RCM-P9** | First expertise bindings, proposed **shadow / evidence-only and non-default only**, each with a cited dated source and explicit sample/admissibility evidence. Promotion to default is human Gate 3 and is explicitly out of scope for this goal. | `architecture/risk` |
 | **RCM-P10** | Exit evidence assembly only. Consumes the receipt/replay, dispatch-integration, proposal, projection, corpus, and negative-control evidence; it defines no new contract and invents no receipt or GMF fields. | `standard-feature` |

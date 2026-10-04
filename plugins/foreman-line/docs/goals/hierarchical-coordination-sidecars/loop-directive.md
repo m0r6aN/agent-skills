@@ -2,12 +2,23 @@
 
 ## COORDINATOR OWNERSHIP — claim before substantive work
 
-> **Queue owner: UNCLAIMED.** A coordinator claims this goal by replacing this sentence
-> with its exact task/session identity and timestamp in the goal's isolated worktree before
-> doing substantive Stage Zero work. One goal has one root coordinator. If another live
-> owner is named or ownership is ambiguous, stop and report.
+> **Queue owner: CLAIMED 2026-09-26.** Claimed by the coordinating session of the
+> 2026-09-26 owner-directed wave, executed by its `HcsStageZero` builder slice
+> (task/session id `HcsStageZero`), timestamp 2026-09-26, authority basis:
+> coordinator decision 2026-09-26 under owner blanket authority (coordinator decision
+> receipt — not a human approval). One goal has one root coordinator (charter D2); root
+> ownership is unsplit. Claim evidence: `hcs-stage-zero-2026-09-26.md` §1 (includes the
+> recorded execution-locus deviation). If another live owner is named or ownership is
+> ambiguous, stop and report.
 
-**State:** `awaiting_coordinator_claim`
+**State:** `claimed; stage_zero_done; gate_1_recorded; p0_shaped; p0_records_produced;`
+`p0_reworked_post_review; p0_accepted` — **HCS-P0 ACCEPTED 2026-09-26**: dual delta
+re-review APPROVE WITH NITS ×2 (`hcs-p0-review-a-findings.md`, `hcs-p0-review-b-findings.md`
+delta sections), dispositions in `hcs-p0-verification.md` §9, acceptance in
+`hcs-p0-acceptance-2026-09-26.md` (F12 resolved by coordinator confirmation; RB-01 carried
+to P1). Next: HCS-P1 shaping (updated 2026-09-26; see `hcs-stage-zero-2026-09-26.md`,
+`gate-1-ratification-2026-09-26.md`, `hcs-p0-authority-and-collision-map.md`,
+`hcs-p0-verification.md`, and `../../specs/active/HCS-P0-authority-and-collision-reconnaissance.md`)
 
 **Pickup precondition:** claim from a dedicated goal worktree after this intake commit is
 merged, or from a dedicated worktree based on the exact intake commit. Do not run either
@@ -49,6 +60,11 @@ records the ratified standing authorizations verbatim.
 - Gate 2 is not granted.
 - Gate 3 is not delegated.
 - No Foreman Kernel ownership transfer is granted.
+- Update 2026-09-26 (lines above preserved as the 2026-09-03 intake authority set): Gate 1
+  is **recorded** as a coordinator decision receipt under owner blanket authority —
+  "coordinator decision 2026-09-26 under owner blanket authority", not a human approval
+  (`gate-1-ratification-2026-09-26.md`). Gate 2 remains not granted; Gate 3 remains not
+  delegated (human-owned); no Foreman Kernel ownership transfer is granted.
 
 ## Stop conditions
 

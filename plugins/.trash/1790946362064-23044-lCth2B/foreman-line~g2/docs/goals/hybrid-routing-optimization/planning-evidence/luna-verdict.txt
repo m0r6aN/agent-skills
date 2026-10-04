@@ -1,0 +1,13 @@
+TOP 5 BRUTAL FINDINGS
+1. P1 cannot be dispatched against routing-policy or dispatch files until active owner handoffs are recorded; the draft currently names candidate files but correctly withholds authorization.
+2. The proposed mapping fields can still be undermined if the existing evaluator continues to return only a single resolvedModelId, so the seam must be explicit before implementation.
+3. Provenance/freshness is underspecified unless its version/hash domain and stale behavior are fixed in the contract; otherwise cache invalidation later becomes guesswork.
+4. Typed rejection must distinguish mapping absence from provider availability and protocol failure without importing live discovery or fallback into P1.
+5. Node engine drift and package-local dependency topology can make green local tests misleading unless the verification environment is pinned and recorded.
+
+TOP 5 MOVES
+1. Obtain and record owner handoffs for each shared file before promoting P1.
+2. Freeze a small route-mapping type plus exact supported/unknown fixtures before editing consumers.
+3. Define provenance as immutable mapping version plus evidence reference and make stale mappings fail closed.
+4. Keep P1 pure and offline: mapping resolution only, no catalog refresh, Jev call, fallback, config write, or provider request.
+5. Verify under Node >=24.11.1 or record the environment as non-authoritative and rerun all package checks at the required runtime.

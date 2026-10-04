@@ -8,7 +8,10 @@ import { piOpenRouterRoutingSchema } from './pi-openrouter.js'
 import {
   classEntrySchema,
   dataClassificationRuleSchema,
-  roleAssignmentSchema,
+  laneEntrySchema,
+  laneRouteSchema,
+  logicalCandidateSchema,
+  modelBindingSchema,
   routingPolicySchema,
   shadowRouteSchema,
   transportRequirementsSchema,
@@ -21,7 +24,10 @@ export const allSchemaFiles: readonly SchemaFile[] = [
   { name: 'class-entry', schema: classEntrySchema },
   { name: 'data-classification-rule', schema: dataClassificationRuleSchema },
   { name: 'transport-requirements', schema: transportRequirementsSchema },
-  { name: 'role-assignment', schema: roleAssignmentSchema },
   { name: 'shadow-route', schema: shadowRouteSchema },
   { name: 'pi-openrouter-routing', schema: piOpenRouterRoutingSchema },
+  { name: 'lane-entry', schema: laneEntrySchema },
+  { name: 'model-binding', schema: modelBindingSchema },
+  { name: 'logical-candidate', schema: logicalCandidateSchema },
+  { name: 'lane-route', schema: laneRouteSchema },
 ]

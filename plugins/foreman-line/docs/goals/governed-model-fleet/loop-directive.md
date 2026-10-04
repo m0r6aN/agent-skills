@@ -2,10 +2,36 @@
 
 ## COORDINATOR OWNERSHIP — read before any dispatch
 
-> **Queue owner:** `/root`, the Remote-safe Codex coordinator that opened
-> `governed-model-fleet` on 2026-09-03. One goal has one coordinator. Ownership may transfer
-> only at a parcel boundary by updating this block, `charter.md`, and the goal index. If
-> ownership or repository-writing authority is ambiguous, stop and report; never assume.
+> **Queue owner (transferred 2026-09-27):** the omp foreman-line coordinator session that
+> resumed `governed-model-fleet` on 2026-09-27 under the owner directive "Proceed with the
+> completion of governed-model-fleet". Transfer occurred at a parcel boundary (GMF-P1
+> landed; GMF-P2A unshaped). Prior owner `/root`, the Remote-safe Codex coordinator that
+> opened the goal on 2026-09-03, is not live. One goal has one coordinator. Ownership may
+> transfer only at a parcel boundary by updating this block, `charter.md`, and the goal
+> index. If ownership or repository-writing authority is ambiguous, stop and report; never
+> assume.
+>
+> **Record revival (2026-09-27):** this goal's record was deleted from `docs/goals/` on
+> 2026-09-26 by the C1 audit verdict (goal-status-report-2026-09-26.md §6.2) and restored
+> from git on 2026-09-27 by explicit owner directive; the C1 deletion is superseded for
+> this goal only. All other audit dispositions stand.
+>
+> **State reconciliation (MRC-01-class propagation write, coordinator session 5 of the
+> `model-routing-chain-wrapper` lineage, 2026-09-28 — parcel-boundary update per the
+> transfer rule above; the record's own Gate-2 grant record pre-authorizes coordinator
+> record-maintenance edits to state/ownership/gates lines as non-drift):** GMF-P2A is
+> LANDED (PR #203 merged `dcadad5`; owner resolution `8407fb1` = precedence (a), reviewed
+> chain bytes restored verbatim; parked work via reconciled PR #202 `754531f`; byte
+> verification in `gmf-p2a-closure-evidence.md`). GMF-P2B is built and accepted (1083/0/0;
+> 2/2 reviews) but its delivery is UNCOMMITTED on `codex/gmf-p2b-atomic-spend-20260928` @
+> `7a6efe5` — the builder is prohibited from committing (`GMF-P2B spec:642-644`); the chain
+> commit+PR+merge awaits the owner's extension of the green-contingent grant or an
+> owner-run landing (wrapper `dispatch-table.md` stop-report act #1). GMF-P2C is shaped and
+> held on the same act (`GMF-P2C spec:746-748`). Closure evidence: `gmf-p2a-closure-evidence.md`,
+> `gmf-p2b-closure-evidence.md` (coordinator assemblies per their specs' claim-verification
+> mandates; GAP registers inside). Coordinator continuity: the wrapper coordinator lineage
+> (sessions 2–5) holds this queue's chain work (MRC-22…25); sessions claim at the wrapper's
+> ownership block.
 
 `model-fleet-v1` is a frozen predecessor stopped at MF-P0 `NO-GO`. It is not an active queue
 owned by this loop, and none of its files or evidence may be amended by Governed Model
@@ -79,23 +105,63 @@ Harness permission prompts and filesystem access are not governance gates.
 > guards; permanent vocabulary lands with DR-002 concurrence." Scope: P1 only;
 > key-provider selection stays CARRIED (DR-006 remainder); nothing herein
 > chooses P2A+ matters. Coordinator note: the cited `P1-C0xx` controls live in
-> the unlanded P1 evidence set (branch `codex/gmf-p1-contracts-20260916`, landing
+> unlanded P1 evidence set (branch `codex/gmf-p1-contracts-20260916`, landing
 > PR pending at record time); this entry's operative content — the designations,
 > the five choices, the F-A1 ratification — applies in full on P1 landing.
+>
+> **Standing grants recorded 2026-09-27 (owner, via the resumed coordinator
+> session):**
+> 1. "Grant Gate 2 for GMF-P2A" — for the exact shaped scope only:
+>    `docs/specs/active/GMF-P2A-runtime-authority-accounting-store.md` (activated
+>    `draft → active` at grant) with its 12 exact `keon-systems` Allowed Files,
+>    branch `codex/gmf-p2a-store-20260927`, worktree
+>    `D:/Repos/agent-skills-worktrees/gmf-p2a-store-keon-systems-20260927`.
+>    GMF-P2B/P2C and all later parcels re-gate per the queue. Spec-verification
+>    ruling: the spec's "shaping-time pins" are anchored to the git-tracked goal
+>    records plus a builder Step-0 SHA-256 baseline (see spec Verification);
+>    coordinator record-maintenance edits to charter/loop-directive state,
+>    ownership, and gates lines are enumerated here and are not drift.
+> 2. Surviving-work ruling: the uncommitted P2A-target diff in worktree
+>    `gmf-p2a-store-keon-systems-20260916` (`codex/gmf-p2a-store-20260916`) is
+>    **PARKED** — the builder ignores it entirely and the worktree stays
+>    byte-untouched as unclaimed provenance; its fate is a Stage-F owner decision.
+> 3. Release chain: "PR creation + Gate 3 merge, green-contingent" — PRs only,
+>    never direct-to-main pushes; the Gate-3 merge covers the GMF-P2A chain and is
+>    voided by any red verification step; pre-existing red CI unrelated to the
+>    parcel is documented in the PR body, never silently absorbed.
+> Unchanged: repository creation (HG-R1), provider spend, private/internal
+> disclosure, patch promotion, deployment, publication, and user-local
+> installation each remain separate explicit human actions at their actual
+> boundaries.
+>
+> **Review triage + rework amendment recorded 2026-09-27:** two independent
+> adversarial reviews (A: `incorrect`, 4 findings; B: `APPROVE WITH NITS`, 2
+> findings; A-F1≡B-F1 and A-F2≡B-F2 converged at identical loci, coordinator-
+> verified). Triage: A-F1/B-F1 **FIX** (blocking: derived denial IDs make repeat
+> conflict/race/quarantine denials throw instead of returning the documented
+> `false` and persisting per-event evidence — P1-C112 repeat-shape gap);
+> A-F2/B-F2 **FIX** via coordinator-ratified spec amendment adding
+> `tests/Keon.Runtime.Api.Tests/LaunchExecutionCutoverTests.cs` to Allowed Files
+> (SPEC-CONVENTION §4.8; test-only, InternalsVisibleTo-gated home); A-F3 **FIX**
+> (literal P1-C071/P1-C103–C105 vocabulary pins in tests); A-F4 **FIX** (trigger
+> hardening on missing attempt row). Rework mandate: findings are a floor — sweep
+> every derived denial-evidence path, not only the cited three. Tripwire floor for
+> rework: 1005/0/0 (baseline 971 + 34). Spec `Allowed Files` now lists 13 files.
 
 ## Current state and next safe action
 
-**State:** `gmf_p1_landed_p2a_awaiting_shape`
-**Active queue item:** GMF-P1 landed (PR #33); GMF-P2A shaping is the next coordinator prep (no Gate 2 yet)
-**Product implementation:** none authorized
-**External effects:** per 2026-09-16 standing grants only (scoped; see above)
+**State:** `gmf_p2a_landed_p2b_accepted_uncommitted_p2c_held` (reconciled 2026-09-28, MRC-01-class write)
+**Active queue item:** GMF-P2B landing — the owner extends the green-contingent PR-creation+merge grant to `codex/gmf-p2b-atomic-spend-20260928` (covering its S1 base-SHA commit + PR + merge) or runs the landing by hand; the complete accepted delivery sits uncommitted in `D:/Repos/agent-skills-worktrees/gmf-p2b-atomic-spend-keon-systems-20260928` (SHA-256-anchored in `gmf-p2b-closure-evidence.md`)
+**Product implementation:** GMF-P2A LANDED in `keon-systems` (PR #203, merge `dcadad5`; 13 Allowed Files; effect path stays disabled); GMF-P2B built (1083/0/0, 2/2 reviews) but unlanded; GMF-P2C shaped and held
+**External effects:** the 2026-09-27 green-contingent grant (consumed by PR #203) plus the owner-run merges of PR #203 and PR #202 (2026-09-28); everything else ungranted — P2B landing, HG-R1, spend, disclosure, promotion, CI waiver
 
-GMF-P0 landed on main (PR #28, five evidence files, closure READY) and GMF-P1
-landed on main (PR #33, seven frozen-contract records + draft spec activated to
-`active` at landing, closure `READY_TO_REQUEST_GMF_P2A_GATE_2`). The next safe
-action is coordinator prep for GMF-P2A shaping (no P2A Gate 2 granted or
-requested); a P2A Gate-2 decision needs its own shaped spec, Allowed Files,
-branch/worktree, and review route.
+GMF-P0 landed on main (PR #28) and GMF-P1 landed on main (PR #33). GMF-P2A shipped its
+full chain 2026-09-27/28 — shaped → Gate 2 → build → two independent reviews + rework
+R1–R5 (mutation proofs M-A…M-E) → acceptance → commit `7a6efe5` → PR #203 merged
+(`dcadad5`; owner resolution `8407fb1`, precedence (a), reviewed bytes verbatim) — and
+GMF-P2B was built and accepted in the same window (delivery uncommitted; see State). The
+next safe action is the owner's P2B landing act (wrapper `dispatch-table.md` stop-report
+act #1), then GMF-P2C dispatch on the named base SHA.
 
 ## Dependency queue
 

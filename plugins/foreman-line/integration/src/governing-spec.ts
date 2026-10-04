@@ -18,7 +18,7 @@ import {
   maxRisk,
   type RiskLevel,
 } from './audit-trigger.js'
-import { IntegrationError } from './errors.js'
+import { assertAbsoluteRoot, IntegrationError } from './errors.js'
 
 /** A `status:'active'` spec descriptor as consumed by the resolver. */
 export interface ActiveSpecDescriptor {
@@ -185,6 +185,9 @@ function parseFrontmatter(
  * descriptors. Directory, file and YAML boundaries are wrapped per lesson #22.
  */
 export const loadActiveSpecsLive: LoadActiveSpecsFn = (repoRoot, pluginRoot) => {
+  // Root refusals (P2b-i / D19) first, before any fs/subprocess/path use.
+  assertAbsoluteRoot(repoRoot, 'loadActiveSpecsLive repoRoot')
+  assertAbsoluteRoot(pluginRoot, 'loadActiveSpecsLive pluginRoot')
   const dir = join(pluginRoot, 'docs', 'specs', 'active')
   let files: string[]
   try {

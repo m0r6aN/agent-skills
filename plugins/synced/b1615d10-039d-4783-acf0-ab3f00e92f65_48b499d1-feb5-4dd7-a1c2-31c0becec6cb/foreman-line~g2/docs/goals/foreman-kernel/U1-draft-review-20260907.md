@@ -1,0 +1,9 @@
+# U1 evidence contract draft review
+
+Independent reviewer `/root/fk_p0_recovery_step0` reviewed the draft authored by `/root/infra_reconciliation_review`. Initial reviewed SHA256 `3822e30fc355445aaab834c18b850cf8c990c3305b5da5783d7bfe39a34506e4` had three findings: unauthenticated promotion-consumer decision input, absent independently selected execution predicate permitting same-subject historical replay, and incomplete decision artifact inventory.
+
+The author corrected all three. Closure review verified SHA256 `9d6ca9637d1683aecd7deaffd57b3d880b0f182f4140bb97bd77e03ceb43bbb5` and found no new textual blocker. Promotion invokes its protected verifier and consumes only the fresh non-deserializable result; serialized decisions remain audit-only. An immutable coordinator request selects exact execution identities independently of evidence. Separate complete artifact namespaces, detached digests and pre-promotion retention avoid circular references. Hostile controls cover forged decisions, same-subject replay and incomplete/substituted evidence.
+
+The coordinator adopted the bounded three-attempt/24-hour shaping default, with durable UTC/attempt accounting, nonreturn/cancellation consumption, no owner-reset and explicit new-request history. Exact clock/timeout implementation remains pre-dispatch work.
+
+This is a reviewed draft, not a completed U1 implementation contract or infrastructure proof. Concrete provider/event support, protected execution and independent context, retention destination, exact schema/limits/paths and accepted upstream contracts remain named pre-P18 dispatch dependencies. Existing P18/P19/P21 edges and human Gate3 are unchanged. No code, Node commands, tests or external queries were performed by this reviewer. No runtime claim is inferred from textual closure.

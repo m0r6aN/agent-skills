@@ -3,8 +3,15 @@
 **Goal slug:** `governed-model-fleet`  
 **Created:** 2026-09-03  
 **Owner:** Clinton Morgan  
-**Coordinator:** `/root` — current Remote-safe Codex conversation  
-**Status:** STAGE ZERO CLOSED — Amendment A1 ratified; awaiting Gate 2 for GMF-P0  
+**Coordinator:** omp foreman-line coordinator session (ownership transferred 2026-09-27 at
+a parcel boundary — GMF-P1 landed, GMF-P2A unshaped; prior owner `/root` not live; see the
+`loop-directive.md` ownership block)  
+**Status:** GMF-P0/P1 LANDED (PRs #28/#33) — GMF-P2A LANDED 2026-09-28 (PR #203, merge
+`dcadad5`; owner resolution `8407fb1` = precedence (a), reviewed bytes verified byte-exact);
+GMF-P2B built+accepted, delivery uncommitted (landing = owner act); GMF-P2C shaped+held
+behind it (state reconciled 2026-09-28, MRC-01-class write); goal
+record restored from git 2026-09-27 by explicit owner directive ("Proceed with the
+completion of governed-model-fleet"), superseding the 2026-09-26 C1 deletion for this goal  
 **Mode:** multi-repository governed reference workload  
 **Predecessor:** `model-fleet-v1`, frozen at MF-P0 `NO-GO`
 
@@ -260,12 +267,13 @@ default activation.
 | Gate 1 — ratify D1–D24 and the phase graph | **Granted 2026-09-04** |
 | Plan-level adversarial review | **Completed — `REQUEST CHANGES`**; triage is recorded in `plan-review-findings.md` |
 | Scoped Gate 1 — Amendment A1 | **Granted 2026-09-04**; controlling text incorporated above |
-| Gate 2 — parcel dispatch | **Not granted** |
+| Gate 2 — parcel dispatch | **Granted 2026-09-27 for GMF-P2A only** (exact shaped spec + 12 Allowed Files); P2B/P2C and later parcels re-gate |
 | Repository creation | **Not granted** |
 | Provider spend or external model call | **Not granted** |
 | Private/internal source disclosure | **Not granted** |
 | Patch promotion into an authoritative repository | **Not granted** |
-| Merge, deployment, publication, user-local installation, or Gate 3 | **Not granted** |
+| PR creation + merge (Gate 3), GMF-P2A chain | **Granted 2026-09-27, green-contingent** — PRs only, never direct-to-main; any red verification step voids the merge grant |
+| Deployment, publication, user-local installation | **Not granted** |
 
 ## Stop conditions
 

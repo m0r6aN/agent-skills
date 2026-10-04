@@ -1,0 +1,28 @@
+{
+  "name": "hung-tip-c",
+  "description": "R4 hung at tip C: idle-and-abandoned — old timestamps, no worktree, no pending gate.",
+  "now": "2026-09-26T12:00:00.000Z",
+  "goal": {
+    "slug": "goal-hungc",
+    "queue": ["1. **P1** dispatched; builder silent since."]
+  },
+  "specs": [{ "name": "P1-alpha.md", "location": "active", "updated": "2026-08-01" }],
+  "chains": [
+    {
+      "workflowId": "00000000-0000-4000-8000-000000000009",
+      "parcel": "P1",
+      "stages": ["A", "B", "C"],
+      "timestampOffsetHours": [-720, -710, -700]
+    }
+  ],
+  "expected": [
+    {
+      "parcel": "P1",
+      "state": "hung",
+      "rule": "R4",
+      "chainEvidence": "present",
+      "thresholdMs": 21600000,
+      "thresholdSource": "default"
+    }
+  ]
+}

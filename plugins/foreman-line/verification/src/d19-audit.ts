@@ -194,7 +194,16 @@ const DECLARATION_SUFFIXES = ['.d.ts', '.d.mts', '.d.cts']
  * the credential itself is delivered by environment variable (D67), never read
  * from here.
  */
-const DATA_EXTENSIONS = ['.json', '.md', '.yaml', '.yml', '.txt', '.env', '.example']
+const DATA_EXTENSIONS = ['.json', '.md', '.yaml', '.yml', '.txt', '.env', '.example', '.html']
+/**
+ * Extension-less build-definition basenames deliberately registered per the
+ * A2.6/A3.5 refusal remedy ("add its extension to the audit deliberately or
+ * move the file"). `Dockerfile` is tracked container-release evidence
+ * (JEV-P3, `jev-decisions/container/Dockerfile`, PR #44 merged 2026-09-22):
+ * it carries no JS/TS root-guard call sites, so it is classified like data —
+ * listed here so the skip is explicit and inventory-checked, never silent.
+ */
+const BUILD_DEFINITION_BASENAMES = ['Dockerfile', '.dockerignore']
 
 // The ratified package allowlist (A1.1/A2.2) is imported at the top of this
 // file from './ratified-packages.js' — declared there so the audit and its
@@ -236,6 +245,24 @@ const E4_SELF_URL = 'import.meta.url'
 const E4_GENERATE_FORMS = [E4_SELF_DIR, E4_SELF_FILE]
 
 /**
+ * E5 — ruled class-5 files (pinned by identity and location, STANDING #13
+ * model; never self-populated): a `resolve()` of a named root is compliant
+ * ONLY in these files and ONLY where `guardedByAbsoluteRootAssertion` holds
+ * structurally (same-function, same-arg-name `assertAbsoluteRoot` preceding
+ * the call — A2.4). `projection/src/path-guard.ts` is the original ruled
+ * site. The three `ops-console` files enrolled 2026-09-26 by coordinator
+ * decision under owner blanket authority: every site carries the governing
+ * guard immediately ahead of it (config.ts defaultConfig, invoke.ts
+ * validateArg receipts-path, liveness.ts gitDirOf).
+ */
+const E5_GUARDED_FILES: Record<string, true> = {
+  'projection/src/path-guard.ts': true,
+  'ops-console/src/config.ts': true,
+  'ops-console/src/invoke.ts': true,
+  'ops-console/src/liveness.ts': true,
+}
+
+/**
  * A4.1 — E4's asserted CARDINALITY per pinned file: the exact number of
  * pinned-form occurrences each file carries. An extra occurrence of a pinned
  * FORM used to enroll silently (the E4 shape of the E2 self-enrollment
@@ -255,6 +282,12 @@ const E4_PINNED_COUNTS: ReadonlyMap<string, number> = new Map([
   ['foreman-config/src/generate.ts', 2],
   ['integration/src/docspine-report.ts', 1],
   ['integration/src/report.ts', 1],
+  // 2026-09-26 owner wave (coordinator enrollment under owner blanket
+  // authority): package-root self-location anchoring only package-local data
+  // (ui/ + state/ default), and the R4 invokedDirectly self-identification —
+  // both byte-verified against the pinned precedents above (A2.3).
+  ['ops-console/src/config.ts', 1],
+  ['ops-console/src/server.ts', 1],
   ['permission-profiles/src/generate.ts', 2],
   ['permission-profiles/src/emitter.ts', 1],
   ['receipts/src/generate.ts', 2],
@@ -274,6 +307,12 @@ const E4_PINNED: ReadonlyMap<string, readonly string[]> = new Map([
   ['foreman-config/src/generate.ts', E4_GENERATE_FORMS],
   ['integration/src/docspine-report.ts', [E4_SELF_URL]],
   ['integration/src/report.ts', [E4_SELF_URL]],
+  // 2026-09-26 owner wave (coordinator enrollment; see counts comment):
+  // config.ts packageRoot() single-hop self-join (R5 justified — package
+  // data only, never a root), server.ts the ratified invokedDirectly form
+  // byte-matching role-authority/src/generate.ts:11's spelling.
+  ['ops-console/src/config.ts', ["join(dirname(fileURLToPath(import.meta.url)),'..')"]],
+  ['ops-console/src/server.ts', [E4_SELF_FILE]],
   ['permission-profiles/src/generate.ts', E4_GENERATE_FORMS],
   ['permission-profiles/src/emitter.ts', [E4_SHIPPED_REGISTRY]],
   ['receipts/src/generate.ts', E4_GENERATE_FORMS],
@@ -665,6 +704,8 @@ function listSourceFiles(dir: string, out: string[]): void {
       out.push(p)
     } else if (DATA_EXTENSIONS.some((s) => name.endsWith(s))) {
       // data files carry no code; listed here so the skip is deliberate
+    } else if (BUILD_DEFINITION_BASENAMES.includes(name)) {
+      // extension-less build definitions (see BUILD_DEFINITION_BASENAMES)
     } else {
       throw new UsageError(
         `unrecognized file extension in a ratified package — '${p}' would be silently unswept ` +
@@ -1432,8 +1473,7 @@ function sweepFile(
     // ── class 5: resolve() of a named root ──
     if (isCallExpression(node) && calleeName(node) === 'resolve') {
       if (namesARoot(firstArgumentName(node))) {
-        const pinned =
-          rel === 'projection/src/path-guard.ts' && guardedByAbsoluteRootAssertion(node)
+        const pinned = E5_GUARDED_FILES[rel] === true && guardedByAbsoluteRootAssertion(node)
         if (!pinned) violate(5, node)
       }
     }

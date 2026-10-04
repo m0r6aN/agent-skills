@@ -1,0 +1,14 @@
++test('R29.3 every curation surface is anchor-keyed with no itemId lookup fallback', () => {
++test('R29.4 standing authorization 8 publishes the exact pre-action refusal contract', () => {
++test('R29.3 anchor migration preserves every surviving published identity and locator digest', () => {
++test('R27 control (a) volatile appends and byte changes preserve the sweep and governed siblings', () => {
++test('R27 control (a) deletion probe fails for each removed volatile-region declaration', () => {
++test('R27 control (b) governed ownership prose still fails closed with VALUE_DIGEST_MISMATCH', () => {
++test('R27 control (b) binding-deletion probe defeats the exact governed-mutation expectation', () => {
++test('R27 control (c) anti-laundering refuses a region overlapping a published locator', () => {
++test('R27 control (d) independently finds no published item inside any shipped volatile extent', () => {
++test('R27 control (d) predicate-mutation probe survives a production overlap predicate forced false', () => {
++test('R27 control (e) generator output is byte-identical under mutation of every volatile region', () => {
++test('R27 control (f) zero heading matches fails closed with the exact VOLATILE_REGION_INVALID message', () => {
++test('R27 control (f) multiple heading matches fails closed with the exact VOLATILE_REGION_INVALID message', () => {
++test('R27 control (g) pins eight curated pre-excision prose rationales without gating future additions', () => {

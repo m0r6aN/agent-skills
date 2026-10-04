@@ -5,7 +5,7 @@
 >
 > **Historical state at the 2026-07-29 stop:** ALL THREE PARCELS SHIPPED + CLOSED. CLOSE-P3 #101/#102 (AC5 proven live, lesson #34). CLOSE-P1 #104 human-merged/#105 (chain `44b6d20b…` sealed, EXIT PASS: PASS, W4 exit item 6 CLOSED, lesson #35). CLOSE-P2 #106 + its closure PR (corpus exit 0 in CI, lessons #36, A5/A6 freeze retirements). The July stop awaited D4 on historical ruleset `19402394`.
 >
-> **Current state (2026-09-06): D4-R2B APPLIED AND VERIFIED; E6-R1 STAGES A–F COMPLETE; PR #21 HUMAN-MERGE STOP AFTER REQUIRED CHECKS.** Clint explicitly confirmed PR #19 merged; GitHub corroborates human account `m0r6aN`, frozen head `d1bf93f555e0e0e611d08089e6402ed6caaf1cfe`, merge commit `57c8a4d2775cac6c37a771392fc0c531d4a35af2`, and merge time `2026-09-06T14:24:52Z`. Goal-complete PR #21 contains current main, the active→done spec move, Stage E, and a real sequence-5 Stage F whose hash is `3de881be904eb9bee9cb2b25034299a99b79a588b5308c00d81ba6847d66407f`. The conforming chain is exactly A–F, valid, and sealed; Stage F records issue #18 honestly as `OPEN`→`OPEN`. Freeze PR #21's final head, require green `test` and `integration-report`, and stop for Clint's human merge. No Jira write, ruleset mutation, issue-state mutation, release, deployment, publication, or other-repository write occurred. Deferred debts remain deferred.
+> **Current state (2026-09-26): PR #21 MERGED; closure record filed (`closure-record-2026-09-26.md`); GOAL COMPLETE — EXIT CRITERION MET; queue empty.**
 
 ## Standing authorizations (verbatim from charter, with contingencies)
 

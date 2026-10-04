@@ -1,0 +1,35 @@
+{
+  "class": "C5",
+  "records": [
+    {
+      "id": "CONC-01",
+      "input": { "scenario": "second-write-transaction-holds-lock", "busyTimeoutMicros": 1000 },
+      "expectedCode": "STORAGE_LOCK_TIMEOUT"
+    },
+    {
+      "id": "CONC-02",
+      "input": { "scenario": "reader-during-writer-transaction" },
+      "expectedOutcome": "pre-transaction-snapshot"
+    },
+    {
+      "id": "CONC-03",
+      "input": { "scenario": "two-processes-open-and-migrate" },
+      "expectedOutcome": "single-apply-with-loser-observing-migrated-state"
+    },
+    {
+      "id": "CONC-04",
+      "input": { "scenario": "backup-under-concurrent-writes" },
+      "expectedOutcome": "backup-passes-verify-backup"
+    },
+    {
+      "id": "CONC-05",
+      "input": { "scenario": "second-write-handle-same-path-in-process" },
+      "expectedCode": "STORAGE_ALREADY_OPEN"
+    },
+    {
+      "id": "POS-04",
+      "input": { "scenario": "backup-verify-restore-sequence-in-process" },
+      "expectedOutcome": "restored-state-matches-committed-boundary"
+    }
+  ]
+}

@@ -5,6 +5,7 @@
  * `RegistrationResult` is the frozen `contracts` type, re-validated against the
  * frozen `registrationResultSchema` (never re-declared).
  */
+import { isAbsolute } from 'node:path'
 
 /**
  * The three fields the mechanical sandbox gate asserts on. `IssueFields`
@@ -86,6 +87,20 @@ export class RegistrationRootUnresolvedError extends Error {
     super(message)
     this.name = 'RegistrationRootUnresolvedError'
     this.reason = reason
+  }
+}
+
+/**
+ * Assert `root` is absolute (P2b-i path-guard ruling) — typed refusal, mechanism
+ * class 5. One helper for roots and for declared-absolute artifact paths (the
+ * back-fill seams): a relative path would silently anchor to the process cwd.
+ */
+export function assertAbsoluteRoot(root: string, seam: string): void {
+  if (!isAbsolute(root)) {
+    throw new RegistrationRootUnresolvedError(
+      'root-not-absolute',
+      `${seam}: '${root}' is not an absolute path; a relative path would silently anchor to the process cwd and is refused (P2b-i / D19)`,
+    )
   }
 }
 

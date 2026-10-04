@@ -5,7 +5,7 @@ import { stageInputSchema, stageOutputSchema } from '../envelope.js'
  * Stage C (Dispatch & Build) first output: the order handed to a builder agent.
  * `routingDecisionRef`, `injectedSkills`, and `permissionProfile` are opaque here —
  * routing logic is W0-P3, the skill-injection matrix is W0-P5, and the permission
- * profile registry is resolved elsewhere (permission-profile-registry goal, P1/P3).
+ * profile registry is resolved elsewhere (shipped `permission-profiles` package, P1/P3).
  */
 export interface DispatchOrder {
   readonly parcelRef: string
