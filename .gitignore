@@ -12,6 +12,12 @@ node_modules/
 # projects/, sessions/, .oauth_refresh.lock.owner: the agent harness writes its
 # global project/session state root into the CWD; it holds other projects'
 # session transcripts and live session keys.
+# .claude.json, .credentials.json, settings.json, history.jsonl,
+# mcp-needs-auth-cache.json, .last-*, backups/, cache/, daemon/, file-history/,
+# shell-snapshots/, jobs/, teams/: harness config, caches and live key material
+# (daemon/*.key, sessions/*.key) swept into the rescue commit on 2026-10-04;
+# untracked in the strip commit and ignored here so they never ride a
+# git add -A again. Treat anything that reached the remote as exposed.
 # plugins/cache: regenerable plugin-install test cache (~109k files).
 # skills/accomplish-workspace: stale (2026-06-16) external skill-eval run that
 # was relocated into this tree; preserved on disk, not this repo's content.
@@ -20,3 +26,17 @@ node_modules/
 /projects/
 /plugins/cache/
 /skills/accomplish-workspace/
+/.claude.json
+/.credentials.json
+/settings.json
+/history.jsonl
+/mcp-needs-auth-cache.json
+/.last-cleanup
+/.last-update-result.json
+/backups/
+/cache/
+/daemon/
+/file-history/
+/shell-snapshots/
+/jobs/
+/teams/
