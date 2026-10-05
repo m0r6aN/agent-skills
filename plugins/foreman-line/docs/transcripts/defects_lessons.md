@@ -184,3 +184,21 @@ keeps killed output from laundering itself.
 **Disposition:** mechanically installed in `scripts/foreman-line-ci.mjs` +
 `.test.mjs` (the v3.1 pin shape + equality; the round-3 probe cases are
 tests); narrative-only otherwise.
+
+## #50 — A rename commit that claims content changes must show deletions
+
+The CI-P2 Stage-F move commit claimed `status: active → done` and a new
+required frontmatter field, but its diff was "33 insertions(+), **0
+deletions**" — a modified line is a deletion plus an insertion, so zero
+deletions proved the content change never staged. The commit shipped the
+done-spec with incomplete lifecycle frontmatter; the spec-linter corpus pins
+caught it at the merge and main went red. The coordinator's closure check
+verified file counts and rename shape but never compared the diff's SHAPE to
+the commit's CLAIMS. Verify diff shape against claimed shape before accepting
+any closure: a claimed modification must produce deletions; a claimed
+addition must produce insertions.
+
+**Disposition:** narrative coordinator discipline + the goal closure record
+(`docs/goals/ci-optimization/goal-closure-2026-10-02.md`); OPEN install
+candidate: the closure checklist in the coordinator carryover /
+COORDINATOR-PATTERN at next touch.
