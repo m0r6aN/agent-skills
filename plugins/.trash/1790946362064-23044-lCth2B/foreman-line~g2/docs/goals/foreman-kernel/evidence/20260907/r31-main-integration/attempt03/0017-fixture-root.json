@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Program Files\\Git\\cmd\\git.EXE",
+    "--git-dir=C:\\Users\\clint\\AppData\\Local\\Temp\\fk-remote-verify-20260907.git",
+    "-C",
+    "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-r31-integration-h7vdnawi\\tree",
+    "rev-parse",
+    "--show-toplevel"
+  ],
+  "cwd": null,
+  "ended_utc": "2026-09-07T18:55:46.769857+00:00",
+  "exit": 0,
+  "pid": 474920,
+  "seconds": 0.06142539996653795,
+  "started_utc": "2026-09-07T18:55:46.708418+00:00",
+  "stderr": "0017-fixture-root.stderr",
+  "stdout": "0017-fixture-root.stdout"
+}

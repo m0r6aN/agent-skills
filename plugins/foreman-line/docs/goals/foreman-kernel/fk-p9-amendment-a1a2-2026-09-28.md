@@ -146,3 +146,66 @@ column): `sha256:cf9bc7e2f3ff4b5f385f85fdd14b6d1e5f2aa8b08a2a356e9f60f2b6639e67f
 `recordCompletedBinding` fixture op pinning the base64 encoding;
 `migrations/0004-idempotency-recorded-result.sql`; `src/export.ts` BLOB
 encoding; `src/rows.ts`).
+
+---
+
+# Amendment A1e — cursor registrations + events.kind vocabulary (2026-09-29)
+
+**Scope:** `migrations/0005-events-kind-checks.sql` (both CHECKs folded into
+one migration per the dispatch's folding clause) + named tests. The A1-family
+record now covers A1/A2/A1b/A1c/A1d/A1e.
+
+**Item 1 — projection-cursor registrations (record-level + DB-enforced).**
+The closed registry from FK-P11 T7 ("Registered projection cursors (never a
+silent grab)"): `goal-state` (**RESERVED** — the FK-P10 engine
+state-application cursor, its T7/OQ-4 ruling), `md-goals-index` and
+`md-goal-ledger` (registered for FK-P11). Per the FK-P10 OQ-4 mandate ("FK-P11
+registers any additional cursor ids via a recorded FK-P9 amendment … no silent
+namespace grabs") and FK-P11's T12-item-1 sequencing ("Registration of the two
+FK-P11 ids arrives as a recorded FK-P9 amendment (A1-family route) before
+builder code"), this amendment **reserves and records** `md-goals-index` and
+`md-goal-ledger` as FK-P11-registered projection cursors.
+
+**Shape decision (recorded):** the registration is enforced WITHOUT a
+registration table — `projection_cursors.projection_id` carries a closed-set
+CHECK (`ck_projection_registered`) naming the three registered ids. Rationale:
+(a) the substrate's export contract pins its table set and column shapes (a
+new registration table would alter the export surface and its closed schema —
+a consumer-facing contract change beyond this amendment's mandate); (b) the
+runtime cursor rows are created at runtime by the owning parcels; (c) a
+closed-set CHECK makes "never a silent grab" mechanically true at the DB — an
+unregistered id refuses (`STORAGE_CONSTRAINT_VIOLATION{check}`) — and future
+cursor ids arrive exactly as these did: a recorded FK-P9 amendment extending
+the CHECK. `setProjectionCursor` therefore accepts exactly the registered set.
+
+**Item 2 — `events.kind` vocabulary extension (FK-P11 OQ-3).** "The
+`import.recorded`/`import.epoch` event kinds extend FK-P10 T8's closed
+vocabulary. Proposed route: a recorded FK-P9 amendment carrying the
+FK-P10-class semantics ruling (A1 precedent) … and whether an `events.kind`
+CHECK migration is wanted alongside" — this dispatch is that confirmation and
+answers YES to the CHECK. The closed vocabulary is T8's seven kinds
+(`lease.claimed`, `lease.takeover`, `lease.renewed`, `lease.released`,
+`transition.requested`, `transition.applied`, `transition.rejected` — FK-P10
+T8 "Event vocabulary (closed; `events.kind`)" table) plus `import.recorded` and
+`import.epoch` — enforced as `ck_events_kind` (defense-in-depth parity with
+A1a/A1b). The events rebuild preserves its append-only triggers (original
+names), AUTOINCREMENT / UNIQUE / FK shapes, and recreates the A2
+`events_goal_operation_idx` lookup index on the rebuilt table. Prior-schema
+rows migrate forward transactionally; out-of-vocab legacy event rows refuse
+the migration fail-closed (`STORAGE_MIGRATION_FAILED{version:5}`, DB stays at
+v4 with rows intact) — kind-vocabulary mapping is FK-P11/owner semantics,
+never silently rewritten.
+
+**Verification (kernel-state chain, direct exits):** `node -v` → 0; `npm ci`
+(lockfile unchanged) → 0; `npm run typecheck` → 0; `npm test` → 0 (172/172);
+`npm run lint` → 0. Named tests: `A1e: events.kind CHECK refuses out-of-vocab
+kinds as a typed constraint violation` (failing-when-broken: vocab kind inserts
+cleanly); `A1e: the events.kind vocabulary is exactly enforced (default-deny)`
+(all nine kinds accepted; the pre-A1e seed shape refuses); `A1e:
+projection_cursors registry refuses unregistered cursor ids` (the three
+registered ids write; a silent namespace grab refuses) — the cursor
+registration assertions ARE applicable (registration is DB-enforced);
+`A1e: prior-schema (v4) databases migrate forward transactionally to v5`;
+`A1e: out-of-vocab legacy event rows refuse the 0005 migration fail-closed`.
+**Golden export re-derived** (5-row ledger + vocab event kinds + registered
+cursor id): `sha256:7a7c5f4eb72c84c422c08c361f2f41b7473f930adfe06bb2304a1515ad4fb545`.

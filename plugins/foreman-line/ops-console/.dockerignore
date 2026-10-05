@@ -1,0 +1,6 @@
+node_modules
+state
+tests
+*.md
+biome.json
+tsconfig.json

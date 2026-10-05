@@ -5,7 +5,7 @@
 **Owner:** Clinton Morgan
 **Intended implementation agent:** GPT Luna (`gpt-5.6-luna` in the current agent catalog)
 **Status:** Ratified HRO direction; coordinated implementation authorized on 2026-09-26, subject to evidence and independent review
-**Scope:** Extend the existing Foreman Line routing and Pi adapter work with explicit provider mappings, deterministic current-policy routing, and measured optimization; model-choice caching is conditional on demonstrated benefit.
+**Scope:** Extend the existing Foreman Line routing and Pi adapter work with explicit provider mappings, deterministic caching, and measured optimization.
 
 ## Current implementation handoff
 
@@ -22,6 +22,9 @@ authority remain with their existing owners and gates.
 
 **2026-09-26 authority update:** The user requested coordination through completion and granted blanket decision authority for this goal. The controlling standing authorization and coordinator ownership are recorded in [loop-directive.md](loop-directive.md). This supersedes the older planning-only and no-merge HRO statements above/below; it does not waive tests, independent review, or other goals' ownership. P1a/P1b are narrowed to isolated proposal/consumer components under the confirmed PMC/RCM handoffs; the full runtime exit criterion remains unchanged.
 
+**Historical note — 2026-09-26 pre-adoption wording, retained verbatim:**
+**Status:** Draft implementation handoff; charter creation requested, no implementation dispatched
+**Scope:** Extend the existing Foreman Line routing and Pi adapter work with explicit provider mappings, deterministic current-policy routing, and measured optimization; model-choice caching is conditional on demonstrated benefit.
 Reduce routing latency and total execution cost while preserving Foreman's authority over role, risk, classification, budget, permissions, and verification independence. Model selection and provider execution must be separate, auditable steps. Every dispatched route must be eligible under current policy, whether it originated from a cache, Jev, a catalog refresh, or an approved fallback.
 
 This charter replaces the pasted `LocalizedRouter`, parcel shell hook, and estimated-savings dashboard as the proposed implementation direction. Those examples are problem context, not code to copy. Produce small, independently verifiable changes within the existing architecture.
@@ -34,6 +37,10 @@ Read the applicable `AGENTS.md` files and the relevant decisions in these docume
 - [Boundary routing charter](../foreman-line-boundary-routing/charter.md): existing routing authority, especially D7 and D8.
 - [Pi model configuration charter](../pi-model-configuration/charter.md): provider catalogs, resolver, explicit fallbacks, and Pi session configuration. This goal extends those owners; it does not create a parallel resolver.
 - [Routing currency and merit charter](../routing-currency-and-merit/charter.md): capability predicates, expertise bindings, catalog refresh, and replayability.
+- [PRAC-P0 compat payload](../pi-model-configuration/prac-p0-compat/compat-memo.md): shipped evidence about actual Pi APIs (extracted from the closed `pi-routing-adapter-compat` goal, deleted 2026-09-26). Follow its evidence pointers when needed; recheck the installed runtime before relying on an API.
+- Governed model fleet (external Keon initiative — `keon-systems` / `keon-mcp-gateway` / `keon-model-gateway`; its foreman-line goal record was deleted 2026-09-26 per the coordinator audit): receipt, envelope, and settlement ownership.
+
+**Historical note — pre-2026-09-26 coordinator-audit wording, retained verbatim; both goal records were deleted on 2026-09-26 per the coordinator audit:**
 - [Pi adapter compatibility charter](../pi-routing-adapter-compat/charter.md): pointer to shipped evidence about actual Pi APIs. Follow its evidence pointers when needed; recheck the installed runtime before relying on an API.
 - [Governed model fleet charter](../governed-model-fleet/charter.md): receipt, envelope, and settlement ownership.
 - [Spec convention](../../SPEC-CONVENTION.md): parcel contracts and lifecycle.
@@ -48,6 +55,9 @@ The current `routing-policy/src/validator.ts` already includes `openai/gpt-6-ast
 
 Use this execution sequence:
 
+`policy eligibility → exact cache lookup / deterministic selection → optional Jev recommendation → current-policy revalidation → approved provider adapter → execution receipt`
+
+**Historical note — the 2026-09-26 choice-cache disposition, retained verbatim; superseded on 2026-09-27 by the HRO-P2 delivery of the indexed exact cache (`hro-p2-cache-2026-09-27.md`):**
 `policy eligibility → deterministic selection (optional proven-beneficial choice cache) → optional Jev recommendation → current-policy revalidation → approved provider adapter → execution receipt`
 
 Eligibility includes role and lane, risk, data classification, required capabilities and tools, context/output capacity, thinking requirements, provider privacy guarantees, remaining budget, and required reviewer independence. Apply it before sending any task metadata to a remote routing service and again immediately before dispatch. Cached decisions cannot grant authority. Changed policy or depleted budget can invalidate an otherwise matching route.
@@ -64,12 +74,17 @@ Use verified mappings only. No prefix stripping, regex-based version substitutio
 
 OpenRouter catalog discovery uses `https://openrouter.ai/api/v1/models`. It supplies metadata; it does not choose the best model for a parcel. Refresh catalogs outside the dispatch hot path where practical, recording source, fetch time, validity, and content hash. Discovery must not automatically promote a model into a trusted tier or allowlist.
 
-Zen offers multiple protocols. Jev uses `https://opencode.ai/zen/v1/systemone` with `state` and typed `questions`; do not parse it as a chat completion. OpenCode configuration IDs can include `opencode/`, while provider API bodies use provider-local IDs. Verify the actual Pi adapter's requirements rather than assuming these formats are interchangeable.
+Zen offers multiple protocols. Jev uses `https://opencode.ai/zen/v1/systemone` with `state` and typed `questions`; do not parse it as a chat completion. OpenCode configuration IDs can include `opencode/`, while provider API bodies use provider-local IDs. Verify the actual Pi adapter's requirements rather than assuming these formats are interchangeable. *(Amended 2026-09-27 — ruling A, `../goal-status-report-2026-09-27.md` §6: the Zen `systemone` statement in this line is demoted to an **unverified candidate**. The single Jev surface is the JEV-J2-approved `POST https://openrouter.ai/api/alpha/decisions`; "do not run two Jev surfaces" holds. Original wording retained above for history.)*
 
 Zen is a remote gateway. A local cache or terminal does not make its inference local. Validate the privacy eligibility of Jev inputs and every execution endpoint. Do not treat OpenRouter-specific privacy request fields as proof of equivalent Zen guarantees. If the required guarantee cannot be established, the route is ineligible.
 
 ### D4 — Make the common path cheap and bounded
 
+Start with deterministic selection and an indexed exact cache. Cache keys must cover every input that changes eligibility or ranking, including policy/catalog/mapping versions, task class, role/lane, risk, classification, capability requirements, context and output requirements, and ranking configuration. Use a canonical encoding and test key separation. Revalidate dynamic budget, availability, and independence rather than trusting stored authorization.
+
+Define TTL and invalidation behavior; validate cache records on read; treat corrupt or incompatible records as misses with diagnostic events. Use bounded queries, atomic upserts, uniqueness constraints, and explicit database lifecycle/concurrency handling. A cache failure may fall back to the same deterministic policy evaluator, never to a weaker routing path.
+
+**Historical note — the reviewed 2026-09-26 feasibility disposition (`hro-p2-feasibility-and-amendment.md`), retained verbatim; the SQLite choice-cache was delivered on 2026-09-27 (`hro-p2-cache-2026-09-27.md`), superseding "held and not implemented". Its stated requirements — compilation reuse is not a model-choice cache, key coverage, D8 negative caching and refresh coalescing — remain binding:**
 Start with deterministic fresh owner selection and accepted immutable-schema compilation reuse. Compilation reuse is not a model-choice cache. The proposed SQLite winner-hint cache is held and not implemented: measured key costs exceed the sort it would save, and a valid larger key exceeds its cap. The independently reviewed [feasibility amendment](hro-p2-feasibility-and-amendment.md) makes model-choice caching conditional on comparable complete-path evidence of worthwhile benefit without weakening any gate. D8 negative caching and refresh coalescing remain mandatory. If a later reviewed design is adopted, its cache keys must cover every input that changes eligibility or ranking, including policy/catalog/mapping versions, task class, role/lane, risk, classification, capability requirements, context and output requirements, and ranking configuration. Use a canonical encoding and test key separation. Revalidate dynamic budget, availability, and independence rather than trusting stored authorization.
 
 For an adopted model-choice cache, define TTL and invalidation behavior; validate cache records on read; treat corrupt or incompatible records as misses with diagnostic events. Use bounded queries, atomic upserts, uniqueness constraints, and explicit database lifecycle/concurrency handling. A cache failure may fall back to the same deterministic policy evaluator, never to a weaker routing path.
@@ -78,6 +93,9 @@ Do not send the full cache to Jev or add an inference call to every hit. Optiona
 
 ### D5 — Measure total cost and quality
 
+Reuse existing receipt and settlement mechanisms. Cache entries represent reusable choices; they are not execution events. Record each decision, cache hit/miss, recommendation call, fallback, dispatch attempt, and settlement with correlated IDs and truthful provenance. Deduplicate event ingestion without hiding retries or repeated charges.
+
+**Historical note — the 2026-09-26 choice-cache disposition, retained verbatim; superseded on 2026-09-27 by the HRO-P2 delivery of the indexed exact cache (`hro-p2-cache-2026-09-27.md`):**
 Reuse existing receipt and settlement mechanisms. Cache entries represent reusable choices; they are not execution events. Record each actual decision, cache event, recommendation call, fallback, dispatch attempt, and settlement with correlated IDs and truthful provenance. Initial model-choice caching is disabled/not adopted: report that status and zero choice-cache events, without labeling schema reuse or ordinary selections as hits/misses. Deduplicate event ingestion without hiding retries or repeated charges.
 
 Capture actual provider/model, input/output and provider-cache usage where available, latency, failures, retries, billed or estimated cost, and price source/version. Keep estimates distinct from bills. Never label an API failure as `openrouter_api` success. Unknown cost stays unknown.
@@ -128,6 +146,11 @@ These are planning boundaries, not automatically dispatchable specs. Shape each 
 | Package | Work and acceptance criteria | Dependencies | Risk / routing |
 | --- | --- | --- | --- |
 | HRO-P0 | Map existing resolver, policy, cache, Jev, and receipt owners; record runtime/catalog evidence; produce an overlap table and precise integration contract. Identify required canon amendments and existing functionality that needs no change. | None | Architecture/risk; frontier shaping/review |
+| HRO-P1 | Extend the approved adapter with explicit mappings/protocols and typed rejection; demonstrate a supported route plus unknown-ID rejection; preserve existing provider behavior and schema/template consistency. | P0, resolved contract conflicts | Architecture/risk; tier resolved before dispatch |
+| HRO-P2 | Add deterministic cache reuse to the existing evaluator; demonstrate cold/warm parity, invalidation, and revalidation of all dynamic gates; prove unavailable/corrupt cache cannot weaken authorization. | P1 | Architecture/risk; tier resolved before dispatch |
+| HRO-P3 | Integrate decision/attempt events with existing receipts and settlement; accurately measure repeated hits and retries; produce a baseline report with explicit cost provenance and unknowns. | P2 | Standard implementation where policy permits Luna |
+
+**Historical note — the 2026-09-26 PMC/RCM narrowed package split and held-cache rows, retained verbatim; superseded by the 2026-09-27 HRO-P1/HRO-P2 deliveries (`hro-p1-mapping-contract-2026-09-27.md`, `hro-p2-cache-2026-09-27.md`). Their stated requirements remain binding:**
 | HRO-P1a | Validate isolated non-authoritative mapping proposals against injected binding evidence; preserve exact identity and reject guesses. | P0 and confirmed proposal-only handoff | Architecture/risk; user-selected Luna builder, frontier review |
 | HRO-P1b | Test offline consumer compatibility with injected normalized facts/refusals; no production wiring or authority. | P1a | Architecture/risk; user-selected Luna builder, frontier review |
 | HRO-P1c | Bridge the reviewed components to actual PMC bindings/resolver and the supported RCM adapter; test compatibility and refusal of proposal objects as authorization; assign exact cross-owner files before dispatch. | P1b, merged PMC-P1/P2 contracts, supported RCM adapter and canonical snapshot producer | Architecture/risk; serialized owner handoff |
@@ -142,9 +165,17 @@ These are planning boundaries, not automatically dispatchable specs. Shape each 
 
 Checkpoint after P0–P1: integration ownership, model mapping, and policy-preservation tests are independently reviewed before caching depends on them. Checkpoint after P2–P3: the reviewed cache disposition and actual telemetry reconcile before runtime integration; warm process/schema behavior must not be described as model-choice hits. Checkpoint after P4–P4b: recovery boundaries and configuration ownership are independently reviewed. Checkpoint after P4c: deterministic release candidate is complete; P5 is not required to claim a useful delivery and cannot be reported as delivered if deferred.
 
+**Historical note — parallel checkpoint wording, retained verbatim:**
+
+Checkpoint after P0–P1: integration ownership, model mapping, and policy-preservation tests are independently reviewed before caching depends on them. Checkpoint after P2–P3: cold/warm outcomes and telemetry reconcile before runtime integration. Checkpoint after P4–P4b: recovery boundaries and configuration ownership are independently reviewed. Checkpoint after P4c: deterministic release candidate is complete; P5 is not required to claim a useful delivery and cannot be reported as delivered if deferred.
+
 ## Verification and acceptance
 
 - [ ] Valid existing routes remain valid; unknown mappings, disabled models, stale catalogs beyond policy tolerance, incompatible protocols, and undeclared fallbacks are rejected.
+- [ ] Cold selection, warm cache hits, Jev results, and declared fallbacks enforce the same role, classification, capability, budget, privacy, and independence constraints.
+- [ ] Policy/catalog changes invalidate affected cache entries; remaining-budget changes can reject a cached route; concurrent identical requests cannot corrupt cache records or duplicate settlement.
+
+**Historical note — the 2026-09-26 choice-cache disposition, retained verbatim; superseded on 2026-09-27 by the HRO-P2 delivery of the indexed exact cache (`hro-p2-cache-2026-09-27.md`):**
 - [ ] Cold/warm fresh selection, any subsequently adopted choice-cache hits, Jev results, and declared fallbacks enforce the same role, classification, capability, budget, privacy, and independence constraints.
 - [ ] Policy/catalog and remaining-budget changes affect every fresh decision. If a model-choice cache is adopted, affected entries invalidate and changed budget can reject its route; concurrent requests cannot corrupt its records. Concurrent identical requests never duplicate settlement, with or without a choice cache.
 - [ ] Restricted metadata cannot reach an ineligible router/provider; malformed Jev answers and fabricated candidate IDs cannot authorize a dispatch.
@@ -154,6 +185,9 @@ Checkpoint after P0–P1: integration ownership, model mapping, and policy-prese
 - [ ] A newly discovered but unapproved model remains ineligible. Routing never writes global Pi configuration. Configuration proposals contain evidence; authorized apply tests cover invalid files, concurrent edits, interrupted writes, rollback, duplicate updates, unrelated-field preservation, and verified session reload behavior.
 - [ ] Fallback and hold events report requested/actual routes accurately. Stdout remains parseable JSON, stderr diagnostics are sanitized and deduplicated, and disabled/failed optional notifications cannot alter routing. Cover Windows and non-interactive output behavior.
 - [ ] Quoted CLI arguments remain data; malformed/duplicate frontmatter is handled deliberately; valid parcel content survives read/write round trips; failed writes do not leave partial output.
+- [ ] A fixture with one miss, repeated hits, a retry, and a failed recommendation reports the exact event counts and known costs. Estimates and unknown values are separately visible.
+
+**Historical note — the 2026-09-26 choice-cache disposition, retained verbatim; superseded on 2026-09-27 by the HRO-P2 delivery of the indexed exact cache (`hro-p2-cache-2026-09-27.md`):**
 - [ ] Fixtures report exact actual decision/retry/failed-recommendation event counts and known costs, with estimates and unknowns separately visible. Initial choice-cache status is disabled with zero such events. An adopted cache additionally requires an exact one-miss/repeated-hit fixture; no fabricated cache events satisfy this requirement.
 - [ ] Relevant package tests, typechecks, lint, schema generation checks, and focused integration tests pass using the repository's existing scripts. Do not invent a root test command or add another test framework.
 - [ ] Record a public synthetic end-to-end Pi smoke receipt proving the requested provider/model was selected and used. Pin runtime/catalog evidence and redact credentials. Fixture success alone is not evidence of live execution.
@@ -163,6 +197,9 @@ Run focused tests after each slice and impacted integration checks at checkpoint
 
 ## Exit criterion
 
+The existing Foreman/Pi path can execute an approved, explicitly mapped route with deterministic cache reuse, current-policy enforcement on every dispatch, and accurate correlated receipts. Unknown models yield bounded, approved recovery or an actionable per-parcel hold, without guessed identities or dispatch-time global configuration writes. Configuration repair proposals and operator diagnostics are verified against D9–D10. Compatibility and rejection tests pass; independent review findings are closed; a public synthetic live smoke receipt establishes runtime behavior. The final report states measured results and any deferred Jev experiment without presenting unmeasured savings as achieved.
+
+**Historical note — the 2026-09-26 choice-cache disposition, retained verbatim; superseded on 2026-09-27 by the HRO-P2 delivery of the indexed exact cache (`hro-p2-cache-2026-09-27.md`):**
 The existing Foreman/Pi path can execute an approved, explicitly mapped route with deterministic fresh owner selection, accepted immutable-schema compilation reuse, current-policy enforcement on every dispatch, and accurate correlated receipts. Model-choice caching is conditional on an independently reviewed design and comparable complete-path benefit; the initial SQLite choice-cache proposal remains held/not implemented, with its feasibility disposition recorded. Unknown models yield bounded, approved recovery or an actionable per-parcel hold, without guessed identities or dispatch-time global configuration writes. Configuration repair proposals and operator diagnostics are verified against D9–D10. Compatibility and rejection tests pass; independent review findings are closed; a public synthetic live smoke receipt establishes runtime behavior. The final report states measured results and any deferred Jev experiment without presenting unmeasured savings as achieved.
 
 ## Authorization and stop conditions

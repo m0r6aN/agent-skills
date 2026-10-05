@@ -1,0 +1,28 @@
+{
+  "name": "g1-pending-tip-a",
+  "description": "R3 G1-pending at an unapproved A tip: chain tip is A with no approval sidecar and no A-receipt-backed approval (approvedHash absent).",
+  "now": "2026-09-26T12:00:00.000Z",
+  "goal": {
+    "slug": "goal-g1a",
+    "queue": ["1. **P1** genesis minted; awaiting human approval."]
+  },
+  "specs": [{ "name": "P1-alpha.md", "location": "active", "updated": "2026-09-01" }],
+  "chains": [
+    {
+      "workflowId": "00000000-0000-4000-8000-000000000006",
+      "parcel": "P1",
+      "stages": ["A"],
+      "timestampOffsetHours": [-720],
+      "approvedHash": false
+    }
+  ],
+  "expected": [
+    {
+      "parcel": "P1",
+      "state": "awaiting-gate",
+      "rule": "R3",
+      "chainEvidence": "present",
+      "gates": { "G1": "pending" }
+    }
+  ]
+}

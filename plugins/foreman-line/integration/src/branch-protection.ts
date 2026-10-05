@@ -10,6 +10,7 @@
  * merging. `canMerge: true` is a posture FAIL.
  */
 import { execFileSync } from 'node:child_process'
+import { assertAbsoluteRoot } from './errors.js'
 
 /** One rule as returned by GitHub's effective-rules API for a branch. */
 export interface EffectiveRule {
@@ -97,6 +98,8 @@ export function fetchEffectiveRulesLive(args: {
   readonly branch: string
   readonly repoRoot: string
 }): unknown {
+  // Root refusal (P2b-i / D19) first, before any subprocess/path use.
+  assertAbsoluteRoot(args.repoRoot, 'fetchEffectiveRulesLive repoRoot')
   const stdout = execFileSync('gh', ['api', `repos/{owner}/{repo}/rules/branches/${args.branch}`], {
     cwd: args.repoRoot,
     encoding: 'utf8',

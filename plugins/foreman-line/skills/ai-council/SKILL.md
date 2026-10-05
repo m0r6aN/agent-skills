@@ -1,11 +1,11 @@
 ---
 name: ai-council
-description: Convene an independent multi-model council (Grok, Codex, Claude, Gemini CLIs) to audit, review, or judge something, then synthesize their verdicts into an actionable directive. Use whenever a task is judgment-heavy and benefits from independent perspectives — site/UX audits, code or architecture reviews, naming and copy decisions, strategy critiques, "is this good?" questions, red-teaming a plan, or any request mentioning "council", "ruthless analysis", "get multiple opinions", "what would other models say", or "audit this". Also use when a single-model answer risks blind spots the user will pay for. Do NOT use for mechanical tasks with one correct answer (renames, refactors, data transforms) — a council on those is waste.
+description: Convene an independent multi-model council of dispatched Pi-session seats to audit, review, or judge something, then synthesize their verdicts into an actionable directive. Use whenever a task is judgment-heavy and benefits from independent perspectives — site/UX audits, code or architecture reviews, naming and copy decisions, strategy critiques, "is this good?" questions, red-teaming a plan, or any request mentioning "council", "ruthless analysis", "get multiple opinions", "what would other models say", or "audit this". Also use when a single-model answer risks blind spots the user will pay for. Do NOT use for mechanical tasks with one correct answer (renames, refactors, data transforms) — a council on those is waste.
 ---
 
 # AI Council — Independent Multi-Model Critique Protocol
 
-Convene several frontier-model CLIs as independent auditors, then synthesize. The power of this
+Convene several dispatched Pi-session seats as independent auditors, then synthesize. The power of this
 protocol comes from one property: **independence**. Each seat forms its verdict without seeing
 the others' work. When N independent minds converge on the same finding, that finding is no
 longer opinion — it is settled fact you can execute against without debate. When one seat finds
@@ -50,14 +50,19 @@ observation ("at 1440px the nav renders as X").
 
 Identical prompts produce redundancy; distinct lenses produce coverage. Diversity catches
 failure modes that redundancy cannot. Give each seat a role one sentence long, plus "judge X
-hardest". Default roster (adapt the lenses to the domain, keep the spread):
+hardest". Default roster (adapt the lenses to the domain, keep the spread).
+Seats are numbered 1..N, and each is dispatched as its own Pi session with its
+own approved route receipt; give them model families drawn from the ratified Pi
+provider and lane matrix (`docs/goals/pi-model-configuration/charter.md:70-75`),
+family-diverse per D5, with the frontier/adversarial rows for the adversarial
+lanes:
 
 | Seat   | Lens                                                                  |
 |--------|-----------------------------------------------------------------------|
-| Grok   | Visceral first impression, brand daring, the 7-second judgment        |
-| Codex  | Mechanics: conversion/correctness, information architecture, journeys |
-| Claude | Narrative arc, credibility, internal consistency, audience routing    |
-| Gemini | Craft: typographic/visual/code discipline, competitive differentiation |
+| Seat 1 | Visceral first impression, brand daring, the 7-second judgment        |
+| Seat 2 | Mechanics: conversion/correctness, information architecture, journeys |
+| Seat 3 | Narrative arc, credibility, internal consistency, audience routing    |
+| Seat 4 | Craft: typographic/visual/code discipline, competitive differentiation |
 
 Domain adaptations (examples, not limits):
 - **Code review**: correctness+edge cases / security / performance / API ergonomics+readability
@@ -65,25 +70,31 @@ Domain adaptations (examples, not limits):
 - **Copy/messaging**: skeptic-trust / clarity-to-a-novice / differentiation / conversion
 - **Plan red-team**: what breaks first / hidden dependencies / cheaper path exists / stakeholder blowback
 
-The consistency lens (Claude's default) deserves special mention: "does this thing contradict
+The consistency lens (Seat 3's default) deserves special mention: "does this thing contradict
 itself?" is the lens that tends to catch the P0s everyone else walks past.
 
-### 3. Launch all seats in parallel, headless
+### 3. Dispatch all seats in parallel
 
-Run every seat concurrently from the directory containing the brief. Each prompt is:
-role sentence + "Read <brief file> in the current directory and complete the task in its
-'Your task' section" + "judge <lens> hardest" + output instruction.
+Each seat is a **separate dispatched Pi session** with its own **approved route
+receipt** minted by the resolver — never asserted, never shared between seats.
+Each seat's task envelope carries its role + lens sentence, the shared brief,
+and its evidence requirement: write `<seat>-out.txt` in the brief directory.
+Each prompt is: role sentence + "Read <brief file> in the current directory and
+complete the task in its 'Your task' section" + "judge <lens> hardest" + output
+instruction. Run every seat concurrently from the directory containing the
+brief.
 
-Read `references/seats.md` for the exact working invocations, timings, and per-CLI quirks on
-this machine (output capture, tool-permission flags, auth notes). If it does not exist yet
+Read `references/seats.md` for the recorded per-machine seat notes, timings, and
+quirks (launch steps, output capture, auth notes). If it does not exist yet
 (fresh install — `seats.md` is machine-local and git-ignored), copy
-`references/seats.template.md` to `references/seats.md` and refine it as you run. If
-`seats.md` disagrees with what you observe, trust your observation and update the file — it
-is maintained state, not gospel.
+`references/seats.template.md` to `references/seats.md` and refine it as you run.
+If `seats.md` disagrees with what you observe, trust your observation and update
+the file — it is maintained state, not gospel.
 
 Seat discipline:
-- Capture output to files (`<seat>-out.txt`) — stdout redirect or the CLI's write tool,
-  whichever `seats.md` says is reliable for that CLI.
+- Capture output to the required answer file (`<seat>-out.txt` in the brief
+  directory) per the seat's evidence requirement, using whichever mechanism
+  `seats.md` records as reliable on this machine.
 - **You must outlive the seats.** The council has no value until synthesis, and only you can
   synthesize — so never background a seat and end your turn "waiting". If your environment
   gives you reliable job control, launch concurrently and block until every output file

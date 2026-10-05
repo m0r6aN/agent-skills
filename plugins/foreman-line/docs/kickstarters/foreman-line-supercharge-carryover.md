@@ -7,7 +7,7 @@
 ## Mission (in order)
 
 1. **Add new models** (list below) to foreman-line's authorized routing surface.
-2. **Analyze** current agent-model routing + frontmatter architecture: is it comprehensive enough for any parcel task with **no fallback model** (fail closed, never silent substitution)?
+2. **Analyze** current agent-model routing + frontmatter architecture: is it comprehensive enough for any parcel task with exactly one declared, preflight-checked fallback per execution candidate (D3; `provider-neutral-fallback-contract`)? Every gap still fails closed with a named, receipted error — declared fallback is recorded in the route, never a silent substitution.
 3. **Implement dynamic family-alias resolution**: authorize families (e.g. `Claude Fable`), and make the shaper/coordinator resolve the latest pinned version at shape/dispatch time (e.g. 5.1 today, 5.2 automatically when released) via live lookup — no code/policy edits on new releases.
 4. **Analyze the rest of foreman-line** and produce a plan to make it a truly exceptional, enterprise-grade powerhouse.
 
@@ -30,9 +30,9 @@ Also consider (already researched, not yet decided): `wan3.0-video` (Alibaba pre
 
 **Where models live today (read all before editing):**
 
-- `routing-policy/routing-policy.yaml` (v0.3) — tiers (`frontier`/`standard`/`economy`), ordered first-eligible selection, classification-gated eligibility, ceiling_usd. Note the header: OpenRouter slugs verbatim, Anthropic uses dots.
+- `routing-policy/routing-policy.yaml` (v0.3) — tiers (`frontier`/`standard`/`economy`), ordered first-eligible selection, classification-gated eligibility, ceiling_usd. Model IDs are first-class in both Pi spellings — `opencode/<id>` and `openrouter/<vendor>/<id>` — while provider-neutral task/result envelopes are preserved. An OpenRouter slug is one spelling of a model ID, not the model vocabulary. Within OpenRouter slugs Anthropic models use dots (e.g. `openrouter/anthropic/claude-opus-5.5`).
 - `routing-policy/src/validator.ts` — hardcoded `KNOWN_FRONTIER_MODELS` (5 pinned IDs); invariant (e) forbids frontier-by-policy-edit. Any new frontier model costs a reviewed code+test change by design.
-- `dispatch/src/routing-eval/` (+ `shadow.ts`) — the dispatcher that walks tiers in order. **No runtime fallback exists**: quota exhaustion fails the task outright (see yaml `data_classification` comment).
+- `dispatch/src/routing-eval/` (+ `shadow.ts`) — the dispatcher that walks tiers in order. The legacy tier-walking dispatcher ships without a runtime fallback path today — exactly the state the ratified charter calls contradictory (D7 rationale, `docs/goals/pi-model-configuration/charter.md:58`), and which the declared-fallback contract replaces: a degraded or unavailable primary routes only to its declared fallback; if both fail, the parcel stops and reports (D8).
 - `dispatch/src/skill-resolver/`, `skill-injection/skill-injection.yaml` — role→skill injection (mechanical, parcel `surfaces:`-driven).
 - Related prior art (read, do not duplicate): `docs/goals/governed-model-fleet/charter.md` (D12–D13: gateway custody, one-attempt-per-permission, **no automatic fallback**; D24: dynamic empirical routing explicitly **out of GMF V1 scope**), `docs/goals/model-fleet-v1/` (**frozen NO-GO** negative evidence — never rewrite), `docs/goals/heterogeneous-agent-worker-fabric/` (owns production routing/registry — deconflict ownership before touching shared concepts).
 
@@ -40,7 +40,7 @@ Also consider (already researched, not yet decided): `wan3.0-video` (Alibaba pre
 
 Frontmatter surface: `spec-linter/schemas/spec-frontmatter.schema.json` (required: ticket/title/status/owner/created/updated/risk/surfaces/routing_class; optional: permission_profile, data_classification) + `shaping/src/self-check.ts` + `shaping/tests/frontmatter-selfcheck.test.ts` + `skills/*/SKILL.md` frontmatter usage.
 
-Deliverable: a findings doc answering — can every parcel task class (`boilerplate`, `standard-feature`, `architecture/risk`, `implementation/standard`, plus any missing classes you identify) resolve to an authorized model for every role (coordinator/verifier/builder + researcher/reviewer/tester/documenter/adversarial) under every data classification, with **no fallback model**? Every gap must fail closed with a named error, never a silent substitution. Cover: multimodal/image/video roles (new with Phase 1 models), ceiling adequacy for new price points (Fable 5.1 is $10/$50 — blows the $25 architecture/risk ceiling in ~1 turn; GPT-6 Astra is $10/$50 too), tier ordering vs. new capabilities, and whether `routing_class` enum needs new values.
+Deliverable: a findings doc answering — can every parcel task class (`boilerplate`, `standard-feature`, `architecture/risk`, `implementation/standard`, plus any missing classes you identify) resolve to an authorized model for every role (coordinator/verifier/builder + researcher/reviewer/tester/documenter/adversarial) under every data classification, with exactly one declared, preflight-checked fallback per execution candidate (D3; `provider-neutral-fallback-contract`)? Every gap still fails closed with a named, receipted error — declared fallback is recorded in the route, never a silent substitution. Cover: multimodal/image/video roles (new with Phase 1 models), ceiling adequacy for new price points (Fable 5.1 is $10/$50 — blows the $25 architecture/risk ceiling in ~1 turn; GPT-6 Astra is $10/$50 too), tier ordering vs. new capabilities, and whether `routing_class` enum needs new values.
 
 ## Phase 3 — Dynamic family-alias resolution (the core design change)
 
@@ -61,7 +61,7 @@ After routing is done, analyze the remaining aspects (shaping, dispatch, verific
 
 - Follow `AGENTS.md`: plan at `docs/FOREMAN-LINE-PLAN.md`, conventions at `docs/SPEC-CONVENTION.md`, dispatch via `docs/kickstarters/`, specs in `docs/specs/active|done`, coordinator pattern at `docs/COORDINATOR-PATTERN.md`. Check `docs/kickstarters/STANDING-CONSTRAINTS.md` first.
 - Parcels: shaping → independent adversarial review → dispatch, with receipts at every stage. Evidence before claims; verify live (hit the real catalog/docs), never assert from memory.
-- No fallback model anywhere: every unresolvable routing decision is a named, receipted failure.
+- Exactly one approved fallback of comparable or higher suitability is declared per execution candidate (D3, `provider-neutral-fallback-contract`); every unresolvable routing decision remains a named, receipted failure.
 - Do not weaken GMF constitutional invariants or D1–D24; do not touch frozen `model-fleet-v1` evidence; deconflict with `heterogeneous-agent-worker-fabric` ownership on first overlap.
 - Credential hygiene per model-fleet-v1 D11 pattern: presence-checks only, never read/print/persist values. No provider spend or live calls without explicit human authorization per call.
 - Keep tests green per package (`biome.json`/`tsconfig.json`/vitest in each dir); run the affected suites before finishing.

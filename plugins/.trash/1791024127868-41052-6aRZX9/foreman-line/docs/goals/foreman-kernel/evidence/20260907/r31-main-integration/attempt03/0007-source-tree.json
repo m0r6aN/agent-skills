@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "C:\\Program Files\\Git\\cmd\\git.EXE",
+    "--git-dir=C:\\Users\\clint\\AppData\\Local\\Temp\\fk-remote-verify-20260907.git",
+    "rev-parse",
+    "8d500704c9e3d6d8b652bbe838aa3623f88203fc^{tree}"
+  ],
+  "cwd": null,
+  "ended_utc": "2026-09-07T18:55:45.887956+00:00",
+  "exit": 0,
+  "pid": 488716,
+  "seconds": 0.08078540000133216,
+  "started_utc": "2026-09-07T18:55:45.807126+00:00",
+  "stderr": "0007-source-tree.stderr",
+  "stdout": "0007-source-tree.stdout"
+}

@@ -1,19 +1,25 @@
 /**
- * Jira query + next-candidate ranking (W2-P1).
+ * Jira query + next-candidate ranking (W2-P1; identity parameterized in P1b).
  *
- * Queries KONE for issues assigned to clinton.morgan@kaseya.com in dispatchable
- * states (To Do / In Progress), cross-references the in-repo receipt chain to
- * resolve each candidate's workflowId and priorReceiptLocator, ranks by
- * resolution status + Jira priority + issue key, and returns a RankedCandidateList.
+ * Queries the caller-declared project for issues assigned to the
+ * caller-declared dispatch-queue identity in dispatchable states (To Do / In
+ * Progress), cross-references the in-repo receipt chain to resolve each
+ * candidate's workflowId and priorReceiptLocator, ranks by resolution status +
+ * Jira priority + issue key, and returns a RankedCandidateList.
  *
  * **Transport:** @modelcontextprotocol/sdk stdio client connected to
  * `docker mcp gateway run --servers atlassian-remote`. NO `docker mcp tools call`
  * (string-only, cannot carry typed arguments — W1-P4 lesson #20).
  *
- * **JQL injection guard:** any configurable token interpolated into JQL passes
- * assertJqlSafeToken (from registration/src/jql.ts) before use. The assignee
- * email clinton.morgan@kaseya.com is a FIXED LITERAL in the template — not
- * passed through assertJqlSafeToken, which would reject the `@` character.
+ * **JQL injection guard (P1b):** `project_key` passes assertJqlSafeToken;
+ * `dispatch_queue` (a Jira assignee identity — account id or email, including
+ * the `:`-prefixed account-id form the token guard refuses) passes
+ * assertJqlSafeQuotedLiteral and is interpolated ONLY as a quoted JQL literal.
+ * One uniform guarded path — no token-shaped/unquoted branch exists.
+ *
+ * **Null identity (P1b):** a `null` project_key or dispatch_queue raises the
+ * typed DispatchIdentityUndeclared BEFORE any MCP client is created — never a
+ * silent empty candidate list, never a fabricated default.
  *
  * **Read-only enforcement:** zero mutating Jira tool paths exist in this file.
  * No issue-create, issue-edit, or comment-write tools are called or exposed.
@@ -23,12 +29,30 @@
  */
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { isAbsolute, join } from 'node:path'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import type { SchemaObject } from 'ajv'
 import { Ajv } from 'ajv'
-import { assertJqlSafeToken } from '../../../registration/src/jql.js'
+import type { ForemanIdentity } from '../../../foreman-config/src/index.js'
+import { assertJqlSafeQuotedLiteral, assertJqlSafeToken } from '../../../registration/src/jql.js'
+import { DispatchError } from '../approval-cli/index.js'
+
+// ─── Root guard (P2b-i / D1) ──────────────────────────────────────────────────
+
+/**
+ * Refuse a non-absolute repoRoot BEFORE any fs/subprocess work (D1): a
+ * relative root would silently anchor to the process cwd. Typed
+ * ROOT_NOT_ABSOLUTE, mirroring routing-eval / skill-resolver's message style.
+ */
+function assertAbsoluteRoot(seam: string, name: string, root: string): void {
+  if (!isAbsolute(root)) {
+    throw new DispatchError(
+      'ROOT_NOT_ABSOLUTE',
+      `${seam}: ${name} '${root}' is not an absolute path; a relative root would silently anchor to the process cwd and is refused (P2b-i / D19)`,
+    )
+  }
+}
 
 // ─── Public types ──────────────────────────────────────────────────────────────
 
@@ -51,7 +75,43 @@ export interface McpToolClient {
 
 export type McpClientFactory = () => McpToolClient
 
+/**
+ * The declared dispatch identity (P1b). Shape mirrors `identity:` in
+ * foreman-config: `project_key` is the Jira project the queue lives in;
+ * `dispatch_queue` is the Jira assignee identity (account id — either 24-hex
+ * or `:`-prefixed — or email) whose assigned issues form the queue. Either may
+ * be explicitly `null` (a no-tracker repo); dispatch then REFUSES with
+ * DispatchIdentityUndeclared rather than degrading to an empty candidate list.
+ */
+export type DispatchIdentity = Pick<ForemanIdentity, 'project_key' | 'dispatch_queue'>
+
+/**
+ * Typed, named refusal for a null dispatch identity (P1b Constraint 4).
+ * Deliberately distinguishable from a legitimately-empty RankedCandidateList:
+ * an empty list means "the tracker was asked and had no work"; this error
+ * means "no tracker identity is declared, so the tracker was never asked".
+ */
+export class DispatchIdentityUndeclared extends Error {
+  /** Which identity key was null. */
+  readonly key: 'project_key' | 'dispatch_queue'
+  constructor(key: 'project_key' | 'dispatch_queue') {
+    super(
+      `DispatchIdentityUndeclared: identity.${key} is null — dispatch cannot query a tracker ` +
+        `without a declared ${key}. This is a refusal, not an empty queue: declare ${key} ` +
+        `(foreman config identity) or do not invoke tracker-backed dispatch.`,
+    )
+    this.name = 'DispatchIdentityUndeclared'
+    this.key = key
+  }
+}
+
 export interface QueryOptions {
+  /**
+   * The caller-declared dispatch identity. REQUIRED — this repo's own values
+   * are the caller's explicit arguments, never hidden defaults in here (P1b
+   * Constraint 2). `null` members raise DispatchIdentityUndeclared.
+   */
+  identity: DispatchIdentity
   /** Injectable factory — tests pass a stub; production omits (real SDK client). */
   clientFactory?: McpClientFactory
   /**
@@ -74,15 +134,18 @@ const SERVER = 'atlassian-remote'
 // ─── JQL ──────────────────────────────────────────────────────────────────────
 
 /**
- * Build the KONE candidate JQL. Calls assertJqlSafeToken on projectKey before
- * interpolating it (injection guard). The assignee email is a FIXED LITERAL —
- * it contains `@` which assertJqlSafeToken rejects, so it is not interpolated
- * through the guard.
+ * Build the candidate JQL from the caller-declared identity (P1b). `projectKey`
+ * is token-shaped and passes assertJqlSafeToken (byte-unmodified since W2-P1);
+ * `dispatchQueue` is an assignee identity (account id or email — `:` and `@`
+ * are legitimate) and passes assertJqlSafeQuotedLiteral, then is interpolated
+ * ONLY inside a quoted JQL literal. One uniform path — no branch on whether
+ * the value happens to be token-shaped.
  */
-export function buildCandidateJql(projectKey: string): string {
+export function buildCandidateJql(projectKey: string, dispatchQueue: string): string {
   assertJqlSafeToken(projectKey, 'projectKey')
+  assertJqlSafeQuotedLiteral(dispatchQueue, 'dispatchQueue')
   return (
-    `project = ${projectKey} AND assignee = "clinton.morgan@kaseya.com"` +
+    `project = ${projectKey} AND assignee = "${dispatchQueue}"` +
     ` AND status in ("To Do", "In Progress") ORDER BY priority ASC, key ASC`
   )
 }
@@ -159,7 +222,7 @@ function defaultClientFactory(): McpToolClient {
 
 // ─── Receipt scanning ─────────────────────────────────────────────────────────
 
-interface ReceiptResolution {
+export interface ReceiptResolution {
   readonly workflowId: string
   readonly priorReceiptLocator: string
 }
@@ -192,8 +255,13 @@ function findHighestSequenceFile(dirPath: string, workflowId: string): string | 
  *
  * Pattern: docs/receipts/<uuid>/000001-B-registration-result.json
  * priorReceiptLocator = highest-sequence receipt file in the UUID directory.
+ *
+ * Exported FOR TESTABILITY ONLY (P1b AC4: proving receipt scanning is
+ * unaffected by a null tracker identity) — not a supported API surface.
  */
-function scanReceiptsForResolution(repoRoot: string): Map<string, ReceiptResolution> {
+export function scanReceiptsForResolution(repoRoot: string): Map<string, ReceiptResolution> {
+  // D1 guard runs FIRST — before any receipt fs scanning below.
+  assertAbsoluteRoot('scanReceiptsForResolution', 'repoRoot', repoRoot)
   const receiptsDir = join(repoRoot, 'docs', 'receipts')
   const result = new Map<string, ReceiptResolution>()
   if (!existsSync(receiptsDir)) return result
@@ -274,7 +342,7 @@ interface JiraSearchResult {
 // ─── Main query function ──────────────────────────────────────────────────────
 
 /**
- * Query KONE for dispatchable candidates and return them ranked.
+ * Query the declared project for dispatchable candidates and return them ranked.
  *
  * Ranking:
  *   1. Candidates with a resolved workflowId come first (ready to dispatch).
@@ -286,7 +354,16 @@ interface JiraSearchResult {
  * getAccessibleAtlassianResources. No mutating tools are reachable.
  */
 export async function queryAndRankCandidates(options: QueryOptions): Promise<RankedCandidateList> {
+  // D1 guard runs FIRST — before any MCP client/subprocess or receipt fs scan.
+  assertAbsoluteRoot('queryAndRankCandidates', 'repoRoot', options.repoRoot)
+  // P1b Constraint 4: refuse a null identity BEFORE any MCP client exists —
+  // a refusal after establishing a client has already produced side effects.
+  const { project_key: projectKey, dispatch_queue: dispatchQueue } = options.identity
+  if (projectKey === null) throw new DispatchIdentityUndeclared('project_key')
+  if (dispatchQueue === null) throw new DispatchIdentityUndeclared('dispatch_queue')
+
   const factory = options.clientFactory ?? defaultClientFactory
+  // P2a/D19: repoRoot is required — the cwd default was removed; roots are never derived.
   const repoRoot = options.repoRoot
 
   let mcpClient: McpToolClient | undefined
@@ -322,7 +399,7 @@ export async function queryAndRankCandidates(options: QueryOptions): Promise<Ran
 
   try {
     const cloudId = await resolveCloudId()
-    const jql = buildCandidateJql('KONE')
+    const jql = buildCandidateJql(projectKey, dispatchQueue)
     const parsed = await callJson<JiraSearchResult>(TOOL_SEARCH, { cloudId, jql })
 
     // Resolve workflowId + priorReceiptLocator from in-repo receipt chain

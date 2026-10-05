@@ -1,0 +1,7 @@
+{
+  "command": "npx tsx evidence/r31/discover.mjs (read-only projection)",
+  "startUtc": "2026-09-07T16:33:03.3802232Z",
+  "endUtc": "2026-09-07T16:33:12.3521267Z",
+  "elapsedSeconds": 8.9739379,
+  "directExit": 0
+}

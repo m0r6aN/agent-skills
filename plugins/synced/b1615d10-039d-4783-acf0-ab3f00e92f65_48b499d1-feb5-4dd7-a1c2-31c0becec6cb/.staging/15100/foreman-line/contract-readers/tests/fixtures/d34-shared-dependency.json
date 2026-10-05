@@ -1,0 +1,3 @@
+{
+  "note": "D34 adversarial fixture: this file is the shared dependency both synthetic parcels are declared readers of, even though their own spec surfaces are disjoint."
+}

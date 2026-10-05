@@ -161,3 +161,34 @@ test('a parcel-object reader with an empty files array is rejected (minItems: 1)
 test('an unknown top-level field is rejected (strict, additionalProperties: false)', () => {
   assert.equal(validate({ contract: 'x', readers: ['a.ts'], notAField: true }), false)
 })
+
+// --- Boundary-routing item 3: D4 full-population + strictness negatives --------
+
+test('valid fixture: a fully-populated entry (description + both reader shapes) is accepted (D4 full-population)', () => {
+  assert.ok(
+    validate(loadFixture('valid-full-population-reader.json')),
+    JSON.stringify(validate.errors),
+  )
+})
+
+test('a missing contract field is rejected (required)', () => {
+  assert.equal(validate({ readers: ['a.ts'] }), false)
+})
+
+test('a missing readers field is rejected (required)', () => {
+  assert.equal(validate({ contract: 'x' }), false)
+})
+
+test('a parcel-object reader missing parcelId is rejected', () => {
+  assert.equal(validate({ contract: 'x', readers: [{ files: ['a.ts'] }] }), false)
+})
+
+test('an unknown field inside a parcel-object reader is rejected (strict, additionalProperties: false)', () => {
+  assert.equal(
+    validate({
+      contract: 'x',
+      readers: [{ parcelId: 'GSO-P2', files: ['a.ts'], notAField: true }],
+    }),
+    false,
+  )
+})

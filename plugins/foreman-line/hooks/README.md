@@ -58,6 +58,24 @@ first run: sessions lacking `session_id` all shared one `unknown` key, so a
 BLOCK written by one was read back by the next and blocked it. A gate that fires
 on the *wrong* session is worse than one that misses an unidentifiable session.
 
+## What this hook is not (D6 thinness)
+
+Hooks are thin host adapters: they may **report or block** a host-visible
+violation, and nothing else. This gate is exactly that — it reports a verdict
+(SessionStart, stdout) and blocks tool calls (PreToolUse, exit 2). It is **not**
+a second routing or approval engine:
+
+- It never selects, suggests-as-a-decision, or falls back between execution
+  models. The relaunch command in a block message is remediation text, not a
+  route.
+- It never approves anything. There is no allow-workflow, no risk ruling, no
+  data-classification ruling — a BLOCK says "stop and report", not "ask me".
+- `model-gate.policy.json` is **session-grade membership data** (which models
+  may hold a session at all), not a routing policy. Per-role model binding at
+  dispatch time is `routing-policy/routing-policy.yaml`'s job and is not
+  duplicated here; the policy deliberately carries no routing, lane, fallback,
+  provider, or approval fields, and `model-gate.test.mjs` pins that absence.
+
 ## Escape hatch
 
 ```
@@ -73,7 +91,7 @@ machine is a control that gets removed.
 node --test plugins/foreman-line/hooks/model-gate.test.mjs
 ```
 
-12 cases, no dependencies. They drive the real script as a subprocess and assert
+13 cases, no dependencies. They drive the real script as a subprocess and assert
 on **exit codes**, because 2 is the only value that actually blocks a tool call.
 
 ## Why this is not a package

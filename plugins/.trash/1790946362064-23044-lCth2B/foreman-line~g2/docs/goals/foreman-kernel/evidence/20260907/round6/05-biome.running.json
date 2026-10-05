@@ -1,0 +1,13 @@
+{
+  "wrapperPid": 467012,
+  "command": [
+    "npx.cmd",
+    "biome",
+    "check",
+    "."
+  ],
+  "status": "running",
+  "head": "0ee165720f8d1e3a91eb283cb770400b23f61bf5",
+  "step": "05-biome",
+  "startedUtc": "2026-09-07T14:13:09.8807782Z"
+}

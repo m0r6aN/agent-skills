@@ -183,6 +183,10 @@ test('AC-1: verification package scaffold matches the W1/W2 sibling pattern', ()
   const dispatchDeps = dispatchPkg.dependencies as Record<string, string>
   assert.equal(deps.ajv, dispatchDeps.ajv)
   assert.equal(deps.yaml, dispatchDeps.yaml)
+  // Scaffold parity covers the shared toolchain pins only; a sibling may carry
+  // package-specific dev dependencies (dispatch's PMC Pi runtime port needs
+  // @earendil-works/*) that are not part of the scaffold and must not be
+  // mirrored into this deliberately minimal package.
   const verificationDevDependencies = pkg.devDependencies as DependencyMap
   const dispatchDevDependencies = dispatchPkg.devDependencies as DependencyMap
   assertScaffoldDevDependencies(verificationDevDependencies, dispatchDevDependencies)

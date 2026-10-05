@@ -1,0 +1,13 @@
+{
+  "name": "complete-with-absent-chain",
+  "description": "R2 fallback: no chain maps, spec in done/, goal record marks the item closed (chainEvidence absent, non-optional).",
+  "now": "2026-09-26T12:00:00.000Z",
+  "goal": {
+    "slug": "goal-absent",
+    "queue": ["1. **P1** ☑ SHIPPED + CLOSED — done without a minted chain."]
+  },
+  "specs": [{ "name": "P1-alpha.md", "location": "done", "status": "done", "updated": "2026-09-20" }],
+  "expected": [
+    { "parcel": "P1", "state": "complete", "rule": "R2", "chainEvidence": "absent" }
+  ]
+}

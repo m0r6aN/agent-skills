@@ -26,7 +26,7 @@
  */
 
 import assert from 'node:assert/strict'
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { test } from 'node:test'
@@ -320,19 +320,18 @@ test('AC4: Stage-C receipt inherits correlationId; sessionId/runId freshly minte
       { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
       { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
-    await executeDispatch(pkg, join(repoRoot, 'worktrees', 'wt'), {
+    const result = await executeDispatch(pkg, join(repoRoot, 'worktrees', 'wt'), {
       repoRoot,
       pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
       dispatchWorktreeFn: successWorktreeFn,
     })
-    const receiptAbsPath = join(
-      repoRoot,
-      'docs',
-      'receipts',
-      WORKFLOW_ID,
-      '000002-C-dispatch-order.json',
-    )
+    // C1 (tip-derived contract, MRC-05): the DispatchOrder slot is allocated
+    // at the chain tip at write time — read the receipt the result actually
+    // names (the literal 000002 pin is replaced, assertions strengthened).
+    assert.match(result.receiptLocator, /\d{6}-C-dispatch-order\.json$/)
+    const receiptAbsPath = join(repoRoot, ...result.receiptLocator.split('/'))
     const receipt = JSON.parse(readFileSync(receiptAbsPath, 'utf8')) as Record<string, unknown>
+    assert.equal(receipt.subjectKind, 'DispatchOrder')
     const correlation = receipt.correlation as Record<string, unknown>
     assert.equal(correlation.correlationId, pkg.priorCorrelationId)
     assert.equal(correlation.correlationId, SHARED_CORRELATION_ID)
@@ -362,18 +361,15 @@ test('RB4-1: Stage-C sessionId/runId are NOT inherited from Stage B (freshly min
       { candidate, specPath, compressFn: makeMockCompressFn(), worktreePath: '/tmp/wt' },
       { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
-    await executeDispatch(pkg, join(repoRoot, 'worktrees', 'wt'), {
+    const result = await executeDispatch(pkg, join(repoRoot, 'worktrees', 'wt'), {
       repoRoot,
       pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
       dispatchWorktreeFn: successWorktreeFn,
     })
-    const receiptAbsPath = join(
-      repoRoot,
-      'docs',
-      'receipts',
-      WORKFLOW_ID,
-      '000002-C-dispatch-order.json',
-    )
+    // C1 (tip-derived contract, MRC-05): read the receipt the result actually
+    // names at the chain tip (the literal 000002 pin is replaced).
+    assert.match(result.receiptLocator, /\d{6}-C-dispatch-order\.json$/)
+    const receiptAbsPath = join(repoRoot, ...result.receiptLocator.split('/'))
     const receiptC = JSON.parse(readFileSync(receiptAbsPath, 'utf8')) as ReceiptDocument
     // C inherits B's correlationId but mints fresh session/run.
     assert.equal(receiptC.correlation.correlationId, receiptB.correlation.correlationId)
@@ -414,18 +410,28 @@ test('AC5: validateChain([A, B, C]) is valid and C inherits B correlationId', as
       dispatchWorktreeFn: successWorktreeFn,
     })
 
-    const receiptAbsPath = join(
-      repoRoot,
-      'docs',
-      'receipts',
-      WORKFLOW_ID,
-      '000002-C-dispatch-order.json',
-    )
-    const receiptC = JSON.parse(readFileSync(receiptAbsPath, 'utf8')) as ReceiptDocument
+    // C1 coexistence (MRC-05, named chain-assembly update): the routing event
+    // entries (decision/attempt, emitted during prepareDispatch) and the
+    // Stage-C DispatchOrder COEXIST on ONE chain — assemble the full chain
+    // (synthetic genesis A + every on-disk entry: Stage-B, the events, and the
+    // tip DispatchOrder) and validate it as a whole. The lineage assertions
+    // are preserved and strengthened: every member shares the one
+    // correlationId.
+    const receiptDir = join(repoRoot, 'docs', 'receipts', WORKFLOW_ID)
+    const onDisk = readdirSync(receiptDir)
+      .filter((name) => /^\d{6}-[A-F]-[a-z0-9-]+\.json$/.test(name))
+      .sort()
+      .map((name) => JSON.parse(readFileSync(join(receiptDir, name), 'utf8')) as ReceiptDocument)
+    const chain: ReceiptDocument[] = [receiptA, ...onDisk]
+    const receiptC = chain[chain.length - 1] as ReceiptDocument
 
-    const result = validateChain([receiptA, receiptB, receiptC])
+    const result = validateChain(chain)
     assert.equal(result.valid, true, `chain must be valid; errors: ${result.errors.join('; ')}`)
+    assert.equal(receiptC.subjectKind, 'DispatchOrder')
     assert.equal(receiptC.correlation.correlationId, receiptB.correlation.correlationId)
+    for (const doc of chain.slice(1)) {
+      assert.equal(doc.correlation.correlationId, receiptB.correlation.correlationId)
+    }
   } finally {
     rmSync(repoRoot, { recursive: true, force: true })
   }

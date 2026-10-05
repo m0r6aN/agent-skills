@@ -11,9 +11,12 @@ canon entry point for this repo.
 > of content, kept in clearly separated sections: **static canon**, written
 > once at scaffold time and not expected to change session to session, and a
 > **managed region**, which this repo's own coordinator sessions read and
-> write as work proceeds. Splice mechanics for the managed region (append vs.
-> replace, delimiter syntax, conflict handling) are not specified here — that
-> is a later stage's design, not this file's content.
+> write as work proceeds. The managed region lives strictly between the
+> scaffold tooling's delimiters —
+> `<!-- foreman-line:begin (generated — edits inside are overwritten) -->` …
+> `<!-- foreman-line:end -->` — which the scaffold appends at the end of this
+> file when absent. Everything between those markers is overwritten on every
+> scaffold run; everything outside them is never modified by the tooling.
 
 ## Static canon
 
@@ -121,15 +124,3 @@ meant to stand alone for a reader who has never seen this pipeline before.
   over a goal's parcels where the loop halts and reports rather than
   proceeding on its own judgment — used for anything that would otherwise
   require silently reinterpreting a frozen decision.
-
-## Managed region — resume state
-
-> Everything below this line is written and rewritten by this repo's own
-> coordinator sessions. Do not hand-author content here beyond the initial
-> empty scaffold; do not assume its shape is stable between sessions.
-
-```
-<in-flight goal: none>
-<current parcel: none>
-<last-known gate: none>
-```

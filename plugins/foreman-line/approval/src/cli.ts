@@ -26,7 +26,7 @@ import { performApproval } from './approve-flow.js'
 import { confirmationMatches, isInteractiveTty, promptForConfirmation } from './confirm.js'
 import { type RejectionRecord, writeRejectionRecord } from './rejection-record.js'
 import { renderTree } from './render.js'
-import { resolveArtifact } from './resolve-input.js'
+import { type ResolvedArtifact, resolveArtifact } from './resolve-input.js'
 import { computeApprovalSubject } from './subject.js'
 
 interface Flags {
@@ -51,10 +51,17 @@ function parseFlags(args: readonly string[]): Flags {
 }
 
 async function runShow(arg: string, flags: Flags): Promise<number> {
+  const repoRoot = flags['repo-root']
+  if (repoRoot === undefined || repoRoot === '') {
+    process.stderr.write(
+      'usage error: --repo-root <absolute path> is required (explicit input; no default, no discovery)\n',
+    )
+    return 2
+  }
   try {
     const resolved = resolveArtifact(arg, {
       epicTitle: flags['epic-title'],
-      repoRoot: flags['repo-root'],
+      repoRoot,
     })
     process.stdout.write(`${renderTree(resolved.projectedResult)}\n`)
     return 0
@@ -66,7 +73,13 @@ async function runShow(arg: string, flags: Flags): Promise<number> {
 
 async function runApprove(arg: string, flags: Flags): Promise<number> {
   const repoRoot = flags['repo-root']
-  let resolved: ReturnType<typeof resolveArtifact>
+  if (repoRoot === undefined || repoRoot === '') {
+    process.stderr.write(
+      'usage error: --repo-root <absolute path> is required (explicit input; no default, no discovery)\n',
+    )
+    return 2
+  }
+  let resolved: ResolvedArtifact
   try {
     resolved = resolveArtifact(arg, { epicTitle: flags['epic-title'], repoRoot })
   } catch (err) {
@@ -119,7 +132,13 @@ async function runApprove(arg: string, flags: Flags): Promise<number> {
 
 async function runReject(arg: string, flags: Flags): Promise<number> {
   const repoRoot = flags['repo-root']
-  let resolved: ReturnType<typeof resolveArtifact>
+  if (repoRoot === undefined || repoRoot === '') {
+    process.stderr.write(
+      'usage error: --repo-root <absolute path> is required (explicit input; no default, no discovery)\n',
+    )
+    return 2
+  }
+  let resolved: ResolvedArtifact
   try {
     resolved = resolveArtifact(arg, { epicTitle: flags['epic-title'], repoRoot })
   } catch (err) {

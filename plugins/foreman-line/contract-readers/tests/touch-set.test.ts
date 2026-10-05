@@ -449,8 +449,14 @@ test("A4(c) reverse control, missing direction — Contract A: every declared re
 
 const ROUTING_POLICY_HOME = '/routing-policy/'
 
-// A2(b)(2), field-name signal.
-const contractBFieldSignal = excludeOwnPackage(gitGrepFiles('routing_class'))
+// A2(b)(2), field-name signal. A2(b)(3)'s home-package ruling applies to this
+// signal exactly as it does to the value signal below: routing-policy/src/*
+// DEFINES this vocabulary, so its `routing_class` field-name hits are the
+// definer's own use of its own field, not cross-package readership. Excluded
+// via the same `excludeHomePackage` mechanism, with every hit recorded in
+// `contractBHomePackageHits` (asserted below) — ruled, never silently dropped.
+const contractBFieldSignalRaw = excludeOwnPackage(gitGrepFiles('routing_class'))
+const contractBFieldSignal = excludeHomePackage(contractBFieldSignalRaw, ROUTING_POLICY_HOME)
 // A2(b)(2), vocabulary-values signal: the concrete enum literals, OR the
 // exported identifier `ROUTING_CLASSES` — this is what surfaces
 // spec-linter/src/index.ts, a barrel re-export that carries the vocabulary
@@ -462,10 +468,11 @@ const contractBValueSignalRaw = excludeOwnPackage(
 )
 // A2(b)(3): routing-policy/src/* DEFINES this vocabulary; it is excluded from
 // the surfaced-for-adjudication set below with that ruling stated explicitly,
-// not silently dropped.
+// not silently dropped. Recorded from BOTH signals (field-name and
+// vocabulary-values) so the ruling covers every way the home package surfaces.
 const contractBValueSignal = excludeHomePackage(contractBValueSignalRaw, ROUTING_POLICY_HOME)
-const contractBHomePackageHits = contractBValueSignalRaw.filter((f) =>
-  f.includes(ROUTING_POLICY_HOME),
+const contractBHomePackageHits = [...contractBFieldSignalRaw, ...contractBValueSignalRaw].filter(
+  (f) => f.includes(ROUTING_POLICY_HOME),
 )
 
 test('A2(b)(1) positive control — Contract B: the field-name signal must find at least one already-declared reader, or the sweep is lying', () => {
@@ -479,15 +486,28 @@ test('A2(b)(1) positive control — Contract B: the field-name signal must find 
 
 test('A2(b)(3) Contract B — the home package is excluded from adjudication with the ruling stated, not silently dropped', () => {
   console.log(
-    `Contract B sweep — value signal home-package hits (definer, not reader): ${JSON.stringify(contractBHomePackageHits)}`,
+    `Contract B sweep — home-package hits (definer, not reader; field + value signals): ${JSON.stringify(contractBHomePackageHits)}`,
   )
   assert.ok(
     contractBHomePackageHits.length > 0,
-    'expected the value signal to surface routing-policy/src/* as the vocabulary-defining home package',
+    'expected the signals to surface routing-policy/src/* as the vocabulary-defining home package',
   )
   for (const hit of contractBHomePackageHits) {
     assert.ok(hit.includes(ROUTING_POLICY_HOME))
   }
+  // The ruling covers EVERY way the home package surfaces: at least one home
+  // hit must come from the field-name signal (routing-policy/src/* threading
+  // its own `routing_class` field), and neither retained signal may smuggle a
+  // home file through to adjudication.
+  const fieldSignalHomeHits = contractBFieldSignalRaw.filter((f) => f.includes(ROUTING_POLICY_HOME))
+  assert.ok(
+    fieldSignalHomeHits.length > 0,
+    'expected the field-name signal to surface routing-policy/src/* too (the definer names its own field); ' +
+      'if it no longer does, the home ruling must still be exercised by the value signal or this control ' +
+      'needs re-derivation',
+  )
+  for (const f of contractBFieldSignal) assert.ok(!f.includes(ROUTING_POLICY_HOME))
+  for (const f of contractBValueSignal) assert.ok(!f.includes(ROUTING_POLICY_HOME))
 })
 
 test('A2(b)(2)/(4) Contract B — every surfaced file is adjudicated; both signals; residual blindness stated', () => {
@@ -571,6 +591,39 @@ test('A2(b)(2)/(4) Contract B — every surfaced file is adjudicated; both signa
   //                                      only inside a prose status-line string ("the routing
   //                                      policy's boilerplate class"); nothing reads or branches on
   //                                      the value, so it need not change if a class is added/removed.
+  //   ops-console/src/frontmatter.ts   — NOT declared (LOCKSTEP-negative): 'routing_class:' appears
+  //                                      only in a doc comment naming the keys the projection reads
+  //                                      (`:4`); the parser is a generic flat `key: value` reader
+  //                                      with no vocabulary reference. ADD a class and this file is
+  //                                      unchanged — same comment-only basis as skill-injection/src/cli.ts.
+  //   ops-console/src/project.ts       — NOT declared (LOCKSTEP-negative): reads `raw.routing_class`
+  //                                      out of a routing-decision receipt as an opaque string
+  //                                      (`:53`, typeof-string check) and threads it into the view;
+  //                                      zero class-name or ROUTING_CLASSES references. ADD a class
+  //                                      and this file is unchanged — same opaque-threading basis as
+  //                                      dispatch/src/approval-cli/index.ts.
+  //   ops-console/src/scan.ts          — NOT declared (LOCKSTEP-negative): `data.routing_class ?? null`
+  //                                      (`:64`) carries the parsed frontmatter value opaquely into
+  //                                      SpecFact; zero vocabulary references. ADD a class and this
+  //                                      file is unchanged — same opaque-threading basis as project.ts.
+  //   project-scaffold/src/equivalent-layout.ts — NOT declared (LOCKSTEP-negative): `typeof
+  //                                      record.routing_class === 'string'` (`:32`) is a KEY-PRESENCE
+  //                                      probe inside the §4 core-key-set shape predicate; it never
+  //                                      tests vocabulary membership. ADD a class and this file is
+  //                                      unchanged (key presence ≠ member values).
+  //
+  // A2(b)(3) home ruling, extended to the field-name signal (this run): the
+  // value signal's home-package exclusion never covered the field-name signal,
+  // so routing-policy/src/* (the vocabulary's DEFINER — its own `routing_class`
+  // field threading) surfaced through it: pi-resolver.ts, route-receipt.ts,
+  // schemas.ts, testing.ts, types.ts, validator.ts. They are adjudicated
+  // HOME-PACKAGE (definer, not reader) under the existing A2(b)(3) ruling,
+  // now applied to both signals via `excludeHomePackage`, with every hit
+  // recorded in `contractBHomePackageHits` and asserted in the A2(b)(3) test —
+  // ruled explicitly, never silently dropped. Note routing-policy/src/schemas.ts
+  // and types.ts restate the enum and WOULD fail the additive lockstep test in
+  // any other package; the home ruling takes precedence because they are the
+  // vocabulary's typed instantiation, not a consumer of another package's.
   //   authority-registry/src/generate.ts — NOT declared (LOCKSTEP-negative): the value signal matches
   //                                      only inside a frozen normalized-excerpt locator key
   //                                      ('coordinator-pattern:md-block:...table-row:Builder
@@ -595,6 +648,27 @@ test('A2(b)(2)/(4) Contract B — every surfaced file is adjudicated; both signa
   //                                      reading was explicitly left open and NOT adopted (the
   //                                      grandfather.ts ruling above states this too).
   //
+  //   dispatch/src/pi-entry/index.ts   — NOT declared (A5(b), same imported-identifier basis as
+  //                                      routing-eval/index.ts): imports `CLASS_NAMES` (`:72`) and
+  //                                      checks membership through the imported set (`:375-376`) but
+  //                                      holds no class literal of its own. ADD a class and this file
+  //                                      is unchanged.
+  //   dispatch/src/routing-cache.ts    — NOT declared (LOCKSTEP-negative, opaque threading):
+  //                                      `routing_class` appears only as a plain `string` field on the
+  //                                      cache-key record (`:330`) and is copied opaquely (`:362`);
+  //                                      zero class-name or ROUTING_CLASSES references — same basis as
+  //                                      dispatch/src/approval-cli/index.ts. ADD a class and unchanged.
+  //   receipts/src/types.ts            — NOT declared (LOCKSTEP-negative, opaque type field):
+  //                                      `readonly routing_class: string` at the type level (`:181`,
+  //                                      `:287`) — key-presence/plain-string reading, like
+  //                                      project-scaffold/src/equivalent-layout.ts. ADD a class and
+  //                                      unchanged.
+  //   receipts/src/validator.ts        — NOT declared (LOCKSTEP-negative, opaque validation):
+  //                                      validates `routing_class` as a non-empty string (`:394-400`,
+  //                                      `:575-617`) and threads it through; zero class-name or
+  //                                      ROUTING_CLASSES references — same basis as
+  //                                      dispatch/src/approval-cli/index.ts. ADD a class and unchanged.
+  //
   // A3(a)/A4(a) also re-adjudicated (outside the sweep's pathspec, absent from
   // `surfaced`, not asserted against here): shaping/tests/helpers.ts,
   // approval/tests/helpers.ts, registration/tests/helpers.ts,
@@ -605,7 +679,15 @@ test('A2(b)(2)/(4) Contract B — every surfaced file is adjudicated; both signa
     'plugins/foreman-line/authority-registry/src/generate.ts',
     'plugins/foreman-line/authority-registry/src/validate.ts',
     'plugins/foreman-line/dispatch/src/approval-cli/index.ts',
+    'plugins/foreman-line/dispatch/src/pi-entry/index.ts',
+    'plugins/foreman-line/dispatch/src/routing-cache.ts',
     'plugins/foreman-line/dispatch/src/routing-eval/index.ts',
+    'plugins/foreman-line/ops-console/src/frontmatter.ts',
+    'plugins/foreman-line/ops-console/src/project.ts',
+    'plugins/foreman-line/ops-console/src/scan.ts',
+    'plugins/foreman-line/project-scaffold/src/equivalent-layout.ts',
+    'plugins/foreman-line/receipts/src/types.ts',
+    'plugins/foreman-line/receipts/src/validator.ts',
     'plugins/foreman-line/skill-injection/src/cli.ts',
     'plugins/foreman-line/spec-linter/src/grandfather.ts',
     'plugins/foreman-line/spec-linter/src/index.ts',

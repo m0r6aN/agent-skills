@@ -1,0 +1,146 @@
+[
+  {
+    "sourceId": "fk-charter",
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/charter.md",
+    "initialWorkingBytesSha256": "c289fbcc384ca825181662b091572c2f085e23c984ad2be6bec5fff49d7350d3",
+    "currentWorkingBytesSha256": "c289fbcc384ca825181662b091572c2f085e23c984ad2be6bec5fff49d7350d3",
+    "unchanged": true,
+    "sourceSnapshotGitBlobSha256": "c289fbcc384ca825181662b091572c2f085e23c984ad2be6bec5fff49d7350d3"
+  },
+  {
+    "sourceId": "fk-plan-review-findings",
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/plan-review-findings.md",
+    "initialWorkingBytesSha256": "d2e5bc3268450c77456ad14baa6df8dadb9cd132123ddc52a782886e42a73057",
+    "currentWorkingBytesSha256": "d2e5bc3268450c77456ad14baa6df8dadb9cd132123ddc52a782886e42a73057",
+    "unchanged": true,
+    "sourceSnapshotGitBlobSha256": "d2e5bc3268450c77456ad14baa6df8dadb9cd132123ddc52a782886e42a73057"
+  },
+  {
+    "sourceId": "fk-loop-directive",
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md",
+    "initialWorkingBytesSha256": "8b2cd6818833d3f27ecd346f05d3f84bdfc669f16ce81265a1bf6667664ce4cb",
+    "currentWorkingBytesSha256": "8b2cd6818833d3f27ecd346f05d3f84bdfc669f16ce81265a1bf6667664ce4cb",
+    "unchanged": true,
+    "sourceSnapshotGitBlobSha256": "8b2cd6818833d3f27ecd346f05d3f84bdfc669f16ce81265a1bf6667664ce4cb"
+  },
+  {
+    "sourceId": "spec-convention",
+    "path": "plugins/foreman-line/docs/SPEC-CONVENTION.md",
+    "initialWorkingBytesSha256": "7ac315005cde6ad6def848b83de1d1b644e321c5d9f6434bc925deb6daba8703",
+    "currentWorkingBytesSha256": "7ac315005cde6ad6def848b83de1d1b644e321c5d9f6434bc925deb6daba8703",
+    "unchanged": true,
+    "sourceSnapshotGitBlobSha256": "7ac315005cde6ad6def848b83de1d1b644e321c5d9f6434bc925deb6daba8703"
+  },
+  {
+    "sourceId": "coordinator-pattern",
+    "path": "plugins/foreman-line/docs/COORDINATOR-PATTERN.md",
+    "initialWorkingBytesSha256": "c734c9b2aef15f020a4a5eb261a1291740eddb2a154376386599074cbb8ca9bd",
+    "currentWorkingBytesSha256": "c734c9b2aef15f020a4a5eb261a1291740eddb2a154376386599074cbb8ca9bd",
+    "unchanged": true,
+    "sourceSnapshotGitBlobSha256": "c734c9b2aef15f020a4a5eb261a1291740eddb2a154376386599074cbb8ca9bd"
+  },
+  {
+    "sourceId": "goal-skill",
+    "path": "plugins/foreman-line/skills/goal/SKILL.md",
+    "initialWorkingBytesSha256": "ee003674865be3a45316b95f5459b8f317d8150bdb8c0774601929cb0befd831",
+    "currentWorkingBytesSha256": "ee003674865be3a45316b95f5459b8f317d8150bdb8c0774601929cb0befd831",
+    "unchanged": true,
+    "sourceSnapshotGitBlobSha256": "ee003674865be3a45316b95f5459b8f317d8150bdb8c0774601929cb0befd831"
+  },
+  {
+    "sourceId": "standing-constraints",
+    "path": "plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md",
+    "initialWorkingBytesSha256": "b5cce5029c4619058795414b624a418fb8c1c28f8534dab9d58c8fef61994c2f",
+    "currentWorkingBytesSha256": "b5cce5029c4619058795414b624a418fb8c1c28f8534dab9d58c8fef61994c2f",
+    "unchanged": true,
+    "sourceSnapshotGitBlobSha256": "b5cce5029c4619058795414b624a418fb8c1c28f8534dab9d58c8fef61994c2f"
+  },
+  {
+    "sourceId": "parcel-driven-development",
+    "path": "plugins/foreman-line/skills/parcel-driven-development/SKILL.md",
+    "initialWorkingBytesSha256": "f673472c804a659f9f01515b878f02c653d4ed97c2c4c97f7340139325c6df05",
+    "currentWorkingBytesSha256": "f673472c804a659f9f01515b878f02c653d4ed97c2c4c97f7340139325c6df05",
+    "unchanged": true,
+    "sourceSnapshotGitBlobSha256": "f673472c804a659f9f01515b878f02c653d4ed97c2c4c97f7340139325c6df05"
+  },
+  {
+    "sourceId": "foreman-line-plan",
+    "path": "plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md",
+    "initialWorkingBytesSha256": "0ca5a264e5371be59b2351e2f8e369a6e7f9fa2b4fd6d94ab54902d4ecd63a22",
+    "currentWorkingBytesSha256": "0ca5a264e5371be59b2351e2f8e369a6e7f9fa2b4fd6d94ab54902d4ecd63a22",
+    "unchanged": true,
+    "sourceSnapshotGitBlobSha256": "0ca5a264e5371be59b2351e2f8e369a6e7f9fa2b4fd6d94ab54902d4ecd63a22"
+  },
+  {
+    "sourceId": "approval-readme",
+    "path": "plugins/foreman-line/approval/README.md",
+    "initialWorkingBytesSha256": "5369e558879ea9faeee5828329807dc544dfbcc21722a1c94d3458f670244849",
+    "currentWorkingBytesSha256": "5369e558879ea9faeee5828329807dc544dfbcc21722a1c94d3458f670244849",
+    "unchanged": true,
+    "sourceSnapshotGitBlobSha256": "5369e558879ea9faeee5828329807dc544dfbcc21722a1c94d3458f670244849"
+  },
+  {
+    "sourceId": "spec-frontmatter-schema",
+    "path": "plugins/foreman-line/spec-linter/schemas/spec-frontmatter.schema.json",
+    "initialWorkingBytesSha256": "8ff17dbd4ccbd29d0f60f7b03dfdc9f08afb63d9de1b64549bc1646ce546034e",
+    "currentWorkingBytesSha256": "8ff17dbd4ccbd29d0f60f7b03dfdc9f08afb63d9de1b64549bc1646ce546034e",
+    "unchanged": true,
+    "sourceSnapshotGitBlobSha256": "8ff17dbd4ccbd29d0f60f7b03dfdc9f08afb63d9de1b64549bc1646ce546034e"
+  },
+  {
+    "sourceId": "spec-linter-validator",
+    "path": "plugins/foreman-line/spec-linter/src/validate.ts",
+    "initialWorkingBytesSha256": "4e542bfa6943c71b962236cbd5410713186f6eabb2b7788e12392cbffaef3a99",
+    "currentWorkingBytesSha256": "4e542bfa6943c71b962236cbd5410713186f6eabb2b7788e12392cbffaef3a99",
+    "unchanged": true,
+    "sourceSnapshotGitBlobSha256": "4e542bfa6943c71b962236cbd5410713186f6eabb2b7788e12392cbffaef3a99"
+  },
+  {
+    "sourceId": "spec-linter-cli",
+    "path": "plugins/foreman-line/spec-linter/src/cli.ts",
+    "initialWorkingBytesSha256": "aa0928ab5173d868c61c1ddd75ce990dbb698afdaee9269b7e99965f5e687c18",
+    "currentWorkingBytesSha256": "aa0928ab5173d868c61c1ddd75ce990dbb698afdaee9269b7e99965f5e687c18",
+    "unchanged": true,
+    "sourceSnapshotGitBlobSha256": "aa0928ab5173d868c61c1ddd75ce990dbb698afdaee9269b7e99965f5e687c18"
+  },
+  {
+    "sourceId": "spec-linter-readme",
+    "path": "plugins/foreman-line/spec-linter/README.md",
+    "initialWorkingBytesSha256": "8be95883d16a3a73a128a8c0d14d73d61204724531c99ee9dfc8072dff08a69c",
+    "currentWorkingBytesSha256": "8be95883d16a3a73a128a8c0d14d73d61204724531c99ee9dfc8072dff08a69c",
+    "unchanged": true,
+    "sourceSnapshotGitBlobSha256": "8be95883d16a3a73a128a8c0d14d73d61204724531c99ee9dfc8072dff08a69c"
+  },
+  {
+    "sourceId": "permission-profiles-registry",
+    "path": "plugins/foreman-line/permission-profiles/permission-profiles.yaml",
+    "initialWorkingBytesSha256": "9da06cf299653b244c636dd9809b5ba6410efb5e9e7f89389c1ef7260fa577cb",
+    "currentWorkingBytesSha256": "9da06cf299653b244c636dd9809b5ba6410efb5e9e7f89389c1ef7260fa577cb",
+    "unchanged": true,
+    "sourceSnapshotGitBlobSha256": "9da06cf299653b244c636dd9809b5ba6410efb5e9e7f89389c1ef7260fa577cb"
+  },
+  {
+    "sourceId": "permission-profiles-types",
+    "path": "plugins/foreman-line/permission-profiles/src/types.ts",
+    "initialWorkingBytesSha256": "91651a073156834119b5037127b942f315ea4d45d26bc17e0c9df2a1499aa5a9",
+    "currentWorkingBytesSha256": "91651a073156834119b5037127b942f315ea4d45d26bc17e0c9df2a1499aa5a9",
+    "unchanged": true,
+    "sourceSnapshotGitBlobSha256": "91651a073156834119b5037127b942f315ea4d45d26bc17e0c9df2a1499aa5a9"
+  },
+  {
+    "sourceId": "permission-profiles-validator",
+    "path": "plugins/foreman-line/permission-profiles/src/validator.ts",
+    "initialWorkingBytesSha256": "1f12fe53f75b089d25dd27e995af024c52269b0db6b8c4e22c616702749a7d23",
+    "currentWorkingBytesSha256": "1f12fe53f75b089d25dd27e995af024c52269b0db6b8c4e22c616702749a7d23",
+    "unchanged": true,
+    "sourceSnapshotGitBlobSha256": "1f12fe53f75b089d25dd27e995af024c52269b0db6b8c4e22c616702749a7d23"
+  },
+  {
+    "sourceId": "permission-profiles-readme",
+    "path": "plugins/foreman-line/permission-profiles/README.md",
+    "initialWorkingBytesSha256": "b790947a8223daab2babf45cba648f1bfd073d7d0b1e6f524fa02f51dc129f00",
+    "currentWorkingBytesSha256": "b790947a8223daab2babf45cba648f1bfd073d7d0b1e6f524fa02f51dc129f00",
+    "unchanged": true,
+    "sourceSnapshotGitBlobSha256": "b790947a8223daab2babf45cba648f1bfd073d7d0b1e6f524fa02f51dc129f00"
+  }
+]

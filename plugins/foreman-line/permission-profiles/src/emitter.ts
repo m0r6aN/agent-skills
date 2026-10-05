@@ -1,6 +1,6 @@
 /**
- * Dispatch-time permission-profile emitter (permission-profile-registry goal,
- * P3). Adds the `dispatch-worktree` verb's engine to P1's package: resolve a
+ * Dispatch-time permission-profile emitter (P3, shipped `permission-profiles`
+ * package). Adds the `dispatch-worktree` verb's engine to P1's package: resolve a
  * named profile against the shipped registry, project its envelope into a
  * worktree-local `.claude/settings.local.json`, and create the git worktree +
  * branch it belongs to — all before any builder/reviewer session launches.

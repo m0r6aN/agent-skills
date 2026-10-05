@@ -17,6 +17,7 @@
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import type { CorrelationContext, ReceiptRef } from '../../contracts/src/index.js'
+import { assertContainedPath } from '../../projection/src/index.js'
 import { ACTIVE_SPECS_DIR, DEFAULT_REPO_ROOT } from './paths.js'
 import { assertSafeSlug } from './slug-guard.js'
 import type { ApprovalSubject } from './subject.js'
@@ -46,6 +47,9 @@ export function approvalRecordPath(
 ): string {
   assertSafeSlug(slug)
   const activeDir = join(repoRoot, ...specsDir.split('/'))
+  // Path containment (D1): the caller-supplied specsDir must resolve beneath
+  // repoRoot — refused before any path under it is used.
+  assertContainedPath(repoRoot, activeDir, specsDir)
   return join(activeDir, `${slug}${APPROVAL_RECORD_SUFFIX}`)
 }
 

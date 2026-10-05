@@ -45,7 +45,8 @@ test('exit 1 on classification-gate rejecting fixture, violation on stderr', () 
 test('exit 1 on role-pinning rejecting fixture, violation on stderr', () => {
   const { status, stderr } = runCli(['validate', join(fixturesDir, 'reject-role-pinning.yaml')])
   assert.equal(status, 1)
-  assert.ok(stderr.includes('roles.coordinator'))
+  // CUTOVER-P4 re-anchor: the D4 pin lives in lane_map.L1 now (was roles.coordinator).
+  assert.ok(stderr.includes('lane_map.L1.frontier_only'))
 })
 
 test('exit 1 on security-override rejecting fixture, violation on stderr', () => {
@@ -81,21 +82,29 @@ test('exit 1 on ceiling-zero rejecting fixture', () => {
 test('exit 1 on the purely structural rejecting fixture, lists every violation (not just the first)', () => {
   const { status, stderr } = runCli(['validate', join(fixturesDir, 'reject-structural.yaml')])
   assert.equal(status, 1)
-  assert.ok(stderr.includes('roles'))
+  // CUTOVER-P4 re-anchor: the schema-layer violation is a missing required
+  // top-level property again — `shadow_routes` (was the removed `roles`).
+  assert.ok(stderr.includes('shadow_routes'))
 })
 
 test('exit 1 lists every violation, not just the first, on a multiply-invalid document', () => {
   const { status, stderr } = runCli(['validate', join(fixturesDir, 'reject-multiple.yaml')])
   assert.equal(status, 1)
-  assert.ok(stderr.includes('roles.coordinator'))
+  // CUTOVER-P4 re-anchor: the second violation is frozen-map drift on the
+  // coordinator lane (was roles.coordinator).
+  assert.ok(stderr.includes('lane_map.L1.frontier_only'))
   assert.ok(stderr.includes('security_flavored but allowlist contains non-frontier tier'))
 })
 
 test('exit 1 lists violations from BOTH the schema layer and the semantic layer together, no short-circuit (Nit 1)', () => {
   const { status, stderr } = runCli(['validate', join(fixturesDir, 'reject-both.yaml')])
   assert.equal(status, 1)
-  // Schema-layer violation: the required top-level `roles` property is missing.
-  assert.ok(stderr.includes('roles'), `expected a schema violation naming 'roles', got: ${stderr}`)
+  // Schema-layer violation: the required top-level `selection_order` property
+  // is missing (CUTOVER-P4 re-anchor; was the removed `roles` property).
+  assert.ok(
+    stderr.includes('selection_order'),
+    `expected a schema violation naming 'selection_order', got: ${stderr}`,
+  )
   // Semantic-layer violation: security-override, independent of `roles` being present.
   assert.ok(
     stderr.includes('security_flavored but allowlist contains non-frontier tier'),
@@ -123,4 +132,13 @@ test('exit 2 on a missing path argument', () => {
 test('exit 2 on an unknown command', () => {
   const { status } = runCli(['explain', 'routing-policy.yaml'])
   assert.equal(status, 2)
+})
+
+test('exit 1 on the self-referential-fallback fixture, contract refusal on stderr', () => {
+  const { status, stderr } = runCli([
+    'validate',
+    join(fixturesDir, 'reject-fallback-self-ref.yaml'),
+  ])
+  assert.equal(status, 1)
+  assert.ok(stderr.includes('FALLBACK_SELF_REFERENCE'), stderr)
 })

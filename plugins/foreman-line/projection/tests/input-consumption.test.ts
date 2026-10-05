@@ -10,6 +10,7 @@ import { dirname, join } from 'node:path'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { discoverProjectableInputs, writeProjectedResult } from '../src/index.js'
+import { discoverShapingResults, readShapingResult } from '../../shaping/src/index.js'
 import { makeTempRepoRoot, writeShapingResultFixture, writeSpecDraft } from './helpers.js'
 
 const packageDir = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -34,6 +35,16 @@ test('AC3: readShapingResult and discoverShapingResults are imported from ../../
 // git-diff checks, not the shipped suite. The shipped half of AC3 - the
 // import-consumption pin above (readers are imported from
 // `../../shaping/src/index.js`, never re-implemented) - stays.
+
+test('AC3: the shipped shaping reader surface this package consumes stays exported', () => {
+  // P2b-i: the original W1-P2 parcel-time byte-freeze on shaping/ is retired —
+  // P2b-i is chartered to change shaping (R2/R3; shaping is in `surfaces:`),
+  // and a shipped byte-pin hard-blocks every future chartered change
+  // (STANDING-CONSTRAINTS #12). The durable invariant is pinned instead: the
+  // reader functions this package consumes remain on shaping's public surface.
+  assert.equal(typeof readShapingResult, 'function')
+  assert.equal(typeof discoverShapingResults, 'function')
+})
 
 test("AC3: the fallback discovery filters out this package's own projected artifact", () => {
   const root = makeTempRepoRoot()

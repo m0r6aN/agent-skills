@@ -1,0 +1,236 @@
+{
+  "capturedUtc": "2026-09-07T18:53:31.492867+00:00",
+  "retainedLocalDirectory": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-r31-main-integration-final-attempt02",
+  "files": [
+    {
+      "file": "0001-before-symbolic.json",
+      "bytes": 461,
+      "sha256": "a80c49b9bf8412b99a423a11f2fa7bbeca081c919a2daf93808366118fcc7816",
+      "published": true
+    },
+    {
+      "file": "0001-before-symbolic.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0001-before-symbolic.stdout",
+      "bytes": 18,
+      "sha256": "48583181859e65c7656874783518080ae7cc67c0b1a8116fef61d317f02982ad",
+      "published": true
+    },
+    {
+      "file": "0002-before-refs.json",
+      "bytes": 427,
+      "sha256": "c7747d80472f9eaacaddce3373992116f1a97238cfd72c5b8c8d029fd653b6de",
+      "published": true
+    },
+    {
+      "file": "0002-before-refs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0002-before-refs.stdout",
+      "bytes": 457,
+      "sha256": "3d89a5c2921ab22a64e7140ec68196ad7ddfd20b7e3737a23425b1ff6f418d57",
+      "published": true
+    },
+    {
+      "file": "0003-git-version.json",
+      "bytes": 427,
+      "sha256": "27ea83017e0ddff1cc4f73fd1da9d2103f62b5f06251e52583b3ea81923b1ec2",
+      "published": true
+    },
+    {
+      "file": "0003-git-version.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0003-git-version.stdout",
+      "bytes": 29,
+      "sha256": "ec9dfdb8fe0dec58e2083352e3e583473b6054c8deb2e6b233ec7a970430aecd",
+      "published": true
+    },
+    {
+      "file": "0004-main-type.json",
+      "bytes": 482,
+      "sha256": "3f19b2d973553def6b9d90a71f55081569caa1ef6f0c0848e9b00f72b297520d",
+      "published": true
+    },
+    {
+      "file": "0004-main-type.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0004-main-type.stdout",
+      "bytes": 7,
+      "sha256": "50836eee574ecff79dea3b4fd40673d7d000f7a5f177d8a6a3000b59c78383b8",
+      "published": true
+    },
+    {
+      "file": "0005-r31-type.json",
+      "bytes": 480,
+      "sha256": "5612dddd7a6172d7f787928735c424d891aa8debb95b232ba9e9c48fcd0b419a",
+      "published": true
+    },
+    {
+      "file": "0005-r31-type.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0005-r31-type.stdout",
+      "bytes": 7,
+      "sha256": "50836eee574ecff79dea3b4fd40673d7d000f7a5f177d8a6a3000b59c78383b8",
+      "published": true
+    },
+    {
+      "file": "0006-source_commit-type.json",
+      "bytes": 499,
+      "sha256": "9f782984b9fe728dc9bad57280924287f689764d999649450bfaf8c83e11c370",
+      "published": true
+    },
+    {
+      "file": "0006-source_commit-type.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0006-source_commit-type.stdout",
+      "bytes": 7,
+      "sha256": "50836eee574ecff79dea3b4fd40673d7d000f7a5f177d8a6a3000b59c78383b8",
+      "published": true
+    },
+    {
+      "file": "0007-source-tree.json",
+      "bytes": 483,
+      "sha256": "4bb86c0f3b31a49a884fbb00c04b1dff71098f2337a82607ed29ee92fd07e727",
+      "published": true
+    },
+    {
+      "file": "0007-source-tree.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0007-source-tree.stdout",
+      "bytes": 41,
+      "sha256": "3d2380c0078afa35f6e83694af6522778e6e064f25ed76825932e1f40cd3c886",
+      "published": true
+    },
+    {
+      "file": "0008-source-ancestor.json",
+      "bytes": 553,
+      "sha256": "453ce460216e7755063163f6aa308d8f93cbeb77b4492240d0bcb00a52063c36",
+      "published": true
+    },
+    {
+      "file": "0008-source-ancestor.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0008-source-ancestor.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0009-accepted-inventory.json",
+      "bytes": 518,
+      "sha256": "1bd1efde23ad9d2dd70146d9b129e029c5114bba5c81e8aba78c6e5ddf062cb9",
+      "published": true
+    },
+    {
+      "file": "0009-accepted-inventory.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0009-accepted-inventory.stdout",
+      "bytes": 158199,
+      "sha256": "de19c8ff346eb152b15e01a7fa949baa1027491f1a2fa118beea0e6dfb8b6078",
+      "published": false,
+      "reason": "Derived NUL-delimited full repository inventory; retained locally to avoid publishing unrelated binary stream.",
+      "reconstruct": "Run exact argv in matching command JSON against the published commit; raw stdout bytes are deterministic."
+    },
+    {
+      "file": "0010-after-symbolic.json",
+      "bytes": 459,
+      "sha256": "d865066f2e0661dad0cb9ca9e7b8d9558bf88ffc3513000525eb6bcf39d7db42",
+      "published": true
+    },
+    {
+      "file": "0010-after-symbolic.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0010-after-symbolic.stdout",
+      "bytes": 18,
+      "sha256": "48583181859e65c7656874783518080ae7cc67c0b1a8116fef61d317f02982ad",
+      "published": true
+    },
+    {
+      "file": "0011-after-refs.json",
+      "bytes": 425,
+      "sha256": "8eff23f2067a7b98e1414c77efc62890238f83b1149865f143f99951b838f8e2",
+      "published": true
+    },
+    {
+      "file": "0011-after-refs.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "published": true
+    },
+    {
+      "file": "0011-after-refs.stdout",
+      "bytes": 457,
+      "sha256": "3d89a5c2921ab22a64e7140ec68196ad7ddfd20b7e3737a23425b1ff6f418d57",
+      "published": true
+    },
+    {
+      "file": "after-refs-snapshot.json",
+      "bytes": 589,
+      "sha256": "efda67e43a1e61110146871824d9b2ce6bc7f326304e9de2d2f3df8b9fdc8a95",
+      "published": true
+    },
+    {
+      "file": "before-refs-snapshot.json",
+      "bytes": 589,
+      "sha256": "efda67e43a1e61110146871824d9b2ce6bc7f326304e9de2d2f3df8b9fdc8a95",
+      "published": true
+    },
+    {
+      "file": "result.json",
+      "bytes": 919,
+      "sha256": "40209137fd274c104bbb8226d629e79007178e9027562d3daf22d94affb37025",
+      "published": true
+    },
+    {
+      "file": "review-input.json",
+      "bytes": 182371,
+      "sha256": "8d950d9c5898fc93563a43940ac575ba2f1abe81d1996881f9601c0e30ec9767",
+      "published": true
+    },
+    {
+      "file": "source-input.json",
+      "bytes": 7263,
+      "sha256": "622b52ac9cb3d93e1406fbb592140c0396c7b47b49e041df9a53d2fc241da9ec",
+      "published": true
+    }
+  ]
+}

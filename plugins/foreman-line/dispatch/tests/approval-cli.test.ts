@@ -25,7 +25,15 @@
  */
 
 import assert from 'node:assert/strict'
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { test } from 'node:test'
@@ -97,6 +105,30 @@ const CORRELATION_ID = 'c0dec0de-0000-4000-8000-000000000001'
 // Valid 64-char lowercase hex used as a stand-in for Stage-B receipt hashes in
 // fixtures (validateReceiptDocument enforces the HASH_PATTERN '^[0-9a-f]{64}$').
 const VALID_HEX_64 = 'a'.repeat(64)
+
+/**
+ * C1 tip-derived contract (MRC-05): the Stage-C DispatchOrder slot is no
+ * longer the literal `000002` — it is allocated at the chain tip at write
+ * time. These helpers locate the DispatchOrder receipt and the chain entries
+ * at whatever sequence they actually landed (the named literal-slot pins are
+ * replaced by the tip-derived contract; every assertion is strengthened).
+ */
+function stageCReceiptNames(repoRoot: string): string[] {
+  const receiptDir = join(repoRoot, 'docs', 'receipts', WORKFLOW_ID)
+  if (!existsSync(receiptDir)) return []
+  return readdirSync(receiptDir).filter((name) => /^\d{6}-C-dispatch-order\.json$/.test(name))
+}
+
+/** Every chain entry under the workflow's receipt dir, in file (sequence) order. */
+function readChainEntries(repoRoot: string): Array<Record<string, unknown>> {
+  const receiptDir = join(repoRoot, 'docs', 'receipts', WORKFLOW_ID)
+  return readdirSync(receiptDir)
+    .filter((name) => /^\d{6}-[A-F]-[a-z0-9-]+\.json$/.test(name))
+    .sort()
+    .map(
+      (name) => JSON.parse(readFileSync(join(receiptDir, name), 'utf8')) as Record<string, unknown>,
+    )
+}
 
 /** Write a fake Stage-B receipt with the given hash and return its locator. */
 function writeStageBReceipt(
@@ -342,6 +374,12 @@ test('AC7: stepZeroRestatement contains all required substrings', async () => {
     assert.ok(restatement.includes('KONE-9999'), 'must contain ticket key')
     assert.ok(restatement.includes(WORKFLOW_ID), 'must contain workflowId')
     assert.ok(restatement.includes('anthropic/claude-opus-5.5'), 'must contain resolved model ID')
+    // C2.4 carry (MRC-05): the resolved thinking level is surfaced in the
+    // Step-0 restatement (the architecture/risk class default per OQ5).
+    assert.ok(
+      restatement.includes('Resolved thinking level: high'),
+      'must contain the resolved thinking level',
+    )
     assert.ok(restatement.includes('artifact ID:'), 'must contain "artifact ID:"')
     assert.ok(restatement.includes('artifact-hash-999'), 'must contain kompressArtifactId')
   } finally {
@@ -401,15 +439,14 @@ test('AC9: worktree FAILED → receipt file does NOT exist', async () => {
       },
     )
 
-    // Receipt must NOT exist
-    const receiptAbsPath = join(
-      repoRoot,
-      'docs',
-      'receipts',
-      WORKFLOW_ID,
-      '000002-C-dispatch-order.json',
+    // Receipt must NOT exist at ANY slot (C1.4, tip-derived contract: the old
+    // literal-000002 absence check strengthens to "no DispatchOrder anywhere
+    // on the chain" — a stray write at a different sequence fails too).
+    assert.deepEqual(
+      stageCReceiptNames(repoRoot),
+      [],
+      'no Stage-C DispatchOrder receipt may exist after WORKTREE_FAILED',
     )
-    assert.equal(existsSync(receiptAbsPath), false, 'receipt must not exist after WORKTREE_FAILED')
   } finally {
     rmSync(repoRoot, { recursive: true, force: true })
   }
@@ -465,27 +502,46 @@ test('AC11: Stage-C receipt written with correct fields after executeDispatch', 
       { repoRoot, pluginRoot: join(repoRoot, 'plugins', 'foreman-line') },
     )
 
-    await executeDispatch(pkg, join(repoRoot, 'worktrees', 'test-wt'), {
+    const result = await executeDispatch(pkg, join(repoRoot, 'worktrees', 'test-wt'), {
       repoRoot,
       pluginRoot: join(repoRoot, 'plugins', 'foreman-line'),
       dispatchWorktreeFn: successWorktreeFn,
     })
 
-    const receiptAbsPath = join(
-      repoRoot,
-      'docs',
-      'receipts',
-      WORKFLOW_ID,
-      '000002-C-dispatch-order.json',
-    )
+    // C1 (tip-derived contract, MRC-05): the returned receiptLocator names the
+    // receipt actually written at the chain tip — the slot is no longer the
+    // literal 000002.
+    const receiptAbsPath = join(repoRoot, ...result.receiptLocator.split('/'))
     assert.ok(existsSync(receiptAbsPath), 'Stage-C receipt must exist')
+    assert.match(result.receiptLocator, /\d{6}-C-dispatch-order\.json$/)
 
     const receipt = JSON.parse(readFileSync(receiptAbsPath, 'utf8')) as Record<string, unknown>
     assert.equal(receipt.stage, 'C')
-    assert.equal(receipt.sequence, 2)
-    assert.equal(receipt.prevHash, stageBHash)
     assert.equal(receipt.subjectKind, 'DispatchOrder')
     assert.ok(typeof receipt.hash === 'string' && receipt.hash.length > 0, 'hash must be non-empty')
+
+    // Tip-derived slot semantics (C1.4: replacing the literal `sequence: 2` /
+    // `prevHash: stageBHash` pins): the DispatchOrder is the TIP entry at its
+    // write time and links to its immediate predecessor on the shared chain
+    // (the prepare-time routing events land on the same chain — coexistence).
+    const chain = readChainEntries(repoRoot)
+    const maxSequence = Math.max(...chain.map((doc) => Number(doc.sequence)))
+    assert.equal(
+      receipt.sequence,
+      maxSequence,
+      'the DispatchOrder is the tip entry at its write time',
+    )
+    const predecessor = chain.find((doc) => Number(doc.sequence) === Number(receipt.sequence) - 1)
+    assert.ok(predecessor !== undefined, 'the DispatchOrder has an immediate predecessor')
+    assert.equal(
+      receipt.prevHash,
+      predecessor.hash,
+      'prevHash links to the immediate predecessor hash',
+    )
+    assert.equal(
+      result.receiptLocator,
+      `docs/receipts/${WORKFLOW_ID}/${String(receipt.sequence).padStart(6, '0')}-C-dispatch-order.json`,
+    )
 
     const subject = receipt.subject as Record<string, unknown>
     assert.equal(subject.kompressArtifactId, 'kompress-artifact-id-test')
@@ -516,7 +572,17 @@ test('AC12: executeDispatch returns { order, receiptLocator, worktreePath }', as
     })
 
     assert.equal(result.worktreePath, worktreePath)
-    assert.equal(result.receiptLocator, `docs/receipts/${WORKFLOW_ID}/000002-C-dispatch-order.json`)
+    // C1 (tip-derived contract, MRC-05): the returned receiptLocator names the
+    // receipt actually written at the chain tip (the literal 000002 slot pin
+    // is replaced) — and that receipt exists.
+    assert.match(
+      result.receiptLocator,
+      new RegExp(`^docs/receipts/${WORKFLOW_ID}/\\d{6}-C-dispatch-order\\.json$`),
+    )
+    assert.ok(
+      existsSync(join(repoRoot, ...result.receiptLocator.split('/'))),
+      'the named Stage-C receipt exists',
+    )
     assert.equal(result.order.parcelRef, 'KONE-9999')
   } finally {
     rmSync(repoRoot, { recursive: true, force: true })
@@ -789,18 +855,12 @@ test('SF3: WORKTREE_FAILED when dispatchWorktreeFn throws synchronously', async 
       },
     )
 
-    // Receipt must NOT have been written
-    const receiptAbsPath = join(
-      repoRoot,
-      'docs',
-      'receipts',
-      WORKFLOW_ID,
-      '000002-C-dispatch-order.json',
-    )
-    assert.equal(
-      existsSync(receiptAbsPath),
-      false,
-      'receipt must not exist after synchronous throw',
+    // Receipt must NOT have been written at ANY slot (C1.4, tip-derived
+    // contract — strengthened from the literal-000002 absence check).
+    assert.deepEqual(
+      stageCReceiptNames(repoRoot),
+      [],
+      'no Stage-C DispatchOrder receipt may exist after synchronous throw',
     )
   } finally {
     rmSync(repoRoot, { recursive: true, force: true })

@@ -1,0 +1,12 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+const {selfCheckDraft, deriveSessionSlug, emitShapingResult, readShapingResult} = await import(pathToFileURL(resolve('plugins/foreman-line/shaping/src/index.ts')).href);
+const spec = 'plugins/foreman-line/docs/specs/active/FK-P1-lifecycle-admission-decision-contracts.md';
+const check = selfCheckDraft(readFileSync(spec,'utf8'));
+console.log(JSON.stringify({advisorySelfCheck:check},null,2));
+if (!check.valid) process.exit(1);
+const sessionSlug = deriveSessionSlug('FK P1 lifecycle admission decision contracts 20260907');
+const emitted = emitShapingResult({sessionSlug, parcelSpecRefs:[spec], repoRoot:process.cwd()});
+console.log(JSON.stringify({emitted},null,2));
+console.log(JSON.stringify({readback:readShapingResult(emitted.artifactPath)},null,2));

@@ -236,6 +236,7 @@ const DATA_EXTENSIONS = [
   '.txt',
   '.env',
   '.example',
+  '.html',
 ]
 /**
  * Extension-less build-definition basenames deliberately registered per the
@@ -277,11 +278,25 @@ const E1_PINNED: Record<string, readonly string[]> = {
   'integration/src/docspine-report.ts': [E1_GIT_TOPLEVEL_FORM],
   'integration/src/report.ts': [E1_GIT_TOPLEVEL_FORM],
 }
-/** A4.1: E1's asserted cardinality per pinned file. */
+/**
+ * A4.1: E1's asserted cardinality per pinned file.
+ *
+ * Merge-union note (2026-10-04): theirs' D19-FK table pinned four
+ * `git rev-parse --show-toplevel` entry-point discovery sites at these files
+ * (report.ts ×2, docspine-hook.ts ×1, docspine-report.ts ×1) — theirs'
+ * integration sources. The merged tree's integration files are OURS' D19
+ * root-refusal-hardened seams (explicit repoRoot parameters, `assertAbsoluteRoot`
+ * P2b-i/D19 refusals before any fs/subprocess use — ours' own E1 pin set was
+ * EMPTY because the process-cwd discovery mechanism was removed entirely).
+ * The slots are held at their UNION-DERIVED counts (0 observed in the merged
+ * tree) — the identities stay pinned and any process-cwd `git rev-parse`
+ * discovery returning to these files fails as a class-4 violation (flip the
+ * counts back to 1/1/2 when the integration source is unioned).
+ */
 const E1_PINNED_COUNTS: Record<string, number> = {
-  'integration/src/docspine-hook.ts': 1,
-  'integration/src/docspine-report.ts': 1,
-  'integration/src/report.ts': 2,
+  'integration/src/docspine-hook.ts': 0,
+  'integration/src/docspine-report.ts': 0,
+  'integration/src/report.ts': 0,
 }
 
 /**
@@ -322,6 +337,24 @@ const E4_SELF_RESOLVE = `resolve(${E4_SELF_FILE})`
 const E4_PACKAGE_ROOT_HOP = `join(${E4_SELF_DIR},'..')`
 const E4_PACKAGE_ROOT_DIRNAME = `dirname(${E4_SELF_DIR})`
 const E4_PLUGIN_ROOT_DIRNAME = `dirname(dirname(${E4_SELF_DIR}))`
+
+/**
+ * E5 — ruled class-5 files (pinned by identity and location, STANDING #13
+ * model; never self-populated): a `resolve()` of a named root is compliant
+ * ONLY in these files and ONLY where `guardedByAbsoluteRootAssertion` holds
+ * structurally (same-function, same-arg-name `assertAbsoluteRoot` preceding
+ * the call — A2.4). `projection/src/path-guard.ts` is the original ruled
+ * site. The three `ops-console` files enrolled 2026-09-26 by coordinator
+ * decision under owner blanket authority: every site carries the governing
+ * guard immediately ahead of it (config.ts defaultConfig, invoke.ts
+ * validateArg receipts-path, liveness.ts gitDirOf).
+ */
+const E5_GUARDED_FILES: Record<string, true> = {
+  'projection/src/path-guard.ts': true,
+  'ops-console/src/config.ts': true,
+  'ops-console/src/invoke.ts': true,
+  'ops-console/src/liveness.ts': true,
+}
 
 /**
  * A4.1 — E4's asserted CARDINALITY per pinned file: the exact number of
@@ -366,6 +399,12 @@ const E4_PINNED_COUNTS: Record<string, number> = {
   'foreman-config/src/generate.ts': 2,
   'integration/src/docspine-report.ts': 1,
   'integration/src/report.ts': 1,
+  // 2026-09-26 owner wave (coordinator enrollment under owner blanket
+  // authority): package-root self-location anchoring only package-local data
+  // (ui/ + state/ default), and the R4 invokedDirectly self-identification —
+  // both byte-verified against the pinned precedents above (A2.3).
+  'ops-console/src/config.ts': 1,
+  'ops-console/src/server.ts': 1,
   'permission-profiles/src/generate.ts': 2,
   'permission-profiles/src/emitter.ts': 1,
   'receipts/src/generate.ts': 2,
@@ -411,6 +450,12 @@ const E4_PINNED: ReadonlyMap<string, readonly string[]> = new Map([
   ['foreman-config/src/generate.ts', E4_GENERATE_FORMS],
   ['integration/src/docspine-report.ts', [E4_SELF_URL]],
   ['integration/src/report.ts', [E4_SELF_URL]],
+  // 2026-09-26 owner wave (coordinator enrollment; see counts comment):
+  // config.ts packageRoot() single-hop self-join (R5 justified — package
+  // data only, never a root), server.ts the ratified invokedDirectly form
+  // byte-matching role-authority/src/generate.ts:11's spelling.
+  ['ops-console/src/config.ts', ["join(dirname(fileURLToPath(import.meta.url)),'..')"]],
+  ['ops-console/src/server.ts', [E4_SELF_FILE]],
   ['permission-profiles/src/generate.ts', E4_GENERATE_FORMS],
   ['permission-profiles/src/emitter.ts', [E4_SHIPPED_REGISTRY]],
   ['receipts/src/generate.ts', E4_GENERATE_FORMS],
@@ -523,22 +568,49 @@ const RULED_ROOT_DERIVATION_COUNTS: Record<string, number> = {
 const RULED_DATA_MATRIX_VALUE = `${REPO_LITERAL}/skill-injection/skill-injection.yaml`
 const RULED_DATA_AC_CONVENTION_VALUE = `${REPO_LITERAL}/verification/AC-CONVENTION.md`
 const RULED_FK_R31_DECISION_VALUE = `${REPO_LITERAL}/docs/goals/foreman-kernel/R31-coordinator-decision-20260907.md`
-const RULED_DATA_PATH_CONSTANTS: Record<string, readonly { name: string; value: string }[]> = {
-  'approval/src/paths.ts': [{ name: 'ACTIVE_SPECS_DIR', value: RULED_REPORT_SPECS_DIR }],
+/**
+ * Ruled class-3 DATA path constants, pinned identity + location + value +
+ * cardinality (`count` is the asserted occurrence count per slot — the A4.1
+ * discipline shared with ScopedPin).
+ *
+ * Merge-union note (2026-10-04): theirs' D19-FK table pinned
+ * `registration/src/register.ts#ACTIVE_SPECS_DIR = plugins/foreman-line/docs/
+ * specs/active` at count 1 (theirs' register.ts). The merged tree's
+ * registration/src/register.ts is OURS' D19 root-refusal-hardened redesign
+ * (P2b-i/R2/A1.3): the absolute literal was replaced by the per-package
+ * RELATIVE constant `DEFAULT_SPECS_DIR = 'docs/specs/active'` ("a relative
+ * path within a caller-supplied root, not a root fallback … no shared
+ * constant"), which is not a repo-shaped class-3 candidate at all. The slot is
+ * therefore held at its UNION-DERIVED count 0 (theirs' site is absent from the
+ * merged tree; ours contributes none) — the identity slot stays pinned and any
+ * `ACTIVE_SPECS_DIR`-shaped repo literal returning to this file fails the
+ * reconciliation loudly (flip the count back to 1 when the source is unioned).
+ */
+const RULED_DATA_PATH_CONSTANTS: Record<
+  string,
+  readonly { name: string; value: string; count: number }[]
+> = {
+  'approval/src/paths.ts': [
+    { name: 'ACTIVE_SPECS_DIR', value: RULED_REPORT_SPECS_DIR, count: 1 },
+  ],
   'authority-registry/src/registry.ts': [
-    { name: 'R31_DECISION_PATH', value: RULED_FK_R31_DECISION_VALUE },
+    { name: 'R31_DECISION_PATH', value: RULED_FK_R31_DECISION_VALUE, count: 1 },
   ],
   'integration/src/governing-spec.ts': [
-    { name: 'ACTIVE_SPECS_DIR', value: RULED_REPORT_SPECS_DIR },
+    { name: 'ACTIVE_SPECS_DIR', value: RULED_REPORT_SPECS_DIR, count: 1 },
   ],
-  'registration/src/register.ts': [{ name: 'ACTIVE_SPECS_DIR', value: RULED_REPORT_SPECS_DIR }],
-  'shaping/src/emit.ts': [{ name: 'ACTIVE_SPECS_DIR', value: RULED_REPORT_SPECS_DIR }],
+  'registration/src/register.ts': [
+    { name: 'ACTIVE_SPECS_DIR', value: RULED_REPORT_SPECS_DIR, count: 0 },
+  ],
+  'shaping/src/emit.ts': [
+    { name: 'ACTIVE_SPECS_DIR', value: RULED_REPORT_SPECS_DIR, count: 1 },
+  ],
   'verification/src/adversarial/index.ts': [
-    { name: 'MATRIX_REPO_PATH', value: RULED_DATA_MATRIX_VALUE },
+    { name: 'MATRIX_REPO_PATH', value: RULED_DATA_MATRIX_VALUE, count: 1 },
   ],
   'verification/src/harness/index.ts': [
-    { name: 'AC_CONVENTION_PATH', value: RULED_DATA_AC_CONVENTION_VALUE },
-    { name: 'MATRIX_REPO_PATH', value: RULED_DATA_MATRIX_VALUE },
+    { name: 'AC_CONVENTION_PATH', value: RULED_DATA_AC_CONVENTION_VALUE, count: 1 },
+    { name: 'MATRIX_REPO_PATH', value: RULED_DATA_MATRIX_VALUE, count: 1 },
   ],
 }
 
@@ -813,6 +885,25 @@ const RULED_CLASS4_SCOPED_SITES: Record<string, Record<string, readonly ScopedPi
       { role: 'db/transaction-commit', form: "storage.driver.exec('COMMIT')", count: 1 },
     ],
   },
+  // Merge-union (2026-10-04, ours' dev WIP line — routing-policy
+  // recovery-notify.ts, the MRC-12/HRO-P4c notification actuator, delivered by
+  // ours' `foreman-kernel: rescue commit — dev WIP working tree (2026-10-04)`;
+  // theirs' D19-FK table predates the file). The one spawn is the guarded
+  // platform-beep executor: the pure planner emits constant argv only
+  // (PowerShell beep / osascript beep / no-spawn terminal-bell fallback), the
+  // sink receives its SpawnSyncLike by injection, no `cwd` is supplied, and a
+  // failure suppresses the notification and retires the sink — the machine
+  // report stays byte-identical (C7.4). Pinned identity + location + value +
+  // cardinality like every scoped entry above.
+  'routing-policy/src/recovery-notify.ts': {
+    createPlatformNotificationSink: [
+      {
+        role: 'spawn/recovery-notification-actor',
+        form: 'init.' + SPAWN_SYNC_NAME + '(command.command,command.args)',
+        count: 1,
+      },
+    ],
+  },
 }
 
 /**
@@ -865,6 +956,21 @@ const RULED_CLASS5_NORMALIZATION_SITES: Record<string, Record<string, readonly S
     ],
     storagePathFor: [
       { role: 'config-root/normalization', form: 'resolve(config.storageRoot)', count: 1 },
+    ],
+  },
+  // Merge-union (2026-10-04, ours' dev WIP line — routing-policy
+  // config-repair-proposal.ts `writeConfigRepairAtomically`, delivered by
+  // ours' `foreman-kernel: rescue commit — dev WIP working tree (2026-10-04)`;
+  // theirs' D19-FK table predates the file). `resolve(target.root)` normalizes
+  // the REQUIRED target root input — never a discovered or defaulted root —
+  // and the seam is fail-closed on a wrong root: both `target.root` and
+  // `target.path` must already be absolute (typed
+  // TARGET_SCOPE_MISMATCH_REFUSED) before any I/O, and the `relative()`
+  // containment comparison refuses a target resolving outside the bound root.
+  // Pinned identity + location + value + cardinality like every scoped entry.
+  'routing-policy/src/config-repair-proposal.ts': {
+    writeConfigRepairAtomically: [
+      { role: 'root/required-input-normalization', form: 'resolve(target.root)', count: 1 },
     ],
   },
   'spec-body-compiler/src/compile-scope.ts': {
@@ -3149,7 +3255,7 @@ function sweepFile(
             })
           } else {
             const pinned =
-              (rel === 'projection/src/path-guard.ts' && guardedByAbsoluteRootAssertion(node)) ||
+              (E5_GUARDED_FILES[rel] === true && guardedByAbsoluteRootAssertion(node)) ||
               pmcPins.has(node)
             if (!pinned) violate(5, node)
           }
@@ -3462,11 +3568,11 @@ function main(argv: readonly string[]): number {
       const got = sink.ruledDataPathSites.filter(
         (site) => site.file === file && site.name === pin.name,
       ).length
-      dataPathExpected += 1
+      dataPathExpected += pin.count
       dataPathObserved += got
-      if (got !== 1) {
+      if (got !== pin.count) {
         pinMismatches.push(
-          `class-3 DATA path constant: ${file}#${pin.name} — ${got} pinned site(s) observed, the pin asserts exactly 1`,
+          `class-3 DATA path constant: ${file}#${pin.name} — ${got} pinned site(s) observed, the pin asserts exactly ${pin.count}`,
         )
       }
     }

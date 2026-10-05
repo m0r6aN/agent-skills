@@ -1,0 +1,42 @@
+{
+  "manifestKind": "legacy-corpus-manifest",
+  "sourceRevision": "2222222222222222222222222222222222222222",
+  "items": [
+    {
+      "sourcePath": "docs/goals/goal-0001.md",
+      "sourceDigest": "sha256:05df77b5dfae47ae392ee379d17d8d8240d5d9f4f3df091defbab269420a9e48",
+      "disposition": "import",
+      "reason": "legacy record"
+    },
+    {
+      "sourcePath": "docs/goals/goal-0002.md",
+      "sourceDigest": "sha256:91e8fcaa27b9fdb6acf6cc1897f559dcdd72e38e856a084ff3c1e2a76627a256",
+      "disposition": "import",
+      "reason": "legacy record"
+    },
+    {
+      "sourcePath": "docs/proof/approval-1.md",
+      "sourceDigest": "sha256:5b7e2131a7397b8f7a38c4584d368dc9ba89194db206c06c1c0f2d33f891bad0",
+      "disposition": "import",
+      "reason": "legacy record"
+    },
+    {
+      "sourcePath": "docs/proof/approval-2.md",
+      "sourceDigest": "sha256:5cf7d80b3b25b0d4f8fc541930c30c0b4ee366449741488d51960e54899d43c0",
+      "disposition": "import",
+      "reason": "legacy record"
+    },
+    {
+      "sourcePath": "docs/ratify/canon-1.md",
+      "sourceDigest": "sha256:8382b3f5c9d0a46101dfa905aca2260036c47f6133c93fd5e90911b9dc1bbf69",
+      "disposition": "import",
+      "reason": "legacy record"
+    },
+    {
+      "sourcePath": "docs/legacy/skipped.md",
+      "sourceDigest": "sha256:fb39e14b0153d82e56ad15f0476c40ed452cd4368143bec56c4be8b0f3beee0c",
+      "disposition": "excluded",
+      "reason": "out of corpus scope"
+    }
+  ]
+}

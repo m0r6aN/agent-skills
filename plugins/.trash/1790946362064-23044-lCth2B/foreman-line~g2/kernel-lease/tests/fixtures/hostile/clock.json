@@ -1,0 +1,236 @@
+{
+  "records": [
+    {
+      "id": "CLK-01",
+      "op": "claimLease",
+      "setup": {
+        "goal": {
+          "status": "active",
+          "revision": 1
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1700000005000000,
+          "releasedAtMicros": null,
+          "casRevision": 1
+        },
+        "clockReadings": [
+          1700000000000000,
+          1699999999999999
+        ],
+        "preOp": {
+          "op": "claimLease",
+          "input": {
+            "goalId": "goal-1",
+            "leaseId": "lease-1",
+            "durationMicros": 5000000,
+            "expectedRevision": 1,
+            "idempotencyKey": {
+              "principalRef": "principal-a",
+              "operationId": "op-clk-01a",
+              "repositoryRef": "repo-1",
+              "worktreeRef": "wt-1",
+              "payloadDigest": "sha256:00000000000000000000000000000000000000000000000000000000000001f5"
+            }
+          }
+        }
+      },
+      "input": {
+        "goalId": "goal-1",
+        "leaseId": "lease-2",
+        "durationMicros": 5000000,
+        "expectedRevision": 2,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-clk-01",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:00000000000000000000000000000000000000000000000000000000000001f6"
+        }
+      },
+      "expectedCode": "CLOCK_REGRESSION"
+    },
+    {
+      "id": "CLK-02",
+      "op": "claimLease",
+      "setup": {
+        "goal": {
+          "status": "active",
+          "revision": 0
+        },
+        "lease": null,
+        "clockReadings": [
+          -1
+        ]
+      },
+      "input": {
+        "goalId": "goal-1",
+        "leaseId": "lease-1",
+        "durationMicros": 5000000,
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-clk-02",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:00000000000000000000000000000000000000000000000000000000000001f7"
+        }
+      },
+      "expectedCode": "CLOCK_UNTRUSTED"
+    },
+    {
+      "id": "CLK-03",
+      "op": "claimLease",
+      "setup": {
+        "goal": {
+          "status": "active",
+          "revision": 0
+        },
+        "lease": null,
+        "clockReadings": [
+          1700000000000000.5
+        ]
+      },
+      "input": {
+        "goalId": "goal-1",
+        "leaseId": "lease-1",
+        "durationMicros": 5000000,
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-clk-03",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:00000000000000000000000000000000000000000000000000000000000001f8"
+        }
+      },
+      "expectedCode": "CLOCK_UNTRUSTED"
+    },
+    {
+      "id": "CLK-04",
+      "op": "claimLease",
+      "setup": {
+        "goal": {
+          "status": "active",
+          "revision": 0
+        },
+        "lease": null,
+        "clockReadings": [
+          9007199254740992
+        ]
+      },
+      "input": {
+        "goalId": "goal-1",
+        "leaseId": "lease-1",
+        "durationMicros": 5000000,
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-clk-04",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:00000000000000000000000000000000000000000000000000000000000001f9"
+        }
+      },
+      "expectedCode": "CLOCK_UNTRUSTED"
+    },
+    {
+      "id": "CLK-05",
+      "op": "claimLease",
+      "setup": {
+        "goal": {
+          "status": "active",
+          "revision": 0
+        },
+        "lease": null,
+        "clockReadings": [
+          1700000000000000
+        ]
+      },
+      "input": {
+        "goalId": "goal-1",
+        "leaseId": "lease-1",
+        "durationMicros": 5000000,
+        "nowMicros": 5,
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-clk-05",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:00000000000000000000000000000000000000000000000000000000000001fa"
+        }
+      },
+      "expectedCode": "ENGINE_ARGUMENT_INVALID"
+    },
+    {
+      "id": "CLK-06",
+      "op": "claimLease",
+      "setup": {
+        "goal": {
+          "status": "active",
+          "revision": 0
+        },
+        "lease": null,
+        "clockReadings": [
+          1700000000000000
+        ]
+      },
+      "input": {
+        "goalId": "goal-1",
+        "leaseId": "lease-1",
+        "durationMicros": 5000000,
+        "expiresAtMicros": 5,
+        "expectedRevision": 0,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-clk-06",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:00000000000000000000000000000000000000000000000000000000000001fb"
+        }
+      },
+      "expectedCode": "ENGINE_ARGUMENT_INVALID"
+    },
+    {
+      "id": "CLK-07",
+      "scenario": "forward-skew-grant",
+      "expectedOutcome": "expiry-judged-from-trusted-stored-micros"
+    },
+    {
+      "id": "CLK-08",
+      "op": "renewLease",
+      "setup": {
+        "goal": {
+          "status": "active",
+          "revision": 1
+        },
+        "lease": {
+          "leaseId": "lease-1",
+          "ownerPrincipalRef": "principal-a",
+          "expiresAtMicros": 1699999999000000,
+          "releasedAtMicros": null,
+          "casRevision": 1
+        },
+        "clockReadings": [
+          1699999999500000
+        ]
+      },
+      "input": {
+        "goalId": "goal-1",
+        "leaseId": "lease-1",
+        "durationMicros": 5000000,
+        "expectedRevision": 1,
+        "idempotencyKey": {
+          "principalRef": "principal-a",
+          "operationId": "op-clk-08",
+          "repositoryRef": "repo-1",
+          "worktreeRef": "wt-1",
+          "payloadDigest": "sha256:00000000000000000000000000000000000000000000000000000000000001fc"
+        }
+      },
+      "expectedCode": "LEASE_EXPIRED"
+    }
+  ]
+}

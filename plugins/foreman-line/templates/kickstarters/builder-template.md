@@ -7,14 +7,40 @@
 **Goal:** `<GOAL-SLUG>` · **Parcel:** `<PARCEL-ID>`
 **Dispatched:** `<DATE>` · **risk:** `<risk-level>` · **routing_class:** `<routing-class>`
 
-**Runtime profile: `<RUNTIME-PROFILE>` · Resolved model: `<MODEL-ID>`, `<TIER>` tier.** Not asserted — **minted**:
-the installed Foreman Line plugin's `evaluateRouting` wrote
-`<PATH-TO-MINTED-RECEIPT>/routing-decision.json`
-(`runtimeProfile: <RUNTIME-PROFILE>`, `resolvedTier: <TIER>`, `resolvedModelId: <MODEL-ID>`), committed with this
-kickstarter. `<NAME THE MODEL(S) YOUR CHARTER'S MODEL-GRADE POLICY MARKS BELOW
-GRADE FOR THIS TIER>` are still selectable and are **below grade**. A Step 0
-restatement that does not name the required model, with its version, is a
-dispatch failure — say so and STOP.
+**Dispatched Pi session** — approved route receipt `<PATH-TO-ROUTE-RECEIPT>`
+(not asserted — **minted** by the resolver): route `<PROVIDER/MODEL-ROUTE>` →
+declared fallback `<FALLBACK-ROUTE>`, thinking level `<LEVEL>`, role `<ROLE>`,
+routing class `<CLASS>`, data class `<DATA-CLASS>`, budget `<BUDGET>`, task
+envelope `<PATH>`, evidence requirements `<LIST>`. A Step 0 restatement that
+does not name the approved route (provider/model route and its declared
+fallback), with its version, is a dispatch failure — say so and STOP. The
+dispatch is authorized only by that approved route receipt: the launch boundary
+verifies it before any inference and fails closed when it is missing, stale,
+mismatched against the requested lane, or unsigned by the resolver, and the
+route, fallback chain, thinking level, role, routing class, data class, budget,
+task envelope, and evidence requirements are fixed before inference begins. Pi's
+interactive `defaultProvider`/`defaultModel` default is a recovery-friendly
+convenience outside Foreman work and is never a Foreman-dispatched route.
+Automatic routing is an execution convenience, not a new approval or
+coordination authority.
+
+**Fallback and model IDs:** Every execution candidate declares **exactly one approved fallback of comparable or higher suitability**, carried as explicit
+fallback metadata in the `provider-neutral-fallback-contract` representation
+(`lane_routes` each carry exactly one typed fallback). A fallback is used only
+after preflight establishes that it is enabled, available, eligible for the data
+class, compatible with required tools/structured output, and within the
+remaining budget. In-provider OpenRouter failover may use Pi's per-model
+`openRouterRouting` controls; cross-provider failover is a new, recorded attempt
+started from a durable handoff — it never silently continues a coordinator,
+review, approval, merge, release, or security decision mid-turn. A degraded or
+unavailable primary routes only to its declared fallback; if both fail, the
+parcel stops and reports. Fallbacks are declared in the approved route and
+recorded in the route receipt — never invented in a template, never silently
+substituted, never credential-bearing. Model IDs are first-class in both Pi
+spellings — `opencode/<id>` and `openrouter/<vendor>/<id>` — while
+provider-neutral task/result envelopes are preserved; an OpenRouter slug is one
+spelling of a model ID, not the model vocabulary, and within OpenRouter slugs
+Anthropic models use dots (e.g. `openrouter/anthropic/claude-opus-5.5`).
 
 Standing constraints apply — `docs/kickstarters/STANDING-CONSTRAINTS.md`.
 `<NAME ANY RULES THIS PARCEL BOTH OBEYS AND SPECIFICALLY EXERCISES, IF ANY.>`
@@ -53,8 +79,9 @@ Silently designing around a gap is the failure this gate exists to prevent.
 
 Before writing any code or artifact:
 
-1. **State the runtime profile and exact model you are running on.** If either
-   does not match the minted receipt above, say so and STOP.
+1. **State the approved route you are running on and confirm it matches the
+   approved route receipt; a mismatch is a launch-boundary failure — say so and
+   STOP.**
 2. Restate the deliverables in your own words, and state what is explicitly
    **out of scope** per the spec.
 3. **Inventory the current state on disk against the spec** — what exists,

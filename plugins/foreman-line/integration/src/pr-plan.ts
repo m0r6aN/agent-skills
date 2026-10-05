@@ -6,7 +6,7 @@
  * (`dispatch/src/approval-cli/index.ts:411`).
  */
 import { execFileSync } from 'node:child_process'
-import { IntegrationError } from './errors.js'
+import { assertAbsoluteRoot, IntegrationError } from './errors.js'
 
 export interface PrAutomationInput {
   readonly branch: string
@@ -145,6 +145,8 @@ export function planPrAutomation(
   input: PrAutomationInput,
   seams: PrAutomationSeams = {},
 ): PrAutomationResult {
+  // Root refusal (P2b-i / D19) first, before any subprocess/path use.
+  assertAbsoluteRoot(input.repoRoot, 'planPrAutomation repoRoot')
   const plan = buildPrAutomationPlan(input)
 
   const gitPushFn = seams.gitPushFn ?? realGitPush

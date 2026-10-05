@@ -1,0 +1,59 @@
+{
+  "description": "Consumer requirement (review E S3): the `readers` path pattern's `\\p{Cc}|\\p{Cf}` clause is Unicode property escapes and is correct only when this schema is compiled with Unicode-aware regex semantics (ajv's `unicodeRegExp: true`, its default). A consumer compiling this schema with `unicodeRegExp: false` will have that clause fail to compile or silently stop matching, and the control/format-character rejection fails OPEN.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "readers"
+  ],
+  "properties": {
+    "contract": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "readers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "not": {
+              "pattern": "([/\\\\]$)|[*?\\[\\]]|(^|[/\\\\])\\.\\.?([/\\\\]|$)|(^[/\\\\])|(^[A-Za-z]:)|(^\\s)|(\\s$)|\\p{Cc}|\\p{Cf}"
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "parcelId",
+              "files"
+            ],
+            "properties": {
+              "parcelId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "files": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "not": {
+                    "pattern": "([/\\\\]$)|[*?\\[\\]]|(^|[/\\\\])\\.\\.?([/\\\\]|$)|(^[/\\\\])|(^[A-Za-z]:)|(^\\s)|(\\s$)|\\p{Cc}|\\p{Cf}"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "confusion-idle-and-abandoned",
+  "description": "Frozen confusion case 2: ancient timestamps and no worktree with no pending gate (tip C) is hung — idle-and-abandoned.",
+  "now": "2026-09-26T12:00:00.000Z",
+  "goal": {
+    "slug": "goal-abandoned",
+    "queue": ["1. **P1** dispatched a year ago; nothing since."]
+  },
+  "specs": [{ "name": "P1-alpha.md", "location": "active", "updated": "2025-08-01" }],
+  "chains": [
+    {
+      "workflowId": "00000000-0000-4000-8000-000000000013",
+      "parcel": "P1",
+      "stages": ["A", "B", "C"],
+      "timestampOffsetHours": [-8760, -8759, -8758]
+    }
+  ],
+  "expected": [
+    {
+      "parcel": "P1",
+      "state": "hung",
+      "rule": "R4",
+      "chainEvidence": "present",
+      "thresholdMs": 21600000,
+      "thresholdSource": "default"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Program Files\\Git\\cmd\\git.EXE",
+    "--git-dir=C:\\Users\\clint\\AppData\\Local\\Temp\\fk-remote-verify-20260907.git",
+    "ls-tree",
+    "-rz",
+    "--full-tree",
+    "8607bd69b51e9fd84244b1837b9e75814ba2d00f"
+  ],
+  "cwd": null,
+  "ended_utc": "2026-09-07T18:55:46.162893+00:00",
+  "exit": 0,
+  "pid": 489916,
+  "seconds": 0.11075710004661232,
+  "started_utc": "2026-09-07T18:55:46.052113+00:00",
+  "stderr": "0010-source-inventory.stderr",
+  "stdout": "0010-source-inventory.stdout"
+}

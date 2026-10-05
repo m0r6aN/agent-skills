@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "C:\\Program Files\\Git\\cmd\\git.EXE",
+    "--git-dir=C:\\Users\\clint\\AppData\\Local\\Temp\\fk-remote-verify-20260907.git",
+    "cat-file",
+    "--batch"
+  ],
+  "cwd": null,
+  "ended_utc": "2026-09-07T18:55:46.979707+00:00",
+  "exit": 0,
+  "pid": 450740,
+  "seconds": 0.2071094000712037,
+  "started_utc": "2026-09-07T18:55:46.772585+00:00",
+  "stderr": "0018-raw-blobs.stderr",
+  "stdout": "0018-raw-blobs.stdout"
+}

@@ -1,0 +1,174 @@
+import csv
+
+import httpx
+import pytest
+
+import pipeline
+from leads import Config
+
+
+def _cfg(**kw):
+    defaults = dict(chain_threshold=5, verify=True,
+                    fetch_fn=lambda url, timeout=15:
+                    "<script src='js.intercom.io'></script>" if "chatty" in url
+                    else "<html>hello</html>",
+                    verify_fn=lambda e: "deliverable")
+    defaults.update(kw)
+    return Config(**defaults)
+
+
+RAW = [
+    {"name": "Glow Med Spa", "website": "https://glowmedspa.example", "phone": "1",
+     "rating": 4.2, "reviews": 100, "business_status": "OPERATIONAL", "email": ""},
+    {"name": "Best Med Spa", "website": "bestmedspa.example", "phone": "2",
+     "rating": 4.9, "reviews": 200, "business_status": "OPERATIONAL",
+     "email": "o@bestmedspa.example"},
+    {"name": "Dead Co", "website": "dead.example", "phone": "3",
+     "business_status": "CLOSED_PERMANENTLY"},
+    {"name": "No Site", "website": "", "phone": "4"},
+    {"name": "Chatty Spa", "website": "chattyspa.example", "phone": "5",
+     "rating": 4.8, "reviews": 50, "business_status": "OPERATIONAL"},
+]
+
+
+def _ok_demo(base, slug="x-1"):
+    return {"status": "ok", "error": "", "brand": "B", "domain": "d",
+            "model": "openai/gpt-4.1-nano", "slug": slug,
+            "demo_url": f"{base}/demo/{slug}", "go_url": f"{base}/go/{slug}",
+            "pixel_url": f"{base}/pixel/{slug}.gif", "embed_url": f"{base}/embed/{slug}",
+            "expires_at": "2026-10-13T00:00:00+00:00"}
+
+
+def test_to_lead_row_filters_and_maps():
+    rows = [r for r in (pipeline.to_lead_row(b) for b in RAW) if r]
+    names = [r["business_name"] for r in rows]
+    assert "Dead Co" not in names and "No Site" not in names
+    best = next(r for r in rows if r["business_name"] == "Best Med Spa")
+    assert best["website"] == "bestmedspa.example"
+    assert best["email"] == "o@bestmedspa.example"
+    assert best["rating"] == 4.9
+
+
+def test_run_end_to_end(tmp_path, monkeypatch):
+    monkeypatch.setattr(pipeline, "outscraper_search",
+                        lambda q, limit, key, **kw: list(RAW))
+    monkeypatch.setattr(
+        pipeline, "domain_search",
+        lambda d, k: {"email": "owner@glowmedspa.example", "first_name": "Ann",
+                      "email_type": "personal", "email_confidence": 88})
+    monkeypatch.setattr("time.sleep", lambda s: None)
+
+    created = []
+
+    def fake_create_one(client, base, token, url, model):
+        created.append((url, token))
+        return _ok_demo(base)
+
+    monkeypatch.setattr(pipeline, "create_one", fake_create_one)
+    cfg = _cfg(find_email_fn=lambda d: pipeline.domain_search(d, "k"))
+    out = tmp_path / "pipeline.csv"
+    rc = pipeline.run("aesthetic med spa", "Atlanta GA", max_leads=10, fetch_limit=50,
+                      out_path=str(out), server="http://x", token="tok", model=None,
+                      cfg=cfg, suppress=set(), outscraper_key="ok", sleep=0)
+    assert rc == 0
+    rows = list(csv.DictReader(open(out, newline="", encoding="utf-8")))
+    assert [r["business_name"] for r in rows] == ["Best Med Spa", "Glow Med Spa"]  # rating desc
+    assert all(r["status"] == "ok" for r in rows)
+    glow = next(r for r in rows if r["business_name"] == "Glow Med Spa")
+    assert glow["email"] == "owner@glowmedspa.example"
+    assert glow["email_source"] == "hunter-domain-search"
+    assert glow["first_name"] == "Ann"
+    assert glow["go_url"] == "http://x/go/x-1"
+    assert glow["pixel_url"] and glow["expires_at"]
+    assert "business_name" in rows[0]  # outreach.py-compatible schema
+    assert all(t == "tok" for _, t in created)
+    assert ("https://chattyspa.example", "tok") not in created  # widget filter
+
+
+def test_run_caps_successful_leads(tmp_path, monkeypatch):
+    monkeypatch.setattr(pipeline, "outscraper_search",
+                        lambda q, limit, key, **kw: list(RAW))
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    created = []
+    monkeypatch.setattr(pipeline, "create_one",
+                        lambda c, base, token, url, model: created.append(url) or _ok_demo(base))
+    cfg = _cfg(find_email_fn=lambda d: {"email": f"o@{d}", "first_name": "X",
+                                        "email_type": "personal", "email_confidence": 1})
+    out = tmp_path / "p.csv"
+    rc = pipeline.run("m", "a", max_leads=1, fetch_limit=50, out_path=str(out),
+                      server="http://x", token="t", model=None, cfg=cfg,
+                      suppress=set(), outscraper_key="ok", sleep=0)
+    assert rc == 0
+    rows = list(csv.DictReader(open(out, newline="", encoding="utf-8")))
+    assert len(rows) == 1  # --max holds
+    assert len(created) == 1  # no extra demo spend past the cap
+
+
+def test_run_demo_failures_are_not_written(tmp_path, monkeypatch):
+    monkeypatch.setattr(pipeline, "outscraper_search",
+                        lambda q, limit, key, **kw: list(RAW))
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    monkeypatch.setattr(pipeline, "create_one",
+                        lambda *a, **k: {"status": "error", "error": "HTTP 400: nope"})
+    cfg = _cfg(find_email_fn=lambda d: {"email": f"o@{d}", "first_name": "X",
+                                        "email_type": "personal", "email_confidence": 1})
+    out = tmp_path / "p.csv"
+    rc = pipeline.run("m", "a", max_leads=5, fetch_limit=50, out_path=str(out),
+                      server="http://x", token="t", model=None, cfg=cfg,
+                      suppress=set(), outscraper_key="ok", sleep=0)
+    assert rc == 1  # nothing survived
+    rows = list(csv.DictReader(open(out, newline="", encoding="utf-8")))
+    assert rows == []  # outreach CSV only carries sendable rows
+
+
+def test_outscraper_polling():
+    calls = {"n": 0}
+
+    def handler(request):
+        calls["n"] += 1
+        if request.url.path.endswith("/maps/search-v2"):
+            return httpx.Response(200, json={"results_location": "https://x/results"})
+        if calls["n"] < 3:
+            return httpx.Response(200, json={"status": "Running"})
+        return httpx.Response(200, json={"status": "SUCCESS", "data": [[{"name": "A"}]]})
+
+    client = httpx.Client(transport=httpx.MockTransport(handler))
+    out = pipeline.outscraper_search("q", 5, "k", client=client, poll_seconds=0)
+    assert out == [{"name": "A"}]
+    assert calls["n"] == 3  # trigger + one Running + one SUCCESS
+
+
+def test_outscraper_auth_is_loud():
+    client = httpx.Client(transport=httpx.MockTransport(
+        lambda request: httpx.Response(401, text="bad key")))
+    with pytest.raises(RuntimeError, match="401"):
+        pipeline.outscraper_search("q", 5, "k", client=client, poll_seconds=0)
+
+
+def test_outscraper_status_is_case_insensitive():
+    # Regression 2026-10-01: the live API returns {"status": "Success"}; the old
+    # exact-match on "SUCCESS" treated a successful task as failure and raised
+    # "Outscraper task failed: Success" on the first live dry run.
+    calls = {"n": 0}
+
+    def handler(request):
+        calls["n"] += 1
+        if request.url.path.endswith("/maps/search-v2"):
+            return httpx.Response(200, json={"results_location": "https://x/results"})
+        return httpx.Response(200, json={"status": "Success", "data": [[{"name": "A"}]]})
+
+    client = httpx.Client(transport=httpx.MockTransport(handler))
+    out = pipeline.outscraper_search("q", 5, "k", client=client, poll_seconds=0)
+    assert out == [{"name": "A"}]
+
+
+def test_outscraper_nonstring_status_is_loud_runtime_error():
+    # R11 finding: a non-string status must raise the clean RuntimeError, not AttributeError.
+    def handler(request):
+        if request.url.path.endswith("/maps/search-v2"):
+            return httpx.Response(200, json={"results_location": "https://x/results"})
+        return httpx.Response(200, json={"status": {"weird": "shape"}})
+
+    client = httpx.Client(transport=httpx.MockTransport(handler))
+    with pytest.raises(RuntimeError, match="task failed"):
+        pipeline.outscraper_search("q", 5, "k", client=client, poll_seconds=0)

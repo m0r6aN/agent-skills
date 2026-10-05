@@ -1,0 +1,210 @@
+{
+  "schema": "spec-body-compiler/link-trees/v1",
+  "note": "H4 symlink/reparse escape. Trees are materialized at test time under a fresh root. linkKind junction MUST execute (chain hard-fails otherwise, OQ-5a); linkKind file/dir are privilege-classed symlink cases that may skip ONLY with a machine-readable gap record (OQ-5b, never counted as passed). LINK-08 is the opened-target substitution race descriptor (no symlink required).",
+  "cases": [
+    {
+      "id": "LINK-01",
+      "linkKind": "file",
+      "tree": [
+        {
+          "op": "outside-file",
+          "path": "outside/secret.txt",
+          "content": "secret"
+        },
+        {
+          "op": "link",
+          "path": "evil.txt",
+          "target": "../outside/secret.txt",
+          "linkKind": "file"
+        }
+      ],
+      "verify": [
+        "evil.txt"
+      ],
+      "expectedCode": "LINK_ESCAPE",
+      "repair": "replace the link with a plain file"
+    },
+    {
+      "id": "LINK-02",
+      "linkKind": "dir",
+      "tree": [
+        {
+          "op": "outside-dir",
+          "path": "outside-dir"
+        },
+        {
+          "op": "outside-file",
+          "path": "outside-dir/x.txt",
+          "content": "x"
+        },
+        {
+          "op": "link",
+          "path": "evildir",
+          "target": "../outside-dir",
+          "linkKind": "dir"
+        }
+      ],
+      "verify": [
+        "evildir/x.txt"
+      ],
+      "expectedCode": "LINK_ESCAPE",
+      "repair": "replace the link with a real directory"
+    },
+    {
+      "id": "LINK-03",
+      "linkKind": "file",
+      "tree": [
+        {
+          "op": "file",
+          "path": "real.txt",
+          "content": "real"
+        },
+        {
+          "op": "link",
+          "path": "link.txt",
+          "target": "real.txt",
+          "linkKind": "file"
+        }
+      ],
+      "verify": [
+        "link.txt"
+      ],
+      "expectedCode": "LINK_IN_ROOT",
+      "repair": "replace the link with a plain file"
+    },
+    {
+      "id": "LINK-04",
+      "linkKind": "dir",
+      "tree": [
+        {
+          "op": "dir",
+          "path": "realdir"
+        },
+        {
+          "op": "file",
+          "path": "realdir/x.txt",
+          "content": "x"
+        },
+        {
+          "op": "link",
+          "path": "linkdir",
+          "target": "realdir",
+          "linkKind": "dir"
+        }
+      ],
+      "verify": [
+        "linkdir/x.txt"
+      ],
+      "expectedCode": "LINK_IN_ROOT",
+      "repair": "replace the link with a real directory"
+    },
+    {
+      "id": "LINK-05",
+      "linkKind": "junction",
+      "tree": [
+        {
+          "op": "outside-dir",
+          "path": "outside-dir"
+        },
+        {
+          "op": "outside-file",
+          "path": "outside-dir/x.txt",
+          "content": "x"
+        },
+        {
+          "op": "link",
+          "path": "jnc",
+          "target": "../outside-dir",
+          "linkKind": "junction"
+        }
+      ],
+      "verify": [
+        "jnc/x.txt"
+      ],
+      "expectedCode": "LINK_ESCAPE",
+      "repair": "replace the junction with a real directory"
+    },
+    {
+      "id": "LINK-06",
+      "linkKind": "junction",
+      "tree": [
+        {
+          "op": "dir",
+          "path": "realdir2"
+        },
+        {
+          "op": "file",
+          "path": "realdir2/x.txt",
+          "content": "x"
+        },
+        {
+          "op": "link",
+          "path": "jnc2",
+          "target": "realdir2",
+          "linkKind": "junction"
+        }
+      ],
+      "verify": [
+        "jnc2/x.txt"
+      ],
+      "expectedCode": "LINK_IN_ROOT",
+      "repair": "replace the junction with a real directory"
+    },
+    {
+      "id": "LINK-07",
+      "linkKind": "junction",
+      "tree": [
+        {
+          "op": "outside-dir",
+          "path": "outside-dir"
+        },
+        {
+          "op": "outside-file",
+          "path": "outside-dir/pwned.txt",
+          "content": "pwned"
+        },
+        {
+          "op": "link",
+          "path": "anc",
+          "target": "../outside-dir",
+          "linkKind": "junction"
+        }
+      ],
+      "verify": [
+        "anc/pwned.txt"
+      ],
+      "expectedCode": "LINK_ESCAPE",
+      "repair": "replace the linked ancestor with a real directory"
+    },
+    {
+      "id": "LINK-08",
+      "linkKind": "race",
+      "tree": [
+        {
+          "op": "file",
+          "path": "target.txt",
+          "content": "original"
+        },
+        {
+          "op": "outside-file",
+          "path": "outside/racer.txt",
+          "content": "racer"
+        }
+      ],
+      "verify": [
+        "target.txt"
+      ],
+      "expectedCode": "LINK_TARGET_RACE",
+      "race": {
+        "steps": [
+          "verifyCompiledPaths captures target.txt identity",
+          "attacker unlinks target.txt and writes a replacement file at the same path (substitution)",
+          "consumer opens target.txt (the opened handle holds the replacement)",
+          "attacker swaps back: unlink and write a fresh copy at the path (double swap — a path re-check would now pass)",
+          "reverifyOpenedTarget(fd, captured) compares the OPENED handle identity and throws LINK_TARGET_RACE"
+        ]
+      },
+      "repair": "no substitution; reverifyOpenedTarget passes"
+    }
+  ]
+}

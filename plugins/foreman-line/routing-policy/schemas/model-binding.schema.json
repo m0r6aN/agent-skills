@@ -1,0 +1,587 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "provider",
+    "model",
+    "family",
+    "identity",
+    "endpoint",
+    "data_classes",
+    "capabilities",
+    "context_window_tokens",
+    "max_output_tokens",
+    "cost",
+    "availability",
+    "quality"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "provider": {
+      "enum": [
+        "opencode",
+        "openrouter"
+      ]
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1
+    },
+    "family": {
+      "type": "string",
+      "minLength": 1
+    },
+    "identity": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "source"
+          ],
+          "properties": {
+            "state": {
+              "const": "resolved"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "attestation",
+            "hold"
+          ],
+          "properties": {
+            "state": {
+              "const": "owner-attested"
+            },
+            "attestation": {
+              "type": "string",
+              "minLength": 1
+            },
+            "hold": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "refusal",
+            "diagnostics",
+            "hold"
+          ],
+          "properties": {
+            "state": {
+              "const": "zero-match"
+            },
+            "refusal": {
+              "type": "string",
+              "minLength": 1
+            },
+            "diagnostics": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "hold": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "endpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "registered",
+        "catalogue",
+        "alignment"
+      ],
+      "properties": {
+        "registered": {
+          "type": "string",
+          "minLength": 1
+        },
+        "catalogue": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "alignment": {
+          "enum": [
+            "aligned",
+            "divergent",
+            "unknown"
+          ]
+        }
+      }
+    },
+    "data_classes": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "value",
+            "source"
+          ],
+          "properties": {
+            "state": {
+              "const": "declared"
+            },
+            "value": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "public",
+                  "internal",
+                  "restricted"
+                ]
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "residual"
+          ],
+          "properties": {
+            "state": {
+              "enum": [
+                "unknown",
+                "unverified",
+                "unproven"
+              ]
+            },
+            "residual": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool-use",
+        "structured-output"
+      ],
+      "properties": {
+        "tool-use": {
+          "enum": [
+            "verified",
+            "unverified",
+            "unknown"
+          ]
+        },
+        "structured-output": {
+          "enum": [
+            "verified",
+            "unverified",
+            "unknown"
+          ]
+        }
+      }
+    },
+    "context_window_tokens": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "value",
+            "source"
+          ],
+          "properties": {
+            "state": {
+              "const": "declared"
+            },
+            "value": {
+              "type": "number"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "residual"
+          ],
+          "properties": {
+            "state": {
+              "enum": [
+                "unknown",
+                "unverified",
+                "unproven"
+              ]
+            },
+            "residual": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "max_output_tokens": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "value",
+            "source"
+          ],
+          "properties": {
+            "state": {
+              "const": "declared"
+            },
+            "value": {
+              "type": "number"
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "residual"
+          ],
+          "properties": {
+            "state": {
+              "enum": [
+                "unknown",
+                "unverified",
+                "unproven"
+              ]
+            },
+            "residual": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "cost": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "value",
+            "source"
+          ],
+          "properties": {
+            "state": {
+              "const": "declared"
+            },
+            "value": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "unit",
+                "input",
+                "output"
+              ],
+              "properties": {
+                "unit": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "input": {
+                  "type": "number"
+                },
+                "output": {
+                  "type": "number"
+                }
+              }
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "residual"
+          ],
+          "properties": {
+            "state": {
+              "enum": [
+                "unknown",
+                "unverified",
+                "unproven"
+              ]
+            },
+            "residual": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "availability": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "value",
+            "source"
+          ],
+          "properties": {
+            "state": {
+              "const": "declared"
+            },
+            "value": {
+              "type": "string",
+              "minLength": 1
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "residual"
+          ],
+          "properties": {
+            "state": {
+              "enum": [
+                "unknown",
+                "unverified",
+                "unproven"
+              ]
+            },
+            "residual": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "quality": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "value",
+            "source"
+          ],
+          "properties": {
+            "state": {
+              "const": "declared"
+            },
+            "value": {
+              "type": "string",
+              "minLength": 1
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "residual"
+          ],
+          "properties": {
+            "state": {
+              "enum": [
+                "unknown",
+                "unverified",
+                "unproven"
+              ]
+            },
+            "residual": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "inputs": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "value",
+            "source"
+          ],
+          "properties": {
+            "state": {
+              "const": "declared"
+            },
+            "value": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "text",
+                  "image"
+                ]
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "residual"
+          ],
+          "properties": {
+            "state": {
+              "enum": [
+                "unknown",
+                "unverified",
+                "unproven"
+              ]
+            },
+            "residual": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "thinking_levels": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "value",
+            "source"
+          ],
+          "properties": {
+            "state": {
+              "const": "declared"
+            },
+            "value": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "off",
+                  "minimal",
+                  "low",
+                  "medium",
+                  "high",
+                  "xhigh",
+                  "max"
+                ]
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "residual"
+          ],
+          "properties": {
+            "state": {
+              "enum": [
+                "unknown",
+                "unverified",
+                "unproven"
+              ]
+            },
+            "residual": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "selection_only": {
+      "type": "boolean"
+    }
+  }
+}

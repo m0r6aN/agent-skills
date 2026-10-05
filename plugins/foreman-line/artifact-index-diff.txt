@@ -1,0 +1,90 @@
+diff --git a/plugins/foreman-line/routing-policy/src/index.ts b/plugins/foreman-line/routing-policy/src/index.ts
+index 3b628a3..047c17e 100644
+--- a/plugins/foreman-line/routing-policy/src/index.ts
++++ b/plugins/foreman-line/routing-policy/src/index.ts
+@@ -3,36 +3,83 @@ export type {
+   PiOpenRouterCapability,
+   PiOpenRouterLane,
+   PiOpenRouterModel,
++  PiOpenRouterProtocol,
++  PiOpenRouterProvenance,
++  PiOpenRouterRefusal,
++  PiOpenRouterResolvedRoute,
++  PiOpenRouterRouteResolution,
+   PiOpenRouterRouting,
+   PiOpenRouterValidationResult,
+ } from './pi-openrouter.js'
+ export {
+   PI_OPENROUTER_ENABLED_MODELS,
++  PI_OPENROUTER_PROTOCOLS,
+   PI_OPENROUTER_ROUTING,
+   piOpenRouterModelSchema,
+   piOpenRouterRoutingSchema,
++  resolvePiOpenRouterRoute,
+   validatePiOpenRouterRouting,
+ } from './pi-openrouter.js'
+ export {
+   classEntrySchema,
+   dataClassificationRuleSchema,
++  laneEntrySchema,
++  laneRouteSchema,
++  logicalCandidateSchema,
++  modelBindingSchema,
+   roleAssignmentSchema,
+   routingPolicySchema,
+   shadowRouteSchema,
+   transportRequirementsSchema,
+ } from './schemas.js'
+ export type {
++  AdapterRefusalName,
++  BindingCapabilities,
++  BindingEndpoint,
++  BindingIdentity,
++  CapabilityState,
+   ClassEntry,
+   ClassName,
++  Compatibility,
++  CostQuote,
+   DataClassificationRule,
+   DataClassificationTier,
++  DeclaredEvidence,
++  Evidence,
++  LaneEntry,
++  LaneId,
++  LaneRoute,
++  LegacyRepresentation,
++  LogicalCandidate,
++  ModelBinding,
+   ProhibitedShadowRoles,
++  ProviderName,
++  ProviderRule,
++  RankingContract,
++  RankingInputId,
++  ResidualSlot,
+   RoleAssignment,
++  RoleFamily,
++  RouteRef,
+   RoutingPolicy,
+   ShadowRoute,
+   ShadowTaskType,
+   TransportRequirements,
++  UnprovenEvidence,
++  UnprovenState,
++} from './types.js'
++export {
++  ADAPTER_REFUSALS,
++  ATTESTED_STATES,
++  CLASS_NAMES,
++  CONTRACT_REFUSALS,
++  CONTRACT_RESIDUALS,
++  DATA_CLASSIFICATION_TIERS,
++  LANE_IDS,
++  PROVIDER_NAMES,
++  RANKING_INPUT_IDS,
++  RESOLVER_HOLDS,
++  RESOLVER_REFUSALS,
+ } from './types.js'
+-export { CLASS_NAMES, DATA_CLASSIFICATION_TIERS } from './types.js'
+ export type { ValidationResult } from './validator.js'
+-export { KNOWN_FRONTIER_MODELS, validatePolicy } from './validator.js'
++export { KNOWN_FRONTIER_BINDINGS, KNOWN_FRONTIER_MODELS, validatePolicy } from './validator.js'

@@ -5,6 +5,7 @@
  * `RegistrationResult` is the frozen `contracts` type, re-validated against the
  * frozen `registrationResultSchema` (never re-declared).
  */
+import { isAbsolute } from 'node:path'
 
 /**
  * The three fields the mechanical sandbox gate asserts on. `IssueFields`
@@ -71,6 +72,38 @@ export interface JiraTransport {
   addRemoteLink(issueKey: string, permalink: string): Promise<string>
 }
 
+/**
+ * Typed root-refusal error (P2b-i, extending P2a's Q4 per-package convention:
+ * `<Domain>RootUnresolvedError`). `root-not-absolute` (path-guard ruling /
+ * AC6): a relative root would silently anchor derived paths to
+ * `process.cwd()` (mechanism class 5) and is refused before any path is
+ * constructed.
+ */
+export class RegistrationRootUnresolvedError extends Error {
+  /** PCC-P0 usage exit code. */
+  readonly code = 2 as const
+  readonly reason: 'root-absent' | 'root-not-a-directory' | 'root-not-absolute'
+  constructor(reason: RegistrationRootUnresolvedError['reason'], message: string) {
+    super(message)
+    this.name = 'RegistrationRootUnresolvedError'
+    this.reason = reason
+  }
+}
+
+/**
+ * Assert `root` is absolute (P2b-i path-guard ruling) — typed refusal, mechanism
+ * class 5. One helper for roots and for declared-absolute artifact paths (the
+ * back-fill seams): a relative path would silently anchor to the process cwd.
+ */
+export function assertAbsoluteRoot(root: string, seam: string): void {
+  if (!isAbsolute(root)) {
+    throw new RegistrationRootUnresolvedError(
+      'root-not-absolute',
+      `${seam}: '${root}' is not an absolute path; a relative path would silently anchor to the process cwd and is refused (P2b-i / D19)`,
+    )
+  }
+}
+
 /** Thrown by `assertRegistrationGate` when a mechanical isolation condition fails. */
 export class RegistrationGateError extends Error {
   readonly violation: 'project-key' | 'label' | 'prefix'
@@ -112,21 +145,5 @@ export class RegistrationError extends Error {
     super(message)
     this.name = 'RegistrationError'
     this.landed = landed
-  }
-}
-
-/**
- * Typed root-refusal error (P2b-i, extending P2a's Q4 per-package convention:
- * `<Domain>RootUnresolvedError`). `root-not-absolute` (path-guard ruling /
- * AC6): a relative root would silently anchor derived paths to
- * `process.cwd()` (mechanism class 5) and is refused before any path is
- * constructed.
- */
-export class RegistrationRootUnresolvedError extends Error {
-  readonly reason: 'root-absent' | 'root-not-a-directory' | 'root-not-absolute'
-  constructor(reason: RegistrationRootUnresolvedError['reason'], message: string) {
-    super(message)
-    this.name = 'RegistrationRootUnresolvedError'
-    this.reason = reason
   }
 }

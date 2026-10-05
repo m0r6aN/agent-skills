@@ -1,0 +1,140 @@
+"""
+Batch demo generation: CSV of prospect URLs -> CSV of demo URLs.
+
+Feeds the email tool (Instantly/Smartlead) with per-lead demo/go/pixel links.
+
+Usage:
+    python src/batch.py --in examples/prospects.csv --out data/demos.csv \
+        --server http://localhost:8000
+
+The input CSV needs a `url` column (or `website`). Every other column is
+passed through to the output. Requires ADMIN_TOKEN (env or --token).
+"""
+import argparse
+import csv
+import os
+import sys
+import time
+from concurrent.futures import ThreadPoolExecutor
+
+import httpx
+
+import config  # noqa: F401  loads .env
+
+OUTPUT_FIELDS = [
+    "brand", "domain", "model", "slug",
+    "demo_url", "go_url", "pixel_url", "embed_url", "pay_url",
+    "expires_at", "status", "error",
+]
+RETRIES = 3
+
+
+def norm_url(u: str) -> str:
+    return (u or "").strip().lower().rstrip("/")
+
+
+def create_one(client: httpx.Client, base: str, token: str, url: str,
+               model: str | None) -> dict:
+    last_err = ""
+    for attempt in range(RETRIES):
+        try:
+            r = client.post(
+                f"{base}/create",
+                json={"url": url, "model": model},
+                headers={"X-Admin-Token": token},
+                timeout=60,
+            )
+            if r.status_code == 200:
+                j = r.json()
+                return {"status": "ok", "error": "", **{
+                    k: j.get(k, "") for k in OUTPUT_FIELDS if k in j
+                }}
+            last_err = f"HTTP {r.status_code}: {r.text[:200]}"
+            if r.status_code < 500:
+                break
+        except Exception as e:
+            last_err = f"{type(e).__name__}: {e}"
+        time.sleep(1.5 * (attempt + 1))
+    return {"status": "error", "error": last_err}
+
+
+def run(in_path: str, out_path: str, server: str, token: str,
+        model: str | None, workers: int) -> int:
+    with open(in_path, newline="", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f)
+        rows = [r for r in reader if (r.get("url") or r.get("website") or "").strip()]
+        in_fields = [c for c in (reader.fieldnames or []) if c]
+        if "url" not in in_fields and "website" not in in_fields:
+            print("input CSV needs a 'url' (or 'website') column", file=sys.stderr)
+            return 2
+
+    # leads.py marks filtered-out rows status=rejected: never spend a scrape on them
+    rejected = [r for r in rows if r.get("status") not in ("", None, "ok")]
+    rows = [r for r in rows if r.get("status") in ("", None, "ok")]
+
+    seen: set[str] = set()
+    todo: list[dict] = []
+    skipped = 0
+    for row in rows:
+        url = (row.get("url") or row.get("website") or "").strip()
+        key = norm_url(url)
+        if key in seen:
+            skipped += 1
+            continue
+        seen.add(key)
+        todo.append(row)
+
+    base = server.rstrip("/")
+    results: list[dict | None] = [None] * len(todo)
+    with httpx.Client() as client:
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            futures = [
+                pool.submit(
+                    create_one, client, base, token,
+                    (row.get("url") or row.get("website") or "").strip(), model,
+                )
+                for row in todo
+            ]
+            for i, fut in enumerate(futures):
+                results[i] = fut.result()
+
+    out_fields = in_fields + [c for c in OUTPUT_FIELDS if c not in in_fields]
+    os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
+    ok = 0
+    with open(out_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=out_fields, extrasaction="ignore")
+        writer.writeheader()
+        for row, res in zip(todo, results):
+            assert res is not None
+            merged = {**row, **res}
+            writer.writerow(merged)
+            if res["status"] == "ok":
+                ok += 1
+
+    failed = len(todo) - ok
+    print(f"created {ok} demos, {failed} failed, {skipped} duplicate URLs skipped, "
+          f"{len(rejected)} rejected rows ignored")
+    print(f"wrote {out_path}")
+    return 1 if failed else 0
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description="Batch demo generation (CSV -> CSV)")
+    ap.add_argument("--in", dest="in_path", required=True, help="input CSV with a url column")
+    ap.add_argument("--out", dest="out_path", default=os.path.join("data", "demos.csv"))
+    ap.add_argument("--server", default="http://localhost:8000")
+    ap.add_argument("--token", default=os.getenv("ADMIN_TOKEN"), help="admin token (default: ADMIN_TOKEN env)")
+    ap.add_argument("--model", default=None, help="pin one model for all demos")
+    ap.add_argument("--workers", type=int, default=4)
+    args = ap.parse_args()
+
+    if not args.token:
+        print("missing admin token: set ADMIN_TOKEN or pass --token", file=sys.stderr)
+        return 2
+
+    return run(args.in_path, args.out_path, args.server, args.token,
+               args.model, max(1, args.workers))
+
+
+if __name__ == "__main__":
+    sys.exit(main())

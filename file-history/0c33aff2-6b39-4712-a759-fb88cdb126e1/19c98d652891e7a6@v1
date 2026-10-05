@@ -1,0 +1,139 @@
+"""
+Optional AgentMail integration: gives the ChatDoorman fleet its own email
+identity and delivers captured leads to business owners.
+
+Disabled unless AGENTMAIL_API_KEY is set — every public function no-ops
+gracefully without it, so the demo server runs fine with or without email.
+
+Design (v1):
+- ONE shared sending inbox ("doorman") for all demos. The free tier only
+  allows 3 inboxes, so per-demo inboxes wait for v2 (paid tier / custom domain).
+- Lead notifications: when the bot's lead-capture flow completes, the owner's
+  inbox gets an email with the visitor's contact info and their question.
+- Owner email comes from the demo metadata (the pipeline passes the Hunter-
+  found address at /create time).
+
+Setup:
+    pip install agentmail
+    export AGENTMAIL_API_KEY="am_..."   # from https://console.agentmail.to
+"""
+import logging
+import os
+import re
+
+log = logging.getLogger(__name__)
+
+SHARED_INBOX_USERNAME = "doorman"
+SHARED_INBOX_CLIENT_ID = "chatdoorman-shared-doorman-v1"
+
+EMAIL_RE = re.compile(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}")
+PHONE_RE = re.compile(r"\+?1?[-.\s]?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}")
+
+# set when the module successfully talks to AgentMail
+_sender_inbox_id: str | None = None
+_disabled_logged = False
+
+
+def _client():
+    """Return an AgentMail client, or None when email is not configured."""
+    global _disabled_logged
+    key = os.getenv("AGENTMAIL_API_KEY")
+    if not key:
+        return None
+    try:
+        from agentmail import AgentMail
+        return AgentMail(api_key=key)
+    except ImportError:
+        if not _disabled_logged:
+            log.warning("AGENTMAIL_API_KEY set but 'agentmail' package not installed")
+            _disabled_logged = True
+        return None
+
+
+def get_sender_inbox() -> str | None:
+    """Idempotent shared sending inbox. Returns inbox address or None."""
+    global _sender_inbox_id
+    if _sender_inbox_id:
+        return _sender_inbox_id
+    client = _client()
+    if not client:
+        return None
+    try:
+        from agentmail.inboxes.types.create_inbox_request import CreateInboxRequest
+        inbox = client.inboxes.create(request=CreateInboxRequest(
+            username=SHARED_INBOX_USERNAME,
+            display_name="ChatDoorman",
+            client_id=SHARED_INBOX_CLIENT_ID,
+        ))
+        _sender_inbox_id = inbox.inbox_id
+        return _sender_inbox_id
+    except Exception as e:
+        # already exists (idempotent client_id) or API error — try lookup
+        try:
+            for ib in client.inboxes.list().inboxes or []:
+                if ib.inbox_id.startswith(SHARED_INBOX_USERNAME + "@"):
+                    _sender_inbox_id = ib.inbox_id
+                    return _sender_inbox_id
+        except Exception:
+            pass
+        log.warning("AgentMail inbox setup failed: %s", e)
+        return None
+
+
+def extract_lead(bot_reply: str, user_text: str) -> dict | None:
+    """
+    Heuristic v1: detect a completed lead-capture turn.
+    Returns {"contact": ..., "kind": "email"|"phone"} or None.
+    """
+    if "passed your question along" not in bot_reply.lower():
+        return None
+    email = EMAIL_RE.search(user_text or "")
+    if email:
+        return {"contact": email.group(0), "kind": "email"}
+    phone = PHONE_RE.search(user_text or "")
+    if phone:
+        return {"contact": phone.group(0), "kind": "phone"}
+    return None
+
+
+def notify_lead(owner_email: str, brand: str, lead: dict,
+                question: str, demo_url: str) -> bool:
+    """Email the business owner about a captured lead. Returns True if sent."""
+    if not owner_email:
+        return False
+    inbox_id = get_sender_inbox()
+    if not inbox_id:
+        return False
+    client = _client()
+    try:
+        client.inboxes.messages.send(
+            inbox_id=inbox_id,
+            to=owner_email,
+            subject=f"New lead for {brand} — website chat",
+            text=(
+                f"Your ChatDoorman captured a new lead.\n\n"
+                f"Contact ({lead['kind']}): {lead['contact']}\n"
+                f"Their question: {question}\n\n"
+                f"Demo: {demo_url}\n"
+            ),
+        )
+        return True
+    except Exception as e:
+        log.warning("lead notification failed: %s", e)
+        return False
+
+
+def maybe_notify_lead(owner_email: str | None, brand: str, demo_url: str,
+                      user_text: str, bot_reply: str,
+                      question: str) -> bool:
+    """
+    Call after each chat turn. Detects a completed lead capture and emails
+    the owner. Safe to call always: no-ops when email is unconfigured,
+    when there's no owner address, or when no lead was captured.
+    """
+    if not owner_email:
+        return False
+    lead = extract_lead(bot_reply, user_text)
+    if not lead:
+        return False
+    return notify_lead(owner_email, brand, lead, question, demo_url)

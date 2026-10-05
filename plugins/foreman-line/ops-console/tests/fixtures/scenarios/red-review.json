@@ -1,0 +1,28 @@
+{
+  "name": "red-review",
+  "description": "R1 red-review: a Stage-D VerificationVerdict with verdict: rework fails the parcel even with fresh progress.",
+  "now": "2026-09-26T12:00:00.000Z",
+  "goal": {
+    "slug": "goal-red",
+    "queue": ["1. **P1** verification returned rework."]
+  },
+  "specs": [{ "name": "P1-alpha.md", "location": "active", "updated": "2026-09-26" }],
+  "chains": [
+    {
+      "workflowId": "00000000-0000-4000-8000-000000000003",
+      "parcel": "P1",
+      "stages": ["A", "B", "C", "D"],
+      "timestampOffsetHours": [-4, -3, -2, -1],
+      "verdict": "rework"
+    }
+  ],
+  "expected": [
+    {
+      "parcel": "P1",
+      "state": "failed",
+      "rule": "R1",
+      "failureCode": "red-review",
+      "chainEvidence": "present"
+    }
+  ]
+}

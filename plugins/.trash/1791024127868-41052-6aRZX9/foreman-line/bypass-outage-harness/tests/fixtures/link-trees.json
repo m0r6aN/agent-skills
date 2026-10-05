@@ -1,0 +1,52 @@
+{
+  "trees": [
+    {
+      "id": "file-symlink",
+      "kind": "file-symlink",
+      "link": "scope/link.txt",
+      "target": "outside/target.txt",
+      "writesThrough": true,
+      "notes": "in-scope file link to an out-of-scope target; may require symlink privilege (gap record when unavailable)"
+    },
+    {
+      "id": "junction",
+      "kind": "junction",
+      "link": "scope/jdir",
+      "target": "outside/odir",
+      "writesThrough": true,
+      "notes": "directory junction write-through; MUST execute (chain hard-fails if the platform cannot)"
+    },
+    {
+      "id": "in-scope-symlink",
+      "kind": "in-scope-symlink",
+      "link": "scope/links/inlink.txt",
+      "target": "scope/real/target.txt",
+      "writesThrough": true,
+      "notes": "control: link and target both in scope; the effect lands in-scope"
+    },
+    {
+      "id": "case-variant",
+      "kind": "case-variant",
+      "link": "scope/forbidden/secret.txt",
+      "target": "scope/forbidden/secret.txt",
+      "writesThrough": true,
+      "notes": "control-relevant pair: the reported spelling varies in case against an exact forbidden entry on a case-insensitive fs"
+    },
+    {
+      "id": "trailing-dot-alias",
+      "kind": "trailing-dot-alias",
+      "link": "scope/forbidden/secret.txt.",
+      "target": "scope/forbidden/secret.txt",
+      "writesThrough": true,
+      "notes": "trailing-dot alias segment: well-formed for the guard, aliases the forbidden file on Windows"
+    },
+    {
+      "id": "regular-file",
+      "kind": "regular-file",
+      "link": "outside/target.txt",
+      "target": "outside/target.txt",
+      "writesThrough": false,
+      "notes": "control: plain regular file outside the envelope"
+    }
+  ]
+}

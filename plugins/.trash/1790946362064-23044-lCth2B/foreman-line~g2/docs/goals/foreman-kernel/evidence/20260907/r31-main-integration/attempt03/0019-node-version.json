@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "D:\\nodejs_symlinks\\node.exe",
+    "--version"
+  ],
+  "cwd": "C:\\Users\\clint\\AppData\\Local\\Temp\\fk-r31-integration-h7vdnawi\\tree\\plugins\\foreman-line\\authority-registry",
+  "ended_utc": "2026-09-07T18:55:59.243082+00:00",
+  "exit": 0,
+  "pid": 467716,
+  "seconds": 0.09694049996323884,
+  "started_utc": "2026-09-07T18:55:59.146154+00:00",
+  "stderr": "0019-node-version.stderr",
+  "stdout": "0019-node-version.stdout"
+}

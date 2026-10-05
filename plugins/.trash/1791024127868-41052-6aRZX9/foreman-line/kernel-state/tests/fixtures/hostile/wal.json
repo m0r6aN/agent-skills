@@ -1,0 +1,50 @@
+{
+  "class": "C2",
+  "records": [
+    {
+      "id": "WAL-01",
+      "input": { "scenario": "truncate-wal-header", "sizeBytes": 16 },
+      "expectedOutcome": { "state": "main-file-committed-state", "expectEventIds": ["evt-1"], "absentEventIds": ["evt-2"] }
+    },
+    {
+      "id": "WAL-02",
+      "input": { "scenario": "zero-length-wal" },
+      "expectedOutcome": { "state": "main-file-committed-state", "expectEventIds": ["evt-1"], "absentEventIds": ["evt-2"] }
+    },
+    {
+      "id": "WAL-03",
+      "input": { "scenario": "torn-final-frame", "corrupt": "last-frame-header" },
+      "expectedOutcome": { "state": "last-committed-transaction", "expectEventIds": ["evt-1"], "absentEventIds": ["evt-2"] }
+    },
+    {
+      "id": "WAL-04",
+      "input": { "scenario": "stale-salt-vs-main" },
+      "expectedOutcome": { "state": "main-file-committed-state", "expectEventIds": ["evt-1", "evt-2"] }
+    },
+    {
+      "id": "WAL-05",
+      "input": { "scenario": "oversized-uncheckpointed-wal", "transactions": 40 },
+      "expectedOutcome": { "state": "last-committed-transaction", "expectEventIds": ["evt-1"], "absentEventIds": ["evt-2"] }
+    },
+    {
+      "id": "WAL-06",
+      "input": { "scenario": "missing-or-zeroed-shm" },
+      "expectedOutcome": { "state": "last-committed-transaction", "expectEventIds": ["evt-1", "evt-2"] }
+    },
+    {
+      "id": "WAL-07",
+      "input": { "scenario": "inconsistent-checksums-mid-sequence", "corrupt": "middle-frame" },
+      "expectedOutcome": { "state": "last-committed-transaction", "expectEventIds": ["evt-1"], "absentEventIds": ["evt-2"] }
+    },
+    {
+      "id": "POS-05",
+      "input": { "scenario": "checkpoint-truncate-then-reopen" },
+      "expectedOutcome": "opens-at-head"
+    },
+    {
+      "id": "CTRL-01",
+      "input": { "scenario": "pragma-seam-reports-non-wal-mode", "reportedMode": "delete" },
+      "expectedCode": "STORAGE_WAL_UNAVAILABLE"
+    }
+  ]
+}

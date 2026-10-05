@@ -1,0 +1,14 @@
+{
+  "schema": "u1-verifier-pin/v1",
+  "workflow": ".github/workflows/u1-verify.yml",
+  "workflowCommit": "be3e3de3dfcf6159d4ffb265aa39847aac5f0814",
+  "workflowFileSha256": "sha256:b7952e1e52f0144e7632fc73d8d04e9564184dfcf4c5af978c71592514cc4bbe",
+  "tag": "refs/tags/u1-verifier-pin",
+  "producerWorkflow": ".github/workflows/u1-produce.yml",
+  "custodian": {
+    "login": "m0r6aN",
+    "objectId": "461a4112-8e91-41cb-afef-6889b8f48ff0"
+  },
+  "recordedAt": "2026-10-01T00:00:00Z",
+  "note": "workflowCommit is the protected verifier revision's full commit SHA (contract 3.1.1 - identity is the commit, never a branch/tag name); workflowFileSha256 pins the u1-verify.yml bytes at that commit. In-run enforcement: manual path checks run-ref == refs/tags/u1-verifier-pin, run-SHA == workflowCommit, and running-workflow bytes == workflowFileSha256; the event-driven path binds by workflow-file byte equality plus the ruleset. Any pin change is a contract amendment (standing #34) recorded in the review trail."
+}

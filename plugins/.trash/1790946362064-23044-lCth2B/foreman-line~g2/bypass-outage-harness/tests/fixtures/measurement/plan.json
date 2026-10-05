@@ -1,0 +1,140 @@
+{
+  "planVersion": "0.1.0",
+  "instrumentPoints": [
+    {
+      "id": "IP-1",
+      "name": "host-lifecycle-entry",
+      "where": "runner monotonic timestamp immediately before spawning node hooks/model-gate.mjs <mode> (the harness plays the host/adapter role for measurement)",
+      "clock": "adapter-monotonic (process.hrtime.bigint in the runner)"
+    },
+    {
+      "id": "IP-2",
+      "name": "hook-exit",
+      "where": "child process close observed by the runner",
+      "clock": "adapter-monotonic"
+    },
+    {
+      "id": "IP-3",
+      "name": "decision-surface-request-received to response-written",
+      "where": "the shipped guard decision seam: preflightCheck/postHocCheck call entry to return/throw, in-process",
+      "clock": "kernel-monotonic analog (harness monotonic; FK-P12 boundary unbuilt — recorded as such)",
+      "comparabilityCaveat": "IP-3 is an analog of, not identical to, the D21 kernelDecisionLatency literal (request-received to response-written at the decision surface); no measurement row presents IP-3 numbers as the D21 span itself"
+    },
+    {
+      "id": "IP-4",
+      "name": "hook-internal decision (evaluate :81)",
+      "where": "unreachable without modifying the hook",
+      "clock": null,
+      "gap": "INSTRUMENT_UNREACHABLE — recorded as a gap, never estimated"
+    }
+  ],
+  "spans": [
+    {
+      "span": "mediatedActionLatency",
+      "points": "IP-1→IP-2",
+      "population": "warm",
+      "budgetMicros": 150000,
+      "rule": "p99 <= 150,000 µs",
+      "sampleSelection": "completed-governed-mutation-decision-attempts-after-readiness-and-initial-invocation"
+    },
+    {
+      "span": "firstCallObservation",
+      "points": "IP-1→IP-2",
+      "population": "cold",
+      "budgetMicros": 2000000,
+      "rule": "<= 2,000,000 µs; reported separately; never folded into warm percentiles",
+      "sampleSelection": "first invocation of each fresh sequence (includesStartup: true)"
+    },
+    {
+      "span": "kernelDecisionLatency",
+      "points": "IP-3",
+      "population": "warm",
+      "budgetMicros": 50000,
+      "rule": "p50 <= 5,000 / p95 <= 20,000 / p99 <= 50,000 µs; IP-4 gap recorded",
+      "sampleSelection": "in-process guard-seam decisions after readiness"
+    }
+  ],
+  "populations": { "warm": 200, "cold": 10, "deadline": 3 },
+  "percentiles": "nearest-rank over integer microseconds sorted ascending: pX = a[ceil(X*N/100)], 1-indexed, clamped to N; deterministic; no interpolation",
+  "hardDeadlineMicros": 1000000,
+  "deadlinePolicy": "deadlineDisposition recorded at crossing; lateResponsePolicy: ignore-terminal-outcome enforced by the record shape",
+  "d8OutagePostureInheritance": "recorded as proven or not-proven; expected not-proven on the shipped surfaces — recorded, never claimed",
+  "populationRefusal": "MEASUREMENT_INCOMPLETE below threshold: the claim is refused, records are retained",
+  "cases": [
+    {
+      "id": "MEAS-01",
+      "kind": "measurement",
+      "vectorClass": null,
+      "className": null,
+      "channel": "measurement",
+      "scenario": "mediatedActionLatency warm population (IP-1→IP-2)",
+      "hypothesis": {
+        "classification": null,
+        "basis": "measurement carrier (T3): no bypass-outcome signals; the T4 classification vocabulary applies to matrix/control rows"
+      },
+      "requiredSignals": ["warm N >= 200 completed attempts", "p99 reported against 150,000 µs"],
+      "params": { "span": "mediatedActionLatency", "population": "warm" },
+      "notes": ""
+    },
+    {
+      "id": "MEAS-02",
+      "kind": "measurement",
+      "vectorClass": null,
+      "className": null,
+      "channel": "measurement",
+      "scenario": "firstCallObservation cold population (IP-1→IP-2, fresh sequences)",
+      "hypothesis": {
+        "classification": null,
+        "basis": "measurement carrier (T3): no bypass-outcome signals; the T4 classification vocabulary applies to matrix/control rows"
+      },
+      "requiredSignals": ["cold N >= 10 fresh sequences", "reported separately, never folded into warm"],
+      "params": { "span": "firstCallObservation", "population": "cold" },
+      "notes": ""
+    },
+    {
+      "id": "MEAS-03",
+      "kind": "measurement",
+      "vectorClass": null,
+      "className": null,
+      "channel": "measurement",
+      "scenario": "kernelDecisionLatency at the IP-3 guard seam (analog), warm population",
+      "hypothesis": {
+        "classification": null,
+        "basis": "measurement carrier (T3): no bypass-outcome signals; the T4 classification vocabulary applies to matrix/control rows"
+      },
+      "requiredSignals": ["warm N >= 200", "IP-3 comparability caveat carried", "IP-4 gap recorded"],
+      "params": { "span": "kernelDecisionLatency", "population": "warm" },
+      "notes": ""
+    },
+    {
+      "id": "MEAS-04",
+      "kind": "measurement",
+      "vectorClass": null,
+      "className": null,
+      "channel": "measurement",
+      "scenario": "hard-deadline failure behavior riding TMO-01/TMO-02",
+      "hypothesis": {
+        "classification": null,
+        "basis": "measurement carrier (T3): no bypass-outcome signals; the T4 classification vocabulary applies to matrix/control rows"
+      },
+      "requiredSignals": ["3 repeats per case", "deadlineDisposition recorded", "lateResponsePolicy conformance"],
+      "params": { "population": "deadline", "ridesCases": ["TMO-01", "TMO-02"] },
+      "notes": ""
+    },
+    {
+      "id": "MEAS-05",
+      "kind": "measurement",
+      "vectorClass": null,
+      "className": null,
+      "channel": "measurement",
+      "scenario": "FK-P2 compiled-scope reference vs shipped guard (D10 divergence, three-state)",
+      "hypothesis": {
+        "classification": null,
+        "basis": "measurement carrier (T3): no bypass-outcome signals; the T4 classification vocabulary applies to matrix/control rows"
+      },
+      "requiredSignals": ["three-state consumption", "divergence recorded against compiled Allowed Files authority"],
+      "params": { "singleShot": true },
+      "notes": "measured only in three-state (a); never an enforcement claim"
+    }
+  ]
+}

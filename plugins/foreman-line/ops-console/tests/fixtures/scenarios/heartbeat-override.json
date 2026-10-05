@@ -1,0 +1,29 @@
+{
+  "name": "heartbeat-override",
+  "description": "OQ1 frozen override parse: a hung-threshold: 0.5h line in the loop directive overrides the 6h default for this goal only.",
+  "now": "2026-09-26T12:00:00.000Z",
+  "hungThresholdLine": "hung-threshold: 0.5h",
+  "goal": {
+    "slug": "goal-fast",
+    "queue": ["1. **P1** dispatched two hours ago under a strict heartbeat."]
+  },
+  "specs": [{ "name": "P1-alpha.md", "location": "active", "updated": "2026-09-26" }],
+  "chains": [
+    {
+      "workflowId": "00000000-0000-4000-8000-000000000014",
+      "parcel": "P1",
+      "stages": ["A", "B", "C"],
+      "timestampOffsetHours": [-2.5, -2.2, -2]
+    }
+  ],
+  "expected": [
+    {
+      "parcel": "P1",
+      "state": "hung",
+      "rule": "R4",
+      "chainEvidence": "present",
+      "thresholdMs": 1800000,
+      "thresholdSource": "goal-override"
+    }
+  ]
+}

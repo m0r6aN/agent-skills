@@ -8,14 +8,16 @@ evaluation and the optional shadow-route execution boundary live in
 
 ## Schema shape
 
-`RoutingPolicy` = `{ classes, data_classification, roles, model_tiers, shadow_routes }`.
+`RoutingPolicy` = `{ classes, data_classification, selection_order, shadow_routes, compatibility, ranking_contract, lane_map, candidates, lane_routes, expertise_bindings? }` (post-CUTOVER-P4: the five representation blocks are required; the legacy `roles`/`model_tiers`/`eligible_models` blocks are removed and refused by name).
 
 - **`classes`** — keyed by `routing_class` value; MUST include the four
   reconciled values (`boilerplate`, `standard-feature`, `architecture/risk`,
   `implementation/standard`) but may carry additional class keys. Each entry:
   `allowlist` (tier names), `ceiling_usd` (> 0), optional `security_flavored`.
 - **`data_classification`** — exactly `public` / `internal` / `restricted`,
-  each an `eligible_models` list plus a `transport_requirements` block
+  each a `transport_requirements` block (data-class eligibility is declared
+  per binding via `data_classes`, A5.2 — the legacy `eligible_models` lists
+  are removed at CUTOVER-P4)
   (`data_collection: allow|deny`, `zdr: boolean`, mirroring OpenRouter's
   `provider` request object). On a multi-provider gateway a model id does not
   determine which upstream host serves the request; these two request
@@ -25,29 +27,26 @@ evaluation and the optional shadow-route execution boundary live in
   non-public data. Pair it with OpenRouter's account-wide privacy settings
   (disable training providers; per-group ZDR) so the strict values are the
   default regardless of what the consumer sends.
-- **`roles`** — `coordinator`, `verifier`, `builder`. Schema only requires
-  non-empty strings; the frontier pin is enforced as an invariant, not a
-  schema `const`, so a schema-valid-but-wrong document is distinguishable from
-  a structurally invalid one.
-- **`model_tiers`** — resolves each tier name used above to concrete model
-  ids. `'frontier'` is the one tier name the validator's invariants depend on
-  literally, and its *contents* are anchored against a validator-code
-  registry (see "Frontier-tier anchoring registry" below), not left to the
-  policy document's own say-so. **Every other tier name (`standard`,
-  `economy` in v0.3) is this parcel's own policy content, revisable quarterly
-  without touching the validator** — it intentionally diverges from plan
-  §5's illustrative `small`/`medium`/`large` labels, which were never
-  binding. **Order within a tier is the selection rule:** the dispatcher
-  (`dispatch/src/routing-eval`) walks a class's allowlist tiers in order and
-  picks the first model eligible under the task's data classification. There
-  is no price comparison at dispatch time, so cost optimization is expressed
-  by list order. The shipped economy order selects Nemotron 3.5 Lightning
-  for boilerplate in all three classifications, preserving each classification's
+- **`selection_order`** — the ordered selection source (C5.2; migrated at
+  CUTOVER-P4 from the removed `model_tiers` block): each tier-group name used
+  above maps to an ordered list of provider-neutral candidate keys, with
+  referential integrity to `candidates` (dangling and self-referential entries
+  are refused). A model's OpenRouter slug lives only in its binding's `model`
+  field; the consumer prepends its own provider prefix at use. `'frontier'` is
+  the one group name the validator's invariants depend on literally, and its
+  *contents* are anchored against a validator-code registry (see
+  "Frontier-tier anchoring registry" below), not left to the policy document's
+  own say-so. **Every other group name (`standard`, `economy`) is policy
+  content, revisable quarterly without touching the validator.** **Order
+  within a group is the selection rule:** the dispatcher
+  (`dispatch/src/routing-eval`) walks a class's allowlist groups in order and
+  picks the first candidate eligible under the task's data classification
+  (eligibility = the binding's declared `data_classes`). There is no price
+  comparison at dispatch time, so cost optimization is expressed by list
+  order. The shipped economy order selects Nemotron 3.5 Lightning for
+  boilerplate in all three classifications, preserving each classification's
   transport requirements. Later entries are eligibility alternatives; the
   evaluator does not retry them on provider health or quota failures.
-  Ids are bare OpenRouter slugs (`vendor/model`); the consumer
-  prepends its own provider prefix. No `:nitro`/`:floor`/`:free`/`:batch`
-  variant suffixes — those are transport concerns or unusable in an agent loop.
 - **`shadow_routes`** — separately governed advisory sidecars, never model
   tiers. May be empty (v0.3 ships none); no particular route key is required
   by the schema. Any route declared must be public-only and candidate-only. A
@@ -74,10 +73,14 @@ the two never drift.
 
 ## The eight enforced invariants
 
-1. **Classification gates before cost (D6):** `eligible_models` must narrow
-   monotonically — `restricted ⊆ internal ⊆ public`.
-2. **Coordinator/verifier frontier pinning (D4):** both must equal `'frontier'`
-   exactly. **Out of reach:** runtime distinctness — coordinator and verifier
+1. **Classification gates before cost (D6):** every binding's declared
+   `data_classes` set must narrow monotonically — `restricted` implies
+   `internal` implies `public` (re-anchored at CUTOVER-P4; the cross-list
+   form lived in the removed `eligible_models` lists).
+2. **Coordinator/verifier frontier pinning (D4):** the coordinator and
+   verifier lanes (`lane_map.L1`/`L2`) are frozen `frontier_only: true`
+   (re-anchored at CUTOVER-P4 — the pin lived in the removed `roles` block).
+   **Out of reach:** runtime distinctness — coordinator and verifier
    resolving to *separate agent instances* at dispatch — is a W2-P3/W3
    dispatch-time property; this parcel validates the tier pinning only.
 3. **Security override + derived guard:** a class self-declaring
@@ -87,14 +90,16 @@ the two never drift.
    derived, never "somehow."
 4. **Ceiling presence:** `ceiling_usd` required and `> 0`, enforced at the
    schema layer (a static bound needs no cross-field logic).
-5. **Frontier-tier anchoring:** every model id in `model_tiers.frontier` must
-   belong to `KNOWN_FRONTIER_MODELS`. See below.
-6. **Tier models are classification-eligible:** every model id in any
-   `model_tiers.*` list must appear in `data_classification.public.eligible_models`.
-   Because invariant 1 already forces `internal` and `restricted` to be
-   subsets of `public`, a model absent from `public` is dispatchable under no
-   classification at all — the tier list would be advertising a route that
-   cannot exist, or one a tier-only caller would take unchecked.
+5. **Frontier-tier anchoring:** every candidate in `selection_order.frontier`
+   must resolve to a `KNOWN_FRONTIER_MODELS` id through its OpenRouter binding.
+   See below.
+6. **Ordered-source candidates are classification-eligible:** every
+   `selection_order` entry's OpenRouter binding must declare `public` in its
+   `data_classes`. Because invariant 1 forces the declared sets to narrow, a
+   candidate absent from `public` is dispatchable under no classification at
+   all — the ordered source would be advertising a route that cannot exist,
+   or one an order-only caller would take unchecked (named refusal
+   `DATA_CLASS_INELIGIBLE`).
 7. **Non-public transport requirements:** `internal` and `restricted` must
    declare `transport_requirements: { data_collection: deny, zdr: true }`. A
    model id names a model, not a host; on OpenRouter the same id is
@@ -105,6 +110,31 @@ the two never drift.
    live discovery, has no authority/tools/effects, is candidate-only, and
    excludes the Coordinator and verifier. The route key must equal its adapter
    id, preventing a policy entry from silently referring to a different adapter.
+
+## Schema v0.4 — RCM capability predicates and expertise bindings (2026-09-27)
+
+RCM-P2/RCM-P3 (charter D7/D8, `docs/goals/routing-currency-and-merit/rcm-p2-scope-reconciliation-2026-09-27.md`):
+
+- **Per-entry capability predicates (optional Evidence envelopes on every binding):**
+  `inputs` (the modalities the binding serves — `text | image`) and `thinking_levels`
+  (the Pi `ThinkingLevel` names its `thinkingLevelMap` carries — `off | minimal | low |
+  medium | high | xhigh | max`). A field that is absent or typed-unavailable is **unknown**,
+  never "text-only" — a model-side fact is never guessed. A declared `inputs` residual must
+  come from the named contract vocabulary like every other envelope.
+- **`expertise_bindings` block (optional; shipped empty):** each entry narrows the
+  already-eligible set within one `(routing_class, expertise)` key — never reorders a tier,
+  never crosses tiers. `shadow: true` entries are evidence-only (RCM-P9) and never narrow.
+  Validator: every ref must resolve (`EXPERTISE_BINDING_DANGLING_REFERENCE`); two non-shadow
+  entries may not share a key (`REPRESENTATION_INCOMPLETE_REFUSED`).
+- **Resolver predicates (D4 fixed order: classification → capability → tier order):** the
+  effective requirements are `required_inputs` (default `['text']`) and
+  `required_thinking_level` (default the routing-class thinking default, OQ5 — a class with
+  no ratified default refuses unless the request declares one). Refusals name the failing
+  predicate: `INPUTS_UNKNOWN` / `INPUTS_INSUFFICIENT`, `THINKING_LEVELS_UNKNOWN` /
+  `THINKING_LEVEL_UNSUPPORTED`. Expertise narrowing records `EXPERTISE_NARROWED_OUT` per
+  narrowed-out binding and stops with `EXPERTISE_BINDING_UNSATISFIABLE` when the binding
+  narrows the eligible set to nothing — never a silent fallback to the un-narrowed set. The
+  narrowed set must cover the chosen route (primary and its declared fallback).
 
 ## Shadow routes (execution boundary)
 
@@ -175,10 +205,11 @@ transport remain host/operator-owned integration work.
 
 ## Frontier-tier anchoring registry
 
-Invariants 2 and 3 pin roles and security-flavored classes to the tier
-*name* `'frontier'` — but nothing about tier names constrains which model
-ids actually populate `model_tiers.frontier` inside the policy document
-itself. A policy document is mutable data under validation; letting it
+Invariants 2 and 3 pin the coordinator/verifier lanes and security-flavored
+classes to the tier *name* `'frontier'` — but nothing about tier names
+constrains which candidates actually populate `selection_order.frontier`
+inside the policy document itself. A policy document is mutable data under
+validation; letting it
 define its own notion of "frontier" would mean it could satisfy every other
 invariant while quietly redefining frontier to point at a cheaper model,
 silently gutting D4's pinning and the §5 security hard-override in one edit.
@@ -188,7 +219,8 @@ silently gutting D4's pinning and the §5 security hard-override in one edit.
 `['anthropic/claude-opus-5.5', 'anthropic/claude-fable-5.1', 'openai/gpt-6-astra', 'openai/gpt-5.6-sol', 'openai/gpt-5.5', 'google/gemini-3.1-pro-preview']`
 (`openai/gpt-6-astra` added by SUPERCHARGE-P1, verified 2026-09-14)
 — as a constant in reviewed, tested code, not as policy content. Invariant 5
-rejects any `model_tiers.frontier` entry absent from this registry. This is
+rejects any `selection_order.frontier` entry that resolves outside this
+registry. This is
 intentional friction: redefining what counts as frontier (the quarterly model
 revisit plan §5 anticipates) requires a code change with a test, never a
 one-line policy-file edit.

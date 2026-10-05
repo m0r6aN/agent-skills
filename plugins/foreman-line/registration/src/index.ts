@@ -49,7 +49,6 @@ export {
 } from './receipt.js'
 export {
   assertRegistrationSlug,
-  PROJECT_KEY,
   type PreviewResult,
   preview,
   type RegisterOptions,

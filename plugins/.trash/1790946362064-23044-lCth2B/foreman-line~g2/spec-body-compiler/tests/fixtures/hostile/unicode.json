@@ -1,0 +1,102 @@
+{
+  "schema": "spec-body-compiler/hostile-fixtures/v1",
+  "note": "H6 Unicode. All tricky code points are JSON escapes so the fixture file stays plain ASCII. UNI-09 is raw bytes (kind=bytes). UNI-10 added 2026-09-28 (rework R1): mixed-form segment — precomposed and decomposed spellings in one segment — strict NFC fires ENTRY_NON_NFC.",
+  "cases": [
+    {
+      "id": "UNI-01",
+      "kind": "entry",
+      "input": "café.ts",
+      "expectedCode": "ENTRY_NON_NFC",
+      "repaired": "café.ts",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "UNI-02",
+      "kind": "entry",
+      "input": "a‮b",
+      "expectedCode": "ENTRY_FORMAT_CHAR",
+      "repaired": "ab",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "UNI-03",
+      "kind": "entry",
+      "input": "a​b",
+      "expectedCode": "ENTRY_FORMAT_CHAR",
+      "repaired": "ab",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "UNI-04",
+      "kind": "entry",
+      "input": "﻿src/a.ts",
+      "expectedCode": "ENTRY_FORMAT_CHAR",
+      "repaired": "src/a.ts",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "UNI-05",
+      "kind": "entry",
+      "input": "a\u0000b",
+      "expectedCode": "ENTRY_NULL_BYTE",
+      "repaired": "ab",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "UNI-06",
+      "kind": "entry",
+      "input": "a\u001fb",
+      "expectedCode": "ENTRY_CONTROL_CHAR",
+      "repaired": "ab",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "UNI-07",
+      "kind": "entry",
+      "input": "ab",
+      "expectedCode": "ENTRY_CONTROL_CHAR",
+      "repaired": "ab",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "UNI-08",
+      "kind": "entry",
+      "input": "a\ud800b",
+      "expectedCode": "ENTRY_UNPAIRED_SURROGATE",
+      "repaired": "ab",
+      "repairedOutcome": "ok"
+    },
+    {
+      "id": "UNI-09",
+      "kind": "bytes",
+      "input": [
+        60,
+        63,
+        194,
+        192,
+        174,
+        63,
+        62
+      ],
+      "expectedCode": "BODY_NOT_UTF8",
+      "repaired": [
+        60,
+        63,
+        226,
+        130,
+        172,
+        63,
+        62
+      ],
+      "repairedOutcome": "SPEC_SECTION_MISSING"
+    },
+    {
+      "id": "UNI-10",
+      "kind": "entry",
+      "input": "xéyéz",
+      "expectedCode": "ENTRY_NON_NFC",
+      "repaired": "xéyéz",
+      "repairedOutcome": "ok"
+    }
+  ]
+}

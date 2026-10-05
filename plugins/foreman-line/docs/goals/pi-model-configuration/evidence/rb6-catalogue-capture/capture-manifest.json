@@ -1,0 +1,59 @@
+{
+  "manifestVersion": 1,
+  "purpose": "MRC-20 RB-6 catalogue bytes capture (carried nit, pmc-p2 review B)",
+  "generatedAtUtc": "2026-09-27T17:18:33.329Z",
+  "capture": {
+    "source": {
+      "method": "GET",
+      "url": "https://openrouter.ai/api/v1/models",
+      "auth": "none (no key; no auth headers sent)",
+      "note": "public catalogue metadata read; no invocation, no provider execution (pmc-p2 record :353-355)"
+    },
+    "acquisitionTimeUtc": "2026-09-27T17:17:50Z",
+    "httpStatus": 200,
+    "responseHeaders": {
+      "date": "Sun, 27 Sep 2026 17:17:50 GMT",
+      "contentType": "application/json"
+    },
+    "byteFormat": {
+      "bom": false,
+      "byteLength": 751858,
+      "encoding": "UTF-8",
+      "lineEndings": "as-received (no normalization)"
+    },
+    "sha256": "b4691ccd4ac3c172013e531702d69b5fe83e4fdfd3cac384faf160aaf52671e4",
+    "modelIdCount": 458,
+    "extractionMethod": {
+      "name": "verbatim capture with in-stream header allowlist",
+      "version": "mrc-20-catalogue-capture-v1",
+      "implementation": "mkdir -p docs/goals/pi-model-configuration/evidence/rb6-catalogue-capture\ncurl.exe -sS -D - -o docs/goals/pi-model-configuration/evidence/rb6-catalogue-capture/catalogue-body.json \\\n  https://openrouter.ai/api/v1/models \\\n  | grep -Eai \"^(HTTP/|Date:|Content-Type:)\" \\\n  > docs/goals/pi-model-configuration/evidence/rb6-catalogue-capture/response-headers.txt\n\nnode -e \"const fs=require('fs'),c=require('crypto');const p='docs/goals/pi-model-configuration/evidence/rb6-catalogue-capture/';const b=fs.readFileSync(p+'catalogue-body.json');console.log('sha256   ',c.createHash('sha256').update(b).digest('hex'));console.log('bytes    ',b.length);console.log('modelIds ',JSON.parse(b).data.length);console.log('utcNow   ',new Date().toISOString())\"",
+      "exclusionBeforeBoundary": true
+    },
+    "explicitOmissions": [
+      "all response headers except status line, Date, Content-Type (including any cookie headers)",
+      "all request headers (none were sent)",
+      "URL userinfo/query/fragment (none used)"
+    ]
+  },
+  "sourceBoundary": {
+    "credentialValuesExported": false,
+    "secretUrlsExported": false,
+    "rawMixedDocumentBytesExported": false,
+    "rawSourceBytesHashed": false,
+    "hashedBytes": "captured public catalogue response body only",
+    "note": "No credential values, secret URLs, or raw mixed-document bytes were exported or hashed. Hash captured public response bytes only; never hash a raw host document."
+  },
+  "recordRelation": {
+    "recordedAttempt": {
+      "source": "GET https://openrouter.ai/api/v1/models",
+      "fetchedAtUtc": "2026-09-27T01:19:55.811Z -> 2026-09-27T01:19:55.959Z",
+      "sha256": "9aae0055b2e393aa4b3de4bee25e173b676d23640ca4d1b38696ba1a993a2269",
+      "byteLength": 751727,
+      "modelIdCount": 458,
+      "locator": "docs/goals/pi-model-configuration/pmc-p2-pi-configuration-and-route-resolver-2026-09-26.md:353-370"
+    },
+    "rederivesRecordedDigest": false,
+    "idCountMatchesRecordedAttempt": true,
+    "note": "The 2026-09-27T01:19:55Z response bytes were never preserved and are not recoverable in this environment (see Shaping-Time Baseline). This capture is a fresh GET; it is not that response and does not claim its digest. The preserved body makes every id-list claim in the record's item 1 re-derivable by parsing data[].id."
+  }
+}

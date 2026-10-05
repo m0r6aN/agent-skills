@@ -1,0 +1,11 @@
+# R31 main integration disposition — September 7, 2026
+
+Accept attempt03's bounded result for main `476b8df6efe6c9974879957147449f61c34cd9a0` and accepted R31 `1747c1df7dfa4677d345390ac673c3d15c82b980`. The hypothetical tree is `a9df33c71d0e34ddae277d312a04f7a97dd66480`, with398 unchanged protected inputs and153 exact reviewed upstream deltas. The runner completed direct0 over18:55:45.251044–18:56:29.779259Z. All24 child commands returned direct0. CLI validate/sweep report valid:true/violations:[]; generation and full-file comparison prove byte idempotence. Raw HEAD/refs are unchanged.
+
+Parent independently parsed all command metadata, validation JSON, exact empty file-delta result and matching raw reference snapshots. The independent final-result review APPROVED with no blocking finding after separately checking all1359 tracked blob identities,18sources,398protected entries,153deltas,1535private dependency files and two inert link representations. Review SHA256: `d750516eabdb0c85b0225b704c9895ad115d091c98d4d2e958b4f86c6046dcd0`.
+
+The reviewed limits remain binding: this is explicit CLI/generator compatibility against the exact hypothetical tree, not full unrelated-package/CI verification or an actual merge. Two unrelated symlink blobs are inert regular files; no target is followed and native link behavior is not certified. The regex external-import list contains false positives and is heuristic; it does not replace reviewed closure and byte equality. Node was24.7.0; verification wall times are not D21 latency evidence. Historical missing-provenance remains open.
+
+Attempts01/02 remain failed and published, with narrow independently reviewed harness corrections before retry. Attempt03's bundle publishes all actual command/result evidence except five derived whole-repository binary streams; their exact sizes/hashes, local retention and deterministic reconstruction instructions are in bundle-manifest.json. The synthetic tree is reproducible from the two published inputs; no synthetic merge commit was pushed. The implementation and source branches remain clean and untouched.
+
+Human Gate3, actual merge, ownership reconciliation and downstream dependencies remain separate. Proceed to final publication verification and leave the precise resume address in CURRENT-RESUME/LIVE-PUBLICATION-MANIFEST.

@@ -1,0 +1,222 @@
+"""
+ChatDoorman lead pipeline: niche + metro in, outreach-ready CSV out.
+
+  python src/pipeline.py --niche "aesthetic med spa" --location "Atlanta GA" --max 200
+
+Steps:
+  1. Outscraper API: Google Maps search for the niche in the location
+  2. Filter: must have website + operational; drop existing chat widgets,
+     10+ location chains, opted-out contacts, duplicates
+  3. Hunter API: find the best email per domain (personal > generic by
+     confidence), verify it is deliverable
+  4. Demo server: POST /create per website (X-Admin-Token required)
+  5. Write CSV ready for src/outreach.py -> src/campaign.py
+
+Env vars (never commit these):
+  OUTSCRAPER_API_KEY, HUNTER_API_KEY, ADMIN_TOKEN
+  DEMO_SERVER_URL (default http://localhost:8000)
+
+Usage notes:
+  - Start with --max 10 as a dry run to check credit burn before a full 200.
+  - Outscraper bills per result; Hunter bills per domain-search + verify.
+  - Filtering drops rows, so output <= --max. Raise --fetch-limit to feed more.
+"""
+import argparse
+import csv
+import os
+import sys
+import time
+from urllib.parse import urlparse
+
+import httpx
+
+import config  # noqa: F401  loads .env
+from batch import create_one
+from leads import Config, domain_search, load_suppression, process, verify_email
+
+OUTSCRAPER_SEARCH_URL = "https://api.app.outscraper.com/maps/search-v2"
+POLL_ATTEMPTS = 60
+POLL_SECONDS = 10
+
+OUT_FIELDS = [
+    "business_name", "first_name", "email", "email_source", "email_type",
+    "email_confidence", "phone", "rating", "reviews", "website", "domain",
+    "slug", "model", "demo_url", "go_url", "pixel_url", "embed_url", "pay_url",
+    "expires_at", "status", "reason",
+]
+# merged from /create; "domain"/"brand" stay with the lead row (normalized)
+DEMO_FIELDS = ["model", "slug", "demo_url", "go_url", "pixel_url", "embed_url",
+               "pay_url", "expires_at"]
+
+# leads.py reads rows through cols[canonical_key]; to_lead_row writes these names
+LEAD_COLS = {"business": "business_name", "website": "website", "email": "email",
+             "phone": "phone", "contact": "contact_name", "locations": "locations"}
+
+
+def _num(v) -> float:
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def outscraper_search(query: str, limit: int, api_key: str,
+                      client: httpx.Client | None = None,
+                      poll_seconds: float = POLL_SECONDS) -> list[dict]:
+    """Trigger a Google Maps search task and poll until results are ready."""
+    own = client is None
+    client = client or httpx.Client()
+    try:
+        r = client.get(
+            OUTSCRAPER_SEARCH_URL,
+            params={"query": query, "limit": limit, "async": "true"},
+            headers={"X-API-KEY": api_key},
+            timeout=30,
+        )
+        if r.status_code in (401, 403, 429):
+            raise RuntimeError(f"Outscraper rejected the request ({r.status_code}): {r.text[:200]}")
+        r.raise_for_status()
+        results_location = r.json()["results_location"]
+        for _ in range(POLL_ATTEMPTS):  # up to ~10 min
+            time.sleep(poll_seconds)
+            pr = client.get(results_location, headers={"X-API-KEY": api_key}, timeout=30)
+            pr.raise_for_status()
+            payload = pr.json()
+            status = str(payload.get("status") or "").upper()  # API returns e.g. "Success"; compare case-insensitively (str() guards non-string shapes)
+            if status == "SUCCESS":
+                data = payload.get("data") or []
+                return data[0] if data else []
+            if status not in ("PENDING", "RUNNING"):
+                raise RuntimeError(f"Outscraper task failed: {payload.get('status')}")
+        raise RuntimeError("Outscraper task timed out")
+    finally:
+        if own:
+            client.close()
+
+
+def to_lead_row(biz: dict) -> dict | None:
+    """Map an Outscraper Google Maps listing onto leads.py's canonical row."""
+    site = (biz.get("website") or "").strip()
+    if not site:
+        return None
+    if biz.get("business_status") not in (None, "OPERATIONAL"):
+        return None
+    return {
+        "business_name": biz.get("name") or "",
+        "website": site,
+        "email": (biz.get("email") or "").strip(),
+        "phone": biz.get("phone") or "",
+        "contact_name": biz.get("contact_name") or biz.get("owner_name") or "",
+        "rating": biz.get("rating") or "",
+        "reviews": biz.get("reviews") or "",
+    }
+
+
+def run(niche: str, location: str, max_leads: int, fetch_limit: int,
+        out_path: str, server: str, token: str, model: str | None,
+        cfg: Config, suppress: set[str], outscraper_key: str,
+        sleep: float = 0.5) -> int:
+    print(f"[1/4] Searching Outscraper: {niche} in {location} ...")
+    raw = outscraper_search(f"{niche} {location}", fetch_limit, outscraper_key)
+    rows = [r for r in (to_lead_row(b) for b in raw) if r]
+    # highest-rated first so --max keeps the best of the batch
+    rows.sort(key=lambda r: (-_num(r["rating"]), r["business_name"]))
+    print(f"      {len(rows)} raw listings with an operational website")
+
+    print("[2/4] Filtering (no chat widget, no chains, no opted-out) ...")
+    results = process(rows, cols=LEAD_COLS, cfg=cfg, suppression=suppress)
+    candidates = [r for r in results if r["status"] == "ok"]
+    dropped = {}
+    for r in results:
+        if r["status"] != "ok":
+            dropped[r["reason"]] = dropped.get(r["reason"], 0) + 1
+    print(f"      {len(candidates)} candidates "
+          f"(dropped: {', '.join(f'{k}={v}' for k, v in sorted(dropped.items())) or 'none'})")
+
+    print("[3/4] Creating demos ...")
+    outreach = []
+    demo_failures = 0
+    with httpx.Client() as client:
+        for r in candidates:
+            if len(outreach) >= max_leads:
+                break
+            demo = create_one(client, server, token, r["url"], model)
+            time.sleep(sleep)
+            if demo.get("status") == "ok":
+                row = {**r, **{k: demo.get(k, "") for k in DEMO_FIELDS}}
+                outreach.append(row)
+                print(f"      ok  {row['business_name']} -> {row['email']} -> {row['demo_url']}")
+            else:
+                demo_failures += 1
+                print(f"      ERR {r['business_name']}: {demo.get('error', 'create failed')[:120]}")
+
+    print(f"[4/4] Writing {out_path} ({len(outreach)} outreach-ready leads, "
+          f"{demo_failures} demo failures)")
+    os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
+    with open(out_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=OUT_FIELDS, extrasaction="ignore")
+        writer.writeheader()
+        for row in outreach:
+            writer.writerow(row)
+    if not outreach:
+        print("no leads survived; check API credits and filters before sending")
+        return 1
+    print("Next: python src/outreach.py --in " + out_path +
+          " --out data/emails.csv && python src/campaign.py ...")
+    return 0
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(
+        description="ChatDoorman lead pipeline: niche + metro in, outreach CSV out")
+    ap.add_argument("--niche", required=True, help='e.g. "aesthetic med spa"')
+    ap.add_argument("--location", required=True, help='e.g. "Atlanta GA"')
+    ap.add_argument("--max", type=int, default=200,
+                    help="target outreach-ready leads (candidates are attempted "
+                         "in rating order until this many demos are live)")
+    ap.add_argument("--fetch-limit", type=int, default=None,
+                    help="Outscraper result limit (default: --max; raise it to "
+                         "offset filter drops)")
+    ap.add_argument("--out", default=os.path.join("data", "pipeline.csv"))
+    ap.add_argument("--server", default=os.getenv("DEMO_SERVER_URL", "http://localhost:8000"))
+    ap.add_argument("--token", default=os.getenv("ADMIN_TOKEN"),
+                    help="demo server admin token (default: ADMIN_TOKEN env)")
+    ap.add_argument("--model", default=None, help="pin one model for all demos")
+    ap.add_argument("--allow-catch-all", action="store_true")
+    ap.add_argument("--suppress", default=None, help="opt-out list (emails)")
+    ap.add_argument("--sleep", type=float, default=0.5,
+                    help="pause between billing API calls")
+    args = ap.parse_args()
+
+    outscraper_key = os.getenv("OUTSCRAPER_API_KEY")
+    hunter_key = os.getenv("HUNTER_API_KEY")
+    if not outscraper_key or not hunter_key:
+        print("Set OUTSCRAPER_API_KEY and HUNTER_API_KEY env vars first.", file=sys.stderr)
+        return 2
+    if not args.token:
+        print("missing admin token: set ADMIN_TOKEN or pass --token "
+              "(the demo server rejects unauthenticated /create)", file=sys.stderr)
+        return 2
+
+    def find_with_pause(domain):
+        found = domain_search(domain, hunter_key)
+        time.sleep(args.sleep)
+        return found
+
+    def verify_with_pause(email):
+        verdict = verify_email(email, hunter_key)
+        time.sleep(args.sleep)
+        return verdict
+
+    cfg = Config(chain_threshold=5, verify=True,
+                 allow_catch_all=args.allow_catch_all, hunter_key=hunter_key,
+                 find_email_fn=find_with_pause, verify_fn=verify_with_pause)
+    suppress = load_suppression(args.suppress) if args.suppress else set()
+    return run(args.niche, args.location, max(1, args.max),
+               args.fetch_limit or max(1, args.max), args.out,
+               args.server.rstrip("/"), args.token, args.model,
+               cfg, suppress, outscraper_key, sleep=max(0.0, args.sleep))
+
+
+if __name__ == "__main__":
+    sys.exit(main())

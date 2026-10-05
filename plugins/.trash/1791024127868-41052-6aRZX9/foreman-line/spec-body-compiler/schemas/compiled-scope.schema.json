@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "foreman-line/spec-body-compiler/compiled-scope.schema.json",
+  "title": "Compiled scope artifact (FK-P2)",
+  "description": "Closed artifact document emitted by @foreman-line/spec-body-compiler. Unknown fields, unknown enum values and missing required data fail closed; artifactVersion mismatch refuses. Lists are sorted ascending by UTF-16 code-unit order of their canonical spelling. `surfaces:` never appears in any field (D10).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifactVersion",
+    "grammar",
+    "spec",
+    "allowedFiles",
+    "frozenSurfaces",
+    "forbiddenSurfaces",
+    "authorityState",
+    "compiledScopeDigest"
+  ],
+  "properties": {
+    "artifactVersion": { "const": "0.1.0" },
+    "grammar": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "convention",
+        "schemaRevision",
+        "revisionDate",
+        "sectionDigest",
+        "fileDigest"
+      ],
+      "properties": {
+        "convention": { "const": "SPEC-CONVENTION" },
+        "schemaRevision": { "const": "v0.4" },
+        "revisionDate": { "const": "2026-09-27" },
+        "sectionDigest": {
+          "const": "sha256:96113a55c6ddf2a7bad93c90d7004f1e51550aa2b1164ae06093992ee824398d"
+        },
+        "fileDigest": {
+          "const": "sha256:70508684d2c929d1331ed0cd9a147fcc2206593a04fbf210314e22fb80cba0a8"
+        }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ticket", "specPath"],
+      "properties": {
+        "ticket": { "type": "string", "minLength": 1 },
+        "specPath": { "type": "string", "minLength": 1 }
+      }
+    },
+    "allowedFiles": {
+      "description": "Exact canonical repo-relative paths (Entry). May be empty; never globs; no scope syntax of any kind (grants are exact non-glob — D10). The pattern rejects every glob metacharacter (* ? [ ] { }), any '.'/'..' segment, empty segments, absolute/UNC/drive/ADS forms, backslashes, and trailing dot/space (F05 Entry exactness).",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^(?! )(?!/)(?!.*//)(?!.*[\\\\:*?\\[\\]{}])(?!(?:.*/)?\\.\\.?(?:/|$))(?!.*\\.$)(?!.* $)[^*]*[^*/ ]$"
+      }
+    },
+    "frozenSurfaces": {
+      "description": "Negative authority (ScopeRef). Exact paths or the deny-only `path/**` directory-scope form — the ONLY permitted glob shape. Sources: entries annotated `frozen` in the `**Forbidden surfaces (exact):**` paragraph (Step-0 flag C ruling). The pattern rejects every other glob metacharacter and all traversal/absolute/ADS forms, including in the scope base.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^(?! )(?!/)(?!.*//)(?!.*[\\\\:?\\[\\]{}])(?!(?:.*/)?\\.\\.?(?:/|$))(?!.*\\.$)(?!.* $)(?:[^*]*[^*/ ]/\\*\\*|[^*]*[^*/ ])$"
+      }
+    },
+    "forbiddenSurfaces": {
+      "description": "Negative authority (ScopeRef). Exact paths or the deny-only `path/**` directory-scope form — the ONLY permitted glob shape. Sources: entries not annotated `frozen` in the `**Forbidden surfaces (exact):**` paragraph. Same exactness constraints as frozenSurfaces.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^(?! )(?!/)(?!.*//)(?!.*[\\\\:?\\[\\]{}])(?!(?:.*/)?\\.\\.?(?:/|$))(?!.*\\.$)(?!.* $)(?:[^*]*[^*/ ]/\\*\\*|[^*]*[^*/ ])$"
+      }
+    },
+    "authorityState": {
+      "description": "`granted` iff allowedFiles.length > 0. Every consumer MUST refuse `empty` (MISSING_AUTHORITY) — the empty set is never widened.",
+      "enum": ["granted", "empty"]
+    },
+    "compiledScopeDigest": {
+      "description": "sha256: + 64 lowercase hex over the F05.5 wrapper {domain: \"foreman-line.spec-body-compiler.compiled-scope\", apiVersion: \"0.1.0\", payload: <artifact without this member>}.",
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}

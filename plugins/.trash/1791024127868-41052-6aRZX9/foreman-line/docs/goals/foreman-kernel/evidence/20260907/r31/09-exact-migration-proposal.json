@@ -1,0 +1,164 @@
+{
+  "basis": "Independently source-authored proposal applied in memory to accepted baseline; no generator call or registry artifact write",
+  "counts": {
+    "sources": 18,
+    "items": 1585,
+    "rules": 542,
+    "audit": 202,
+    "reconciliations": 21
+  },
+  "ordering": "Retain accepted source/rule/item order. Insert M01 immediately before constraint8 in standing inventory and global rules; insert note immediately before retained thesis. Append four audit records in M01,note,thesis,M03 order.",
+  "priorManifest": "7f122f6ddecc916582ca299b48f8eedc23c813a960f28f2b786c76e343d90d2b",
+  "newManifest": "605f9c370c62cdbf619d1f65583a2404311d69cfc8c0fcc7c7867959b4adf4d5",
+  "decisionInputCanonicalJson": "{\"commit\":\"8d500704c9e3d6d8b652bbe838aa3623f88203fc\",\"path\":\"plugins/foreman-line/docs/goals/foreman-kernel/R31-coordinator-decision-20260907.md\"}",
+  "decisionInputDigest": "7095b8623ecfbab4d383046d19111a0c99580f94e2b03ca20f0dd1eb02639e69",
+  "decisionPath": "plugins/foreman-line/docs/goals/foreman-kernel/R31-coordinator-decision-20260907.md",
+  "decisionCommit": "8d500704c9e3d6d8b652bbe838aa3623f88203fc",
+  "decisionBlobSha256": "974c26657ef1cfab3c7a72cdb552e1e979ac9534832acb7009d5d0f74c776e9f",
+  "diagnostic": {
+    "kind": "command-result",
+    "reference": "{\"actorClass\":\"coordinator\",\"commandId\":\"r31-plan-decision-git-blob\",\"exitCode\":0,\"inputDigest\":\"7095b8623ecfbab4d383046d19111a0c99580f94e2b03ca20f0dd1eb02639e69\",\"resultDigest\":\"974c26657ef1cfab3c7a72cdb552e1e979ac9534832acb7009d5d0f74c776e9f\",\"tool\":\"@foreman-line/authority-registry\",\"toolVersion\":\"0.1.0\"}",
+    "digest": "d44523e9f8d044c45f6138d5df68c521ea8f359674e40aea874df8bf2c7d8ee4"
+  },
+  "delegationFullShape": {
+    "ruleId": "rule.fk-loop-directive.c98e1f76aeb5.continuation",
+    "authoritySubject": "goal.continuation.scoped-decision-authority",
+    "authorityClaim": "covered-coordinator-decisions-need-no-repeat-permission",
+    "normalizedStatement": "The recorded developer instruction authorizes this coordinator's needed non-destructive decisions/actions within the existing goal without repeated permission requests.",
+    "sourceRefs": [
+      {
+        "sourceId": "fk-loop-directive",
+        "itemId": "item.c98e1f76aeb5",
+        "locatorDigest": "1388a84f45baa2148f545913cc7c750ae1e2deb65ca58db0de74ed4824c00588",
+        "valueDigest": "f8efec1d5b8607c1af4634545b805ef6fff99f1b18a615575b37b10fd07a0146"
+      }
+    ],
+    "authorityBasisRef": {
+      "sourceId": "fk-loop-directive",
+      "itemId": "item.c98e1f76aeb5",
+      "locatorDigest": "1388a84f45baa2148f545913cc7c750ae1e2deb65ca58db0de74ed4824c00588",
+      "valueDigest": "f8efec1d5b8607c1af4634545b805ef6fff99f1b18a615575b37b10fd07a0146"
+    },
+    "applicability": {
+      "goals": [
+        "foreman-kernel"
+      ],
+      "roles": [
+        "coordinator"
+      ],
+      "stages": [
+        "stage-zero",
+        "shaping",
+        "step-zero",
+        "build",
+        "deterministic-verify",
+        "adversarial-review",
+        "merge",
+        "closure"
+      ],
+      "operations": [
+        "source-inventory",
+        "spec-mutation",
+        "repo-read",
+        "repo-mutation",
+        "state-transition",
+        "external-write"
+      ],
+      "hosts": [
+        "any"
+      ]
+    },
+    "severity": "critical",
+    "classification": "narrative-provenance",
+    "decision": "ADVISORY",
+    "refusalCode": null,
+    "enforcementOwner": "provenance-only",
+    "assurance": "human-ratified",
+    "pairedRuleIds": [],
+    "retirementState": "active-reading",
+    "retirementEvidence": {
+      "predicate": null,
+      "negativeRefusalTest": null,
+      "corpusSweep": null,
+      "independentBypassAttempt": null
+    },
+    "bindingDigest": "088cb025312c0789567e682f124b98e4a614e9cab231f8e3e9bcc1d522c10735"
+  },
+  "record": {
+    "reconciliationId": "registry-rework-446700d",
+    "topic": "R30 registry bindings superseded by the coordinator-ratified finite R31 source adoption.",
+    "observedRefs": [
+      {
+        "sourceId": "standing-constraints",
+        "itemId": "item.constraint-14",
+        "locatorDigest": "22f088d2c9e1efe1e1f6b620474d795c54c76354b19c1b0508ebd1b31d3b959c",
+        "valueDigest": "4f3ee9daa1a008f7002cce5742fa585387976783bb9a1a333f5cd6ab5a1d4d19"
+      },
+      {
+        "sourceId": "foreman-line-plan",
+        "itemId": "item.8bef504af1db",
+        "locatorDigest": "6a99cca27c8da23a9569a3ab65ca4c3f0b29751f420e6a3bfd4ba8969b31c07d",
+        "valueDigest": "9d600b9b44dfe18183d5a668eb46862ab9187395aa35ce43a15d2b9e41e4741d"
+      },
+      {
+        "sourceId": "foreman-line-plan",
+        "itemId": "item.two-gate-thesis",
+        "locatorDigest": "464f7353d3bb900a07fe85436e96f2fd8729dd616c635338c17ed6f3a703875e",
+        "valueDigest": "9f09f265b9c38dd2abd8707f94a94d70783e32bcd58c354ff1c1c0446a532d59"
+      },
+      {
+        "sourceId": "foreman-line-plan",
+        "itemId": "item.483a4914f57e",
+        "locatorDigest": "b209a80af8457ba1a89290fe308c3a65484075080d43cc059692d7044e788647",
+        "valueDigest": "9bc1d135bbd0ddbb5fedd27f9d7040660d8ad8e94b6ba2ff3da56f86ecd516ad"
+      },
+      {
+        "sourceId": "fk-loop-directive",
+        "itemId": "item.c98e1f76aeb5",
+        "locatorDigest": "1388a84f45baa2148f545913cc7c750ae1e2deb65ca58db0de74ed4824c00588",
+        "valueDigest": "f8efec1d5b8607c1af4634545b805ef6fff99f1b18a615575b37b10fd07a0146"
+      }
+    ],
+    "observedEvidence": [
+      {
+        "kind": "git-commit",
+        "reference": "446700d47c2e162fcfa575d5a46b9247241a59c1",
+        "digest": "bb421f8e3d3baba8781937f302d42210262a72ed874f756a72e527767b462e05"
+      },
+      {
+        "kind": "git-commit",
+        "reference": "8d500704c9e3d6d8b652bbe838aa3623f88203fc",
+        "digest": "81070168ff53c12d3cc94020d76da1dbcbfde5a460b579e74d14f258cc4c2a71"
+      },
+      {
+        "kind": "command-result",
+        "reference": "{\"actorClass\":\"coordinator\",\"commandId\":\"registry-binding-manifest-r30\",\"exitCode\":0,\"inputDigest\":\"43d3dfe4823498282c484ef4a614bef918b89543ca80fc14bc0548bf2281eae5\",\"resultDigest\":\"7f122f6ddecc916582ca299b48f8eedc23c813a960f28f2b786c76e343d90d2b\",\"tool\":\"@foreman-line/authority-registry\",\"toolVersion\":\"0.1.0\"}",
+        "digest": "b0a426bb57a320f5c2379df4b0272fc356dc7dfc28d7f3ff42c4785bdc257d8c"
+      },
+      {
+        "kind": "command-result",
+        "reference": "{\"actorClass\":\"coordinator\",\"commandId\":\"superseding-binding-manifest-r31\",\"exitCode\":0,\"inputDigest\":\"7f122f6ddecc916582ca299b48f8eedc23c813a960f28f2b786c76e343d90d2b\",\"resultDigest\":\"605f9c370c62cdbf619d1f65583a2404311d69cfc8c0fcc7c7867959b4adf4d5\",\"tool\":\"@foreman-line/authority-registry\",\"toolVersion\":\"0.1.0\"}",
+        "digest": "c486ecceac7f2d3205cc044ff2a5d3c49d5669c72aea6b35600de19d91400be5"
+      },
+      {
+        "kind": "command-result",
+        "reference": "{\"actorClass\":\"coordinator\",\"commandId\":\"r31-plan-decision-git-blob\",\"exitCode\":0,\"inputDigest\":\"7095b8623ecfbab4d383046d19111a0c99580f94e2b03ca20f0dd1eb02639e69\",\"resultDigest\":\"974c26657ef1cfab3c7a72cdb552e1e979ac9534832acb7009d5d0f74c776e9f\",\"tool\":\"@foreman-line/authority-registry\",\"toolVersion\":\"0.1.0\"}",
+        "digest": "d44523e9f8d044c45f6138d5df68c521ea8f359674e40aea874df8bf2c7d8ee4"
+      }
+    ],
+    "authoritativeRuleIds": [
+      "rule.standing-constraints.constraint-14",
+      "rule.fk-loop-directive.c98e1f76aeb5.continuation"
+    ],
+    "scopedDisposition": "R31 adopts two exact upstream source blobs within the unchanged eighteen-source set under the externally recorded coordinator ratification of finite plan106fd58 and existing continuation delegation. The decision blob at source8d ratifies that plan only; later mapping approval and implementation dispatch are separately recorded and are not attributed to the old decision. Add the complete conditional plugin/marketplace verification requirement without an install grant. Add the distinct historical repository annotation, relocate the unchanged historical thesis from paragraph1 to paragraph2 while preserving its identity and authority effect, and correct the historical library-name value without new policy or deployment evidence. Preserve all twenty prior reconciliation records canonically, including historical thirteen-standing-rule statements; current coverage becomes fourteen. Add two inventory items, one rule and four audit dispositions; change one existing value and one existing locator binding. M01 is representative changed-corpus evidence, not ratification of the entire amendment. L01 remains noncontrolling provenance, and the supporting diagnostic establishes Git-blob custody only.",
+    "unresolvedConsequence": "Future binding changes require another typed prior-to-new migration. Independent mapping review and a separately recorded implementation ruling remain prerequisites; complete verification, fresh independent reviews and human Gate3 remain mandatory. No diagnostic, source annotation or record membership grants operational authority, proves installation verification, or claims historical commands were rerun.",
+    "migrationStatus": "superseded-by-amendment",
+    "supersedingEvidence": {
+      "sourceId": "standing-constraints",
+      "itemId": "item.constraint-14",
+      "locatorDigest": "22f088d2c9e1efe1e1f6b620474d795c54c76354b19c1b0508ebd1b31d3b959c",
+      "valueDigest": "4f3ee9daa1a008f7002cce5742fa585387976783bb9a1a333f5cd6ab5a1d4d19"
+    }
+  },
+  "proposedRecordCanonicalSha256": "73b921477e09f2bcf20c4cf27d182221746c6cd85e2948a82f573e465177bf33"
+}

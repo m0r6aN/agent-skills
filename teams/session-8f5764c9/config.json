@@ -1,0 +1,18 @@
+{
+  "name": "session-8f5764c9",
+  "createdAt": 1783970466978,
+  "leadAgentId": "team-lead@session-8f5764c9",
+  "leadSessionId": "8f5764c9-9788-4f4f-b730-b6b8ed60fcec",
+  "members": [
+    {
+      "agentId": "team-lead@session-8f5764c9",
+      "name": "team-lead",
+      "agentType": "team-lead",
+      "joinedAt": 1783970466978,
+      "tmuxPaneId": "leader",
+      "cwd": "D:\\Repos\\BioStack",
+      "subscriptions": [],
+      "backendType": "in-process"
+    }
+  ]
+}

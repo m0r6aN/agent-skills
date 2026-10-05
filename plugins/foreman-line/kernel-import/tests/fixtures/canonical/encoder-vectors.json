@@ -1,0 +1,93 @@
+{
+  "class": "canonical",
+  "records": [
+    {
+      "id": "CAN-01",
+      "name": "key order is UTF-16 code-unit order (uppercase before lowercase)",
+      "expectedOutcome": "byte-exact",
+      "value": {
+        "0": 6,
+        "Z": 1,
+        "a": 2,
+        "A": 3,
+        "_": 4,
+        "~": 5
+      },
+      "canonical": "{\"0\":6,\"A\":3,\"Z\":1,\"_\":4,\"a\":2,\"~\":5}"
+    },
+    {
+      "id": "CAN-02",
+      "name": "array member order preserved while object keys sort in the same value",
+      "expectedOutcome": "byte-exact",
+      "value": {
+        "keys": {
+          "z": 1,
+          "a": 2
+        },
+        "array": [
+          "z",
+          "a"
+        ]
+      },
+      "canonical": "{\"array\":[\"z\",\"a\"],\"keys\":{\"a\":2,\"z\":1}}"
+    },
+    {
+      "id": "CAN-03",
+      "name": "escape set is quote, backslash and U+0000-U+001F only (slash and non-ASCII raw)",
+      "expectedOutcome": "byte-exact",
+      "value": "\"\\\n\t\u0000/é😀",
+      "canonical": "\"\\\"\\\\\\u000a\\u0009\\u0000/é😀\""
+    },
+    {
+      "id": "CAN-04",
+      "name": "integer lexemes are digits only (no sign, fraction or exponent forms)",
+      "expectedOutcome": "byte-exact",
+      "value": {
+        "zero": 0,
+        "ten": 10,
+        "max": 9007199254740991
+      },
+      "canonical": "{\"max\":9007199254740991,\"ten\":10,\"zero\":0}"
+    },
+    {
+      "id": "CAN-05",
+      "name": "Unicode is not normalized (U+00E9 stays distinct from e + U+0301)",
+      "expectedOutcome": "byte-exact",
+      "value": [
+        "é",
+        "e\u0301"
+      ],
+      "canonical": "[\"é\",\"e\u0301\"]"
+    },
+    {
+      "id": "CAN-06",
+      "name": "no path case folding (Path and path stay distinct, Path sorts first)",
+      "expectedOutcome": "byte-exact",
+      "value": {
+        "path": 2,
+        "Path": 1
+      },
+      "canonical": "{\"Path\":1,\"path\":2}"
+    },
+    {
+      "id": "CAN-07",
+      "name": "empty containers and atoms encode literally",
+      "expectedOutcome": "byte-exact",
+      "value": [
+        {},
+        [],
+        null,
+        ""
+      ],
+      "canonical": "[{},[],null,\"\"]"
+    },
+    {
+      "id": "CAN-08",
+      "name": "unpaired surrogate (lone U+D800) is rejected",
+      "expectedOutcome": "rejects",
+      "value": {
+        "s": "\ud800"
+      }
+    }
+  ]
+}

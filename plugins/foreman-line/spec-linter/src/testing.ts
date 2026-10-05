@@ -20,4 +20,8 @@ export const sampleSpecFrontmatter: SpecFrontmatter = {
   permission_profile: 'builder-standard',
   data_classification: 'internal',
   involves: ['ticketing'],
+  expertise: 'engineering',
+  inputs: ['text', 'image'],
+  min_context: 200000,
+  thinking_level: 'low',
 }

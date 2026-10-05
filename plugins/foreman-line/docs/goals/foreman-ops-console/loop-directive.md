@@ -9,9 +9,23 @@
 >
 > **State (update on every stop/closure):** Charter RATIFIED 2026-09-16 (owner:
 > OQ1–OQ4 ruled per recommendations, OQ5 decided 2026-09-15). Plan-level
-> adversarial review NOT run (mandatory next step). Loop directive active
-> (scaffold only — the loop starts after plan review). No parcel shaped,
-> no Gate 2, no external effects.
+> adversarial review RUN 2026-09-16 (REQUEST CHANGES; findings triaged in
+> `plan-review-findings.md`, dispositions frozen into the FOC-P0 spec).
+> **2026-09-26 (coordinator decision 2026-09-26 under owner blanket
+> authority): FOC-P0 SHAPED** — frozen projection contract + fixture corpus at
+> `docs/specs/active/FOC-P0-projection-contract-and-discovery-inventory.md`
+> (spec-linter clean) — **and FOC-P1–FOC-P4 IMPLEMENTED** in
+> `plugins/foreman-line/ops-console/`: projection library (chain walk + scans +
+> derivation R1–R5), localhost-only board/API on 127.0.0.1:8081 (frozen route
+> table), gates/alerts presentation via the OQ5 proxies with the console-local
+> notification + invocation-audit stores, and the S1 live exit proof against
+> goal `w4-closeout` / parcel `E6-R1` chain `a5b1975a-7497-4200-bac2-5d8a6fd6c749`.
+> Package verification: `npm test` 73/73 green, `npm run typecheck` clean,
+> `npm run lint` exit 0; read-only invariant proven by negative control
+> (`tests/read-only.test.ts`). Phase 2 (FOC-P5–FOC-P8) remains OUT — charter
+> D7 requires a scoped Gate 1 amendment first. Gate 1 ratification capture and
+> Gate 3 merge remain owner acts with no console capture path; Stage-F
+> spec-move and merge decisions stay with the coordinator/owner.
 
 **Resume prompt** (fresh session, after Gate 1): `/goal resume foreman-ops-console`
 

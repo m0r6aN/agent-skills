@@ -1,0 +1,198 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "foreman-line.kernel-import.legacy-import",
+  "title": "FK-P11 legacy import document (T1 closed shapes)",
+  "description": "Machine-readable companion to the T1 shape table. The code validator (src/import-document.ts) is the runtime authority; every object here is closed (additionalProperties: false) per the default-deny wire discipline.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "apiVersion",
+    "documentKind",
+    "corpusDigest",
+    "sourceLineage",
+    "corpusManifest",
+    "rows"
+  ],
+  "properties": {
+    "apiVersion": { "const": "0.1.0" },
+    "documentKind": { "const": "legacy-import" },
+    "corpusDigest": { "$ref": "#/$defs/Digest" },
+    "sourceLineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rootCommit", "tipCommit"],
+      "properties": {
+        "rootCommit": { "$ref": "#/$defs/CommitId" },
+        "tipCommit": { "$ref": "#/$defs/CommitId" }
+      }
+    },
+    "corpusManifest": { "$ref": "#/$defs/CorpusManifest" },
+    "rows": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1024,
+      "items": { "$ref": "#/$defs/LegacyGoalRecord" }
+    }
+  },
+  "$defs": {
+    "Digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "CommitId": {
+      "type": "string",
+      "pattern": "^([0-9a-f]{40}|[0-9a-f]{64})$"
+    },
+    "Id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9._-]+$"
+    },
+    "SafeInt": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "SourceProvenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourcePath", "sourceDigest", "sourceCommit"],
+      "properties": {
+        "sourcePath": { "type": "string", "minLength": 1, "maxLength": 4096 },
+        "sourceDigest": { "$ref": "#/$defs/Digest" },
+        "sourceCommit": { "$ref": "#/$defs/CommitId" }
+      }
+    },
+    "RatificationRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gitIdentity", "digest", "provenance"],
+      "properties": {
+        "gitIdentity": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "digest": { "$ref": "#/$defs/Digest" },
+        "provenance": { "$ref": "#/$defs/SourceProvenance" }
+      }
+    },
+    "ApprovalClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidenceKind", "gitIdentity", "digest"],
+      "properties": {
+        "evidenceKind": {
+          "enum": ["commit-ref", "signature", "status-check", "merge-record"]
+        },
+        "gitIdentity": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "digest": { "$ref": "#/$defs/Digest" },
+        "provenance": {
+          "oneOf": [{ "$ref": "#/$defs/SourceProvenance" }, { "type": "null" }]
+        }
+      }
+    },
+    "ClaimedBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principalRef", "operationId", "repositoryRef", "worktreeRef"],
+      "properties": {
+        "principalRef": { "$ref": "#/$defs/Id" },
+        "operationId": { "$ref": "#/$defs/Id" },
+        "repositoryRef": { "$ref": "#/$defs/Id" },
+        "worktreeRef": { "$ref": "#/$defs/Id" }
+      }
+    },
+    "OperationalFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claimedRevision",
+        "claimedLeaseHolderPrincipalRef",
+        "claimedPendingTransitionTarget",
+        "claimedWakeupCount",
+        "claimedHandoffCount",
+        "claimedBinding"
+      ],
+      "properties": {
+        "claimedRevision": {
+          "oneOf": [{ "$ref": "#/$defs/SafeInt" }, { "type": "null" }]
+        },
+        "claimedLeaseHolderPrincipalRef": {
+          "oneOf": [{ "$ref": "#/$defs/Id" }, { "type": "null" }]
+        },
+        "claimedPendingTransitionTarget": {
+          "enum": [
+            "proposed",
+            "active",
+            "awaiting-human",
+            "completed",
+            "cancelled",
+            null
+          ]
+        },
+        "claimedWakeupCount": {
+          "oneOf": [{ "$ref": "#/$defs/SafeInt" }, { "type": "null" }]
+        },
+        "claimedHandoffCount": {
+          "oneOf": [{ "$ref": "#/$defs/SafeInt" }, { "type": "null" }]
+        },
+        "claimedBinding": {
+          "oneOf": [{ "$ref": "#/$defs/ClaimedBinding" }, { "type": "null" }]
+        }
+      }
+    },
+    "LegacyGoalRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "goalId",
+        "claimedStatus",
+        "source",
+        "claimedRatificationRefs",
+        "claimedApprovals",
+        "claimedOperationalFacts"
+      ],
+      "properties": {
+        "goalId": { "$ref": "#/$defs/Id" },
+        "claimedStatus": {
+          "enum": ["proposed", "active", "awaiting-human", "completed", "cancelled"]
+        },
+        "source": { "$ref": "#/$defs/SourceProvenance" },
+        "claimedRatificationRefs": {
+          "type": "array",
+          "maxItems": 64,
+          "items": { "$ref": "#/$defs/RatificationRef" }
+        },
+        "claimedApprovals": {
+          "type": "array",
+          "maxItems": 64,
+          "items": { "$ref": "#/$defs/ApprovalClaim" }
+        },
+        "claimedOperationalFacts": { "$ref": "#/$defs/OperationalFacts" }
+      }
+    },
+    "CorpusItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourcePath", "sourceDigest", "disposition", "reason"],
+      "properties": {
+        "sourcePath": { "type": "string", "minLength": 1, "maxLength": 4096 },
+        "sourceDigest": { "$ref": "#/$defs/Digest" },
+        "disposition": { "enum": ["import", "excluded"] },
+        "reason": { "type": "string", "minLength": 1, "maxLength": 256 }
+      }
+    },
+    "CorpusManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifestKind", "sourceRevision", "items"],
+      "properties": {
+        "manifestKind": { "const": "legacy-corpus-manifest" },
+        "sourceRevision": { "$ref": "#/$defs/CommitId" },
+        "items": {
+          "type": "array",
+          "maxItems": 4096,
+          "items": { "$ref": "#/$defs/CorpusItem" }
+        }
+      }
+    }
+  }
+}
