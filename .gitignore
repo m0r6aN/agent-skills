@@ -7,3 +7,16 @@ node_modules/
 **/.claude/settings.local.json
 .claude/.simplify-ignore-cache/
 .claude/sdd-cache/
+
+# Harness runtime state and test caches — never repo content.
+# projects/, sessions/, .oauth_refresh.lock.owner: the agent harness writes its
+# global project/session state root into the CWD; it holds other projects'
+# session transcripts and live session keys.
+# plugins/cache: regenerable plugin-install test cache (~109k files).
+# skills/accomplish-workspace: stale (2026-06-16) external skill-eval run that
+# was relocated into this tree; preserved on disk, not this repo's content.
+/.oauth_refresh.lock.owner
+/sessions/
+/projects/
+/plugins/cache/
+/skills/accomplish-workspace/
