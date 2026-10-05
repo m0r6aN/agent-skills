@@ -20,11 +20,12 @@ The CI-P2 Stage-F move commit `7e0735a` shipped its done-spec with incomplete li
 **Lesson #50 — a rename commit that claims content changes must show deletions.** The Stage-F commit's diff was "33 insertions(+), 0 deletions" while its message claimed a `status:` change and a new field — a modified line is a deletion plus an insertion, so zero deletions proved the content change never staged. Closure checks verified file counts and rename shape but not diff shape. Verify the SHAPE of a diff against what the commit CLAIMS (a claimed modification must produce deletions; a claimed addition must produce insertions) before accepting any closure.
 **Disposition:** narrative coordinator discipline + this record; OPEN install candidate: the coordinator's closure checklist in the carryover/COORDINATOR-PATTERN at next touch.
 
-## Named follow-ups (developer-owned)
+## Follow-ups and check disposition
 
-1. **U1 pin red (pre-existing, non-required check):** `test-plugin-install` → "Validate manifest versions" fails on main (`plugin.json` 0.6.9 vs expected `u1-verifier-pin`) — the U1/foreman-kernel lane's in-flight pin rollout; fails on their own main commits since `95ee74e`. Not required by `main-pr-gate` (which requires `test` + `integration-report`).
-2. **Waiver packages:** `authority-registry` (R31 drift + 32/30 CI-env members), `bypass-outage-harness` (FK-P17 spec missing + mutationScope typing + CTL gates), `kernel-lease` (FK constraint + biome + the CN-01..CN-05 race family) → foreman-kernel line; `jev-decisions` (6× LEGACY_EXECUTION_RETIRED) → JEV line. Waived entries self-expire on signature divergence; removal is the next runner-touching parcel's Stage-F bookkeeping.
-3. **OQ3:** dropping/filtering the `on: push` duplicate runs remains the largest remaining CI-waste lever (out of charter scope).
+The earlier U1 version-pin note is withdrawn: `validate-versions.js` filters `git describe` to numeric version tags, so it excludes `u1-verifier-pin`. At this PR head the selected version is `0.6.9`, matching all manifests; `test-plugin-install` passed on this commit (run `37118852140`).
+
+1. **Waiver packages:** `authority-registry` (R31 drift + 32/30 CI-env members), `bypass-outage-harness` (FK-P17 spec missing + mutationScope typing + CTL gates), `kernel-lease` (FK constraint + biome + the CN-01..CN-05 race family) → foreman-kernel line; `jev-decisions` (6× LEGACY_EXECUTION_RETIRED) → JEV line. Waived entries self-expire on signature divergence; removal is the next runner-touching parcel's Stage-F bookkeeping.
+2. **OQ3:** dropping/filtering the `on: push` duplicate runs remains the largest remaining CI-waste lever (out of charter scope).
 
 ## Residuals (accepted, named in their records)
 
