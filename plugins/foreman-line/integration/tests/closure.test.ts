@@ -541,29 +541,6 @@ test('AC12d: retry with no half-closed and no seal raises CLOSURE_STATE_MISSING'
   )
 })
 
-test('P2a/D19: retryHalfClosedClosure reads the chain from the GIVEN repoRoot, not process.cwd()', async () => {
-  // Builder #15: a root the old default never held — a tmp dir with a sealed
-  // chain on disk that the invoking cwd does not contain. Uses the REAL
-  // default chain loader (no loadReceiptChainFn injection) so the repoRoot
-  // parameter must flow end-to-end into the filesystem read.
-  const repoRoot = makeTempRepoRoot()
-  try {
-    writeChainToDisk(repoRoot, [...makeStageEChain(), makeSeal()])
-    const transport = makeRecordingTransport({ throwOnAnyCall: true })
-    const { fn, written } = captureWriteFn()
-    const result = await retryHalfClosedClosure(WORKFLOW_ID, {
-      transport,
-      writeFn: fn,
-      repoRoot,
-    })
-    assert.equal(result.kind, 'closed')
-    assert.equal(written.length, 0)
-    assert.equal(transport.calls.transitionIssue.length, 0)
-  } finally {
-    rmSync(repoRoot, { recursive: true, force: true })
-  }
-})
-
 test('AC12e: a retry that fails again emits a further half-closed receipt and returns half-closed', async () => {
   const transport = makeRecordingTransport({ failOn: 'transitionIssue' })
   const { fn, written } = captureWriteFn()

@@ -1,0 +1,52 @@
+{
+  "model": "sonnet",
+  "enabledPlugins": {
+    "foreman-line@m0r6an-agent-skills": true,
+    "audit-suite@m0r6an-agent-skills": true
+  },
+  "extraKnownMarketplaces": {
+    "m0r6an-agent-skills": {
+      "source": {
+        "source": "directory",
+        "path": "D:\\Repos\\agent-skills"
+      }
+    }
+  },
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "dark",
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true,
+  "autoMode": {
+    "environment": [
+      "### Org-wide",
+      "**Organization**: None configured",
+      "**Cloud provider(s)**: None configured",
+      "**Repository visibility**: PUBLIC — github.com/m0r6aN/agent-skills (confirmed via gh)",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: None configured",
+      "**Default / protected branches**: default branch `main`; ruleset active on `main`; gh also lists a large set of protected branches (`add-accomplish-skill`, `agent/kpp-001-a-foreman-r3`, `blackboxai/update-gitignore-runtime-artifacts`, `codex/foreman-line-bootstrap`, `codex/foreman-line-bootstrap-closeout`, `codex/foreman-line-bootstrap-r1`, `codex/foreman-routing-cerebras-shadow-20260830`, `codex/foreman-routing-cerebras-shadow-v2-20260830`, `codex/goal-intake-hierarchical-worker-fabric-20260903`, `codex/parcel-compiler-bootstrap`, `codex/wgt-p0a-foreman-reconciliation-20260801`, `codex/wgt-p0a-stage-f-archive-20260801`, `main`, `opencode/foreman-routing-policy-openrouter-v0.3-20260903`)",
+      "**CI/CD deploy targets**: None configured",
+      "**Network posture**: None configured",
+      "**Source control**: The trusted repo (github.com/m0r6aN/agent-skills, public) and its remote `origin` only — no additional orgs configured",
+      "**Trusted internal domains**: None configured",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: None configured",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: local credential/key files excluded from this repo via .gitignore — `.env`, `.env.*` (except `.env.example`/`.env.sample`), `*.key`, `/.credentials.json`, `daemon/control.key`, `daemon/pipe.key`; not for commit or sharing beyond the maintainer",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development",
+      "**Trusted repo**: this repo (D:\\Repos\\agent-skills, remote `origin` → github.com/m0r6aN/agent-skills.git) — PUBLIC, so only this repo's own work should be pushed there; confidential/secret material is never cleared into it regardless of visibility",
+      "**Org-specific CLIs**: None configured"
+    ]
+  },
+  "modelSettings": {
+    "claude-sonnet-5-5": {
+      "effortLevel": "low"
+    }
+  }
+}

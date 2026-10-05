@@ -81,27 +81,22 @@ export {
 } from './query/index.js'
 // W2-P3: routing-eval
 export type {
-  ParcelShadowAuthorization,
-  ResolvedParcelShadowAuthorization,
   RoutingInput,
   RoutingOptions,
   RoutingResult,
-  ShadowCandidateResult,
-  ShadowInvocationRequest,
+} from './routing-eval/index.js'
+export { evaluateRouting, RoutingError } from './routing-eval/index.js'
+export type {
   ShadowRoutingDependencies,
   ShadowRoutingInput,
   ShadowRoutingOptions,
-  ShadowRoutingResult,
-  ShadowSkippedResult,
-} from './routing-eval/index.js'
+} from './routing-eval/shadow.js'
 export {
-  evaluateRouting,
   executeShadowRoute,
   hashShadowPublicInput,
-  RoutingError,
   SHADOW_LIMITS,
   ShadowRoutingError,
-} from './routing-eval/index.js'
+} from './routing-eval/shadow.js'
 // W2-P5: skill-resolver
 export type {
   SkillResolverInput,

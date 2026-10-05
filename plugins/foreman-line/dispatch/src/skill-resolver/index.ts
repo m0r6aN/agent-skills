@@ -165,8 +165,6 @@ export function resolveSkills(
     role: 'builder',
     surfaces: Array.from(input.surfaces),
     injectedSkills,
-    // Q5's shape applied to the matrix (P2b-i R1/Q3): plugin-relative ref,
-    // with the root it resolves against recorded separately.
     matrixRef: MATRIX_PLUGIN_PATH,
     pluginRoot,
     timestamp: new Date().toISOString(),

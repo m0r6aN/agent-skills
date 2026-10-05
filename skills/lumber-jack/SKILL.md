@@ -38,20 +38,22 @@ Confirm the target before touching anything: `Operating on <base repo path> (rep
 
 From the base repo run `git worktree list --porcelain`. Worktrees can live anywhere — a sibling `<repo>-worktrees/` directory, `.claude/worktrees/`, `/tmp` — so the porcelain list, not a directory listing, is the authoritative inventory. Record for each entry: path, HEAD, branch (or `detached`). The base worktree is never removed. Also list local branches with no worktree: `git branch --list`.
 
-### 2. Classify each non-base worktree
+### 2. Classify worktrees and branch-only refs
 
-Inside each worktree:
+Classify each non-base worktree and each local branch without a worktree using the corresponding rules below.
 
 - **Uncommitted work** — `git status --porcelain` is non-empty. Untracked files count; they are work.
-- **Unpushed work** — commits on the worktree's HEAD not reachable from any remote-tracking ref: `git log --branches --not --remotes`, or `git log origin/<branch>..HEAD` when an upstream is set.
+- **Unpushed work** — commits reachable from this worktree's `HEAD` but not from any remote-tracking ref: `git log HEAD --not --remotes`; when an upstream is configured, use `git log @{upstream}..HEAD`. Do not use `--branches` here; it includes unrelated local branches.
 - **Detached HEAD** — the commits have no branch; recovery uses `recovery/<worktree-dir-name>-<YYYYMMDD>`.
-- **Clean and fully pushed** — cleanup only; nothing to rescue.
+- **Clean and fully pushed** — no work needs rescuing, but the PR deletion gate still applies before cleanup.
+- **Branch without a worktree** — for each local branch absent from the inventory, check `git log <branch> --not --remotes` (branch-specific) and inspect associated PR state/base (`gh pr list --head <branch> --state all`).
+  Mark pushed/no-PR branches handoff-required; closed-unmerged, wrong-base, or unavailable PR checks are blocked.
 
 Produce the classification table before changing anything.
 
 ### 3. Rescue outstanding work (per worktree with anything outstanding)
 
-1. **Commit uncommitted changes** in the worktree: `git add -A`, then commit with a message describing what `git status` showed, e.g. `wip: recover uncommitted export notes from worktree reporting`. The recovery commit is the durable record of the rescued work — make it informative.
+1. **Commit uncommitted changes** in the worktree: `git add -A`, then commit with a message describing what `git status` showed, e.g. `recover: preserve the reporting export notes`. The recovery commit is the durable record of the rescued work — make it informative.
 2. **Push the branch** (create `recovery/<name>` first if the worktree was detached): `git push -u origin <branch>`.
 3. **Ensure `dev` exists on the remote** — PRs target it. `git fetch origin`; if `origin/dev` is missing, create it from the default branch: `git push origin <default>:dev`. If a local `dev` exists with commits missing from `origin/dev`, push it instead of overwriting.
 4. **Open the PR**: `gh pr create --base dev --head <branch> --title "<summary>" --body "Recovered from worktree <path>: <what was outstanding>"`. Record the PR URL.
@@ -71,7 +73,7 @@ Before `git branch -d`, prove the commits are on the remote: `git branch -r --co
 
 ### 5. Leftover local branches without worktrees
 
-The same rules apply to branches from `git branch --list` that are neither the default branch nor `dev`: unpushed commits → push + PR to `dev`, delete after the PR exists; already pushed or merged → `git branch -d`. Unpushed work on a branch is never deleted.
+The same rules apply to local branches from `git branch --list` that are neither the default branch nor `dev`; inspect each branch's PR state and base first. Unpushed commits → push + request a PR to `dev`; fully pushed branches with an open PR to `dev` or a merged PR to `dev` → `git branch -d` only after remote reachability is proven; fully pushed branches without such a PR → request a PR (or report the provider/auth blocker) and preserve the branch. A closed-unmerged or wrong-base PR does not satisfy the deletion gate. Unpushed work is never deleted.
 
 ### 6. Local `dev` and end state
 

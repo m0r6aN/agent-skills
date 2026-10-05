@@ -129,7 +129,10 @@ test('P2b-AC6b: the projected fixture default location still resolves under the 
   writeSpecDraft(repoRoot, 'plugins/foreman-line/docs/specs/active/example.md', 'Example')
   writeProjectedFixture(repoRoot, 'example', sampleShapingResult())
   const resolved = resolveArtifact('example', { repoRoot })
-  assert.equal(resolved.artifactRef, 'docs/specs/active/example.projected.shaping-result.json')
+  assert.equal(
+    resolved.artifactRef,
+    'plugins/foreman-line/docs/specs/active/example.projected.shaping-result.json',
+  )
 })
 
 // --- D1: out-of-root containment at every path-resolving seam ---

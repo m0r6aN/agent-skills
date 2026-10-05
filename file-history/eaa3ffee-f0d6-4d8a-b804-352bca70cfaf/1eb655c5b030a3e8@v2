@@ -1,0 +1,113 @@
+<#
+.SYNOPSIS
+  PowerShell 5.1 front-end to the shared run database (db/rundb.mjs).
+
+.DESCRIPTION
+  Dot-source from a RUN.ps1:   . (Join-Path (Split-Path -Parent $TaskRoot) 'db\RunDb.ps1')
+  The database is the system of record for run history, captured reports and
+  transcripts. Every function degrades safely: if Node or the database is
+  unavailable the run still completes, and history falls back to the legacy
+  state/history.jsonl line (re-importable later with `node db\rundb.mjs import`).
+#>
+
+$script:RunDbScript = Join-Path $PSScriptRoot 'rundb.mjs'
+
+function Get-RunDbNodeExe {
+  $cmd = Get-Command node -ErrorAction SilentlyContinue
+  if ($cmd) { return $cmd.Source }
+  foreach ($p in @('C:\Program Files\nodejs\node.exe', 'D:\nodejs\node.exe')) {
+    if (Test-Path -LiteralPath $p) { return $p }
+  }
+  return $null
+}
+
+function ConvertTo-RunDbArg([string]$Value) {
+  # CreateProcess/CommandLineToArgvW quoting (PS 5.1 has no ProcessStartInfo.ArgumentList).
+  $v = $Value -replace '(\\*)"', '$1$1\"'
+  $v = $v -replace '(\\+)$', '$1$1'
+  return '"' + $v + '"'
+}
+
+function Invoke-RunDb {
+  [CmdletBinding()]
+  param([Parameter(Mandatory)][string[]]$Arguments)
+  $node = Get-RunDbNodeExe
+  if (-not $node) { return [pscustomobject]@{ ExitCode = 127; Out = ''; Err = 'node not found' } }
+  $psi = New-Object System.Diagnostics.ProcessStartInfo
+  $psi.FileName = $node
+  $all = @('--disable-warning=ExperimentalWarning', $script:RunDbScript) + $Arguments
+  $psi.Arguments = ($all | ForEach-Object { ConvertTo-RunDbArg $_ }) -join ' '
+  $psi.UseShellExecute = $false
+  $psi.CreateNoWindow = $true
+  $psi.RedirectStandardOutput = $true
+  $psi.RedirectStandardError = $true
+  $psi.StandardOutputEncoding = [System.Text.Encoding]::UTF8
+  $psi.StandardErrorEncoding = [System.Text.Encoding]::UTF8
+  try {
+    $proc = [System.Diagnostics.Process]::Start($psi)
+    $errTask = $proc.StandardError.ReadToEndAsync()
+    $out = $proc.StandardOutput.ReadToEnd()
+    $proc.WaitForExit()
+    return [pscustomobject]@{ ExitCode = $proc.ExitCode; Out = $out; Err = $errTask.Result }
+  } catch {
+    return [pscustomobject]@{ ExitCode = 1; Out = ''; Err = $_.Exception.Message }
+  }
+}
+
+function Get-RunDbNextRun {
+  param([Parameter(Mandatory)][string]$Project, [string]$HistoryFile = '')
+  $r = Invoke-RunDb -Arguments @('next-run', $Project)
+  $n = 0
+  if ($r.ExitCode -eq 0 -and [int]::TryParse($r.Out.Trim(), [ref]$n) -and $n -ge 1) { return $n }
+  Write-Warning "run database unavailable for next-run ($($r.Err.Trim())); counting legacy history.jsonl instead"
+  $count = 0
+  if ($HistoryFile -and (Test-Path -LiteralPath $HistoryFile)) {
+    $reader = [System.IO.File]::OpenText($HistoryFile)
+    try { while ($null -ne $reader.ReadLine()) { $count++ } } finally { $reader.Close() }
+  }
+  return $count + 1
+}
+
+function Add-RunDbRecord {
+  <# Record one run: history entry (ordered hashtable) + report + transcript/prompt logs. #>
+  param(
+    [Parameter(Mandatory)][string]$Project,
+    [Parameter(Mandatory)]$Entry,
+    [string]$ReportPath = '',
+    [string[]]$LogPaths = @(),
+    [string]$HistoryFile = ''
+  )
+  $json = $Entry | ConvertTo-Json -Compress
+  $tmp = Join-Path ([System.IO.Path]::GetTempPath()) ("rundb-entry-{0}.json" -f [guid]::NewGuid().ToString('N'))
+  try {
+    [System.IO.File]::WriteAllText($tmp, $json, (New-Object System.Text.UTF8Encoding($false)))
+    $args2 = @('record', $Project, '--entry', $tmp)
+    if ($ReportPath) { $args2 += @('--report', $ReportPath) }
+    foreach ($l in $LogPaths) { if ($l) { $args2 += @('--log', $l) } }
+    $r = Invoke-RunDb -Arguments $args2
+    if ($r.ExitCode -ne 0) {
+      Write-Warning "run database write failed (exit $($r.ExitCode)): $($r.Err.Trim())"
+      if ($HistoryFile) { Add-Content -LiteralPath $HistoryFile -Value $json -Encoding utf8 }
+      return $false
+    }
+    return $true
+  } finally {
+    Remove-Item -LiteralPath $tmp -Force -ErrorAction SilentlyContinue
+  }
+}
+
+function Write-RunDbEvent {
+  param([Parameter(Mandatory)][string]$Source, [string]$Level = 'info', [Parameter(Mandatory)][string]$Message)
+  $r = Invoke-RunDb -Arguments @('event', $Source, $Level, $Message)
+  return ($r.ExitCode -eq 0)
+}
+
+function Get-RunDbLatestReport {
+  <# Newest captured report body for a project, or $null. -Lines 0 = whole report. #>
+  param([Parameter(Mandatory)][string]$Project, [int]$Lines = 0)
+  $a = @('latest-report', $Project)
+  if ($Lines -gt 0) { $a += @('--lines', "$Lines") }
+  $r = Invoke-RunDb -Arguments $a
+  if ($r.ExitCode -ne 0) { return $null }
+  return $r.Out
+}

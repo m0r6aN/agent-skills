@@ -68,7 +68,6 @@ test('classification-gates-before-cost: shipped policy uses OpenRouter vendor/mo
     assert.match(id, slug, `'${id}' is not a vendor/model OpenRouter slug`)
   }
 })
-
 test('classification-gates-before-cost: rejects a public-only model leaking into restricted', () => {
   const doc = loadYaml(join(fixturesDir, 'reject-classification-gate.yaml'))
   const result = validatePolicy(doc)

@@ -1,0 +1,13 @@
+TOP 5 BRUTAL FINDINGS
+1. The parcel blocks itself: the registry hard-codes provider const 'openrouter' and the baseUrl, with additionalProperties:false, so wrong-provider/protocol/host fields need a schema amendment, which trips its own Stop rule; no owner handoff exists either.
+2. AC "typed outcomes without throwing" contradicts "existing behavior unchanged": evaluateRouting only throws a closed public RoutingError code union, so both new codes and returned outcomes break consumers.
+3. The evaluator never consults pi-openrouter today; joining policy IDs to registry keys adds a new failure path for existing routes, and adding mapping fields to routing-decision.json is an unowned receipt-format change.
+4. Untestable ACs: "freshness" has no clock or threshold (non-deterministic), "unavailable endpoint" needs a live probe (forbidden), "undeclared fallback" has nothing declared (fallback out of scope), and "never resolves as alias" has no fixture corpus.
+5. Security gaps: a plain-object registry lookup lets "__proto__"/"constructor" resolve; a mapping could give Jev a host ID and bypass its recommend-only lane; workflowId flows unvalidated into the receipt path (traversal); types/schemas/index are shared exports, with no deny-list for the committed JSON parity files; Node 24.7.0 is below engines >=24.11.1, so "existing tests pass" is unprovable.
+
+TOP 5 MOVES
+1. Split: P1a is a docs-only mapping/rejection contract in goals/hybrid-routing-optimization; P1b is a pure resolver in new routing-policy/src/provider-mapping.ts plus its test only; P1c (evaluator/receipt wiring) waits for RCM-P1/SUPERCHARGE-P1/PMC handoffs.
+2. The P1b resolver returns a discriminated union; add snapshot tests locking the RoutingError code set and the routing-decision.json key set byte-identical.
+3. Replace freshness with a static mappingVersion + sourceRef + contentHash, where stale means a mismatch against a caller-supplied expected version; move the endpoint and fallback rejections to the recovery parcel.
+4. Mandate a near-miss fixture corpus that must reject: case change, suffix, prefix-stripped, -latest, provider swap, __proto__, constructor. Use an own-property Map lookup, and add a test that Jev never resolves for execution lanes.
+5. Add a diff-scope deny-list (committed JSON, YAML, templates, dispatch, receipts) and record node -v >=24.11.1 in evidence; file the workflowId path-traversal issue as a separate security ticket before any receipt extension.

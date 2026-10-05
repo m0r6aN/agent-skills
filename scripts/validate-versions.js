@@ -26,7 +26,7 @@ function readManifestVersions(manifestPath) {
 
 const expectedVersion = execFileSync(
   "git",
-  ["describe", "--tags", "--abbrev=0"],
+  ["describe", "--tags", "--abbrev=0", "--match", "[0-9]*.[0-9]*.[0-9]*"],
   { encoding: "utf8" },
 ).trim();
 

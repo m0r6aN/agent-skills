@@ -11,7 +11,8 @@
  * `parcelSpecRefs` is empty, even though `parcelSpecRefs: []` is schema-valid.
  */
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { Ajv } from 'ajv'
 // Frozen emission authority - imported from the contracts public surface, never
 // re-declared here. Relative ESM specifier (W0-P4 precedent); the bare scoped
@@ -19,15 +20,17 @@ import { Ajv } from 'ajv'
 import { type ShapingResult, shapingResultSchema } from '../../contracts/src/index.js'
 import { assertAbsoluteRoot, assertContainedRootPath } from './errors.js'
 
-/**
- * Foreign-repo default for the specs `active/` directory, RELATIVE to the
- * caller-supplied `repoRoot` (P2b-i ruling R2 / A1.3). This is NOT a class-1
- * root fallback: it is a relative path within a root the caller supplied
- * explicitly, categorically different from deriving a root nobody gave you.
- * The home repo passes its plugin-prefixed value
- * (`plugins/foreman-line/docs/specs/active`) explicitly at call sites.
- */
-const DEFAULT_SPECS_DIR = 'docs/specs/active'
+/** Repo root, resolved from this module's location: src -> shaping -> foreman-line -> plugins -> root. */
+export const DEFAULT_REPO_ROOT = join(
+  dirname(fileURLToPath(import.meta.url)),
+  '..',
+  '..',
+  '..',
+  '..',
+)
+
+/** Repo-relative POSIX directory the artifact is written beneath. */
+export const ACTIVE_SPECS_DIR = 'plugins/foreman-line/docs/specs/active'
 
 const ajv = new Ajv({ allErrors: true })
 const validateShapingResult = ajv.compile(shapingResultSchema)
@@ -76,17 +79,13 @@ export interface EmitOptions {
   readonly sessionSlug: string
   /** Repo-relative paths to the emitted draft `.md` spec files. Normalized to POSIX. */
   readonly parcelSpecRefs: readonly string[]
+  /** Repo root to write beneath. Defaults to the real repo root. */
+  readonly repoRoot?: string
   /**
-   * Absolute path to the TARGET repo root to write beneath. Required
-   * (P2b-i/R3, extending P2a/D19): never derived from this module's own
-   * location or from process.cwd().
-   */
-  readonly repoRoot: string
-  /**
-   * Specs `active/` directory, relative to `repoRoot` (P2b-i/R2). Defaults to
-   * the foreign-repo value `docs/specs/active`; the home repo passes
-   * `plugins/foreman-line/docs/specs/active` explicitly at call sites. A
-   * relative path within a caller-supplied root — not a root fallback (A1.3).
+   * Repo-relative POSIX directory the artifact is written beneath. Defaults to
+   * the legacy `ACTIVE_SPECS_DIR` value (`plugins/foreman-line/docs/specs/active`)
+   * when omitted - the constant itself is retired from the public surface
+   * (P2b-i AC2) and home-repo call sites pass the directory explicitly.
    */
   readonly specsDir?: string
 }
@@ -106,7 +105,16 @@ export interface EmitResult {
  * refuses to overwrite an existing artifact (collision policy).
  */
 export function emitShapingResult(options: EmitOptions): EmitResult {
-  const { sessionSlug, parcelSpecRefs, repoRoot, specsDir = DEFAULT_SPECS_DIR } = options
+  const {
+    sessionSlug,
+    parcelSpecRefs,
+    repoRoot = DEFAULT_REPO_ROOT,
+    specsDir = ACTIVE_SPECS_DIR,
+  } = options
+
+  // P2b-i AC6b seam refusal: a non-absolute repoRoot would silently re-anchor
+  // every derived path to process.cwd() (mechanism class 5), so it is refused
+  // with the typed error before any path is constructed.
   assertAbsoluteRoot(repoRoot, 'emitShapingResult')
 
   // Semantic guard: schema-valid != semantically complete. `parcelSpecRefs: []`

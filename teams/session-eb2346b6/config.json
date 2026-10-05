@@ -1,0 +1,18 @@
+{
+  "name": "session-eb2346b6",
+  "createdAt": 1782132414517,
+  "leadAgentId": "team-lead@session-eb2346b6",
+  "leadSessionId": "eb2346b6-ec20-4d99-b295-409026137998",
+  "members": [
+    {
+      "agentId": "team-lead@session-eb2346b6",
+      "name": "team-lead",
+      "agentType": "team-lead",
+      "joinedAt": 1782132414517,
+      "tmuxPaneId": "leader",
+      "cwd": "D:\\Repos\\keon-omega\\keon.collective",
+      "subscriptions": [],
+      "backendType": "in-process"
+    }
+  ]
+}

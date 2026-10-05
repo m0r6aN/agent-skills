@@ -10,7 +10,7 @@
  * Nothing here mints a `correlationId`.
  */
 import { readdirSync, readFileSync } from 'node:fs'
-import { join, relative } from 'node:path'
+import { join } from 'node:path'
 import { parseDocument } from 'yaml'
 import {
   type AuditTriggerDecision,
@@ -129,6 +129,9 @@ export type LoadActiveSpecsFn = (
   pluginRoot: string,
 ) => readonly ActiveSpecDescriptor[]
 
+/** Repo-relative directory holding the live spec contracts (PR4-6). */
+const ACTIVE_SPECS_DIR = join('plugins', 'foreman-line', 'docs', 'specs', 'active')
+
 const VALID_RISKS: readonly RiskLevel[] = ['low', 'standard', 'elevated', 'critical']
 
 function isRiskLevel(value: unknown): value is RiskLevel {
@@ -204,7 +207,7 @@ export const loadActiveSpecsLive: LoadActiveSpecsFn = (repoRoot, pluginRoot) => 
 
   const descriptors: ActiveSpecDescriptor[] = []
   for (const name of files) {
-    const specPath = relative(repoRoot, join(dir, name)).replace(/\\/g, '/')
+    const specPath = join(ACTIVE_SPECS_DIR, name).replace(/\\/g, '/')
     let parsed: ReturnType<typeof parseFrontmatter>
     try {
       parsed = parseFrontmatter(readFileSync(join(dir, name), 'utf8'))

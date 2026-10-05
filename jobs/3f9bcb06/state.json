@@ -1,0 +1,29 @@
+{
+  "state": "working",
+  "detail": "(idle — send a prompt to start)",
+  "tempo": "blocked",
+  "needs": "send a prompt to start",
+  "output": null,
+  "children": null,
+  "linkScanOffset": 0,
+  "template": "bg",
+  "respawnFlags": [
+    "--permission-mode",
+    "plan",
+    "--tools",
+    "Read",
+    "BioStack/Keon coordination status request only. Do not edit files, run deployments, or create PRs. Report your current or most recent Keon/BioStack work: repos, branches/worktrees, open PRs, files/surfaces being changed, completed checks, active blockers, and anything the Codex coordinator should avoid duplicating. Keep it concise and evidence-based; distinguish current facts from plans."
+  ],
+  "providerEnv": {
+    "CLAUDE_CONFIG_DIR": "D:/Repos/agent-skills"
+  },
+  "intent": "",
+  "sessionId": "3f9bcb06-bf73-4998-8462-728f8541b718",
+  "resumeSessionId": "3f9bcb06-bf73-4998-8462-728f8541b718",
+  "daemonShort": "3f9bcb06",
+  "cwd": "D:\\Repos\\keon-omega",
+  "createdAt": "2026-07-26T16:49:12.950Z",
+  "updatedAt": "2026-07-26T16:49:12.950Z",
+  "firstTerminalAt": null,
+  "backend": "daemon"
+}

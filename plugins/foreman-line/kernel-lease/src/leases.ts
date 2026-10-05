@@ -58,6 +58,7 @@ import {
   type EngineResult,
   finalizeEffect,
   type IdempotencyBinding,
+  isValidToolVersion,
   type LeaseCasDescriptor,
   lookupBinding,
   type OperationName,
@@ -120,15 +121,7 @@ export function createEngine(options: CreateEngineOptions): Engine {
     }
   }
   const toolVersion = options.toolVersion
-  const toolVersionBytes =
-    typeof toolVersion === 'string' ? new TextEncoder().encode(toolVersion) : null
-  if (
-    toolVersionBytes === null ||
-    toolVersion.length === 0 ||
-    toolVersionBytes.length > 128 ||
-    // Bytes<128> ASCII (F05.11): every UTF-8 byte below 0x80.
-    toolVersionBytes.some((byte) => byte > 0x7f)
-  ) {
+  if (!isValidToolVersion(toolVersion)) {
     throw engineError('ENGINE_ARGUMENT_INVALID', { fieldPath: 'toolVersion' })
   }
   return {

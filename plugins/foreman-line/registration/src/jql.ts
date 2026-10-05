@@ -34,21 +34,12 @@ export function assertJqlSafeToken(token: string, label: string): void {
 }
 
 /**
- * Guard for values interpolated ONLY as quoted JQL string literals (`"..."`),
- * e.g. the dispatch-queue assignee identity (P1b). Unlike `assertJqlSafeToken`
- * this admits `:` and `@` — Atlassian account ids come in a `:`-prefixed form
- * (`557058:f58131cb-…`) and assignee emails carry `@`, both outside the token
- * allowlist. Safety inside a quoted literal instead hinges on refusing every
- * character that can terminate or escape the quotes: `"` (0x22), `\` (0x5C),
- * newline (0x0A), carriage return (0x0D), and tab (0x09), plus the empty
- * string. Additionally (rework R2, coordinator-accepted reviewer residual):
- * ALL remaining C0 control characters (< 0x20) and DEL (0x7F) are refused —
- * not as an injection vector (reviewer-probed: only `"` and `\` are structural
- * inside a JQL quoted literal) but so NUL/ESC/etc. never reach the Jira API as
- * data or anything that prints the JQL. Linear-time char-code scan — no regex
- * over untrusted text (lesson #19). This is the primary and ONLY path for
- * `dispatch_queue`: one uniform guarded path, never a "token-shaped? then
- * unquoted" branch.
+ * The one guarded path for values interpolated as quoted JQL string literals
+ * (dispatch_queue). The quoted-literal surface admits characters the token
+ * guard refuses (notably `:` in Atlassian account ids and `@` in emails), so it
+ * carries its own uniform refusal set: `"` and `\` (quote-context breakers) and
+ * every control character (named individually for the five common offenders).
+ * No token-shaped branch — one rule for every caller.
  */
 export function assertJqlSafeQuotedLiteral(value: string, label: string): void {
   if (value.length === 0) {
@@ -56,24 +47,35 @@ export function assertJqlSafeQuotedLiteral(value: string, label: string): void {
   }
   for (let i = 0; i < value.length; i++) {
     const c = value.charCodeAt(i)
-    let offender: string | null = null
     if (c === 34) {
-      offender = 'double quote'
-    } else if (c === 92) {
-      offender = 'backslash'
-    } else if (c === 10) {
-      offender = 'newline'
-    } else if (c === 9) {
-      offender = 'tab'
-    } else if (c === 13) {
-      offender = 'carriage return'
-    } else if (c < 32 || c === 127) {
-      // Remaining C0 controls + DEL (R2): named generically, refused uniformly.
-      offender = `control character (0x${c.toString(16).padStart(2, '0').toUpperCase()})`
-    }
-    if (offender !== null) {
       throw new Error(
-        `assertJqlSafeQuotedLiteral: ${label} ${JSON.stringify(value)} contains a ${offender} at index ${i} - refused before it reaches a quoted JQL literal`,
+        `assertJqlSafeQuotedLiteral: ${label} ${JSON.stringify(value)} contains a double quote at index ${i}`,
+      )
+    }
+    if (c === 92) {
+      throw new Error(
+        `assertJqlSafeQuotedLiteral: ${label} ${JSON.stringify(value)} contains a backslash at index ${i}`,
+      )
+    }
+    if (c === 10) {
+      throw new Error(
+        `assertJqlSafeQuotedLiteral: ${label} ${JSON.stringify(value)} contains a newline at index ${i}`,
+      )
+    }
+    if (c === 9) {
+      throw new Error(
+        `assertJqlSafeQuotedLiteral: ${label} ${JSON.stringify(value)} contains a tab at index ${i}`,
+      )
+    }
+    if (c === 13) {
+      throw new Error(
+        `assertJqlSafeQuotedLiteral: ${label} ${JSON.stringify(value)} contains a carriage return at index ${i}`,
+      )
+    }
+    if (c <= 31 || c === 127) {
+      const hex = c.toString(16).toUpperCase().padStart(2, '0')
+      throw new Error(
+        `assertJqlSafeQuotedLiteral: ${label} ${JSON.stringify(value)} contains a control character (0x${hex}) at index ${i}`,
       )
     }
   }

@@ -95,11 +95,10 @@ export interface ClassEntry {
 }
 
 /**
- * Gateway-level routing constraints the consumer MUST apply to every request
- * made under a classification. The policy names model ids; on a multi-provider
- * gateway (OpenRouter) the same id can be served by many upstream hosts with
- * different retention and training policies, and provider selection is a
- * request parameter this repository never sends. Declaring the requirement
+ * The gateway transport obligations a classification tier declares. On a
+ * multi-provider gateway (OpenRouter) the same id can be served by many upstream
+ * hosts with different retention and training policies, and provider selection is
+ * a request parameter this repository never sends. Declaring the requirement
  * here makes the consumer's obligation explicit and machine-readable; it does
  * not enforce it. Field names mirror OpenRouter's `provider` request object.
  */
@@ -123,6 +122,7 @@ export interface TransportRequirements {
 export interface DataClassificationRule {
   readonly transport_requirements: TransportRequirements
 }
+
 
 export type ShadowTaskType = 'spec_lint' | 'evidence_index' | 'review_triage'
 

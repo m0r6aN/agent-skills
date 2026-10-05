@@ -10,6 +10,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { Ajv } from 'ajv'
 import { type ShapingResult, shapingResultSchema } from '../../contracts/src/index.js'
+import { ACTIVE_SPECS_DIR, DEFAULT_REPO_ROOT } from './emit.js'
 import {
   assertAbsoluteArtifactPath,
   assertAbsoluteRoot,
@@ -50,17 +51,19 @@ export function readShapingResult(filePath: string): ShapingResult {
 }
 
 /**
- * Discovery fallback: list every `*.shaping-result.json` artifact under
- * `active/`, beneath the given repo root. `repoRoot` is required and absolute
- * (P2b-i/R3); `specsDir` is the specs directory relative to it (P2b-i/R2,
- * foreign default `docs/specs/active` — the home repo passes
- * `plugins/foreman-line/docs/specs/active` explicitly). Returns absolute
- * filesystem paths, sorted. Returns `[]` when the directory does not exist.
+ * Discovery fallback: list every `*.shaping-result.json` artifact under the
+ * `specsDir` directory, beneath the given repo root. `specsDir` defaults to the
+ * legacy `ACTIVE_SPECS_DIR` value (`plugins/foreman-line/docs/specs/active`,
+ * retired from the public surface, P2b-i AC2). Returns absolute filesystem
+ * paths, sorted. Returns `[]` when the directory does not exist.
  */
 export function discoverShapingResults(
-  repoRoot: string,
-  specsDir: string = 'docs/specs/active',
+  repoRoot: string = DEFAULT_REPO_ROOT,
+  specsDir: string = ACTIVE_SPECS_DIR,
 ): string[] {
+  // P2b-i AC6b seam refusal: a non-absolute repoRoot would silently re-anchor
+  // the scan base to process.cwd() (mechanism class 5), so it is refused with
+  // the typed error before any path is constructed or probed.
   assertAbsoluteRoot(repoRoot, 'discoverShapingResults')
   const activeDir = join(repoRoot, ...specsDir.split('/'))
   // Path containment (D1): the caller-supplied specsDir must resolve beneath

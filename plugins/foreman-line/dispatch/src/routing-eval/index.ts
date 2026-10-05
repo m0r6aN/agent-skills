@@ -68,25 +68,6 @@ import {
   type RoutingDecisionCache,
 } from '../routing-cache.js'
 
-export type {
-  ParcelShadowAuthorization,
-  ResolvedParcelShadowAuthorization,
-  ShadowCandidateResult,
-  ShadowInvocationRequest,
-  ShadowRoutingDependencies,
-  ShadowRoutingInput,
-  ShadowRoutingOptions,
-  ShadowRoutingResult,
-  ShadowSkippedResult,
-} from './shadow.js'
-export {
-  executeShadowRoute,
-  hashShadowPublicInput,
-  SHADOW_LIMITS,
-  ShadowRoutingError,
-} from './shadow.js'
-export type { TransportRequirements }
-
 // ─── Error class ──────────────────────────────────────────────────────────────
 
 export class RoutingError extends Error {
@@ -153,22 +134,14 @@ export interface RoutingInput {
 }
 
 export interface RoutingResult {
-  /** The single resolved concrete model ID (an OpenRouter slug, e.g. 'anthropic/claude-sonnet-5'). */
+  /** The single resolved concrete model ID (e.g. 'claude-sonnet-5'). */
   readonly resolvedModelId: string
   /** The policy tier that produced the resolved model (e.g. 'standard'). */
   readonly resolvedTier: string
-  /**
-   * Gateway routing constraints the caller MUST apply to every request made
-   * for this task (policy `data_classification.<tier>.transport_requirements`,
-   * mirroring OpenRouter's `provider` object). A model id names a model, not a
-   * host; on a multi-provider gateway these two fields are what keep
-   * non-public prompts off providers that store or train on inputs. This
-   * package selects the model and hands the obligation on — it does not send
-   * requests.
-   */
-  readonly transportRequirements: TransportRequirements
   /** Repo-relative path to the written routing receipt JSON. */
   readonly routingDecisionRef: string
+  /** The resolved data tier's declared gateway transport obligations. */
+  readonly transportRequirements: TransportRequirements
 }
 
 export interface RoutingOptions {
@@ -1069,3 +1042,23 @@ export function evaluateRouting(input: RoutingInput, options: RoutingOptions): R
     routingDecisionRef,
   }
 }
+
+export type {
+  ParcelShadowAuthorization,
+  ResolvedParcelShadowAuthorization,
+  ShadowCandidateResult,
+  ShadowInvocationRequest,
+  ShadowRoutingDependencies,
+  ShadowRoutingInput,
+  ShadowRoutingOptions,
+  ShadowRoutingResult,
+  ShadowSkippedResult,
+} from './shadow.js'
+// Shadow-route execution lives in ./shadow.js; re-exported here so consumers of
+// the routing-eval seam reach it through one entry (identity-stable bindings).
+export {
+  executeShadowRoute,
+  hashShadowPublicInput,
+  SHADOW_LIMITS,
+  ShadowRoutingError,
+} from './shadow.js'

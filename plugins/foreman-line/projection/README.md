@@ -53,7 +53,10 @@ non-empty, stable, distinct **placeholders** W1-P4 overwrites:
 ## Output mechanics — new sibling artifact, never in-place
 
 `writeProjectedResult(inputPath, epicTitle)` writes a **new sibling artifact**
-at `active/<slug>.projected.shaping-result.json`. The pristine input
+at `<specsDir>/<slug>.projected.shaping-result.json` (the legacy default
+`specsDir` is `plugins/foreman-line/docs/specs/active`; the constant is
+retired from the public surface — P2b-i AC2 — and callers pass the directory
+explicitly). The pristine input
 `<slug>.shaping-result.json` is **never mutated**. Writing **refuses to
 overwrite** an existing projected artifact. `parcelSpecRefs` is copied
 verbatim (byte-for-byte) from the input into the output. The file is
@@ -69,7 +72,11 @@ constructed or resolved: a `slug` containing `/`, `\`, or `..` is refused at
 both the key-minting point (`projectShapingResult`, before the Epic key is
 derived) and the path-construction point (`writeProjectedArtifact`); a
 `parcelSpecRef` whose resolved path escapes `repoRoot` is refused (naming the
-ref) before `readSpecTitle` checks existence or reads anything.
+ref) before `readSpecTitle` checks existence or reads anything. A
+non-absolute `repoRoot` is refused at every seam with
+`ProjectionRootUnresolvedError` (`reason: 'root-not-absolute'`) **before** any
+comparison or path construction — never silently re-anchored to
+`process.cwd()` (P2b-i AC6).
 
 ## Validation boundary + four semantic guards
 
@@ -97,7 +104,11 @@ downstream CLI surface that invokes this package's `projectShapingResult` /
 
 ```ts
 import { type ShapingResult, shapingResultSchema } from '../../contracts/src/index.js'
-import { discoverShapingResults, readShapingResult, ACTIVE_SPECS_DIR } from '../../shaping/src/index.js'
+// The handoff readers come from the shipped barrel. `ACTIVE_SPECS_DIR` is
+// retired from that public surface (P2b-i AC2) and survives only as the
+// legacy default for an omitted `specsDir`, so it is read from the emitter.
+import { ACTIVE_SPECS_DIR } from '../../shaping/src/emit.js'
+import { discoverShapingResults, readShapingResult } from '../../shaping/src/index.js'
 import { parseFrontmatter } from '../../spec-linter/src/index.js'
 ```
 

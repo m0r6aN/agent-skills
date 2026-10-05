@@ -1,0 +1,18 @@
+{
+  "name": "session-c00e3f62",
+  "createdAt": 1783970410313,
+  "leadAgentId": "team-lead@session-c00e3f62",
+  "leadSessionId": "c00e3f62-dcd8-46eb-ba63-a5f03afb1d7c",
+  "members": [
+    {
+      "agentId": "team-lead@session-c00e3f62",
+      "name": "team-lead",
+      "agentType": "team-lead",
+      "joinedAt": 1783970410313,
+      "tmuxPaneId": "leader",
+      "cwd": "C:\\Users\\clint",
+      "subscriptions": [],
+      "backendType": "in-process"
+    }
+  ]
+}

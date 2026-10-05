@@ -52,6 +52,11 @@ test('exit 0 on a single valid spec file', () => {
   assert.equal(status, 0, stderr)
 })
 
+test('exit 0 (with advisory warning) on all four shipped docs/specs/done specs, directory mode', () => {
+  const { status, stderr } = runCli(['validate', '--repo-root', repoRoot, doneDir])
+  assert.equal(status, 0, stderr)
+})
+
 test('exit 0 (with advisory warning) on all four shipped docs/specs/done specs with an explicit repo root', () => {
   const { status, stderr } = runCli(['validate', '--repo-root', repoRoot, doneDir])
   assert.equal(status, 0, stderr)

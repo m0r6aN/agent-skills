@@ -1,0 +1,18 @@
+{
+  "name": "session-46064971",
+  "createdAt": 1782065898504,
+  "leadAgentId": "team-lead@session-46064971",
+  "leadSessionId": "46064971-539f-4ccb-81be-7be09bd4b851",
+  "members": [
+    {
+      "agentId": "team-lead@session-46064971",
+      "name": "team-lead",
+      "agentType": "team-lead",
+      "joinedAt": 1782065898504,
+      "tmuxPaneId": "leader",
+      "cwd": "D:\\Repos\\keon-omega\\keon-cortex",
+      "subscriptions": [],
+      "backendType": "in-process"
+    }
+  ]
+}

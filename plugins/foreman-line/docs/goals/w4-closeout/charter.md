@@ -5,6 +5,11 @@
 **Predecessor:** `w4-ci-integration` (COMPLETE 2026-07-28; exit items 1 and 6 recorded OPEN at closure — this goal exists to close them and clear the accepted hygiene debt; predecessor record deleted 2026-09-26 per coordinator audit — item dispositions carried in this goal's closure record, see `../goal-status-report-2026-09-26.md` §6).
 **Current amendments:** [`e6-r1-current-repository-evidence-rerun-amendment.md`](./e6-r1-current-repository-evidence-rerun-amendment.md) and ratified [`e6-r1b-marketplace-and-evidence-guard-amendment.md`](./e6-r1b-marketplace-and-evidence-guard-amendment.md). D4-R2B remains controlling for repository rulesets and has been applied and verified.
 
+**Historical note — the 2026-07-28 header record, retained verbatim; superseded by the 2026-09-05 D4-R2B and 2026-09-06 E6-R1 ratifications:**
+**Status:** FULLY RATIFIED — Gate 1 (D1–D6) ratified 2026-07-28 11:17 EDT; plan-adversarial review complete (RATIFY-WITH-AMENDMENTS — `plan-review-findings.md`, all amendments applied); scoped Gate-1 re-open (D4, D6, authorizations, Jira-leg scope) **RE-RATIFIED 2026-07-28 11:35 EDT** (Clint, all four recommendations). Standing authorizations IN FORCE.
+**Coordinator:** this session (Clint-launched, 2026-07-28). One goal, one coordinator.
+**Predecessor:** `w4-ci-integration` (COMPLETE 2026-07-28; exit items 1 and 6 recorded OPEN at closure — this goal exists to close them and clear the accepted hygiene debt).
+
 ## Objective
 
 Close out Wave 4 completely: satisfy the two exit conditions W4 honestly recorded as OPEN (item 6 — minted receipt chain; item 1 — config-proven PR and trusted-check protection under the owner-approved D4-R2B sole-owner compromise), reconcile the spec-linter corpus (W4-P5), and put biome into CI so the two defect classes that landed on main because CI never ran it cannot recur.

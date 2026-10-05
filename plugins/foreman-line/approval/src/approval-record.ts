@@ -18,12 +18,8 @@ import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import type { CorrelationContext, ReceiptRef } from '../../contracts/src/index.js'
 import { assertContainedPath } from '../../projection/src/index.js'
-import { assertAbsoluteRoot } from './errors.js'
+import { ACTIVE_SPECS_DIR, DEFAULT_REPO_ROOT } from './paths.js'
 import { assertSafeSlug } from './slug-guard.js'
-
-/** Foreign-repo default specs dir, relative to `repoRoot` (P2b-i R2/A1.3 — not a root fallback). */
-const DEFAULT_SPECS_DIR = 'docs/specs/active'
-
 import type { ApprovalSubject } from './subject.js'
 
 export const APPROVAL_RECORD_SUFFIX = '.approval.json'
@@ -46,11 +42,10 @@ export interface ApprovalRecord {
  */
 export function approvalRecordPath(
   slug: string,
-  repoRoot: string,
-  specsDir: string = DEFAULT_SPECS_DIR,
+  repoRoot: string = DEFAULT_REPO_ROOT,
+  specsDir: string = ACTIVE_SPECS_DIR,
 ): string {
   assertSafeSlug(slug)
-  assertAbsoluteRoot(repoRoot, 'approvalRecordPath')
   const activeDir = join(repoRoot, ...specsDir.split('/'))
   // Path containment (D1): the caller-supplied specsDir must resolve beneath
   // repoRoot — refused before any path under it is used.
@@ -67,8 +62,8 @@ export function approvalRecordPath(
 export function writeApprovalRecord(
   slug: string,
   record: ApprovalRecord,
-  repoRoot: string,
-  specsDir: string = DEFAULT_SPECS_DIR,
+  repoRoot: string = DEFAULT_REPO_ROOT,
+  specsDir: string = ACTIVE_SPECS_DIR,
 ): string {
   const filePath = approvalRecordPath(slug, repoRoot, specsDir)
   if (existsSync(filePath)) {

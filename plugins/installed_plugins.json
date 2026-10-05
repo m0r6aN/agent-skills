@@ -1,0 +1,113 @@
+{
+  "version": 2,
+  "plugins": {
+    "csharp-lsp@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "C:\\Users\\clint",
+        "installPath": "D:\\Repos\\agent-skills\\plugins\\cache\\claude-plugins-official\\csharp-lsp\\1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-06-17T10:45:16.612Z",
+        "lastUpdated": "2026-06-17T10:45:16.612Z"
+      }
+    ],
+    "feature-dev@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "C:\\Users\\clint",
+        "installPath": "D:\\Repos\\agent-skills\\plugins\\cache\\claude-plugins-official\\feature-dev\\unknown",
+        "version": "unknown",
+        "installedAt": "2026-06-17T10:45:16.612Z",
+        "lastUpdated": "2026-09-08T14:08:22.911Z"
+      }
+    ],
+    "frontend-design@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "C:\\Users\\clint",
+        "installPath": "D:\\Repos\\agent-skills\\plugins\\cache\\claude-plugins-official\\frontend-design\\unknown",
+        "version": "unknown",
+        "installedAt": "2026-06-17T10:45:16.612Z",
+        "lastUpdated": "2026-09-08T14:08:22.042Z"
+      }
+    ],
+    "agent-sdk-dev@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "C:\\Users\\clint",
+        "installPath": "D:\\Repos\\agent-skills\\plugins\\cache\\claude-plugins-official\\agent-sdk-dev\\unknown",
+        "version": "unknown",
+        "installedAt": "2026-06-17T10:45:16.612Z",
+        "lastUpdated": "2026-09-08T14:08:22.886Z"
+      }
+    ],
+    "linear@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "C:\\Users\\clint",
+        "installPath": "D:\\Repos\\agent-skills\\plugins\\cache\\claude-plugins-official\\linear\\unknown",
+        "version": "unknown",
+        "installedAt": "2026-06-17T10:45:16.612Z",
+        "lastUpdated": "2026-09-08T14:08:22.124Z"
+      }
+    ],
+    "plugin-dev@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "C:\\Users\\clint",
+        "installPath": "D:\\Repos\\agent-skills\\plugins\\cache\\claude-plugins-official\\plugin-dev\\unknown",
+        "version": "unknown",
+        "installedAt": "2026-06-17T10:45:16.612Z",
+        "lastUpdated": "2026-09-08T14:08:23.777Z"
+      }
+    ],
+    "skill-creator@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "C:\\Users\\clint",
+        "installPath": "D:\\Repos\\agent-skills\\plugins\\cache\\claude-plugins-official\\skill-creator\\unknown",
+        "version": "unknown",
+        "installedAt": "2026-06-17T10:45:16.612Z",
+        "lastUpdated": "2026-09-08T14:08:22.145Z"
+      }
+    ],
+    "ralph-loop@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "C:\\Users\\clint",
+        "installPath": "D:\\Repos\\agent-skills\\plugins\\cache\\claude-plugins-official\\ralph-loop\\1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-06-17T10:45:16.612Z",
+        "lastUpdated": "2026-06-17T10:45:16.612Z"
+      }
+    ],
+    "claude-code-setup@claude-plugins-official": [
+      {
+        "scope": "project",
+        "projectPath": "C:\\Users\\clint",
+        "installPath": "D:\\Repos\\agent-skills\\plugins\\cache\\claude-plugins-official\\claude-code-setup\\1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-06-17T10:45:16.612Z",
+        "lastUpdated": "2026-06-17T10:45:16.612Z"
+      }
+    ],
+    "foreman-line@m0r6an-agent-skills": [
+      {
+        "scope": "user",
+        "installPath": "D:\\Repos\\agent-skills\\plugins\\cache\\m0r6an-agent-skills\\foreman-line\\0.6.10",
+        "version": "0.6.10",
+        "installedAt": "2026-09-19T21:14:30.855Z",
+        "lastUpdated": "2026-09-19T21:14:30.855Z"
+      }
+    ],
+    "audit-suite@m0r6an-agent-skills": [
+      {
+        "scope": "user",
+        "installPath": "D:\\Repos\\agent-skills\\plugins\\cache\\m0r6an-agent-skills\\audit-suite\\1.2.0",
+        "version": "1.2.0",
+        "installedAt": "2026-09-28T23:06:25.864Z",
+        "lastUpdated": "2026-09-28T23:06:25.864Z"
+      }
+    ]
+  }
+}

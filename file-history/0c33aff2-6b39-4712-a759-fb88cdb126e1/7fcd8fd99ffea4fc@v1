@@ -1,0 +1,67 @@
+import pytest
+from fastapi.testclient import TestClient
+
+import server as server_mod
+from store import Store
+
+FAKE_PROFILE = {
+    "domain": "acmeplumbing.com",
+    "brand": "Acme Plumbing",
+    "pages": {"/": "Acme Plumbing offers 24/7 emergency plumbing in Austin."},
+    "faqs_detected": ["Do you offer 24/7 service?"],
+    "corpus": (
+        "Acme Plumbing offers 24/7 emergency plumbing in Austin. "
+        "Do you offer 24/7 service? Yes, around the clock."
+    ),
+}
+
+
+@pytest.fixture()
+def store(tmp_path):
+    s = Store(str(tmp_path / "demos.db"))
+    server_mod.set_store(s)
+    yield s
+    server_mod.set_store(None)
+    s.close()
+
+
+@pytest.fixture()
+def env(monkeypatch):
+    monkeypatch.setenv("ADMIN_TOKEN", "test-token")
+    monkeypatch.delenv("PUBLIC_BASE_URL", raising=False)
+    monkeypatch.delenv("STRIPE_PAYMENT_LINK", raising=False)
+    monkeypatch.delenv("OPENROUTER_MODEL", raising=False)
+    monkeypatch.delenv("DEMO_TTL_DAYS", raising=False)
+    return monkeypatch
+
+
+@pytest.fixture()
+def client(store, env):
+    with TestClient(server_mod.app) as c:
+        yield c
+
+
+@pytest.fixture()
+def fake_scrape(monkeypatch):
+    monkeypatch.setattr(
+        server_mod, "scrape_site", lambda url: dict(FAKE_PROFILE)
+    )
+
+
+@pytest.fixture()
+def fake_chat(monkeypatch):
+    monkeypatch.setattr(
+        server_mod,
+        "chat",
+        lambda profile, messages, model=None, api_key=None: "We offer 24/7 plumbing.",
+    )
+
+
+def make_demo(client, fake_scrape, **body):
+    r = client.post(
+        "/create",
+        json={"url": "https://acmeplumbing.com", **body},
+        headers={"X-Admin-Token": "test-token"},
+    )
+    assert r.status_code == 200, r.text
+    return r.json()

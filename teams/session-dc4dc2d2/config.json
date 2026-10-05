@@ -1,0 +1,18 @@
+{
+  "name": "session-dc4dc2d2",
+  "createdAt": 1782333726199,
+  "leadAgentId": "team-lead@session-dc4dc2d2",
+  "leadSessionId": "dc4dc2d2-cb9e-4e1b-aa52-866ec4436373",
+  "members": [
+    {
+      "agentId": "team-lead@session-dc4dc2d2",
+      "name": "team-lead",
+      "agentType": "team-lead",
+      "joinedAt": 1782333726199,
+      "tmuxPaneId": "leader",
+      "cwd": "D:\\Repos\\silent-apply",
+      "subscriptions": [],
+      "backendType": "in-process"
+    }
+  ]
+}

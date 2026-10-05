@@ -25,7 +25,7 @@ export {
 } from './gate.js'
 export { GatedTransport } from './gated-transport.js'
 export { assertApprovedHashMatches } from './hash-refusal.js'
-export { assertJqlSafeQuotedLiteral, assertJqlSafeToken, buildIdempotencyJql } from './jql.js'
+export { assertJqlSafeToken, buildIdempotencyJql } from './jql.js'
 export {
   buildCreatePayload,
   type CreateBits,
@@ -65,5 +65,4 @@ export {
   type JiraTransport,
   RegistrationError,
   RegistrationGateError,
-  RegistrationRootUnresolvedError,
 } from './types.js'

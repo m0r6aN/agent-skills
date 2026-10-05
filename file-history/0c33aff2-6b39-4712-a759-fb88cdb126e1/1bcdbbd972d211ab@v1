@@ -1,0 +1,80 @@
+import httpx
+
+import batch
+
+
+def test_norm_url():
+    assert batch.norm_url(" HTTPS://Example.com/ ") == "https://example.com"
+    assert batch.norm_url("") == ""
+
+
+def _client(handler):
+    return httpx.Client(transport=httpx.MockTransport(handler))
+
+
+def test_create_one_ok():
+    def handler(request):
+        assert request.url.path == "/create"
+        assert request.headers["x-admin-token"] == "tok"
+        return httpx.Response(200, json={
+            "slug": "acme-1", "brand": "Acme Plumbing", "domain": "acmeplumbing.com",
+            "model": "meta/muse-spark-1.3", "demo_url": "http://x/demo/acme-1",
+            "go_url": "http://x/go/acme-1", "pixel_url": "http://x/pixel/acme-1.gif",
+            "embed_url": "http://x/embed/acme-1", "expires_at": "2026-10-13T00:00:00+00:00",
+        })
+
+    with _client(handler) as c:
+        out = batch.create_one(c, "http://x", "tok", "https://acmeplumbing.com", None)
+    assert out["status"] == "ok"
+    assert out["slug"] == "acme-1"
+    assert out["demo_url"] == "http://x/demo/acme-1"
+
+
+def test_create_one_4xx_does_not_retry(monkeypatch):
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    calls = []
+
+    def handler(request):
+        calls.append(1)
+        return httpx.Response(400, text="Could not scrape usable content")
+
+    with _client(handler) as c:
+        out = batch.create_one(c, "http://x", "tok", "https://bad.example", None)
+    assert out["status"] == "error"
+    assert "400" in out["error"]
+    assert len(calls) == 1
+
+
+def test_create_one_retries_5xx(monkeypatch):
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    calls = []
+
+    def handler(request):
+        calls.append(1)
+        return httpx.Response(500, text="boom")
+
+    with _client(handler) as c:
+        out = batch.create_one(c, "http://x", "tok", "https://flaky.example", None)
+    assert out["status"] == "error"
+    assert len(calls) == batch.RETRIES
+
+
+def test_run_skips_rejected_rows(tmp_path, monkeypatch):
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    seen = []
+
+    def fake_create_one(client, base, token, url, model):
+        seen.append(url)
+        return {"status": "ok", "error": "", "slug": "s", "brand": "B", "domain": "d",
+                "model": "m", "demo_url": "u", "go_url": "g", "pixel_url": "p",
+                "embed_url": "e", "expires_at": "t"}
+
+    monkeypatch.setattr(batch, "create_one", fake_create_one)
+    inp = tmp_path / "in.csv"
+    inp.write_text("url,business_name,status\n"
+                   "https://ok1.example,Ok1,ok\n"
+                   "https://bad.example,Bad,rejected\n"
+                   "https://ok2.example,Ok2,\n", encoding="utf-8")
+    out = tmp_path / "out.csv"
+    assert batch.run(str(inp), str(out), "http://x", "tok", None, 2) == 0
+    assert seen == ["https://ok1.example", "https://ok2.example"]
