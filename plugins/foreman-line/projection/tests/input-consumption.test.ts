@@ -9,8 +9,8 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { discoverProjectableInputs, writeProjectedResult } from '../src/index.js'
 import { discoverShapingResults, readShapingResult } from '../../shaping/src/index.js'
+import { discoverProjectableInputs, writeProjectedResult } from '../src/index.js'
 import { makeTempRepoRoot, writeShapingResultFixture, writeSpecDraft } from './helpers.js'
 
 const packageDir = join(dirname(fileURLToPath(import.meta.url)), '..')

@@ -30,10 +30,9 @@ import type {
   VerificationVerdict,
 } from '../../../contracts/src/stages/d-verification.js'
 import { branchForParcel } from '../../../permission-profiles/src/emitter.js'
-import { THINKING_DEFAULT_BY_CLASS } from '../../../routing-policy/src/types.js'
 import {
-  receiptPath,
   ROUTING_EVENT_SUBJECT_KINDS,
+  receiptPath,
   validateEventSubject,
   validateReceiptDocument,
 } from '../../../receipts/src/index.js'
@@ -48,6 +47,7 @@ import {
   readMeasuredSessionV1,
   type SealV1,
 } from '../../../receipts/src/measured-workflow-internal.js'
+import { THINKING_DEFAULT_BY_CLASS } from '../../../routing-policy/src/types.js'
 import {
   type CollectResult,
   collectAdversarialFindings,
@@ -1342,9 +1342,7 @@ function verifyInitial(
   // declared `thinking_level:` or the routing-class default (the producer's
   // formula). The class-default table is a union-keyed constant, read here as
   // a plain string index (missing class → undefined, refused below).
-  const classDefaults = THINKING_DEFAULT_BY_CLASS as Readonly<
-    Record<string, string | undefined>
-  >
+  const classDefaults = THINKING_DEFAULT_BY_CLASS as Readonly<Record<string, string | undefined>>
   const routingClassInput: unknown = fm.routing_class
   const thinkingLevelInput: unknown = fm.thinking_level
   const resolvedThinkingLevel: unknown =

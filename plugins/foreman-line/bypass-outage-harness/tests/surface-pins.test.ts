@@ -22,9 +22,12 @@ import {
   classifyPin,
   type PinEntry,
   type PinSnapshotRow,
+  SPEC_RELATIVE_PATH,
   SPEC_SHA256,
   SURFACE_PINS,
+  digestFile,
   snapshotPins,
+  specPath,
 } from '../src/surface-refs.js'
 
 function dirnameOf(p: string): string {
@@ -51,14 +54,22 @@ test('a pin without a known base fails closed on any drift', () => {
   assert.equal(classifyPin('bb'.repeat(32), strictEntry), 'drift')
 })
 
-test('live worktree pins: zero drift; SPEC-CONVENTION is the named known-base KNOWN-GAP', () => {
+test('FK-P17 spec pin follows the completed spec and its committed digest', () => {
+  assert.equal(SPEC_RELATIVE_PATH, 'docs/specs/done/FK-P17-bypass-outage-matrix.md')
+  assert.equal(digestFile(specPath()), SPEC_SHA256)
+})
+
+test('live worktree pins: zero drift; SPEC-CONVENTION gap closed (v0.4 delta committed)', () => {
   const rows = snapshotPins()
   const drifted = rows.filter((r) => r.state === 'drift')
   assert.deepEqual(drifted, [], `unexpected pin drift: ${drifted.map((d) => d.path).join(', ')}`)
+  // The RCM-P2 schema-v0.4 delta is committed: live bytes match the pinned
+  // digest, so the named known-base KNOWN-GAP is resolved to 'match' (the
+  // known-base record is retained as history only — spec pin-table row,
+  // GAP CLOSED 2026-10-06).
   const convention = rows.find((r) => r.id === 'spec-convention')
   assert.ok(convention !== undefined)
-  assert.equal(convention.state, 'known-base')
-  assert.equal(convention.gapReason, 'blocked: RCM-P2 schema-v0.4 delta uncommitted')
+  assert.equal(convention.state, 'match')
   const spec = rows.find((r) => r.id === 'fk-p17-spec')
   assert.ok(spec !== undefined)
   assert.equal(spec.pinnedDigest, SPEC_SHA256)

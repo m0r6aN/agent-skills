@@ -823,11 +823,7 @@ test('actual captured aggregate bytes accept exactly 16 MiB and refuse plus one'
       // BuildResult sequence + 1) instead of the literal 4 — the same twelve
       // closed documents in the same scanning-only role.
       const firstProbeSequence = Number(previous.sequence) + 1
-      for (
-        let sequence = firstProbeSequence;
-        sequence < firstProbeSequence + 12;
-        sequence++
-      ) {
+      for (let sequence = firstProbeSequence; sequence < firstProbeSequence + 12; sequence++) {
         const { hash: previousHash, ...fields } = previous
         const draft = {
           ...fields,

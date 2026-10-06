@@ -34,8 +34,8 @@ export interface PinEntry {
 export type PinState = 'match' | 'known-base' | 'drift'
 
 /** The dispatch pin-table amendment also re-pinned the spec itself. */
-export const SPEC_RELATIVE_PATH = 'docs/specs/active/FK-P17-bypass-outage-matrix.md'
-export const SPEC_SHA256 = '0a53c3bb0b6113188c98a4bc3b8543465d6de8dc80b115e17f6d1b9f0aef8c91'
+export const SPEC_RELATIVE_PATH = 'docs/specs/done/FK-P17-bypass-outage-matrix.md'
+export const SPEC_SHA256 = '6742cc99001240dbb946029131b2cb664425f1db6aa1313ba43d0fdde52db015'
 
 export const SURFACE_PINS: readonly PinEntry[] = [
   {
@@ -71,7 +71,7 @@ export const SURFACE_PINS: readonly PinEntry[] = [
   {
     id: 'exit-annex',
     path: 'docs/goals/foreman-kernel/fk-exit-annex-draft-2026-09-27.md',
-    sha256: '115f5ed3f9d47d0d9d821252b28573cda0a7eac4b5ea130fa3a8b905d1178fc6',
+    sha256: '67a6d52f5d9f2ccb80904c8a0773feee5926a43da048b7f199680cc1911e8f92',
     binds: 'what this parcel must NOT claim (stranded rows)',
   },
   {
@@ -124,9 +124,9 @@ export const SURFACE_PINS: readonly PinEntry[] = [
   {
     id: 'approval-cli',
     path: 'dispatch/src/approval-cli/index.ts',
-    sha256: '1eceee9253163c829bc80fd5e96f1f3810a672e2871a436f04a48eb0b876281d',
+    sha256: 'd930c0a575ed576bf08a91e3be5a3c61b0bed58aa4d6ccb6d8cfede4dc89b430',
     binds:
-      'prepareDispatch def :242, preflightCheck call :271, executeDispatch def :429, postHocCheck call :468, changedPaths refusal :461–:464 (symbol resolution authoritative)',
+      'prepareDispatch def :378, preflightCheck call :419, executeDispatch def :624, postHocCheck call :666, changedPaths refusal :659–:662 (re-pinned 2026-10-06; symbol resolution authoritative, line numbers documentation)',
   },
   {
     id: 'guard',

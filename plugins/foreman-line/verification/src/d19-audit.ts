@@ -590,9 +590,7 @@ const RULED_DATA_PATH_CONSTANTS: Record<
   string,
   readonly { name: string; value: string; count: number }[]
 > = {
-  'approval/src/paths.ts': [
-    { name: 'ACTIVE_SPECS_DIR', value: RULED_REPORT_SPECS_DIR, count: 1 },
-  ],
+  'approval/src/paths.ts': [{ name: 'ACTIVE_SPECS_DIR', value: RULED_REPORT_SPECS_DIR, count: 1 }],
   'authority-registry/src/registry.ts': [
     { name: 'R31_DECISION_PATH', value: RULED_FK_R31_DECISION_VALUE, count: 1 },
   ],
@@ -602,9 +600,7 @@ const RULED_DATA_PATH_CONSTANTS: Record<
   'registration/src/register.ts': [
     { name: 'ACTIVE_SPECS_DIR', value: RULED_REPORT_SPECS_DIR, count: 0 },
   ],
-  'shaping/src/emit.ts': [
-    { name: 'ACTIVE_SPECS_DIR', value: RULED_REPORT_SPECS_DIR, count: 1 },
-  ],
+  'shaping/src/emit.ts': [{ name: 'ACTIVE_SPECS_DIR', value: RULED_REPORT_SPECS_DIR, count: 1 }],
   'verification/src/adversarial/index.ts': [
     { name: 'MATRIX_REPO_PATH', value: RULED_DATA_MATRIX_VALUE, count: 1 },
   ],
@@ -925,6 +921,18 @@ const RULED_CLASS4_SCOPED_SITES: Record<string, Record<string, readonly ScopedPi
  * ruled normalization, or beyond the pinned cardinality remains class 5.
  */
 const RULED_CLASS5_NORMALIZATION_SITES: Record<string, Record<string, readonly ScopedPin[]>> = {
+  // FK-P11 (ratified under delegated Gate 3, RS-2.1; pin added 2026-10-06):
+  // `resolve(repoRoot)` normalizes the GitLineageReader's REQUIRED
+  // constructor root — never a discovered or defaulted root — and the seam
+  // is fail-closed on a wrong root: read-only git plumbing against a wrong
+  // or non-git root exits nonzero and surfaces as the typed
+  // `git-invocation-failure`/`git-nonzero-exit` lineage-reader failure, and
+  // an unknown commit is typed lineage absence; both refuse the import.
+  'kernel-import/src/lineage-git.ts': {
+    normalizeRepoRoot: [
+      { role: 'root/required-input-normalization', form: 'resolve(repoRoot)', count: 1 },
+    ],
+  },
   'authority-registry/src/validate.ts': {
     repoRootCheck: [
       { role: 'root/canonical-worktree-comparison', form: 'resolve(repoRoot)', count: 1 },
