@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { existsSync, lstatSync, readFileSync, realpathSync } from 'node:fs'
+import { existsSync, lstatSync, readFileSync, realpathSync, statSync } from 'node:fs'
 import { isAbsolute, relative, resolve, sep } from 'node:path'
 import * as ts from 'typescript/unstable/ast'
 import { API as TypeScriptApi } from 'typescript/unstable/sync'
@@ -4559,7 +4559,19 @@ function repoRootCheck(repoRoot: string): {
     const worktreeRoot = realpathSync(
       runGitText(canonicalRoot, ['rev-parse', '--show-toplevel']).trim(),
     )
+    // Path-SPELLING equality is not directory identity on Windows: git's own
+    // canonicalization expands 8.3 short names (`RUNNER~1` -> `runneradmin`)
+    // while libuv realpath preserves the spelling it was handed, so the same
+    // directory can compare unequal (earned on windows-latest CI, where %TEMP%
+    // is short-named). Directory identity is the (device, inode) pair, which
+    // is spelling-immune on every platform; the case-folded string check stays
+    // as the cheap fast path.
     if (canonicalRoot.toLowerCase() === worktreeRoot.toLowerCase()) {
+      return { gitReady: true, violations: [] }
+    }
+    const rootStat = statSync(canonicalRoot, { bigint: true })
+    const worktreeStat = statSync(worktreeRoot, { bigint: true })
+    if (rootStat.dev === worktreeStat.dev && rootStat.ino === worktreeStat.ino) {
       return { gitReady: true, violations: [] }
     }
     return {
@@ -4567,7 +4579,7 @@ function repoRootCheck(repoRoot: string): {
       violations: [
         violation(
           'REPO_ROOT_INVALID',
-          `repository root is not the exact root of a real Git worktree [diag] canonical=${canonicalRoot} worktree=${worktreeRoot}`,
+          'repository root is not the exact root of a real Git worktree',
         ),
       ],
     }
