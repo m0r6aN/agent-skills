@@ -2616,6 +2616,16 @@ test('R31 historical positive uses the pinned R30 implementation and its exact s
       writeFileSync(join(root, source.path), bytes)
     }
     symlinkSync(join(packageRoot, 'node_modules'), join(oldPackage, 'node_modules'), 'junction')
+    // The pinned R30-era CLI verifies --repo-root by STRING comparison against
+    // git's own toplevel, and those bytes cannot change (they are the pinned
+    // historical evidence). Git expands 8.3 short names (`RUNNER~1` ->
+    // `runneradmin`) while Node's realpath preserves the spelling it was
+    // handed, so on a short-named %TEMP% (windows-latest) the historical
+    // implementation can only verify git's own spelling of the directory.
+    // Hand it exactly that: same directory, the spelling it can prove.
+    const gitCanonicalRoot = execFileSync('git', ['-C', root, 'rev-parse', '--show-toplevel'], {
+      encoding: 'utf8',
+    }).trim()
     const stdout = execFileSync(
       process.execPath,
       [
@@ -2624,7 +2634,7 @@ test('R31 historical positive uses the pinned R30 implementation and its exact s
         'validate',
         join(oldPackage, 'authority-enforcement-registry.yaml'),
         '--repo-root',
-        root,
+        gitCanonicalRoot,
       ],
       { cwd: oldPackage, encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 },
     )
