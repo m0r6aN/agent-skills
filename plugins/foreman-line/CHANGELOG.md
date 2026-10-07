@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.2.0 — 2026-10-07
+
+pi-model-configuration wave 2 (Amendments 06–09, owner-ratified):
+
+- Amendment 06: Pi-native dashed session identities; first-party `anthropic`
+  bindings; `opencode-go` and `fireworks` provider lanes; model-gate roster v2
+  (Claude-Code-hosted sessions only — named residual MODEL_GATE_HOOK_COVERAGE).
+- Live availability probe 2026-10-07: auth/catalogue captures, PONG probes,
+  endpoint-divergence findings; G-3 Go region refusal recorded and resolved
+  after Global regions enabled; deepseek-v4-pro re-enabled plus
+  deepseek-v4.1-flash admitted on both gateways.
+- Amendment 07: L1/L2 `opencode` re-pin — L1 `gpt-6.1-sol` → `claude-opus-5-5`,
+  L2 `claude-sonnet-5-5` → `gpt-6-luna`; frontier-binding registry admissions;
+  host-settings proposal re-minted (35 enablement adds).
+- Amendment 08: `gpt-5.6-sol` struck from the roster (M2-style, with a
+  reconciliation test); `gpt-6.1-sol` admitted to KNOWN_FRONTIER_MODELS and
+  the frontier ordering as preferred verifier; L3 re-pins;
+  `opencode-go/deepseek-v4.1-flash` end-appended to the economy ordering.
+- Amendment 09: ten Zen (`opencode`) bindings declared `data_classes: [public]`
+  on the captured Zen privacy terms — public-class dispatch eligibility
+  unblocked; wider classes remain owner attestation.
+- bypass-outage-harness re-aligned to the roster (APPROVED_MODEL
+  `claude-sonnet-5-5`; hook surfaces re-pinned in surface-refs).
+- Evidence: models.dev capture and Zen docs capture (sha256-pinned,
+  `docs/goals/pi-model-configuration/evidence/`).
+
 ## Unreleased
 
 - The CI aggregation now captures each package check's complete stdout/stderr and
