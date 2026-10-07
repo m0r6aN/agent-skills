@@ -12,28 +12,33 @@
 
 ## State
 
-`cff_plan_review_triaged_reratification_pending`
+`cff_gate2_granted_p0_p3_dispatched`
 
-The plan-level adversarial review has returned (findings 1–6); triage complete
-in [`plan-review-triage-2026-10-07.md`](plan-review-triage-2026-10-07.md).
-Findings 1/3/5 mutate locked-decision text: **Gate 1 re-opened scoped** to
-D7, D8, D9, the Objective sentence, plus D10 extensions and a new D11 (diff
-source) + graph edits. Proposed amendment text is drafted and **awaiting
-developer re-ratification** (Stage Zero rule 3 — not installed until directed).
-Blocked on re-ratification: CFF-P1, CFF-P2, CFF-P4 shaping. Provably
-unblocked: CFF-P0 recon deliverables, CFF-P3 original scope — but Gate 2 is
-ungranted (no standing authorization in this goal) and awaits the developer's
-word. After re-ratification: the Gate 2 request for the final named graph.
+Amendment package re-ratified ("1. ratify as written") and installed:
+D7/D8/D9/D10/D11 + Objective wording + graph edits + exit-criterion-7 clause.
+Gate 2 granted early and scoped ("gate 2 early grant issued") — CFF-P0 and
+CFF-P3 kickstarters issued to shaping. CFF-P1/P2/P4 hold until the full-graph
+Gate 2 request. Gate 3 human-owned.
 
 ## Standing authorizations
 
-**None.** Verbatim from the ratified charter:
+**Gate 2 — GRANTED 2026-10-07, early and scoped.** Verbatim grant: "gate 2
+early grant issued" (response to the coordinator's request for "an early
+scoped Gate 2 for CFF-P0-recon + CFF-P3 (original scope)"). Coordinator-stated
+scope interpretation, flagged for correction: dispatch approval covers the
+parcels **CFF-P0 and CFF-P3 in their post-re-ratification form** (P0's D7
+measurement deliverable and P3's D10 drift check included — both were locked
+into the parcels by the "1. ratify as written" amendment package issued in the
+same directive). Contingencies: standing constraints by reference
+(`plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`); every
+dispatch opens with a Step 0 restate-and-stop gate; branch/worktree named in
+each kickstarter, never ambient; rework directives mandate "every X"; the
+charter's review requirements bind (two reviews where named, incl. CFF-P0's D7
+measurement deliverable). **Any work beyond CFF-P0 and CFF-P3 requires the
+full-graph Gate 2 request.**
 
-- Gate 2: not granted. Request only for the final named parcel graph after
-  the plan-level adversarial review; per-parcel vs. per-graph cadence is
-  decided at that request.
-- Gate 3: not delegated. Every merge to a workflow, the CI runner, or the
-  reuse/waiver machinery remains human-owned.
+**Gate 3 — NOT delegated.** Verbatim from the ratified charter: "Every merge to
+a workflow, the CI runner, or the reuse/waiver machinery remains human-owned."
 
 ## Stop conditions (charter §Stop conditions, binding here)
 
@@ -55,3 +60,7 @@ conditions per COORDINATOR-PATTERN also apply.
 - Ratification record: charter §Gate 1 record.
 - Plan review findings + triage dispositions + scoped re-open package:
   [`plan-review-triage-2026-10-07.md`](plan-review-triage-2026-10-07.md).
+- Dispatched under the Gate 2 grant (kickstarters, Step 0 restate-and-stop
+  gates in each):
+  - CFF-P0 shaping: `plugins/foreman-line/docs/kickstarters/foreman-line-shaping-CFF-P0.md`
+  - CFF-P3 shaping: `plugins/foreman-line/docs/kickstarters/foreman-line-shaping-CFF-P3.md`
