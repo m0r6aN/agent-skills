@@ -111,6 +111,26 @@ the two never drift.
    excludes the Coordinator and verifier. The route key must equal its adapter
    id, preventing a policy entry from silently referring to a different adapter.
 
+## Lane -> class referential integrity (ROPT-P1 advisory)
+
+Every dispatchable lane names the routing classes it serves
+(`lane_map.<lane>.routing_classes`). If such a name has no `classes` entry, a
+dispatch under it resolves **no allowlist and no `ceiling_usd`** — the spend
+bound does not exist for that lane/class pair. `laneClassReferenceAdvisories`
+(exported, pure) names each such gap as `LANE_CLASS_UNDEFINED`, and the CLI
+prints them as non-blocking `advisory:` lines on stderr; the exit-code
+contract below is unchanged (a valid policy with advisories still exits 0).
+
+This is an advisory, not a ninth invariant, on purpose: closing the gap
+requires policy *content* — one `classes` entry per referenced-but-undefined
+class, each carrying an owner-set ceiling, and an enforced bound is never a
+guessed value. A lane with `status: disabled-refused` (M2: L6) is exempt — it
+cannot dispatch, so its undefined class bounds nothing. On the shipped v0.4
+policy the advisory names exactly two gaps: `lane_map.L2` ->
+`review/security` and `lane_map.L3` -> `implementation/complex`. Promotion to
+a hard refusal, once the owner ratifies those class definitions, is specced
+in `docs/specs/active/ROPT-P1-routing-optimization-program.md`.
+
 ## Schema v0.4 — RCM capability predicates and expertise bindings (2026-09-27)
 
 RCM-P2/RCM-P3 (charter D7/D8, `docs/goals/routing-currency-and-merit/rcm-p2-scope-reconciliation-2026-09-27.md`):
@@ -237,7 +257,7 @@ because they exhaust a $25 class ceiling in a single turn.
 
 | Code | Meaning |
 |---|---|
-| `0` | Valid |
+| `0` | Valid (non-blocking `advisory:` lines may appear on stderr; they never move the exit code) |
 | `1` | Schema or semantic-invariant violation — every violation on stderr, not just the first |
 | `2` | Usage error — missing/unreadable path, bad invocation |
 

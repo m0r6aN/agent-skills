@@ -1,7 +1,8 @@
 /**
  * `routing-policy validate <path>` — thin wrapper over `validatePolicy`.
  * Exit-code contract (frozen by this parcel, no workflow wiring):
- *   0  valid
+ *   0  valid (non-blocking `advisory:` lines may still appear on stderr;
+ *      they never change the exit code)
  *   1  schema or semantic-invariant violation (every violation on stderr)
  *   2  usage error (missing/unreadable path, bad invocation)
  */
@@ -15,7 +16,7 @@ import {
   resolveRenderOptions,
 } from './recovery-diagnostics.js'
 import { createPlatformNotificationSink } from './recovery-notify.js'
-import { validatePolicy } from './validator.js'
+import { laneClassReferenceAdvisories, validatePolicy } from './validator.js'
 
 function run(argv: readonly string[]): number {
   const [command, path] = argv
@@ -49,6 +50,11 @@ function run(argv: readonly string[]): number {
       process.stderr.write(`${message}\n`)
     }
     return 1
+  }
+  // ROPT-P1: non-blocking advisories ride stderr (grandfather-advisory style)
+  // and never move the exit code — a valid policy with advisories is still 0.
+  for (const advisory of laneClassReferenceAdvisories(doc)) {
+    process.stderr.write(`advisory: ${advisory}\n`)
   }
   return 0
 }
