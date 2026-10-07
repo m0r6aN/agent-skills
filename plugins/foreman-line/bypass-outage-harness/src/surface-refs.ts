@@ -105,7 +105,10 @@ export const SURFACE_PINS: readonly PinEntry[] = [
   {
     id: 'model-gate',
     path: 'hooks/model-gate.mjs',
-    sha256: 'a01c12db4f1ef0220e6da085a945c712e342a22be31ee06450e703984a814065',
+    // Re-pinned 2026-10-07: Amendment 06 N2 roster update (dashed Pi-native
+    // ids, coverage-limit note) landed without re-pinning; harness channels
+    // re-aligned to the v2 roster (APPROVED_MODEL claude-sonnet-5-5).
+    sha256: '27fdbbca245a76480634e3ae4fb2750508e1e7365ed7535e9dbec52f645f39e5',
     binds:
       'IP-4 anchor file; readPayload :37, loadPolicy :48, gateDisabled :54, statePath :69, evaluate :81, main :146, pre-tool :186, fail-open catch :213',
   },
@@ -118,7 +121,10 @@ export const SURFACE_PINS: readonly PinEntry[] = [
   {
     id: 'model-gate-policy',
     path: 'hooks/model-gate.policy.json',
-    sha256: 'd1dfa19a8c2d5f5f00deed08bd8c388ddbf28eefd8cd991111eea681bd7c7a16',
+    // Re-pinned 2026-10-07: roster v2 (Amendment 06 N1/N4 dashed ids + retired
+    // block; Amendment 08 moves the 5.6-sol id to retired, approves
+    // gpt-6.1-sol).
+    sha256: 'dcf07abeec7ef93f4e6eeade0dd27830b1d3189a7e3d699938b17da7fc28dff7',
     binds: 'model roster + FL_MODEL_GATE escape hatch (MB-01/MB-02 fixtures)',
   },
   {
