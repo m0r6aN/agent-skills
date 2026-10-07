@@ -20,7 +20,7 @@
     },
     {
       "name": "foreman-line",
-      "version": "0.6.9",
+      "version": "0.2.0",
       "description": "Contract-first development coordination from goal shaping through verified closure.",
       "source": {
         "source": "local",
