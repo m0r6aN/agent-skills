@@ -123,7 +123,6 @@ export interface DataClassificationRule {
   readonly transport_requirements: TransportRequirements
 }
 
-
 export type ShadowTaskType = 'spec_lint' | 'evidence_index' | 'review_triage'
 
 /** Exactly the two roles a shadow route may never fill, in either YAML order. */

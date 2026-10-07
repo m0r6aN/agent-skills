@@ -26,6 +26,7 @@ export const RATIFIED_PACKAGES = [
   'hybrid-routing',
   'integration',
   'jev-decisions',
+  'kernel-import',
   'kernel-contracts',
   'kernel-lease',
   'kernel-state',

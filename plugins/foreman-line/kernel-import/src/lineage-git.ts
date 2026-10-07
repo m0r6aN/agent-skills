@@ -57,12 +57,24 @@ function gitFailure(code: GitLineageFailureCode): never {
   throw Object.assign(new Error('lineage-reader-failure'), { code })
 }
 
+/**
+ * Normalizes the REQUIRED repo-root constructor input once (D19-FK class-5
+ * ruled site: required-input normalization, never a discovered or defaulted
+ * root). The seam is fail-closed on a wrong root: every invocation runs
+ * read-only git plumbing against the resolved root, and a wrong or non-git
+ * root surfaces as a typed lineage-reader failure (`git-invocation-failure` /
+ * `git-nonzero-exit`) or typed lineage absence — both refuse the import.
+ */
+function normalizeRepoRoot(repoRoot: string): string {
+  return resolve(repoRoot)
+}
+
 /** Shipped read-only `SourceLineageReader` over the named revisions of a git repo. */
 export class GitLineageReader implements SourceLineageReader {
   #repoRoot: string
 
   constructor(repoRoot: string) {
-    this.#repoRoot = resolve(repoRoot)
+    this.#repoRoot = normalizeRepoRoot(repoRoot)
   }
 
   /** `rev-parse --verify --quiet <commitId>^{commit}` — exit 0 known, 1 unknown. */

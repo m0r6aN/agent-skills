@@ -18,6 +18,7 @@ Every builder and reviewer kickstarter includes this file by reference (one line
 
 6. **Classifier/heuristic parcels:** fixtures MUST cover the naming conventions that dominate real codebases (camelCase, concatenated, abbreviated), not just the canonical/textbook form — and for a *safety* classifier, the under-detect (false-negative) direction gets the most fixtures. (#29)
 7. **Kompress-touching parcels:** probe content length before assembly; the ~200-token router:noop threshold is an effective ceiling in coordinator/builder sessions. Content above it is a stop condition requiring a coordinator ruling — never a silent retry. (#23)
+14. **Plugin/marketplace parcels:** verify each living install identifier through the declared marketplace entry to an existing plugin source whose nested manifest name equals the requested plugin. A normalized repository URL does not prove that an install command resolves. (#37)
 
 ## Reviewer
 

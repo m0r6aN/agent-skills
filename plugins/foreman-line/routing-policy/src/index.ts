@@ -1,5 +1,11 @@
 // HRO-P4b (MRC-10) — additive config-repair-proposal re-exports (the
 // package's supported-surface wiring). Existing exports above are untouched.
+
+export type {
+  CatalogEligibilityInput,
+  CatalogEligibilityResult,
+} from './catalog-eligibility-adapter.js'
+export { evaluateCatalogEligibility } from './catalog-eligibility-adapter.js'
 export type {
   ApplyChecklistItem,
   ApplyContract,
@@ -24,11 +30,6 @@ export {
   planConfigRepairApply,
   writeConfigRepairAtomically,
 } from './config-repair-proposal.js'
-export type {
-  CatalogEligibilityInput,
-  CatalogEligibilityResult,
-} from './catalog-eligibility-adapter.js'
-export { evaluateCatalogEligibility } from './catalog-eligibility-adapter.js'
 export type { EligibilityFacts, IdentityRefusalCode, Provenance } from './eligibility.js'
 export { IDENTITY_REFUSAL_CODES, projectEligibility, readCatalogSnapshot } from './eligibility.js'
 export type {
@@ -73,39 +74,6 @@ export {
   provenanceFreshnessVerdict,
   resolveRouteWithRecovery,
 } from './pi-resolver.js'
-// HRO-P4c (MRC-12) — additive recovery-diagnostics re-exports (the package's
-// supported-surface wiring). Existing exports above are untouched.
-export type {
-  DiagnosticEvent,
-  DiagnosticIdentity,
-  DiagnosticInput,
-  DiagnosticLabel,
-  DiagnosticSeverity,
-  DiagnosticsBatchInput,
-  DiagnosticsReport,
-  NotificationRequest,
-  NotificationSink,
-  RenderedDiagnostic,
-  RenderOptions,
-} from './recovery-diagnostics.js'
-export {
-  boundIdentifierText,
-  buildDiagnosticsReport,
-  dedupeRendered,
-  deriveDiagnosticEvents,
-  renderHumanLine,
-  resolveRenderOptions,
-  sanitizeForTerminal,
-} from './recovery-diagnostics.js'
-export type { NotificationCommand, SpawnSyncLike } from './recovery-notify.js'
-export { createPlatformNotificationSink, notificationCommand } from './recovery-notify.js'
-export type {
-  AttemptRecord,
-  FreshnessVerdict,
-  RecoveryEpisodeRecord,
-  RefreshProvenance,
-  RouteUnavailableOutcome,
-} from './route-receipt.js'
 export { resolvePmcRouteV1 } from './pmc-resolver.js'
 export type {
   BindingClaims,
@@ -149,6 +117,39 @@ export type {
 } from './provider-bindings.js'
 export { validateProviderBindingPolicyV1 } from './provider-bindings.js'
 export { producePublicObservationSnapshot } from './public-observation-producer.js'
+// HRO-P4c (MRC-12) — additive recovery-diagnostics re-exports (the package's
+// supported-surface wiring). Existing exports above are untouched.
+export type {
+  DiagnosticEvent,
+  DiagnosticIdentity,
+  DiagnosticInput,
+  DiagnosticLabel,
+  DiagnosticSeverity,
+  DiagnosticsBatchInput,
+  DiagnosticsReport,
+  NotificationRequest,
+  NotificationSink,
+  RenderedDiagnostic,
+  RenderOptions,
+} from './recovery-diagnostics.js'
+export {
+  boundIdentifierText,
+  buildDiagnosticsReport,
+  dedupeRendered,
+  deriveDiagnosticEvents,
+  renderHumanLine,
+  resolveRenderOptions,
+  sanitizeForTerminal,
+} from './recovery-diagnostics.js'
+export type { NotificationCommand, SpawnSyncLike } from './recovery-notify.js'
+export { createPlatformNotificationSink, notificationCommand } from './recovery-notify.js'
+export type {
+  AttemptRecord,
+  FreshnessVerdict,
+  RecoveryEpisodeRecord,
+  RefreshProvenance,
+  RouteUnavailableOutcome,
+} from './route-receipt.js'
 export {
   classEntrySchema,
   dataClassificationRuleSchema,
