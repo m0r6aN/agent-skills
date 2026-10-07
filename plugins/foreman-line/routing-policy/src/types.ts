@@ -221,9 +221,27 @@ export interface BindingCapabilities {
   readonly 'structured-output': CapabilityState
 }
 
-export type ProviderName = 'opencode' | 'openrouter'
+/**
+ * Providers the contract can bind. Each is a DISTINCT namespace: an id present
+ * under one never resolves under another (Amendment 02; `MISSING_MODEL_REFUSED`,
+ * no namespace fallback). In particular `opencode` and `opencode-go` are two
+ * providers, not one with an alias, and a fallback never crosses providers (D3).
+ *
+ * Three id spellings coexist and are each recorded verbatim — never normalized
+ * toward one another (Amendment 06 N1/N3):
+ *   anthropic    dashes, first-party        `claude-opus-5-5`
+ *   openrouter   dots, vendor-prefixed      `anthropic/claude-opus-5.5`
+ *   fireworks    full path, `p` for a dot   `accounts/fireworks/models/glm-5p3`
+ */
+export type ProviderName = 'opencode' | 'opencode-go' | 'openrouter' | 'anthropic' | 'fireworks'
 
-export const PROVIDER_NAMES: readonly ProviderName[] = ['opencode', 'openrouter']
+export const PROVIDER_NAMES: readonly ProviderName[] = [
+  'opencode',
+  'opencode-go',
+  'openrouter',
+  'anthropic',
+  'fireworks',
+]
 
 export type LaneId = 'L1' | 'L2' | 'L3' | 'L4' | 'L5' | 'L6'
 
@@ -492,6 +510,21 @@ export const CONTRACT_RESIDUALS: readonly string[] = [
   'L3_PROVIDER_PREFERENCE_UNSET',
   'L4_PROVIDER_PREFERENCE_UNSET',
   'DELTA_L_UNSET',
+  // Amendment 06 N3: no `opencode-go` catalogue on a host where the provider is
+  // not credentialed. RESOLVED on this host 2026-10-07 (29 models captured), but
+  // retained in the vocabulary: it is the correct refusal on any host that has
+  // not configured the provider, and a binding must never claim a fact about an
+  // unfetched catalogue.
+  'OPENCODE_GO_CATALOGUE_UNFETCHED',
+  // Amendment 06 N3 / probe 2026-10-07: `opencode-go` is a gateway in front of
+  // third-party models. Its catalogue establishes identity, cost, context and
+  // modality, but not the invariant-(g) transport guarantees. Open-gateway
+  // bindings are `public`-only while this stands.
+  'OPENCODE_GO_TRANSPORT_UNVERIFIED',
+  // Amendment 06 N3: the open-weight capture establishes identity and cost,
+  // but not the invariant-(g) transport guarantees. Open-weight bindings are
+  // `public`-only while this stands.
+  'FIREWORKS_TRANSPORT_UNVERIFIED',
 ]
 
 /**

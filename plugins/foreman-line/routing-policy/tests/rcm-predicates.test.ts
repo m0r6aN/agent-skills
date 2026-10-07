@@ -16,6 +16,8 @@ import type { ExpertiseBinding, ModelBinding, RoutingPolicy } from '../src/types
 import { validatePolicy } from '../src/validator.js'
 import {
   FIXED_ISSUED_AT,
+  L5_PRIMARY_BINDINGS,
+  L5_SELECTABLE_BINDINGS,
   makeDeclaredPolicy,
   makeRequest,
   withBinding,
@@ -83,12 +85,7 @@ test('F1/F2: an image-bearing economy request never selects a text-only first/ch
 
 test('unsatisfiable input-modality requirements refuse with the named predicate — never a silent downgrade', () => {
   let policy = makeDeclaredPolicy()
-  for (const id of [
-    'opencode/qwen3.8-flash',
-    'opencode/glm-5.3-flash',
-    'openrouter/google/gemini-3.8-flash',
-    'openrouter/anthropic/claude-haiku-4.5',
-  ]) {
+  for (const id of L5_SELECTABLE_BINDINGS) {
     policy = withBinding(policy, id, (binding) => ({
       ...binding,
       inputs: { state: 'declared', value: ['text'], source: 'synthetic-test-fixture' },
@@ -105,12 +102,7 @@ test('unsatisfiable input-modality requirements refuse with the named predicate 
 
 test('unknown input-modality facts refuse when a modality is required (INPUTS_UNKNOWN) — a model-side fact is never guessed', () => {
   let policy = makeDeclaredPolicy()
-  for (const id of [
-    'opencode/qwen3.8-flash',
-    'opencode/glm-5.3-flash',
-    'openrouter/google/gemini-3.8-flash',
-    'openrouter/anthropic/claude-haiku-4.5',
-  ]) {
+  for (const id of L5_SELECTABLE_BINDINGS) {
     policy = withBinding(policy, id, (binding) => stripPredicate(binding, 'inputs'))
   }
   const receipt = resolveRoute(policy, makeRequest({ required_inputs: ['image'] }), {
@@ -161,12 +153,7 @@ test('D4: a capability-perfect binding outside the classification set is not sel
 
 test('D8: a binding lacking the requested thinking level refuses (THINKING_LEVEL_UNSUPPORTED) — never a silent downgrade', () => {
   let policy = makeDeclaredPolicy()
-  for (const id of [
-    'opencode/qwen3.8-flash',
-    'opencode/glm-5.3-flash',
-    'openrouter/google/gemini-3.8-flash',
-    'openrouter/anthropic/claude-haiku-4.5',
-  ]) {
+  for (const id of L5_SELECTABLE_BINDINGS) {
     policy = withBinding(policy, id, (binding) => ({
       ...binding,
       thinking_levels: {
@@ -208,12 +195,7 @@ test('OQ5: legacy thinking-level omission means the routing-class default — bo
 
 test('OQ5: an architecture/risk request defaults to high — minimal-only bindings refuse naming the defaulted level', () => {
   let policy = makeDeclaredPolicy()
-  for (const id of [
-    'opencode/qwen3.8-flash',
-    'opencode/glm-5.3-flash',
-    'openrouter/google/gemini-3.8-flash',
-    'openrouter/anthropic/claude-haiku-4.5',
-  ]) {
+  for (const id of L5_SELECTABLE_BINDINGS) {
     policy = withBinding(policy, id, (binding) => ({
       ...binding,
       thinking_levels: {
@@ -621,10 +603,13 @@ test('F1 named control: nvidia/nemotron-3.5-lightning — an image-bearing boile
   // (iii, stop branch) when no vision-capable primary-role binding remains in
   // the selection pool (fallback-role bindings never compete), the route stops
   // naming INPUTS_INSUFFICIENT — never a silent downgrade.
-  const allTextOnly = withBinding(policy, 'opencode/qwen3.8-flash', (binding) => ({
-    ...binding,
-    inputs: { state: 'declared', value: ['text'], source: 'synthetic-test-fixture' },
-  }))
+  let allTextOnly = policy
+  for (const id of L5_PRIMARY_BINDINGS) {
+    allTextOnly = withBinding(allTextOnly, id, (binding) => ({
+      ...binding,
+      inputs: { state: 'declared', value: ['text'], source: 'synthetic-test-fixture' },
+    }))
+  }
   const stopped = resolveRoute(allTextOnly, request, { issued_at: FIXED_ISSUED_AT })
   assert.equal(stopped.status, 'stop')
   assert.equal(stopped.route, null)
@@ -704,10 +689,13 @@ test('F2 named control: z-ai/glm-5.3 — an image-bearing boilerplate request ne
   // (iii, stop branch) when no vision-capable primary-role binding remains in
   // the selection pool (fallback-role bindings never compete), the route stops
   // naming INPUTS_INSUFFICIENT — never a silent downgrade.
-  const allTextOnly = withBinding(policy, 'opencode/qwen3.8-flash', (binding) => ({
-    ...binding,
-    inputs: { state: 'declared', value: ['text'], source: 'synthetic-test-fixture' },
-  }))
+  let allTextOnly = policy
+  for (const id of L5_PRIMARY_BINDINGS) {
+    allTextOnly = withBinding(allTextOnly, id, (binding) => ({
+      ...binding,
+      inputs: { state: 'declared', value: ['text'], source: 'synthetic-test-fixture' },
+    }))
+  }
   const stopped = resolveRoute(allTextOnly, request, { issued_at: FIXED_ISSUED_AT })
   assert.equal(stopped.status, 'stop')
   assert.equal(stopped.route, null)

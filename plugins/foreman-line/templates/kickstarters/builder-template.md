@@ -36,11 +36,43 @@ review, approval, merge, release, or security decision mid-turn. A degraded or
 unavailable primary routes only to its declared fallback; if both fail, the
 parcel stops and reports. Fallbacks are declared in the approved route and
 recorded in the route receipt — never invented in a template, never silently
-substituted, never credential-bearing. Model IDs are first-class in both Pi
-spellings — `opencode/<id>` and `openrouter/<vendor>/<id>` — while
-provider-neutral task/result envelopes are preserved; an OpenRouter slug is one
-spelling of a model ID, not the model vocabulary, and within OpenRouter slugs
-Anthropic models use dots (e.g. `openrouter/anthropic/claude-opus-5.5`).
+substituted, never credential-bearing.
+
+**Model IDs and how the session is launched.** A dispatched session is started
+by the Pi CLI, naming the approved route's identity:
+
+```
+pi --model <provider>/<model-id>        # e.g. pi --model anthropic/claude-opus-5-5
+```
+
+`--model` carries the *identity*; it confers no authority. The approved route
+receipt remains the authorizing artifact, and the launch boundary still verifies
+it before inference. A bare `pi` with no approved route is a direct invocation
+and is not a Foreman execution path.
+
+Model IDs are first-class in **four** provider spellings, each recorded verbatim
+and never normalized toward another — exact string equality within one namespace
+only (Amendment 06 N1/N3):
+
+| Provider | Spelling | Example |
+|---|---|---|
+| `anthropic` (first-party) | **dashes** | `anthropic/claude-opus-5-5` |
+| `opencode` / `opencode-go` | dashes, no vendor | `opencode/<id>` |
+| `openrouter` | **dots**, vendor-prefixed | `openrouter/anthropic/claude-opus-5.5` |
+| `fireworks` (open-weight) | full path, `p` for a dot | `fireworks/accounts/fireworks/models/glm-5p3` |
+
+An OpenRouter slug is one spelling of a model ID, not the model vocabulary.
+`anthropic/claude-opus-5-5` and `openrouter/anthropic/claude-opus-5.5` are two
+namespaces describing two routes, not one id with two spellings — never derive
+or alias one from the other. Provider-neutral task/result envelopes are
+preserved throughout.
+
+**Open-weight lane.** `fireworks` models are eligible for **`public` data only**
+(residual `FIREWORKS_TRANSPORT_UNVERIFIED`): the invariant-(g) transport
+guarantees are unmeasured for an inference host that is not the model's author.
+An internal or restricted parcel never routes there. `opencode-go` is a declared
+provider with no bindings until its catalogue is captured
+(`OPENCODE_GO_CATALOGUE_UNFETCHED`) — it is never aliased to `opencode`.
 
 Standing constraints apply — `docs/kickstarters/STANDING-CONSTRAINTS.md`.
 `<NAME ANY RULES THIS PARCEL BOTH OBEYS AND SPECIFICALLY EXERCISES, IF ANY.>`

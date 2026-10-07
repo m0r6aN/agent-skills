@@ -101,14 +101,21 @@ selection_order:
     # Two vendors on purpose: a verifier drawn from a different vendor than the
     # coordinator makes distinct-instance independence more than nominal.
     - claude-opus-5-5 # anthropic/claude-opus-5.5 — confirmed Opus 5.5 frontier route
-    - gpt-5.6-sol # openai/gpt-5.6-sol — preferred verifier
+    - gpt-6.1-sol # openai/gpt-6.1-sol — preferred verifier (Amendment 08:
+      # supersedes the struck 5.6-sol id at identical $2/$10, newer
+      # generation; the predecessor is removed from the roster entirely)
     - gemini-3.1-pro-preview # google/gemini-3.1-pro-preview — third-vendor fallback (no GA slug on OpenRouter)
     - claude-fable-5.1 # anthropic/claude-fable-5.1 — escalation only; 2x Opus 5
     - gpt-6-astra # openai/gpt-6-astra — newest escalation, after Fable (SUPERCHARGE-P1, verified 2026-09-14)
   standard:
     # Builder default. Gemini 3.8 Flash is half its Zen price on OpenRouter
-    # and sits second on price; Sonnet 5 stays first on track record.
-    - claude-sonnet-5 # anthropic/claude-sonnet-5
+    # and sits second on price; the Sonnet line stays first on track record.
+    - claude-sonnet-5-5 # anthropic/claude-sonnet-5-5 (Amendment 06 N1)
+    - claude-sonnet-5 # anthropic/claude-sonnet-5 — retained: the openrouter
+      # catalogue is NOT covered by an on-host capture, so no `-5-5` id is
+      # established for it. (Amendment 07 established `opencode/claude-sonnet-5-5`
+      # via the 2026-10-07 models.dev capture; the OpenRouter spelling remains
+      # unestablished.) Removing this would strand the openrouter binding.
     - gemini-3.8-flash # google/gemini-3.8-flash
     - gpt-5.6-terra # openai/gpt-5.6-terra
     # SUPERCHARGE-P1 appends (verified 2026-09-14; end-append preserves
@@ -116,6 +123,14 @@ selection_order:
     - glm-5.3 # z-ai/glm-5.3
     - grok-4.6 # x-ai/grok-4.6
     - muse-spark-1.3 # meta/muse-spark-1.3
+    # Amendment 06 N3 open-weight appends. END-APPENDED on purpose: these are
+    # `public`-only (FIREWORKS_TRANSPORT_UNVERIFIED), so for internal/restricted
+    # they are skipped by the data-class filter, and for public every entry
+    # above is already eligible and selected first. Existing selection for every
+    # declared class/classification pair is therefore unchanged.
+    - kimi-k3 # fireworks/accounts/fireworks/models/kimi-k3
+    - qwen3p8-max # fireworks/accounts/fireworks/models/qwen3p8-max
+    - glm-5p3 # fireworks/accounts/fireworks/models/glm-5p3
   economy:
     # Boilerplate / build-fix-loop. First eligible wins; Nemotron stays first
     # so it is actually selected in all three declared classifications.
@@ -129,6 +144,16 @@ selection_order:
     - gpt-5.6-luna # openai/gpt-5.6-luna
     - gemini-3.1-flash-lite # google/gemini-3.1-flash-lite
     - claude-haiku-4.5 # anthropic/claude-haiku-4.5
+    # Amendment 06 N3 open-weight appends (same end-append reasoning as
+    # `standard`: public-only, so no existing pair changes selection).
+    - nemotron-lightning-3p5-30b-a3b # fireworks — $0.05/$0.20, cheapest admitted
+    - glm-5p3-flash # fireworks — $0.15/$0.50
+    - gpt-oss-120b # fireworks — $0.15/$0.60, open-source weights
+    # Amendment 08: end-appended (same reasoning as the N3 appends — public-only
+    # via the opencode-go binding, so no existing class/classification pair
+    # changes selection; both bindings are public-only — Go per G-5, Zen per
+    # Amendment 09 — so non-public classifications skip the candidate).
+    - deepseek-v4.1-flash # opencode-go — $0.15/$0.60, 1M ctx
 
 # Shadow routes are advisory sidecars for explicitly public, non-authoritative
 # analysis (spec_lint, evidence_index, review_triage). They are never model
@@ -310,19 +335,47 @@ candidates:
   claude-opus-5-5:
     family: anthropic
     bindings:
+      # Amendment 07 / probe §7 (2026-10-07): the on-host catalogue capture
+      # resolves identity (superseding the amendment-03 owner attestation and
+      # its hold) and establishes context, max output, cost, and modalities.
+      # The endpoint is DIVERGENT (registered /zen/v1, served /zen — probe
+      # §7.2), so H-EP withholds availability attestation even though §6 O-4
+      # measured this id live.
       - id: opencode/claude-opus-5-5
         provider: opencode
         model: claude-opus-5-5
         family: anthropic
-        identity: { state: owner-attested, attestation: amendment-03, hold: OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY }
-        endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: null, alignment: unknown }
-        data_classes: { state: unknown, residual: DATA_CLASS_UNKNOWN }
+        identity: { state: resolved, source: 'pmc-live-availability-probe-2026-10-07.md#7.4 (~/.pi/agent/models-store.json capture, 2026-10-07T14:19:18Z)' }
+        endpoint: { registered: https://opencode.ai/zen/v1, catalogue: https://opencode.ai/zen, alignment: divergent }
+        data_classes: { state: declared, value: [public], source: 'gate-1-amendment-09.md#n1 (Zen §Privacy capture 2026-10-07, evidence/zen-docs-20261007.html: zero-retention/no-training baseline; OpenAI/Anthropic upstreams retain 30d — public only; wider is owner attestation)' }
         capabilities: { tool-use: unverified, structured-output: unverified }
-        context_window_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
-        max_output_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
-        cost: { state: unknown, residual: COST_UNKNOWN }
+        context_window_tokens: { state: declared, value: 1000000, source: 'pmc-live-availability-probe-2026-10-07.md#7.4' }
+        max_output_tokens: { state: declared, value: 128000, source: 'pmc-live-availability-probe-2026-10-07.md#7.4' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 4, output: 20 }, source: 'pmc-live-availability-probe-2026-10-07.md#7.4' }
         availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
         quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text, image], source: 'pmc-live-availability-probe-2026-10-07.md#7.4' }
+        thinking_levels: { state: declared, value: [xhigh, max], source: 'pmc-live-availability-probe-2026-10-07.md#7.4 (map keys, Amendment 06 convention)' }
+      # Amendment 06 N1 — first-party Pi binding. This is the identity
+      # `pi --model anthropic/claude-opus-5-5` launches, and the only binding in
+      # this file whose facts come from an on-host catalogue read rather than a
+      # transcription. Dashed spelling; never derived from the dotted OpenRouter
+      # id below (they are separate namespaces, N1).
+      - id: anthropic/claude-opus-5-5
+        provider: anthropic
+        model: claude-opus-5-5
+        family: anthropic
+        identity: { state: resolved, source: 'gate-1-amendment-06.md#evidence-basis (~/.pi/agent/models-store.json capture, 2026-10-07T09:21:58Z)' }
+        endpoint: { registered: https://api.anthropic.com, catalogue: https://api.anthropic.com, alignment: aligned }
+        data_classes: { state: declared, value: [public, internal, restricted], source: 'gate-1-amendment-06.md#n6 (OWNER ATTESTATION — PREMISE FALSIFIED: it assumed commercial-API terms; pmc-live-availability-probe-2026-10-07.md#1 measured authType=oauth on this host. Resolve per that probe §4 before relying on internal/restricted.)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1000000, source: 'gate-1-amendment-06.md#evidence-basis' }
+        max_output_tokens: { state: declared, value: 128000, source: 'gate-1-amendment-06.md#evidence-basis' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 4, output: 20 }, source: 'gate-1-amendment-06.md#evidence-basis' }
+        availability: { state: declared, value: live-availability, source: 'pmc-live-availability-probe-2026-10-07.md#3-live-availability' }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text, image], source: 'gate-1-amendment-06.md#evidence-basis' }
+        thinking_levels: { state: declared, value: [off, minimal, low, medium, high, xhigh, max], source: 'gate-1-amendment-06.md#evidence-basis' }
       - id: openrouter/anthropic/claude-opus-5.5
         provider: openrouter
         model: anthropic/claude-opus-5.5
@@ -345,7 +398,7 @@ candidates:
         family: openai
         identity: { state: resolved, source: pmc-p0-capability-baseline.md#ac2 }
         endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: https://opencode.ai/zen/v1, alignment: divergent }
-        data_classes: { state: unknown, residual: DATA_CLASS_UNKNOWN }
+        data_classes: { state: declared, value: [public], source: 'gate-1-amendment-09.md#n1 (Zen §Privacy capture 2026-10-07, evidence/zen-docs-20261007.html: zero-retention/no-training baseline; OpenAI/Anthropic upstreams retain 30d — public only; wider is owner attestation)' }
         capabilities: { tool-use: unverified, structured-output: unverified }
         context_window_tokens: { state: declared, value: 1050000, source: pmc-p0-capability-baseline.md#ac5 }
         max_output_tokens: { state: declared, value: 128000, source: pmc-p0-capability-baseline.md#ac5 }
@@ -365,35 +418,82 @@ candidates:
         cost: { state: declared, value: { unit: usd_per_mtok, input: 10, output: 50 }, source: pmc-p0-capability-baseline.md#ac5 }
         availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
         quality: { state: unproven, residual: QUALITY_UNRECORDED }
-  gpt-5.6-sol:
+  # Amendment 08 (2026-10-07): the 5.6-sol id is REMOVED from the roster by
+  # owner direction — better models exist at equal or lower cost (gpt-6.1-sol
+  # at identical $2/$10), and it is 403 access-disabled on this host (probe
+  # O-2). Both bindings, the frontier ordering entry, and both L3 route legs
+  # are struck. A test asserts the id stays absent (M2-style reconciliation).
+  gpt-6.1-sol:
     family: openai
     bindings:
-      - id: opencode/gpt-5.6-sol
+      # Amendment 07 (2026-10-07), upgraded same-day by probe §7: the on-host
+      # models-store capture establishes identity, context, max output, cost,
+      # modalities, and thinking-level keys; the PONG probe plus ALIGNED
+      # endpoint (registered /zen/v1 == catalogue /zen/v1, per the
+      # pi-opencode-direct extension source) lets availability be declared.
+      # `pdf` in the modalities list is outside the schema's inputs
+      # vocabulary, so the declared value records [text, image] exactly.
+      # Base-tier price is declared; the >272k-context tier ($4/$15) is
+      # noted here verbatim. data_classes is declared [public] per Amendment 09
+      # (Zen §Privacy capture); wider classes remain owner attestation.
+      - id: opencode/gpt-6.1-sol
         provider: opencode
-        model: gpt-5.6-sol
+        model: gpt-6.1-sol
         family: openai
-        identity: { state: resolved, source: pmc-p0-capability-baseline.md#ac2 }
-        endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: https://opencode.ai/zen/v1, alignment: divergent }
-        data_classes: { state: unknown, residual: DATA_CLASS_UNKNOWN }
+        identity: { state: resolved, source: 'pmc-live-availability-probe-2026-10-07.md#7.4 (~/.pi/agent/models-store.json capture, 2026-10-07T14:19:18Z)' }
+        endpoint: { registered: https://opencode.ai/zen/v1, catalogue: https://opencode.ai/zen/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public], source: 'gate-1-amendment-09.md#n1 (Zen §Privacy capture 2026-10-07, evidence/zen-docs-20261007.html: zero-retention/no-training baseline; OpenAI/Anthropic upstreams retain 30d — public only; wider is owner attestation)' }
         capabilities: { tool-use: unverified, structured-output: unverified }
-        context_window_tokens: { state: declared, value: 1050000, source: pmc-p0-capability-baseline.md#ac5 }
-        max_output_tokens: { state: declared, value: 128000, source: pmc-p0-capability-baseline.md#ac5 }
-        cost: { state: declared, value: { unit: usd_per_mtok, input: 4, output: 20 }, source: pmc-p0-capability-baseline.md#ac5 }
-        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        context_window_tokens: { state: declared, value: 1050000, source: 'pmc-live-availability-probe-2026-10-07.md#7.4' }
+        max_output_tokens: { state: declared, value: 128000, source: 'pmc-live-availability-probe-2026-10-07.md#7.4' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 2, output: 10 }, source: 'pmc-live-availability-probe-2026-10-07.md#7.4 (agrees with the models.dev capture)' }
+        availability: { state: declared, value: live-availability, source: 'pmc-live-availability-probe-2026-10-07.md#7.3 (PONG; aligned endpoint)' }
         quality: { state: unproven, residual: QUALITY_UNRECORDED }
-      - id: openrouter/openai/gpt-5.6-sol
+        inputs: { state: declared, value: [text, image], source: 'pmc-live-availability-probe-2026-10-07.md#7.4' }
+        thinking_levels: { state: declared, value: [off, minimal, low, medium, high, xhigh, max], source: 'pmc-live-availability-probe-2026-10-07.md#7.4 (map keys, Amendment 06 convention)' }
+      # Amendment 08: OpenRouter leg, admitted so the frontier ordering's
+      # anchoring invariant (e) can resolve this candidate and so the
+      # preferred-verifier slot stays eligible in every classification.
+      # Non-public eligibility rides the policy's declared transport
+      # requirements (invariant g) — the same basis every other openrouter
+      # binding's class list stands on. Identity/cost from the 2026-10-07
+      # models.dev capture; its context fields are null and stay
+      # CONTEXT_UNKNOWN.
+      - id: openrouter/openai/gpt-6.1-sol
         provider: openrouter
-        model: openai/gpt-5.6-sol
+        model: openai/gpt-6.1-sol
         family: openai
-        identity: { state: resolved, source: pmc-p0-capability-baseline.md#ac2 }
+        identity: { state: resolved, source: 'gate-1-amendment-08.md#evidence-basis (models.dev capture 2026-10-07T15:58:41Z, sha256 7471e41b…30f582c)' }
         endpoint: { registered: https://openrouter.ai/api/v1, catalogue: https://openrouter.ai/api/v1, alignment: aligned }
-        data_classes: { state: declared, value: [public, internal, restricted], source: 'pmc-p1-fallback-contract-2026-09-26.md#s2-item-3 (pre-cutover eligibility lists, transcribed; CUTOVER-P4)' }
+        data_classes: { state: declared, value: [public, internal, restricted], source: 'gate-1-amendment-08.md#n1' }
         capabilities: { tool-use: unverified, structured-output: unverified }
-        context_window_tokens: { state: declared, value: 1050000, source: pmc-p0-capability-baseline.md#ac5 }
-        max_output_tokens: { state: declared, value: 128000, source: pmc-p0-capability-baseline.md#ac5 }
-        cost: { state: declared, value: { unit: usd_per_mtok, input: 2, output: 10 }, source: pmc-p0-capability-baseline.md#ac5 }
+        context_window_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        max_output_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 2, output: 10 }, source: 'gate-1-amendment-08.md#evidence-basis' }
         availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
         quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text, image], source: 'gate-1-amendment-08.md#evidence-basis' }
+  gpt-6-luna:
+    family: openai
+    bindings:
+      # Amendment 07 (2026-10-07), upgraded same-day by probe §7 — same
+      # evidence basis as gpt-6.1-sol. Base-tier price declared; the
+      # >272k-context tier ($0.20/$0.75) is noted here verbatim.
+      - id: opencode/gpt-6-luna
+        provider: opencode
+        model: gpt-6-luna
+        family: openai
+        identity: { state: resolved, source: 'pmc-live-availability-probe-2026-10-07.md#7.4 (~/.pi/agent/models-store.json capture, 2026-10-07T14:19:18Z)' }
+        endpoint: { registered: https://opencode.ai/zen/v1, catalogue: https://opencode.ai/zen/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public], source: 'gate-1-amendment-09.md#n1 (Zen §Privacy capture 2026-10-07, evidence/zen-docs-20261007.html: zero-retention/no-training baseline; OpenAI/Anthropic upstreams retain 30d — public only; wider is owner attestation)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1050000, source: 'pmc-live-availability-probe-2026-10-07.md#7.4' }
+        max_output_tokens: { state: declared, value: 128000, source: 'pmc-live-availability-probe-2026-10-07.md#7.4' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 0.1, output: 0.5 }, source: 'pmc-live-availability-probe-2026-10-07.md#7.4 (agrees with the models.dev capture)' }
+        availability: { state: declared, value: live-availability, source: 'pmc-live-availability-probe-2026-10-07.md#7.3 (PONG; aligned endpoint)' }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text, image], source: 'pmc-live-availability-probe-2026-10-07.md#7.4' }
+        thinking_levels: { state: declared, value: [off, minimal, low, medium, high, xhigh, max], source: 'pmc-live-availability-probe-2026-10-07.md#7.4 (map keys, Amendment 06 convention)' }
   claude-sonnet-5:
     family: anthropic
     bindings:
@@ -403,7 +503,7 @@ candidates:
         family: anthropic
         identity: { state: resolved, source: pmc-p0-capability-baseline.md#ac2 }
         endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: https://opencode.ai/zen, alignment: divergent }
-        data_classes: { state: unknown, residual: DATA_CLASS_UNKNOWN }
+        data_classes: { state: declared, value: [public], source: 'gate-1-amendment-09.md#n1 (Zen §Privacy capture 2026-10-07, evidence/zen-docs-20261007.html: zero-retention/no-training baseline; OpenAI/Anthropic upstreams retain 30d — public only; wider is owner attestation)' }
         capabilities: { tool-use: unverified, structured-output: unverified }
         context_window_tokens: { state: declared, value: 1000000, source: pmc-p0-capability-baseline.md#ac5 }
         max_output_tokens: { state: declared, value: 128000, source: pmc-p0-capability-baseline.md#ac5 }
@@ -426,19 +526,86 @@ candidates:
   deepseek-v4-pro:
     family: deepseek
     bindings:
+      # Amendment 07 addendum A7.1 / probe §7.7 (2026-10-07): owner re-enabled
+      # the id on the opencode workspace after the §7.6 403 regression; the
+      # on-host catalogue shows it served at /zen/v1 — ALIGNED with the
+      # §7.2-registered endpoint — so the corrected endpoint record and the
+      # PONG together support the availability attestation. AC5's
+      # context/cost transcription agrees with the catalogue capture.
       - id: opencode/deepseek-v4-pro
         provider: opencode
         model: deepseek-v4-pro
         family: deepseek
         identity: { state: resolved, source: pmc-p0-capability-baseline.md#ac2 }
-        endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: https://opencode.ai/zen/v1, alignment: divergent }
-        data_classes: { state: unknown, residual: DATA_CLASS_UNKNOWN }
+        endpoint: { registered: https://opencode.ai/zen/v1, catalogue: https://opencode.ai/zen/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public], source: 'gate-1-amendment-09.md#n1 (Zen §Privacy capture 2026-10-07, evidence/zen-docs-20261007.html: zero-retention/no-training baseline; OpenAI/Anthropic upstreams retain 30d — public only; wider is owner attestation)' }
         capabilities: { tool-use: unverified, structured-output: unverified }
         context_window_tokens: { state: declared, value: 1000000, source: pmc-p0-capability-baseline.md#ac5 }
         max_output_tokens: { state: declared, value: 384000, source: pmc-p0-capability-baseline.md#ac5 }
         cost: { state: declared, value: { unit: usd_per_mtok, input: 1.74, output: 3.84 }, source: pmc-p0-capability-baseline.md#ac5 }
-        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        availability: { state: declared, value: live-availability, source: 'pmc-live-availability-probe-2026-10-07.md#7.7 (PONG after owner re-enablement; aligned endpoint)' }
         quality: { state: unproven, residual: QUALITY_UNRECORDED }
+      # Amendment 07 addendum A7.1 / probe §7.8: admitted after the owner
+      # enabled Global regions (the owner decision G-3 said binding was gated
+      # on). Aligned endpoint, probed live. Public-only per G-5; the cheaper
+      # of the two gateways for this id ($0.66/$1.98 vs $1.74/$3.84).
+      - id: opencode-go/deepseek-v4-pro
+        provider: opencode-go
+        model: deepseek-v4-pro
+        family: deepseek
+        identity: { state: resolved, source: 'pmc-live-availability-probe-2026-10-07.md#7.8 (opencode-go catalogue capture, 2026-10-07T14:00:20Z)' }
+        endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: https://opencode.ai/zen/go/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public], source: 'pmc-live-availability-probe-2026-10-07.md#7.8 (G-5 unchanged: gateway in front of third-party models; invariant (g) unmeasured — OPENCODE_GO_TRANSPORT_UNVERIFIED)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1000000, source: 'pmc-live-availability-probe-2026-10-07.md#7.8' }
+        max_output_tokens: { state: declared, value: 384000, source: 'pmc-live-availability-probe-2026-10-07.md#7.8' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 0.66, output: 1.98 }, source: 'pmc-live-availability-probe-2026-10-07.md#7.8' }
+        availability: { state: declared, value: live-availability, source: 'pmc-live-availability-probe-2026-10-07.md#7.8 (PONG after Global regions enabled; aligned endpoint)' }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text], source: 'pmc-live-availability-probe-2026-10-07.md#7.8' }
+        thinking_levels: { state: declared, value: [minimal, low, medium, high, max], source: 'pmc-live-availability-probe-2026-10-07.md#7.8 (map keys, Amendment 06 convention)' }
+  deepseek-v4.1-flash:
+    family: deepseek
+    bindings:
+      # Amendment 07 addendum A7.1 / probe §7.7 (2026-10-07) — owner-enabled
+      # on the opencode workspace; catalogue-established and probed live.
+      # Aligned endpoint, so availability is declared. NOT ROUTED: no lane
+      # route and no selection_order entry carries this id — binding first,
+      # routing by owner direction only.
+      - id: opencode/deepseek-v4.1-flash
+        provider: opencode
+        model: deepseek-v4.1-flash
+        family: deepseek
+        identity: { state: resolved, source: 'pmc-live-availability-probe-2026-10-07.md#7.7 (~/.pi/agent/models-store.json capture, 2026-10-07T14:19:18Z)' }
+        endpoint: { registered: https://opencode.ai/zen/v1, catalogue: https://opencode.ai/zen/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public], source: 'gate-1-amendment-09.md#n1 (Zen §Privacy capture 2026-10-07, evidence/zen-docs-20261007.html: zero-retention/no-training baseline; OpenAI/Anthropic upstreams retain 30d — public only; wider is owner attestation)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1000000, source: 'pmc-live-availability-probe-2026-10-07.md#7.7' }
+        max_output_tokens: { state: declared, value: 384000, source: 'pmc-live-availability-probe-2026-10-07.md#7.7' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 0.3, output: 1.2 }, source: 'pmc-live-availability-probe-2026-10-07.md#7.7' }
+        availability: { state: declared, value: live-availability, source: 'pmc-live-availability-probe-2026-10-07.md#7.7 (PONG; aligned endpoint)' }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text, image], source: 'pmc-live-availability-probe-2026-10-07.md#7.7' }
+        thinking_levels: { state: declared, value: [off, minimal, low, medium, high, xhigh, max], source: 'pmc-live-availability-probe-2026-10-07.md#7.7 (map keys, Amendment 06 convention)' }
+      # Amendment 08 / probe §7.9 — owner-enabled on the Go workspace; probed
+      # live, aligned endpoint. Public-only per G-5. Half the Zen price
+      # ($0.15/$0.60 vs $0.30/$1.20). This is the binding that carries the
+      # candidate's public eligibility for the economy ordering.
+      - id: opencode-go/deepseek-v4.1-flash
+        provider: opencode-go
+        model: deepseek-v4.1-flash
+        family: deepseek
+        identity: { state: resolved, source: 'pmc-live-availability-probe-2026-10-07.md#7.9 (opencode-go catalogue capture, 2026-10-07T14:00:20Z)' }
+        endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: https://opencode.ai/zen/go/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public], source: 'pmc-live-availability-probe-2026-10-07.md#7.9 (G-5 unchanged: gateway in front of third-party models; invariant (g) unmeasured — OPENCODE_GO_TRANSPORT_UNVERIFIED)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1000000, source: 'pmc-live-availability-probe-2026-10-07.md#7.9' }
+        max_output_tokens: { state: declared, value: 384000, source: 'pmc-live-availability-probe-2026-10-07.md#7.9' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 0.15, output: 0.6 }, source: 'pmc-live-availability-probe-2026-10-07.md#7.9' }
+        availability: { state: declared, value: live-availability, source: 'pmc-live-availability-probe-2026-10-07.md#7.9 (PONG; aligned endpoint)' }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text, image], source: 'pmc-live-availability-probe-2026-10-07.md#7.9' }
+        thinking_levels: { state: declared, value: [off, minimal, low, medium, high, xhigh, max], source: 'pmc-live-availability-probe-2026-10-07.md#7.9 (map keys, Amendment 06 convention)' }
   gpt-5.6-terra:
     family: openai
     bindings:
@@ -448,7 +615,7 @@ candidates:
         family: openai
         identity: { state: resolved, source: pmc-p0-capability-baseline.md#ac2 }
         endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: https://opencode.ai/zen/v1, alignment: divergent }
-        data_classes: { state: unknown, residual: DATA_CLASS_UNKNOWN }
+        data_classes: { state: declared, value: [public], source: 'gate-1-amendment-09.md#n1 (Zen §Privacy capture 2026-10-07, evidence/zen-docs-20261007.html: zero-retention/no-training baseline; OpenAI/Anthropic upstreams retain 30d — public only; wider is owner attestation)' }
         capabilities: { tool-use: unverified, structured-output: unverified }
         context_window_tokens: { state: declared, value: 1050000, source: pmc-p0-capability-baseline.md#ac5 }
         max_output_tokens: { state: declared, value: 128000, source: pmc-p0-capability-baseline.md#ac5 }
@@ -471,6 +638,29 @@ candidates:
   qwen3.8-flash:
     family: qwen
     bindings:
+      - id: opencode-go/qwen3.8-flash
+        provider: opencode-go
+        model: qwen3.8-flash
+        family: qwen
+        identity: { state: resolved, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        # ENDPOINT DIVERGENCE (measured): the catalogue serves this id at
+        # `/zen/go`, not the `/zen/go/v1` the provider is registered at.
+        # Recorded, not normalized — the two URLs are not asserted equal.
+        endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: https://opencode.ai/zen/go, alignment: divergent }
+        data_classes: { state: declared, value: [public], source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go (gateway in front of third-party models; invariant (g) unmeasured — OPENCODE_GO_TRANSPORT_UNVERIFIED)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1000000, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        max_output_tokens: { state: declared, value: 131072, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 0.15, output: 0.47 }, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        # The probe DID get a live answer from this id. The contract still
+        # refuses to attest availability because the endpoint diverges (H-EP):
+        # a reply proves something answered, not that the REGISTERED endpoint
+        # did. Keeping the rule costs nothing here and keeps it meaningful where
+        # it matters.
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text, image], source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        thinking_levels: { state: declared, value: [off, minimal, low, medium, high, xhigh, max], source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
       - id: opencode/qwen3.8-flash
         provider: opencode
         model: qwen3.8-flash
@@ -479,6 +669,14 @@ candidates:
         # `opencode`; diagnosed AC2A_WRONG_PROVIDER + AC2A_PREFIX_ALIAS_REFUSED.
         # Never aliased to `opencode-go`/`qwen-token-plan` records or to
         # `openrouter/qwen/qwen3.8-flash`. L5 primary role held to A6/PMC-P2.
+        #
+        # CONTESTED BY MEASUREMENT 2026-10-07, NOT LIFTED. With the `opencode`
+        # provider configured, the live catalogue carries this id and
+        # `pi --model opencode/qwen3.8-flash` answers (probe §6, finding O-1).
+        # The hold is retained anyway: lifting it converts a fail-closed L5 stop
+        # into a live route and supersedes a ratified amendment, which is an
+        # owner decision, not a measurement consequence. Evidence recorded;
+        # disposition pending.
         identity: { state: zero-match, refusal: AC2A_ZERO_MATCH, diagnostics: [AC2A_WRONG_PROVIDER, AC2A_PREFIX_ALIAS_REFUSED], hold: AC2A_ZERO_MATCH_HELD }
         endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: null, alignment: unknown }
         data_classes: { state: unknown, residual: DATA_CLASS_UNKNOWN }
@@ -491,13 +689,28 @@ candidates:
   glm-5.3-flash:
     family: z-ai
     bindings:
+      - id: opencode-go/glm-5.3-flash
+        provider: opencode-go
+        model: glm-5.3-flash
+        family: z-ai
+        identity: { state: resolved, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: https://opencode.ai/zen/go/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public], source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go (gateway in front of third-party models; invariant (g) unmeasured — OPENCODE_GO_TRANSPORT_UNVERIFIED)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1000000, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        max_output_tokens: { state: declared, value: 131072, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 0.15, output: 0.5 }, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        availability: { state: declared, value: live-availability, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text, image], source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        thinking_levels: { state: declared, value: [off, minimal, low, medium, high, xhigh, max], source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
       - id: opencode/glm-5.3-flash
         provider: opencode
         model: glm-5.3-flash
         family: z-ai
         identity: { state: resolved, source: pmc-p0-capability-baseline.md#ac2 }
         endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: https://opencode.ai/zen/v1, alignment: divergent }
-        data_classes: { state: unknown, residual: DATA_CLASS_UNKNOWN }
+        data_classes: { state: declared, value: [public], source: 'gate-1-amendment-09.md#n1 (Zen §Privacy capture 2026-10-07, evidence/zen-docs-20261007.html: zero-retention/no-training baseline; OpenAI/Anthropic upstreams retain 30d — public only; wider is owner attestation)' }
         capabilities: { tool-use: unverified, structured-output: unverified }
         context_window_tokens: { state: declared, value: 1000000, source: pmc-p0-capability-baseline.md#ac5 }
         max_output_tokens: { state: declared, value: 131072, source: pmc-p0-capability-baseline.md#ac5 }
@@ -542,9 +755,71 @@ candidates:
   # logical candidate yet). The slug survives only as the binding's `model`
   # field. Facts the transcription record establishes are declared; everything
   # else is typed-unavailable with its named residual — never a guessed value.
+  # Amendment 06 N1. A new logical candidate rather than a rename of
+  # `claude-sonnet-5`: the capture covers the `anthropic` provider only, so no
+  # `claude-sonnet-5-5` id is established for opencode or openrouter and none is
+  # invented here. The older candidate keeps its two bindings.
+  claude-sonnet-5-5:
+    family: anthropic
+    bindings:
+      - id: anthropic/claude-sonnet-5-5
+        provider: anthropic
+        model: claude-sonnet-5-5
+        family: anthropic
+        identity: { state: resolved, source: 'gate-1-amendment-06.md#evidence-basis (~/.pi/agent/models-store.json capture, 2026-10-07T09:21:58Z)' }
+        endpoint: { registered: https://api.anthropic.com, catalogue: https://api.anthropic.com, alignment: aligned }
+        data_classes: { state: declared, value: [public, internal, restricted], source: 'gate-1-amendment-06.md#n6 (OWNER ATTESTATION — PREMISE FALSIFIED: it assumed commercial-API terms; pmc-live-availability-probe-2026-10-07.md#1 measured authType=oauth on this host. Resolve per that probe §4 before relying on internal/restricted.)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1000000, source: 'gate-1-amendment-06.md#evidence-basis' }
+        max_output_tokens: { state: declared, value: 128000, source: 'gate-1-amendment-06.md#evidence-basis' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 2, output: 10 }, source: 'gate-1-amendment-06.md#evidence-basis' }
+        availability: { state: declared, value: live-availability, source: 'pmc-live-availability-probe-2026-10-07.md#3-live-availability' }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text, image], source: 'gate-1-amendment-06.md#evidence-basis' }
+        thinking_levels: { state: declared, value: [off, minimal, low, medium, high, xhigh, max], source: 'gate-1-amendment-06.md#evidence-basis' }
+      # Amendment 07 (2026-10-07), upgraded same-day by probe §7. This is the
+      # L2 primary under the re-pinned opencode routes. The endpoint is
+      # DIVERGENT (registered /zen/v1, served /zen — the catalogue's own
+      # per-model override for Anthropic-API ids), so H-EP withholds the
+      # availability attestation even though the §7.3 probe returned PONG.
+      - id: opencode/claude-sonnet-5-5
+        provider: opencode
+        model: claude-sonnet-5-5
+        family: anthropic
+        identity: { state: resolved, source: 'pmc-live-availability-probe-2026-10-07.md#7.4 (~/.pi/agent/models-store.json capture, 2026-10-07T14:19:18Z)' }
+        endpoint: { registered: https://opencode.ai/zen/v1, catalogue: https://opencode.ai/zen, alignment: divergent }
+        data_classes: { state: declared, value: [public], source: 'gate-1-amendment-09.md#n1 (Zen §Privacy capture 2026-10-07, evidence/zen-docs-20261007.html: zero-retention/no-training baseline; OpenAI/Anthropic upstreams retain 30d — public only; wider is owner attestation)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1000000, source: 'pmc-live-availability-probe-2026-10-07.md#7.4' }
+        max_output_tokens: { state: declared, value: 128000, source: 'pmc-live-availability-probe-2026-10-07.md#7.4' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 2, output: 10 }, source: 'pmc-live-availability-probe-2026-10-07.md#7.4 (agrees with the models.dev capture)' }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text, image], source: 'pmc-live-availability-probe-2026-10-07.md#7.4' }
+        thinking_levels: { state: declared, value: [xhigh, max], source: 'pmc-live-availability-probe-2026-10-07.md#7.4 (map keys, Amendment 06 convention)' }
+
   claude-fable-5.1:
     family: anthropic
     bindings:
+      # Amendment 06 N1/N5 first-party Pi binding. NOTE: unlike
+      # `claude-fable-5`, the catalogue records NO `compat.allowedFallbackModels`
+      # for this id  — there is no provider-side default to inherit, so its
+      # fallback is declared explicitly in `lane_routes` and nowhere else.
+      - id: anthropic/claude-fable-5-1
+        provider: anthropic
+        model: claude-fable-5-1
+        family: anthropic
+        identity: { state: resolved, source: 'gate-1-amendment-06.md#evidence-basis (~/.pi/agent/models-store.json capture, 2026-10-07T09:21:58Z)' }
+        endpoint: { registered: https://api.anthropic.com, catalogue: https://api.anthropic.com, alignment: aligned }
+        data_classes: { state: declared, value: [public, internal, restricted], source: 'gate-1-amendment-06.md#n6 (OWNER ATTESTATION — PREMISE FALSIFIED: it assumed commercial-API terms; pmc-live-availability-probe-2026-10-07.md#1 measured authType=oauth on this host. Resolve per that probe §4 before relying on internal/restricted.)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1000000, source: 'gate-1-amendment-06.md#evidence-basis' }
+        max_output_tokens: { state: declared, value: 128000, source: 'gate-1-amendment-06.md#evidence-basis' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 10, output: 50 }, source: 'gate-1-amendment-06.md#evidence-basis' }
+        availability: { state: declared, value: live-availability, source: 'pmc-live-availability-probe-2026-10-07.md#3-live-availability' }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text, image], source: 'gate-1-amendment-06.md#evidence-basis' }
+        thinking_levels: { state: declared, value: [off, xhigh, max], source: 'gate-1-amendment-06.md#evidence-basis' }
       - id: openrouter/anthropic/claude-fable-5.1
         provider: openrouter
         model: anthropic/claude-fable-5.1
@@ -579,6 +854,21 @@ candidates:
   glm-5.3:
     family: z-ai
     bindings:
+      - id: opencode-go/glm-5.3
+        provider: opencode-go
+        model: glm-5.3
+        family: z-ai
+        identity: { state: resolved, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: https://opencode.ai/zen/go/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public], source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go (gateway in front of third-party models; invariant (g) unmeasured — OPENCODE_GO_TRANSPORT_UNVERIFIED)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1000000, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        max_output_tokens: { state: declared, value: 131072, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 1.4, output: 4.4 }, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        availability: { state: declared, value: live-availability, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text], source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        thinking_levels: { state: declared, value: [off, minimal, low, medium, high, xhigh, max], source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
       - id: openrouter/z-ai/glm-5.3
         provider: openrouter
         model: z-ai/glm-5.3
@@ -596,6 +886,21 @@ candidates:
   grok-4.6:
     family: x-ai
     bindings:
+      - id: opencode-go/grok-4.6
+        provider: opencode-go
+        model: grok-4.6
+        family: x-ai
+        identity: { state: resolved, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: https://opencode.ai/zen/go/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public], source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go (gateway in front of third-party models; invariant (g) unmeasured — OPENCODE_GO_TRANSPORT_UNVERIFIED)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 500000, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        max_output_tokens: { state: declared, value: 500000, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 2, output: 6 }, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        availability: { state: declared, value: live-availability, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text, image], source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        thinking_levels: { state: declared, value: [off, minimal, low, medium, high, xhigh, max], source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
       - id: openrouter/x-ai/grok-4.6
         provider: openrouter
         model: x-ai/grok-4.6
@@ -647,6 +952,21 @@ candidates:
   gpt-5.6-luna:
     family: openai
     bindings:
+      - id: opencode-go/gpt-5.6-luna
+        provider: opencode-go
+        model: gpt-5.6-luna
+        family: openai
+        identity: { state: resolved, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: https://opencode.ai/zen/go/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public], source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go (gateway in front of third-party models; invariant (g) unmeasured — OPENCODE_GO_TRANSPORT_UNVERIFIED)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1050000, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        max_output_tokens: { state: declared, value: 128000, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 0.2, output: 1.2 }, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        availability: { state: declared, value: live-availability, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text, image], source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        thinking_levels: { state: declared, value: [off, minimal, low, medium, high, xhigh, max], source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
       - id: openrouter/openai/gpt-5.6-luna
         provider: openrouter
         model: openai/gpt-5.6-luna
@@ -679,6 +999,162 @@ candidates:
         availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
         quality: { state: unproven, residual: QUALITY_UNRECORDED }
 
+  # -------------------------------------------------------------------------
+  # Amendment 06 N3 — open-weight / open-source lane on `fireworks`.
+  #
+  # Every fact below is transcribed from the on-host catalogue capture
+  # (`~/.pi/agent/models-store.json`, 2026-10-07T09:21:58Z); `pi auth check
+  # --provider fireworks` reported `ready` at capture time.
+  #
+  # Three things about this block are deliberate and load-bearing:
+  #
+  #  1. ID SPELLING. Fireworks ids are full `accounts/fireworks/models/<id>`
+  #     paths in which `p` stands in for a decimal point (`glm-5p3` IS GLM 5.3).
+  #     That is a THIRD spelling convention alongside the dashed Pi ids and the
+  #     dotted OpenRouter slugs. It is recorded verbatim and never normalized
+  #     toward either (N1/N3) — the binding id is `fireworks/` + that path.
+  #
+  #  2. PUBLIC ONLY. `data_classes` is `[public]` for every entry. Invariant (g)
+  #     demands `data_collection: deny` + `zdr: true` for internal/restricted,
+  #     and the capture establishes neither for an inference host that is not
+  #     the model's author. Residual: FIREWORKS_TRANSPORT_UNVERIFIED (N6).
+  #     Do not widen these lists without transport evidence.
+  #
+  #  3. NO ROUTERS. `accounts/fireworks/routers/*` aggregator ids are excluded
+  #     on purpose: a router re-dispatches to an unnamed upstream, which
+  #     defeats the executed-identity check the receipt chain depends on.
+  #
+  # `opencode-go` has NO candidate here. It is a declared provider (types.ts
+  # PROVIDER_NAMES) that is `not_ready` on this host and absent from the
+  # capture, so no id, cost, or capability is establishable for it. Residual:
+  # OPENCODE_GO_CATALOGUE_UNFETCHED. Set OPENCODE_API_KEY, run `pi update`,
+  # then transcribe the result under a follow-up amendment — never guess it.
+  kimi-k3:
+    family: moonshot
+    bindings:
+      - id: opencode-go/kimi-k3
+        provider: opencode-go
+        model: kimi-k3
+        family: moonshot
+        identity: { state: resolved, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: https://opencode.ai/zen/go/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public], source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go (gateway in front of third-party models; invariant (g) unmeasured — OPENCODE_GO_TRANSPORT_UNVERIFIED)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1048576, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        max_output_tokens: { state: declared, value: 131072, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 3, output: 15 }, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        availability: { state: declared, value: live-availability, source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text, image], source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+        thinking_levels: { state: declared, value: [off, minimal, low, medium, high, xhigh, max], source: 'pmc-live-availability-probe-2026-10-07.md#5-opencode-go' }
+      - id: fireworks/accounts/fireworks/models/kimi-k3
+        provider: fireworks
+        model: accounts/fireworks/models/kimi-k3
+        family: moonshot
+        identity: { state: resolved, source: 'gate-1-amendment-06.md#evidence-basis (~/.pi/agent/models-store.json capture, 2026-10-07T09:21:58Z)' }
+        endpoint: { registered: https://api.fireworks.ai/inference/v1, catalogue: https://api.fireworks.ai/inference/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public], source: 'gate-1-amendment-06.md#n6 (open-weight lane is public-only; FIREWORKS_TRANSPORT_UNVERIFIED)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1048576, source: 'gate-1-amendment-06.md#evidence-basis' }
+        max_output_tokens: { state: declared, value: 131072, source: 'gate-1-amendment-06.md#evidence-basis' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 3, output: 15 }, source: 'gate-1-amendment-06.md#evidence-basis' }
+        availability: { state: declared, value: live-availability, source: 'pmc-live-availability-probe-2026-10-07.md#3-live-availability' }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text, image], source: 'gate-1-amendment-06.md#evidence-basis' }
+        thinking_levels: { state: declared, value: [off, minimal, low, medium, high, xhigh, max], source: 'gate-1-amendment-06.md#evidence-basis' }
+  qwen3p8-max:
+    family: qwen
+    bindings:
+      - id: fireworks/accounts/fireworks/models/qwen3p8-max
+        provider: fireworks
+        model: accounts/fireworks/models/qwen3p8-max
+        family: qwen
+        identity: { state: resolved, source: 'gate-1-amendment-06.md#evidence-basis (~/.pi/agent/models-store.json capture, 2026-10-07T09:21:58Z)' }
+        endpoint: { registered: https://api.fireworks.ai/inference/v1, catalogue: https://api.fireworks.ai/inference/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public], source: 'gate-1-amendment-06.md#n6 (open-weight lane is public-only; FIREWORKS_TRANSPORT_UNVERIFIED)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 262144, source: 'gate-1-amendment-06.md#evidence-basis' }
+        max_output_tokens: { state: declared, value: 131072, source: 'gate-1-amendment-06.md#evidence-basis' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 2, output: 6 }, source: 'gate-1-amendment-06.md#evidence-basis' }
+        availability: { state: declared, value: live-availability, source: 'pmc-live-availability-probe-2026-10-07.md#3-live-availability' }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text, image], source: 'gate-1-amendment-06.md#evidence-basis' }
+        thinking_levels: { state: declared, value: [off, minimal, low, medium, high, xhigh, max], source: 'gate-1-amendment-06.md#evidence-basis' }
+  glm-5p3:
+    family: z-ai
+    bindings:
+      - id: fireworks/accounts/fireworks/models/glm-5p3
+        provider: fireworks
+        model: accounts/fireworks/models/glm-5p3
+        family: z-ai
+        identity: { state: resolved, source: 'gate-1-amendment-06.md#evidence-basis (~/.pi/agent/models-store.json capture, 2026-10-07T09:21:58Z)' }
+        endpoint: { registered: https://api.fireworks.ai/inference/v1, catalogue: https://api.fireworks.ai/inference/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public], source: 'gate-1-amendment-06.md#n6 (open-weight lane is public-only; FIREWORKS_TRANSPORT_UNVERIFIED)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1048573, source: 'gate-1-amendment-06.md#evidence-basis' }
+        max_output_tokens: { state: declared, value: 262144, source: 'gate-1-amendment-06.md#evidence-basis' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 1.4, output: 4.4 }, source: 'gate-1-amendment-06.md#evidence-basis' }
+        availability: { state: declared, value: live-availability, source: 'pmc-live-availability-probe-2026-10-07.md#3-live-availability' }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text], source: 'gate-1-amendment-06.md#evidence-basis' }
+        thinking_levels: { state: declared, value: [off, minimal, low, medium, high, xhigh, max], source: 'gate-1-amendment-06.md#evidence-basis' }
+  glm-5p3-flash:
+    family: z-ai
+    bindings:
+      - id: fireworks/accounts/fireworks/models/glm-5p3-flash
+        provider: fireworks
+        model: accounts/fireworks/models/glm-5p3-flash
+        family: z-ai
+        identity: { state: resolved, source: 'gate-1-amendment-06.md#evidence-basis (~/.pi/agent/models-store.json capture, 2026-10-07T09:21:58Z)' }
+        endpoint: { registered: https://api.fireworks.ai/inference/v1, catalogue: https://api.fireworks.ai/inference/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public], source: 'gate-1-amendment-06.md#n6 (open-weight lane is public-only; FIREWORKS_TRANSPORT_UNVERIFIED)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1048573, source: 'gate-1-amendment-06.md#evidence-basis' }
+        max_output_tokens: { state: declared, value: 131072, source: 'gate-1-amendment-06.md#evidence-basis' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 0.15, output: 0.5 }, source: 'gate-1-amendment-06.md#evidence-basis' }
+        availability: { state: declared, value: live-availability, source: 'pmc-live-availability-probe-2026-10-07.md#3-live-availability' }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text, image], source: 'gate-1-amendment-06.md#evidence-basis' }
+        thinking_levels: { state: declared, value: [off, minimal, low, medium, high, xhigh, max], source: 'gate-1-amendment-06.md#evidence-basis' }
+  nemotron-lightning-3p5-30b-a3b:
+    family: nvidia
+    bindings:
+      - id: fireworks/accounts/fireworks/models/nemotron-lightning-3p5-30b-a3b
+        provider: fireworks
+        model: accounts/fireworks/models/nemotron-lightning-3p5-30b-a3b
+        family: nvidia
+        identity: { state: resolved, source: 'gate-1-amendment-06.md#evidence-basis (~/.pi/agent/models-store.json capture, 2026-10-07T09:21:58Z)' }
+        endpoint: { registered: https://api.fireworks.ai/inference/v1, catalogue: https://api.fireworks.ai/inference/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public], source: 'gate-1-amendment-06.md#n6 (open-weight lane is public-only; FIREWORKS_TRANSPORT_UNVERIFIED)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 262144, source: 'gate-1-amendment-06.md#evidence-basis' }
+        max_output_tokens: { state: declared, value: 262144, source: 'gate-1-amendment-06.md#evidence-basis' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 0.05, output: 0.2 }, source: 'gate-1-amendment-06.md#evidence-basis' }
+        availability: { state: declared, value: live-availability, source: 'pmc-live-availability-probe-2026-10-07.md#3-live-availability' }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text], source: 'gate-1-amendment-06.md#evidence-basis' }
+        # thinking_levels OMITTED: the capture records an EMPTY thinkingLevelMap
+        # for this model. Absent = unknown, so a request requiring a thinking
+        # level refuses rather than assuming one (Amendment 06 N3).
+  gpt-oss-120b:
+    family: openai
+    bindings:
+      - id: fireworks/accounts/fireworks/models/gpt-oss-120b
+        provider: fireworks
+        model: accounts/fireworks/models/gpt-oss-120b
+        family: openai
+        identity: { state: resolved, source: 'gate-1-amendment-06.md#evidence-basis (~/.pi/agent/models-store.json capture, 2026-10-07T09:21:58Z)' }
+        endpoint: { registered: https://api.fireworks.ai/inference/v1, catalogue: https://api.fireworks.ai/inference/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public], source: 'gate-1-amendment-06.md#n6 (open-weight lane is public-only; FIREWORKS_TRANSPORT_UNVERIFIED)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 131072, source: 'gate-1-amendment-06.md#evidence-basis' }
+        max_output_tokens: { state: declared, value: 32768, source: 'gate-1-amendment-06.md#evidence-basis' }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 0.15, output: 0.6 }, source: 'gate-1-amendment-06.md#evidence-basis' }
+        availability: { state: declared, value: live-availability, source: 'pmc-live-availability-probe-2026-10-07.md#3-live-availability' }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+        inputs: { state: declared, value: [text], source: 'gate-1-amendment-06.md#evidence-basis' }
+        thinking_levels: { state: declared, value: [off, minimal, low, medium, high, xhigh, max], source: 'gate-1-amendment-06.md#evidence-basis' }
+
 lane_routes:
   # One route per lane and provider, exactly as the charter matrix declares
   # (provider-local primary -> fallback; cross-provider failover is a new,
@@ -687,10 +1163,14 @@ lane_routes:
   # `comparability` is the rubric's "comparable or higher" verdict: it stays
   # typed-unproven while any comparison input (including delta_L) is
   # unavailable, per the evidence threshold.
+  # Amendment 07 (2026-10-07): L1/L2 opencode re-pinning, owner-directed.
+  # Both legs of each route are provider-local on the opencode gateway (D3);
+  # identity/cost sourced to the models.dev capture, everything else
+  # typed-unavailable per the amendment's evidence basis.
   - lane: L1
     provider: opencode
-    primary: { type: binding, ref: opencode/claude-opus-5-5 }
-    fallback: { type: binding, ref: opencode/gpt-6-astra }
+    primary: { type: binding, ref: opencode/gpt-6.1-sol }
+    fallback: { type: binding, ref: opencode/claude-opus-5-5 }
     comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
   - lane: L1
     provider: openrouter
@@ -699,8 +1179,8 @@ lane_routes:
     comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
   - lane: L2
     provider: opencode
-    primary: { type: binding, ref: opencode/gpt-6-astra }
-    fallback: { type: binding, ref: opencode/claude-opus-5-5 }
+    primary: { type: binding, ref: opencode/claude-sonnet-5-5 }
+    fallback: { type: binding, ref: opencode/gpt-6-luna }
     comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
   - lane: L2
     provider: openrouter
@@ -709,13 +1189,15 @@ lane_routes:
     comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
   - lane: L3
     provider: opencode
-    primary: { type: binding, ref: opencode/gpt-5.6-sol }
+    # Amendment 08: gpt-6.1-sol replaces the struck 5.6-sol id (403
+    # access-disabled on this host, probe O-2; equal price, newer generation).
+    primary: { type: binding, ref: opencode/gpt-6.1-sol }
     fallback: { type: binding, ref: opencode/claude-sonnet-5 }
     comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
   - lane: L3
     provider: openrouter
     primary: { type: binding, ref: openrouter/anthropic/claude-sonnet-5 }
-    fallback: { type: binding, ref: openrouter/openai/gpt-5.6-sol }
+    fallback: { type: binding, ref: openrouter/openai/gpt-6.1-sol }
     comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
   - lane: L4
     provider: opencode
@@ -736,6 +1218,72 @@ lane_routes:
     provider: openrouter
     primary: { type: binding, ref: openrouter/google/gemini-3.8-flash }
     fallback: { type: binding, ref: openrouter/anthropic/claude-haiku-4.5 }
+    comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
+  # --- Amendment 06 N1: first-party `anthropic` routes. ---
+  # These are what `pi --model anthropic/<id>` resolves against. Every fallback
+  # is provider-local (D3) and declared here rather than inherited: N5 records
+  # that `claude-fable-5-1` ships NO provider-side allowedFallbackModels.
+  - lane: L1
+    provider: anthropic
+    primary: { type: binding, ref: anthropic/claude-opus-5-5 }
+    fallback: { type: binding, ref: anthropic/claude-fable-5-1 }
+    comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
+  - lane: L2
+    provider: anthropic
+    # Verifier primary is Fable, so the L2 reviewer is a different model from the
+    # L1 coordinator even inside one provider — independence stays more than
+    # nominal (selection_order frontier note).
+    primary: { type: binding, ref: anthropic/claude-fable-5-1 }
+    fallback: { type: binding, ref: anthropic/claude-opus-5-5 }
+    comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
+  - lane: L3
+    provider: anthropic
+    primary: { type: binding, ref: anthropic/claude-sonnet-5-5 }
+    fallback: { type: binding, ref: anthropic/claude-opus-5-5 }
+    comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
+  # --- Amendment 06 N3 / probe 2026-10-07: `opencode-go` routes. ---
+  # A DISTINCT provider from `opencode`, never an alias. Every leg is
+  # provider-local (D3) and `public`-only (OPENCODE_GO_TRANSPORT_UNVERIFIED), so
+  # no fallback widens its primary's data-class reach. No L1/L2 route: those
+  # lanes are frontier-only and no opencode-go binding is in
+  # KNOWN_FRONTIER_BINDINGS.
+  #
+  # The pre-existing `opencode` routes below are left exactly as they are. They
+  # are unresolvable on the probe host (the provider is not configured there at
+  # all), but that is a fact about one host, not about the contract.
+  - lane: L3
+    provider: opencode-go
+    primary: { type: binding, ref: opencode-go/grok-4.6 }
+    fallback: { type: binding, ref: opencode-go/kimi-k3 }
+    comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
+  - lane: L4
+    provider: opencode-go
+    primary: { type: binding, ref: opencode-go/glm-5.3 }
+    fallback: { type: binding, ref: opencode-go/grok-4.6 }
+    comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
+  - lane: L5
+    provider: opencode-go
+    # qwen3.8-flash is the cheapest admitted opencode-go id ($0.15/$0.47) and is
+    # the id whose absence under `opencode` produced the long-standing
+    # AC2A_ZERO_MATCH. It resolves here, in its own namespace — which is the
+    # confirmation of that diagnosis, not a reversal of the no-alias rule.
+    primary: { type: binding, ref: opencode-go/qwen3.8-flash }
+    fallback: { type: binding, ref: opencode-go/glm-5.3-flash }
+    comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
+  # --- Amendment 06 N3: open-weight `fireworks` routes. ---
+  # L4/L5 only. There is deliberately NO fireworks route for L1/L2: those lanes
+  # are `frontier_only` and no open-weight binding is in KNOWN_FRONTIER_BINDINGS.
+  # Both legs of each route are public-only, so the fallback never widens the
+  # primary's data-class reach.
+  - lane: L4
+    provider: fireworks
+    primary: { type: binding, ref: fireworks/accounts/fireworks/models/qwen3p8-max }
+    fallback: { type: binding, ref: fireworks/accounts/fireworks/models/glm-5p3 }
+    comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
+  - lane: L5
+    provider: fireworks
+    primary: { type: binding, ref: fireworks/accounts/fireworks/models/nemotron-lightning-3p5-30b-a3b }
+    fallback: { type: binding, ref: fireworks/accounts/fireworks/models/glm-5p3-flash }
     comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
 
 # ---------------------------------------------------------------------------

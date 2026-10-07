@@ -42,6 +42,7 @@
 
 import {
   PI_OPENROUTER_ROUTING,
+  PI_PROVIDER_ROUTING,
   type PiOpenRouterModel,
   type PiOpenRouterProvenance,
 } from './pi-openrouter.js'
@@ -1143,9 +1144,35 @@ export function piModelContractFor(
   binding: Pick<ModelBinding, 'provider' | 'model'>,
   models: Readonly<Record<string, PiOpenRouterModel>> = PI_OPENROUTER_ROUTING.models,
 ): PiModelContract | null {
+  // Amendment 06 N1/N3: identities that are not OpenRouter listings carry
+  // their contract in the provider-keyed registry. Looked up by exact
+  // [provider][model] — never by scanning, so no provider can match another's
+  // id. Checked first because it is the narrower, fully-qualified statement.
+  const providerEntry = PI_PROVIDER_ROUTING[binding.provider]?.[binding.model]
+  if (providerEntry !== undefined) {
+    return {
+      registry_key: binding.model,
+      opencode_id: providerEntry.opencodeId ?? null,
+      provider_local_id: providerEntry.providerLocalId ?? null,
+      protocol: providerEntry.protocol ?? null,
+      capabilities: providerEntry.capabilities,
+      allowed_lanes: providerEntry.allowedLanes,
+      prohibited_lanes: providerEntry.prohibitedLanes,
+      authority: providerEntry.authority,
+    }
+  }
+
   for (const [key, entry] of Object.entries(models)) {
+    // Provider-explicit matching (Amendment 06 N1). Each provider is its own
+    // namespace and states its own id; there is deliberately no `else` arm that
+    // would let an unlisted provider fall through onto OpenCode's id and
+    // inherit a contract it was never granted.
     const matches =
-      binding.provider === 'openrouter' ? key === binding.model : entry.opencodeId === binding.model
+      binding.provider === 'openrouter'
+        ? key === binding.model
+        : binding.provider === 'opencode'
+          ? entry.opencodeId === binding.model
+          : false
     if (!matches) continue
     return {
       registry_key: key,

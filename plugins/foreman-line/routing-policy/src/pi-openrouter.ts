@@ -146,7 +146,7 @@ export const PI_OPENROUTER_ENABLED_MODELS = [
   'openai/gpt-5.5',
   'openai/gpt-5.5-pro',
   'openai/gpt-5.6-luna',
-  'openai/gpt-5.6-sol',
+  'openai/gpt-6.1-sol',
   'openai/gpt-5.6-terra',
   'openai/gpt-6-astra',
   'openai/gpt-6-luna',
@@ -217,7 +217,7 @@ export const PI_OPENROUTER_ROUTING: PiOpenRouterRouting = {
     'openai/gpt-5.5',
     'openai/gpt-5.5-pro',
     'openai/gpt-5.6-luna',
-    'openai/gpt-5.6-sol',
+    'openai/gpt-6.1-sol',
     'openai/gpt-5.6-terra',
     'openai/gpt-6-astra',
     'openai/gpt-6-luna',
@@ -676,13 +676,13 @@ export const PI_OPENROUTER_ROUTING: PiOpenRouterRouting = {
       providerLocalId: 'openai/gpt-5.6-luna',
       protocol: 'openai-chat-completions',
     },
-    'openai/gpt-5.6-sol': {
+    'openai/gpt-6.1-sol': {
       capabilities: ['prose-generation', 'implementation'],
       allowedLanes: ['builder', 'prose-generation', 'implementation'],
       prohibitedLanes: ['approval', 'merge', 'policy-bypass'],
       authority: 'execution',
-      opencodeId: 'gpt-5.6-sol',
-      providerLocalId: 'openai/gpt-5.6-sol',
+      opencodeId: 'gpt-6.1-sol',
+      providerLocalId: 'openai/gpt-6.1-sol',
       protocol: 'openai-chat-completions',
     },
     'openai/gpt-5.6-terra': {
@@ -1114,4 +1114,180 @@ export function resolvePiOpenRouterRoute(
       provenance: entry.provenance,
     },
   }
+}
+
+/**
+ * Amendment 06 N1/N3 — execution-plane contracts for model identities that
+ * are NOT OpenRouter listings.
+ *
+ * Deliberately a separate registry rather than extra keys in
+ * `PI_OPENROUTER_ROUTING.models`. That record is the OpenRouter enablement
+ * registry and holds a one-to-one invariant with
+ * `PI_OPENROUTER_ENABLED_MODELS` (pinned by its own test). Adding a Fireworks
+ * path or a dashed Pi id to it would either break that invariant or force the
+ * id into the OpenRouter enabled list — asserting an OpenRouter listing that
+ * the 2026-10-07 catalogue capture does not establish. Two registries keep
+ * both statements true.
+ *
+ * Keyed by provider, then by that provider's own model id. No entry is
+ * reachable from another provider's namespace: `piModelContractFor` looks up
+ * `[binding.provider][binding.model]` and nothing else, so there is no path by
+ * which a Fireworks id inherits an Anthropic contract or vice versa.
+ *
+ * `authority: 'execution'` with builder/implementation lanes only. None of
+ * these may approve, merge, or bypass policy, and the open-weight entries are
+ * additionally held out of the frontier-only lanes by KNOWN_FRONTIER_BINDINGS.
+ */
+export const PI_PROVIDER_ROUTING: Readonly<
+  Record<string, Readonly<Record<string, PiOpenRouterModel>>>
+> = {
+  anthropic: {
+    // All three first-party identities live here, keyed by the DASHED Pi id.
+    //
+    // Opus 5.5 and Fable 5.1 also exist as OpenRouter listings
+    // (`anthropic/claude-opus-5.5`, `anthropic/claude-fable-5.1`) and keep
+    // their entries in PI_OPENROUTER_ROUTING. Those are separate namespaces
+    // describing separate routes, not one entry with two spellings — the
+    // OpenRouter entry governs `openrouter/…` bindings, this one governs
+    // `anthropic/…` bindings, and neither is reachable from the other.
+    //
+    // Keeping the mapping here rather than as a `providerIds` field on the
+    // OpenRouter entries leaves `templates/pi-openrouter-routing.json` (a
+    // pinned artifact) byte-identical.
+    'claude-opus-5-5': {
+      capabilities: ['prose-generation', 'implementation'],
+      allowedLanes: ['builder', 'prose-generation', 'implementation'],
+      prohibitedLanes: ['approval', 'merge', 'policy-bypass'],
+      authority: 'execution',
+      providerLocalId: 'claude-opus-5-5',
+      protocol: 'openai-chat-completions',
+    },
+    'claude-fable-5-1': {
+      capabilities: ['prose-generation', 'implementation'],
+      allowedLanes: ['builder', 'prose-generation', 'implementation'],
+      prohibitedLanes: ['approval', 'merge', 'policy-bypass'],
+      authority: 'execution',
+      providerLocalId: 'claude-fable-5-1',
+      protocol: 'openai-chat-completions',
+    },
+    'claude-sonnet-5-5': {
+      capabilities: ['prose-generation', 'implementation'],
+      allowedLanes: ['builder', 'prose-generation', 'implementation'],
+      prohibitedLanes: ['approval', 'merge', 'policy-bypass'],
+      authority: 'execution',
+      providerLocalId: 'claude-sonnet-5-5',
+      protocol: 'openai-chat-completions',
+    },
+  },
+  // Amendment 06 N3 / probe 2026-10-07. `opencode-go` is a DISTINCT provider
+  // from `opencode`; these ids are reachable only here. Note `opencode` has no
+  // entry in this registry at all — it keeps using the `opencodeId` field on
+  // the OpenRouter entries, and the two are never cross-resolved.
+  //
+  // `deepseek-v4-pro` is deliberately ABSENT despite being catalogued: a live
+  // probe returns a reproducible 400 — "This Go model requires Global regions.
+  // Select Global in your workspace's Privacy settings to use it." That is a
+  // privacy control refusing, not an outage. Binding it would mean either a
+  // route that always fails or loosening a region restriction; both are owner
+  // decisions, not a registry edit.
+  'opencode-go': {
+    'qwen3.8-flash': {
+      capabilities: ['prose-generation', 'implementation'],
+      allowedLanes: ['builder', 'prose-generation', 'implementation'],
+      prohibitedLanes: ['approval', 'merge', 'policy-bypass'],
+      authority: 'execution',
+      providerLocalId: 'qwen3.8-flash',
+      protocol: 'openai-chat-completions',
+    },
+    'glm-5.3-flash': {
+      capabilities: ['prose-generation', 'implementation'],
+      allowedLanes: ['builder', 'prose-generation', 'implementation'],
+      prohibitedLanes: ['approval', 'merge', 'policy-bypass'],
+      authority: 'execution',
+      providerLocalId: 'glm-5.3-flash',
+      protocol: 'openai-chat-completions',
+    },
+    'glm-5.3': {
+      capabilities: ['prose-generation', 'implementation'],
+      allowedLanes: ['builder', 'prose-generation', 'implementation'],
+      prohibitedLanes: ['approval', 'merge', 'policy-bypass'],
+      authority: 'execution',
+      providerLocalId: 'glm-5.3',
+      protocol: 'openai-chat-completions',
+    },
+    'grok-4.6': {
+      capabilities: ['prose-generation', 'implementation'],
+      allowedLanes: ['builder', 'prose-generation', 'implementation'],
+      prohibitedLanes: ['approval', 'merge', 'policy-bypass'],
+      authority: 'execution',
+      providerLocalId: 'grok-4.6',
+      protocol: 'openai-chat-completions',
+    },
+    'kimi-k3': {
+      capabilities: ['prose-generation', 'implementation'],
+      allowedLanes: ['builder', 'prose-generation', 'implementation'],
+      prohibitedLanes: ['approval', 'merge', 'policy-bypass'],
+      authority: 'execution',
+      providerLocalId: 'kimi-k3',
+      protocol: 'openai-chat-completions',
+    },
+    'gpt-5.6-luna': {
+      capabilities: ['prose-generation', 'implementation'],
+      allowedLanes: ['builder', 'prose-generation', 'implementation'],
+      prohibitedLanes: ['approval', 'merge', 'policy-bypass'],
+      authority: 'execution',
+      providerLocalId: 'gpt-5.6-luna',
+      protocol: 'openai-chat-completions',
+    },
+  },
+  fireworks: {
+    'accounts/fireworks/models/kimi-k3': {
+      capabilities: ['prose-generation', 'implementation'],
+      allowedLanes: ['builder', 'prose-generation', 'implementation'],
+      prohibitedLanes: ['approval', 'merge', 'policy-bypass'],
+      authority: 'execution',
+      providerLocalId: 'accounts/fireworks/models/kimi-k3',
+      protocol: 'openai-chat-completions',
+    },
+    'accounts/fireworks/models/qwen3p8-max': {
+      capabilities: ['prose-generation', 'implementation'],
+      allowedLanes: ['builder', 'prose-generation', 'implementation'],
+      prohibitedLanes: ['approval', 'merge', 'policy-bypass'],
+      authority: 'execution',
+      providerLocalId: 'accounts/fireworks/models/qwen3p8-max',
+      protocol: 'openai-chat-completions',
+    },
+    'accounts/fireworks/models/glm-5p3': {
+      capabilities: ['prose-generation', 'implementation'],
+      allowedLanes: ['builder', 'prose-generation', 'implementation'],
+      prohibitedLanes: ['approval', 'merge', 'policy-bypass'],
+      authority: 'execution',
+      providerLocalId: 'accounts/fireworks/models/glm-5p3',
+      protocol: 'openai-chat-completions',
+    },
+    'accounts/fireworks/models/glm-5p3-flash': {
+      capabilities: ['prose-generation', 'implementation'],
+      allowedLanes: ['builder', 'prose-generation', 'implementation'],
+      prohibitedLanes: ['approval', 'merge', 'policy-bypass'],
+      authority: 'execution',
+      providerLocalId: 'accounts/fireworks/models/glm-5p3-flash',
+      protocol: 'openai-chat-completions',
+    },
+    'accounts/fireworks/models/nemotron-lightning-3p5-30b-a3b': {
+      capabilities: ['prose-generation', 'implementation'],
+      allowedLanes: ['builder', 'prose-generation', 'implementation'],
+      prohibitedLanes: ['approval', 'merge', 'policy-bypass'],
+      authority: 'execution',
+      providerLocalId: 'accounts/fireworks/models/nemotron-lightning-3p5-30b-a3b',
+      protocol: 'openai-chat-completions',
+    },
+    'accounts/fireworks/models/gpt-oss-120b': {
+      capabilities: ['prose-generation', 'implementation'],
+      allowedLanes: ['builder', 'prose-generation', 'implementation'],
+      prohibitedLanes: ['approval', 'merge', 'policy-bypass'],
+      authority: 'execution',
+      providerLocalId: 'accounts/fireworks/models/gpt-oss-120b',
+      protocol: 'openai-chat-completions',
+    },
+  },
 }

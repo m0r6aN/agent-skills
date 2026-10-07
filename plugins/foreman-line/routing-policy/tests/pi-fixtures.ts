@@ -38,7 +38,33 @@ export function loadSettingsProjection(): HostSettingsSnapshot {
   return parse(readFileSync(path, 'utf8')) as HostSettingsSnapshot
 }
 
+/**
+ * The CURRENT host-settings proposal artifact.
+ *
+ * Amendment 06 re-minted this as a new dated artifact rather than regenerating
+ * `...-PROPOSED-2026-09-26.json` in place. That file is a dated goal record of
+ * what was proposed on that date; rewriting it would make a 2026-09-26 record
+ * assert a binding set that did not exist until 2026-10-07. Both files are
+ * kept: the old one as history (byte-untouched), this one as the live artifact.
+ *
+ * The generator is unchanged — the artifact grew because the contract gained
+ * the first-party `anthropic` and open-weight `fireworks` bindings.
+ *
+ * Amendment 07 (same-day, 2026-10-07) regenerated this artifact in place: the
+ * three new `opencode` enablement adds (gpt-6.1-sol, claude-sonnet-5-5,
+ * gpt-6-luna) exist as of the artifact's own date, so no new dated file is
+ * minted and no dated record is falsified.
+ */
 export const proposalArtifactPath = join(
+  foremanRoot,
+  'docs',
+  'goals',
+  'pi-model-configuration',
+  'pmc-p2-pi-host-settings-PROPOSED-2026-10-07.json',
+)
+
+/** The superseded 2026-09-26 proposal, retained as an unedited dated record. */
+export const proposalArtifactPathHistorical2026_09_26 = join(
   foremanRoot,
   'docs',
   'goals',
@@ -185,3 +211,45 @@ export function withComparability(
   clone.lane_routes = clone.lane_routes.map((route) => ({ ...route, comparability }))
   return clone
 }
+
+/**
+ * Every binding the L5 (economy / boilerplate) lane can select — primary and
+ * declared fallback of each L5 `lane_routes` entry.
+ *
+ * Centralized deliberately. Four negative controls in `rcm-predicates.test.ts`
+ * each used to inline this list, so adding the Amendment 06 `fireworks` L5
+ * route silently left a selectable, fully-declared binding standing in all
+ * four. Each then approved instead of refusing — the controls did not fail
+ * loudly, they stopped testing what they claimed to test.
+ *
+ * KEEP IN SYNC with `routing-policy.yaml` `lane_routes` for L5: any new L5
+ * route must add its two bindings here, or the controls weaken again.
+ */
+export const L5_SELECTABLE_BINDINGS: readonly string[] = [
+  'opencode/qwen3.8-flash',
+  'opencode/glm-5.3-flash',
+  'openrouter/google/gemini-3.8-flash',
+  'openrouter/anthropic/claude-haiku-4.5',
+  'opencode-go/qwen3.8-flash',
+  'opencode-go/glm-5.3-flash',
+  'fireworks/accounts/fireworks/models/nemotron-lightning-3p5-30b-a3b',
+  'fireworks/accounts/fireworks/models/glm-5p3-flash',
+]
+
+/**
+ * The PRIMARY-role binding of each L5 `lane_routes` entry.
+ *
+ * Separate from `L5_SELECTABLE_BINDINGS` on purpose. The F1/F2 modality
+ * controls assert "when no vision-capable PRIMARY-role binding remains, the
+ * route stops" and rely on fallback-role bindings never competing. Neutralizing
+ * fallbacks too would still pass, but it would stop proving that — so these
+ * controls patch primaries only.
+ *
+ * KEEP IN SYNC with `routing-policy.yaml` `lane_routes` for L5.
+ */
+export const L5_PRIMARY_BINDINGS: readonly string[] = [
+  'opencode/qwen3.8-flash',
+  'openrouter/google/gemini-3.8-flash',
+  'opencode-go/qwen3.8-flash',
+  'fireworks/accounts/fireworks/models/nemotron-lightning-3p5-30b-a3b',
+]

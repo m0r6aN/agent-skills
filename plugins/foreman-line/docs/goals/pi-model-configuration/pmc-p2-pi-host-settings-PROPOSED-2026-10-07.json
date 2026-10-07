@@ -1,0 +1,1139 @@
+{
+  "kind": "pi-host-settings-proposal",
+  "status": "PROPOSED-NOT-WRITTEN",
+  "target": {
+    "file": "Pi host-owned settings file (host path deliberately not addressed; the owner applies this proposal by hand)",
+    "write_policy": "Foreman NEVER writes Pi’s host-owned settings file — proposal only, no host write, no credential anywhere"
+  },
+  "discipline": "one-way projection artifact/patch (RCM charter D1/RCM-P7 discipline): Foreman never writes Pi’s shared settings.json, never reads it back for routing, and applies nothing automatically",
+  "changes": [
+    {
+      "path": "providers['opencode'].baseUrl",
+      "op": "keep",
+      "value": {
+        "baseUrl": "https://opencode.ai/zen/go/v1",
+        "providerKey": "opencode"
+      },
+      "reason": "endpoint URL stays in Pi settings as registered (charter D2; baseline discovery)",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "D2 + \"Current baseline and authority boundary\""
+        },
+        {
+          "source": "docs/goals/routing-currency-and-merit/host-owner-export/settings-projection.json",
+          "locator": "providers[] providerKey=opencode"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md",
+          "locator": "§ 4 (\"SCF-1/2/3\" endpoint divergences transcribed from pmc-p0-capability-baseline.md § 3) — SCF-1/SCF-2"
+        }
+      ]
+    },
+    {
+      "path": "providers['openrouter'].baseUrl",
+      "op": "keep",
+      "value": {
+        "baseUrl": "https://openrouter.ai/api/v1",
+        "providerKey": "openrouter"
+      },
+      "reason": "registered endpoint equals the pi-openrouter.ts contract const (SCF-3 comparator: a divergent catalogue value is refused, never normalized into this const)",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "D2 + \"Current baseline and authority boundary\""
+        },
+        {
+          "source": "docs/goals/routing-currency-and-merit/host-owner-export/settings-projection.json",
+          "locator": "providers[] providerKey=openrouter"
+        },
+        {
+          "source": "routing-policy/src/pi-openrouter.ts",
+          "locator": "PI_OPENROUTER_ROUTING.baseUrl / piOpenRouterRoutingSchema baseUrl const"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md",
+          "locator": "§ 4 (\"SCF-1/2/3\" endpoint divergences transcribed from pmc-p0-capability-baseline.md § 3) — SCF-3"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "keep",
+      "value": "opencode:deepseek/deepseek-r1-distill-qwen-32b",
+      "reason": "retained: no ratified clause authorizes removal from enabledModels (Amendment 02 M4 assigns enablement only; a \"stale\" label is not evidence — catalogue metadata is never an availability oracle (rubric R6)). Removal requires an explicit owner decision",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 (enablement only)"
+        },
+        {
+          "source": "docs/goals/routing-currency-and-merit/host-owner-export/settings-projection.json",
+          "locator": "enabledModels[]"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "keep",
+      "value": "opencode:qwen/qwen-2.5-coder-32b",
+      "reason": "retained: no ratified clause authorizes removal from enabledModels (Amendment 02 M4 assigns enablement only), and this entry is the M3-kept interactive default model — removing it would contradict M3. Removal requires an explicit owner decision",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M3 + M4"
+        },
+        {
+          "source": "docs/goals/routing-currency-and-merit/host-owner-export/settings-projection.json",
+          "locator": "enabledModels[] + defaultModel"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "keep",
+      "value": "openrouter:anthropic/claude-3.5-sonnet",
+      "reason": "retained: no ratified clause authorizes removal from enabledModels (Amendment 02 M4 assigns enablement only; a \"stale\" label is not evidence — catalogue metadata is never an availability oracle (rubric R6)). Removal requires an explicit owner decision",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 (enablement only)"
+        },
+        {
+          "source": "docs/goals/routing-currency-and-merit/host-owner-export/settings-projection.json",
+          "locator": "enabledModels[]"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "keep",
+      "value": "openrouter:openai/gpt-4o-mini",
+      "reason": "retained: no ratified clause authorizes removal from enabledModels (Amendment 02 M4 assigns enablement only; a \"stale\" label is not evidence — catalogue metadata is never an availability oracle (rubric R6)). Removal requires an explicit owner decision",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 (enablement only)"
+        },
+        {
+          "source": "docs/goals/routing-currency-and-merit/host-owner-export/settings-projection.json",
+          "locator": "enabledModels[]"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "remove",
+      "value": "openrouter:typesafe/jev-1.13",
+      "reason": "M2: the charter strikes typesafe/jev-1.13 from the lane matrix (ratified finding: enabled in Pi settings but absent from the catalogue, so it resolves to a missing-model refusal) — removed, never silently substituted",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M2"
+        },
+        {
+          "source": "docs/goals/routing-currency-and-merit/host-owner-export/settings-projection.json",
+          "locator": "enabledModels[]"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "anthropic:claude-fable-5-1",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'anthropic/claude-fable-5-1'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "anthropic:claude-opus-5-5",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'anthropic/claude-opus-5-5'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "anthropic:claude-sonnet-5-5",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'anthropic/claude-sonnet-5-5'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "fireworks:accounts/fireworks/models/glm-5p3",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'fireworks/accounts/fireworks/models/glm-5p3'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "fireworks:accounts/fireworks/models/glm-5p3-flash",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'fireworks/accounts/fireworks/models/glm-5p3-flash'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "fireworks:accounts/fireworks/models/gpt-oss-120b",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'fireworks/accounts/fireworks/models/gpt-oss-120b'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "fireworks:accounts/fireworks/models/kimi-k3",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'fireworks/accounts/fireworks/models/kimi-k3'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "fireworks:accounts/fireworks/models/nemotron-lightning-3p5-30b-a3b",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'fireworks/accounts/fireworks/models/nemotron-lightning-3p5-30b-a3b'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "fireworks:accounts/fireworks/models/qwen3p8-max",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'fireworks/accounts/fireworks/models/qwen3p8-max'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "opencode-go:deepseek-v4-pro",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode-go/deepseek-v4-pro'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "opencode-go:deepseek-v4.1-flash",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode-go/deepseek-v4.1-flash'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "opencode-go:glm-5.3",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode-go/glm-5.3'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "opencode-go:glm-5.3-flash",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode-go/glm-5.3-flash'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "opencode-go:gpt-5.6-luna",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode-go/gpt-5.6-luna'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "opencode-go:grok-4.6",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode-go/grok-4.6'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "opencode-go:kimi-k3",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode-go/kimi-k3'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "opencode-go:qwen3.8-flash",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode-go/qwen3.8-flash'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "opencode:claude-opus-5-5",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode/claude-opus-5-5'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "opencode:claude-sonnet-5",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode/claude-sonnet-5'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "opencode:claude-sonnet-5-5",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode/claude-sonnet-5-5'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "opencode:deepseek-v4-pro",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode/deepseek-v4-pro'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "opencode:deepseek-v4.1-flash",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode/deepseek-v4.1-flash'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "opencode:glm-5.3-flash",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode/glm-5.3-flash'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "opencode:gpt-5.6-terra",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode/gpt-5.6-terra'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "opencode:gpt-6-astra",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode/gpt-6-astra'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "opencode:gpt-6-luna",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode/gpt-6-luna'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "opencode:gpt-6.1-sol",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode/gpt-6.1-sol'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "opencode:qwen3.8-flash",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode/qwen3.8-flash'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "openrouter:anthropic/claude-haiku-4.5",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'openrouter/anthropic/claude-haiku-4.5'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "openrouter:anthropic/claude-opus-5.5",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'openrouter/anthropic/claude-opus-5.5'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "openrouter:anthropic/claude-sonnet-5",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'openrouter/anthropic/claude-sonnet-5'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "openrouter:google/gemini-3.8-flash",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'openrouter/google/gemini-3.8-flash'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "openrouter:openai/gpt-5.6-terra",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'openrouter/openai/gpt-5.6-terra'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "openrouter:openai/gpt-6-astra",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'openrouter/openai/gpt-6-astra'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "enabledModels",
+      "op": "add",
+      "value": "openrouter:openai/gpt-6.1-sol",
+      "reason": "M4: enable the charter-matrix binding set (identity from the ratified binding layer)",
+      "provenance": [
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'openrouter/openai/gpt-6.1-sol'"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M4 + Initial Pi provider and lane matrix"
+        }
+      ]
+    },
+    {
+      "path": "models['anthropic/claude-haiku-4.5'].openRouterRouting",
+      "op": "set",
+      "value": {
+        "allow_fallbacks": true,
+        "data_collection": "deny",
+        "zdr": true
+      },
+      "reason": "provider routing controls declared per OpenRouter model (charter D3): in-provider failover only; data_collection/zdr derived from the strictest Foreman data classification the binding serves",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "D3 + Initial Pi provider and lane matrix (\"OpenRouter models also declare provider routing\")"
+        },
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "data_classification.<tiers>.transport_requirements + candidates → binding 'openrouter/anthropic/claude-haiku-4.5'.data_classes"
+        }
+      ]
+    },
+    {
+      "path": "models['anthropic/claude-opus-5.5'].openRouterRouting",
+      "op": "set",
+      "value": {
+        "allow_fallbacks": true,
+        "data_collection": "deny",
+        "zdr": true
+      },
+      "reason": "provider routing controls declared per OpenRouter model (charter D3): in-provider failover only; data_collection/zdr derived from the strictest Foreman data classification the binding serves",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "D3 + Initial Pi provider and lane matrix (\"OpenRouter models also declare provider routing\")"
+        },
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "data_classification.<tiers>.transport_requirements + candidates → binding 'openrouter/anthropic/claude-opus-5.5'.data_classes"
+        }
+      ]
+    },
+    {
+      "path": "models['anthropic/claude-sonnet-5'].openRouterRouting",
+      "op": "set",
+      "value": {
+        "allow_fallbacks": true,
+        "data_collection": "deny",
+        "zdr": true
+      },
+      "reason": "provider routing controls declared per OpenRouter model (charter D3): in-provider failover only; data_collection/zdr derived from the strictest Foreman data classification the binding serves",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "D3 + Initial Pi provider and lane matrix (\"OpenRouter models also declare provider routing\")"
+        },
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "data_classification.<tiers>.transport_requirements + candidates → binding 'openrouter/anthropic/claude-sonnet-5'.data_classes"
+        }
+      ]
+    },
+    {
+      "path": "models['google/gemini-3.8-flash'].openRouterRouting",
+      "op": "set",
+      "value": {
+        "allow_fallbacks": true,
+        "data_collection": "deny",
+        "zdr": true
+      },
+      "reason": "provider routing controls declared per OpenRouter model (charter D3): in-provider failover only; data_collection/zdr derived from the strictest Foreman data classification the binding serves",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "D3 + Initial Pi provider and lane matrix (\"OpenRouter models also declare provider routing\")"
+        },
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "data_classification.<tiers>.transport_requirements + candidates → binding 'openrouter/google/gemini-3.8-flash'.data_classes"
+        }
+      ]
+    },
+    {
+      "path": "models['openai/gpt-5.6-terra'].openRouterRouting",
+      "op": "set",
+      "value": {
+        "allow_fallbacks": true,
+        "data_collection": "deny",
+        "zdr": true
+      },
+      "reason": "provider routing controls declared per OpenRouter model (charter D3): in-provider failover only; data_collection/zdr derived from the strictest Foreman data classification the binding serves",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "D3 + Initial Pi provider and lane matrix (\"OpenRouter models also declare provider routing\")"
+        },
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "data_classification.<tiers>.transport_requirements + candidates → binding 'openrouter/openai/gpt-5.6-terra'.data_classes"
+        }
+      ]
+    },
+    {
+      "path": "models['openai/gpt-6-astra'].openRouterRouting",
+      "op": "set",
+      "value": {
+        "allow_fallbacks": true,
+        "data_collection": "deny",
+        "zdr": true
+      },
+      "reason": "provider routing controls declared per OpenRouter model (charter D3): in-provider failover only; data_collection/zdr derived from the strictest Foreman data classification the binding serves",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "D3 + Initial Pi provider and lane matrix (\"OpenRouter models also declare provider routing\")"
+        },
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "data_classification.<tiers>.transport_requirements + candidates → binding 'openrouter/openai/gpt-6-astra'.data_classes"
+        }
+      ]
+    },
+    {
+      "path": "models['openai/gpt-6.1-sol'].openRouterRouting",
+      "op": "set",
+      "value": {
+        "allow_fallbacks": true,
+        "data_collection": "deny",
+        "zdr": true
+      },
+      "reason": "provider routing controls declared per OpenRouter model (charter D3): in-provider failover only; data_collection/zdr derived from the strictest Foreman data classification the binding serves",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "D3 + Initial Pi provider and lane matrix (\"OpenRouter models also declare provider routing\")"
+        },
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "data_classification.<tiers>.transport_requirements + candidates → binding 'openrouter/openai/gpt-6.1-sol'.data_classes"
+        }
+      ]
+    },
+    {
+      "path": "defaultProvider",
+      "op": "keep",
+      "value": "opencode",
+      "reason": "M3 is a documentation correction only — changing the host default is not authorized by this charter; the default confers no parcel authority (A1)",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M3"
+        },
+        {
+          "source": "docs/goals/routing-currency-and-merit/host-owner-export/settings-projection.json",
+          "locator": "defaultProvider"
+        }
+      ]
+    },
+    {
+      "path": "defaultModel",
+      "op": "keep",
+      "value": "qwen/qwen-2.5-coder-32b",
+      "reason": "M3 is a documentation correction only — changing the host default is not authorized by this charter; the default confers no parcel authority (A1)",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M3"
+        },
+        {
+          "source": "docs/goals/routing-currency-and-merit/host-owner-export/settings-projection.json",
+          "locator": "defaultModel"
+        }
+      ]
+    },
+    {
+      "path": "defaultThinkingLevel",
+      "op": "keep",
+      "value": "minimal",
+      "reason": "M3 is a documentation correction only — changing the host default is not authorized by this charter; the default confers no parcel authority (A1)",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/charter.md",
+          "locator": "Amendment 02 M3"
+        },
+        {
+          "source": "docs/goals/routing-currency-and-merit/host-owner-export/settings-projection.json",
+          "locator": "defaultThinkingLevel"
+        }
+      ]
+    }
+  ],
+  "endpoint_divergences": [
+    {
+      "binding": "opencode-go/qwen3.8-flash",
+      "registered": "https://opencode.ai/zen/go/v1",
+      "catalogue": "https://opencode.ai/zen/go",
+      "alignment": "divergent",
+      "scf_finding": null,
+      "disposition": "unresolved divergence — no host change proposed (RCM D13: any host-side correction is a human act outside Foreman; no aliasing, no path normalization). The resolver refuses this binding at resolve time (ENDPOINT_DIVERGENCE_REFUSED) until an owner resolves the divergence",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md",
+          "locator": "§ 4 (\"SCF-1/2/3\" endpoint divergences transcribed from pmc-p0-capability-baseline.md § 3)"
+        },
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode-go/qwen3.8-flash'.endpoint"
+        }
+      ]
+    },
+    {
+      "binding": "opencode/claude-opus-5-5",
+      "registered": "https://opencode.ai/zen/v1",
+      "catalogue": "https://opencode.ai/zen",
+      "alignment": "divergent",
+      "scf_finding": "SCF-2",
+      "disposition": "unresolved divergence — no host change proposed (RCM D13: any host-side correction is a human act outside Foreman; no aliasing, no path normalization). The resolver refuses this binding at resolve time (ENDPOINT_DIVERGENCE_REFUSED) until an owner resolves the divergence",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md",
+          "locator": "§ 4 (\"SCF-1/2/3\" endpoint divergences transcribed from pmc-p0-capability-baseline.md § 3)"
+        },
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode/claude-opus-5-5'.endpoint"
+        }
+      ]
+    },
+    {
+      "binding": "opencode/claude-sonnet-5",
+      "registered": "https://opencode.ai/zen/go/v1",
+      "catalogue": "https://opencode.ai/zen",
+      "alignment": "divergent",
+      "scf_finding": "SCF-2",
+      "disposition": "unresolved divergence — no host change proposed (RCM D13: any host-side correction is a human act outside Foreman; no aliasing, no path normalization). The resolver refuses this binding at resolve time (ENDPOINT_DIVERGENCE_REFUSED) until an owner resolves the divergence",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md",
+          "locator": "§ 4 (\"SCF-1/2/3\" endpoint divergences transcribed from pmc-p0-capability-baseline.md § 3)"
+        },
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode/claude-sonnet-5'.endpoint"
+        }
+      ]
+    },
+    {
+      "binding": "opencode/claude-sonnet-5-5",
+      "registered": "https://opencode.ai/zen/v1",
+      "catalogue": "https://opencode.ai/zen",
+      "alignment": "divergent",
+      "scf_finding": "SCF-2",
+      "disposition": "unresolved divergence — no host change proposed (RCM D13: any host-side correction is a human act outside Foreman; no aliasing, no path normalization). The resolver refuses this binding at resolve time (ENDPOINT_DIVERGENCE_REFUSED) until an owner resolves the divergence",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md",
+          "locator": "§ 4 (\"SCF-1/2/3\" endpoint divergences transcribed from pmc-p0-capability-baseline.md § 3)"
+        },
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode/claude-sonnet-5-5'.endpoint"
+        }
+      ]
+    },
+    {
+      "binding": "opencode/glm-5.3-flash",
+      "registered": "https://opencode.ai/zen/go/v1",
+      "catalogue": "https://opencode.ai/zen/v1",
+      "alignment": "divergent",
+      "scf_finding": "SCF-1",
+      "disposition": "unresolved divergence — no host change proposed (RCM D13: any host-side correction is a human act outside Foreman; no aliasing, no path normalization). The resolver refuses this binding at resolve time (ENDPOINT_DIVERGENCE_REFUSED) until an owner resolves the divergence",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md",
+          "locator": "§ 4 (\"SCF-1/2/3\" endpoint divergences transcribed from pmc-p0-capability-baseline.md § 3)"
+        },
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode/glm-5.3-flash'.endpoint"
+        }
+      ]
+    },
+    {
+      "binding": "opencode/gpt-5.6-terra",
+      "registered": "https://opencode.ai/zen/go/v1",
+      "catalogue": "https://opencode.ai/zen/v1",
+      "alignment": "divergent",
+      "scf_finding": "SCF-1",
+      "disposition": "unresolved divergence — no host change proposed (RCM D13: any host-side correction is a human act outside Foreman; no aliasing, no path normalization). The resolver refuses this binding at resolve time (ENDPOINT_DIVERGENCE_REFUSED) until an owner resolves the divergence",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md",
+          "locator": "§ 4 (\"SCF-1/2/3\" endpoint divergences transcribed from pmc-p0-capability-baseline.md § 3)"
+        },
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode/gpt-5.6-terra'.endpoint"
+        }
+      ]
+    },
+    {
+      "binding": "opencode/gpt-6-astra",
+      "registered": "https://opencode.ai/zen/go/v1",
+      "catalogue": "https://opencode.ai/zen/v1",
+      "alignment": "divergent",
+      "scf_finding": "SCF-1",
+      "disposition": "unresolved divergence — no host change proposed (RCM D13: any host-side correction is a human act outside Foreman; no aliasing, no path normalization). The resolver refuses this binding at resolve time (ENDPOINT_DIVERGENCE_REFUSED) until an owner resolves the divergence",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md",
+          "locator": "§ 4 (\"SCF-1/2/3\" endpoint divergences transcribed from pmc-p0-capability-baseline.md § 3)"
+        },
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'opencode/gpt-6-astra'.endpoint"
+        }
+      ]
+    },
+    {
+      "binding": "openrouter/anthropic/claude-haiku-4.5",
+      "registered": "https://openrouter.ai/api/v1",
+      "catalogue": "https://openrouter.ai/api",
+      "alignment": "divergent",
+      "scf_finding": "SCF-3",
+      "disposition": "unresolved divergence — no host change proposed (RCM D13: any host-side correction is a human act outside Foreman; no aliasing, no path normalization). The resolver refuses this binding at resolve time (ENDPOINT_DIVERGENCE_REFUSED) until an owner resolves the divergence",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md",
+          "locator": "§ 4 (\"SCF-1/2/3\" endpoint divergences transcribed from pmc-p0-capability-baseline.md § 3)"
+        },
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'openrouter/anthropic/claude-haiku-4.5'.endpoint"
+        }
+      ]
+    },
+    {
+      "binding": "openrouter/anthropic/claude-sonnet-5",
+      "registered": "https://openrouter.ai/api/v1",
+      "catalogue": "https://openrouter.ai/api",
+      "alignment": "divergent",
+      "scf_finding": "SCF-3",
+      "disposition": "unresolved divergence — no host change proposed (RCM D13: any host-side correction is a human act outside Foreman; no aliasing, no path normalization). The resolver refuses this binding at resolve time (ENDPOINT_DIVERGENCE_REFUSED) until an owner resolves the divergence",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md",
+          "locator": "§ 4 (\"SCF-1/2/3\" endpoint divergences transcribed from pmc-p0-capability-baseline.md § 3)"
+        },
+        {
+          "source": "routing-policy/routing-policy.yaml",
+          "locator": "candidates → binding 'openrouter/anthropic/claude-sonnet-5'.endpoint"
+        }
+      ]
+    }
+  ],
+  "residual_dispositions": [
+    {
+      "slot": "lane_map.L1.provider_rule.pinned_provider",
+      "residual": "L1_PINNED_PROVIDER_UNSET",
+      "state": "fail-closed",
+      "attempted_evidence": "see pmc-p2-pi-configuration-and-route-resolver-2026-09-26.md § 5 (recorded public-catalogue metadata GET with source, fetch time, content hash): catalogue metadata cannot establish A6 live-availability, A6 model-quality, or an owner declaration — value stays fail-closed (typed unavailable)",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/a54-ratification-2026-09-26.md",
+          "locator": "disposition 2 — value unset, fail closed"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md",
+          "locator": "§ 4 \"Residuals preserved — fail closed, never fabricated\" + § 2 item 11 (resolver-side enforcement is PMC-P2 work)"
+        }
+      ]
+    },
+    {
+      "slot": "lane_map.L2.provider_rule.pinned_provider",
+      "residual": "L2_PINNED_PROVIDER_UNSET",
+      "state": "fail-closed",
+      "attempted_evidence": "see pmc-p2-pi-configuration-and-route-resolver-2026-09-26.md § 5 (recorded public-catalogue metadata GET with source, fetch time, content hash): catalogue metadata cannot establish A6 live-availability, A6 model-quality, or an owner declaration — value stays fail-closed (typed unavailable)",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/a54-ratification-2026-09-26.md",
+          "locator": "disposition 2 — value unset, fail closed"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md",
+          "locator": "§ 4 \"Residuals preserved — fail closed, never fabricated\" + § 2 item 11 (resolver-side enforcement is PMC-P2 work)"
+        }
+      ]
+    },
+    {
+      "slot": "lane_map.L3.provider_rule.preference",
+      "residual": "L3_PROVIDER_PREFERENCE_UNSET",
+      "state": "fail-closed",
+      "attempted_evidence": "see pmc-p2-pi-configuration-and-route-resolver-2026-09-26.md § 5 (recorded public-catalogue metadata GET with source, fetch time, content hash): catalogue metadata cannot establish A6 live-availability, A6 model-quality, or an owner declaration — value stays fail-closed (typed unavailable)",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/a54-ratification-2026-09-26.md",
+          "locator": "disposition 3 — value unset, fail closed"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md",
+          "locator": "§ 4 \"Residuals preserved — fail closed, never fabricated\" + § 2 item 11 (resolver-side enforcement is PMC-P2 work)"
+        }
+      ]
+    },
+    {
+      "slot": "lane_map.L4.provider_rule.preference",
+      "residual": "L4_PROVIDER_PREFERENCE_UNSET",
+      "state": "fail-closed",
+      "attempted_evidence": "see pmc-p2-pi-configuration-and-route-resolver-2026-09-26.md § 5 (recorded public-catalogue metadata GET with source, fetch time, content hash): catalogue metadata cannot establish A6 live-availability, A6 model-quality, or an owner declaration — value stays fail-closed (typed unavailable)",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/a54-ratification-2026-09-26.md",
+          "locator": "disposition 3 — value unset, fail closed"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md",
+          "locator": "§ 4 \"Residuals preserved — fail closed, never fabricated\" + § 2 item 11 (resolver-side enforcement is PMC-P2 work)"
+        }
+      ]
+    },
+    {
+      "slot": "lane_map.<lane>.quality_tolerance",
+      "residual": "DELTA_L_UNSET",
+      "state": "fail-closed",
+      "attempted_evidence": "see pmc-p2-pi-configuration-and-route-resolver-2026-09-26.md § 5 (recorded public-catalogue metadata GET with source, fetch time, content hash): catalogue metadata cannot establish A6 live-availability, A6 model-quality, or an owner declaration — value stays fail-closed (typed unavailable)",
+      "provenance": [
+        {
+          "source": "docs/goals/pi-model-configuration/a54-ratification-2026-09-26.md",
+          "locator": "disposition 5 — value unset, fail closed"
+        },
+        {
+          "source": "docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md",
+          "locator": "§ 4 \"Residuals preserved — fail closed, never fabricated\" + § 2 item 11 (resolver-side enforcement is PMC-P2 work)"
+        }
+      ]
+    }
+  ],
+  "credentials": {
+    "policy": "credentials remain environment references and never enter Foreman Line source, templates, receipts, or prompts (charter D2)",
+    "contains_credential_value": false
+  }
+}

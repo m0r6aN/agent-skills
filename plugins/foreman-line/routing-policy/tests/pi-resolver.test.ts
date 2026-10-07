@@ -100,7 +100,9 @@ test('L5 resolves to the cheapest rankable primary with its declared fallback (s
 test('the receipt records every ranking input for every candidate (A3), and only vocabulary names', () => {
   const receipt = resolveRoute(makeDeclaredPolicy(), makeRequest(), { issued_at: FIXED_ISSUED_AT })
 
-  assert.equal(receipt.evaluations.length, 4)
+  // L5 now has four provider routes (opencode, openrouter, opencode-go,
+  // fireworks), two bindings each (Amendment 06 N3 + the 2026-10-07 probe).
+  assert.equal(receipt.evaluations.length, 8)
   for (const evaluation of receipt.evaluations) {
     assert.deepEqual(
       evaluation.ranking_inputs.map((input) => input.input),
@@ -174,7 +176,9 @@ test('the shipped policy fails closed on every lane with named residuals (no fab
   assert.deepEqual(stopNames(l1), ['L1_PINNED_PROVIDER_UNSET'])
   assert.equal(
     l1.evaluations.length,
-    4,
+    // L1 gained the first-party `anthropic` route (Amendment 06 N1): three
+    // providers x two bindings.
+    6,
     'A3: every candidate is evaluated and recorded before the provider step',
   )
 

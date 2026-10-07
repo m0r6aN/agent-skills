@@ -105,6 +105,25 @@ const QWEN_ID = 'opencode/qwen3.8-flash'
 const GLM_ID = 'opencode/glm-5.3-flash'
 const GEMINI_ID = 'openrouter/google/gemini-3.8-flash'
 const HAIKU_ID = 'openrouter/anthropic/claude-haiku-4.5'
+// Amendment 06 N3 added a third L5 lane route on `fireworks`. Its two bindings
+// join every L5 walk, so a control that means "the whole lane is exhausted"
+// must neutralize these too — otherwise the walk succeeds here and the control
+// silently stops testing exhaustion.
+const NEMO_ID = 'fireworks/accounts/fireworks/models/nemotron-lightning-3p5-30b-a3b'
+const FW_GLM_ID = 'fireworks/accounts/fireworks/models/glm-5p3-flash'
+const OG_QWEN_ID = 'opencode-go/qwen3.8-flash'
+const OG_GLM_ID = 'opencode-go/glm-5.3-flash'
+/** Every L5 binding a recovery walk can attempt, in lane_routes declaration order. */
+const L5_WALK_IDS = [
+  QWEN_ID,
+  GLM_ID,
+  GEMINI_ID,
+  HAIKU_ID,
+  OG_QWEN_ID,
+  OG_GLM_ID,
+  NEMO_ID,
+  FW_GLM_ID,
+] as const
 
 function makeClock(startIso: string): {
   now: () => string
@@ -607,6 +626,10 @@ test('C4 step 3: the walk covers only declared lane routes in declaration order 
   policy = withBinding(policy, GLM_ID, stripInputs)
   policy = withBinding(policy, GEMINI_ID, stripInputs)
   policy = withBinding(policy, HAIKU_ID, stripInputs)
+  policy = withBinding(policy, OG_QWEN_ID, stripInputs)
+  policy = withBinding(policy, OG_GLM_ID, stripInputs)
+  policy = withBinding(policy, NEMO_ID, stripInputs)
+  policy = withBinding(policy, FW_GLM_ID, stripInputs)
 
   const context = createRecoveryContext(configFor(makeClock(FIXTURE_NOW).now))
   const result = resolveRouteWithRecovery(
@@ -620,7 +643,7 @@ test('C4 step 3: the walk covers only declared lane routes in declaration order 
   const walkOrder = result.episode.attempted
     .filter((attempt) => attempt.role !== 'requested')
     .map((attempt) => attempt.identity)
-  assert.deepEqual(walkOrder, [QWEN_ID, GLM_ID, GEMINI_ID, HAIKU_ID])
+  assert.deepEqual(walkOrder, [...L5_WALK_IDS])
   for (const attempt of result.episode.attempted) {
     assert.notEqual(attempt.identity, undeclaredId, 'an undeclared candidate is never attempted')
   }
@@ -632,6 +655,10 @@ test('C4 step 3: max_fallback_attempts caps the walk — exactly cap attempts, t
   policy = withBinding(policy, GLM_ID, stripInputs)
   policy = withBinding(policy, GEMINI_ID, stripInputs)
   policy = withBinding(policy, HAIKU_ID, stripInputs)
+  policy = withBinding(policy, OG_QWEN_ID, stripInputs)
+  policy = withBinding(policy, OG_GLM_ID, stripInputs)
+  policy = withBinding(policy, NEMO_ID, stripInputs)
+  policy = withBinding(policy, FW_GLM_ID, stripInputs)
   const context = createRecoveryContext(
     configFor(makeClock(FIXTURE_NOW).now, { bounds: { max_fallback_attempts: 1 } }),
   )
@@ -669,6 +696,10 @@ test('C4 step 3: the deadline ends the walk with RECOVERY_DEADLINE_EXCEEDED (inj
   policy = withBinding(policy, GLM_ID, stripInputs)
   policy = withBinding(policy, GEMINI_ID, stripInputs)
   policy = withBinding(policy, HAIKU_ID, stripInputs)
+  policy = withBinding(policy, OG_QWEN_ID, stripInputs)
+  policy = withBinding(policy, OG_GLM_ID, stripInputs)
+  policy = withBinding(policy, NEMO_ID, stripInputs)
+  policy = withBinding(policy, FW_GLM_ID, stripInputs)
   const clock = makeClock(FIXTURE_NOW)
   const steppingNow = (): string => {
     const value = clock.now()
@@ -808,6 +839,10 @@ function terminalEpisode(): { result: RecoveryResolution; record: RecoveryEpisod
   policy = withBinding(policy, GLM_ID, stripInputs)
   policy = withBinding(policy, GEMINI_ID, stripInputs)
   policy = withBinding(policy, HAIKU_ID, stripInputs)
+  policy = withBinding(policy, OG_QWEN_ID, stripInputs)
+  policy = withBinding(policy, OG_GLM_ID, stripInputs)
+  policy = withBinding(policy, NEMO_ID, stripInputs)
+  policy = withBinding(policy, FW_GLM_ID, stripInputs)
   const context = createRecoveryContext(configFor(makeClock(FIXTURE_NOW).now))
   const result = resolveRouteWithRecovery(
     policy,
@@ -908,6 +943,10 @@ function terminalEpisodeWithin(context: RecoveryContext): RecoveryResolution {
   policy = withBinding(policy, GLM_ID, stripInputs)
   policy = withBinding(policy, GEMINI_ID, stripInputs)
   policy = withBinding(policy, HAIKU_ID, stripInputs)
+  policy = withBinding(policy, OG_QWEN_ID, stripInputs)
+  policy = withBinding(policy, OG_GLM_ID, stripInputs)
+  policy = withBinding(policy, NEMO_ID, stripInputs)
+  policy = withBinding(policy, FW_GLM_ID, stripInputs)
   return resolveRouteWithRecovery(
     policy,
     makeRequest(),
@@ -985,6 +1024,10 @@ test('C6 honesty: a transient retry occurs exactly once per target and only unde
   policy = withBinding(policy, GLM_ID, stripInputs)
   policy = withBinding(policy, GEMINI_ID, stripInputs)
   policy = withBinding(policy, HAIKU_ID, stripInputs)
+  policy = withBinding(policy, OG_QWEN_ID, stripInputs)
+  policy = withBinding(policy, OG_GLM_ID, stripInputs)
+  policy = withBinding(policy, NEMO_ID, stripInputs)
+  policy = withBinding(policy, FW_GLM_ID, stripInputs)
   const prior = [
     {
       attempt_ref: GLM_ID,
@@ -1048,6 +1091,10 @@ test('C6 honesty: walk instrumentation — one refresh per episode, at most one 
   policy = withBinding(policy, GLM_ID, stripInputs)
   policy = withBinding(policy, GEMINI_ID, stripInputs)
   policy = withBinding(policy, HAIKU_ID, stripInputs)
+  policy = withBinding(policy, OG_QWEN_ID, stripInputs)
+  policy = withBinding(policy, OG_GLM_ID, stripInputs)
+  policy = withBinding(policy, NEMO_ID, stripInputs)
+  policy = withBinding(policy, FW_GLM_ID, stripInputs)
   const context = createRecoveryContext(configFor(makeClock(FIXTURE_NOW).now, { refresh }))
   const episodeInput = episodeFor({
     requested: { lane: 'L5', registry_key: 'unlisted/slug' },
@@ -1087,6 +1134,10 @@ test('C6 honesty: an unhealthy failure class stamps provider cooldown and expire
   policy = withBinding(policy, GLM_ID, stripInputs)
   policy = withBinding(policy, GEMINI_ID, stripInputs)
   policy = withBinding(policy, HAIKU_ID, stripInputs)
+  policy = withBinding(policy, OG_QWEN_ID, stripInputs)
+  policy = withBinding(policy, OG_GLM_ID, stripInputs)
+  policy = withBinding(policy, NEMO_ID, stripInputs)
+  policy = withBinding(policy, FW_GLM_ID, stripInputs)
   const clock = makeClock(FIXTURE_NOW)
   const context = createRecoveryContext(
     configFor(clock.now, {
@@ -1496,6 +1547,10 @@ test('R5: the visited set is falsifiable — exactly one AttemptRecord per bindi
   policyB = withBinding(policyB, GLM_ID, stripInputs)
   policyB = withBinding(policyB, GEMINI_ID, stripInputs)
   policyB = withBinding(policyB, HAIKU_ID, stripInputs)
+  policyB = withBinding(policyB, OG_QWEN_ID, stripInputs)
+  policyB = withBinding(policyB, OG_GLM_ID, stripInputs)
+  policyB = withBinding(policyB, NEMO_ID, stripInputs)
+  policyB = withBinding(policyB, FW_GLM_ID, stripInputs)
   const contextB = createRecoveryContext(configFor(makeClock(FIXTURE_NOW).now))
   const resultB = resolveRouteWithRecovery(
     policyB,
@@ -1512,7 +1567,7 @@ test('R5: the visited set is falsifiable — exactly one AttemptRecord per bindi
   for (const [identity, count] of perIdentity) {
     assert.equal(count, 1, `a duplicate declaration must record one attempt (${identity})`)
   }
-  assert.equal(perIdentity.size, 4, 'every declared target recorded exactly once')
+  assert.equal(perIdentity.size, L5_WALK_IDS.length, 'every declared target recorded exactly once')
 })
 
 test('R6: a permitted transient retry consumes a cap slot (the retry is counted against max_fallback_attempts)', () => {
@@ -1566,12 +1621,14 @@ test('R7: the cooldown stamp map is bounded — markers dead longer than the win
       health_policy: { unhealthy: (failureClass) => failureClass === 'outage' },
     }),
   )
-  const priors = ['opencode', 'openrouter', 'third-party'].map((provider, position) => ({
-    attempt_ref: `pa-${String(position)}`,
-    provider,
-    failure_class: 'outage',
-    charge_status: 'no-charge' as const,
-  }))
+  const priors = ['opencode', 'openrouter', 'opencode-go', 'fireworks', 'third-party'].map(
+    (provider, position) => ({
+      attempt_ref: `pa-${String(position)}`,
+      provider,
+      failure_class: 'outage',
+      charge_status: 'no-charge' as const,
+    }),
+  )
   const stamped = resolveRouteWithRecovery(
     makeDeclaredPolicy(),
     makeRequest(),
@@ -1583,7 +1640,7 @@ test('R7: the cooldown stamp map is bounded — markers dead longer than the win
     context,
   )
   assert.equal(stamped.status, 'route-unavailable')
-  assert.equal(context.state.cooldowns.size, 3, 'three providers stamped')
+  assert.equal(context.state.cooldowns.size, 5, 'five providers stamped')
 
   clock.advance(40_001) // dead longer than provider_cooldown_ms (20 000)
   const pruned = resolveRouteWithRecovery(

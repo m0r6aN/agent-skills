@@ -24,10 +24,51 @@ only to its declared fallback; if both fail, the parcel stops and reports. Fallb
 declared in the approved route and recorded in the route receipt — never invented in a
 template, never silently substituted, never credential-bearing.
 
-Model IDs are first-class in both Pi spellings — `opencode/<id>` and
-`openrouter/<vendor>/<id>` — while provider-neutral task/result envelopes are preserved.
-An OpenRouter slug is one spelling of a model ID, not the model vocabulary. Within
-OpenRouter slugs Anthropic models use dots (e.g. `openrouter/anthropic/claude-opus-5.5`).
+A dispatched session is launched by the Pi CLI, naming the approved route's
+identity:
+
+```
+pi --model <provider>/<model-id>        # e.g. pi --model anthropic/claude-opus-5-5
+```
+
+`--model` carries the identity; it confers no authority. The approved route
+receipt remains the authorizing artifact and the launch boundary verifies it
+before inference. A bare `pi` invocation with no approved route is a direct
+invocation and is not a Foreman execution path. A session never writes Pi
+configuration to change its own model.
+
+Model IDs are first-class in four provider spellings, each recorded verbatim and
+never normalized toward another — exact string equality within one namespace
+only (Amendment 06 N1/N3):
+
+| Provider | Spelling | Example |
+|---|---|---|
+| `anthropic` (first-party) | **dashes** | `anthropic/claude-opus-5-5` |
+| `opencode` / `opencode-go` | dashes, no vendor | `opencode/<id>` |
+| `openrouter` | **dots**, vendor-prefixed | `openrouter/anthropic/claude-opus-5.5` |
+| `fireworks` (open-weight) | full path, `p` for a dot | `fireworks/accounts/fireworks/models/glm-5p3` |
+
+An OpenRouter slug is one spelling of a model ID, not the model vocabulary, and
+provider-neutral task/result envelopes are preserved. `anthropic/claude-opus-5-5`
+and `openrouter/anthropic/claude-opus-5.5` are two namespaces describing two
+routes, not one id with two spellings — neither is ever derived or aliased from
+the other. `opencode` and `opencode-go` are likewise distinct: an id present
+under one does not resolve under the other (`MISSING_MODEL_REFUSED`, no
+namespace fallback).
+
+The **open-weight lane** (`fireworks`) is eligible for `public` data only, under
+residual `FIREWORKS_TRANSPORT_UNVERIFIED`: invariant (g) requires
+`data_collection: deny` and `zdr: true` for non-public classes, and neither is
+established for an inference host that is not the model's author. Internal and
+restricted parcels never route there. Aggregator `routers/*` ids are excluded
+outright — a router re-dispatches to an unnamed upstream, defeating the
+executed-identity check the receipt chain depends on. `opencode-go` is a
+declared provider carrying no bindings until its catalogue is captured
+(`OPENCODE_GO_CATALOGUE_UNFETCHED`).
+
+Frontier (coordinator and verifier) lanes admit no open-weight binding: those
+roles see everything, and `KNOWN_FRONTIER_BINDINGS` holds the line in reviewed,
+tested code rather than in this document.
 
 For fast structured routing/classification decisions the **single Jev surface** is JEV's
 J2-approved `POST https://openrouter.ai/api/alpha/decisions` under capability

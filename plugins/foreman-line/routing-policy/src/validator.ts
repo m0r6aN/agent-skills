@@ -55,7 +55,11 @@ export const KNOWN_FRONTIER_MODELS: readonly string[] = [
   'anthropic/claude-opus-5.5',
   'anthropic/claude-fable-5.1',
   'openai/gpt-6-astra', // SUPERCHARGE-P1 (verified 2026-09-14; $10/$50 escalation)
-  'openai/gpt-5.6-sol',
+  // Amendment 08 (2026-10-07): gpt-5.6-sol removed from the roster by owner
+  // direction (equal-cost successor exists; 403 access-disabled on the probe
+  // host, O-2). gpt-6.1-sol is the preferred-verifier successor at identical
+  // $2/$10 (models.dev capture 2026-10-07, gate-1-amendment-08.md).
+  'openai/gpt-6.1-sol',
   'openai/gpt-5.5',
   'google/gemini-3.1-pro-preview',
 ]
@@ -85,12 +89,35 @@ function openrouterModelOf(candidate: Record<string, unknown>): string | null {
   return null
 }
 
-/** The OpenRouter binding of a candidate, if any (the evaluator's C3.1 domain). */
-function openrouterBindingOf(candidate: Record<string, unknown>): Record<string, unknown> | null {
+/**
+ * The first binding of a candidate *declaring* the given data class, with its
+ * provider — whichever provider that is.
+ *
+ * Amendment 06 N3 generalized this from an OpenRouter-only lookup. The rule
+ * being checked was always "eligible SOMEWHERE, or it can never be dispatched";
+ * only the mechanism assumed OpenRouter was the sole eligibility-carrying
+ * provider. With first-party `anthropic` and open-weight `fireworks` bindings
+ * that assumption is false, and keeping it would have reported a perfectly
+ * dispatchable candidate as ineligible.
+ *
+ * Still fail-closed in the way that matters: a candidate with no binding whose
+ * `data_classes` envelope is `declared` and contains the class returns null,
+ * because unknown eligibility is never read as eligible (A5.2).
+ */
+function bindingEligibleFor(
+  candidate: Record<string, unknown>,
+  dataClass: string,
+): { readonly provider: string; readonly model: string } | null {
   const bindings = candidate.bindings
   if (!Array.isArray(bindings)) return null
   for (const rawBinding of bindings) {
-    if (isRecord(rawBinding) && rawBinding.provider === 'openrouter') return rawBinding
+    if (!isRecord(rawBinding)) continue
+    const declared = declaredDataClassesOf(rawBinding)
+    if (declared === null || !declared.has(dataClass)) continue
+    return {
+      provider: typeof rawBinding.provider === 'string' ? rawBinding.provider : 'unknown',
+      model: typeof rawBinding.model === 'string' ? rawBinding.model : 'unknown',
+    }
   }
   return null
 }
@@ -314,13 +341,18 @@ function checkTiersEligibleUnderPublic(doc: Record<string, unknown>): string[] {
     for (const entry of toStringArray(entries)) {
       const candidate = candidates[entry]
       if (!isRecord(candidate)) continue // referential integrity reports dangling entries
-      const binding = openrouterBindingOf(candidate)
-      const model =
-        binding === null ? null : typeof binding.model === 'string' ? binding.model : null
-      const declared = binding === null ? null : declaredDataClassesOf(binding)
-      if (declared === null || !declared.has('public')) {
+      const eligible = bindingEligibleFor(candidate, 'public')
+      if (eligible === null) {
+        // Name the ids that were actually examined, not just the candidate key.
+        // A bare key tells a reader which list to look at; the binding ids tell
+        // them which declaration to fix.
+        const rawBindings = Array.isArray(candidate.bindings) ? candidate.bindings : []
+        const examined = rawBindings
+          .filter(isRecord)
+          .map((binding) => (typeof binding.model === 'string' ? `'${binding.model}'` : "'?'"))
+        const detail = examined.length === 0 ? 'no bindings' : examined.join(', ')
         errors.push(
-          `selection_order.${group} entry '${entry}' (OpenRouter model '${String(model)}') is not classification-eligible under data_classification.public — every ordered-source candidate must be classification-eligible somewhere or it can never be dispatched (D6) — DATA_CLASS_INELIGIBLE`,
+          `selection_order.${group} entry '${entry}' (bindings: ${detail}) is not classification-eligible under data_classification.public — every ordered-source candidate must be classification-eligible somewhere or it can never be dispatched (D6) — DATA_CLASS_INELIGIBLE`,
         )
       }
     }
@@ -489,6 +521,23 @@ export const KNOWN_FRONTIER_BINDINGS: readonly string[] = [
   'opencode/gpt-6-astra',
   'openrouter/anthropic/claude-opus-5.5',
   'openrouter/openai/gpt-6-astra',
+  // Amendment 06 N1: the first-party Pi/Anthropic bindings, dashed spelling.
+  // Admitted on the 2026-10-07 `~/.pi/agent/models-store.json` capture, which
+  // is the strongest identity evidence in the contract (first-party, on-host)
+  // — but it establishes identity and cost only, never live availability.
+  // No open-weight binding appears here: the frontier tier is where the
+  // coordinator and verifier see everything, and the open-weight lane is
+  // `public`-only under FIREWORKS_TRANSPORT_UNVERIFIED.
+  'anthropic/claude-opus-5-5',
+  'anthropic/claude-fable-5-1',
+  // Amendment 07 (ratified 2026-10-07): L1/L2 `opencode` re-pinning. Identity
+  // and cost established by the models.dev public-metadata capture
+  // (docs/goals/pi-model-configuration/evidence/models-dev-observation-20261007.json);
+  // context, data classes, and live availability remain typed-unavailable —
+  // admission here asserts reviewed identity only, never measured merit.
+  'opencode/gpt-6.1-sol',
+  'opencode/claude-sonnet-5-5',
+  'opencode/gpt-6-luna',
 ]
 
 /** The five blocks of the new representation; they stand or fall together. */

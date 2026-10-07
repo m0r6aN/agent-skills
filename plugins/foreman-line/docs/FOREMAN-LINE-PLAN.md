@@ -131,11 +131,16 @@ are dispatched Pi sessions — the dispatch requirements, route-receipt
 authorization, and launch-boundary rules are the Pi-session dispatch canon
 (`plugins/foreman-line/templates/pi-routing-directive.md`, C0-A). The
 operational registry is the ratified Pi provider and lane matrix
-(`docs/goals/pi-model-configuration/charter.md:68-75`): model IDs use the
-prefixed Pi spellings `opencode/<id>` and `openrouter/<vendor>/<id>` — an
-OpenRouter slug is one spelling of a model ID, not the model vocabulary (within
-OpenRouter slugs Anthropic models use dots) — while provider-neutral task/result
-envelopes are preserved (C0-C). Every execution candidate declares exactly one approved fallback of comparable or higher suitability, carried as explicit
+(`docs/goals/pi-model-configuration/charter.md:68-75`), as amended by
+`gate-1-amendment-06.md`: sessions are launched by the Pi CLI
+(`pi --model <provider>/<model-id>`, e.g. `pi --model anthropic/claude-opus-5-5`),
+and model IDs use four prefixed Pi spellings — first-party `anthropic/<id>`
+(dashes), `opencode/<id>` and `opencode-go/<id>`, `openrouter/<vendor>/<id>`
+(dots for Anthropic), and open-weight `fireworks/accounts/fireworks/models/<id>`
+(`p` for a decimal point). An OpenRouter slug is one spelling of a model ID, not
+the model vocabulary; each namespace is exact-match only and never aliased to
+another — while provider-neutral task/result envelopes are preserved (C0-C). The
+open-weight lane is `public`-data-only and is excluded from frontier lanes. Every execution candidate declares exactly one approved fallback of comparable or higher suitability, carried as explicit
 fallback metadata in the `provider-neutral-fallback-contract` representation and
 recorded in the route receipt (C0-B). For fast structured routing/classification
 decisions the single Jev surface is JEV's J2-approved

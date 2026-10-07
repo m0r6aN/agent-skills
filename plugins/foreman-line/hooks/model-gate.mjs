@@ -103,7 +103,7 @@ function evaluate(model, policy) {
       verdict: 'BLOCK',
       model: actual,
       reason: policy.oneMillionContext?.message ?? 'A 1M-context session is not approved.',
-      suggest: Object.hasOwn(approved, base) ? base : 'claude-opus-5',
+      suggest: Object.hasOwn(approved, base) ? base : 'claude-opus-5-5',
     }
   }
 
@@ -117,6 +117,17 @@ function evaluate(model, policy) {
     model: actual,
     reason: 'This model is not on the approved roster for any Foreman Line role.',
   }
+}
+
+/**
+ * Roster ids are bare (`claude-opus-5-5`) because that is what a SessionStart
+ * payload reports. `pi --model` wants the provider-qualified form, so the hint
+ * - and only the hint - qualifies it. This is presentation, not matching: the
+ * verdict above is still byte-exact against the bare id, and nothing here
+ * derives or aliases an identity (Amendment 06 N1).
+ */
+function launchId(id) {
+  return id.startsWith('claude-') ? `anthropic/${id}` : id
 }
 
 function renderBlock(result, policy) {
@@ -134,10 +145,9 @@ function renderBlock(result, policy) {
     ...approved,
     '',
     '  Relaunch on an approved model:',
-    `    claude --model ${result.suggest ?? 'claude-opus-5'}`,
+    `    pi --model ${launchId(result.suggest ?? 'claude-opus-5-5')}`,
     '',
-    `  Durable fix - set "model" in ~/.claude/settings.json (it overrides the`,
-    '  org default, so this needs no administrator).',
+    `  Durable fix - set "defaultProvider"/"defaultModel" in ~/.pi/agent/settings.json.`,
     '',
     `  Bypass for this session:  set ${envName}=off`,
   ].join('\n')
