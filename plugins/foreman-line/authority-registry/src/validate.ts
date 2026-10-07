@@ -4567,7 +4567,7 @@ function repoRootCheck(repoRoot: string): {
       violations: [
         violation(
           'REPO_ROOT_INVALID',
-          'repository root is not the exact root of a real Git worktree',
+          `repository root is not the exact root of a real Git worktree [diag] canonical=${canonicalRoot} worktree=${worktreeRoot}`,
         ),
       ],
     }
