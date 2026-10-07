@@ -199,22 +199,6 @@ any closure: a claimed modification must produce deletions; a claimed
 addition must produce insertions.
 
 **Disposition:** narrative coordinator discipline + the goal closure record
-(`docs/goals/ci-optimization/goal-closure-2026-10-02.md`); **installed at the
-next touch** — the closure checklist now lives in `docs/COORDINATOR-PATTERN.md`
-(Verification spine, 2026-10-06), routed per the lessons-discipline rule.
-
-## #51 — Parallel dispatch is bounded by host resources, not by lane count
-
-On 2026-10-05 the foreman-kernel coordinator session took five kickstarter
-subagents in flight (KickAt208…226) while a rework builder sat at its Step-0
-gate and an owner `ask` was pending. The host exhausted memory; the session
-died mid-tool-call (sighup) with the owner question unsent, and every subagent
-died with it. The expensive loss was not the work — it was all on disk — but
-the *gate*: an owner ruling that had already been formulated sat unasked for a
-day. Dispatch volume is a resource decision with gate-level consequences: cap
-in-flight agents, count heavy runtime as multiple slots, and dispatch in
-waves.
-
-**Disposition:** installed in `docs/COORDINATOR-PATTERN.md` (Concurrency
-budget: max 6 in flight, heavy runtime counts as 2, waves of ≤4, queue at
-budget); narrative coordinator discipline otherwise.
+(`docs/goals/ci-optimization/goal-closure-2026-10-02.md`); OPEN install
+candidate: the closure checklist in the coordinator carryover /
+COORDINATOR-PATTERN at next touch.

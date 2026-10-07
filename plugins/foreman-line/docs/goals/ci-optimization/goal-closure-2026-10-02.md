@@ -18,7 +18,7 @@ The CI-P2 Stage-F move commit `7e0735a` shipped its done-spec with incomplete li
 #45 dead-seam class ("wired in name only") · #46 measured read-sweep for validation-excluding classifiers · #47 pwsh multi-command exit codes · #48 value pins measured where they run (variance named, not averaged) · #49 waivers bind failure identity, not counts · #50 (below).
 
 **Lesson #50 — a rename commit that claims content changes must show deletions.** The Stage-F commit's diff was "33 insertions(+), 0 deletions" while its message claimed a `status:` change and a new field — a modified line is a deletion plus an insertion, so zero deletions proved the content change never staged. Closure checks verified file counts and rename shape but not diff shape. Verify the SHAPE of a diff against what the commit CLAIMS (a claimed modification must produce deletions; a claimed addition must produce insertions) before accepting any closure.
-**Disposition:** narrative coordinator discipline + this record; the install candidate is **closed** — the closure checklist was routed at the next touch of the candidate artifact and installed in `docs/COORDINATOR-PATTERN.md` (Verification spine) 2026-10-06; ledger #50 disposition updated.
+**Disposition:** narrative coordinator discipline + this record; OPEN install candidate: the coordinator's closure checklist in the carryover/COORDINATOR-PATTERN at next touch.
 
 ## Follow-ups and check disposition
 

@@ -68,14 +68,6 @@ Per-role routing is governed by the shipped routing policy (`plugins/foreman-lin
 
 Three dispatch mechanics rules, all earned: every dispatch - including rework - opens with a Step 0 restate-and-stop gate; the branch/worktree is named in the directive, never ambient; and rework directives mandate "every X," never "the listed X" - the findings are a floor, not a ceiling, and no role is exempt from the sweep, including the coordinator (lesson #16). Every builder/reviewer kickstarter includes the standing constraints by reference (`plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`). For architecture/risk parcels, run **two independent adversarial reviews** (lesson #12: two frontier reviews of W0-P4 agreed on every focus question and only one found the blocker). Where reviews disagree, the coordinator reproduces the disputed finding before triaging - the reproduction is the tie-breaker at triage and the closure proof at acceptance.
 
-## Concurrency budget
-- Max 6 agents in flight at any time (builders + reviewers + shapers combined).
-- Max 1 agent doing heavy runtime work (Docker/live runs) at a time; it counts as 2 slots.
-- Shapers/kickstarters dispatch in waves of ≤4; next wave only after a slot frees.
-- Before dispatch: if in-flight count is at budget, queue and wait. Never exceed.
-
-Provenance: earned 2026-10-05 (lesson #51), when a coordinator session took five kickstarter subagents in flight and the host exhausted memory at a pending owner gate - the dispatches, the builder and the gate all died together.
-
 ## The long-running loop
 
 The coordinator runs as a self-pacing loop (`/goal` enters it after ratification): work while there is work, sleep on a long fallback while builders build (completion notifications are the primary wake signal), stop when the exit criterion is met or a stop condition fires. One goal, one coordinator: the loop directive carries an ownership block, and ownership transfers only at parcel boundaries via that block (rule earned when a second coordinator committed onto a live parcel branch - 491fb80 - and was benign only by luck). Universal stop conditions: a frozen contract needs modification; a tripwire fires twice on one parcel; a security finding can't close in-parcel; anything outward-facing beyond the standing authorizations; queue empty.
@@ -85,8 +77,6 @@ When triage re-opens Gate 1 for specific decisions, the re-open is scoped, not b
 ## Verification spine (unchanged, referenced)
 
 The per-parcel 11-step loop is canon in the coordinator carryover and is not duplicated here. Its non-negotiables: claims are verified on disk before acceptance (green checks verify state; only per-item closure checks verify work); deterministic passes run on the coordinator's machine in the environment the lessons file mandates; wrong-shaped claims are presumptively empty; test-count tripwires on every rework; reviews rank, owners decide.
-
-**Closure checklist (lesson #50, installed here 2026-10-06).** Before accepting any commit, chain, or completion claim, verify the **shape of the diff against what the commit claims**: a claimed modification must show deletions, a claimed addition must show insertions, a claimed rename must show the rename - a claimed content change with zero deletions is presumptively empty, and the claim is wrong-shaped rather than merely incomplete. Then the rest of the shape: exactly the Authorized/Allowed Files set, counted from the diff rather than from the claim; counts reproduced on the coordinator's machine; worktree clean at the claimed SHA; pinned runner/tool hashes where the claim depends on them.
 
 One more, earned at the W4 exit (lesson #33): **when a parcel spec restates a goal exit criterion, diff the two texts word by word.** Specs are written after the charter by shaping sessions reading it, and they can weaken a criterion while appearing to implement it. A criterion naming a *produced artifact* — a minted receipt chain, a live API response, a real merged PR — is satisfied only by that artifact; a fixture imitating it is a self-graded claim. Parcel-level green does not roll up into goal-level satisfied: record the shortfall as an open exit condition at Stage-F closure and carry it to the final report.
 
