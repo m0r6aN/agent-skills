@@ -30,7 +30,7 @@ import type { CaseRow } from '../vectors.js'
 import { createWorkspace, delay, probeFile, shellWrite } from './fixtures.js'
 import { runHookAsync, runHookSync } from './gate.js'
 
-const APPROVED_MODEL = 'claude-sonnet-5-5'  // Amendment 06 N1 roster spelling; the bare -5 id is retired (gate policy v2)
+const APPROVED_MODEL = 'claude-sonnet-5-5' // Amendment 06 N1 roster spelling; the bare -5 id is retired (gate policy v2)
 const HARD_DEADLINE_MICROS = BUDGETS.hardDeadline
 
 function monotonicMicros(start: bigint): number {

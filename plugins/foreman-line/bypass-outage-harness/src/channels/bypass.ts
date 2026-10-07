@@ -35,7 +35,7 @@ import {
 } from './fixtures.js'
 import { runHookSync } from './gate.js'
 
-const APPROVED_MODEL = 'claude-sonnet-5-5'  // Amendment 06 N1 roster spelling; the bare -5 id is retired (gate policy v2)
+const APPROVED_MODEL = 'claude-sonnet-5-5' // Amendment 06 N1 roster spelling; the bare -5 id is retired (gate policy v2)
 const SUBAGENT_OBLIGATION =
   'FK-P18′ lane: operator-run subagent live-session protocol (V5) — materialized simulation recorded here'
 
