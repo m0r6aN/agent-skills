@@ -12,14 +12,18 @@
 
 ## State
 
-`cff_gate1_ratified_plan_review_pending`
+`cff_plan_review_triaged_reratification_pending`
 
-Charter ratified with all Stage Zero recommendations installed. **Next action:
-plan-level adversarial review** — a fresh frontier session with zero
-coordinator context beyond the charter and repo canon (mandate per
-COORDINATOR-PATTERN §Plan-level adversarial review). No parcel is shaped
-before that review's findings are triaged; if triage changes a locked
-decision, Gate 1 re-opens scoped to that decision.
+The plan-level adversarial review has returned (findings 1–6); triage complete
+in [`plan-review-triage-2026-10-07.md`](plan-review-triage-2026-10-07.md).
+Findings 1/3/5 mutate locked-decision text: **Gate 1 re-opened scoped** to
+D7, D8, D9, the Objective sentence, plus D10 extensions and a new D11 (diff
+source) + graph edits. Proposed amendment text is drafted and **awaiting
+developer re-ratification** (Stage Zero rule 3 — not installed until directed).
+Blocked on re-ratification: CFF-P1, CFF-P2, CFF-P4 shaping. Provably
+unblocked: CFF-P0 recon deliverables, CFF-P3 original scope — but Gate 2 is
+ungranted (no standing authorization in this goal) and awaits the developer's
+word. After re-ratification: the Gate 2 request for the final named graph.
 
 ## Standing authorizations
 
@@ -49,3 +53,5 @@ conditions per COORDINATOR-PATTERN also apply.
   §Stage Zero reconciliation.
 - Draft charter commit: `b399ff6f` (PR #157).
 - Ratification record: charter §Gate 1 record.
+- Plan review findings + triage dispositions + scoped re-open package:
+  [`plan-review-triage-2026-10-07.md`](plan-review-triage-2026-10-07.md).
