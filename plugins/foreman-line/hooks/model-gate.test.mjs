@@ -39,22 +39,46 @@ function gate(sessionId, model, env = {}) {
 }
 
 test('an approved model allows tool calls', () => {
-  for (const m of ['claude-opus-5', 'claude-sonnet-5', 'claude-fable-5', 'gpt-5.6-sol']) {
+  for (const m of ['claude-opus-5-5', 'claude-sonnet-5-5', 'claude-fable-5-1', 'gpt-6.1-sol']) {
     assert.equal(gate(`ok-${m}`, m).code, 0, `${m} should be allowed`)
   }
 })
 
 test('the 1M-context variant is BLOCKED, and named as such', () => {
-  const r = gate('blk-1m', 'claude-opus-5[1m]')
+  const r = gate('blk-1m', 'claude-opus-5-5[1m]')
   assert.equal(r.code, 2, 'must block')
   assert.match(r.stderr, /1M-context/i)
-  // The remedy must be the non-1m base model, not a generic default.
-  assert.match(r.stderr, /claude --model claude-opus-5\b/)
+  // The remedy must be the non-1m base model, not a generic default, and it
+  // must be a runnable `pi` launch line (Amendment 06 N2).
+  assert.match(r.stderr, /pi --model anthropic\/claude-opus-5-5\b/)
 })
 
 test('byte-exact matching is what rejects [1m] - not a special case', () => {
   // Proves the mechanism: any suffix fails membership on its own.
-  assert.equal(gate('blk-suffix', 'claude-opus-5-preview').code, 2)
+  assert.equal(gate('blk-suffix', 'claude-opus-5-5-preview').code, 2)
+})
+
+test('AMENDMENT 04: the superseded ids are retired, and say what replaced them', () => {
+  // The rename is the whole point of Amendment 06 N4. If an old id were
+  // merely dropped rather than retired, the block message would say "not on the
+  // approved roster" and a developer would have no idea what to run instead.
+  for (const [old, next] of [
+    ['claude-opus-5', 'claude-opus-5-5'],
+    ['claude-sonnet-5', 'claude-sonnet-5-5'],
+    ['claude-fable-5', 'claude-fable-5-1'],
+  ]) {
+    const r = gate(`blk-superseded-${old}`, old)
+    assert.equal(r.code, 2, `${old} must no longer be approved`)
+    assert.match(r.stderr, new RegExp(`Superseded by ${next}`), `${old} must name ${next}`)
+  }
+})
+
+test('AMENDMENT 04: OpenRouter dotted slugs are a different namespace and never match', () => {
+  // N1 keeps two namespaces and forbids deriving one from the other. The
+  // dotted OpenRouter spelling is not a session identity; if it ever started
+  // matching here, the gate would have grown an alias.
+  assert.equal(gate('blk-dotted', 'claude-opus-5.5').code, 2)
+  assert.equal(gate('blk-or-prefixed', 'openrouter/anthropic/claude-opus-5.5').code, 2)
 })
 
 test('a retired model is BLOCKED with its reason', () => {

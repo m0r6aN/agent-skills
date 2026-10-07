@@ -1,5 +1,5 @@
 /**
- * PMC-P1 — provider-neutral fallback contract (charter A5.1–A5.5, A3):
+ * PMC-P1 — provider-neutral fallback contract (charter N1–N5, A3):
  * acceptance of the shipped contract, the frozen role/lane/authority map with
  * its fail-closed residuals, the refusal vocabulary (suitability rubric §7),
  * and one negative control per refusal path.
@@ -102,7 +102,9 @@ test('shipped policy: the provider-neutral fallback contract validates with zero
 
 test('shipped policy: every lane route carries exactly one typed fallback and unproven comparability', () => {
   const doc = validPolicy as unknown as MutableDoc
-  assert.equal(doc.lane_routes.length, 10)
+  // 10 original (L1-L5 x opencode/openrouter) + 3 anthropic + 3 opencode-go
+  // + 2 fireworks (Amendment 06 + the 2026-10-07 probe).
+  assert.equal(doc.lane_routes.length, 18)
   for (const route of doc.lane_routes) {
     assert.equal(typeof route.fallback?.ref, 'string')
     assert.ok(route.primary.type === 'binding' || route.primary.type === 'candidate')
@@ -114,11 +116,14 @@ test('shipped policy: every lane route carries exactly one typed fallback and un
   }
 })
 
-test('shipped policy: H-OPUS and H-B7 holds are encoded on their bindings', () => {
+test('shipped policy: H-B7 hold is encoded; H-OPUS is released by probe §7', () => {
   const doc = validPolicy as unknown as MutableDoc
+  // H-OPUS RELEASED (2026-10-07, probe §7.4): the on-host models-store
+  // capture establishes the opencode/claude-opus-5-5 identity first-party,
+  // superseding the amendment-03 owner attestation. The attestation and its
+  // OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY hold must not come back.
   const opus = bindingOf(doc, 'opencode/claude-opus-5-5')
-  assert.equal(opus.identity?.state, 'owner-attested')
-  assert.equal(opus.identity?.hold, 'OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY')
+  assert.equal(opus.identity?.state, 'resolved')
   const b7 = bindingOf(doc, 'opencode/qwen3.8-flash')
   assert.equal(b7.identity?.state, 'zero-match')
   assert.equal(b7.identity?.refusal, 'AC2A_ZERO_MATCH')
@@ -193,6 +198,41 @@ test('frontier registry pins the Amendment 03 Opus identities in both spellings'
   assert.ok(KNOWN_FRONTIER_BINDINGS.includes('openrouter/openai/gpt-6-astra'))
 })
 
+test('Amendment 08 reconciliation: the policy file and its fixtures encode no gpt-5.6-sol identity', () => {
+  const raw = readFileSync(policyPath, 'utf8')
+  assert.ok(
+    !raw.includes('gpt-5.6-sol'),
+    'routing-policy.yaml must not encode gpt-5.6-sol (Amendment 08 removal)',
+  )
+  assert.ok(
+    !JSON.stringify(validPolicy).includes('gpt-5.6-sol'),
+    'parsed policy must not encode gpt-5.6-sol; gpt-6.1-sol is the preferred-verifier successor',
+  )
+  assert.ok(!KNOWN_FRONTIER_MODELS.includes('openai/gpt-5.6-sol'), 'registry struck')
+  assert.ok(KNOWN_FRONTIER_MODELS.includes('openai/gpt-6.1-sol'), 'successor admitted')
+})
+
+test('frontier registry admits the Amendment 07 opencode re-pinning bindings', () => {
+  assert.ok(KNOWN_FRONTIER_BINDINGS.includes('opencode/gpt-6.1-sol'))
+  assert.ok(KNOWN_FRONTIER_BINDINGS.includes('opencode/claude-sonnet-5-5'))
+  assert.ok(KNOWN_FRONTIER_BINDINGS.includes('opencode/gpt-6-luna'))
+  // Amendment 07 itself added no KNOWN_FRONTIER_MODELS entry; Amendment 08
+  // later admitted openai/gpt-6.1-sol as the preferred-verifier successor.
+  assert.ok(KNOWN_FRONTIER_MODELS.includes('openai/gpt-6.1-sol'), 'admitted by Amendment 08')
+})
+
+test('Amendment 07: opencode L1/L2 routes encode the owner-directed pairs', () => {
+  const doc = validPolicy as unknown as MutableDoc
+  const route = (lane: string) =>
+    doc.lane_routes.find((r) => r.lane === lane && r.provider === 'opencode')
+  const l1 = route('L1')
+  assert.equal(l1?.primary.ref, 'opencode/gpt-6.1-sol')
+  assert.equal(l1?.fallback?.ref, 'opencode/claude-opus-5-5')
+  const l2 = route('L2')
+  assert.equal(l2?.primary.ref, 'opencode/claude-sonnet-5-5')
+  assert.equal(l2?.fallback?.ref, 'opencode/gpt-6-luna')
+})
+
 test('frontier lanes route only reviewed frontier bindings', () => {
   const doc = validPolicy as unknown as MutableDoc
   for (const route of doc.lane_routes) {
@@ -259,6 +299,12 @@ test('contract residuals name the a54 unfabricated values and nothing else', () 
     'L3_PROVIDER_PREFERENCE_UNSET',
     'L4_PROVIDER_PREFERENCE_UNSET',
     'DELTA_L_UNSET',
+    // Amendment 06 N3. Both name a fact that is NOT established rather than
+    // a value: `opencode-go` has no catalogue on this host, and the
+    // open-weight transport guarantees of invariant (g) are unmeasured.
+    'OPENCODE_GO_CATALOGUE_UNFETCHED',
+    'OPENCODE_GO_TRANSPORT_UNVERIFIED',
+    'FIREWORKS_TRANSPORT_UNVERIFIED',
   ])
 })
 
@@ -323,7 +369,7 @@ test('refuses a fallback that crosses providers (FALLBACK_PROVIDER_MISMATCH)', (
 test('refuses a fallback that weakens declared data eligibility (FALLBACK_DATA_POLICY_VIOLATION)', () => {
   assertRefusal(
     docWith((doc) => {
-      bindingOf(doc, 'openrouter/openai/gpt-5.6-sol').data_classes = {
+      bindingOf(doc, 'openrouter/openai/gpt-6.1-sol').data_classes = {
         state: 'declared',
         value: ['public'],
         source: 'negative-control',
@@ -345,7 +391,7 @@ test('refuses a fallback that drops a verified capability (FALLBACK_TOOL_REQUIRE
 test('refuses a fallback whose cost quote is unusable for budget (FALLBACK_BUDGET_POLICY_VIOLATION)', () => {
   assertRefusal(
     docWith((doc) => {
-      const cost = bindingOf(doc, 'openrouter/openai/gpt-5.6-sol').cost
+      const cost = bindingOf(doc, 'openrouter/openai/gpt-6.1-sol').cost
       cost.value = {
         ...(cost.value as Record<string, unknown>),
         unit: 'usd_per_token',
@@ -511,9 +557,15 @@ test('refuses an ordered-source candidate without public eligibility (DATA_CLASS
   // candidate that is not classification-eligible under `public` (invariant f).
   assertRefusal(
     docWith((doc) => {
-      bindingOf(doc, 'openrouter/anthropic/claude-sonnet-5').data_classes = {
-        state: 'unknown',
-        residual: 'DATA_CLASS_UNKNOWN',
+      // Amendment 09: the opencode leg of this candidate is now declared
+      // [public], and invariant (f) is satisfied by eligibility ANYWHERE
+      // (A6 N3) — so the control must strip public eligibility from BOTH
+      // bindings to isolate the refusal.
+      for (const id of ['openrouter/anthropic/claude-sonnet-5', 'opencode/claude-sonnet-5']) {
+        bindingOf(doc, id).data_classes = {
+          state: 'unknown',
+          residual: 'DATA_CLASS_UNKNOWN',
+        }
       }
     }),
     'DATA_CLASS_INELIGIBLE',
@@ -535,11 +587,15 @@ test('structural: a missing fallback is refused', () => {
 })
 
 test('structural: an unapproved provider is refused on routes and bindings', () => {
+  // NOTE: this used `anthropic` as the unapproved example until Amendment 06
+  // admitted it as a real provider. `bedrock` is the replacement — a plausible
+  // provider name that PROVIDER_NAMES deliberately does not list, which is the
+  // property this test needs.
   const onRoute = docWith((doc) => {
-    routeOf(doc, 'L1', 'opencode').provider = 'anthropic'
+    routeOf(doc, 'L1', 'opencode').provider = 'bedrock'
   })
   const onBinding = docWith((doc) => {
-    bindingOf(doc, 'opencode/gpt-6-astra').provider = 'anthropic'
+    bindingOf(doc, 'opencode/gpt-6-astra').provider = 'bedrock'
   })
   for (const doc of [onRoute, onBinding]) {
     const result = validatePolicy(doc)
@@ -569,17 +625,20 @@ test('structural: an envelope may not mix a value with a residual', () => {
   )
 })
 
-// Typed references and migration (A5.3, A5.5) -------------------------------
+// Typed references and migration (N3, N5) -------------------------------
 
 test('a candidate-typed reference resolves to the route provider binding', () => {
   const doc = docWith((doc) => {
-    routeOf(doc, 'L1', 'opencode').primary = { type: 'candidate', ref: 'claude-opus-5-5' }
+    // Amendment 07: the candidate chosen here must not resolve to the L1
+    // fallback binding (opencode/claude-opus-5-5), which A5.3 refuses as a
+    // self-reference. gpt-6.1-sol resolves to the route's own primary.
+    routeOf(doc, 'L1', 'opencode').primary = { type: 'candidate', ref: 'gpt-6.1-sol' }
   })
   assert.deepEqual(validatePolicy(doc).errors, [])
 })
 
 // CUTOVER-P4 (C4.2): the deprecation-window control "a legacy-only document
-// stays valid through the deprecation window (A5.5)" is deleted here — exactly
+// stays valid through the deprecation window (N5)" is deleted here — exactly
 // one named deletion in this packet — and inverted at window end in
 // tests/legacy-cutover.test.ts ("a legacy-only document is refused once
 // CUTOVER-P4 ends the deprecation window"). The old assertion is never re-pinned.

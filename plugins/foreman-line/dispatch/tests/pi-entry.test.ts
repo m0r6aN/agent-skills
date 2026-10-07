@@ -61,7 +61,7 @@ const proposalArtifactPath = join(
   'docs',
   'goals',
   'pi-model-configuration',
-  'pmc-p2-pi-host-settings-PROPOSED-2026-09-26.json',
+  'pmc-p2-pi-host-settings-PROPOSED-2026-10-07.json',
 )
 const FIXED_NOW = '2026-09-26T12:00:00.000Z'
 const FIXED_OPTIONS = { now: () => FIXED_NOW }

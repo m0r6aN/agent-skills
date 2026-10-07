@@ -356,7 +356,8 @@ export const modelBindingSchema: SchemaObject = {
   ],
   properties: {
     id: { type: 'string', minLength: 1 },
-    provider: { enum: ['opencode', 'openrouter'] },
+    // Mirrors PROVIDER_NAMES in types.ts (parity.test.ts pins the agreement).
+    provider: { enum: ['opencode', 'opencode-go', 'openrouter', 'anthropic', 'fireworks'] },
     model: { type: 'string', minLength: 1 },
     family: { type: 'string', minLength: 1 },
     identity: bindingIdentitySchema,
@@ -432,7 +433,8 @@ export const laneRouteSchema: SchemaObject = {
   required: ['lane', 'provider', 'primary', 'fallback', 'comparability'],
   properties: {
     lane: { enum: ['L1', 'L2', 'L3', 'L4', 'L5', 'L6'] },
-    provider: { enum: ['opencode', 'openrouter'] },
+    // Mirrors PROVIDER_NAMES in types.ts (parity.test.ts pins the agreement).
+    provider: { enum: ['opencode', 'opencode-go', 'openrouter', 'anthropic', 'fireworks'] },
     primary: routeRefSchema,
     fallback: routeRefSchema,
     comparability: evidence({ type: 'string', minLength: 1 }),

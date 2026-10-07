@@ -178,8 +178,8 @@ test('tier eligibility: rejects a selection_order entry absent from data_classif
   // entry's OpenRouter binding for public eligibility (binding-level
   // `data_classes`, A5.2).
   assert.ok(
-    KNOWN_FRONTIER_MODELS.includes('openai/gpt-5.6-sol'),
-    'fixture assumes openai/gpt-5.6-sol is a known frontier model so only invariant (f) fires',
+    KNOWN_FRONTIER_MODELS.includes('openai/gpt-6.1-sol'),
+    'fixture assumes openai/gpt-6.1-sol is a known frontier model so only invariant (f) fires',
   )
   const doc = loadYaml(join(fixturesDir, 'reject-tier-not-eligible.yaml'))
   const result = validatePolicy(doc)
@@ -191,7 +191,7 @@ test('tier eligibility: rejects a selection_order entry absent from data_classif
   )
   assert.ok(
     result.errors[0]?.includes('selection_order.frontier') &&
-      result.errors[0]?.includes("'openai/gpt-5.6-sol'") &&
+      result.errors[0]?.includes("'openai/gpt-6.1-sol'") &&
       result.errors[0]?.includes('data_classification.public'),
     `expected an error naming the group and offending model id, got: ${JSON.stringify(result.errors)}`,
   )

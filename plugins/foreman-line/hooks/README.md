@@ -16,7 +16,7 @@ relaunch command.
 | `claude-opus-5` | coordinator |
 | `claude-sonnet-5` | builder, shaping |
 | `claude-fable-5` | reviewer, verifier |
-| `gpt-5.6-sol` | coordinator, reviewer, verifier |
+| `gpt-6.1-sol` | coordinator, reviewer, verifier |
 | `gpt-5.6-terra` | builder, shaping |
 | `gpt-5.6-luna` | builder, shaping |
 

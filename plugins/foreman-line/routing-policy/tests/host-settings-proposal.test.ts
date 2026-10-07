@@ -84,7 +84,13 @@ test('M4: the proposal enables exactly the charter-matrix binding set in host sp
     .map((change) => change.value as string)
     .sort()
   assert.deepEqual(adds, expectedAdds)
-  assert.equal(adds.length, 15)
+  // 15 pre-Amendment-06 + 15 new in 06 (3 anthropic + 6 fireworks +
+  // 6 opencode-go) + 3 new in 07 (opencode: gpt-6.1-sol, claude-sonnet-5-5,
+  // gpt-6-luna — the re-pinned L1/L2 route legs) + 2 new in 07 addendum A7.1
+  // (opencode/deepseek-v4.1-flash, opencode-go/deepseek-v4-pro) + Amendment 08
+  // nets zero: −2 (both gpt-5.6-sol bindings struck) +2 (openrouter/gpt-6.1-sol,
+  // opencode-go/deepseek-v4.1-flash).
+  assert.equal(adds.length, 35)
 
   const current = loadSettingsProjection()
   // Removals are authorized only where a ratified clause authorizes them (F8):

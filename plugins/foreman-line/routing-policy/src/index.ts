@@ -212,4 +212,12 @@ export {
   RESOLVER_REFUSALS,
 } from './types.js'
 export type { ValidationResult } from './validator.js'
-export { KNOWN_FRONTIER_BINDINGS, KNOWN_FRONTIER_MODELS, validatePolicy } from './validator.js'
+// ROPT-P1 — additive lane->class referential-integrity advisory surface.
+// Existing exports above are untouched.
+export {
+  KNOWN_FRONTIER_BINDINGS,
+  KNOWN_FRONTIER_MODELS,
+  LANE_CLASS_UNDEFINED,
+  laneClassReferenceAdvisories,
+  validatePolicy,
+} from './validator.js'

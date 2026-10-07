@@ -38,7 +38,10 @@
           "provider": {
             "enum": [
               "opencode",
-              "openrouter"
+              "opencode-go",
+              "openrouter",
+              "anthropic",
+              "fireworks"
             ]
           },
           "model": {

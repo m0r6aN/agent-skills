@@ -135,7 +135,7 @@ export function readHookState(sessionId: string): Record<string, unknown> | null
   }
 }
 
-const APPROVED_MODEL = 'claude-sonnet-5'
+const APPROVED_MODEL = 'claude-sonnet-5-5' // Amendment 06 N1 roster spelling; the bare -5 id is retired (gate policy v2)
 const UNAPPROVED_MODEL = 'claude-opus-5[1m]'
 
 /**
