@@ -384,6 +384,55 @@ function checkShadowRoutes(doc: Record<string, unknown>): string[] {
   return errors
 }
 
+/**
+ * ROPT-P1 — lane -> class referential integrity, as an *advisory* surface,
+ * deliberately not a `validatePolicy` invariant yet.
+ *
+ * Every dispatchable lane names the routing classes it serves
+ * (`lane_map.<lane>.routing_classes`), but nothing cross-checks those names
+ * against the `classes` block. A lane referencing an undefined class has no
+ * allowlist and no `ceiling_usd` to resolve against at dispatch time — the
+ * spend bound simply does not exist for that lane/class pair.
+ *
+ * Why advisory and not invariant 9: closing the gap requires policy *content*
+ * — a `classes` entry per referenced-but-undefined class, each carrying an
+ * owner-set ceiling (an enforced bound is never a guessed value). The shipped
+ * v0.4 policy itself references three undefined classes (`review/security`,
+ * `implementation/complex`, `routing/classification`); the first two need
+ * owner-ratified ceilings, and `routing/classification` is reachable only via
+ * the disabled-refused L6 lane (M2), which cannot dispatch and is therefore
+ * exempt here. The promotion path — owner sets the ceilings, this advisory
+ * becomes a hard refusal — is specced in
+ * `docs/specs/active/ROPT-P1-routing-optimization-program.md`.
+ *
+ * Pure and deterministic like the rest of this module: no I/O, no clock.
+ */
+export const LANE_CLASS_UNDEFINED = 'LANE_CLASS_UNDEFINED' as const
+
+export function laneClassReferenceAdvisories(doc: unknown): readonly string[] {
+  const advisories: string[] = []
+  if (!isRecord(doc)) return advisories
+  const laneMap = doc.lane_map
+  const classes = doc.classes
+  if (!isRecord(laneMap) || !isRecord(classes)) return advisories
+
+  for (const lane of LANE_IDS) {
+    const entry = laneMap[lane]
+    if (!isRecord(entry)) continue
+    // A disabled-refused lane (M2: L6) cannot dispatch, so an undefined class
+    // on it bounds nothing — naming it would be noise, not a gap.
+    if (entry.status === 'disabled-refused') continue
+    for (const routingClass of toStringArray(entry.routing_classes)) {
+      if (!(routingClass in classes)) {
+        advisories.push(
+          `lane_map.${lane}.routing_classes references '${routingClass}', which has no classes entry — a dispatch under this class resolves no allowlist and no ceiling_usd — ${LANE_CLASS_UNDEFINED} (advisory; hard-invariant promotion pending owner-set class definitions, ROPT-P1)`,
+        )
+      }
+    }
+  }
+  return advisories.sort()
+}
+
 export function validatePolicy(doc: unknown): ValidationResult {
   const errors: string[] = []
 
