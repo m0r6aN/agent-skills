@@ -20,12 +20,12 @@ import {
 import {
   classifyFk2Reference,
   classifyPin,
+  digestFile,
   type PinEntry,
   type PinSnapshotRow,
   SPEC_RELATIVE_PATH,
   SPEC_SHA256,
   SURFACE_PINS,
-  digestFile,
   snapshotPins,
   specPath,
 } from '../src/surface-refs.js'
