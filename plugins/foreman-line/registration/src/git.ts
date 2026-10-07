@@ -5,8 +5,12 @@
  * Output is captured in full before any exit code is trusted (lesson #11/#17).
  */
 import { execFileSync } from 'node:child_process'
+import { assertAbsoluteRoot } from './types.js'
 
 function git(cwd: string, args: readonly string[]): string {
+  // Typed root refusal (P2b-i / D19): a relative cwd would silently anchor the
+  // subprocess to the process cwd (mechanism class 5).
+  assertAbsoluteRoot(cwd, 'git')
   return execFileSync('git', [...args], { cwd, encoding: 'utf8' })
 }
 

@@ -1,0 +1,1002 @@
+TAP version 13
+# Subtest: R4 copied corpus without Git metadata fails closed
+ok 1 - R4 copied corpus without Git metadata fails closed
+  ---
+  duration_ms: 3175.8335
+  type: 'test'
+  ...
+# Subtest: R4 blob object cannot impersonate commit migration evidence
+ok 2 - R4 blob object cannot impersonate commit migration evidence
+  ---
+  duration_ms: 6100.0989
+  type: 'test'
+  ...
+# Subtest: R4 missing-path evidence rejects a non-snapshot commit even when that commit is real
+ok 3 - R4 missing-path evidence rejects a non-snapshot commit even when that commit is real
+  ---
+  duration_ms: 3164.7348
+  type: 'test'
+  ...
+# Subtest: R4 natural binding prose added under a curated authority section is discovered
+ok 4 - R4 natural binding prose added under a curated authority section is discovered
+  ---
+  duration_ms: 18287.6461
+  type: 'test'
+  ...
+# Subtest: R4 inserted top-level executable function is discovered without keyword matching
+ok 5 - R4 inserted top-level executable function is discovered without keyword matching
+  ---
+  duration_ms: 18227.7826
+  type: 'test'
+  ...
+# Subtest: R4 early return inside an inventoried function changes its complete construct digest
+ok 6 - R4 early return inside an inventoried function changes its complete construct digest
+  ---
+  duration_ms: 18416.2067
+  type: 'test'
+  ...
+# Subtest: R4 additive JSON schema constraint is discovered
+ok 7 - R4 additive JSON schema constraint is discovered
+  ---
+  duration_ms: 18301.9662
+  type: 'test'
+  ...
+# Subtest: R4 additive permission profile is discovered
+ok 8 - R4 additive permission profile is discovered
+  ---
+  duration_ms: 19170.0194
+  type: 'test'
+  ...
+# Subtest: shipped registry sweeps the complete pinned corpus with no gaps or conflicts
+ok 9 - shipped registry sweeps the complete pinned corpus with no gaps or conflicts
+  ---
+  duration_ms: 2875.9566
+  type: 'test'
+  ...
+# Subtest: charter inventory contains one atomic record for each D1 through D20 decision
+ok 10 - charter inventory contains one atomic record for each D1 through D20 decision
+  ---
+  duration_ms: 6.0181
+  type: 'test'
+  ...
+# Subtest: collapsing one charter decision row into another cannot preserve D-row coverage
+ok 11 - collapsing one charter decision row into another cannot preserve D-row coverage
+  ---
+  duration_ms: 17615.3171
+  type: 'test'
+  ...
+# Subtest: plan review inventory contains one atomic record for each R1 through R13 correction
+ok 12 - plan review inventory contains one atomic record for each R1 through R13 correction
+  ---
+  duration_ms: 5.6208
+  type: 'test'
+  ...
+# Subtest: historical plan inventories the pre-heading two-gate thesis independently
+ok 13 - historical plan inventories the pre-heading two-gate thesis independently
+  ---
+  duration_ms: 6.2073
+  type: 'test'
+  ...
+# Subtest: standing constraints inventory contains all fourteen atomic numbered rules
+ok 14 - standing constraints inventory contains all fourteen atomic numbered rules
+  ---
+  duration_ms: 5.4823
+  type: 'test'
+  ...
+# Subtest: PDD inventory contains all fifteen atomic hard rules
+ok 15 - PDD inventory contains all fifteen atomic hard rules
+  ---
+  duration_ms: 3.9884
+  type: 'test'
+  ...
+# Subtest: operative rules do not use blanket any applicability shortcuts
+not ok 16 - operative rules do not use blanket any applicability shortcuts
+  ---
+  duration_ms: 13.2612
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills\\plugins\\foreman-line\\authority-registry\\tests\\corpus-sweep.test.ts:1:978'
+  failureType: 'testCodeFailure'
+  error: |-
+    rule.fk-charter.6a8d073a64f1
+    + actual - expected
+    
+      [
+    +   'provider-neutral',
+    +   'claude-windows-docker-loaded',
+    +   'claude-windows-docker-unenrolled',
+    +   'unsupported-host',
+    +   'ci',
+        'any'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'any'
+  actual:
+    0: 'provider-neutral'
+    1: 'claude-windows-docker-loaded'
+    2: 'claude-windows-docker-unenrolled'
+    3: 'unsupported-host'
+    4: 'ci'
+    5: 'any'
+  operator: 'deepStrictEqual'
+  stack: |-
+    <anonymous> (D:\Repos\agent-skills\plugins\foreman-line\authority-registry\tests\corpus-sweep.test.ts:469:49)
+    TestContext.<anonymous> (D:\Repos\agent-skills\plugins\foreman-line\authority-registry\tests\corpus-sweep.test.ts:59:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: repeated source sweeps are byte-identical and read-only
+ok 17 - repeated source sweeps are byte-identical and read-only
+  ---
+  duration_ms: 5662.3222
+  type: 'test'
+  ...
+# Subtest: unrelated bytes outside every registered locator stay green
+ok 18 - unrelated bytes outside every registered locator stay green
+  ---
+  duration_ms: 21560.109
+  type: 'test'
+  ...
+# Subtest: absolute, traversal, and duplicate normalized source paths are refused
+ok 19 - absolute, traversal, and duplicate normalized source paths are refused
+  ---
+  duration_ms: 8887.869
+  type: 'test'
+  ...
+# Subtest: dot path segments are refused before resolution
+ok 20 - dot path segments are refused before resolution
+  ---
+  duration_ms: 2462.1355
+  type: 'test'
+  ...
+# Subtest: missing and non-regular corpus sources are refused with stable codes
+ok 21 - missing and non-regular corpus sources are refused with stable codes
+  ---
+  duration_ms: 21590.854
+  type: 'test'
+  ...
+# Subtest: symlink and reparse-point corpus sources are refused before following targets
+ok 22 - symlink and reparse-point corpus sources are refused before following targets
+  ---
+  duration_ms: 18313.7366
+  type: 'test'
+  ...
+# Subtest: a junction in a parent path component is refused before reading a source
+ok 23 - a junction in a parent path component is refused before reading a source
+  ---
+  duration_ms: 18191.6807
+  type: 'test'
+  ...
+# Subtest: comment text cannot impersonate an operative linter symbol anchor
+ok 24 - comment text cannot impersonate an operative linter symbol anchor
+  ---
+  duration_ms: 19890.5206
+  type: 'test'
+  ...
+# Subtest: a new binding heading is reported as an uncovered inventory item
+ok 25 - a new binding heading is reported as an uncovered inventory item
+  ---
+  duration_ms: 18863.2965
+  type: 'test'
+  ...
+# Subtest: R3 additive D22 decision row is discovered independently of the curated inventory
+ok 26 - R3 additive D22 decision row is discovered independently of the curated inventory
+  ---
+  duration_ms: 18686.3343
+  type: 'test'
+  ...
+# Subtest: R3 additive PDD hard rule sixteen is discovered
+ok 27 - R3 additive PDD hard rule sixteen is discovered
+  ---
+  duration_ms: 19962.432
+  type: 'test'
+  ...
+# Subtest: R3 new binding authority bullet is discovered
+ok 28 - R3 new binding authority bullet is discovered
+  ---
+  duration_ms: 18514.2308
+  type: 'test'
+  ...
+# Subtest: R3 weakening a loop stop body fails even when the heading remains
+not ok 29 - R3 weakening a loop stop body fails even when the heading remains
+  ---
+  duration_ms: 17327.2053
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills\\plugins\\foreman-line\\authority-registry\\tests\\corpus-sweep.test.ts:1:978'
+  failureType: 'testCodeFailure'
+  error: 'expected a truthy value (see the stack frame below for the exact assertion)'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TestAssertionError'
+  stack: |-
+    ok (D:\Repos\agent-skills\plugins\foreman-line\authority-registry\tests\support\assert-ok.ts:28:9)
+    <anonymous> (D:\Repos\agent-skills\plugins\foreman-line\authority-registry\tests\corpus-sweep.test.ts:717:5)
+    TestContext.<anonymous> (D:\Repos\agent-skills\plugins\foreman-line\authority-registry\tests\corpus-sweep.test.ts:59:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: real spec-linter return behavior mutation is detected outside comments
+ok 30 - real spec-linter return behavior mutation is detected outside comments
+  ---
+  duration_ms: 18797.2689
+  type: 'test'
+  ...
+# Subtest: real permission-profile deny behavior mutation is detected
+ok 31 - real permission-profile deny behavior mutation is detected
+  ---
+  duration_ms: 18322.981
+  type: 'test'
+  ...
+# Subtest: retirement evidence paths and byte digests are resolved beneath the admitted root
+ok 32 - retirement evidence paths and byte digests are resolved beneath the admitted root
+  ---
+  duration_ms: 2617.0971
+  type: 'test'
+  ...
+# Subtest: multiple corpus violations are deterministically ordered by path, locator, rule, then code
+ok 33 - multiple corpus violations are deterministically ordered by path, locator, rule, then code
+  ---
+  duration_ms: 4952.3801
+  type: 'test'
+  ...
+# Subtest: R5 Markdown numbered-item locators survive physical line wrapping
+ok 34 - R5 Markdown numbered-item locators survive physical line wrapping
+  ---
+  duration_ms: 18923.9793
+  type: 'test'
+  ...
+# Subtest: R5 unnumbered charter prose outside keyword-selected sections is discovered
+ok 35 - R5 unnumbered charter prose outside keyword-selected sections is discovered
+  ---
+  duration_ms: 18127.8071
+  type: 'test'
+  ...
+# Subtest: R5 fenced Markdown prose cannot impersonate a live authority binding
+ok 36 - R5 fenced Markdown prose cannot impersonate a live authority binding
+  ---
+  duration_ms: 18002.7842
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript compiler AST discovers additive function form
+ok 37 - R5 TypeScript compiler AST discovers additive function form
+  ---
+  duration_ms: 18784.8699
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript compiler AST discovers additive const form
+ok 38 - R5 TypeScript compiler AST discovers additive const form
+  ---
+  duration_ms: 19511.3051
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript compiler AST discovers additive let form
+ok 39 - R5 TypeScript compiler AST discovers additive let form
+  ---
+  duration_ms: 19021.1525
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript compiler AST discovers additive var form
+ok 40 - R5 TypeScript compiler AST discovers additive var form
+  ---
+  duration_ms: 18366.5177
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript compiler AST discovers additive class form
+ok 41 - R5 TypeScript compiler AST discovers additive class form
+  ---
+  duration_ms: 18686.6813
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript compiler AST discovers additive default-export form
+ok 42 - R5 TypeScript compiler AST discovers additive default-export form
+  ---
+  duration_ms: 18882.2468
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript compiler AST discovers additive method form
+ok 43 - R5 TypeScript compiler AST discovers additive method form
+  ---
+  duration_ms: 18354.5673
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript compiler AST discovers additive arrow form
+ok 44 - R5 TypeScript compiler AST discovers additive arrow form
+  ---
+  duration_ms: 18758.8915
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript compiler AST discovers additive top-level-call form
+ok 45 - R5 TypeScript compiler AST discovers additive top-level-call form
+  ---
+  duration_ms: 18544.3677
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript compiler AST detects a nested branch mutation
+ok 46 - R5 TypeScript compiler AST detects a nested branch mutation
+  ---
+  duration_ms: 18740.8311
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript semantic inventory ignores benign comment changes
+ok 47 - R5 TypeScript semantic inventory ignores benign comment changes
+  ---
+  duration_ms: 17964.0896
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript semantic inventory ignores benign whitespace changes
+ok 48 - R5 TypeScript semantic inventory ignores benign whitespace changes
+  ---
+  duration_ms: 17860.2493
+  type: 'test'
+  ...
+# Subtest: R5 TypeScript semantic inventory ignores benign import-order changes
+ok 49 - R5 TypeScript semantic inventory ignores benign import-order changes
+  ---
+  duration_ms: 18627.5666
+  type: 'test'
+  ...
+# Subtest: R5 sweep verifies declared snapshot bytes at the bound Git commit
+ok 50 - R5 sweep verifies declared snapshot bytes at the bound Git commit
+  ---
+  duration_ms: 2703.5576
+  type: 'test'
+  ...
+# Subtest: R6 visible prose before a same-line HTML comment is discovered
+ok 51 - R6 visible prose before a same-line HTML comment is discovered
+  ---
+  duration_ms: 18233.3344
+  type: 'test'
+  ...
+# Subtest: R6 visible prose after a same-line HTML comment is discovered
+ok 52 - R6 visible prose after a same-line HTML comment is discovered
+  ---
+  duration_ms: 17387.4022
+  type: 'test'
+  ...
+# Subtest: R6 visible prose after a multiline HTML comment close is discovered
+ok 53 - R6 visible prose after a multiline HTML comment close is discovered
+  ---
+  duration_ms: 19032.4657
+  type: 'test'
+  ...
+# Subtest: R6 comment-only Markdown remains non-operative
+ok 54 - R6 comment-only Markdown remains non-operative
+  ---
+  duration_ms: 19208.1456
+  type: 'test'
+  ...
+# Subtest: R6 additive TypeScript side-effect import is discovered
+ok 55 - R6 additive TypeScript side-effect import is discovered
+  ---
+  duration_ms: 18851.9071
+  type: 'test'
+  ...
+# Subtest: R6 additive TypeScript value import binding is discovered
+ok 56 - R6 additive TypeScript value import binding is discovered
+  ---
+  duration_ms: 18496.2252
+  type: 'test'
+  ...
+# Subtest: R6 TypeScript value import module retargeting changes operative inventory
+ok 57 - R6 TypeScript value import module retargeting changes operative inventory
+  ---
+  duration_ms: 22007.1586
+  type: 'test'
+  ...
+# Subtest: R6 additive TypeScript type-only import remains non-operative
+ok 58 - R6 additive TypeScript type-only import remains non-operative
+  ---
+  duration_ms: 18270.6452
+  type: 'test'
+  ...
+# Subtest: R7 unmatched HTML comment cannot hide following binding prose
+ok 59 - R7 unmatched HTML comment cannot hide following binding prose
+  ---
+  duration_ms: 17313.5585
+  type: 'test'
+  ...
+# Subtest: R7 four-space pseudo-fences cannot hide binding prose
+ok 60 - R7 four-space pseudo-fences cannot hide binding prose
+  ---
+  duration_ms: 19251.7212
+  type: 'test'
+  ...
+# Subtest: R8 backtick in backtick-fence info is visible and cannot hide binding prose
+ok 61 - R8 backtick in backtick-fence info is visible and cannot hide binding prose
+  ---
+  duration_ms: 18926.2745
+  type: 'test'
+  ...
+# Subtest: R9 raw mixed comment and backtick info cannot become a hiding fence after comment masking
+ok 62 - R9 raw mixed comment and backtick info cannot become a hiding fence after comment masking
+  ---
+  duration_ms: 17819.0236
+  type: 'test'
+  ...
+# Subtest: R9 valid fenced standing-constraint number is ignored by the shared Markdown map
+ok 63 - R9 valid fenced standing-constraint number is ignored by the shared Markdown map
+  ---
+  duration_ms: 17469.513
+  type: 'test'
+  ...
+# Subtest: R8 valid fenced heading is ignored by every Markdown discovery layer
+ok 64 - R8 valid fenced heading is ignored by every Markdown discovery layer
+  ---
+  duration_ms: 18338.9033
+  type: 'test'
+  ...
+# Subtest: R8 valid fenced D row is ignored by every Markdown discovery layer
+ok 65 - R8 valid fenced D row is ignored by every Markdown discovery layer
+  ---
+  duration_ms: 18728.0619
+  type: 'test'
+  ...
+# Subtest: R8 valid fenced R row is ignored by every Markdown discovery layer
+ok 66 - R8 valid fenced R row is ignored by every Markdown discovery layer
+  ---
+  duration_ms: 17681.844
+  type: 'test'
+  ...
+# Subtest: R8 valid fenced numbered hard rule is ignored by every Markdown discovery layer
+ok 67 - R8 valid fenced numbered hard rule is ignored by every Markdown discovery layer
+  ---
+  duration_ms: 18644.0812
+  type: 'test'
+  ...
+# Subtest: R7 mixed fence delimiters do not close a correctly paired fence
+ok 68 - R7 mixed fence delimiters do not close a correctly paired fence
+  ---
+  duration_ms: 17978.3234
+  type: 'test'
+  ...
+# Subtest: R7 mixed type and value import order is semantically stable
+ok 69 - R7 mixed type and value import order is semantically stable
+  ---
+  duration_ms: 18279.3193
+  type: 'test'
+  ...
+# Subtest: R7 ambient declarations remain non-operative
+ok 70 - R7 ambient declarations remain non-operative
+  ---
+  duration_ms: 18287.0779
+  type: 'test'
+  ...
+# Subtest: R7 permission-profile nested add mutation is discovered
+ok 71 - R7 permission-profile nested add mutation is discovered
+  ---
+  duration_ms: 19288.8563
+  type: 'test'
+  ...
+# Subtest: R7 permission-profile nested delete mutation is discovered
+ok 72 - R7 permission-profile nested delete mutation is discovered
+  ---
+  duration_ms: 18775.9842
+  type: 'test'
+  ...
+# Subtest: R7 permission-profile nested retarget mutation is discovered
+ok 73 - R7 permission-profile nested retarget mutation is discovered
+  ---
+  duration_ms: 18223.9438
+  type: 'test'
+  ...
+# Subtest: R7 permission-profile nested move mutation is discovered
+ok 74 - R7 permission-profile nested move mutation is discovered
+  ---
+  duration_ms: 19359.5285
+  type: 'test'
+  ...
+# Subtest: R10 generator constructs Markdown block custody without a source-ID allowlist
+ok 75 - R10 generator constructs Markdown block custody without a source-ID allowlist
+  ---
+  duration_ms: 8.3612
+  type: 'test'
+  ...
+# Subtest: R10 validator constructs Markdown block custody without a source-ID allowlist
+ok 76 - R10 validator constructs Markdown block custody without a source-ID allowlist
+  ---
+  duration_ms: 5.6356
+  type: 'test'
+  ...
+# Subtest: R11 Markdown block anchors contain only structural heading kind and stable identity
+ok 77 - R11 Markdown block anchors contain only structural heading kind and stable identity
+  ---
+  duration_ms: 6.4283
+  type: 'test'
+  ...
+# Subtest: R11 a Markdown value-only edit resolves the same locator as VALUE_DIGEST_MISMATCH
+ok 78 - R11 a Markdown value-only edit resolves the same locator as VALUE_DIGEST_MISMATCH
+  ---
+  duration_ms: 19267.7674
+  type: 'test'
+  ...
+# Subtest: R11 inserting a same-kind Markdown block is a separate location mutation
+ok 79 - R11 inserting a same-kind Markdown block is a separate location mutation
+  ---
+  duration_ms: 17295.4531
+  type: 'test'
+  ...
+# Subtest: R11 CommonMark parenthesized ordered items produce two independent uncovered items
+ok 80 - R11 CommonMark parenthesized ordered items produce two independent uncovered items
+  ---
+  duration_ms: 17431.499
+  type: 'test'
+  ...
+# Subtest: R12 every published Markdown paragraph and list rule uses one structural canonical locator
+ok 81 - R12 every published Markdown paragraph and list rule uses one structural canonical locator
+  ---
+  duration_ms: 7.7608
+  type: 'test'
+  ...
+# Subtest: R12 no published Markdown rule uses a raw-text line-excerpt or additional-anchor escape
+ok 82 - R12 no published Markdown rule uses a raw-text line-excerpt or additional-anchor escape
+  ---
+  duration_ms: 13.0623
+  type: 'test'
+  ...
+# Subtest: R12 all sixteen R11 raw-text Markdown rules migrate to structural canonical items
+ok 83 - R12 all sixteen R11 raw-text Markdown rules migrate to structural canonical items
+  ---
+  duration_ms: 5.9541
+  type: 'test'
+  ...
+# Subtest: R12 published Markdown table rules use stable first-column keys
+ok 84 - R12 published Markdown table rules use stable first-column keys
+  ---
+  duration_ms: 7.0477
+  type: 'test'
+  ...
+# Subtest: R12 active standing-rule marker renumbering is a value mismatch without locator loss
+ok 85 - R12 active standing-rule marker renumbering is a value mismatch without locator loss
+  ---
+  duration_ms: 18029.1348
+  type: 'test'
+  ...
+# Subtest: R12 active ordered rules have no excluded structural duplicate substitute
+ok 86 - R12 active ordered rules have no excluded structural duplicate substitute
+  ---
+  duration_ms: 8.831
+  type: 'test'
+  ...
+# Subtest: R12 ordered marker mutation preserves structural item rule and locator identity
+ok 87 - R12 ordered marker mutation preserves structural item rule and locator identity
+  ---
+  duration_ms: 1581.9567
+  type: 'test'
+  ...
+# Subtest: R12 compound block value mutation preserves structural item rule and locator identity
+ok 88 - R12 compound block value mutation preserves structural item rule and locator identity
+  ---
+  duration_ms: 12.8065
+  type: 'test'
+  ...
+# Subtest: R13 lineHint changes do not change Markdown item or locator identity
+ok 89 - R13 lineHint changes do not change Markdown item or locator identity
+  ---
+  duration_ms: 10.2899
+  type: 'test'
+  ...
+# Subtest: R13 leading blank lines preserve every published Markdown identity
+ok 90 - R13 leading blank lines preserve every published Markdown identity
+  ---
+  duration_ms: 9.8668
+  type: 'test'
+  ...
+# Subtest: R13 actual compound coordinator value mutation preserves all six rule identities
+ok 91 - R13 actual compound coordinator value mutation preserves all six rule identities
+  ---
+  duration_ms: 11.7939
+  type: 'test'
+  ...
+# Subtest: R13 duplicate identical Gate 2 keyed row emits LOCATOR_DUPLICATE
+not ok 92 - R13 duplicate identical Gate 2 keyed row emits LOCATOR_DUPLICATE
+  ---
+  duration_ms: 18613.0152
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills\\plugins\\foreman-line\\authority-registry\\tests\\corpus-sweep.test.ts:1:978'
+  failureType: 'testCodeFailure'
+  error: |-
+    [
+      {
+        "code": "SOURCE_ITEM_UNCOVERED",
+        "message": "binding prose block is not inventoried",
+        "sourcePath": "plugins/foreman-line/docs/COORDINATOR-PATTERN.md",
+        "locator": "md-block:# The Coordinator Pattern > ## The three human gates:table-row:2:2"
+      }
+    ]
+  code: 'ERR_TEST_FAILURE'
+  name: 'TestAssertionError'
+  stack: |-
+    ok (D:\Repos\agent-skills\plugins\foreman-line\authority-registry\tests\support\assert-ok.ts:28:9)
+    <anonymous> (D:\Repos\agent-skills\plugins\foreman-line\authority-registry\tests\corpus-sweep.test.ts:1742:3)
+    TestContext.<anonymous> (D:\Repos\agent-skills\plugins\foreman-line\authority-registry\tests\corpus-sweep.test.ts:59:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: R13 duplicate table text cannot bypass structural coverage
+not ok 93 - R13 duplicate table text cannot bypass structural coverage
+  ---
+  duration_ms: 17870.9756
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills\\plugins\\foreman-line\\authority-registry\\tests\\corpus-sweep.test.ts:1:978'
+  failureType: 'testCodeFailure'
+  error: 'expected a truthy value (see the stack frame below for the exact assertion)'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TestAssertionError'
+  stack: |-
+    ok (D:\Repos\agent-skills\plugins\foreman-line\authority-registry\tests\support\assert-ok.ts:28:9)
+    <anonymous> (D:\Repos\agent-skills\plugins\foreman-line\authority-registry\tests\corpus-sweep.test.ts:1751:3)
+    TestContext.<anonymous> (D:\Repos\agent-skills\plugins\foreman-line\authority-registry\tests\corpus-sweep.test.ts:59:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: R10 baseline block custody: goal skill verification custody
+ok 94 - R10 baseline block custody: goal skill verification custody
+  ---
+  duration_ms: 6.3223
+  type: 'test'
+  ...
+# Subtest: R10 baseline block custody: goal skill human-gate stop custody
+ok 95 - R10 baseline block custody: goal skill human-gate stop custody
+  ---
+  duration_ms: 8.024
+  type: 'test'
+  ...
+# Subtest: R10 baseline block custody: goal skill loop-stop custody
+ok 96 - R10 baseline block custody: goal skill loop-stop custody
+  ---
+  duration_ms: 7.0152
+  type: 'test'
+  ...
+# Subtest: R10 baseline block custody: coordinator pattern ownership stop
+ok 97 - R10 baseline block custody: coordinator pattern ownership stop
+  ---
+  duration_ms: 8.2206
+  type: 'test'
+  ...
+# Subtest: R10 baseline block custody: coordinator pattern universal-stop custody
+ok 98 - R10 baseline block custody: coordinator pattern universal-stop custody
+  ---
+  duration_ms: 9.3096
+  type: 'test'
+  ...
+# Subtest: R10 baseline block custody: coordinator pattern scoped-Gate-1 custody
+ok 99 - R10 baseline block custody: coordinator pattern scoped-Gate-1 custody
+  ---
+  duration_ms: 9.0133
+  type: 'test'
+  ...
+# Subtest: R10 baseline block custody: PDD branch isolation
+ok 100 - R10 baseline block custody: PDD branch isolation
+  ---
+  duration_ms: 10.2192
+  type: 'test'
+  ...
+# Subtest: R10 baseline block custody: PDD serialization custody
+ok 101 - R10 baseline block custody: PDD serialization custody
+  ---
+  duration_ms: 9.5237
+  type: 'test'
+  ...
+# Subtest: R10 baseline block custody: SPEC-CONVENTION ordinary mutation authority
+ok 102 - R10 baseline block custody: SPEC-CONVENTION ordinary mutation authority
+  ---
+  duration_ms: 8.8912
+  type: 'test'
+  ...
+# Subtest: R10 additive ordinary prose is discovered in goal skill
+ok 103 - R10 additive ordinary prose is discovered in goal skill
+  ---
+  duration_ms: 17917.4416
+  type: 'test'
+  ...
+# Subtest: R10 additive ordinary prose is discovered in coordinator pattern
+ok 104 - R10 additive ordinary prose is discovered in coordinator pattern
+  ---
+  duration_ms: 18310.7148
+  type: 'test'
+  ...
+# Subtest: R10 additive ordinary prose is discovered in PDD
+ok 105 - R10 additive ordinary prose is discovered in PDD
+  ---
+  duration_ms: 19051.4256
+  type: 'test'
+  ...
+# Subtest: R10 additive ordinary prose is discovered in SPEC-CONVENTION
+ok 106 - R10 additive ordinary prose is discovered in SPEC-CONVENTION
+  ---
+  duration_ms: 18405.9391
+  type: 'test'
+  ...
+# Subtest: R14 an NTFS alternate-data-stream source path ending :$DATA is refused by policy
+ok 107 - R14 an NTFS alternate-data-stream source path ending :$DATA is refused by policy
+  ---
+  duration_ms: 2352.7508
+  type: 'test'
+  ...
+# Subtest: R14 an NTFS alternate-data-stream source path ending ::$DATA is refused by policy
+ok 108 - R14 an NTFS alternate-data-stream source path ending ::$DATA is refused by policy
+  ---
+  duration_ms: 2640.0673
+  type: 'test'
+  ...
+# Subtest: R14 an NTFS alternate-data-stream source path ending :hidden is refused by policy
+ok 109 - R14 an NTFS alternate-data-stream source path ending :hidden is refused by policy
+  ---
+  duration_ms: 2880.5949
+  type: 'test'
+  ...
+# Subtest: R14 an NTFS alternate-data-stream source path ending :hidden:$DATA is refused by policy
+ok 110 - R14 an NTFS alternate-data-stream source path ending :hidden:$DATA is refused by policy
+  ---
+  duration_ms: 2317.5829
+  type: 'test'
+  ...
+# Subtest: R14 an interior colon is refused in any path segment, not only the last
+ok 111 - R14 an interior colon is refused in any path segment, not only the last
+  ---
+  duration_ms: 3062.2197
+  type: 'test'
+  ...
+# Subtest: R14 added narrative prose in a Markdown source is detected as SOURCE_ITEM_UNCOVERED
+ok 112 - R14 added narrative prose in a Markdown source is detected as SOURCE_ITEM_UNCOVERED
+  ---
+  duration_ms: 19079.752
+  type: 'test'
+  ...
+# Subtest: R14 an added heading stays inert while a paragraph beneath it does not
+ok 113 - R14 an added heading stays inert while a paragraph beneath it does not
+  ---
+  duration_ms: 20261.9792
+  type: 'test'
+  ...
+# Subtest: R29.3 every curation surface is anchor-keyed with no itemId lookup fallback
+ok 114 - R29.3 every curation surface is anchor-keyed with no itemId lookup fallback
+  ---
+  duration_ms: 15.4479
+  type: 'test'
+  ...
+# Subtest: R29.4 standing authorization 8 publishes the exact pre-action refusal contract
+ok 115 - R29.4 standing authorization 8 publishes the exact pre-action refusal contract
+  ---
+  duration_ms: 693.5124
+  type: 'test'
+  ...
+# Subtest: R29.3 anchor migration preserves every surviving published identity and locator digest
+ok 116 - R29.3 anchor migration preserves every surviving published identity and locator digest
+  ---
+  duration_ms: 1249.8797
+  type: 'test'
+  ...
+# Subtest: R27 control (a) volatile appends and byte changes preserve the sweep and governed siblings
+ok 117 - R27 control (a) volatile appends and byte changes preserve the sweep and governed siblings
+  ---
+  duration_ms: 17588.3792
+  type: 'test'
+  ...
+# Subtest: R27 control (a) deletion probe fails for each removed volatile-region declaration
+ok 118 - R27 control (a) deletion probe fails for each removed volatile-region declaration
+  ---
+  duration_ms: 53099.7362
+  type: 'test'
+  ...
+# Subtest: R27 control (b) governed ownership prose still fails closed with VALUE_DIGEST_MISMATCH
+ok 119 - R27 control (b) governed ownership prose still fails closed with VALUE_DIGEST_MISMATCH
+  ---
+  duration_ms: 17356.3
+  type: 'test'
+  ...
+# Subtest: R27 control (b) binding-deletion probe defeats the exact governed-mutation expectation
+ok 120 - R27 control (b) binding-deletion probe defeats the exact governed-mutation expectation
+  ---
+  duration_ms: 18070.8802
+  type: 'test'
+  ...
+# Subtest: R27 control (c) anti-laundering refuses a region overlapping a published locator
+ok 121 - R27 control (c) anti-laundering refuses a region overlapping a published locator
+  ---
+  duration_ms: 136.2908
+  type: 'test'
+  ...
+# Subtest: R27 control (d) independently finds no published item inside any shipped volatile extent
+ok 122 - R27 control (d) independently finds no published item inside any shipped volatile extent
+  ---
+  duration_ms: 11.5596
+  type: 'test'
+  ...
+# Subtest: R27 control (d) predicate-mutation probe survives a production overlap predicate forced false
+ok 123 - R27 control (d) predicate-mutation probe survives a production overlap predicate forced false
+  ---
+  duration_ms: 1190.8192
+  type: 'test'
+  ...
+# Subtest: R27 control (e) generator output is byte-identical under mutation of every volatile region
+ok 124 - R27 control (e) generator output is byte-identical under mutation of every volatile region
+  ---
+  duration_ms: 22932.5481
+  type: 'test'
+  ...
+# Subtest: R27 control (f) zero heading matches fails closed with the exact VOLATILE_REGION_INVALID message
+ok 125 - R27 control (f) zero heading matches fails closed with the exact VOLATILE_REGION_INVALID message
+  ---
+  duration_ms: 17652.952
+  type: 'test'
+  ...
+# Subtest: R27 control (f) multiple heading matches fails closed with the exact VOLATILE_REGION_INVALID message
+ok 126 - R27 control (f) multiple heading matches fails closed with the exact VOLATILE_REGION_INVALID message
+  ---
+  duration_ms: 18056.6309
+  type: 'test'
+  ...
+# Subtest: R27 control (g) pins eight curated pre-excision prose rationales without gating future additions
+ok 127 - R27 control (g) pins eight curated pre-excision prose rationales without gating future additions
+  ---
+  duration_ms: 265.1211
+  type: 'test'
+  ...
+# Subtest: R30 INF-1 real governed source mutation fails exact value binding
+ok 128 - R30 INF-1 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 18711.0741
+  type: 'test'
+  ...
+# Subtest: R30 INF-2 real governed source mutation fails exact value binding
+ok 129 - R30 INF-2 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 17743.2497
+  type: 'test'
+  ...
+# Subtest: R30 INF-3 real governed source mutation fails exact value binding
+ok 130 - R30 INF-3 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 17593.9551
+  type: 'test'
+  ...
+# Subtest: R30 INF-4 real governed source mutation fails exact value binding
+ok 131 - R30 INF-4 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 18417.9552
+  type: 'test'
+  ...
+# Subtest: R30 INF-5 real governed source mutation fails exact value binding
+ok 132 - R30 INF-5 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 18032.2638
+  type: 'test'
+  ...
+# Subtest: R30 INF-6 real governed source mutation fails exact value binding
+ok 133 - R30 INF-6 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 16867.706
+  type: 'test'
+  ...
+# Subtest: R30 INF-7 real governed source mutation fails exact value binding
+ok 134 - R30 INF-7 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 17715.2675
+  type: 'test'
+  ...
+# Subtest: R30 INF-8 real governed source mutation fails exact value binding
+ok 135 - R30 INF-8 real governed source mutation fails exact value binding
+  ---
+  duration_ms: 17675.4183
+  type: 'test'
+  ...
+# Subtest: R30 new continuation authority is governed outside every volatile region
+ok 136 - R30 new continuation authority is governed outside every volatile region
+  ---
+  duration_ms: 18206.4098
+  type: 'test'
+  ...
+# Subtest: R30 prior anchor freeze retains ledger identities and rejects ambiguous current ledger anchors
+not ok 137 - R30 prior anchor freeze retains ledger identities and rejects ambiguous current ledger anchors
+  ---
+  duration_ms: 17168.8237
+  type: 'test'
+  location: 'D:\\Repos\\agent-skills\\plugins\\foreman-line\\authority-registry\\tests\\corpus-sweep.test.ts:1:978'
+  failureType: 'testCodeFailure'
+  error: '[{"code":"SOURCE_ITEM_UNCOVERED","message":"binding prose block is not inventoried","sourcePath":"plugins/foreman-line/docs/goals/foreman-kernel/charter.md","locator":"md-block:# Foreman Kernel Development Charter > ## 4. Locked decisions > ### 4.1 Ratification ledger:table-row:L4:2"}]'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TestAssertionError'
+  stack: |-
+    ok (D:\Repos\agent-skills\plugins\foreman-line\authority-registry\tests\support\assert-ok.ts:28:9)
+    <anonymous> (D:\Repos\agent-skills\plugins\foreman-line\authority-registry\tests\corpus-sweep.test.ts:2433:5)
+    TestContext.<anonymous> (D:\Repos\agent-skills\plugins\foreman-line\authority-registry\tests\corpus-sweep.test.ts:59:13)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: R31 approved annotation and thesis have distinct source-bound identities
+ok 138 - R31 approved annotation and thesis have distinct source-bound identities
+  ---
+  duration_ms: 11.7099
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects parcel condition mutation
+ok 139 - R31 actual M01 source rejects parcel condition mutation
+  ---
+  duration_ms: 18035.2227
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects living identifier mutation
+ok 140 - R31 actual M01 source rejects living identifier mutation
+  ---
+  duration_ms: 18800.0018
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects marketplace entry mutation
+ok 141 - R31 actual M01 source rejects marketplace entry mutation
+  ---
+  duration_ms: 17815.711
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects source existence mutation
+ok 142 - R31 actual M01 source rejects source existence mutation
+  ---
+  duration_ms: 17043.0681
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects nested manifest equality mutation
+ok 143 - R31 actual M01 source rejects nested manifest equality mutation
+  ---
+  duration_ms: 18761.9162
+  type: 'test'
+  ...
+# Subtest: R31 actual M01 source rejects URL insufficiency mutation
+ok 144 - R31 actual M01 source rejects URL insufficiency mutation
+  ---
+  duration_ms: 19136.4923
+  type: 'test'
+  ...
+# Subtest: R31 actual decision blob correspondence detects Git replacement despite an unchanged diagnostic
+ok 145 - R31 actual decision blob correspondence detects Git replacement despite an unchanged diagnostic
+  ---
+  duration_ms: 12591.8312
+  type: 'test'
+  ...
+# Subtest: R31 source-bound aliases reject displaced or substituted historical note and thesis
+ok 146 - R31 source-bound aliases reject displaced or substituted historical note and thesis
+  ---
+  duration_ms: 14.2097
+  type: 'test'
+  ...
+# Subtest: R31 historical positive uses the pinned R30 implementation and its exact source subject
+ok 147 - R31 historical positive uses the pinned R30 implementation and its exact source subject
+  ---
+  duration_ms: 17396.8962
+  type: 'test'
+  ...
+# Subtest: R31 current fourteen-rule coverage still refuses an unreviewed fifteenth standing rule
+ok 148 - R31 current fourteen-rule coverage still refuses an unreviewed fifteenth standing rule
+  ---
+  duration_ms: 18823.4025
+  type: 'test'
+  ...
+1..148
+# tests 148
+# suites 0
+# pass 143
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1868905.0257

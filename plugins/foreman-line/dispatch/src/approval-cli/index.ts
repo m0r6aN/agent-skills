@@ -18,22 +18,42 @@
 
 import { randomUUID } from 'node:crypto'
 import { existsSync, readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { isAbsolute, join, relative } from 'node:path'
 import { Ajv } from 'ajv'
 import { parse } from 'yaml'
 import type { JsonValue } from '../../../approval/src/index.js'
 import { canonicalize, sha256Hex, writeReceiptDocument } from '../../../approval/src/index.js'
-import type { CorrelationId, RunId, SessionId, WorkflowId } from '../../../contracts/src/index.js'
+import type {
+  CorrelationContext,
+  CorrelationId,
+  RunId,
+  SessionId,
+  WorkflowId,
+} from '../../../contracts/src/index.js'
 import type { DispatchOrder } from '../../../contracts/src/stages/c-dispatch.js'
 import { dispatchOrderSchema } from '../../../contracts/src/stages/c-dispatch.js'
+import type { ScopeEnvelope } from '../../../mutation-scope-guard/src/index.js'
+import { postHocCheck, preflightCheck } from '../../../mutation-scope-guard/src/index.js'
 import { dispatchWorktree as realDispatchWorktree } from '../../../permission-profiles/src/emitter.js'
 import type { ReceiptDocument } from '../../../receipts/src/index.js'
 import { receiptPath, validateReceiptDocument } from '../../../receipts/src/index.js'
+import type {
+  ClassName,
+  ExpertiseArea,
+  InputModality,
+  ThinkingLevelName,
+} from '../../../routing-policy/src/types.js'
+import {
+  EXPERTISE_AREAS,
+  INPUT_MODALITIES,
+  THINKING_DEFAULT_BY_CLASS,
+  THINKING_LEVELS,
+} from '../../../routing-policy/src/types.js'
 import type { KompressFn, KompressResult } from '../kompress-adapter/index.js'
 import { kompressContext } from '../kompress-adapter/index.js'
 import type { CandidateRecord } from '../query/index.js'
 import type { RoutingResult } from '../routing-eval/index.js'
-import { evaluateRouting } from '../routing-eval/index.js'
+import { evaluateRouting, RoutingError, readChainState } from '../routing-eval/index.js'
 import type { SkillResolverResult } from '../skill-resolver/index.js'
 import { resolveSkills } from '../skill-resolver/index.js'
 
@@ -46,16 +66,49 @@ export class DispatchError extends Error {
     | 'PRIOR_RECEIPT_UNREADABLE'
     | 'PRIOR_CORRELATION_MISSING'
     | 'ROUTING_FAILED'
+    | 'REQUIREMENTS_UNSATISFIABLE'
     | 'SKILL_RESOLUTION_FAILED'
     | 'COMPRESS_FAILED'
     | 'ORDER_INVALID'
     | 'WORKTREE_FAILED'
+    | 'MUTATION_SCOPE_FAILED'
     | 'RECEIPT_WRITE_FAILED'
+    | 'ROOT_NOT_ABSOLUTE'
 
   constructor(code: DispatchError['code'], message: string) {
     super(message)
     this.name = 'DispatchError'
     this.code = code
+  }
+}
+
+// ─── Root / path guards (P2b-i / D1) ──────────────────────────────────────────
+
+/**
+ * Refuse a non-absolute root BEFORE any fs/subprocess work (D1): a relative
+ * root would silently anchor to the process cwd. Typed ROOT_NOT_ABSOLUTE,
+ * mirroring routing-eval / skill-resolver's message style.
+ */
+function assertAbsoluteRoot(seam: string, name: string, root: string): void {
+  if (!isAbsolute(root)) {
+    throw new DispatchError(
+      'ROOT_NOT_ABSOLUTE',
+      `${seam}: ${name} '${root}' is not an absolute path; a relative root would silently anchor to the process cwd and is refused (P2b-i / D19)`,
+    )
+  }
+}
+
+/**
+ * Refuse a caller-supplied path that resolves outside `root` BEFORE any fs
+ * work happens at the constructed path (D1). `rel` starting with '..' means
+ * the target climbed out of root; an absolute `rel` (e.g. a different Windows
+ * drive) escapes it too. Cross-package containment vocabulary: plain Error
+ * carrying 'resolves outside repoRoot and is refused'.
+ */
+function assertContainedRootPath(seam: string, ref: string, absPath: string, root: string): void {
+  const rel = relative(root, absPath)
+  if (rel.startsWith('..') || isAbsolute(rel)) {
+    throw new Error(`${seam}: '${ref}' resolves outside repoRoot and is refused`)
   }
 }
 
@@ -66,6 +119,18 @@ export interface SpecFrontmatter {
   readonly data_classification: string
   readonly surfaces: readonly string[]
   readonly permission_profile?: string
+  /**
+   * RCM-P4A (C2.1, schema v0.4): `inputs:` — the closed `text | image`
+   * modality vocabulary (`INPUT_MODALITIES`). Absent = text-only (D8 legacy
+   * omission). No model identity may enter through these fields (RCM D9).
+   */
+  readonly inputs?: readonly string[]
+  /** RCM-P4A (C2.1): `thinking_level:` — one of the seven `ThinkingLevel` names. */
+  readonly thinking_level?: string
+  /** RCM-P4A (C2.1): `min_context:` — positive-integer token floor (upward-only override; declared value used as-is). */
+  readonly min_context?: number
+  /** RCM-P4A (C2.1): `expertise:` — one closed-vocabulary expertise area (`EXPERTISE_AREAS`). */
+  readonly expertise?: string
 }
 
 export interface DispatchInput {
@@ -73,6 +138,8 @@ export interface DispatchInput {
   readonly specPath: string
   readonly compressFn: KompressFn
   readonly worktreePath: string
+  /** Optional task-envelope scope; when present, both preflight and post-hoc checks are mandatory. */
+  readonly mutationScope?: ScopeEnvelope
 }
 
 export interface DispatchPackage {
@@ -85,6 +152,7 @@ export interface DispatchPackage {
   readonly order: DispatchOrder
   readonly prevHash: string
   readonly priorCorrelationId: CorrelationId
+  readonly mutationScope?: ScopeEnvelope
 }
 
 export interface ExecuteResult {
@@ -104,6 +172,8 @@ export interface DispatchWorktreeOutput {
   readonly code: 0 | 1 | 2
   readonly stdout: string
   readonly stderr: string
+  /** Repo-relative paths observed as changed by the worktree operation. */
+  readonly changedPaths?: readonly string[]
 }
 
 export interface DispatchOptions {
@@ -180,6 +250,76 @@ function parseFrontmatter(text: string, specPath: string): SpecFrontmatter {
     }
   }
 
+  // RCM-P4A (C2.1): schema-v0.4 requirement fields — runtime-validated
+  // against the closed vocabularies (RCM D7/D8) in the existing typed style.
+  // No model identity may enter through these fields (RCM D9): the
+  // vocabularies are closed, so an identity value refuses here.
+  let inputs: string[] | undefined
+  if (fm.inputs !== undefined) {
+    if (!Array.isArray(fm.inputs) || fm.inputs.length === 0) {
+      throw new DispatchError(
+        'SPEC_INVALID_FRONTMATTER',
+        `Frontmatter 'inputs' must be a non-empty array in '${specPath}'`,
+      )
+    }
+    const inputsArr = fm.inputs as unknown[]
+    for (const entry of inputsArr) {
+      if (typeof entry !== 'string' || !(INPUT_MODALITIES as readonly string[]).includes(entry)) {
+        throw new DispatchError(
+          'SPEC_INVALID_FRONTMATTER',
+          `Frontmatter 'inputs' values must be drawn from ${INPUT_MODALITIES.join(' | ')} in '${specPath}'`,
+        )
+      }
+    }
+    inputs = inputsArr as string[]
+    if (new Set(inputs).size !== inputs.length) {
+      throw new DispatchError(
+        'SPEC_INVALID_FRONTMATTER',
+        `Frontmatter 'inputs' must have unique values in '${specPath}'`,
+      )
+    }
+  }
+  let thinkingLevel: string | undefined
+  if (fm.thinking_level !== undefined) {
+    if (
+      typeof fm.thinking_level !== 'string' ||
+      !(THINKING_LEVELS as readonly string[]).includes(fm.thinking_level)
+    ) {
+      throw new DispatchError(
+        'SPEC_INVALID_FRONTMATTER',
+        `Frontmatter 'thinking_level' must be one of ${THINKING_LEVELS.join(' | ')} in '${specPath}'`,
+      )
+    }
+    thinkingLevel = fm.thinking_level
+  }
+  let minContext: number | undefined
+  if (fm.min_context !== undefined) {
+    if (
+      typeof fm.min_context !== 'number' ||
+      !Number.isInteger(fm.min_context) ||
+      fm.min_context < 1
+    ) {
+      throw new DispatchError(
+        'SPEC_INVALID_FRONTMATTER',
+        `Frontmatter 'min_context' must be a positive integer in '${specPath}'`,
+      )
+    }
+    minContext = fm.min_context
+  }
+  let expertise: string | undefined
+  if (fm.expertise !== undefined) {
+    if (
+      typeof fm.expertise !== 'string' ||
+      !(EXPERTISE_AREAS as readonly string[]).includes(fm.expertise)
+    ) {
+      throw new DispatchError(
+        'SPEC_INVALID_FRONTMATTER',
+        `Frontmatter 'expertise' must be one of ${EXPERTISE_AREAS.join(' | ')} in '${specPath}'`,
+      )
+    }
+    expertise = fm.expertise
+  }
+
   const permissionProfile =
     typeof fm.permission_profile === 'string' ? fm.permission_profile : undefined
 
@@ -188,6 +328,10 @@ function parseFrontmatter(text: string, specPath: string): SpecFrontmatter {
     data_classification: fm.data_classification as string,
     surfaces: surfacesArr as string[],
     ...(permissionProfile !== undefined ? { permission_profile: permissionProfile } : {}),
+    ...(inputs !== undefined ? { inputs } : {}),
+    ...(thinkingLevel !== undefined ? { thinking_level: thinkingLevel } : {}),
+    ...(minContext !== undefined ? { min_context: minContext } : {}),
+    ...(expertise !== undefined ? { expertise } : {}),
   }
 }
 
@@ -235,8 +379,21 @@ export async function prepareDispatch(
   input: DispatchInput,
   options: DispatchOptions,
 ): Promise<DispatchPackage> {
+  // D1 guards run FIRST — before any fs/subprocess work below.
+  assertAbsoluteRoot('prepareDispatch', 'repoRoot', options.repoRoot)
+  assertAbsoluteRoot('prepareDispatch', 'pluginRoot', options.pluginRoot)
+  // specPath is an explicit standalone caller path (never resolved against a
+  // root) — a relative one would silently anchor to the process cwd, so it is
+  // refused with the same typed family before readFileSync touches it.
+  if (!isAbsolute(input.specPath)) {
+    throw new DispatchError(
+      'ROOT_NOT_ABSOLUTE',
+      `prepareDispatch: specPath '${input.specPath}' is not an absolute path; a relative artifact path would silently anchor to the process cwd and is refused (P2b-i / D19)`,
+    )
+  }
   const repoRoot = options.repoRoot
-  const { candidate, specPath, compressFn } = input
+  const pluginRoot = options.pluginRoot
+  const { candidate, specPath, compressFn, mutationScope } = input
 
   // Guard: workflowId must be non-null (null means no receipt chain exists)
   if (candidate.workflowId === null) {
@@ -257,6 +414,16 @@ export async function prepareDispatch(
 
   // 2. Parse frontmatter
   const specFrontmatter = parseFrontmatter(specText, specPath)
+  if (mutationScope !== undefined) {
+    try {
+      preflightCheck(mutationScope, specFrontmatter.surfaces)
+    } catch (err) {
+      throw new DispatchError(
+        'MUTATION_SCOPE_FAILED',
+        `Mutation scope preflight refused dispatch: ${String(err)}`,
+      )
+    }
+  }
 
   // 3. Read prior (Stage-B) receipt
   if (candidate.priorReceiptLocator === null) {
@@ -266,6 +433,14 @@ export async function prepareDispatch(
     )
   }
   const priorReceiptAbsPath = join(repoRoot, ...candidate.priorReceiptLocator.split('/'))
+  // D1 containment: the locator is caller-supplied and resolved against
+  // repoRoot — an out-of-root candidate is refused before any fs read below.
+  assertContainedRootPath(
+    'prepareDispatch',
+    candidate.priorReceiptLocator,
+    priorReceiptAbsPath,
+    repoRoot,
+  )
   if (!existsSync(priorReceiptAbsPath)) {
     throw new DispatchError(
       'PRIOR_RECEIPT_UNREADABLE',
@@ -317,7 +492,21 @@ export async function prepareDispatch(
     )
   }
 
-  // 5. Routing eval (W2-P3)
+  // 5. Routing eval (W2-P3). MRC-05 (C1.3/C2.3): ONE CorrelationContext per
+  // dispatch run — correlationId INHERITED from the prior stage (W4-P0
+  // discipline, extracted above), sessionId/runId minted fresh per run — is
+  // passed as `input.correlation` on every dispatch so the decision/cache/
+  // attempt events append to the workflowId chain (one chain per parcel, never
+  // fork; the evaluator refuses a mismatched chain key). The declared
+  // schema-v0.4 requirement fields ride along as additive RoutingInput fields
+  // (absent = the pre-existing evaluator behavior; D8 legacy-omission defaults
+  // are applied inside the evaluator).
+  const correlation: CorrelationContext = {
+    correlationId: priorCorrelationId,
+    sessionId: randomUUID() as SessionId,
+    workflowId: workflowId as WorkflowId,
+    runId: randomUUID() as RunId,
+  }
   let routingResult: RoutingResult
   try {
     routingResult = evaluateRouting(
@@ -325,10 +514,29 @@ export async function prepareDispatch(
         routing_class: specFrontmatter.routing_class,
         data_classification: specFrontmatter.data_classification,
         workflowId,
+        correlation,
+        ...(specFrontmatter.inputs !== undefined
+          ? { required_inputs: specFrontmatter.inputs as InputModality[] }
+          : {}),
+        ...(specFrontmatter.thinking_level !== undefined
+          ? { required_thinking_level: specFrontmatter.thinking_level as ThinkingLevelName }
+          : {}),
+        ...(specFrontmatter.min_context !== undefined
+          ? { required_context_tokens: specFrontmatter.min_context }
+          : {}),
+        ...(specFrontmatter.expertise !== undefined
+          ? { expertise: specFrontmatter.expertise as ExpertiseArea }
+          : {}),
       },
-      { repoRoot, pluginRoot: options.pluginRoot },
+      { repoRoot, pluginRoot },
     )
   } catch (err) {
+    // C3.3: the gate's typed failure is preserved through the dispatch caller
+    // (exit criterion 4 — "refuses with a typed error naming the unsatisfiable
+    // predicate"; the named refusals travel in the message).
+    if (err instanceof RoutingError && err.code === 'REQUIREMENTS_UNSATISFIABLE') {
+      throw new DispatchError('REQUIREMENTS_UNSATISFIABLE', err.message)
+    }
     throw new DispatchError('ROUTING_FAILED', `Routing evaluation failed: ${String(err)}`)
   }
 
@@ -337,7 +545,7 @@ export async function prepareDispatch(
   try {
     skillResult = resolveSkills(
       { surfaces: specFrontmatter.surfaces, workflowId },
-      { repoRoot, pluginRoot: options.pluginRoot },
+      { repoRoot, pluginRoot },
     )
   } catch (err) {
     throw new DispatchError('SKILL_RESOLUTION_FAILED', `Skill resolution failed: ${String(err)}`)
@@ -360,12 +568,18 @@ export async function prepareDispatch(
     throw new DispatchError('COMPRESS_FAILED', `Kompress failed: ${String(err)}`)
   }
 
-  // 8. Assemble Step 0 restatement
+  // 8. Assemble Step 0 restatement. C2.4: the resolved thinking level (the
+  // declared `thinking_level:` or the routing-class default — the resolver's
+  // identical computation) is surfaced here and bound in the decision receipt.
+  const resolvedThinkingLevel: ThinkingLevelName =
+    (specFrontmatter.thinking_level as ThinkingLevelName | undefined) ??
+    THINKING_DEFAULT_BY_CLASS[specFrontmatter.routing_class as ClassName]
   const injectedSkillsList = [...skillResult.injectedSkills].join(', ')
   const stepZeroRestatement = [
     `Parcel: ${candidate.ticketKey}`,
     `Workflow ID: ${workflowId}`,
     `Resolved model: ${routingResult.resolvedModelId}`,
+    `Resolved thinking level: ${resolvedThinkingLevel}`,
     `Injected skills: ${injectedSkillsList}`,
     `Kompress artifact ID: ${kompressResult.artifactId}`,
   ].join('\n')
@@ -401,6 +615,7 @@ export async function prepareDispatch(
     order,
     prevHash,
     priorCorrelationId,
+    ...(mutationScope !== undefined ? { mutationScope } : {}),
   }
 }
 
@@ -411,6 +626,9 @@ export async function executeDispatch(
   worktreePath: string,
   options: DispatchOptions,
 ): Promise<ExecuteResult> {
+  // D1 guards run FIRST — before the worktree subprocess call below.
+  assertAbsoluteRoot('executeDispatch', 'repoRoot', options.repoRoot)
+  assertAbsoluteRoot('executeDispatch', 'pluginRoot', options.pluginRoot)
   const repoRoot = options.repoRoot
   const workflowId = pkg.candidate.workflowId as string
 
@@ -437,11 +655,51 @@ export async function executeDispatch(
     )
   }
 
+  if (pkg.mutationScope !== undefined) {
+    if (worktreeResult.changedPaths === undefined) {
+      throw new DispatchError(
+        'MUTATION_SCOPE_FAILED',
+        'Mutation scope enforcement requires the worktree adapter to report changedPaths',
+      )
+    }
+    try {
+      postHocCheck(pkg.mutationScope, worktreeResult.changedPaths)
+    } catch (err) {
+      throw new DispatchError(
+        'MUTATION_SCOPE_FAILED',
+        `Mutation scope post-hoc check refused changes: ${String(err)}`,
+      )
+    }
+  }
+
   // Stage-C receipt assembly — wrapped so receiptPath / canonicalize / sha256Hex
   // RangeError throws surface as RECEIPT_WRITE_FAILED (Lesson #22).
   let receiptLocator: string
   try {
-    const locator = receiptPath(workflowId, 2, 'C', 'DispatchOrder')
+    // C1 INVARIANT (RCM-05) — one chain per parcel, keyed by
+    // correlation.workflowId/correlationId (checkSharedCorrelation; a fork
+    // refuses at the evaluator's CORRELATION_MISMATCH gate). The Stage-C
+    // DispatchOrder receipt and the routing event entries COEXIST on that
+    // chain with sequence values exactly 0..M-1, contiguous, no gaps and no
+    // duplicate sequences (checkSequenceContiguity), each entry's prevHash
+    // pointing at its immediate predecessor's hash (checkPrevHashPointers) —
+    // every chain produced here is validateChain-valid, and the DispatchOrder
+    // is always the tip entry at its write time.
+    //
+    // The slot is derived from the chain tip AT WRITE TIME (the Stage-E
+    // emitter's rule: `sequence` is tip.sequence + 1; `prevHash` is tip.hash)
+    // through the evaluator's own readChainState — never a literal slot, never
+    // the prepare-time Stage-B read alone. At the legacy tip (no entries
+    // landed after Stage-B) the tip IS Stage-B, so the derived values are
+    // exactly 2 and the Stage-B hash — byte-identical to the historical
+    // `000002-C-dispatch-order.json` outcome, preserved by construction, not
+    // by special case. A reserved-but-later-filled slot is rejected by design
+    // (it would introduce a gap whenever events land in between — contiguity
+    // has no gaps by construction).
+    const chainState = readChainState(join(repoRoot, 'docs', 'receipts', workflowId))
+    const sequence = chainState.nextSequence
+    const tipPrevHash = chainState.prevHash
+    const locator = receiptPath(workflowId, sequence, 'C', 'DispatchOrder')
 
     const draft = {
       schemaVersion: '1',
@@ -457,8 +715,8 @@ export async function executeDispatch(
         workflowId: workflowId as WorkflowId,
         runId: randomUUID() as RunId,
       },
-      sequence: 2,
-      prevHash: pkg.prevHash,
+      sequence,
+      prevHash: tipPrevHash,
       timestamp: new Date().toISOString(),
       subjectKind: 'DispatchOrder',
       subject: {

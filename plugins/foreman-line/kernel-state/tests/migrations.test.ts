@@ -25,7 +25,13 @@ import {
   openStorage,
   openStorageWithDriver,
 } from '../src/open.js'
-import { getGoal, getRecordedResult, insertGoal, insertTransition } from '../src/rows.js'
+import {
+  getGoal,
+  getRecordedResult,
+  insertEvent,
+  insertGoal,
+  insertTransition,
+} from '../src/rows.js'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const PKG_ROOT = resolve(HERE, '..')
@@ -34,6 +40,10 @@ const PACKAGED_0002 = readFileSync(join(PKG_ROOT, 'migrations', '0002-goal-statu
 const PACKAGED_0003 = readFileSync(
   join(PKG_ROOT, 'migrations', '0003-transitions-status-checks.sql'),
 )
+const PACKAGED_0004 = readFileSync(
+  join(PKG_ROOT, 'migrations', '0004-idempotency-recorded-result.sql'),
+)
+const PACKAGED_0005 = readFileSync(join(PKG_ROOT, 'migrations', '0005-events-kind-checks.sql'))
 
 interface MigrationRecord {
   id: string
@@ -369,7 +379,7 @@ test('POS-01: fresh create migrates to head', () => {
   }[]
   assert.deepEqual(
     versions.map((row) => row.version),
-    [1, 2, 3, 4],
+    [1, 2, 3, 4, 5],
   )
   closeStorage(storage)
   rmSync(root, { recursive: true, force: true })
@@ -385,7 +395,7 @@ test('POS-02: reopen at head lands at head', () => {
   const applied = second.driver.prepare('SELECT count(*) AS c FROM schema_migrations').get() as {
     c: number
   }
-  assert.equal(applied.c, 4)
+  assert.equal(applied.c, 5)
   closeStorage(second)
   rmSync(root, { recursive: true, force: true })
 })
@@ -476,7 +486,7 @@ test('A1: prior-schema databases migrate forward transactionally', () => {
   }[]
   assert.deepEqual(
     versions.map((row) => row.version),
-    [1, 2, 3, 4],
+    [1, 2, 3, 4, 5],
   )
   const kept = head.driver
     .prepare("SELECT status, revision FROM goals WHERE goal_id = 'goal-keep'")
@@ -654,7 +664,7 @@ test('A1b: prior-schema (v2) databases migrate forward transactionally to v3', (
   }[]
   assert.deepEqual(
     versions.map((row) => row.version),
-    [1, 2, 3, 4],
+    [1, 2, 3, 4, 5],
   )
   const kept = head.driver
     .prepare("SELECT status FROM transitions WHERE transition_id = 'tr-keep'")
@@ -791,7 +801,7 @@ test('A1d: prior-schema (v3) databases migrate forward transactionally to v4', (
   }[]
   assert.deepEqual(
     versions.map((row) => row.version),
-    [1, 2, 3, 4],
+    [1, 2, 3, 4, 5],
   )
   const stored = getRecordedResult(head, {
     principalRef: 'principal-1',
@@ -803,6 +813,120 @@ test('A1d: prior-schema (v3) databases migrate forward transactionally to v4', (
   closeStorage(head)
   rmSync(root, { recursive: true, force: true })
   rmSync(setThree, { recursive: true, force: true })
+})
+
+test('A1e: prior-schema (v4) databases migrate forward transactionally to v5', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fkp9-a1efwd-'))
+  const setFour = mkdtempSync(join(tmpdir(), 'fkp9-a1efwds-'))
+  // Genuine prior-schema (version 4) database: packaged 0001..0004 under
+  // their packaged names and bytes.
+  writeSet(setFour, [
+    { name: '0001-initial.sql', sql: PACKAGED_0001 },
+    { name: '0002-goal-status-checks.sql', sql: PACKAGED_0002 },
+    { name: '0003-transitions-status-checks.sql', sql: PACKAGED_0003 },
+    { name: '0004-idempotency-recorded-result.sql', sql: PACKAGED_0004 },
+  ])
+  const fourth = openStorageWithDriver(configFor(root), undefined, { migrationDir: setFour })
+  fourth.driver
+    .prepare(
+      "INSERT INTO goals (goal_id, revision, status, pending_transition_id, updated_at_micros) VALUES ('goal-1', 0, 'active', NULL, 1)",
+    )
+    .run()
+  fourth.driver
+    .prepare(
+      "INSERT INTO events (event_id, goal_id, kind, payload, payload_digest, principal_ref, operation_id, recorded_at_micros) VALUES ('evt-keep', 'goal-1', 'lease.claimed', '{}', 'sha256:" +
+        'a'.repeat(64) +
+        "', 'principal-1', 'op-1', 5)",
+    )
+    .run()
+  fourth.driver
+    .prepare(
+      "INSERT INTO projection_cursors (projection_id, goal_id, last_applied_event_seq, updated_at_micros) VALUES ('md-goal-ledger', NULL, 1, 5)",
+    )
+    .run()
+  closeStorage(fourth)
+  const head = openStorage(configFor(root))
+  const versions = head.driver
+    .prepare('SELECT version FROM schema_migrations ORDER BY version')
+    .all() as {
+    version: number
+  }[]
+  assert.deepEqual(
+    versions.map((row) => row.version),
+    [1, 2, 3, 4, 5],
+  )
+  const kept = head.driver.prepare("SELECT kind FROM events WHERE event_id = 'evt-keep'").get() as {
+    kind: string
+  }
+  assert.equal(kept.kind, 'lease.claimed')
+  // The A1e CHECKs are live at v5.
+  assert.throws(
+    () =>
+      insertEvent(head, {
+        eventId: 'evt-bad',
+        goalId: 'goal-1',
+        kind: 'created',
+        payload: '{}',
+        payloadDigest: `sha256:${'a'.repeat(64)}`,
+        principalRef: 'principal-1',
+        operationId: 'op-2',
+        recordedAtMicros: 6,
+      }),
+    (error: unknown) => {
+      assert.ok(error instanceof StorageError)
+      assert.equal(error.code, 'STORAGE_CONSTRAINT_VIOLATION')
+      return true
+    },
+  )
+  closeStorage(head)
+  rmSync(root, { recursive: true, force: true })
+  rmSync(setFour, { recursive: true, force: true })
+})
+
+test('A1e: out-of-vocab legacy event rows refuse the 0005 migration fail-closed', () => {
+  const root = mkdtempSync(join(tmpdir(), 'fkp9-a1elegacy-'))
+  const setFour = mkdtempSync(join(tmpdir(), 'fkp9-a1elegacys-'))
+  writeSet(setFour, [
+    { name: '0001-initial.sql', sql: PACKAGED_0001 },
+    { name: '0002-goal-status-checks.sql', sql: PACKAGED_0002 },
+    { name: '0003-transitions-status-checks.sql', sql: PACKAGED_0003 },
+    { name: '0004-idempotency-recorded-result.sql', sql: PACKAGED_0004 },
+  ])
+  const fourth = openStorageWithDriver(configFor(root), undefined, { migrationDir: setFour })
+  fourth.driver
+    .prepare(
+      "INSERT INTO goals (goal_id, revision, status, pending_transition_id, updated_at_micros) VALUES ('goal-1', 0, 'active', NULL, 1)",
+    )
+    .run()
+  // Legacy out-of-vocab kind (pre-T8-class shape), valid at v4.
+  fourth.driver
+    .prepare(
+      "INSERT INTO events (event_id, goal_id, kind, payload, payload_digest, principal_ref, operation_id, recorded_at_micros) VALUES ('evt-legacy', 'goal-1', 'created', '{}', 'sha256:" +
+        'a'.repeat(64) +
+        "', 'principal-1', 'op-1', 5)",
+    )
+    .run()
+  closeStorage(fourth)
+  // Kind-vocabulary mapping is FK-P11/owner semantics, not FK-P9's: the
+  // migration refuses rather than silently rewriting event kinds.
+  const error = expectCode(() => openStorage(configFor(root)), 'STORAGE_MIGRATION_FAILED')
+  assert.equal(error.diagnostic.version, 5)
+  // Fail-closed: the database remains at version 4 with its row intact.
+  const inspect = openStorageWithDriver(configFor(root), undefined, { migrationDir: setFour })
+  const versions = inspect.driver.prepare('SELECT version FROM schema_migrations').all() as {
+    version: number
+  }[]
+  assert.deepEqual(
+    versions.map((row) => row.version),
+    [1, 2, 3, 4],
+  )
+  const kept = inspect.driver
+    .prepare("SELECT kind FROM events WHERE event_id = 'evt-legacy'")
+    .get() as { kind: string }
+  assert.equal(kept.kind, 'created')
+  closeStorage(inspect)
+  rmSync(root, { recursive: true, force: true })
+  rmSync(setFour, { recursive: true, force: true })
 })
 
 test('migration digests are file-bytes digests and drift when bytes change', () => {

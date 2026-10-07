@@ -6,6 +6,7 @@
  */
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
+import { assertContainedPath } from '../../projection/src/index.js'
 import type { ReceiptDocument } from '../../receipts/src/index.js'
 import { DEFAULT_REPO_ROOT } from './paths.js'
 
@@ -15,6 +16,9 @@ export function writeReceiptDocument(
   repoRoot: string = DEFAULT_REPO_ROOT,
 ): string {
   const absPath = join(repoRoot, ...locator.split('/'))
+  // Path containment (D1): the locator-resolved path must stay beneath
+  // repoRoot — refused before any directory creation or write.
+  assertContainedPath(repoRoot, absPath, locator)
   mkdirSync(dirname(absPath), { recursive: true })
   writeFileSync(absPath, `${JSON.stringify(document, null, 2)}\n`, 'utf8')
   return absPath

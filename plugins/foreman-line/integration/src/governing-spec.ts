@@ -18,7 +18,7 @@ import {
   maxRisk,
   type RiskLevel,
 } from './audit-trigger.js'
-import { IntegrationError } from './errors.js'
+import { assertAbsoluteRoot, IntegrationError } from './errors.js'
 
 /** A `status:'active'` spec descriptor as consumed by the resolver. */
 export interface ActiveSpecDescriptor {
@@ -124,7 +124,10 @@ export function evaluateChangeSet(
 // ── Injected active-spec loader seam (default = real disk read) ─────────────
 
 /** Injected seam: load `status:'active'` spec descriptors from a repo root. */
-export type LoadActiveSpecsFn = (repoRoot: string) => readonly ActiveSpecDescriptor[]
+export type LoadActiveSpecsFn = (
+  repoRoot: string,
+  pluginRoot: string,
+) => readonly ActiveSpecDescriptor[]
 
 /** Repo-relative directory holding the live spec contracts (PR4-6). */
 const ACTIVE_SPECS_DIR = join('plugins', 'foreman-line', 'docs', 'specs', 'active')
@@ -184,8 +187,11 @@ function parseFrontmatter(
  * Real loader (default): reads `active/*.md` and returns only validated active
  * descriptors. Directory, file and YAML boundaries are wrapped per lesson #22.
  */
-export const loadActiveSpecsLive: LoadActiveSpecsFn = (repoRoot) => {
-  const dir = join(repoRoot, ACTIVE_SPECS_DIR)
+export const loadActiveSpecsLive: LoadActiveSpecsFn = (repoRoot, pluginRoot) => {
+  // Root refusals (P2b-i / D19) first, before any fs/subprocess/path use.
+  assertAbsoluteRoot(repoRoot, 'loadActiveSpecsLive repoRoot')
+  assertAbsoluteRoot(pluginRoot, 'loadActiveSpecsLive pluginRoot')
+  const dir = join(pluginRoot, 'docs', 'specs', 'active')
   let files: string[]
   try {
     // Sort for a stable, deterministic descriptor order (RA-2/RB-3).

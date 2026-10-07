@@ -37,7 +37,7 @@ import { canonicalize, sha256Hex, writeReceiptDocument } from '../../approval/sr
 import type { ClosureRecord, CorrelationContext } from '../../contracts/src/index.js'
 import type { ReceiptDocument } from '../../receipts/src/index.js'
 import { receiptPath, validateReceiptDocument } from '../../receipts/src/index.js'
-import { IntegrationError } from './errors.js'
+import { assertAbsoluteRoot, IntegrationError } from './errors.js'
 import type { WriteReceiptFn } from './receipt.js'
 
 /** The half-closed claim receipt's `claimRef` and `subjectKind` (spec Design). */
@@ -214,6 +214,9 @@ function buildAndWriteFReceipt(args: {
  * Correlation is inherited from the tip (fresh `sessionId`/`runId` only).
  */
 export function emitClosureReceipt(args: EmitClosureReceiptArgs): ReceiptDocument {
+  // Root refusal (P2b-i / D19) first — the injected writeFn must never see a
+  // relative root (this guard cannot live only in the delegated builder).
+  assertAbsoluteRoot(args.repoRoot, 'emitClosureReceipt repoRoot')
   return buildAndWriteFReceipt({
     kind: 'stage',
     claimRef: null,
@@ -237,6 +240,9 @@ export function emitHalfClosedClosureReceipt(args: {
   readonly repoRoot: string
   readonly writeFn?: WriteReceiptFn
 }): BuiltFReceipt {
+  // Root refusal (P2b-i / D19) first — the injected writeFn must never see a
+  // relative root (this guard cannot live only in the delegated builder).
+  assertAbsoluteRoot(args.repoRoot, 'emitHalfClosedClosureReceipt repoRoot')
   return buildAndWriteFReceipt({
     kind: 'claim',
     claimRef: HALF_CLOSED_CLAIM_REF,

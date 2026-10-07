@@ -1,7 +1,7 @@
 ---
 ticket: FK-P10
 title: Foreman Kernel - lease and transition engine
-status: draft
+status: done
 owner: clinton.morgan
 created: 2026-09-28
 updated: 2026-09-28
@@ -603,7 +603,7 @@ exit annex — record propagation is coordinator-owned); other goals' records.
     re-derives FK-P1's golden fixture digests byte-exactly in
     `tests/canonical-conformance.test.ts` (read-only input; `kernel-contracts/**`
     byte-unchanged pre/post).
-11. **Closed error registry:** 22 codes (T9) with one tested refusal per code; safe
+11. **Closed error registry:** 23 codes (T9) with one tested refusal per code; safe
     diagnostics carry only the declared shapes (no host path, row content, driver
     text, credential — fault injection per code); wrapped substrate errors carry the
     FK-P9 `StorageErrorCode` literal only.

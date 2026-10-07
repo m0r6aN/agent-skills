@@ -225,6 +225,27 @@ P3 remains pending merge, local refresh, and human Gate 3 acceptance. No P4/P5
 dispatch, live call, spend, routing, host/Pi, parent, HAWF, Helmholtz, or
 downstream action is authorized by this record.
 
+## JEV-P3 merge reconciliation and JEV-P4/P5 gate record
+
+**RECONCILED 2026-09-26:** PR #44 is **MERGED 2026-09-22** (recorded in
+`docs/goals/goal-status-report-2026-09-26.md` §1 row 9 and the goal index
+state `jev_p3_pr44_merged`). The dispatch record above is retained verbatim as
+history; the open-PR language there reflects 2026-09-22 pre-merge state only.
+
+**GATE DECISION — coordinator decision 2026-09-26 under owner blanket
+authority:** The owner granted the coordinating session blanket authority on
+2026-09-26 to decide gate questions. Under that authority the coordinating
+session decides the strict-sequence predecessor question as follows: the
+merged JEV-P3 handoff (the `support-triage-advisory-v1` consumer on PR #44's
+merged state) is the accepted predecessor for JEV-P4/JEV-P5 dispatch under the
+already-granted Gate 2 strict-sequence parcel set. Rationale: the merge is an
+established recorded fact; the strict-sequence rule exists to prevent
+out-of-order dispatch, and the coordinating session is authorized to resolve
+that gate; no human approval is claimed beyond the blanket authority itself.
+This decision does not authorize any live provider call, spend, credentials in
+evidence, parent-surface mutation, host/Pi action, HAWF/Helmholtz action, or
+general routing; those limits are unchanged.
+
 ## Plan-review Gate 1 reopening
 
 The mandatory fresh plan-level review on 2026-09-21 returned **REQUEST CHANGES**.

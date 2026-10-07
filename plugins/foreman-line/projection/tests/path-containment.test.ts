@@ -119,3 +119,20 @@ test('Item 1b: projectShapingResult propagates the traversal-specRef rejection e
     /resolves outside repoRoot/,
   )
 })
+
+// --- writeProjectedArtifact (specsDir containment, D1) ---
+
+test('D1: writeProjectedArtifact refuses a specsDir that resolves outside repoRoot before any write', () => {
+  const root = makeTempRepoRoot()
+  assert.throws(
+    () =>
+      writeProjectedArtifact(
+        'escape',
+        { parcelSpecRefs: [], epics: [] },
+        { repoRoot: root, specsDir: '../../foreman-escape-probe' },
+      ),
+    /resolves outside repoRoot/,
+  )
+  // No stray dir escaped the temp root as a side effect of the refused call.
+  assert.equal(existsSync(join(root, '..', '..', 'foreman-escape-probe')), false)
+})

@@ -1,0 +1,7 @@
+{
+  "command": "npx tsx src/cli.ts validate authority-enforcement-registry.yaml",
+  "startUtc": "2026-09-07T17:09:00.5167760Z",
+  "endUtc": "2026-09-07T17:09:03.2375993Z",
+  "elapsedSeconds": 2.7431175,
+  "directExit": 0
+}

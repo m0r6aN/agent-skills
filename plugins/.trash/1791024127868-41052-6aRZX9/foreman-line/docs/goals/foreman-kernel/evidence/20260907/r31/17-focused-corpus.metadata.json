@@ -1,0 +1,7 @@
+{
+  "command": "npx tsx --test --test-reporter=tap --test-concurrency=1 --test-name-pattern=R31|R30|standing-inventory|R5-numbered|R12-standing|R9-fenced tests/corpus-sweep.test.ts",
+  "startUtc": "2026-09-07T17:15:04.4343602Z",
+  "endUtc": "2026-09-07T17:17:31.5931792Z",
+  "elapsedSeconds": 147.1614688,
+  "directExit": 1
+}

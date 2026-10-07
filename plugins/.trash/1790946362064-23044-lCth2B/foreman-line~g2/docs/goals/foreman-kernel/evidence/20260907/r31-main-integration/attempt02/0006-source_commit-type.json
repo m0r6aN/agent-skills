@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "C:\\Program Files\\Git\\cmd\\git.EXE",
+    "--git-dir=C:\\Users\\clint\\AppData\\Local\\Temp\\fk-remote-verify-20260907.git",
+    "cat-file",
+    "-t",
+    "8d500704c9e3d6d8b652bbe838aa3623f88203fc"
+  ],
+  "cwd": null,
+  "ended_utc": "2026-09-07T18:52:35.122627+00:00",
+  "exit": 0,
+  "pid": 480112,
+  "seconds": 0.04550210002344102,
+  "started_utc": "2026-09-07T18:52:35.077111+00:00",
+  "stderr": "0006-source_commit-type.stderr",
+  "stdout": "0006-source_commit-type.stdout"
+}

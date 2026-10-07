@@ -1,0 +1,11 @@
+{
+  "utc": "2026-09-07T18:48:25.357556+00:00",
+  "head": "1747c1df7dfa4677d345390ac673c3d15c82b980",
+  "candidateClean": true,
+  "all159WorkingHashesMatch": true,
+  "packageDiffFromTestedCommit": "",
+  "reviewSha256": "695d19aaa753582578693705bdd12fb141fc97e423b47a2b7a5b883d45aed0cb",
+  "reviewerWroteOnlyDedicatedDirectory": true,
+  "reviewerCommits": 0,
+  "nodeWindowReleased": true
+}

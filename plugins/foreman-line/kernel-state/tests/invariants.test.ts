@@ -26,6 +26,7 @@ import {
   insertTransition,
   insertWakeupHandoff,
   recordCompletedBinding,
+  setProjectionCursor,
   updateGoalRow,
   updateLeaseRow,
 } from '../src/rows.js'
@@ -59,7 +60,7 @@ function seedGoalAndEvent(storage: Storage): void {
   insertEvent(storage, {
     eventId: 'evt-1',
     goalId: 'goal-1',
-    kind: 'created',
+    kind: 'transition.requested',
     payload: '{}',
     payloadDigest: `sha256:${'a'.repeat(64)}`,
     principalRef: 'principal-1',
@@ -135,7 +136,7 @@ test('INV-01: event with unknown goal_id refuses (foreign-key)', () => {
         insertEvent(storage, {
           eventId: 'evt-x',
           goalId: 'goal-unknown',
-          kind: 'created',
+          kind: 'transition.requested',
           payload: '{}',
           payloadDigest: `sha256:${'a'.repeat(64)}`,
           principalRef: 'principal-1',
@@ -153,7 +154,10 @@ test('INV-02: UPDATE on events refuses (append-only)', () => {
   withStorage((storage) => {
     seedGoalAndEvent(storage)
     expectConstraint(
-      () => withTransaction(storage, (s) => s.driver.prepare("UPDATE events SET kind = 'x'").run()),
+      () =>
+        withTransaction(storage, (s) =>
+          s.driver.prepare("UPDATE events SET kind = 'transition.applied'").run(),
+        ),
       expected.reasonCode,
     )
   })
@@ -180,7 +184,7 @@ test('INV-04: INSERT OR REPLACE / upsert on events refuses (append-only)', () =>
           s.driver
             .prepare(
               `INSERT OR REPLACE INTO events (event_id, goal_id, kind, payload, payload_digest, principal_ref, operation_id, recorded_at_micros)
-               VALUES ('evt-1', 'goal-1', 'x', '{}', '${`sha256:${'b'.repeat(64)}`}', 'principal-1', 'op-2', ${T0})`,
+               VALUES ('evt-1', 'goal-1', 'transition.requested', '{}', '${`sha256:${'b'.repeat(64)}`}', 'principal-1', 'op-2', ${T0})`,
             )
             .run(),
         ),
@@ -192,8 +196,8 @@ test('INV-04: INSERT OR REPLACE / upsert on events refuses (append-only)', () =>
           s.driver
             .prepare(
               `INSERT INTO events (event_id, goal_id, kind, payload, payload_digest, principal_ref, operation_id, recorded_at_micros)
-               VALUES ('evt-1', 'goal-1', 'x', '{}', '${`sha256:${'b'.repeat(64)}`}', 'principal-1', 'op-2', ${T0})
-               ON CONFLICT(event_id) DO UPDATE SET kind = 'x'`,
+               VALUES ('evt-1', 'goal-1', 'transition.requested', '{}', '${`sha256:${'b'.repeat(64)}`}', 'principal-1', 'op-2', ${T0})
+               ON CONFLICT(event_id) DO UPDATE SET kind = 'transition.applied'`,
             )
             .run(),
         ),
@@ -305,7 +309,7 @@ test('payload byte cap is a protocol error, never truncation', () => {
     insertEvent(storage, {
       eventId: 'evt-limit',
       goalId: 'goal-1',
-      kind: 'created',
+      kind: 'transition.requested',
       payload: atLimit,
       payloadDigest: `sha256:${'a'.repeat(64)}`,
       principalRef: 'principal-1',
@@ -317,7 +321,7 @@ test('payload byte cap is a protocol error, never truncation', () => {
         insertEvent(storage, {
           eventId: 'evt-over',
           goalId: 'goal-1',
-          kind: 'created',
+          kind: 'transition.requested',
           payload: `${atLimit}x`,
           payloadDigest: `sha256:${'a'.repeat(64)}`,
           principalRef: 'principal-1',
@@ -701,6 +705,121 @@ test('A1d: APPLIED and NOOP completions both store their result (unified invaria
   })
 })
 
+test('A1e: events.kind CHECK refuses out-of-vocab kinds as a typed constraint violation', () => {
+  withStorage((storage) => {
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
+    // The pre-A1e seed shape is out of the T8 vocabulary: refuse with CHECK.
+    assert.throws(
+      () =>
+        insertEvent(storage, {
+          eventId: 'evt-bad',
+          goalId: 'goal-1',
+          kind: 'created',
+          payload: '{}',
+          payloadDigest: `sha256:${'a'.repeat(64)}`,
+          principalRef: 'principal-1',
+          operationId: 'op-1',
+          recordedAtMicros: T0,
+        }),
+      (error: unknown) => {
+        assert.ok(error instanceof StorageError)
+        assert.equal(error.code, 'STORAGE_CONSTRAINT_VIOLATION')
+        assert.equal(error.diagnostic.reasonCode, 'check')
+        return true
+      },
+    )
+    // Failing-when-broken: a vocab kind inserts cleanly (the CHECK refuses).
+    insertEvent(storage, {
+      eventId: 'evt-ok',
+      goalId: 'goal-1',
+      kind: 'transition.requested',
+      payload: '{}',
+      payloadDigest: `sha256:${'a'.repeat(64)}`,
+      principalRef: 'principal-1',
+      operationId: 'op-1',
+      recordedAtMicros: T0,
+    })
+  })
+})
+
+test('A1e: the events.kind vocabulary is exactly enforced (default-deny)', () => {
+  withStorage((storage) => {
+    insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
+    const kinds = [
+      'lease.claimed',
+      'lease.takeover',
+      'lease.renewed',
+      'lease.released',
+      'transition.requested',
+      'transition.applied',
+      'transition.rejected',
+      'import.recorded',
+      'import.epoch',
+    ]
+    for (const kind of kinds) {
+      insertEvent(storage, {
+        eventId: `evt-${kind}`,
+        goalId: 'goal-1',
+        kind,
+        payload: '{}',
+        payloadDigest: `sha256:${'a'.repeat(64)}`,
+        principalRef: 'principal-1',
+        operationId: `op-${kind}`,
+        recordedAtMicros: T0,
+      })
+    }
+    assert.throws(
+      () =>
+        insertEvent(storage, {
+          eventId: 'evt-legacy',
+          goalId: 'goal-1',
+          kind: 'goal.state-changed',
+          payload: '{}',
+          payloadDigest: `sha256:${'a'.repeat(64)}`,
+          principalRef: 'principal-1',
+          operationId: 'op-legacy',
+          recordedAtMicros: T0,
+        }),
+      (error: unknown) => {
+        assert.ok(error instanceof StorageError)
+        assert.equal(error.code, 'STORAGE_CONSTRAINT_VIOLATION')
+        return true
+      },
+    )
+  })
+})
+
+test('A1e: projection_cursors registry refuses unregistered cursor ids', () => {
+  withStorage((storage) => {
+    // The registered closed set: goal-state (FK-P10 RESERVED) + the two
+    // FK-P11 ids reserved by this amendment. Registered ids write cleanly.
+    for (const projectionId of ['goal-state', 'md-goals-index', 'md-goal-ledger']) {
+      setProjectionCursor(storage, {
+        projectionId,
+        goalId: null,
+        lastAppliedEventSeq: 1,
+        updatedAtMicros: T0,
+      })
+    }
+    // A silent namespace grab refuses at the DB (OQ-4: never a silent grab).
+    assert.throws(
+      () =>
+        setProjectionCursor(storage, {
+          projectionId: 'proj-future',
+          goalId: null,
+          lastAppliedEventSeq: 1,
+          updatedAtMicros: T0,
+        }),
+      (error: unknown) => {
+        assert.ok(error instanceof StorageError)
+        assert.equal(error.code, 'STORAGE_CONSTRAINT_VIOLATION')
+        assert.equal(error.diagnostic.reasonCode, 'check')
+        return true
+      },
+    )
+  })
+})
+
 test('a throwing transaction body rolls back every write', () => {
   withStorage((storage) => {
     insertGoal(storage, { goalId: 'goal-1', revision: 0, status: 'active', updatedAtMicros: T0 })
@@ -709,7 +828,7 @@ test('a throwing transaction body rolls back every write', () => {
         insertEvent(inner, {
           eventId: 'evt-rollback',
           goalId: 'goal-1',
-          kind: 'created',
+          kind: 'transition.requested',
           payload: '{}',
           payloadDigest: `sha256:${'a'.repeat(64)}`,
           principalRef: 'principal-1',

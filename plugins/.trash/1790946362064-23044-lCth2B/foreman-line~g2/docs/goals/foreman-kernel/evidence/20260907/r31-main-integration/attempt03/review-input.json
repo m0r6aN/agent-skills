@@ -1,0 +1,2838 @@
+{
+  "authorizedUtc": "2026-09-07T18:49:52.122401+00:00",
+  "coordinatorDisposition": {
+    "path": "plugins/foreman-line/docs/goals/foreman-kernel/R31-coordinator-disposition-20260907.md",
+    "sha256": "7c666b85b13304f2a3080b83e0016f639347a14ce715bffbb495c0e7158b48c7"
+  },
+  "dependencies": [
+    {
+      "destination": "plugins/foreman-line/authority-registry/node_modules",
+      "file_count": 1535,
+      "source": "D:\\Repos\\agent-skills-worktrees\\fk-p0-r31-source-adoption-20260907\\plugins\\foreman-line\\authority-registry\\node_modules",
+      "tree_sha256": "15a8448177c0981fd131cb2441c7a43fbad5a6e3e5074020d34af28dae240e7f"
+    }
+  ],
+  "exclusions": [
+    {
+      "after": [
+        "100644",
+        "b39fca2dc08f86faddb3e2c3fcf9182b88c55d92"
+      ],
+      "before": [
+        "100644",
+        "f901f1b485f4103d6b5f57f603a4704e95492c9b"
+      ],
+      "category": "marketplace-or-unrelated-plugin",
+      "mergebase": [
+        "100644",
+        "f901f1b485f4103d6b5f57f603a4704e95492c9b"
+      ],
+      "path": ".claude-plugin/marketplace.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. Fixture invokes explicit local Node/tsx/CLI paths, not marketplace or plugin discovery. This metadata/document is neither an imported module nor executed install configuration; no install-resolution claim is made."
+    },
+    {
+      "after": [
+        "100644",
+        "b2661793a4775d80f7e321d1d40a951423b52575"
+      ],
+      "before": null,
+      "category": "ci-or-orchestration",
+      "mergebase": null,
+      "path": ".github/workflows/foreman-line-ci.yml",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. Fixture runs explicit CLI and generator commands, not GitHub Actions or the repository CI orchestrator. This workflow/script and its tests are not executed; their integration is outside the verdict."
+    },
+    {
+      "after": [
+        "100644",
+        "be8178a96429d284f010bbcae29166b8a9180ebb"
+      ],
+      "before": null,
+      "category": "other-goal-receipt",
+      "mergebase": null,
+      "path": "docs/receipts/a5b1975a-7497-4200-bac2-5d8a6fd6c749/000000-A-shaping-result.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. Historical pipeline receipt capture is not a current registry retirement-evidence path or imported module. Fixture does not walk these receipt chains or consume their authorization claims."
+    },
+    {
+      "after": [
+        "100644",
+        "dfa9c2e85f213c7bba0ef195e24b731a18460be8"
+      ],
+      "before": null,
+      "category": "other-goal-receipt",
+      "mergebase": null,
+      "path": "docs/receipts/a5b1975a-7497-4200-bac2-5d8a6fd6c749/000001-B-registration-result.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. Historical pipeline receipt capture is not a current registry retirement-evidence path or imported module. Fixture does not walk these receipt chains or consume their authorization claims."
+    },
+    {
+      "after": [
+        "100644",
+        "526b3f332a4fb08aaceff653062c56143fbd446c"
+      ],
+      "before": null,
+      "category": "other-goal-receipt",
+      "mergebase": null,
+      "path": "docs/receipts/a5b1975a-7497-4200-bac2-5d8a6fd6c749/000002-C-dispatch-order.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. Historical pipeline receipt capture is not a current registry retirement-evidence path or imported module. Fixture does not walk these receipt chains or consume their authorization claims."
+    },
+    {
+      "after": [
+        "100644",
+        "a8ad0b9565db0a085b55b401ff25712463140d27"
+      ],
+      "before": null,
+      "category": "other-goal-receipt",
+      "mergebase": null,
+      "path": "docs/receipts/a5b1975a-7497-4200-bac2-5d8a6fd6c749/000003-D-verification-verdict.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. Historical pipeline receipt capture is not a current registry retirement-evidence path or imported module. Fixture does not walk these receipt chains or consume their authorization claims."
+    },
+    {
+      "after": [
+        "100644",
+        "aea9fd2373c50d4282e13b4888b7cf05fa0b3849"
+      ],
+      "before": null,
+      "category": "other-goal-receipt",
+      "mergebase": null,
+      "path": "docs/receipts/a5b1975a-7497-4200-bac2-5d8a6fd6c749/000004-E-integration-result.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. Historical pipeline receipt capture is not a current registry retirement-evidence path or imported module. Fixture does not walk these receipt chains or consume their authorization claims."
+    },
+    {
+      "after": [
+        "100644",
+        "f58f172df90dace2dea59048a901859307d0148b"
+      ],
+      "before": null,
+      "category": "other-goal-receipt",
+      "mergebase": null,
+      "path": "docs/receipts/a5b1975a-7497-4200-bac2-5d8a6fd6c749/000005-F-closure-record.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. Historical pipeline receipt capture is not a current registry retirement-evidence path or imported module. Fixture does not walk these receipt chains or consume their authorization claims."
+    },
+    {
+      "after": [
+        "100644",
+        "fc10a4f65dcec033879ad1158a689dc6c7968cbe"
+      ],
+      "before": null,
+      "category": "other-goal-receipt",
+      "mergebase": null,
+      "path": "docs/receipts/a5b1975a-7497-4200-bac2-5d8a6fd6c749/kompress.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. Historical pipeline receipt capture is not a current registry retirement-evidence path or imported module. Fixture does not walk these receipt chains or consume their authorization claims."
+    },
+    {
+      "after": [
+        "100644",
+        "a235299de8790c0f3bb79444ca9d0605b234346f"
+      ],
+      "before": null,
+      "category": "other-goal-receipt",
+      "mergebase": null,
+      "path": "docs/receipts/a5b1975a-7497-4200-bac2-5d8a6fd6c749/routing-decision.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. Historical pipeline receipt capture is not a current registry retirement-evidence path or imported module. Fixture does not walk these receipt chains or consume their authorization claims."
+    },
+    {
+      "after": [
+        "100644",
+        "092828b67b278d1b058dc669a455e2f409b73f25"
+      ],
+      "before": null,
+      "category": "other-goal-receipt",
+      "mergebase": null,
+      "path": "docs/receipts/a5b1975a-7497-4200-bac2-5d8a6fd6c749/skill-injection.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. Historical pipeline receipt capture is not a current registry retirement-evidence path or imported module. Fixture does not walk these receipt chains or consume their authorization claims."
+    },
+    {
+      "after": [
+        "100644",
+        "e1d6b9626e54eac69a35afd68bec317963465c6e"
+      ],
+      "before": [
+        "100644",
+        "4db3e78a678ceee1367dc88f72bdaec8e8be4568"
+      ],
+      "category": "marketplace-or-unrelated-plugin",
+      "mergebase": [
+        "100644",
+        "4db3e78a678ceee1367dc88f72bdaec8e8be4568"
+      ],
+      "path": "plugins/audit-suite/audit-suite/.claude-plugin/plugin.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. Fixture invokes explicit local Node/tsx/CLI paths, not marketplace or plugin discovery. This metadata/document is neither an imported module nor executed install configuration; no install-resolution claim is made."
+    },
+    {
+      "after": [
+        "100644",
+        "95e207dc9bc8041d3a5049a273c4503404423950"
+      ],
+      "before": [
+        "100644",
+        "2b53eb3bfce2feac1850aeccf61b1614dc58b674"
+      ],
+      "category": "marketplace-or-unrelated-plugin",
+      "mergebase": [
+        "100644",
+        "2b53eb3bfce2feac1850aeccf61b1614dc58b674"
+      ],
+      "path": "plugins/audit-suite/audit-suite/README.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. Fixture invokes explicit local Node/tsx/CLI paths, not marketplace or plugin discovery. This metadata/document is neither an imported module nor executed install configuration; no install-resolution claim is made."
+    },
+    {
+      "after": [
+        "100644",
+        "cc97b5d411aeb608488863b3eaa33185f91296b3"
+      ],
+      "before": [
+        "100644",
+        "aadba987d87008defe840dad6dea4e360c8edffc"
+      ],
+      "category": "marketplace-or-unrelated-plugin",
+      "mergebase": [
+        "100644",
+        "aadba987d87008defe840dad6dea4e360c8edffc"
+      ],
+      "path": "plugins/foreman-line/.claude-plugin/plugin.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. Fixture invokes explicit local Node/tsx/CLI paths, not marketplace or plugin discovery. This metadata/document is neither an imported module nor executed install configuration; no install-resolution claim is made."
+    },
+    {
+      "after": [
+        "100644",
+        "343cc2970510d82b3b2fe37626df8c7a82e6a56b"
+      ],
+      "before": [
+        "100644",
+        "84ffb85bf83862fd9ba3a6aa6652cfe1a81a05df"
+      ],
+      "category": "marketplace-or-unrelated-plugin",
+      "mergebase": [
+        "100644",
+        "84ffb85bf83862fd9ba3a6aa6652cfe1a81a05df"
+      ],
+      "path": "plugins/foreman-line/.codex-plugin/plugin.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. Fixture invokes explicit local Node/tsx/CLI paths, not marketplace or plugin discovery. This metadata/document is neither an imported module nor executed install configuration; no install-resolution claim is made."
+    },
+    {
+      "after": [
+        "100644",
+        "b07aae48d37ca1e940f3415dba7080d75a5e71ab"
+      ],
+      "before": [
+        "100644",
+        "b0b2facd45320f6c9017642fcabac8475441f7d9"
+      ],
+      "category": "unrelated-package-approval",
+      "mergebase": [
+        "100644",
+        "b0b2facd45320f6c9017642fcabac8475441f7d9"
+      ],
+      "path": "plugins/foreman-line/approval/tests/canonical-parity.test.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The approval package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "466a6dbb06b9890176b7b5a090a1a58ed5096b05"
+      ],
+      "before": [
+        "100644",
+        "82efb57496fa424d7282ea8167d46a6ac8136792"
+      ],
+      "category": "unrelated-package-dispatch",
+      "mergebase": [
+        "100644",
+        "82efb57496fa424d7282ea8167d46a6ac8136792"
+      ],
+      "path": "plugins/foreman-line/dispatch/README.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The dispatch package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "77a7ac9fc02f3b59cf6919ace0681cd37e95767c"
+      ],
+      "before": [
+        "100644",
+        "a1113ae6b56588ab7973ee30f0673edc8fb260e4"
+      ],
+      "category": "unrelated-package-dispatch",
+      "mergebase": [
+        "100644",
+        "a1113ae6b56588ab7973ee30f0673edc8fb260e4"
+      ],
+      "path": "plugins/foreman-line/dispatch/src/routing-eval/index.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The dispatch package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "fc9ccebccd35203f31efa1f0de558f7233e01507"
+      ],
+      "before": [
+        "100644",
+        "8183037e35183b9f6837ee3cc4bc11c0935f0767"
+      ],
+      "category": "unrelated-package-dispatch",
+      "mergebase": [
+        "100644",
+        "8183037e35183b9f6837ee3cc4bc11c0935f0767"
+      ],
+      "path": "plugins/foreman-line/dispatch/tests/approval-cli.test.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The dispatch package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "00c5f4f2286777c03e928a814c40c9f306802a34"
+      ],
+      "before": [
+        "100644",
+        "72c33964123b9788d71c8924eb9fac126e3c24ca"
+      ],
+      "category": "unrelated-package-dispatch",
+      "mergebase": [
+        "100644",
+        "72c33964123b9788d71c8924eb9fac126e3c24ca"
+      ],
+      "path": "plugins/foreman-line/dispatch/tests/routing-eval.test.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The dispatch package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "97c04ae31610604a09462f9bc61371dccbd9b3b0"
+      ],
+      "before": [
+        "100644",
+        "83f319d7f997bde3e86d1b1a0eddf2baf4b7ff67"
+      ],
+      "category": "unrelated-package-dispatch",
+      "mergebase": [
+        "100644",
+        "83f319d7f997bde3e86d1b1a0eddf2baf4b7ff67"
+      ],
+      "path": "plugins/foreman-line/dispatch/tests/shadow-routing.test.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The dispatch package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "922f9b909dcf16e3ed93622f8ea127162e95e73a"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/INDEX.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "dd7c3d44b7cc5775a51f0160d3e7c18b1606c334"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/heterogeneous-agent-worker-fabric/charter.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "a6d3d4fbe8ab54ab1381283abb06ef862fa18bbc"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/heterogeneous-agent-worker-fabric/historical-charter-source.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "eb6f55a8d621946dc0f3b74a82e4e98114a091b4"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/heterogeneous-agent-worker-fabric/loop-directive.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "9f11394ae8058f2fdab560783d37c9d577d23e05"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/hierarchical-coordination-sidecars/charter.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "c6489d8b5c0a95576d6ccd1ce4d494827e3419be"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/hierarchical-coordination-sidecars/loop-directive.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "78278025d078cfd1cafe97f54fe26aa1130f3a35"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/hierarchical-coordination-sidecars/source-proposed-amendment-A3.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "b06558ef664a0fef6a895a6e68a182e3716dccb4"
+      ],
+      "before": [
+        "100644",
+        "dc000e017e35a9fee3494b4e7675b45a1b965259"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "dc000e017e35a9fee3494b4e7675b45a1b965259"
+      ],
+      "path": "plugins/foreman-line/docs/goals/permission-profile-registry/loop-directive.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "e2471a0fe6fc53ed5aa67c6c02142e5336fce067"
+      ],
+      "before": [
+        "100644",
+        "c16a2cc6684403b4a005628cf5523ba5e76b1a94"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "c16a2cc6684403b4a005628cf5523ba5e76b1a94"
+      ],
+      "path": "plugins/foreman-line/docs/goals/permission-profile-registry/p3-adversarial-review-B-findings.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "9e7b6ef77472d59776bd6a744abe7dea617c2fc1"
+      ],
+      "before": [
+        "100644",
+        "11c0bfbe723b8e9d064bf881154b5bd9da8e5832"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "11c0bfbe723b8e9d064bf881154b5bd9da8e5832"
+      ],
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/charter.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "a69008ae9d93fa84737ebb5edb76113cb0739e34"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/d4-r1-plan-review-findings.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "228c717fe327147702b7a4aec3972d9cd13a4e7b"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/d4-r1-ruleset-retarget-amendment.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "963accd392c6fc36d319d173751d723a350a0a89"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/d4-r2b-plan-review-findings.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "2bf4a8989bf1b9a4c796ca4a01ab3006f5b0c0a5"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/d4-r2b-sole-owner-compromise-amendment.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "4f89eaeaf3b9ee0d9b2914beceafbac3e438a097"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/e6-r1-current-repository-evidence-rerun-amendment.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "0d57e7fbf3f9d1c6ba1a548aff3981023733c10b"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/e6-r1-goal-complete-evidence.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "6396a84f46767e68679154b98b5d5a9155d37ed9"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/e6-r1-implementation-review-a-findings.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "88098bd9316940e13e8ec6254b9253f34c4b61a5"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/e6-r1-implementation-review-b-findings.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "57537ac56794618e71f6db62eb1066dddd44892c"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/e6-r1-plan-review-findings.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "39d82150579102e84531275f72858a3ffa581777"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/e6-r1-stage-b-stop-report.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "fe37b3deda46e700f085ea5de05601dc074e815a"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/e6-r1-stage-e-pr-observation.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "bf58922f53e0fe295ecf929967b9fa73af1e6185"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/e6-r1-stage-f-merge-observation.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "ed7e25e88ec48fdc8b7c015cd07be42df343cd68"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/e6-r1b-implementation-rereview-a-findings.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "d8e703dfcbf33e497fb20ca80d89f0f1bc9a861f"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/e6-r1b-implementation-rereview-b-findings.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "c97dafa7b295ff5a2ac3a3e8a65411db3cb01bd2"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/e6-r1b-marketplace-and-evidence-guard-amendment.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "a2ac25a0aa9bcac3be6a6557d7e9e77972dcd2e6"
+      ],
+      "before": [
+        "100644",
+        "30ec08c14a4898897e167d9cb17d3a7fdae5570f"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "30ec08c14a4898897e167d9cb17d3a7fdae5570f"
+      ],
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/loop-directive.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "f96a1414771831babc5f6987b88ac2636c57cbc4"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/kickstarters/FL-ASSEMBLY-handoff.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "376f1a0748e3bc838efbc9da0bae1f05638acbac"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/kickstarters/FL-R1-handoff.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "feba89d159544036c402f2fde993093220d5dc53"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/kickstarters/FL-R2-handoff.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "1eeaec4d093f8102b7cebc5969b85f05e539ca02"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/kickstarters/FL-R3-handoff.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "a7bab55b4a3cc715f09839ed3c56a198b892deea"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/kickstarters/FL-R4-handoff.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "e71e5f59f5db40b2963bdc7feddbad09e9994e77"
+      ],
+      "before": [
+        "100644",
+        "6458d8a3ad06ce7b3e58e56735ba9a9ac511f828"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "6458d8a3ad06ce7b3e58e56735ba9a9ac511f828"
+      ],
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-CLOSE-P3.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "531939900df0b0f3fbd09977bf959b678eb3f12f"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-E6-R1.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "006381a7547e8dc015b424808d2a97d87f779a77"
+      ],
+      "before": [
+        "100644",
+        "c03c7cdfd7197d75b54964be2cc33b237ee7d8fa"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "c03c7cdfd7197d75b54964be2cc33b237ee7d8fa"
+      ],
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-SCAF-P3.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "e6f2b4dfa08b405a0900ed32b1a138b9eab256d3"
+      ],
+      "before": [
+        "100644",
+        "1629c5241ca6f8a77056f717ba310e28a4cdf9d9"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "1629c5241ca6f8a77056f717ba310e28a4cdf9d9"
+      ],
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W1-P1.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "4f6365db0f8a35d9ef475e18b89cdf59c37134f9"
+      ],
+      "before": [
+        "100644",
+        "f3ef7e102acb8c51384c6761a1a5a7228b2efa2d"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "f3ef7e102acb8c51384c6761a1a5a7228b2efa2d"
+      ],
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W1-P2.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "d77335a707d7d94c000d2c3363d0b125c03e7cea"
+      ],
+      "before": [
+        "100644",
+        "e797f325e40a80ab10695e476aeea0fbcba9808d"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "e797f325e40a80ab10695e476aeea0fbcba9808d"
+      ],
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W1-P3.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "9955fb3df3329517a29f6f8218e4de130ae7ba6a"
+      ],
+      "before": [
+        "100644",
+        "7b4df8d88215596df5709fb19139b7d1e2e9da9d"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "7b4df8d88215596df5709fb19139b7d1e2e9da9d"
+      ],
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W1-P4.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "ca283b93661aab77094031e7bed6c8e6855fffe4"
+      ],
+      "before": [
+        "100644",
+        "a15a8729fa75a5d39b12843877ecf19d79166a4a"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "a15a8729fa75a5d39b12843877ecf19d79166a4a"
+      ],
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W3-P1.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "f74e51fc3982e7753623e1460d16e63936afb1c1"
+      ],
+      "before": [
+        "100644",
+        "0d41e0b23b697506997cf41205ef6275b9baf6a0"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "0d41e0b23b697506997cf41205ef6275b9baf6a0"
+      ],
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W3-P4.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "38cfe492fe7ea0f87d248b0548ef739c8dc1e723"
+      ],
+      "before": [
+        "100644",
+        "633696b6600f31d937784ffb4d65322838393e92"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "633696b6600f31d937784ffb4d65322838393e92"
+      ],
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W4-P4.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "dcc8fc49839b4ffcaaac357b4d4499f40291e3f7"
+      ],
+      "before": [
+        "100644",
+        "0faec4ef20540d36eeaada919f9bfda04e0e002f"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "0faec4ef20540d36eeaada919f9bfda04e0e002f"
+      ],
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-coordinator-loop.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "0e4a2c09aebaa649528715e2d597b6922a0ae0fe"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-goal-intake-20260903.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "6819eea986fae2665c2b299143b4641c9ce1ecd5"
+      ],
+      "before": [
+        "100644",
+        "b5f5d1c906f14ac0bfca1b4eb9805cb314ed4351"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "b5f5d1c906f14ac0bfca1b4eb9805cb314ed4351"
+      ],
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-DOCS-P1.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "1cd528d688f0b8fc2e9669071fb03db0ccd15b67"
+      ],
+      "before": [
+        "100644",
+        "78decee4e1ecbb5afaca21d463c3a7626aa5740c"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "78decee4e1ecbb5afaca21d463c3a7626aa5740c"
+      ],
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-SCAF-P1.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "b10ec84993ba20fa7fea8ad13fec4ed56793e0c8"
+      ],
+      "before": [
+        "100644",
+        "19004b8d59692e26dad420cf2544de028e2581e4"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "19004b8d59692e26dad420cf2544de028e2581e4"
+      ],
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-SEC-1.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "5cf7c5d92f40d0c0ef95a4cee8032fe399b17a56"
+      ],
+      "before": [
+        "100644",
+        "5fdec0b83f24f51c9acde8998ac541289e385c52"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "5fdec0b83f24f51c9acde8998ac541289e385c52"
+      ],
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-W0-P2.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "f38996d215fc878b7c1e1600e909e07972dd48ee"
+      ],
+      "before": [
+        "100644",
+        "0e006e4a55168f1f8a6898c63f4f677c72f3d258"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "0e006e4a55168f1f8a6898c63f4f677c72f3d258"
+      ],
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-W0-P3.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "b27f74ffffae7f8d0b334e886723c26fce1c1beb"
+      ],
+      "before": [
+        "100644",
+        "9d974ac84fb0b7659bad4be883fe0060190861e6"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "9d974ac84fb0b7659bad4be883fe0060190861e6"
+      ],
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-W0-P4.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "a2980b87eb60627266a2a5464f69e3ce761c285f"
+      ],
+      "before": [
+        "100644",
+        "08dbe4060359c46cf8319744bc928874e377e28e"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "08dbe4060359c46cf8319744bc928874e377e28e"
+      ],
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-W0-P5.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "34224e5c71168c6a8b517d9aab5373fea31bc898"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-rework-E6-R1B.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "297941b47a312fffbbed938597bb020654c68f2e"
+      ],
+      "before": [
+        "100644",
+        "b15477cce6c83caddcf2d6a6d42c17d010b1a060"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "b15477cce6c83caddcf2d6a6d42c17d010b1a060"
+      ],
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-P1.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "53fae78c337709937b55d2da7e977eecc86e9275"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/specs/active/FL-ASSEMBLY-approval-vector.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "e50020f126d0c37bc836fca700518ef6bd7a0eff"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/specs/active/FL-R1-terminal-seal.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "b4d9821dc2157300260bd6f199a5f215ebb1a153"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/specs/active/FL-R2-real-audit-loader.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "4be21cf1696eef91c508262fa7873279d3845e8e"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/specs/active/FL-R3-push-failure-stop.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "09df7ea05a2d286df128181402d1829abf344d5d"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/specs/active/FL-R4-package-ci.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "a8bd85a58bcc1754c8fb36c4da72bb4d187e42d7"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/specs/active/e6-r1-current-repository-identity-and-evidence-rerun.approval.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "af5949dae308f8e380772a2badeaec965112ed9c"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/specs/active/e6-r1-current-repository-identity-and-evidence-rerun.projected.shaping-result.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "40e598bdf578803b154e7925b7bc0da77cf72e84"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/specs/active/e6-r1-current-repository-identity-and-evidence-rerun.registration.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "cafb08ffe1d68f4ea5dd0e387a033cdb289ca78b"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/specs/active/e6-r1-current-repository-identity-and-evidence-rerun.shaping-result.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": null,
+      "before": [
+        "100644",
+        "ec4a70acbb1a2511b2e187fb0898c3c451e6aebf"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "ec4a70acbb1a2511b2e187fb0898c3c451e6aebf"
+      ],
+      "path": "plugins/foreman-line/docs/specs/active/receipt-chain-walker.registration.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "6e377caaf040a03dd9d04d8f07cf2f46f423accd"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/specs/active/receipt-chain-walker.repository-migration.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": null,
+      "before": [
+        "100644",
+        "3a9d99420756304f3db2a53ceceb18adef040d30"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "3a9d99420756304f3db2a53ceceb18adef040d30"
+      ],
+      "path": "plugins/foreman-line/docs/specs/active/scaffold-migration.registration.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "53269396ff3458afecb640f8f28f2944ef0d458f"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/specs/active/scaffold-migration.repository-migration.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "34d6963af69dd5bc8cc5f2fb2c0e8a76303938a2"
+      ],
+      "before": null,
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/specs/done/E6-R1-current-repository-identity-and-evidence-rerun.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "ef9363793ae47c74a1149bae5b197088acd8448b"
+      ],
+      "before": [
+        "100644",
+        "068a43df30e1eafa3eafa8c9c813a657b841187b"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "068a43df30e1eafa3eafa8c9c813a657b841187b"
+      ],
+      "path": "plugins/foreman-line/docs/specs/done/P1-permission-profile-registry-schema.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "32d4c9545ba31214fb018270b7eca0078b7d24ef"
+      ],
+      "before": [
+        "100644",
+        "15a536f43dcb7234b01718da5204fe6a3d862c8d"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "15a536f43dcb7234b01718da5204fe6a3d862c8d"
+      ],
+      "path": "plugins/foreman-line/docs/specs/done/P2-dispatch-order-permission-profile-field.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "5d5675a6ef4c93b4c92d69493b8254ecac150401"
+      ],
+      "before": [
+        "100644",
+        "39859515331b433a385a0a81afdcc5e889d88d30"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "39859515331b433a385a0a81afdcc5e889d88d30"
+      ],
+      "path": "plugins/foreman-line/docs/specs/done/P4-spec-linter-permission-profile-enum.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "fbd8cc1a2da55cc20aa9926c8ff95a6dcdd0d893"
+      ],
+      "before": [
+        "100644",
+        "2879a52d1f67e3312a20675da90197d65acb8785"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "2879a52d1f67e3312a20675da90197d65acb8785"
+      ],
+      "path": "plugins/foreman-line/docs/specs/done/W0-P1-pipeline-stage-contracts.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "02914b5b699d4bd1bfabdcdbb1e2ce4f492c3d06"
+      ],
+      "before": [
+        "100644",
+        "eae54e026eb4879bde9f26a23366cafe49bea87c"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "eae54e026eb4879bde9f26a23366cafe49bea87c"
+      ],
+      "path": "plugins/foreman-line/docs/specs/done/W0-P3-routing-policy-schema-validator.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "95144bb0ecee036c594ebc94c572babdf2209e2f"
+      ],
+      "before": [
+        "100644",
+        "9a321535b69c2f749fcf155b0cc3efe291eac723"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "9a321535b69c2f749fcf155b0cc3efe291eac723"
+      ],
+      "path": "plugins/foreman-line/docs/specs/done/W0-P4-receipt-chain-schema-validator.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "e6cc459bb3d60f819c37f0eff54a885f6978c5a3"
+      ],
+      "before": [
+        "100644",
+        "b2ee2ed7b48557b80f30c16096646ab03099b280"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "b2ee2ed7b48557b80f30c16096646ab03099b280"
+      ],
+      "path": "plugins/foreman-line/docs/specs/done/W0-P5-skill-injection-matrix-schema-validator.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "4133a4c78e3dac22d258492a05b130743940be38"
+      ],
+      "before": [
+        "100644",
+        "4cdc5311be0e5fdbd29b9b93b6c7aa29148a23d1"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "4cdc5311be0e5fdbd29b9b93b6c7aa29148a23d1"
+      ],
+      "path": "plugins/foreman-line/docs/specs/done/W1-P1-shaping-agent.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "0b15b1acd166cc6246a9d4279caaddfa35d9ddc9"
+      ],
+      "before": [
+        "100644",
+        "cc5e2f7059eb964bb7e7d558b1e81b3656fa7bbc"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "cc5e2f7059eb964bb7e7d558b1e81b3656fa7bbc"
+      ],
+      "path": "plugins/foreman-line/docs/specs/done/W1-P2-epic-story-projection.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "ddce2753b06fb7c6a6d8199aa87a22583b00d8a4"
+      ],
+      "before": [
+        "100644",
+        "9b8ef527efcbdd649a64e70858ca38af3295dbce"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "9b8ef527efcbdd649a64e70858ca38af3295dbce"
+      ],
+      "path": "plugins/foreman-line/docs/specs/done/W1-P3-human-approval-flow.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "0159727fb41bddbb310cb706c0f4075e39fb7592"
+      ],
+      "before": [
+        "100644",
+        "d5b79f30b720018b8e38da1be9b149edd680f2ee"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "d5b79f30b720018b8e38da1be9b149edd680f2ee"
+      ],
+      "path": "plugins/foreman-line/docs/specs/done/W1-P4-jira-registration.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "e508ad8774be279c6d6d198ea6efb139b6453a24"
+      ],
+      "before": [
+        "100644",
+        "cf977988ca9a9c670a995629c2c9b2b2b3f8171d"
+      ],
+      "category": "unrelated-document-or-shaping-record",
+      "mergebase": [
+        "100644",
+        "cf977988ca9a9c670a995629c2c9b2b2b3f8171d"
+      ],
+      "path": "plugins/foreman-line/docs/transcripts/build-W0-P1-deterministic-pass.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This document/JSON shaping or historical record is not dynamically discovered by registry CLI; the fixed source inventory does not sweep all docs. It is not a current registry evidence artifact or runtime import. No activation/approval described in it is evaluated."
+    },
+    {
+      "after": [
+        "100644",
+        "69fbc0b4afb0cdbfd12c10589a3ebadc3c49bf02"
+      ],
+      "before": null,
+      "category": "historical-provenance-target",
+      "mergebase": null,
+      "path": "plugins/foreman-line/docs/transcripts/defects_lessons.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Current lesson ledger is not among the eighteen swept source files. The missing-provenance-reference checks absence at pinned historical commit 51857a3a7796b393c0c0a68712f98c06e7015d79 via git cat-file -e commit:path, not current filesystem absence. Current addition does not rewrite or satisfy that historical record; no ledger operations execute in fixture validate/sweep/generate."
+    },
+    {
+      "after": [
+        "100644",
+        "3ca1d862658736c4658ba01127a2032c3e23a6c7"
+      ],
+      "before": [
+        "100644",
+        "ebd804aad400d7957b3db89181b19ed26a551b64"
+      ],
+      "category": "unrelated-package-integration",
+      "mergebase": [
+        "100644",
+        "ebd804aad400d7957b3db89181b19ed26a551b64"
+      ],
+      "path": "plugins/foreman-line/integration/package-lock.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The integration package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "e81687dd3d91219116b17c348411520c134e06fe"
+      ],
+      "before": [
+        "100644",
+        "ea85850b4f772f0ce8a3dc74172bc8f25579d090"
+      ],
+      "category": "unrelated-package-integration",
+      "mergebase": [
+        "100644",
+        "ea85850b4f772f0ce8a3dc74172bc8f25579d090"
+      ],
+      "path": "plugins/foreman-line/integration/package.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The integration package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "19150f285df0ae9c4cddb156b749abb2a292b23c"
+      ],
+      "before": [
+        "100644",
+        "e77d0a5f82cba5254caae13439f03c140fa06cc4"
+      ],
+      "category": "unrelated-package-integration",
+      "mergebase": [
+        "100644",
+        "e77d0a5f82cba5254caae13439f03c140fa06cc4"
+      ],
+      "path": "plugins/foreman-line/integration/src/errors.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The integration package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "8487e1e0cc5ba727eabf7e353cbd16e992b2b518"
+      ],
+      "before": [
+        "100644",
+        "363407dc8c0067c46767f9b01dd8756fea1eabf0"
+      ],
+      "category": "unrelated-package-integration",
+      "mergebase": [
+        "100644",
+        "363407dc8c0067c46767f9b01dd8756fea1eabf0"
+      ],
+      "path": "plugins/foreman-line/integration/src/governing-spec.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The integration package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "893d9e6a5d275fd82401e99b3810779f5223c1c2"
+      ],
+      "before": [
+        "100644",
+        "ab0c0a9a3481c8403342fe9c23d2779c55c37d77"
+      ],
+      "category": "unrelated-package-integration",
+      "mergebase": [
+        "100644",
+        "ab0c0a9a3481c8403342fe9c23d2779c55c37d77"
+      ],
+      "path": "plugins/foreman-line/integration/src/pr-plan.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The integration package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "9c2f7801d87209367e4da478a78e6d7e8ec45f80"
+      ],
+      "before": [
+        "100644",
+        "6b79fbb5b6d9c92b84292084fe01366e29406db0"
+      ],
+      "category": "unrelated-package-integration",
+      "mergebase": [
+        "100644",
+        "6b79fbb5b6d9c92b84292084fe01366e29406db0"
+      ],
+      "path": "plugins/foreman-line/integration/tests/conformance.test.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The integration package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "8bf0c3e9f10596143312175d7d3e9f302ecdb966"
+      ],
+      "before": [
+        "100644",
+        "568cb18e115f5662ff2b5b53b984e77ef73b9932"
+      ],
+      "category": "unrelated-package-integration",
+      "mergebase": [
+        "100644",
+        "568cb18e115f5662ff2b5b53b984e77ef73b9932"
+      ],
+      "path": "plugins/foreman-line/integration/tests/effective-rules.test.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The integration package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "58667b83062e11d539030017f6f7a82909f98f27"
+      ],
+      "before": [
+        "100644",
+        "8757377b998617ef6ebcda9f2ffef23ecde74d53"
+      ],
+      "category": "unrelated-package-integration",
+      "mergebase": [
+        "100644",
+        "8757377b998617ef6ebcda9f2ffef23ecde74d53"
+      ],
+      "path": "plugins/foreman-line/integration/tests/fixtures/effective-rules-live-capture.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The integration package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "8d2df2b147b5378b0a03e913c84a263aa99bdb5e"
+      ],
+      "before": null,
+      "category": "unrelated-package-integration",
+      "mergebase": null,
+      "path": "plugins/foreman-line/integration/tests/fl-r2-real-loader.test.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The integration package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "f2bddfe05dfd34be48062134dfbeb50e0e3e9df9"
+      ],
+      "before": null,
+      "category": "unrelated-package-integration",
+      "mergebase": null,
+      "path": "plugins/foreman-line/integration/tests/fl-r3-push-failure.test.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The integration package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "9634ca680b84753f3eff2caa2716fc7a4167ef2d"
+      ],
+      "before": [
+        "100644",
+        "86975ffeb7575dba55fe1f09217a3dd5e49b67fe"
+      ],
+      "category": "unrelated-package-integration",
+      "mergebase": [
+        "100644",
+        "86975ffeb7575dba55fe1f09217a3dd5e49b67fe"
+      ],
+      "path": "plugins/foreman-line/integration/tests/governing-spec.test.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The integration package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "a9271283fdc084f19319414eb406ed504b03a35d"
+      ],
+      "before": [
+        "100644",
+        "a2030707dd582e268a280bf82b93ea97c95d967a"
+      ],
+      "category": "unrelated-package-receipts",
+      "mergebase": [
+        "100644",
+        "a2030707dd582e268a280bf82b93ea97c95d967a"
+      ],
+      "path": "plugins/foreman-line/receipts/README.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The receipts package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "e5aba3acb4f9a5403a2fc30e12b5b068a6fc8a7a"
+      ],
+      "before": [
+        "100644",
+        "f917654597619002ceb92a792ae9f0283d8eb859"
+      ],
+      "category": "unrelated-package-receipts",
+      "mergebase": [
+        "100644",
+        "f917654597619002ceb92a792ae9f0283d8eb859"
+      ],
+      "path": "plugins/foreman-line/receipts/src/validator.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The receipts package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "99d8fa6dcb3432b8b518efeef539a22c007d89bd"
+      ],
+      "before": [
+        "100644",
+        "1be11774ae952b979fe6cd3f6d636cb039ca0538"
+      ],
+      "category": "unrelated-package-receipts",
+      "mergebase": [
+        "100644",
+        "1be11774ae952b979fe6cd3f6d636cb039ca0538"
+      ],
+      "path": "plugins/foreman-line/receipts/tests/chain-invariants.test.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The receipts package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "3d8c20e3262f626be5d39389e47e1135af8f33c3"
+      ],
+      "before": [
+        "100644",
+        "f680cbd9cd3280909ae82ddf6b958c5570f38e03"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "f680cbd9cd3280909ae82ddf6b958c5570f38e03"
+      ],
+      "path": "plugins/foreman-line/routing-policy/README.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "83370d6142ae381fa068469f01e3ddc86edd031a"
+      ],
+      "before": [
+        "100644",
+        "1c9a9e382bed17d536456c2c1f84b28caaa0f886"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "1c9a9e382bed17d536456c2c1f84b28caaa0f886"
+      ],
+      "path": "plugins/foreman-line/routing-policy/routing-policy.yaml",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "7e643b656bbe56fd961a11f06998772782e89d1b"
+      ],
+      "before": [
+        "100644",
+        "2d71403f621ee83aa832da94f409da40c7fdf5f3"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "2d71403f621ee83aa832da94f409da40c7fdf5f3"
+      ],
+      "path": "plugins/foreman-line/routing-policy/schemas/data-classification-rule.schema.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "29346cabbfa3e44bea2d416a66407c1b99ec0359"
+      ],
+      "before": [
+        "100644",
+        "d56fd60438acf8f0d5e5285c4ae11853378af1fe"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "d56fd60438acf8f0d5e5285c4ae11853378af1fe"
+      ],
+      "path": "plugins/foreman-line/routing-policy/schemas/routing-policy.schema.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "25dba559dea4ecf52a724b52051aafa02ee448a8"
+      ],
+      "before": null,
+      "category": "unrelated-package-routing-policy",
+      "mergebase": null,
+      "path": "plugins/foreman-line/routing-policy/schemas/transport-requirements.schema.json",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "40b2ff17975d958e7fb7d70817c29cbcc264b493"
+      ],
+      "before": [
+        "100644",
+        "38890941011ceb3fee44bcad3aefdee7ad07462f"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "38890941011ceb3fee44bcad3aefdee7ad07462f"
+      ],
+      "path": "plugins/foreman-line/routing-policy/src/index.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "8ca4157484c652e7077d65dddfbbce5601a0f7da"
+      ],
+      "before": [
+        "100644",
+        "9985abb67cb539518c63929198608f733cf6e0a1"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "9985abb67cb539518c63929198608f733cf6e0a1"
+      ],
+      "path": "plugins/foreman-line/routing-policy/src/registry.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "9c018f0a862a5477b92ae88fcdb49dda42a2c7a9"
+      ],
+      "before": [
+        "100644",
+        "12bcde70b63c2e7a80e149d68c6f8bd6aa11d61a"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "12bcde70b63c2e7a80e149d68c6f8bd6aa11d61a"
+      ],
+      "path": "plugins/foreman-line/routing-policy/src/schemas.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "7c8e79788438951bf37d1dfebf39d9b698f51c0d"
+      ],
+      "before": [
+        "100644",
+        "fedea83762050b0aa53ffb7f99aa2b74b9abb4d6"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "fedea83762050b0aa53ffb7f99aa2b74b9abb4d6"
+      ],
+      "path": "plugins/foreman-line/routing-policy/src/testing.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "8660e46ae7c511699dfb97e8fb40317744f005e6"
+      ],
+      "before": [
+        "100644",
+        "0df7d7636f6a662f3761fb6e4a7437c065b1510e"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "0df7d7636f6a662f3761fb6e4a7437c065b1510e"
+      ],
+      "path": "plugins/foreman-line/routing-policy/src/types.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "b15ee6e901a588c74c458f87d28ea213a7c8d775"
+      ],
+      "before": [
+        "100644",
+        "573e63d46ad2291c3839cc9111a3a40613f4a7ff"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "573e63d46ad2291c3839cc9111a3a40613f4a7ff"
+      ],
+      "path": "plugins/foreman-line/routing-policy/src/validator.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "093a0a04bfa05b18ab784549e54a8477a6c8e8fb"
+      ],
+      "before": [
+        "100644",
+        "f15243a04ff1ae8b0bdeefe14e8e60f179e6e928"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "f15243a04ff1ae8b0bdeefe14e8e60f179e6e928"
+      ],
+      "path": "plugins/foreman-line/routing-policy/tests/entrypoint.test.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "cfb868b6458b8044b01a244f2c5dcac5fd1b05ea"
+      ],
+      "before": null,
+      "category": "unrelated-package-routing-policy",
+      "mergebase": null,
+      "path": "plugins/foreman-line/routing-policy/tests/fixtures/accept-shadow-route.yaml",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "f8ae91b37fa5df96ef3534b160fd11d40ebbf4b8"
+      ],
+      "before": [
+        "100644",
+        "f85e4fc427e97c3b3b21e32908067c5a3f2c1e3d"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "f85e4fc427e97c3b3b21e32908067c5a3f2c1e3d"
+      ],
+      "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-both.yaml",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "5e42dd89b75196ded05c1180dee2f02ae7f301d7"
+      ],
+      "before": [
+        "100644",
+        "80d0b484baae4424fdbb2e3ffa0d7039b0e5afcf"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "80d0b484baae4424fdbb2e3ffa0d7039b0e5afcf"
+      ],
+      "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-ceiling-missing.yaml",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "c3f7b81c21b69185e0d0dad2bf2b3eb83c6e6944"
+      ],
+      "before": [
+        "100644",
+        "7c968f39048e3c65f4e8e770473a14676bc53fa6"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "7c968f39048e3c65f4e8e770473a14676bc53fa6"
+      ],
+      "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-ceiling-zero.yaml",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "18a45ab48080b932323c4b3beb1451a17ad80050"
+      ],
+      "before": [
+        "100644",
+        "cc007be7ebb3e21db506dbba725352391e435ff5"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "cc007be7ebb3e21db506dbba725352391e435ff5"
+      ],
+      "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-classification-gate.yaml",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "8a18e6556417011026d2905ae6e9d008ce758438"
+      ],
+      "before": [
+        "100644",
+        "66bf54c5212166a5f593a4605c4b3285550e1592"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "66bf54c5212166a5f593a4605c4b3285550e1592"
+      ],
+      "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-frontier-anchor.yaml",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "00d2a289a5f13e7355cca24c010eccb0ab70be4b"
+      ],
+      "before": [
+        "100644",
+        "0453f8f6b55a3811e9760c6eedb6746040ffcc0f"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "0453f8f6b55a3811e9760c6eedb6746040ffcc0f"
+      ],
+      "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-multiple.yaml",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "f5b8b79a6ba370baf2ecb5d6caad2fefd6041efc"
+      ],
+      "before": [
+        "100644",
+        "a6ec2deb4b638331acb404a0badf5e70a1123f7e"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "a6ec2deb4b638331acb404a0badf5e70a1123f7e"
+      ],
+      "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-role-pinning.yaml",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "d664188474805bd74a4dabe8d09f70030daf4d55"
+      ],
+      "before": [
+        "100644",
+        "891a807e4a28e1641a2de1cc875d71ead0258e6a"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "891a807e4a28e1641a2de1cc875d71ead0258e6a"
+      ],
+      "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-security-override.yaml",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "99acb95ba2dcf2a460300b94006668b743c6e2a7"
+      ],
+      "before": [
+        "100644",
+        "5f03c62c1449cbba56c8761876809e7aef70ccc6"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "5f03c62c1449cbba56c8761876809e7aef70ccc6"
+      ],
+      "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-security-undeclared.yaml",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "f64b7c8234812bb1de8d130a86f667dda8ed8b06"
+      ],
+      "before": [
+        "100644",
+        "bb9c86c43d62d94e61af4883aeb8e657551bd6b2"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "bb9c86c43d62d94e61af4883aeb8e657551bd6b2"
+      ],
+      "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-structural.yaml",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "988e9c7d129c0a47b1a8694ed4545256701fd2d1"
+      ],
+      "before": null,
+      "category": "unrelated-package-routing-policy",
+      "mergebase": null,
+      "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-tier-not-eligible.yaml",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "612fbff8e43c4fdc49101ebbc9f656387a45edf5"
+      ],
+      "before": null,
+      "category": "unrelated-package-routing-policy",
+      "mergebase": null,
+      "path": "plugins/foreman-line/routing-policy/tests/fixtures/reject-transport-requirements.yaml",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "e5737aa585775215f8c910871634a52311d7eab7"
+      ],
+      "before": [
+        "100644",
+        "a072199f50c484c13099a81fc08e0c2be9af6133"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "a072199f50c484c13099a81fc08e0c2be9af6133"
+      ],
+      "path": "plugins/foreman-line/routing-policy/tests/parity.test.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "ba1efcd7a965f7c26ba09248cd2860a95776f8ed"
+      ],
+      "before": [
+        "100644",
+        "7822894ceb41954271f06091a25599a84b630834"
+      ],
+      "category": "unrelated-package-routing-policy",
+      "mergebase": [
+        "100644",
+        "7822894ceb41954271f06091a25599a84b630834"
+      ],
+      "path": "plugins/foreman-line/routing-policy/tests/semantic-invariants.test.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The routing-policy package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "1f2914dd39299d0276c70c9ac97ce8dc69d04010"
+      ],
+      "before": [
+        "100644",
+        "3c392eec495a0fba967232bed464a0d06275643a"
+      ],
+      "category": "unrelated-package-skill-injection",
+      "mergebase": [
+        "100644",
+        "3c392eec495a0fba967232bed464a0d06275643a"
+      ],
+      "path": "plugins/foreman-line/skill-injection/tests/schema-validation.test.ts",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. The skill-injection package surface is not in the CLI/generator literal import closure (authority-registry plus schema-scaffold) and is not an ancestry resolver config. Reading specific registered source files, if any, does not execute this unrelated package or its test suite. This exclusion does not certify that package/CI behavior."
+    },
+    {
+      "after": [
+        "100644",
+        "a0dbde71c12db9a5e9d7293edb00e0b2e48a8123"
+      ],
+      "before": null,
+      "category": "ci-or-orchestration",
+      "mergebase": null,
+      "path": "scripts/foreman-line-ci.mjs",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. Fixture runs explicit CLI and generator commands, not GitHub Actions or the repository CI orchestrator. This workflow/script and its tests are not executed; their integration is outside the verdict."
+    },
+    {
+      "after": [
+        "100644",
+        "4549953973c6f71f7351a85484cbc4f66a9801fa"
+      ],
+      "before": null,
+      "category": "ci-or-orchestration",
+      "mergebase": null,
+      "path": "scripts/foreman-line-ci.test.mjs",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. Fixture runs explicit CLI and generator commands, not GitHub Actions or the repository CI orchestrator. This workflow/script and its tests are not executed; their integration is outside the verdict."
+    },
+    {
+      "after": [
+        "100644",
+        "f1ff25961ab6ccc31cf1bf3031998fe39b84f528"
+      ],
+      "before": [
+        "100644",
+        "8bbd33b4bcae3b8c577d226a08b730ad63692d23"
+      ],
+      "category": "other-skill-source",
+      "mergebase": [
+        "100644",
+        "8bbd33b4bcae3b8c577d226a08b730ad63692d23"
+      ],
+      "path": "skills/get-app-specs/SKILL.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This root skill asset is not the plugin-local governed skill source. CLI parses only registered sources and does not invoke root skills, dispatch agents or execute their instructions."
+    },
+    {
+      "after": [
+        "100644",
+        "89fc21ce37ab6fd3d8978c4615c07faa0f522b88"
+      ],
+      "before": [
+        "100644",
+        "bfde4cb5defe7545298fbb9c60e0415f707929b8"
+      ],
+      "category": "other-skill-source",
+      "mergebase": [
+        "100644",
+        "bfde4cb5defe7545298fbb9c60e0415f707929b8"
+      ],
+      "path": "skills/go-live-readiness/SKILL.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This root skill asset is not the plugin-local governed skill source. CLI parses only registered sources and does not invoke root skills, dispatch agents or execute their instructions."
+    },
+    {
+      "after": [
+        "100644",
+        "1e2b1969e1d8a243be937a0635e136591677e429"
+      ],
+      "before": [
+        "100644",
+        "edf7782cd91a57611e0619ad4305d2d25d69578d"
+      ],
+      "category": "other-skill-source",
+      "mergebase": [
+        "100644",
+        "edf7782cd91a57611e0619ad4305d2d25d69578d"
+      ],
+      "path": "skills/initiative-coordination/SKILL.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This root skill asset is not the plugin-local governed skill source. CLI parses only registered sources and does not invoke root skills, dispatch agents or execute their instructions."
+    },
+    {
+      "after": [
+        "100644",
+        "87af35635ec7bacc0f05be98f7ba1118685b8aaa"
+      ],
+      "before": [
+        "100644",
+        "6d15de85750423097277fea76ea534763721ba4f"
+      ],
+      "category": "other-skill-source",
+      "mergebase": [
+        "100644",
+        "6d15de85750423097277fea76ea534763721ba4f"
+      ],
+      "path": "skills/modernize/SKILL.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This root skill asset is not the plugin-local governed skill source. CLI parses only registered sources and does not invoke root skills, dispatch agents or execute their instructions."
+    },
+    {
+      "after": [
+        "100644",
+        "6ef0b6e55ec952239f6dc36ef264b489278aeda3"
+      ],
+      "before": [
+        "100644",
+        "3eb9ea679023b0d2af2e675632f06932be21c390"
+      ],
+      "category": "other-skill-source",
+      "mergebase": [
+        "100644",
+        "3eb9ea679023b0d2af2e675632f06932be21c390"
+      ],
+      "path": "skills/modernizer/SKILL.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This root skill asset is not the plugin-local governed skill source. CLI parses only registered sources and does not invoke root skills, dispatch agents or execute their instructions."
+    },
+    {
+      "after": [
+        "100644",
+        "abb7d244805a4ec4f9c1be5ba7fe63952d971049"
+      ],
+      "before": [
+        "100644",
+        "79c29cc5e7be44f2664f1143ffeef3da479c130e"
+      ],
+      "category": "other-skill-source",
+      "mergebase": [
+        "100644",
+        "79c29cc5e7be44f2664f1143ffeef3da479c130e"
+      ],
+      "path": "skills/parcel-compiler/SKILL.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This root skill asset is not the plugin-local governed skill source. CLI parses only registered sources and does not invoke root skills, dispatch agents or execute their instructions."
+    },
+    {
+      "after": [
+        "100644",
+        "32bd0c0747fdfee3f3aa4efa50809e8ae550fa3f"
+      ],
+      "before": [
+        "100644",
+        "d85326acc2c59b46a519dcbc045b2268912237c3"
+      ],
+      "category": "other-skill-source",
+      "mergebase": [
+        "100644",
+        "d85326acc2c59b46a519dcbc045b2268912237c3"
+      ],
+      "path": "skills/parcel-compiler/docs/specs/done/PCC-P0-pcc-cli-scaffold.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This root skill asset is not the plugin-local governed skill source. CLI parses only registered sources and does not invoke root skills, dispatch agents or execute their instructions."
+    },
+    {
+      "after": [
+        "100644",
+        "15a7648d17e00be6cc4b1da31693a4d5c6b5aef2"
+      ],
+      "before": [
+        "100644",
+        "6a87607bc64cda45b8fc929c9af1e8b20de9ad0c"
+      ],
+      "category": "other-skill-source",
+      "mergebase": [
+        "100644",
+        "6a87607bc64cda45b8fc929c9af1e8b20de9ad0c"
+      ],
+      "path": "skills/parcel-compiler/docs/transcripts/build-PCC-P0-deterministic-pass.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This root skill asset is not the plugin-local governed skill source. CLI parses only registered sources and does not invoke root skills, dispatch agents or execute their instructions."
+    },
+    {
+      "after": [
+        "100644",
+        "7c2e314f2f531b74fde9c67dd9854de5efc738b7"
+      ],
+      "before": [
+        "100644",
+        "36073f9809b6abfc2b8905d04eef591ee3f95eb0"
+      ],
+      "category": "other-skill-source",
+      "mergebase": [
+        "100644",
+        "36073f9809b6abfc2b8905d04eef591ee3f95eb0"
+      ],
+      "path": "skills/security-review/SKILL.md",
+      "prediction_basis": "candidate equals mergebase exactly in blob and mode; upstream-only change",
+      "reason": "Not a declared governed source, current FK-P0 contract, FK goal artifact, authority-registry/schema-scaffold implementation, or resolver-ancestry input. This root skill asset is not the plugin-local governed skill source. CLI parses only registered sources and does not invoke root skills, dispatch agents or execute their instructions."
+    }
+  ],
+  "finalReviews": [
+    {
+      "findings": "No P0/P1/P2",
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31-final-review-authority/review.md",
+      "sha256": "666629cdaf9ab23df3bbd4d78ffdd8864639aedc7b50c23c10571e028cc9aad7",
+      "verdict": "APPROVE"
+    },
+    {
+      "findings": "No P0/P1/P2",
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31-final-review-identity/review.md",
+      "sha256": "695d19aaa753582578693705bdd12fb141fc97e423b47a2b7a5b883d45aed0cb",
+      "verdict": "APPROVE"
+    }
+  ],
+  "inert_symlinks": [
+    {
+      "blob": "7fc7d9f7be858ee62e454c529b3f8deddd83e1d2",
+      "mode": "120000",
+      "path": ".opencode/skills",
+      "reason": "OpenCode skill discovery link is outside fixture-local Node CLI/generator execution and all protected sources/imports. Preserve target bytes as inert regular file; do not traverse.",
+      "target": "../skills/"
+    },
+    {
+      "blob": "83cc3f226b17278384e32056cfa8470b9ae43738",
+      "mode": "120000",
+      "path": "debug/latest",
+      "reason": "Historical debug convenience link is outside fixture CLI/generator/source/evidence closure. Absolute target is inert blob content, never opened or resolved.",
+      "target": "D:/Repos/agent-skills/debug/ca212ab3-8107-415b-9921-ac706b4f3fb9.txt"
+    }
+  ],
+  "main": "476b8df6efe6c9974879957147449f61c34cd9a0",
+  "node_expected_version": "v24.7.0",
+  "node_sha256": "c1b274a8d0a23e060fc42ce71c3cdfa1569b83d91ba82cc59fa907da97a425e9",
+  "preparedUtc": "2026-09-07T18:39:47.096769+00:00",
+  "protected_paths": [
+    "plugins/foreman-line/approval/README.md",
+    "plugins/foreman-line/approval/package.json",
+    "plugins/foreman-line/approval/tsconfig.json",
+    "plugins/foreman-line/authority-registry/README.md",
+    "plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml",
+    "plugins/foreman-line/authority-registry/biome.json",
+    "plugins/foreman-line/authority-registry/package-lock.json",
+    "plugins/foreman-line/authority-registry/package.json",
+    "plugins/foreman-line/authority-registry/schemas/authority-enforcement-registry.schema.json",
+    "plugins/foreman-line/authority-registry/src/cli.ts",
+    "plugins/foreman-line/authority-registry/src/generate.ts",
+    "plugins/foreman-line/authority-registry/src/index.ts",
+    "plugins/foreman-line/authority-registry/src/registry.ts",
+    "plugins/foreman-line/authority-registry/src/schemas.ts",
+    "plugins/foreman-line/authority-registry/src/types.ts",
+    "plugins/foreman-line/authority-registry/src/validate.ts",
+    "plugins/foreman-line/authority-registry/tests/bare-specifier.test.ts",
+    "plugins/foreman-line/authority-registry/tests/corpus-sweep.test.ts",
+    "plugins/foreman-line/authority-registry/tests/dependency-allowlist.test.ts",
+    "plugins/foreman-line/authority-registry/tests/fixtures/pass-minimal.yaml",
+    "plugins/foreman-line/authority-registry/tests/parity.test.ts",
+    "plugins/foreman-line/authority-registry/tests/schema-validation.test.ts",
+    "plugins/foreman-line/authority-registry/tests/semantic-invariants.test.ts",
+    "plugins/foreman-line/authority-registry/tests/support/assert-ok.ts",
+    "plugins/foreman-line/authority-registry/tsconfig.json",
+    "plugins/foreman-line/docs/COORDINATOR-PATTERN.md",
+    "plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md",
+    "plugins/foreman-line/docs/SPEC-CONVENTION.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/A1.8-coordinator-review-and-exact-ratification-text.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/A2-PARKED-known-unowned-risk.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/A2-adversarial-review-findings.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/A2-r2-adversarial-review-findings.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/A2-r3-adversarial-review-findings.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/ADR-001-runtime-infrastructure-posture.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-BLOCKER-volatile-canon-source.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-GATE-3-package.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-MERGE-READY-material.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-STOP-REPORT-for-developer.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R14.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R15.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R16.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R19.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R20.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R21.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R22.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R23.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R30.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R31.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-coordinator-closure-check.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-review-A-findings.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-rework1-step0-rulings.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-STOP-REPORT.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-baseline-closure-20260907.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-execution-ruling-20260907.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-recovery-record.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-recovery-step0-ruling.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-triage-round1.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/FOREMAN-KERNEL-DEVELOPMENT-CHARTER.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/GOAL-FINDING-inherited-canon-provenance.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/R30-coordinator-disposition-20260907.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/R30-implementation-ruling-20260907.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/R30-plan-and-source-review-20260907.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/R30-source-expectations-20260907.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/R30-source-integration.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/R30-step0-mapping-20260907.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/R30-verification-closure-20260907.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/R31-coordinator-decision-20260907.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/R31-full-run28-test-migration-review-20260907.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/R31-full-run28-test-migration-ruling-20260907.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/R31-implementation-ruling-20260907.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/R31-migration-evidence-review-20260907.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/R31-migration-evidence-ruling-20260907.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/R31-source-expectations-20260907.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/R31-source-integration-20260907.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/R31-source-plan-review-20260907.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/R31-step0-mapping-20260907.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/R31-step0-review-20260907.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/adoption-review-20260907.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/amendment-A1.8-ratification-ledger.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/amendment-A4-infrastructure-adoption-20260907.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/authorization-20260907-unattended.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/charter.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-authority/metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-authority/probe-output.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-authority/probe.mjs",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-authority/review.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-history/metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-history/probe-output.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-history/probe.mjs",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30-final-review-history/review.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/01-npm-ci.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/02-red-adoption-counts.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/03-typecheck-increment.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/04-typecheck-increment.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/05-generate-first.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/06-generate-frozen-anchors.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/07-generate-approved-masked-ids.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/08-typecheck-tests.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/09-validate-increment.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/10-typecheck-expanded-controls.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/11-format-increment.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/12-oracle-counts-increment.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/13-typecheck-r30-9.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/14-generate-r30-9.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/15-validate-r30-9.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/16-generate-final-shapes.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/17-head-pin-validation.exit",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/17-head-pin-validation.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/18-focused-r30-semantic.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/19-focused-r30-semantic-corrected.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/20-focused-r30-semantic.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/21-focused-r30-corpus.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/22-format-final.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/23-typecheck-checkpoint.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/24-final-npm-ci.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/25-final-typecheck.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/26-completion-observation.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/26-final-npm-test.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/26-live-process-start-evidence.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/27-repair-format.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/27-repair-format.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/28-focused-historical-repairs.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/28-focused-historical-repairs.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/29-repair-final-format.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/29-repair-final-format.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/30-focused-historical-final.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/30-focused-historical-final.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/31-final-npm-ci.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/31-final-npm-ci.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/32-final-typecheck.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/32-final-typecheck.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/33-cancel-owned-processes.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/33-cancellation.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/33-final-npm-test.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/33-final-npm-test.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/34-oracle-format.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/34-oracle-format.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/35-focused-oracle-and-historical.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/35-focused-oracle-and-historical.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/36-oracle-checkpoint-checks.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/36-oracle-checkpoint-checks.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/37-final-npm-ci.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/37-final-npm-ci.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/38-final-typecheck.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/38-final-typecheck.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/39-final-npm-test.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/39-final-npm-test.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/40-final-biome.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/40-final-biome.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/41-final-validate.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/41-final-validate.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/42-final-sweep.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/42-final-sweep.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/43-final-generate-one.hashes.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/43-final-generate-one.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/43-final-generate-one.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/44-final-generate-two.hashes.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/44-final-generate-two.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/44-final-generate-two.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/45-final-evidence-collector.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/45-final-evidence-collector.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/46-final-scope-check.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/47-final-scope-check.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/47-final-scope-check.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/48-final-node-version.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/48-final-node-version.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/49-final-npm-version.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/49-final-npm-version.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/50-raw-evidence-whitespace-check.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/50-raw-evidence-whitespace-check.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/51-authored-evidence-check.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/checkpoint-artifact-hashes.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/collect-final-evidence.mjs",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/development-notes.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/evidence-manifest.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-adoption-delta.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-artifact-hashes.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-chain-timing-recovery.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-handoff.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-source-snapshot-hashes.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-source-working-hashes.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-test-coverage.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/final-tracked-byte-delta.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/initial-tracked-hashes.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/node-version.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/npm-version.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/run-final-tail.ps1",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/01-npm-ci.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/01-npm-ci.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/02-source-discovery.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/02-source-discovery.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/02-source-discovery.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-initial-draft-unvalidated.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-step0-contract.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-step0-contract.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-step0-proposed-contract.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/04-step0-contract.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/04-step0-contract.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/04-step0-proposed-contract.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/05-source-byte-check.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/06-complete-item-correspondence.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/06-item-correspondence.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/06-item-correspondence.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/07-scope-metadata-preparation-error.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/08-step0-scope-check.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/09-exact-migration-proposal.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/09-exact-migration-proposal.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/09-exact-migration-proposal.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/10-final-step0-scope.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/11-red-source-controls.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/11-red-source-controls.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/12-development-typecheck.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/12-development-typecheck.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/13-development-generation.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/13-development-generation.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/14-development-validate.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/14-development-validate.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/15-development-typecheck.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/15-development-typecheck.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/16-focused-semantic.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/16-focused-semantic.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/17-focused-corpus.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/17-focused-corpus.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/18-development-notes.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/19-development-typecheck.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/19-development-typecheck.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/20-development-biome.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/20-development-biome.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/21-focused-semantic.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/21-focused-semantic.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/22-focused-corpus.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/22-focused-corpus.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/23-development-biome.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/23-development-biome.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/24-development-typecheck.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/24-development-typecheck.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/25-focused-semantic.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/25-focused-semantic.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/26-full-npm-ci.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/26-full-npm-ci.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/27-full-typecheck.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/27-full-typecheck.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/28-full-test.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/28-full-test.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/29-full-run-failure-diagnosis.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/30-test-migration-biome.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/30-test-migration-biome.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/31-test-migration-typecheck.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/31-test-migration-typecheck.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/32-test-migration-focused.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/32-test-migration-focused.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/33-test-migration-checkpoint.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/34-full-npm-ci.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/34-full-npm-ci.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/35-full-typecheck.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/35-full-typecheck.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/36-full-test.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/36-full-test.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/37-full-biome.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/37-full-biome.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/38-full-validate.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/38-full-validate.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/39-full-sweep.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/39-full-sweep.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/40-full-generate-one.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/40-full-generate-one.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/41-full-generate-two.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/41-full-generate-two.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/42-node-version.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/42-node-version.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/43-npm-version.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/43-npm-version.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/44-final-integrity.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/44-final-integrity.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/45-final-coverage.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/45-final-coverage.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/46-final-package-scope.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/46-final-package-scope.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/47-authored-evidence-whitespace.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/47-authored-evidence-whitespace.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/build-evidence-manifest.mjs",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/collect-coverage.mjs",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/correspondence.mjs",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/discover.mjs",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/evidence-manifest.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/final-chain.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/final-handoff.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/final-integrity.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/final-integrity.ts",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/final-test-coverage.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/initial-package-hashes.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/migration-proposal.mjs",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/monitor-notes.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/propose-contract.mjs",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/step0-evidence-manifest.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.exit.txt",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.running.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.stderr.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/01-node.stdout.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/02-install.exit.txt",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/02-install.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/02-install.running.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/02-install.stderr.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/02-install.stdout.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/03-typecheck.exit.txt",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/03-typecheck.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/03-typecheck.running.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/03-typecheck.stderr.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/03-typecheck.stdout.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.added-test-names.txt",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.corpus-progress.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.exit.txt",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.running.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.semantic-progress.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.stderr.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.stdout.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/04-test.totals.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/05-biome.exit.txt",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/05-biome.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/05-biome.running.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/05-biome.stderr.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/05-biome.stdout.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/06-validate.exit.txt",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/06-validate.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/06-validate.running.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/06-validate.stderr.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/06-validate.stdout.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/07-sweep.exit.txt",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/07-sweep.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/07-sweep.running.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/07-sweep.stderr.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/07-sweep.stdout.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.after-sha256.csv",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.before-sha256.csv",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.exit.txt",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.running.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.stderr.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/08-generate.stdout.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/09-status.exit.txt",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/09-status.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/09-status.running.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/09-status.stderr.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/09-status.stdout.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.exit.txt",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.provenance.csv",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.running.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.stderr.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/10-scope.stdout.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/BUILDER-HANDOFF.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/baseline-metadata.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/baseline-tracked-sha256.csv",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/evidence-sha256.csv",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/final-integrity.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/final-tracked-sha256.csv",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/fk-p0-progress-corpus-sweep-lnwaCS.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/fk-p0-progress-semantic-invariants-zK3ZEb.log",
+    "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/run-command.ps1",
+    "plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/main-source-compatibility-20260907.json",
+    "plugins/foreman-line/docs/goals/foreman-kernel/main-source-impact-20260907.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/plan-review-findings.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A1-decision-path-latency-budget.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-ci-backstop-host-independence.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r2-backstop-independence.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r3-backstop-independence.md",
+    "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r4-backstop-independence.md",
+    "plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md",
+    "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md",
+    "plugins/foreman-line/permission-profiles/README.md",
+    "plugins/foreman-line/permission-profiles/package.json",
+    "plugins/foreman-line/permission-profiles/permission-profiles.yaml",
+    "plugins/foreman-line/permission-profiles/src/types.ts",
+    "plugins/foreman-line/permission-profiles/src/validator.ts",
+    "plugins/foreman-line/permission-profiles/tsconfig.json",
+    "plugins/foreman-line/schema-scaffold/README.md",
+    "plugins/foreman-line/schema-scaffold/biome.json",
+    "plugins/foreman-line/schema-scaffold/package-lock.json",
+    "plugins/foreman-line/schema-scaffold/package.json",
+    "plugins/foreman-line/schema-scaffold/src/generate.ts",
+    "plugins/foreman-line/schema-scaffold/src/index.ts",
+    "plugins/foreman-line/schema-scaffold/src/registry.ts",
+    "plugins/foreman-line/schema-scaffold/src/test-scaffold.ts",
+    "plugins/foreman-line/schema-scaffold/tests/dependency-allowlist.test.ts",
+    "plugins/foreman-line/schema-scaffold/tests/generate.test.ts",
+    "plugins/foreman-line/schema-scaffold/tests/test-scaffold.test.ts",
+    "plugins/foreman-line/schema-scaffold/tsconfig.json",
+    "plugins/foreman-line/skills/goal/SKILL.md",
+    "plugins/foreman-line/skills/parcel-driven-development/SKILL.md",
+    "plugins/foreman-line/spec-linter/README.md",
+    "plugins/foreman-line/spec-linter/package.json",
+    "plugins/foreman-line/spec-linter/schemas/spec-frontmatter.schema.json",
+    "plugins/foreman-line/spec-linter/src/cli.ts",
+    "plugins/foreman-line/spec-linter/src/validate.ts",
+    "plugins/foreman-line/spec-linter/tsconfig.json"
+  ],
+  "r31": "1747c1df7dfa4677d345390ac673c3d15c82b980",
+  "scope": "Exact fixture CLI validate/sweep and generator inputs; excluded other packages/CI are not runtime-verified by this check.",
+  "source_commit": "8d500704c9e3d6d8b652bbe838aa3623f88203fc",
+  "source_tree": "8607bd69b51e9fd84244b1837b9e75814ba2d00f",
+  "status": "Approved for execution after two fresh final APPROVE verdicts and scoped coordinator acceptance"
+}

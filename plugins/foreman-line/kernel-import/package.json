@@ -1,0 +1,28 @@
+{
+  "name": "@foreman-line/kernel-import",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "FK-P11 legacy import and projection engine: one-time digest/commit-bound legacy import onto the FK-P9 substrate under the D2/D14 field-level authority matrix (no manufactured approvals), deterministic bytes-only Markdown projection over the ledger, one recorded cutover epoch per source lineage, and the named DIVERGENCE_STOP refusal.",
+  "engines": {
+    "node": ">=22"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "lint": "biome check ."
+  },
+  "dependencies": {
+    "@foreman-line/kernel-lease": "file:../kernel-lease",
+    "@foreman-line/kernel-state": "file:../kernel-state"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.14",
+    "@types/node": "26.6.2",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
+  }
+}

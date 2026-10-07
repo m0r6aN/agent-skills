@@ -1,0 +1,13 @@
+{
+  "wrapperPid": 474428,
+  "status": "running",
+  "command": [
+    "git.exe",
+    "diff",
+    "--name-only",
+    "51857a3a7796b393c0c0a68712f98c06e7015d79...HEAD"
+  ],
+  "step": "10-scope",
+  "startedUtc": "2026-09-07T14:14:53.8504288Z",
+  "head": "0ee165720f8d1e3a91eb283cb770400b23f61bf5"
+}

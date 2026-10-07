@@ -1,0 +1,7 @@
+{
+  "command": "node --version",
+  "startUtc": "2026-09-07T16:14:41.0077000Z",
+  "endUtc": "2026-09-07T16:14:41.1849533Z",
+  "elapsedSeconds": 0.1793549,
+  "directExit": 0
+}

@@ -1,0 +1,5 @@
+{
+  "observedCompletionUtc": "2026-09-07T15:35:09.1654958Z",
+  "directExit": 1,
+  "basis": "explicit observation after tool reported process completion; command start separately recovered from filesystem and OS evidence"
+}

@@ -1,0 +1,60 @@
+{
+  "kind": "control",
+  "purpose": "non-vacuousness of mechanical (T2): the harness observes both refusal and allow through the shipped dispatch CLI",
+  "cases": [
+    {
+      "id": "CTL-01",
+      "kind": "control",
+      "vectorClass": null,
+      "className": null,
+      "channel": "dispatch-cli",
+      "scenario": "out-of-scope mutationScope through shipped prepareDispatch",
+      "hypothesis": {
+        "classification": "mechanical",
+        "basis": "shipped preflightCheck refuses an out-of-scope envelope inside prepareDispatch before worktree creation (T2: MUTATION_SCOPE_FAILED)"
+      },
+      "requiredSignals": [
+        "refusalObserved: true",
+        "MUTATION_SCOPE_FAILED before worktree creation"
+      ],
+      "params": {},
+      "notes": "control row: proves the harness can observe mechanical"
+    },
+    {
+      "id": "CTL-02",
+      "kind": "control",
+      "vectorClass": null,
+      "className": null,
+      "channel": "dispatch-cli",
+      "scenario": "out-of-scope changed path through shipped executeDispatch post-hoc",
+      "hypothesis": {
+        "classification": "mechanical",
+        "basis": "shipped postHocCheck refuses an out-of-scope changed path inside executeDispatch before the Stage-C receipt (T2)"
+      },
+      "requiredSignals": [
+        "refusalObserved: true",
+        "no Stage-C receipt written"
+      ],
+      "params": {},
+      "notes": "control row: proves the harness can observe mechanical"
+    },
+    {
+      "id": "CTL-03",
+      "kind": "control",
+      "vectorClass": null,
+      "className": null,
+      "channel": "dispatch-cli",
+      "scenario": "in-scope mutation through the CLI",
+      "hypothesis": {
+        "classification": "unsupported",
+        "basis": "allow baseline (T2): dispatch proceeds through the shipped CLI; no refusal or detection occurs by design — T4 derives unsupported from (false, true, false); this row claims no bypass outcome"
+      },
+      "requiredSignals": [
+        "dispatch proceeds",
+        "Stage-C receipt written"
+      ],
+      "params": {},
+      "notes": "allow baseline (T2); classification reflects only that no refusal or detection occurred"
+    }
+  ]
+}

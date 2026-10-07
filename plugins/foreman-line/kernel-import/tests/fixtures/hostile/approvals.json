@@ -1,0 +1,1752 @@
+[
+  {
+    "id": "FAB-01",
+    "input": {
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaa000000000000000000000000000000000001",
+            "parents": []
+          },
+          {
+            "id": "aaaa000000000000000000000000000000000002",
+            "parents": [
+              "aaaa000000000000000000000000000000000001"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "aaaa000000000000000000000000000000000002",
+            "sourcePath": "docs/goals/a.md",
+            "text": "# Goal X\n\nLegacy goal record for goal-x.\n"
+          },
+          {
+            "commitId": "aaaa000000000000000000000000000000000002",
+            "sourcePath": "docs/goals/approval-1.md",
+            "text": "approval evidence for goal-x\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [
+          {
+            "goalId": "goal-seed-1",
+            "revision": 1,
+            "status": "active"
+          }
+        ],
+        "leases": [
+          {
+            "leaseId": "lease-seed-1",
+            "goalId": "goal-seed-1",
+            "ownerPrincipalRef": "op-seed-1",
+            "casRevision": 1,
+            "acquiredAtMicros": 0,
+            "expiresAtMicros": null,
+            "releasedAtMicros": null
+          }
+        ],
+        "idempotencyKeys": [
+          {
+            "principalRef": "op-seed-1",
+            "operationId": "op-seed-bind-1",
+            "repositoryRef": "repo-1",
+            "worktreeRef": "wt-1",
+            "payloadDigest": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+          }
+        ],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:063c7ba8e24372cd6e26c538ee36646697546a7388a643b3b34bef0fef03f066",
+        "sourceLineage": {
+          "rootCommit": "aaaa000000000000000000000000000000000001",
+          "tipCommit": "aaaa000000000000000000000000000000000002"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "aaaa000000000000000000000000000000000002",
+          "items": [
+            {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "disposition": "import",
+              "reason": "legacy goal record"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "sourceCommit": "aaaa000000000000000000000000000000000002"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-1",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda"
+              }
+            ],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "IMPORT_APPROVAL_UNEVIDENCED",
+    "expectedReasonCode": "provenance-absent"
+  },
+  {
+    "id": "FAB-02",
+    "input": {
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaa000000000000000000000000000000000001",
+            "parents": []
+          },
+          {
+            "id": "aaaa000000000000000000000000000000000002",
+            "parents": [
+              "aaaa000000000000000000000000000000000001"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "aaaa000000000000000000000000000000000002",
+            "sourcePath": "docs/goals/a.md",
+            "text": "# Goal X\n\nLegacy goal record for goal-x.\n"
+          },
+          {
+            "commitId": "aaaa000000000000000000000000000000000001",
+            "sourcePath": "docs/goals/approval-1.md",
+            "text": "approval evidence for goal-x\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:063c7ba8e24372cd6e26c538ee36646697546a7388a643b3b34bef0fef03f066",
+        "sourceLineage": {
+          "rootCommit": "aaaa000000000000000000000000000000000001",
+          "tipCommit": "aaaa000000000000000000000000000000000002"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "aaaa000000000000000000000000000000000002",
+          "items": [
+            {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "disposition": "import",
+              "reason": "legacy goal record"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "sourceCommit": "aaaa000000000000000000000000000000000002"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-1",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              }
+            ],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "IMPORT_APPROVAL_UNEVIDENCED",
+    "expectedReasonCode": "blob-absent"
+  },
+  {
+    "id": "FAB-03",
+    "input": {
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaa000000000000000000000000000000000001",
+            "parents": []
+          },
+          {
+            "id": "aaaa000000000000000000000000000000000002",
+            "parents": [
+              "aaaa000000000000000000000000000000000001"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "aaaa000000000000000000000000000000000002",
+            "sourcePath": "docs/goals/a.md",
+            "text": "# Goal X\n\nLegacy goal record for goal-x.\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:063c7ba8e24372cd6e26c538ee36646697546a7388a643b3b34bef0fef03f066",
+        "sourceLineage": {
+          "rootCommit": "aaaa000000000000000000000000000000000001",
+          "tipCommit": "aaaa000000000000000000000000000000000002"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "aaaa000000000000000000000000000000000002",
+          "items": [
+            {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "disposition": "import",
+              "reason": "legacy goal record"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "completed",
+            "source": {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "sourceCommit": "aaaa000000000000000000000000000000000002"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "IMPORT_APPROVAL_UNEVIDENCED",
+    "expectedReasonCode": "claim-required-missing"
+  },
+  {
+    "id": "FAB-04",
+    "input": {
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaa000000000000000000000000000000000001",
+            "parents": []
+          },
+          {
+            "id": "aaaa000000000000000000000000000000000002",
+            "parents": [
+              "aaaa000000000000000000000000000000000001"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "aaaa000000000000000000000000000000000002",
+            "sourcePath": "docs/goals/a.md",
+            "text": "# Goal X\n\nLegacy goal record for goal-x.\n"
+          },
+          {
+            "commitId": "aaaa000000000000000000000000000000000002",
+            "sourcePath": "docs/goals/approval-1.md",
+            "text": "approval evidence for goal-x\n"
+          },
+          {
+            "commitId": "aaaa000000000000000000000000000000000002",
+            "sourcePath": "docs/goals/approval-2.md",
+            "text": "second approval evidence for goal-x\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:063c7ba8e24372cd6e26c538ee36646697546a7388a643b3b34bef0fef03f066",
+        "sourceLineage": {
+          "rootCommit": "aaaa000000000000000000000000000000000001",
+          "tipCommit": "aaaa000000000000000000000000000000000002"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "aaaa000000000000000000000000000000000002",
+          "items": [
+            {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "disposition": "import",
+              "reason": "legacy goal record"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "completed",
+            "source": {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "sourceCommit": "aaaa000000000000000000000000000000000002"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-1",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "signature",
+                "gitIdentity": "maintainer-2",
+                "digest": "sha256:2127c03542d7ed6cc1237fcfdea17d54f4a644aa78017d83611d5f5dbf42e929"
+              }
+            ],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "IMPORT_APPROVAL_UNEVIDENCED",
+    "expectedReasonCode": "provenance-absent"
+  },
+  {
+    "id": "FAB-05",
+    "input": {
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaa000000000000000000000000000000000001",
+            "parents": []
+          },
+          {
+            "id": "aaaa000000000000000000000000000000000002",
+            "parents": [
+              "aaaa000000000000000000000000000000000001"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "aaaa000000000000000000000000000000000002",
+            "sourcePath": "docs/goals/a.md",
+            "text": "# Goal X\n\nLegacy goal record for goal-x.\n"
+          },
+          {
+            "commitId": "aaaa000000000000000000000000000000000002",
+            "sourcePath": "docs/goals/approval-1.md",
+            "text": "approval evidence for goal-x\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:063c7ba8e24372cd6e26c538ee36646697546a7388a643b3b34bef0fef03f066",
+        "sourceLineage": {
+          "rootCommit": "aaaa000000000000000000000000000000000001",
+          "tipCommit": "aaaa000000000000000000000000000000000002"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "aaaa000000000000000000000000000000000002",
+          "items": [
+            {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "disposition": "import",
+              "reason": "legacy goal record"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "sourceCommit": "aaaa000000000000000000000000000000000002"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [
+              {
+                "evidenceKind": "attestation",
+                "gitIdentity": "maintainer-1",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              }
+            ],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "IMPORT_ARGUMENT_INVALID"
+  },
+  {
+    "id": "FAB-06",
+    "input": {
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaa000000000000000000000000000000000001",
+            "parents": []
+          },
+          {
+            "id": "aaaa000000000000000000000000000000000002",
+            "parents": [
+              "aaaa000000000000000000000000000000000001"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "aaaa000000000000000000000000000000000002",
+            "sourcePath": "docs/goals/a.md",
+            "text": "# Goal X\n\nLegacy goal record for goal-x.\n"
+          },
+          {
+            "commitId": "aaaa000000000000000000000000000000000002",
+            "sourcePath": "docs/goals/ratified.md",
+            "text": "ratified bytes for goal-x\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:063c7ba8e24372cd6e26c538ee36646697546a7388a643b3b34bef0fef03f066",
+        "sourceLineage": {
+          "rootCommit": "aaaa000000000000000000000000000000000001",
+          "tipCommit": "aaaa000000000000000000000000000000000002"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "aaaa000000000000000000000000000000000002",
+          "items": [
+            {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "disposition": "import",
+              "reason": "legacy goal record"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "sourceCommit": "aaaa000000000000000000000000000000000002"
+            },
+            "claimedRatificationRefs": [
+              {
+                "gitIdentity": "maintainer-1",
+                "digest": "sha256:xyz",
+                "provenance": {
+                  "sourcePath": "docs/goals/ratified.md",
+                  "sourceDigest": "sha256:2b01085c93dfe86933697ebfa424168166aac1ef72ce44b3ed0e2fe2be33afbb",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              }
+            ],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "IMPORT_ARGUMENT_INVALID"
+  },
+  {
+    "id": "FAB-07",
+    "input": {
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaa000000000000000000000000000000000001",
+            "parents": []
+          },
+          {
+            "id": "aaaa000000000000000000000000000000000002",
+            "parents": [
+              "aaaa000000000000000000000000000000000001"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "aaaa000000000000000000000000000000000002",
+            "sourcePath": "docs/goals/a.md",
+            "text": "# Goal X\n\nLegacy goal record for goal-x.\n"
+          },
+          {
+            "commitId": "aaaa000000000000000000000000000000000002",
+            "sourcePath": "docs/goals/approval-1.md",
+            "text": "approval evidence for goal-x\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:063c7ba8e24372cd6e26c538ee36646697546a7388a643b3b34bef0fef03f066",
+        "sourceLineage": {
+          "rootCommit": "aaaa000000000000000000000000000000000001",
+          "tipCommit": "aaaa000000000000000000000000000000000002"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "aaaa000000000000000000000000000000000002",
+          "items": [
+            {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "disposition": "import",
+              "reason": "legacy goal record"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "sourceCommit": "aaaa000000000000000000000000000000000002"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              }
+            ],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "IMPORT_ARGUMENT_INVALID"
+  },
+  {
+    "id": "FAB-08",
+    "input": {
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaa000000000000000000000000000000000001",
+            "parents": []
+          },
+          {
+            "id": "aaaa000000000000000000000000000000000002",
+            "parents": [
+              "aaaa000000000000000000000000000000000001"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "aaaa000000000000000000000000000000000002",
+            "sourcePath": "docs/goals/a.md",
+            "text": "# Goal X\n\nLegacy goal record for goal-x.\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:063c7ba8e24372cd6e26c538ee36646697546a7388a643b3b34bef0fef03f066",
+        "sourceLineage": {
+          "rootCommit": "aaaa000000000000000000000000000000000001",
+          "tipCommit": "aaaa000000000000000000000000000000000002"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "aaaa000000000000000000000000000000000002",
+          "items": [
+            {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "disposition": "import",
+              "reason": "legacy goal record"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "sourceCommit": "aaaa000000000000000000000000000000000002"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            },
+            "gateSatisfied": true
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "IMPORT_ARGUMENT_INVALID"
+  },
+  {
+    "id": "FAB-09",
+    "input": {
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaa000000000000000000000000000000000001",
+            "parents": []
+          },
+          {
+            "id": "aaaa000000000000000000000000000000000002",
+            "parents": [
+              "aaaa000000000000000000000000000000000001"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "aaaa000000000000000000000000000000000002",
+            "sourcePath": "docs/goals/a.md",
+            "text": "# Goal X\n\nLegacy goal record for goal-x.\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:063c7ba8e24372cd6e26c538ee36646697546a7388a643b3b34bef0fef03f066",
+        "sourceLineage": {
+          "rootCommit": "aaaa000000000000000000000000000000000001",
+          "tipCommit": "aaaa000000000000000000000000000000000002"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "aaaa000000000000000000000000000000000002",
+          "items": [
+            {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "disposition": "import",
+              "reason": "legacy goal record"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "gate.satisfied",
+            "source": {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "sourceCommit": "aaaa000000000000000000000000000000000002"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "IMPORT_STATUS_UNKNOWN"
+  },
+  {
+    "id": "FAB-10",
+    "input": {
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaa000000000000000000000000000000000001",
+            "parents": []
+          },
+          {
+            "id": "aaaa000000000000000000000000000000000002",
+            "parents": [
+              "aaaa000000000000000000000000000000000001"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "aaaa000000000000000000000000000000000002",
+            "sourcePath": "docs/goals/a.md",
+            "text": "# Goal X\n\nLegacy goal record for goal-x.\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:063c7ba8e24372cd6e26c538ee36646697546a7388a643b3b34bef0fef03f066",
+        "sourceLineage": {
+          "rootCommit": "aaaa000000000000000000000000000000000001",
+          "tipCommit": "aaaa000000000000000000000000000000000002"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "aaaa000000000000000000000000000000000002",
+          "items": [
+            {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "disposition": "import",
+              "reason": "legacy goal record"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "human.approved",
+            "source": {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "sourceCommit": "aaaa000000000000000000000000000000000002"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "IMPORT_STATUS_UNKNOWN"
+  },
+  {
+    "id": "FAB-11",
+    "input": {
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaa000000000000000000000000000000000001",
+            "parents": []
+          },
+          {
+            "id": "aaaa000000000000000000000000000000000002",
+            "parents": [
+              "aaaa000000000000000000000000000000000001"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "aaaa000000000000000000000000000000000002",
+            "sourcePath": "docs/goals/a.md",
+            "text": "# Goal X\n\nLegacy goal record for goal-x.\n"
+          },
+          {
+            "commitId": "aaaa000000000000000000000000000000000002",
+            "sourcePath": "docs/goals/approval-1.md",
+            "text": "approval evidence for goal-x\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:063c7ba8e24372cd6e26c538ee36646697546a7388a643b3b34bef0fef03f066",
+        "sourceLineage": {
+          "rootCommit": "aaaa000000000000000000000000000000000001",
+          "tipCommit": "aaaa000000000000000000000000000000000002"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "aaaa000000000000000000000000000000000002",
+          "items": [
+            {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "disposition": "import",
+              "reason": "legacy goal record"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "sourceCommit": "aaaa000000000000000000000000000000000002"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-0",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-1",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-2",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-3",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-4",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-5",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-6",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-7",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-8",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-9",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-10",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-11",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-12",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-13",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-14",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-15",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-16",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-17",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-18",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-19",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-20",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-21",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-22",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-23",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-24",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-25",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-26",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-27",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-28",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-29",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-30",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-31",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-32",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-33",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-34",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-35",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-36",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-37",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-38",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-39",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-40",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-41",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-42",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-43",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-44",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-45",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-46",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-47",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-48",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-49",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-50",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-51",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-52",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-53",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-54",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-55",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-56",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-57",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-58",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-59",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-60",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-61",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-62",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-63",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              },
+              {
+                "evidenceKind": "commit-ref",
+                "gitIdentity": "maintainer-64",
+                "digest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-1.md",
+                  "sourceDigest": "sha256:9939321562eaa2e8b9c5538819c7aad766e3262bb5c92ceb70cde807a278afda",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              }
+            ],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": null,
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "IMPORT_LIMIT_EXCEEDED"
+  },
+  {
+    "id": "FAB-12",
+    "input": {
+      "lineage": {
+        "commits": [
+          {
+            "id": "aaaa000000000000000000000000000000000001",
+            "parents": []
+          },
+          {
+            "id": "aaaa000000000000000000000000000000000002",
+            "parents": [
+              "aaaa000000000000000000000000000000000001"
+            ]
+          }
+        ],
+        "blobs": [
+          {
+            "commitId": "aaaa000000000000000000000000000000000002",
+            "sourcePath": "docs/goals/a.md",
+            "text": "# Goal X\n\nLegacy goal record for goal-x.\n"
+          },
+          {
+            "commitId": "aaaa000000000000000000000000000000000001",
+            "sourcePath": "docs/goals/approval-2.md",
+            "text": "second approval evidence for goal-x\n"
+          }
+        ]
+      },
+      "seed": {
+        "goals": [],
+        "leases": [],
+        "idempotencyKeys": [],
+        "events": []
+      },
+      "document": {
+        "apiVersion": "0.1.0",
+        "documentKind": "legacy-import",
+        "corpusDigest": "sha256:063c7ba8e24372cd6e26c538ee36646697546a7388a643b3b34bef0fef03f066",
+        "sourceLineage": {
+          "rootCommit": "aaaa000000000000000000000000000000000001",
+          "tipCommit": "aaaa000000000000000000000000000000000002"
+        },
+        "corpusManifest": {
+          "manifestKind": "legacy-corpus-manifest",
+          "sourceRevision": "aaaa000000000000000000000000000000000002",
+          "items": [
+            {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "disposition": "import",
+              "reason": "legacy goal record"
+            }
+          ]
+        },
+        "rows": [
+          {
+            "goalId": "goal-x",
+            "claimedStatus": "active",
+            "source": {
+              "sourcePath": "docs/goals/a.md",
+              "sourceDigest": "sha256:313dc3479079382737c64b2f59abdfa0be88c63f5c70ce3aaa8cc72793a67bb7",
+              "sourceCommit": "aaaa000000000000000000000000000000000002"
+            },
+            "claimedRatificationRefs": [],
+            "claimedApprovals": [
+              {
+                "evidenceKind": "merge-record",
+                "gitIdentity": "maintainer-1",
+                "digest": "sha256:2127c03542d7ed6cc1237fcfdea17d54f4a644aa78017d83611d5f5dbf42e929",
+                "provenance": {
+                  "sourcePath": "docs/goals/approval-2.md",
+                  "sourceDigest": "sha256:2127c03542d7ed6cc1237fcfdea17d54f4a644aa78017d83611d5f5dbf42e929",
+                  "sourceCommit": "aaaa000000000000000000000000000000000002"
+                }
+              }
+            ],
+            "claimedOperationalFacts": {
+              "claimedRevision": null,
+              "claimedLeaseHolderPrincipalRef": null,
+              "claimedPendingTransitionTarget": "active",
+              "claimedWakeupCount": null,
+              "claimedHandoffCount": null,
+              "claimedBinding": null
+            }
+          }
+        ]
+      },
+      "request": {
+        "principalRef": "operator-1",
+        "operationId": "op-0001"
+      }
+    },
+    "expectedCode": "IMPORT_APPROVAL_UNEVIDENCED",
+    "expectedReasonCode": "blob-absent"
+  }
+]

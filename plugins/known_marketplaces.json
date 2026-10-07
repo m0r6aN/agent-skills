@@ -1,0 +1,42 @@
+{
+  "claude-plugins-official": {
+    "source": {
+      "source": "github",
+      "repo": "anthropics/claude-plugins-official"
+    },
+    "installLocation": "C:\\Users\\clint\\.claude\\plugins\\marketplaces\\claude-plugins-official",
+    "lastUpdated": "2026-06-16T13:28:58.569Z"
+  },
+  "mcp-apps": {
+    "source": {
+      "source": "github",
+      "repo": "modelcontextprotocol/ext-apps"
+    },
+    "installLocation": "C:\\Users\\clint\\.claude\\plugins\\marketplaces\\mcp-apps",
+    "lastUpdated": "2026-01-28T19:48:01.181Z"
+  },
+  "last30days-skill": {
+    "source": {
+      "source": "git",
+      "url": "https://github.com/mvanhorn/last30days-skill.git"
+    },
+    "installLocation": "C:\\Users\\clint\\.claude\\plugins\\marketplaces\\last30days-skill",
+    "lastUpdated": "2026-06-15T13:56:37.985Z"
+  },
+  "anthropic-agent-skills": {
+    "source": {
+      "source": "github",
+      "repo": "anthropics/skills"
+    },
+    "installLocation": "C:\\Users\\clint\\.claude\\plugins\\marketplaces\\anthropic-agent-skills",
+    "lastUpdated": "2026-06-16T14:29:21.980Z"
+  },
+  "m0r6an-agent-skills": {
+    "source": {
+      "source": "directory",
+      "path": "D:\\Repos\\agent-skills"
+    },
+    "installLocation": "D:\\Repos\\agent-skills",
+    "lastUpdated": "2026-09-26T13:43:13.262Z"
+  }
+}

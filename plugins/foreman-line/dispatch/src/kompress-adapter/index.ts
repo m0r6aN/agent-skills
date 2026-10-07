@@ -17,7 +17,7 @@
  */
 
 import { mkdirSync, writeFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { isAbsolute, join, relative } from 'node:path'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -60,12 +60,42 @@ export interface KompressOptions {
 // ─── Error class ──────────────────────────────────────────────────────────────
 
 export class KompressError extends Error {
-  readonly code: 'COMPRESS_FAILED' | 'RECEIPT_WRITE_FAILED'
+  readonly code: 'COMPRESS_FAILED' | 'RECEIPT_WRITE_FAILED' | 'ROOT_NOT_ABSOLUTE'
 
   constructor(code: KompressError['code'], message: string) {
     super(message)
     this.name = 'KompressError'
     this.code = code
+  }
+}
+
+// ─── Root / path guards (P2b-i / D1) ──────────────────────────────────────────
+
+/**
+ * Refuse a non-absolute repoRoot BEFORE any fs/subprocess work (D1): a
+ * relative root would silently anchor to the process cwd. Typed
+ * ROOT_NOT_ABSOLUTE, mirroring routing-eval / skill-resolver's message style.
+ */
+function assertAbsoluteRoot(seam: string, name: string, root: string): void {
+  if (!isAbsolute(root)) {
+    throw new KompressError(
+      'ROOT_NOT_ABSOLUTE',
+      `${seam}: ${name} '${root}' is not an absolute path; a relative root would silently anchor to the process cwd and is refused (P2b-i / D19)`,
+    )
+  }
+}
+
+/**
+ * Refuse a caller-supplied path segment that resolves outside `root` BEFORE
+ * any fs work happens at the constructed path (D1). `rel` starting with '..'
+ * means the target climbed out of root; an absolute `rel` (e.g. a different
+ * Windows drive) escapes it too. Cross-package containment vocabulary: plain
+ * Error carrying 'resolves outside repoRoot and is refused'.
+ */
+function assertContainedRootPath(seam: string, ref: string, absPath: string, root: string): void {
+  const rel = relative(root, absPath)
+  if (rel.startsWith('..') || isAbsolute(rel)) {
+    throw new Error(`${seam}: '${ref}' resolves outside repoRoot and is refused`)
   }
 }
 
@@ -76,6 +106,8 @@ export async function kompressContext(
   compressFn: KompressFn,
   options: KompressOptions,
 ): Promise<KompressResult> {
+  // D1 guard runs FIRST — before the compressFn call and the mkdir/write pair.
+  assertAbsoluteRoot('kompressContext', 'repoRoot', options.repoRoot)
   const repoRoot = options.repoRoot
 
   // 1. Assemble content — empty chain: parcelSpecText only; with chain: join with separator
@@ -126,7 +158,12 @@ export async function kompressContext(
   }
 
   // 5. Write receipt — mkdirSync + writeFileSync wrapped in single try-catch → RECEIPT_WRITE_FAILED
-  const receiptDir = join(repoRoot, 'docs', 'receipts', input.workflowId)
+  // D1 containment: workflowId is a caller-supplied path SEGMENT joined under
+  // the fixed receipts root — an escaping value (e.g. '../..') is refused
+  // before the mkdir/write pair below.
+  const receiptsBase = join(repoRoot, 'docs', 'receipts')
+  const receiptDir = join(receiptsBase, input.workflowId)
+  assertContainedRootPath('kompressContext', input.workflowId, receiptDir, receiptsBase)
   const receiptPath = join(receiptDir, 'kompress.json')
   try {
     mkdirSync(receiptDir, { recursive: true })

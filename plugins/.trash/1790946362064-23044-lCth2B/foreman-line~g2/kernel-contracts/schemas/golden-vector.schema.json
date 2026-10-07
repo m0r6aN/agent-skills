@@ -1,0 +1,189 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://foreman-line.local/schemas/kernel-contracts/golden-vector.schema.json",
+  "$defs": {
+    "GoldenVectorFixture": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "const": "0.1.0"
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/GoldenVectorCase"
+          },
+          "minItems": 1,
+          "maxItems": 256
+        }
+      },
+      "required": [
+        "apiVersion",
+        "cases"
+      ],
+      "additionalProperties": false
+    },
+    "GoldenVectorCase": {
+      "type": "object",
+      "properties": {
+        "caseId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9._-]+$"
+        },
+        "charterClause": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "producerParcel": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "consumerParcel": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "inputTrustOrigin": {
+          "enum": [
+            "wire-untrusted",
+            "admitted-internal",
+            "trusted-runtime"
+          ]
+        },
+        "request": {
+          "oneOf": [
+            {
+              "$ref": "lifecycle-event.schema.json#/$defs/LifecycleEvent"
+            },
+            {
+              "$ref": "repository-read-request.schema.json#/$defs/ReadRequest"
+            },
+            {
+              "$ref": "authorize-action-input.schema.json#/$defs/AuthorizeActionInput"
+            }
+          ]
+        },
+        "expectedResponseKind": {
+          "enum": [
+            "policy-result",
+            "protocol-error",
+            "effect-result",
+            "adapter-failure"
+          ]
+        },
+        "expectedCode": {
+          "$ref": "decision-envelope.schema.json#/$defs/WireCode"
+        },
+        "expectedDecision": {
+          "oneOf": [
+            {
+              "enum": [
+                "ALLOW",
+                "REFUSE",
+                "ADVISORY",
+                "CONFLICT",
+                "REQUIRE_HUMAN",
+                "APPLIED",
+                "NOOP"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedWouldDecision": {
+          "oneOf": [
+            {
+              "enum": [
+                "ALLOW",
+                "REFUSE",
+                "ADVISORY",
+                "CONFLICT",
+                "REQUIRE_HUMAN",
+                "APPLIED",
+                "NOOP"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expectedAssuranceLevel": {
+          "enum": [
+            "structural",
+            "mediated",
+            "detected-only",
+            "ci-enforced",
+            "human-judgment",
+            "unsupported-host",
+            "degraded-read-only"
+          ]
+        },
+        "expectedObligations": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "post-diff-inspection",
+              "fresh-scm-evidence",
+              "stop-report-emission",
+              "degraded-read-logging",
+              "latency-recording"
+            ]
+          },
+          "maxItems": 8
+        },
+        "trustStageExpectation": {
+          "enum": [
+            "protocol-stop",
+            "admission-stop",
+            "authorized-context"
+          ]
+        },
+        "expectedRequestDigest": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "expectedInputDigest": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "verificationStage": {
+          "const": "contract-only"
+        },
+        "laterOwner": {
+          "type": "string",
+          "maxLength": 32
+        }
+      },
+      "required": [
+        "caseId",
+        "charterClause",
+        "producerParcel",
+        "consumerParcel",
+        "inputTrustOrigin",
+        "request",
+        "expectedResponseKind",
+        "expectedCode",
+        "expectedDecision",
+        "expectedWouldDecision",
+        "expectedAssuranceLevel",
+        "expectedObligations",
+        "trustStageExpectation",
+        "expectedRequestDigest",
+        "expectedInputDigest",
+        "verificationStage",
+        "laterOwner"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

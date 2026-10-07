@@ -1,5 +1,7 @@
 # The Foreman Line — Master Plugin Plan
 
+> **Repository identity migration (2026-09-06):** Repository identifiers and paths in this historical record were normalized to `m0r6aN/agent-skills`. Recorded commands were not rerun; all other historical outcomes remain as captured.
+
 **Version:** 0.1 (Draft — working name "the Line"; rename at will)
 **Owner:** Clinton Morgan — Principal Agentic AI Platform Architect, KaseyaOne
 **Status:** Proposed
@@ -124,21 +126,32 @@ roles:
 
 Rules: data classification gates eligibility **before** cost optimization runs; ceilings are per-parcel and enforced by the Context Ledger; every routing decision lands in the receipt.
 
-**Concrete v0 instantiation (as of July 2026 — revisit quarterly):**
+**Operational instantiation (Pi-session dispatch canon):** Foreman Line sessions
+are dispatched Pi sessions — the dispatch requirements, route-receipt
+authorization, and launch-boundary rules are the Pi-session dispatch canon
+(`plugins/foreman-line/templates/pi-routing-directive.md`, C0-A). The
+operational registry is the ratified Pi provider and lane matrix
+(`docs/goals/pi-model-configuration/charter.md:68-75`): model IDs use the
+prefixed Pi spellings `opencode/<id>` and `openrouter/<vendor>/<id>` — an
+OpenRouter slug is one spelling of a model ID, not the model vocabulary (within
+OpenRouter slugs Anthropic models use dots) — while provider-neutral task/result
+envelopes are preserved (C0-C). Every execution candidate declares exactly one approved fallback of comparable or higher suitability, carried as explicit
+fallback metadata in the `provider-neutral-fallback-contract` representation and
+recorded in the route receipt (C0-B). For fast structured routing/classification
+decisions the single Jev surface is JEV's J2-approved
+`POST https://openrouter.ai/api/alpha/decisions` under capability
+`openrouter-alpha-decisions` — Jev is `recommend-only` and may not approve,
+merge, release, or bypass policy; "Do not run two Jev surfaces" holds (C0-D).
 
-| Role / class | Model | Reasoning |
-|---|---|---|
-| Builder (default) | Claude Sonnet 5 | Most agentic Sonnet, near-Opus coding at ~40% of the cost; PDD's pinned scopes are exactly the conditions where mid-tier performs like frontier. Budget at standard $3/$15 — intro $2/$10 pricing ends Aug 31, 2026 |
-| Boilerplate / build-fix-loop | Claude Haiku 4.5 | $1/$5, fast; mechanical fixes don't deserve Sonnet tokens |
-| Coordinator | Claude Opus 4.8 | Frontier role by D4; must outclass the builders it coordinates |
-| Adversarial Reviewer | Claude Opus 4.8 | A verifier weaker than its builders is theater |
-| Security-audit parcels & security review | Claude Opus 4.8 — **hard override, never Sonnet 5** | Sonnet 5 has deliberately reduced cybersecurity capability; task class overrides default routing |
+*(Dated pointer: the July-2026 "Concrete v0 instantiation" friendly-name table
+is superseded by the ratified matrix above as of 2026-09-27 and is retired from
+this plan — kept as this dated pointer, not as a live table.)*
 
 ---
 
 ## 5a. Skill Injection Policy (the execution-plane library)
 
-The Line is the conveyor; the skills library is the rack of tools hanging above each station (`kaseya-one-productivity-tools`, deployed at `~\.claude\skills\`). Skills are wired in through a single mechanism — a versioned **skill injection matrix**, policy-as-code alongside the routing policy — rather than hardcoding each skill into a pipeline stage:
+The Line is the conveyor; the skills library is the rack of tools hanging above each station (`agent-skills`, deployed at `~\.claude\skills\`). Skills are wired in through a single mechanism — a versioned **skill injection matrix**, policy-as-code alongside the routing policy — rather than hardcoding each skill into a pipeline stage:
 
 ```yaml
 # illustrative — skill-injection.yaml

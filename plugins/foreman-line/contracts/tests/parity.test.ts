@@ -44,7 +44,7 @@ test('every exported contract type has a committed schema file', () => {
   assert.equal(allSchemaFiles.length, 17)
 })
 
-// permission-profile-registry P2: DispatchOrder.permissionProfile field cases.
+// permission-profiles package P2 (shipped): DispatchOrder.permissionProfile field cases.
 // These construct local literals over the read-only sampleDispatchOrder fixture;
 // they do not run through the loops above and do not touch src/testing.ts.
 

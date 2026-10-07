@@ -40,7 +40,10 @@ This goal supersedes only the **model-configuration and fallback** portion of
 Its D1–D8 authority controls, especially the rule that Pi is an execution-plane
 router and not the coordinator, remain binding.  `model-fleet-v1` and
 `governed-model-fleet` are not implementation dependencies and receive no
-authority from this charter.
+authority from this charter (both external records deleted from `docs/goals/`
+2026-09-26 — `governed-model-fleet` restored 2026-09-27 by explicit owner directive and
+active again as an external goal; `model-fleet-v1` remains deleted — see
+`goal-status-report-2026-09-26.md` §6).
 
 ## Locked decisions proposed for Gate 1
 
@@ -205,6 +208,8 @@ then-current registry statement in Amendment 01 is superseded by Amendment 03.
 
 Review load is unchanged: PMC-P0, P1, P2, and P4 each require **two**
 independent adversarial reviews; PMC-P3 requires one.
+
+**Coordination note — 2026-09-27 (ruling B, `../goal-status-report-2026-09-27.md` §6; covers shipped HRO-P1 retroactively; no charter amendment required).** On `routing-policy/src/pi-openrouter.ts` — the Amendment 01 A7 file map (`gate-1-amendment-01.md` A7; the file is already shipped — coordinator lint record row "Some Pi/OpenRouter plumbing already exists") — `hybrid-routing-optimization` is the **additive author of mapping/protocol fields**; **PMC-P1 keeps schema review** and **PMC-P2 keeps adapter/resolver review**. The A7 ownership table above is unchanged and stands as ratified.
 
 ### A8 — amends the exit criterion
 

@@ -1,3 +1,8 @@
+export type {
+  ExpertiseArea,
+  ExpertiseDefinition,
+} from './expertise.js'
+export { EXPERTISE_AREAS, EXPERTISE_DEFINITIONS } from './expertise.js'
 export type { InvolvesResolution } from './resolve.js'
 export { resolveInvolves } from './resolve.js'
 export {

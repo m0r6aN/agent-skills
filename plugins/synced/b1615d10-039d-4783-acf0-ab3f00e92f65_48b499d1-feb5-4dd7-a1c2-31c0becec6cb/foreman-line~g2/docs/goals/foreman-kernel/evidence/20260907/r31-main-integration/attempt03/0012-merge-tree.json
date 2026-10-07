@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Program Files\\Git\\cmd\\git.EXE",
+    "--git-dir=C:\\Users\\clint\\AppData\\Local\\Temp\\fk-remote-verify-20260907.git",
+    "merge-tree",
+    "--write-tree",
+    "476b8df6efe6c9974879957147449f61c34cd9a0",
+    "1747c1df7dfa4677d345390ac673c3d15c82b980"
+  ],
+  "cwd": null,
+  "ended_utc": "2026-09-07T18:55:46.307232+00:00",
+  "exit": 0,
+  "pid": 488724,
+  "seconds": 0.06611710006836802,
+  "started_utc": "2026-09-07T18:55:46.241096+00:00",
+  "stderr": "0012-merge-tree.stderr",
+  "stdout": "0012-merge-tree.stdout"
+}

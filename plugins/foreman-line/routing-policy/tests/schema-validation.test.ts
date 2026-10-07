@@ -28,13 +28,16 @@ test('shipped routing-policy.yaml contains all four reconciled classes', () => {
   )
 })
 
-test('shipped routing-policy.yaml pins coordinator and verifier to frontier, builder per-class', () => {
+test('shipped routing-policy.yaml pins the coordinator and verifier lanes to frontier (D4, re-anchored)', () => {
+  // CUTOVER-P4: the structural D4 pin lived in the removed `roles` block; the
+  // frozen role/lane/authority map carries it now (lane_map.L1/L2).
   const doc = parse(readFileSync(policyPath, 'utf8')) as {
-    roles: { coordinator: string; verifier: string; builder: string }
+    lane_map: Record<string, { role_family: string; frontier_only: boolean }>
   }
-  assert.equal(doc.roles.coordinator, 'frontier')
-  assert.equal(doc.roles.verifier, 'frontier')
-  assert.equal(doc.roles.builder, 'per-class')
+  assert.equal(doc.lane_map.L1?.role_family, 'coordinator')
+  assert.equal(doc.lane_map.L1?.frontier_only, true)
+  assert.equal(doc.lane_map.L2?.role_family, 'verifier')
+  assert.equal(doc.lane_map.L2?.frontier_only, true)
 })
 
 test('shipped routing-policy.yaml every class entry has a positive ceiling_usd', () => {

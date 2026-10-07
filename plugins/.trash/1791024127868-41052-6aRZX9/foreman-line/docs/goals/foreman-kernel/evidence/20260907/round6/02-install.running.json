@@ -1,0 +1,11 @@
+{
+  "wrapperPid": 472424,
+  "startedUtc": "2026-09-07T13:49:55.9994493Z",
+  "step": "02-install",
+  "command": [
+    "npm.cmd",
+    "ci"
+  ],
+  "head": "0ee165720f8d1e3a91eb283cb770400b23f61bf5",
+  "status": "running"
+}

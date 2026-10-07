@@ -1,5 +1,5 @@
 {
-  "lastUpdated": 1790304061960,
+  "lastUpdated": 1791021701382,
   "plugins": [
     {
       "pluginId": "plugin_01XXJmxLXPEhPMmnxmrgntNw",
@@ -32,10 +32,11 @@
       "pluginId": "plugin_019iPNgSpqW7kdNT72VAaUud",
       "name": "brand-voice",
       "description": "Discover your brand voice from existing documents and conversations, generate enforceable guidelines, and validate AI-generated content against your established tone and positioning.",
-      "version": "0039",
-      "updatedAt": "2026-09-22T20:19:50.826998Z",
+      "version": "0040",
+      "updatedAt": "2026-10-01T21:59:56.815087Z",
       "marketplaceName": "knowledge-work-plugins",
-      "installationPreference": "available"
+      "installationPreference": "available",
+      "generation": 2
     },
     {
       "pluginId": "plugin_01AYHYqVLaZRH2Vi6aHgDwEw",
@@ -68,19 +69,21 @@
       "pluginId": "plugin_01VTbvGZYaCVU2CNSvhDCnkg",
       "name": "data",
       "description": "Write SQL, explore datasets, and generate insights faster. Build visualizations and dashboards, and turn raw data into clear stories for stakeholders.",
-      "version": "0040",
-      "updatedAt": "2026-09-22T20:19:52.398980Z",
+      "version": "0041",
+      "updatedAt": "2026-10-01T21:59:56.806057Z",
       "marketplaceName": "knowledge-work-plugins",
-      "installationPreference": "available"
+      "installationPreference": "available",
+      "generation": 2
     },
     {
       "pluginId": "plugin_0155zZVATbJU3jHUmPP9NvMC",
       "name": "cowork-plugin-management",
       "description": "Create, customize, and manage plugins tailored to your organization's tools and workflows. Configure MCP servers, adjust plugin behavior, and adapt templates to match how your team works.",
-      "version": "0039",
-      "updatedAt": "2026-09-22T20:19:52.672917Z",
+      "version": "0040",
+      "updatedAt": "2026-10-01T21:59:56.801289Z",
       "marketplaceName": "knowledge-work-plugins",
-      "installationPreference": "available"
+      "installationPreference": "available",
+      "generation": 2
     },
     {
       "pluginId": "plugin_01SfWJSiw6JtGbsuW75PKvPK",
@@ -95,10 +98,11 @@
       "pluginId": "plugin_011AJW6cn2VtJLqCHysamM6E",
       "name": "foreman-line",
       "description": "Foreman Line is a contract-first workflow for shaping, dispatching, verifying, integrating, and closing multi-parcel development work with explicit human gates.",
-      "version": "0026",
-      "updatedAt": "2026-09-24T20:42:32.798201Z",
+      "version": "0092",
+      "updatedAt": "2026-10-02T21:16:42.398199Z",
       "marketplaceName": "agent-skills",
-      "installationPreference": "available"
+      "installationPreference": "available",
+      "generation": 2
     }
   ]
 }

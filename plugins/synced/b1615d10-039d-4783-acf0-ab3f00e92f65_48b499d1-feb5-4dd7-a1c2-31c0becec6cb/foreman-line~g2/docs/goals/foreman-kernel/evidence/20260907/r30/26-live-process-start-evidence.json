@@ -1,0 +1,26 @@
+[
+  {
+    "ProcessId": 479940,
+    "ParentProcessId": 471184,
+    "creationTimeUtc": "2026-09-07T15:09:40.8962780Z",
+    "basis": "OS process creation; not equivalent to shell command start"
+  },
+  {
+    "ProcessId": 483144,
+    "ParentProcessId": 463964,
+    "creationTimeUtc": "2026-09-07T15:09:41.1827800Z",
+    "basis": "OS process creation; not equivalent to shell command start"
+  },
+  {
+    "ProcessId": 463692,
+    "ParentProcessId": 483144,
+    "creationTimeUtc": "2026-09-07T15:09:42.2233620Z",
+    "basis": "OS process creation; not equivalent to shell command start"
+  },
+  {
+    "ProcessId": 482680,
+    "ParentProcessId": 463692,
+    "creationTimeUtc": "2026-09-07T15:09:42.4231010Z",
+    "basis": "OS process creation; not equivalent to shell command start"
+  }
+]

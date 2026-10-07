@@ -1,0 +1,19 @@
+{
+  "directExit": 0,
+  "elapsedMs": 10455,
+  "stderrSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+  "step": "07-sweep",
+  "stdoutSha256": "B65FF4BBC746CD0E56CE44C70916C43D4A79EC4DDE13046B3E48662BD0F23008",
+  "head": "0ee165720f8d1e3a91eb283cb770400b23f61bf5",
+  "startedUtc": "2026-09-07T14:13:41.3207780Z",
+  "command": [
+    "npx.cmd",
+    "tsx",
+    "src/cli.ts",
+    "sweep",
+    "authority-enforcement-registry.yaml",
+    "--repo-root",
+    "../../../"
+  ],
+  "endedUtc": "2026-09-07T14:13:51.7780107Z"
+}

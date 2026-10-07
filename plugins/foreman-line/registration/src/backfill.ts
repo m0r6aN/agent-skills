@@ -7,6 +7,7 @@
  * registered. Linear-time (line split + `startsWith`; no regex).
  */
 import { readFileSync, writeFileSync } from 'node:fs'
+import { assertAbsoluteRoot } from './types.js'
 
 const TICKET_PREFIX = 'ticket:'
 
@@ -22,6 +23,9 @@ export interface FileSnapshot {
  * `ticket:` line. Only that one line changes; every other byte is preserved.
  */
 export function backfillTicketLine(absSpecPath: string, ticketKey: string): FileSnapshot {
+  // Typed refusal (P2b-i / D19): a relative path would silently anchor the
+  // read and write to the process cwd (mechanism class 5).
+  assertAbsoluteRoot(absSpecPath, 'backfillTicketLine')
   const original = readFileSync(absSpecPath, 'utf8')
   const lines = original.split('\n')
   let edited = false
@@ -43,6 +47,8 @@ export function backfillTicketLine(absSpecPath: string, ticketKey: string): File
 /** Restore snapshots to disk (rollback of back-fill writes when a commit fails). */
 export function restoreSnapshots(snapshots: readonly FileSnapshot[]): void {
   for (const snap of snapshots) {
+    // Typed refusal (P2b-i / D19): same class-5 cwd anchor as backfillTicketLine.
+    assertAbsoluteRoot(snap.absPath, 'restoreSnapshots')
     writeFileSync(snap.absPath, snap.original, 'utf8')
   }
 }

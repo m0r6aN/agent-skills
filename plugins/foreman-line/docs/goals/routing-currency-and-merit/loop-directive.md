@@ -18,18 +18,41 @@
 > child's rule against editing parent surfaces without a ratified integration parcel
 > still binds it. The transfer changes no gate, hold, or authorization recorded below.
 
-**State:** `RCM-P0-closed-incomplete` — Stage Zero, mandatory plan review, shaping,
-Gate 2, builder rework, deterministic closure, two fresh post-rework adversarial
-reviews, and the bounded human Gate 3 merge are complete. RCM-P0 is accepted only
-as an incomplete evidence handoff; its spec is in `docs/specs/done/` and its four
-evidence files are merged. The bounded Gate 3 grant is explicitly extended to
-refreshes of these same four evidence artifacts under the completed P0 spec only.
+**State:** `RCM-P2-built-awaiting-gate-3` — RCM-P2 is built on the Window-R surfaces with
+green suites (see `rcm-p2-scope-reconciliation-2026-09-27.md`); its merge decision is human
+Gate 3 and is not claimed here. Historical state paragraphs below are kept as the record
+(RCM-P0 closed incomplete; RCM-P1 released).
 
 **Updated 2026-09-22:** `RCM-P1-released`. Clinton Morgan accepted the P0 evidence
 as design input only, set a 24-hour freshness bound, ruled that endpoint mismatches
 refuse without aliasing, and re-granted Gate 2 for RCM-P1. The full ruling is in
 the charter's "RCM-P0 evidence-boundary ruling" section. RCM-P1 is next in the
 queue. RCM-P2 onward still need a new exact Gate 2 grant.
+
+**Updated 2026-09-26:** cross-goal serialization decided — see
+`../pi-model-configuration/rcm-sequencing-decision-2026-09-26.md` (BINDING, recorded
+here per its cross-goal requirement): **Window P** = PMC-P1 then PMC-P2 hold
+`routing-policy/**` and `templates/**`; RCM-P2+ holds **no** `routing-policy/**` /
+`dispatch/**` window until Window P releases per that decision's release conditions
+(incl. the second-writer rebase/69-test rule and the Jev-reconciliation owner settled
+as PMC-P1). RCM-P1's frozen additive-only footprint (`37cbb5c..7faa46a`) stands.
+Authority: coordinator decision 2026-09-26 under owner blanket authority; any RCM
+objection to the sequencing remains binding and is filed against that record.
+
+**Updated 2026-09-27 — Gate 2 for RCM-P2 GRANTED; Window R open and RCM-P2 built:**
+"coordinator decision 2026-09-27 under owner blanket authority grants the exact Gate 2 for
+RCM-P2 as scoped by the charter" (receipt; a coordinator decision receipt, never a fabricated
+human approval). Window P was released by
+`../pi-model-configuration/pmc-wave1-release-2026-09-27.md`, so Window R is open; the
+second-writer rule is satisfied by re-running the full `routing-policy` suite on the current
+tree (release-record baseline 156/0; 175/0 observed before this run's edits — the tree carries
+user-owned changes). The charter's RCM-P2 wording predates PMC-P1/P2; the remaining-work
+interpretation, the authorized write-set extension (`spec-linter/**`, `foreman-config/**`,
+`docs/SPEC-CONVENTION.md` — coordinator-authorized 2026-09-27; boundary slice confirmed no
+claim), the D8/OQ5 semantics as implemented, the DA-1 resolve-time mirror, and the deferred
+items with exact reasons are all recorded in
+`rcm-p2-scope-reconciliation-2026-09-27.md`. Queue item 3 is now **built, awaiting the human
+Gate 3 merge decision**; nothing has been merged, pushed, or opened as a pull request.
 
 ## Standing authorizations and limits
 

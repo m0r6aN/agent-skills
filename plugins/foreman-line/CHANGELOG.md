@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- The CI aggregation now captures each package check's complete stdout/stderr and
+  re-emits every failing check in a failure section before the summary matrix, so
+  the failing assertion is always visible in the job log.
+- `verification` scaffold parity (AC-1) now covers the shared toolchain pins only;
+  package-specific dev dependencies (dispatch's `@earendil-works/*` Pi runtime
+  port) are no longer mirrored into the verification manifest.
 - Verification package: pinned U1 candidate-sandbox's module-relative fixture
   lookup and made its Git identity read use the script's explicit directory;
   the D19 audit passes on the live tree.
@@ -43,6 +49,18 @@
 - Verification scaffold golden: pinned `SHARED_DEV_DEPENDENCIES` to the
   verification+dispatch sibling-agreement values (the prior golden never
   matched the pair it checks).
+
+## 0.6.10 — 2026-09-19
+
+- Ported explicit repository/plugin roots and caller/config identity injection.
+- Added `foreman-config`, contract readers, role authority, worker envelopes,
+  mutation-scope enforcement, hooks, and templates.
+- Added generated-schema parity coverage for the new contracts.
+- Added TypeSafe Jev 1.13 through OpenRouter for fast routing/classification
+  decisions only; it remains recommendation-only and cannot approve, merge, or
+  bypass policy.
+- Allowed Pi to auto-route only within Foreman-approved execution lanes.
+- Removed the Fireworks routing and worker-provider path entirely.
 
 ## 0.1.0 — 2026-07-29
 

@@ -4,7 +4,7 @@ title: Jev portable-container boundary and security scenarios
 status: active
 owner: clinton.morgan
 created: 2026-09-22
-updated: 2026-09-22
+updated: 2026-09-26
 risk: elevated
 surfaces:
   - plugins/foreman-line/jev-decisions/tests/p4-boundary-scenarios.test.ts
@@ -107,3 +107,34 @@ baseline failures separately from the P4 result.
 | Authority | redirect or unverified TLS | `evidence:R04` refusal |
 | Secret handling | success with injected key | live observation excludes key |
 | Success | synthetic injected adapter | valid bounded observation and terminal lease |
+
+## Environment-specific scenario matrix
+
+The runnable suite is `plugins/foreman-line/jev-decisions/tests/p4-boundary-
+scenarios.test.ts`, executed by the package's `npm test`. Every scenario is
+environment-tagged in its test name. Two offline environments are executable;
+the live-provider environment is not authorized by this parcel and carries no
+scenario:
+
+- `runtime-adapter` — the in-process JEV-P2 runtime over injected lease,
+  transport, clock, and custody seams.
+- `container-launcher` — the portable-container entrypoint contract
+  (`container/jev-run.mjs`) over one-request stdin framing, dry-run only, with
+  a credential sentinel in the process environment.
+
+| Scenario class | `runtime-adapter` | `container-launcher` |
+| --- | --- | --- |
+| positive | synthetic success (redacted observation); canonical validated P1 response to the exact six-key `support-triage-advisory/v1` object | one dry-run request to a single redacted typed result |
+| negative | malformed provider/transport results; malformed, incomplete, and extra answers | empty, malformed, duplicate/trailing, oversized, and unsupported-mode inputs fail closed |
+| timeout | synthetic timeout and occupied-lease refusal | one-request/one-result lifecycle |
+| auth | missing and blank `OPENROUTER_API_KEY` refuse `evidence:R06` before the transport seam | credential sentinel never disclosed in output |
+| privacy | closed-state/free-text refusal `R10`; rejected values never retained | closed-state refusal `R10`; rejected values never echoed |
+| cost | unqualified or missing cost `evidence:R13` (over-cap covered by the cap scenario) | over-cap synthetic cost refused `evidence:R13` |
+| refusal | requested-identity alias `R10`; incomplete answers `R10`; records never fabricate answers | caller-override fields neutralized; result identical to baseline |
+| provider-boundary | redirect/unverified-TLS refusal; non-2xx, content type, endpoint authority, body bounds `evidence:R04`; missing provider metadata `evidence:R12` hold | missing provider metadata `evidence:R12` hold |
+
+Scenarios assert only the runtime's own closed records and outputs; refusal,
+hold, lease, budget, authority, and redaction rules are not re-implemented in
+the tests. The container image environment (Docker/OCI runtime) is not
+executable in this parcel and is dispositioned with exact uncheckable items and
+causes in `jev-container-release-checklist.md`.

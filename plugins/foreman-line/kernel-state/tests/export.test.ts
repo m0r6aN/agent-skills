@@ -143,7 +143,7 @@ function insertSampleRows(storage: Storage, order: 'forward' | 'interleaved'): v
       insertEvent(storage, {
         eventId: 'evt-1',
         goalId: 'goal-1',
-        kind: 'created',
+        kind: 'transition.requested',
         payload: '{"n":1}',
         payloadDigest: `sha256:${'a'.repeat(64)}`,
         principalRef: 'principal-1',
@@ -154,7 +154,7 @@ function insertSampleRows(storage: Storage, order: 'forward' | 'interleaved'): v
       insertEvent(storage, {
         eventId: 'evt-2',
         goalId: 'goal-1',
-        kind: 'updated',
+        kind: 'transition.applied',
         payload: '{"n":2}',
         payloadDigest: `sha256:${'b'.repeat(64)}`,
         principalRef: 'principal-1',
@@ -194,7 +194,7 @@ function insertSampleRows(storage: Storage, order: 'forward' | 'interleaved'): v
       }),
     cursor: () =>
       setProjectionCursor(storage, {
-        projectionId: 'proj-1',
+        projectionId: 'md-goals-index',
         goalId: 'goal-1',
         lastAppliedEventSeq: 2,
         updatedAtMicros: T0 + 6,

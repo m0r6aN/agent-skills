@@ -1,0 +1,441 @@
+{
+  "verifiedUtc": "2026-09-07T17:41:39.091927+00:00",
+  "initialHandoffCommit": "fe31042bbe4370cb81b38632720849983c7be04c",
+  "capturedSourceFileChecks": [
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/A1.8-coordinator-review-and-exact-ratification-text.md",
+      "sha256": "a4f777a955fcc85927e12e70a4cdd6add02f7694298bf819b81c2da3506f01f8",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/A2-PARKED-known-unowned-risk.md",
+      "sha256": "90045abf3a899962c877f25367712aa0328608f280a6806e45aec47e7823b77d",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/A2-adversarial-review-findings.md",
+      "sha256": "2c15824525649f5ffe22f216de678ca0909ff45e5d4729683bffe8aeeb4d1fbf",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/A2-r2-adversarial-review-findings.md",
+      "sha256": "62b60ad105faad2515704afe00873c69adbc370a46914f5c9d3b52bde1b6902a",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/A2-r3-adversarial-review-findings.md",
+      "sha256": "64804e1c43845ede81bc68c6de2f72aed52ef95de23c7fc15206d9514bb46918",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/ADR-001-runtime-infrastructure-posture.md",
+      "sha256": "7d7f1ac7f5f543052b475737879d8fa278cdb788b61df257b63e4481ed40b5e7",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-BLOCKER-volatile-canon-source.md",
+      "sha256": "6004c7567757f2d6db6642169af45715c0de94f5e2c6486958a66f1d3fb1924a",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-GATE-3-package.md",
+      "sha256": "563bb6cadcd5df2f4957a971de5ab975ebd84f85fd22a5ca82e60b18d2d6d91d",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-MERGE-READY-material.md",
+      "sha256": "3b97555283e8b9e589dc5597dedd37955dbca5dfa5de16d2cce742f896e7a72f",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-STOP-REPORT-for-developer.md",
+      "sha256": "50c8f349543f4bdd90f41153384970bbbd906ab9d5b0dabf3ae956ca101d6627",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-coordinator-closure-check.md",
+      "sha256": "9bf09bd4e0bd67ebb59a1485347b6198261dd2beda3f8c3bcdf968d6b850be5a",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-review-A-findings.md",
+      "sha256": "9e4244af894082c7bda8db44d88f62a0edbeb5f22c57fbec52a15f67a5fca0ca",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-rework1-step0-rulings.md",
+      "sha256": "e2abf0777aaf1c8f383b58b4b8393830f9e82042134b4b3f284508aeeb0c21e7",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-recovery-step0-ruling.md",
+      "sha256": "1e6d4e47536c1645022e5a602192c89e156c60a41e828d24e9c0855e8783c7bb",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-triage-round1.md",
+      "sha256": "7ed07c36c81cf204dbab848e978653188d5be1be7b45d24362e8d38a99de9c3c",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/GOAL-FINDING-inherited-canon-provenance.md",
+      "sha256": "13b0bb5d1dc391c2ab801dc9b418784a1808d5752d931331574d904108eaa05c",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/amendment-A1.8-ratification-ledger.md",
+      "sha256": "d0116f9394ad7a8f43787f25d58e6a9c5c77caa94717d2a5b3e25c05bcf77cbe",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/charter.md",
+      "sha256": "c19359374480b03c39ce04316f94007fbb87e3be2b5be39bca8dd4072164234d",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md",
+      "sha256": "1742023d00f5f33275ff1ac957f66844bbfe2f5cfc31a98efac7d74f420ab140",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/plan-review-findings.md",
+      "sha256": "d2e5bc3268450c77456ad14baa6df8dadb9cd132123ddc52a782886e42a73057",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A1-decision-path-latency-budget.md",
+      "sha256": "ae7fea39b978b3d673e0e74b1640223ae8db5b6a7e34c9b8f8cec800c40561f4",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-ci-backstop-host-independence.md",
+      "sha256": "a0dee210e0084ba72d723fcdc9da4d1297d6097b91c2a225b8b1ac60e7b3c813",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r2-backstop-independence.md",
+      "sha256": "3e676047a4515356d4b15a56d40407a642fe03c6f948fe9ca39598d3240b2475",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r3-backstop-independence.md",
+      "sha256": "2c391f14ab16a0d5a246e4b14cd20d07353bd478f1a40af86acb6f8ee04662b2",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A2-r4-backstop-independence.md",
+      "sha256": "4a23454e558420d063786b362947d3e4350b5703cd022bd4f12570d99cba5056",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A3-standing-authorization-widening.md",
+      "sha256": "8452cd45c2c3172731377a654fdcd6ea2fb64216f924018fec3d055d786a4fb0",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry",
+      "sourcePath": "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework1.md",
+      "sha256": "1ab99e3c3e78c64b50b6afbfb96139afc38b2cf82b6864371049d7b2324c2f06",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework2.md",
+      "sha256": "ceb812db2292e98b721e4a6ee081208354dde8c312f936654979e37abb3063d5",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework3.md",
+      "sha256": "948eba6d8f843a897cc6727dd0bc75fdcd19ac0da11e68882b31db811c3cc977",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework6-recovery.md",
+      "sha256": "ce38f7dcac7ed416d11e0b75694f4d94a727196395b37e351740dcd016d96d6e",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r2.md",
+      "sha256": "f6ebac901f3fb81865ea9ffbeedb887dec33a6748a37505c05ee55d4fd85f77c",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2-r3.md",
+      "sha256": "303feea40d1813eb54765b4eb04e38d452940b90cc52b214d2be271b9b6e78cb",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-A2.md",
+      "sha256": "4e22b151e124f4dfc5d822e377d64dae0c3aaec730df953aae1daf89b8875b06",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-FK-P0-postrework.md",
+      "sha256": "1509c4219033f1f8708281e30a38a081bcbf14280039401d385bc82b505d23d8",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/kickstarters/foreman-kernel-review-FK-P0.md",
+      "sha256": "24ce072f261859fd8de11c6dc0b5fb8a1404b33158d16e645b48e1d8a09432a3",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry",
+      "sourcePath": "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md",
+      "sha256": "7f8471affe2ff5e2e9fc0012af90a313034d1297c5ce38188a124c5e4a379fda",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R14.md",
+      "sha256": "3548c28fe7e37beaae8482dc750974d54022e03b38b480c9349e3eb686321365",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R15.md",
+      "sha256": "320af1ded1f06ceb1dde4a5faaffb970557364c201e7564f8101160366f07226",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R16.md",
+      "sha256": "1d6d2a5a77022c4d132b3ebbb5f80412f117926b158b133f77f7b524143ee272",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R19.md",
+      "sha256": "e4316468715a38a5a7e9a898b87c57113575f951c9227df9a15ecaf1de9686fd",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R20.md",
+      "sha256": "eb868a8d9bed35c1d2691f798ab5e5ab0e2443560318f95dd21fbff7b0115772",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R21.md",
+      "sha256": "dc6465e8523f4f99fa155474a8c28db3e61c98dca1aba6f375c70b6fa5da9381",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R22.md",
+      "sha256": "729012269c9a49f12b60f0a831c2e15d4f4108a2d94ac0e290751baabde6b065",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-amendment-R23.md",
+      "sha256": "95916284476a51c9f6ae5a5310f34e719f57d057b60d8a0860c043650ff53db0",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-STOP-REPORT.md",
+      "sha256": "d1ad8ea4e0eb747358c185ba5f252cd263a8891d4fb5d8d7e92bbbd787dedd92",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/FK-P0-round6-recovery-record.md",
+      "sha256": "34e7fb8c23d4b0bbf5d8216b164f1ffeff40732f8573dd478b9511f6c6145717",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/charter.md",
+      "sha256": "151a5a7cb5f6e92d7780f3ef27af5599e7ba7e7f4a9ef3e91acf8d27dd753f65",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md",
+      "sha256": "d10f7de3f559147f91ec823258b89cf0afd106e9e4728fd96848504bbf499748",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework1.md",
+      "sha256": "bd46264d648ba8ce380df349770fb7e02a1ffb1455380eb032ef824df13a414e",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry",
+      "sourcePath": "plugins/foreman-line/docs/kickstarters/foreman-kernel-build-FK-P0-rework6.md",
+      "sha256": "5fa22e0a49ee9e241e916ae038d8371f67525598965f4861ed6a66ab371f4ba6",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md",
+      "sha256": "b2c2505dd6a08f416e58b77e2e624581c3cb9c55d8a5161b5d2000df85924af2",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills",
+      "sourcePath": "plugins/foreman-line/docs/goals/foreman-kernel/charter.md",
+      "sha256": "e7c211c55fd7534d4d36fed624f51e019662326be9688a8e9ea665b64d4e1346",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": ".github/workflows/test-plugin-install.yml",
+      "sha256": "cedc54f017570ef59ad3baf2a53916e2ca4c0e4154c619116809021140a29239",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/approval/README.md",
+      "sha256": "5369e558879ea9faeee5828329807dc544dfbcc21722a1c94d3458f670244849",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/COORDINATOR-PATTERN.md",
+      "sha256": "c734c9b2aef15f020a4a5eb261a1291740eddb2a154376386599074cbb8ca9bd",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md",
+      "sha256": "0ca5a264e5371be59b2351e2f8e369a6e7f9fa2b4fd6d94ab54902d4ecd63a22",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/SPEC-CONVENTION.md",
+      "sha256": "7ac315005cde6ad6def848b83de1d1b644e321c5d9f6434bc925deb6daba8703",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md",
+      "sha256": "b5cce5029c4619058795414b624a418fb8c1c28f8534dab9d58c8fef61994c2f",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/permission-profiles/README.md",
+      "sha256": "b790947a8223daab2babf45cba648f1bfd073d7d0b1e6f524fa02f51dc129f00",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/permission-profiles/permission-profiles.yaml",
+      "sha256": "9da06cf299653b244c636dd9809b5ba6410efb5e9e7f89389c1ef7260fa577cb",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/permission-profiles/src/types.ts",
+      "sha256": "91651a073156834119b5037127b942f315ea4d45d26bc17e0c9df2a1499aa5a9",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/permission-profiles/src/validator.ts",
+      "sha256": "1f12fe53f75b089d25dd27e995af024c52269b0db6b8c4e22c616702749a7d23",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/routing-policy/routing-policy.yaml",
+      "sha256": "fd9afccec8efdb5ba5b9c6756d59a9f2daea8ce838ffd9724fbf14acc3018f25",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/skills/goal/SKILL.md",
+      "sha256": "ee003674865be3a45316b95f5459b8f317d8150bdb8c0774601929cb0befd831",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/skills/parcel-driven-development/SKILL.md",
+      "sha256": "f673472c804a659f9f01515b878f02c653d4ed97c2c4c97f7340139325c6df05",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/spec-linter/README.md",
+      "sha256": "8be95883d16a3a73a128a8c0d14d73d61204724531c99ee9dfc8072dff08a69c",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/spec-linter/schemas/spec-frontmatter.schema.json",
+      "sha256": "8ff17dbd4ccbd29d0f60f7b03dfdc9f08afb63d9de1b64549bc1646ce546034e",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/spec-linter/src/cli.ts",
+      "sha256": "aa0928ab5173d868c61c1ddd75ce990dbb698afdaee9269b7e99965f5e687c18",
+      "matchesInitialCapture": true
+    },
+    {
+      "sourceWorktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "sourcePath": "plugins/foreman-line/spec-linter/src/validate.ts",
+      "sha256": "4e542bfa6943c71b962236cbd5410713186f6eabb2b7788e12392cbffaef3a99",
+      "matchesInitialCapture": true
+    }
+  ],
+  "worktrees": [
+    {
+      "worktree": "D:\\Repos\\agent-skills-worktrees\\foreman-kernel-stage0-20260830",
+      "fullHeadSha": "d0e87ce0e36e69868909c93e0f00f6fc7e4a9af3",
+      "status": "",
+      "matchesInitialHeadAndStatus": true
+    },
+    {
+      "worktree": "D:\\Repos\\agent-skills-worktrees\\fk-p0-canon-authority-enforcement-registry",
+      "fullHeadSha": "0ee165720f8d1e3a91eb283cb770400b23f61bf5",
+      "status": "",
+      "matchesInitialHeadAndStatus": true
+    },
+    {
+      "worktree": "D:\\Repos\\agent-skills",
+      "fullHeadSha": "dab90c9c769867e1bded5151e6126f4360b4f6fc",
+      "status": "D plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A1-decision-path-latency-budget.md\n?? plugins/foreman-line/docs/goals/foreman-kernel/charter.md",
+      "matchesInitialHeadAndStatus": true
+    }
+  ],
+  "valid": true
+}

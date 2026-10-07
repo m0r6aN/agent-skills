@@ -12,7 +12,15 @@
  * `validate.ts`, kept distinct from pure structural shape.
  */
 import type { SchemaObject } from 'ajv'
-import { PROFILE_NAMES } from '../../permission-profiles/src/index.js'
+// PROFILE_NAMES is imported from its import-free HOME module, not the package
+// barrel (amendment A2.2, P2b-ii): permission-profiles' index.js VALUE-
+// re-exports validateRegistry, so loading the barrel executes validator.ts
+// and pulls ajv from permission-profiles' own node_modules — which breaks
+// spec-linter's standalone invocation in any tree where only spec-linter is
+// installed (finding B2's second edge). The cross-package src/ coupling
+// itself remains, and remains a reported E2 debt owned by P5/D22; the
+// long-term fix recorded there is splitting that barrel.
+import { PROFILE_NAMES } from '../../permission-profiles/src/types.js'
 
 export const specFrontmatterSchema: SchemaObject = {
   type: 'object',
@@ -67,6 +75,34 @@ export const specFrontmatterSchema: SchemaObject = {
     involves: {
       type: 'array',
       items: { type: 'string', pattern: '\\S' },
+    },
+    // RCM D7/D8 (SPEC-CONVENTION §4.9, schema v0.4): all four OPTIONAL (the
+    // §4.6 additive pattern) with their value registries already ratified, so
+    // enum/shape validation ships now. Restated enum literals here are proven
+    // equal to their owning vocabularies by tests/rcm-fields.test.ts.
+    expertise: {
+      type: 'string',
+      enum: [
+        'engineering',
+        'architecture',
+        'security',
+        'legal',
+        'finance',
+        'writing',
+        'research',
+        'data',
+      ],
+    },
+    inputs: {
+      type: 'array',
+      items: { type: 'string', enum: ['text', 'image'] },
+      minItems: 1,
+      uniqueItems: true,
+    },
+    min_context: { type: 'integer', minimum: 1 },
+    thinking_level: {
+      type: 'string',
+      enum: ['off', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max'],
     },
   },
 }

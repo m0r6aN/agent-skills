@@ -44,6 +44,10 @@ F05 field tables (3 review sessions, 2 rework rounds); Step-0 rulings F1–F4 (`
 - L2-2 `goalRevision` 4-code scoping — accept-as-documented with the clarifying sentence.
 - Cross-check obligation: FK-P2's chain must include the read-only F05.5 encoder conformance check against this package's canonical golden fixtures (FK-P2 spec, OQ-3 ruling).
 
+## Gating note (honest accounting)
+
+The spec activation record gated acceptance on "R32 must land before this parcel's verification chain is accepted (RS-2.5)". At merge time, R32's **corpus regeneration** had landed and absorbed FK-P1's canon (validate/sweep green, 1766 items incl. the FK-charter additions), but R32's **independent review** was — and is — still pending, with FK-P0-internal corrections (W2-1/W2-2/W2-3) in flight. The RS-2.5 trust condition was therefore satisfied in substance but not in full form at merge. Recorded rather than papered over: the R32 review is explicitly tasked to scrutinize the corpus entries derived from FK-P1's records/spec, and any finding touching them triggers a post-merge correction. The RS-2.1 merge gate itself (parcel chain fully green) held without exception. **Update:** R32's independent review completed 2026-09-27 with VERDICT CLOSED (all findings closed; the FK-P1 corpus entries were explicitly verified faithful to the live sources; chain 752/752). This note's open thread is closed — no post-merge correction is required.
+
 ## Worktree/branch disposition
 
 Worktree `D:/Repos/agent-skills-worktrees/fk-p1-lifecycle-admission-decision-contracts` removed at Stage F (registration cleaned). Branch `codex/fk-p1-lifecycle-admission-decision-contracts` KEPT as merged provenance (referenced by this record and the review trail).

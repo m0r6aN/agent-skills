@@ -15,6 +15,7 @@ import * as api from '../src/index.js'
 import {
   discoverShapingResults,
   emitShapingResult,
+  readShapingResult,
   ShapingRootUnresolvedError,
 } from '../src/index.js'
 import { makeTempRepoRoot } from './helpers.js'
@@ -79,5 +80,32 @@ test('P2b-AC6b: discoverShapingResults refuses a non-absolute repoRoot with the 
     () => discoverShapingResults('relative/root'),
     (err: unknown) =>
       err instanceof ShapingRootUnresolvedError && err.reason === 'root-not-absolute',
+  )
+})
+
+test('D1: readShapingResult refuses a relative artifact path with the typed error (root-not-absolute)', () => {
+  assert.throws(
+    () => readShapingResult('docs/specs/active/relative.shaping-result.json'),
+    (err: unknown) =>
+      err instanceof ShapingRootUnresolvedError && err.reason === 'root-not-absolute',
+  )
+})
+
+test('D1: discoverShapingResults refuses a specsDir that resolves outside repoRoot', () => {
+  const root = makeTempRepoRoot()
+  assert.throws(() => discoverShapingResults(root, '../../etc'), /resolves outside repoRoot/)
+})
+
+test('D1: emitShapingResult refuses a specsDir that resolves outside repoRoot before any write', () => {
+  const root = makeTempRepoRoot()
+  assert.throws(
+    () =>
+      emitShapingResult({
+        sessionSlug: 'escape',
+        parcelSpecRefs: ['x.md'],
+        repoRoot: root,
+        specsDir: '../../etc',
+      }),
+    /resolves outside repoRoot/,
   )
 })

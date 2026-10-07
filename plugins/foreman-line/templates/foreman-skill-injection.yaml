@@ -1,0 +1,24 @@
+# Rendered into <repo-root>/foreman/skill-injection.yaml by the Foreman Line
+# project scaffold. Which skills are injected at which pipeline role —
+# project-owned data, edited under review. Injection is driven mechanically by
+# a parcel's `surfaces:` and task class — no per-dispatch human decision.
+#
+# The `integration:` keys are capability names (the `involves:` vocabulary,
+# SPEC-CONVENTION §4.8), not tracker names — `ticketing`, never a vendor.
+# Named profile presets in the plugin map capability names to concrete skill
+# names for a given organization; nothing here names a customer or tracker.
+
+builder:
+  '*': [test-coverage]
+
+verifier_harness:
+  '*': [test-coverage.check]
+
+adversarial_reviewer:
+  '*': [code-review]
+
+coordinator:
+  rework_first: [build-fix-loop]
+
+integration:
+  ticketing: [code-review]

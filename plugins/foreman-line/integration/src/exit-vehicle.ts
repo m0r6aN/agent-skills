@@ -39,6 +39,7 @@ import { STAGE_IDS, UUID_PATTERN } from '../../contracts/src/index.js'
 import type { ReceiptDocument } from '../../receipts/src/index.js'
 import { validateChain } from '../../receipts/src/index.js'
 import { emitClosureReceipt } from './closure-receipt.js'
+import { assertAbsoluteRoot } from './errors.js'
 import type { WriteReceiptFn } from './receipt.js'
 import { emitIntegrationReceipt } from './receipt.js'
 
@@ -181,6 +182,8 @@ function parseSequencePrefix(name: string): number {
  * at every fs boundary (lesson #22); linear-time name checks (lesson #19).
  */
 export function loadChainTip(workflowId: string, repoRoot: string): LoadedChainTip {
+  // Root refusal (P2b-i / D19) first — before even the workflowId check.
+  assertAbsoluteRoot(repoRoot, 'loadChainTip repoRoot')
   if (!new RegExp(UUID_PATTERN).test(workflowId)) {
     throw new ExitVehicleError(
       'CHAIN_SCAN_FAILED',
@@ -327,6 +330,8 @@ export interface RunStageEArgs {
  * the REAL `emitIntegrationReceipt` with the tip as `priorReceipt`.
  */
 export function runStageE(args: RunStageEArgs): ReceiptDocument {
+  // Root refusal (P2b-i / D19) first, before any fs/subprocess/path use.
+  assertAbsoluteRoot(args.repoRoot, 'runStageE repoRoot')
   const parsed = parsePrRef(args.prRef)
   if (parsed.headSha !== args.headSha) {
     throw new ExitVehicleError(
@@ -361,6 +366,8 @@ export interface RunStageFArgs {
  * draft path — the only Stage-F construction lives in `closure-receipt.ts`.
  */
 export function runStageF(args: RunStageFArgs): ReceiptDocument {
+  // Root refusal (P2b-i / D19) first, before any fs/subprocess/path use.
+  assertAbsoluteRoot(args.repoRoot, 'runStageF repoRoot')
   const tip = loadChainTip(args.workflowId, args.repoRoot)
   assertTipStage(tip, 'E', 4, 'runStageF')
   return emitClosureReceipt({

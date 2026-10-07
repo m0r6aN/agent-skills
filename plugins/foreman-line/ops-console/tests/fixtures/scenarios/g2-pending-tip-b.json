@@ -1,0 +1,27 @@
+{
+  "name": "g2-pending-tip-b",
+  "description": "R3 G2-pending: chain tip is B awaiting dispatch, old timestamps, no worktree — a slow human decision is not abandonment.",
+  "now": "2026-09-26T12:00:00.000Z",
+  "goal": {
+    "slug": "goal-g2",
+    "queue": ["1. **P1** registered; awaiting dispatch."]
+  },
+  "specs": [{ "name": "P1-alpha.md", "location": "active", "updated": "2026-08-01" }],
+  "chains": [
+    {
+      "workflowId": "00000000-0000-4000-8000-000000000007",
+      "parcel": "P1",
+      "stages": ["A", "B"],
+      "timestampOffsetHours": [-720, -700]
+    }
+  ],
+  "expected": [
+    {
+      "parcel": "P1",
+      "state": "awaiting-gate",
+      "rule": "R3",
+      "chainEvidence": "present",
+      "gates": { "G2": "pending" }
+    }
+  ]
+}

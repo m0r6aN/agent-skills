@@ -1,0 +1,16 @@
+{
+  "step": "10-scope",
+  "endedUtc": "2026-09-07T14:14:55.2112319Z",
+  "directExit": 0,
+  "command": [
+    "git.exe",
+    "diff",
+    "--name-only",
+    "51857a3a7796b393c0c0a68712f98c06e7015d79...HEAD"
+  ],
+  "stderrSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+  "startedUtc": "2026-09-07T14:14:53.8504288Z",
+  "stdoutSha256": "A5FFE52FC10966F6393A9BE825842DC278B65F0EB2FE5FC2F52D005D1D819165",
+  "head": "0ee165720f8d1e3a91eb283cb770400b23f61bf5",
+  "elapsedMs": 1359
+}

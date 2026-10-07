@@ -1,4 +1,6 @@
-# Foreman Line — Model Routing Policy (v0.3)
+# Foreman Line — Model Routing Policy (v0.4 — RCM schema v0.4: per-entry
+# capability predicates `inputs`/`thinking_levels` and the `expertise_bindings`
+# block, per RCM-P2/RCM-P3; see docs/goals/routing-currency-and-merit/)
 #
 # Concrete September-2026 instantiation of plan §5 against the OpenRouter
 # catalog (https://openrouter.ai/api/v1/models). Model ids are OpenRouter slugs
@@ -60,127 +62,62 @@ data_classification:
   # first-eligible dispatcher with no runtime fallback means quota exhaustion
   # fails the task outright.
   #
-  # Classification gating is evaluated before cost optimization (D6): each
-  # tier's eligible set must narrow monotonically (restricted subset-of
-  # internal subset-of public), and every model_tiers entry must appear under
-  # public. All three lists are identical in v0.3.
+  # Classification gating is evaluated before cost optimization (D6):
+  # data-class eligibility is declared per binding (`candidates` ->
+  # `data_classes`, A5.2) and must narrow monotonically (restricted implies
+  # internal implies public).
   public:
     transport_requirements:
       # Public inputs may reach any provider; still recommend the strict
       # account-wide setting so this is never load-bearing.
       data_collection: allow
       zdr: false
-    eligible_models:
-      - anthropic/claude-opus-5.5
-      - anthropic/claude-fable-5.1
-      - openai/gpt-5.6-sol
-      - google/gemini-3.1-pro-preview
-      - anthropic/claude-sonnet-5
-      - google/gemini-3.8-flash
-      - openai/gpt-5.6-terra
-      - openai/gpt-5.6-luna
-      - google/gemini-3.1-flash-lite
-      - anthropic/claude-haiku-4.5
-      # SUPERCHARGE-P1 (verified 2026-09-14; all three lists stay identical, D6):
-      - openai/gpt-6-astra
-      - z-ai/glm-5.3
-      - x-ai/grok-4.6
-      - meta/muse-spark-1.3
-      # Nemotron 3.5 Lightning (see economy-tier note: third-party-served on
-      # OpenRouter; strict transport requirements apply for non-public data):
-      - nvidia/nemotron-3.5-lightning
   internal:
     transport_requirements:
       data_collection: deny # required by invariant (g)
       zdr: true # required by invariant (g)
-    eligible_models:
-      - anthropic/claude-opus-5.5
-      - anthropic/claude-fable-5.1
-      - openai/gpt-5.6-sol
-      - google/gemini-3.1-pro-preview
-      - anthropic/claude-sonnet-5
-      - google/gemini-3.8-flash
-      - openai/gpt-5.6-terra
-      - openai/gpt-5.6-luna
-      - google/gemini-3.1-flash-lite
-      - anthropic/claude-haiku-4.5
-      # SUPERCHARGE-P1 (verified 2026-09-14; all three lists stay identical, D6):
-      - openai/gpt-6-astra
-      - z-ai/glm-5.3
-      - x-ai/grok-4.6
-      - meta/muse-spark-1.3
-      # Nemotron 3.5 Lightning (see economy-tier note: third-party-served on
-      # OpenRouter; strict transport requirements apply for non-public data):
-      - nvidia/nemotron-3.5-lightning
   restricted:
     transport_requirements:
       data_collection: deny # required by invariant (g)
       zdr: true # required by invariant (g)
-    eligible_models:
-      - anthropic/claude-opus-5.5
-      - anthropic/claude-fable-5.1
-      - openai/gpt-5.6-sol
-      - google/gemini-3.1-pro-preview
-      - anthropic/claude-sonnet-5
-      - google/gemini-3.8-flash
-      - openai/gpt-5.6-terra
-      - openai/gpt-5.6-luna
-      - google/gemini-3.1-flash-lite
-      - anthropic/claude-haiku-4.5
-      # SUPERCHARGE-P1 (verified 2026-09-14; all three lists stay identical, D6):
-      - openai/gpt-6-astra
-      - z-ai/glm-5.3
-      - x-ai/grok-4.6
-      - meta/muse-spark-1.3
-      # Nemotron 3.5 Lightning (see economy-tier note: third-party-served on
-      # OpenRouter; strict transport requirements apply for non-public data):
-      - nvidia/nemotron-3.5-lightning
 
-roles:
-  coordinator: frontier # always; D4
-  verifier: frontier # always; distinct-instance-from-coordinator is a dispatch-time property (W2-P3/W3), not expressed here
-  builder: per-class
-
-model_tiers:
-  # Tier vocabulary below `frontier` is this parcel's own content and is
-  # revisable quarterly; it diverges from plan §5's illustrative
-  # small/medium/large. `frontier` is the one literal name the validator's
-  # invariants depend on — do not rename it. Every `frontier` id must also be
-  # in KNOWN_FRONTIER_MODELS (src/validator.ts).
+selection_order:
+  # Ordered selection source (C5.2) — migrated at CUTOVER-P4 from the removed
+  # `model_tiers` block. Entries are provider-neutral candidate keys with
+  # referential integrity to `candidates`; a model's OpenRouter slug lives only
+  # in its binding's `model` field (never as a bare policy entry). Tier-group
+  # vocabulary below `frontier` is policy content and is revisable quarterly;
+  # `frontier` is the one literal name the validator's invariants depend on —
+  # do not rename it. Every `frontier` entry must resolve to a
+  # KNOWN_FRONTIER_MODELS id (src/validator.ts).
   #
   # ORDER IS THE SELECTION RULE. The dispatcher (dispatch/src/routing-eval)
-  # walks the class allowlist tiers in order and, within each tier, picks the
-  # FIRST model that is eligible under the task's data classification. There
-  # is no price comparison at dispatch time — cost optimization is expressed
-  # entirely by how these lists are ordered.
-  #
-  # Do not append OpenRouter variant suffixes here. `:nitro` enables priced
-  # priority tiers and `:floor` enables flex tiers; `:free` is rate-capped;
-  # `:batch` is asynchronous and unusable in an agent loop. Provider speed
-  # preferences (`provider.sort`, `provider.order: ['cerebras']`) are transport
-  # parameters for the consumer, not model ids.
+  # walks the class allowlist groups in order and, within each group, picks the
+  # FIRST candidate that is eligible under the task's data classification.
+  # There is no price comparison at dispatch time — cost optimization is
+  # expressed entirely by how these lists are ordered.
   frontier:
     # Coordinator, Adversarial Reviewer, and the security-audit hard override.
     # Two vendors on purpose: a verifier drawn from a different vendor than the
     # coordinator makes distinct-instance independence more than nominal.
-    - anthropic/claude-opus-5.5 # confirmed Opus 5.5 frontier route
-    - openai/gpt-5.6-sol # $2 / $10 — preferred verifier
-    - google/gemini-3.1-pro-preview # $2 / $12 — third-vendor fallback (no GA slug on OpenRouter)
-    - anthropic/claude-fable-5.1 # $10 / $50 — escalation only; 2x Opus 5
-    - openai/gpt-6-astra # $10 / $50 — newest escalation, after Fable (SUPERCHARGE-P1, verified 2026-09-14)
+    - claude-opus-5-5 # anthropic/claude-opus-5.5 — confirmed Opus 5.5 frontier route
+    - gpt-5.6-sol # openai/gpt-5.6-sol — preferred verifier
+    - gemini-3.1-pro-preview # google/gemini-3.1-pro-preview — third-vendor fallback (no GA slug on OpenRouter)
+    - claude-fable-5.1 # anthropic/claude-fable-5.1 — escalation only; 2x Opus 5
+    - gpt-6-astra # openai/gpt-6-astra — newest escalation, after Fable (SUPERCHARGE-P1, verified 2026-09-14)
   standard:
     # Builder default. Gemini 3.8 Flash is half its Zen price on OpenRouter
     # and sits second on price; Sonnet 5 stays first on track record.
-    - anthropic/claude-sonnet-5 # $2 / $10
-    - google/gemini-3.8-flash # $0.75 / $3.75
-    - openai/gpt-5.6-terra # $2 / $12
+    - claude-sonnet-5 # anthropic/claude-sonnet-5
+    - gemini-3.8-flash # google/gemini-3.8-flash
+    - gpt-5.6-terra # openai/gpt-5.6-terra
     # SUPERCHARGE-P1 appends (verified 2026-09-14; end-append preserves
     # first-eligible selection for all existing class/classification pairs):
-    - z-ai/glm-5.3 # $1.40 / $4.40
-    - x-ai/grok-4.6 # $2 / $6
-    - meta/muse-spark-1.3 # $1.25 / $4.25
+    - glm-5.3 # z-ai/glm-5.3
+    - grok-4.6 # x-ai/grok-4.6
+    - muse-spark-1.3 # meta/muse-spark-1.3
   economy:
-    # Boilerplate / build-fix-loop. First eligible wins; put Nemotron first
+    # Boilerplate / build-fix-loop. First eligible wins; Nemotron stays first
     # so it is actually selected in all three declared classifications.
     # Later entries are eligibility alternatives, not health/quota failover.
     # Nemotron 3.5 Lightning (BF16 weights lineage), NVIDIA 30B-A3B open MoE
@@ -188,10 +125,10 @@ model_tiers:
     # it is served by third parties only (no first-party NVIDIA endpoint at
     # time of listing) — non-public use rides entirely on the declared
     # transport_requirements below plus the account-wide privacy settings.
-    - nvidia/nemotron-3.5-lightning # $0.065 / $0.18
-    - openai/gpt-5.6-luna # $0.20 / $1.20
-    - google/gemini-3.1-flash-lite # $0.25 / $1.50
-    - anthropic/claude-haiku-4.5 # $1 / $5
+    - nemotron-3.5-lightning # nvidia/nemotron-3.5-lightning
+    - gpt-5.6-luna # openai/gpt-5.6-luna
+    - gemini-3.1-flash-lite # google/gemini-3.1-flash-lite
+    - claude-haiku-4.5 # anthropic/claude-haiku-4.5
 
 # Shadow routes are advisory sidecars for explicitly public, non-authoritative
 # analysis (spec_lint, evidence_index, review_triage). They are never model
@@ -206,3 +143,610 @@ model_tiers:
 # invariants are retained; see tests/fixtures/accept-shadow-route.yaml for the
 # shape of a valid route.
 shadow_routes: {}
+
+# ---------------------------------------------------------------------------
+# PMC-P1 — provider-neutral fallback contract (charter A5.1–A5.5, A3).
+#
+# The sole representation since CUTOVER-P4 ended the A5.5 deprecation window:
+# the legacy `model_tiers`/`roles`/`data_classification.eligible_models`
+# blocks are removed (refused by name: LEGACY_REPRESENTATION_REFUSED), and the
+# `compatibility.legacy_representation` record below is the ratified historical
+# statement of what was removed and where removal was serialized.
+#
+# Layering (A5.1–A5.3):
+#   logical layer  — `candidates` keyed by provider-neutral ids
+#   binding layer  — provider-prefixed bindings (`opencode/...`,
+#                    `openrouter/...`) attached to a candidate, carrying
+#                    eligibility at the binding level
+#   fallback       — explicit, typed references (`type: binding|candidate`);
+#                    self-referential and dangling references are rejected
+#
+# Frozen role/lane/authority map (A5.4): `lane_map` encodes the six lanes of
+# `pmc-p0-role-lane-map.md` as ratified by `a54-ratification-2026-09-26.md`.
+# The L1/L2 pinned-provider values, the L3/L4 provider-preference values, and
+# the per-lane quality tolerance delta_L are named unfabricated residuals
+# (a54 dispositions 2/3/5): typed-unavailable, never silently defaulted.
+# Their declared values are assignable only from real availability/model-quality
+# evidence (A6) under a later, reviewed change.
+#
+# Evidence values follow one envelope shape everywhere:
+#   { state: declared, value: <typed>, source: <named source of truth> }
+#   { state: unknown|unverified|unproven, residual: <named refusal/hold> }
+# No field asserts anything its named source does not establish (A6).
+# ---------------------------------------------------------------------------
+compatibility:
+  representation: provider-neutral-fallback-contract
+  version: 1
+  legacy_representation:
+    blocks: [model_tiers, roles, data_classification.eligible_models]
+    id_vocabulary: openrouter-slug-only
+    status: deprecated
+    removal_serialized_into: PMC-P4
+
+ranking_contract:
+  # A3 / suitability rubric: the required eligibility/ranking fields (R1-R7)
+  # and the evidence threshold, encoded. Values live on bindings and routes.
+  inputs:
+    R1: data-class eligibility
+    R2: required capability
+    R3: independence obligation
+    R4: available context
+    R5: remaining budget
+    R6: verified availability
+    R7: recorded quality score
+  eligibility_filters: [R1, R2, R3, R4, R6]
+  budget_ordering_lane: L5
+  quality_ordering_key: R7
+  stable_order: [declared-matrix-role, provider, model-id]
+  evidence_threshold:
+    rankable_requires: R1-R6-definite-true-from-a-named-source-and-R7-recorded-for-this-lane
+    on_unknown: refuse # unrankable is never ranked last; unknown is never "comparable"
+  attested_states: [static-conformance, live-availability, model-quality]
+
+lane_map:
+  L1:
+    role_family: coordinator
+    subroles: [coordinator, shaper, architect]
+    routing_classes: [architecture/risk]
+    authority_cap: [coordinate, shape, propose-amendment]
+    authority_prohibited: [ratify, grant-gate, merge, release, self-verify]
+    frontier_only: true
+    independence: coordinator-is-never-its-own-verifier
+    human_gates: [gate-1, gate-2, gate-3, break-glass-owner-only]
+    provider_rule:
+      kind: pinned-provider
+      pinned_provider: { state: unavailable, residual: L1_PINNED_PROVIDER_UNSET }
+    quality_tolerance: { state: unavailable, residual: DELTA_L_UNSET }
+  L2:
+    role_family: verifier
+    subroles: [adversarial-reviewer, verifier, security-auditor]
+    routing_classes: [architecture/risk, review/security]
+    authority_cap: [verdict, findings-recommendation]
+    authority_prohibited: [approve, merge, release, edit-artifact, accept-own-findings]
+    frontier_only: true
+    independence: independent-family-from-builder-applies-to-primary-and-fallback
+    human_gates: [coordinator-acceptance, gate-3]
+    provider_rule:
+      kind: pinned-provider
+      pinned_provider: { state: unavailable, residual: L2_PINNED_PROVIDER_UNSET }
+    quality_tolerance: { state: unavailable, residual: DELTA_L_UNSET }
+  L3:
+    role_family: builder
+    subroles: [builder-complex]
+    routing_classes: [implementation/complex]
+    authority_cap: [execution-within-allowed-files]
+    authority_prohibited: [approve, merge, release, policy-bypass, self-review]
+    frontier_only: false
+    independence: reviewer-must-be-independent-family
+    human_gates: [gate-2]
+    provider_rule:
+      kind: declared-preference
+      preference: { state: unavailable, residual: L3_PROVIDER_PREFERENCE_UNSET }
+    quality_tolerance: { state: unavailable, residual: DELTA_L_UNSET }
+  L4:
+    role_family: builder
+    subroles: [builder-standard]
+    routing_classes: [standard-feature, implementation/standard]
+    authority_cap: [execution-within-allowed-files]
+    authority_prohibited: [approve, merge, release, policy-bypass, self-review]
+    frontier_only: false
+    independence: reviewer-independent-where-parcel-risk-requires
+    human_gates: [gate-2]
+    provider_rule:
+      kind: declared-preference
+      preference: { state: unavailable, residual: L4_PROVIDER_PREFERENCE_UNSET }
+    quality_tolerance: { state: unavailable, residual: DELTA_L_UNSET }
+  L5:
+    role_family: builder
+    subroles: [builder-economy]
+    routing_classes: [boilerplate]
+    authority_cap: [execution-within-allowed-files]
+    authority_prohibited: [security, approve, merge, release, final-verification]
+    frontier_only: false
+    independence: never-a-verifier
+    human_gates: [gate-2]
+    provider_rule:
+      kind: cheapest-eligible
+    quality_tolerance: { state: unavailable, residual: DELTA_L_UNSET }
+  L6:
+    # M2: typed routing/classification is refused/disabled. No route may be
+    # declared for L6 (validator: LANE_DISABLED_REFUSED); any re-enablement
+    # requires a ratified amendment (rubric L6 resolution, rule 1).
+    role_family: classifier
+    subroles: [routing-classifier]
+    routing_classes: [routing/classification]
+    authority_cap: [recommend-only]
+    authority_prohibited:
+      [
+        prose,
+        implementation,
+        review,
+        approve,
+        merge,
+        verification,
+        control-plane,
+        promotion,
+        cross-provider-fallback,
+      ]
+    frontier_only: false
+    independence: not-applicable
+    human_gates: [reattestation-by-ratified-amendment]
+    provider_rule:
+      kind: none
+      refusal: LANE_DISABLED_REFUSED
+    quality_tolerance: { state: unavailable, residual: DELTA_L_UNSET }
+    status: disabled-refused
+    re_enablement: ratified-amendment-required
+    re_enablement_candidates: [opencode/qwen3.8-flash, opencode/glm-5.3-flash]
+
+candidates:
+  # Logical candidates (provider-neutral ids) with provider-prefixed bindings
+  # (A5.2). Binding facts are transcribed from `pmc-p0-capability-baseline.md`
+  # (AC2 identity, AC5 capability facts, H-* holds); where that evidence is
+  # absent the envelope is typed-unavailable with the named residual — never a
+  # guessed value. `family` is the declared model family (R3 input), derived
+  # from the vendor identity of the charter-matrix model, never inferred at
+  # resolve time.
+  claude-opus-5-5:
+    family: anthropic
+    bindings:
+      - id: opencode/claude-opus-5-5
+        provider: opencode
+        model: claude-opus-5-5
+        family: anthropic
+        identity: { state: owner-attested, attestation: amendment-03, hold: OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY }
+        endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: null, alignment: unknown }
+        data_classes: { state: unknown, residual: DATA_CLASS_UNKNOWN }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        max_output_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        cost: { state: unknown, residual: COST_UNKNOWN }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+      - id: openrouter/anthropic/claude-opus-5.5
+        provider: openrouter
+        model: anthropic/claude-opus-5.5
+        family: anthropic
+        identity: { state: owner-attested, attestation: amendment-03, hold: OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY }
+        endpoint: { registered: https://openrouter.ai/api/v1, catalogue: null, alignment: unknown }
+        data_classes: { state: declared, value: [public, internal, restricted], source: 'pmc-p1-fallback-contract-2026-09-26.md#s2-item-3 (pre-cutover eligibility lists, transcribed; CUTOVER-P4)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        max_output_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        cost: { state: unknown, residual: COST_UNKNOWN }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+  gpt-6-astra:
+    family: openai
+    bindings:
+      - id: opencode/gpt-6-astra
+        provider: opencode
+        model: gpt-6-astra
+        family: openai
+        identity: { state: resolved, source: pmc-p0-capability-baseline.md#ac2 }
+        endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: https://opencode.ai/zen/v1, alignment: divergent }
+        data_classes: { state: unknown, residual: DATA_CLASS_UNKNOWN }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1050000, source: pmc-p0-capability-baseline.md#ac5 }
+        max_output_tokens: { state: declared, value: 128000, source: pmc-p0-capability-baseline.md#ac5 }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 10, output: 50 }, source: pmc-p0-capability-baseline.md#ac5 }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+      - id: openrouter/openai/gpt-6-astra
+        provider: openrouter
+        model: openai/gpt-6-astra
+        family: openai
+        identity: { state: resolved, source: pmc-p0-capability-baseline.md#ac2 }
+        endpoint: { registered: https://openrouter.ai/api/v1, catalogue: https://openrouter.ai/api/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public, internal, restricted], source: 'pmc-p1-fallback-contract-2026-09-26.md#s2-item-3 (pre-cutover eligibility lists, transcribed; CUTOVER-P4)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1050000, source: pmc-p0-capability-baseline.md#ac5 }
+        max_output_tokens: { state: declared, value: 128000, source: pmc-p0-capability-baseline.md#ac5 }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 10, output: 50 }, source: pmc-p0-capability-baseline.md#ac5 }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+  gpt-5.6-sol:
+    family: openai
+    bindings:
+      - id: opencode/gpt-5.6-sol
+        provider: opencode
+        model: gpt-5.6-sol
+        family: openai
+        identity: { state: resolved, source: pmc-p0-capability-baseline.md#ac2 }
+        endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: https://opencode.ai/zen/v1, alignment: divergent }
+        data_classes: { state: unknown, residual: DATA_CLASS_UNKNOWN }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1050000, source: pmc-p0-capability-baseline.md#ac5 }
+        max_output_tokens: { state: declared, value: 128000, source: pmc-p0-capability-baseline.md#ac5 }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 4, output: 20 }, source: pmc-p0-capability-baseline.md#ac5 }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+      - id: openrouter/openai/gpt-5.6-sol
+        provider: openrouter
+        model: openai/gpt-5.6-sol
+        family: openai
+        identity: { state: resolved, source: pmc-p0-capability-baseline.md#ac2 }
+        endpoint: { registered: https://openrouter.ai/api/v1, catalogue: https://openrouter.ai/api/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public, internal, restricted], source: 'pmc-p1-fallback-contract-2026-09-26.md#s2-item-3 (pre-cutover eligibility lists, transcribed; CUTOVER-P4)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1050000, source: pmc-p0-capability-baseline.md#ac5 }
+        max_output_tokens: { state: declared, value: 128000, source: pmc-p0-capability-baseline.md#ac5 }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 2, output: 10 }, source: pmc-p0-capability-baseline.md#ac5 }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+  claude-sonnet-5:
+    family: anthropic
+    bindings:
+      - id: opencode/claude-sonnet-5
+        provider: opencode
+        model: claude-sonnet-5
+        family: anthropic
+        identity: { state: resolved, source: pmc-p0-capability-baseline.md#ac2 }
+        endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: https://opencode.ai/zen, alignment: divergent }
+        data_classes: { state: unknown, residual: DATA_CLASS_UNKNOWN }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1000000, source: pmc-p0-capability-baseline.md#ac5 }
+        max_output_tokens: { state: declared, value: 128000, source: pmc-p0-capability-baseline.md#ac5 }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 2, output: 10 }, source: pmc-p0-capability-baseline.md#ac5 }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+      - id: openrouter/anthropic/claude-sonnet-5
+        provider: openrouter
+        model: anthropic/claude-sonnet-5
+        family: anthropic
+        identity: { state: resolved, source: pmc-p0-capability-baseline.md#ac2 }
+        endpoint: { registered: https://openrouter.ai/api/v1, catalogue: https://openrouter.ai/api, alignment: divergent }
+        data_classes: { state: declared, value: [public, internal, restricted], source: 'pmc-p1-fallback-contract-2026-09-26.md#s2-item-3 (pre-cutover eligibility lists, transcribed; CUTOVER-P4)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1000000, source: pmc-p0-capability-baseline.md#ac5 }
+        max_output_tokens: { state: declared, value: 128000, source: pmc-p0-capability-baseline.md#ac5 }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 2, output: 10 }, source: pmc-p0-capability-baseline.md#ac5 }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+  deepseek-v4-pro:
+    family: deepseek
+    bindings:
+      - id: opencode/deepseek-v4-pro
+        provider: opencode
+        model: deepseek-v4-pro
+        family: deepseek
+        identity: { state: resolved, source: pmc-p0-capability-baseline.md#ac2 }
+        endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: https://opencode.ai/zen/v1, alignment: divergent }
+        data_classes: { state: unknown, residual: DATA_CLASS_UNKNOWN }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1000000, source: pmc-p0-capability-baseline.md#ac5 }
+        max_output_tokens: { state: declared, value: 384000, source: pmc-p0-capability-baseline.md#ac5 }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 1.74, output: 3.84 }, source: pmc-p0-capability-baseline.md#ac5 }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+  gpt-5.6-terra:
+    family: openai
+    bindings:
+      - id: opencode/gpt-5.6-terra
+        provider: opencode
+        model: gpt-5.6-terra
+        family: openai
+        identity: { state: resolved, source: pmc-p0-capability-baseline.md#ac2 }
+        endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: https://opencode.ai/zen/v1, alignment: divergent }
+        data_classes: { state: unknown, residual: DATA_CLASS_UNKNOWN }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1050000, source: pmc-p0-capability-baseline.md#ac5 }
+        max_output_tokens: { state: declared, value: 128000, source: pmc-p0-capability-baseline.md#ac5 }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 2.5, output: 15 }, source: pmc-p0-capability-baseline.md#ac5 }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+      - id: openrouter/openai/gpt-5.6-terra
+        provider: openrouter
+        model: openai/gpt-5.6-terra
+        family: openai
+        identity: { state: resolved, source: pmc-p0-capability-baseline.md#ac2 }
+        endpoint: { registered: https://openrouter.ai/api/v1, catalogue: https://openrouter.ai/api/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public, internal, restricted], source: 'pmc-p1-fallback-contract-2026-09-26.md#s2-item-3 (pre-cutover eligibility lists, transcribed; CUTOVER-P4)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1050000, source: pmc-p0-capability-baseline.md#ac5 }
+        max_output_tokens: { state: declared, value: 128000, source: pmc-p0-capability-baseline.md#ac5 }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 2, output: 12 }, source: pmc-p0-capability-baseline.md#ac5 }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+  qwen3.8-flash:
+    family: qwen
+    bindings:
+      - id: opencode/qwen3.8-flash
+        provider: opencode
+        model: qwen3.8-flash
+        family: qwen
+        # AC2A_ZERO_MATCH (Amendment 04 D-b1): zero literal matches under
+        # `opencode`; diagnosed AC2A_WRONG_PROVIDER + AC2A_PREFIX_ALIAS_REFUSED.
+        # Never aliased to `opencode-go`/`qwen-token-plan` records or to
+        # `openrouter/qwen/qwen3.8-flash`. L5 primary role held to A6/PMC-P2.
+        identity: { state: zero-match, refusal: AC2A_ZERO_MATCH, diagnostics: [AC2A_WRONG_PROVIDER, AC2A_PREFIX_ALIAS_REFUSED], hold: AC2A_ZERO_MATCH_HELD }
+        endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: null, alignment: unknown }
+        data_classes: { state: unknown, residual: DATA_CLASS_UNKNOWN }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        max_output_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        cost: { state: unknown, residual: COST_UNKNOWN }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+  glm-5.3-flash:
+    family: z-ai
+    bindings:
+      - id: opencode/glm-5.3-flash
+        provider: opencode
+        model: glm-5.3-flash
+        family: z-ai
+        identity: { state: resolved, source: pmc-p0-capability-baseline.md#ac2 }
+        endpoint: { registered: https://opencode.ai/zen/go/v1, catalogue: https://opencode.ai/zen/v1, alignment: divergent }
+        data_classes: { state: unknown, residual: DATA_CLASS_UNKNOWN }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1000000, source: pmc-p0-capability-baseline.md#ac5 }
+        max_output_tokens: { state: declared, value: 131072, source: pmc-p0-capability-baseline.md#ac5 }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 0.15, output: 0.5 }, source: pmc-p0-capability-baseline.md#ac5 }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+  gemini-3.8-flash:
+    family: google
+    bindings:
+      - id: openrouter/google/gemini-3.8-flash
+        provider: openrouter
+        model: google/gemini-3.8-flash
+        family: google
+        identity: { state: resolved, source: pmc-p0-capability-baseline.md#ac2 }
+        endpoint: { registered: https://openrouter.ai/api/v1, catalogue: https://openrouter.ai/api/v1, alignment: aligned }
+        data_classes: { state: declared, value: [public, internal, restricted], source: 'pmc-p1-fallback-contract-2026-09-26.md#s2-item-3 (pre-cutover eligibility lists, transcribed; CUTOVER-P4)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 1048576, source: pmc-p0-capability-baseline.md#ac5 }
+        max_output_tokens: { state: declared, value: 65536, source: pmc-p0-capability-baseline.md#ac5 }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 0.75, output: 3.75 }, source: pmc-p0-capability-baseline.md#ac5 }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+  claude-haiku-4.5:
+    family: anthropic
+    bindings:
+      - id: openrouter/anthropic/claude-haiku-4.5
+        provider: openrouter
+        model: anthropic/claude-haiku-4.5
+        family: anthropic
+        identity: { state: resolved, source: pmc-p0-capability-baseline.md#ac2 }
+        endpoint: { registered: https://openrouter.ai/api/v1, catalogue: https://openrouter.ai/api, alignment: divergent }
+        data_classes: { state: declared, value: [public, internal, restricted], source: 'pmc-p1-fallback-contract-2026-09-26.md#s2-item-3 (pre-cutover eligibility lists, transcribed; CUTOVER-P4)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: declared, value: 200000, source: pmc-p0-capability-baseline.md#ac5 }
+        max_output_tokens: { state: declared, value: 64000, source: pmc-p0-capability-baseline.md#ac5 }
+        cost: { state: declared, value: { unit: usd_per_mtok, input: 1, output: 5 }, source: pmc-p0-capability-baseline.md#ac5 }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+
+  # CUTOVER-P4 migration (C5.2): provider-neutral identities for the ordered
+  # source's remaining entries (the pre-cutover `model_tiers` slugs that had no
+  # logical candidate yet). The slug survives only as the binding's `model`
+  # field. Facts the transcription record establishes are declared; everything
+  # else is typed-unavailable with its named residual — never a guessed value.
+  claude-fable-5.1:
+    family: anthropic
+    bindings:
+      - id: openrouter/anthropic/claude-fable-5.1
+        provider: openrouter
+        model: anthropic/claude-fable-5.1
+        family: anthropic
+        identity: { state: resolved, source: 'pmc-p1-fallback-contract-2026-09-26.md#s5 (legacy ordered-source entry, migrated at CUTOVER-P4)' }
+        selection_only: true
+        endpoint: { registered: https://openrouter.ai/api/v1, catalogue: null, alignment: unknown }
+        data_classes: { state: declared, value: [public, internal, restricted], source: 'pmc-p1-fallback-contract-2026-09-26.md#s2-item-3 (pre-cutover eligibility lists, transcribed; CUTOVER-P4)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        max_output_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        cost: { state: unknown, residual: COST_UNKNOWN }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+  gemini-3.1-pro-preview:
+    family: google
+    bindings:
+      - id: openrouter/google/gemini-3.1-pro-preview
+        provider: openrouter
+        model: google/gemini-3.1-pro-preview
+        family: google
+        identity: { state: resolved, source: 'pmc-p1-fallback-contract-2026-09-26.md#s5 (legacy ordered-source entry, migrated at CUTOVER-P4)' }
+        selection_only: true
+        endpoint: { registered: https://openrouter.ai/api/v1, catalogue: null, alignment: unknown }
+        data_classes: { state: declared, value: [public, internal, restricted], source: 'pmc-p1-fallback-contract-2026-09-26.md#s2-item-3 (pre-cutover eligibility lists, transcribed; CUTOVER-P4)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        max_output_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        cost: { state: unknown, residual: COST_UNKNOWN }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+  glm-5.3:
+    family: z-ai
+    bindings:
+      - id: openrouter/z-ai/glm-5.3
+        provider: openrouter
+        model: z-ai/glm-5.3
+        family: z-ai
+        identity: { state: resolved, source: 'pmc-p1-fallback-contract-2026-09-26.md#s5 (legacy ordered-source entry, migrated at CUTOVER-P4)' }
+        selection_only: true
+        endpoint: { registered: https://openrouter.ai/api/v1, catalogue: null, alignment: unknown }
+        data_classes: { state: declared, value: [public, internal, restricted], source: 'pmc-p1-fallback-contract-2026-09-26.md#s2-item-3 (pre-cutover eligibility lists, transcribed; CUTOVER-P4)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        max_output_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        cost: { state: unknown, residual: COST_UNKNOWN }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+  grok-4.6:
+    family: x-ai
+    bindings:
+      - id: openrouter/x-ai/grok-4.6
+        provider: openrouter
+        model: x-ai/grok-4.6
+        family: x-ai
+        identity: { state: resolved, source: 'pmc-p1-fallback-contract-2026-09-26.md#s5 (legacy ordered-source entry, migrated at CUTOVER-P4)' }
+        selection_only: true
+        endpoint: { registered: https://openrouter.ai/api/v1, catalogue: null, alignment: unknown }
+        data_classes: { state: declared, value: [public, internal, restricted], source: 'pmc-p1-fallback-contract-2026-09-26.md#s2-item-3 (pre-cutover eligibility lists, transcribed; CUTOVER-P4)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        max_output_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        cost: { state: unknown, residual: COST_UNKNOWN }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+  muse-spark-1.3:
+    family: meta
+    bindings:
+      - id: openrouter/meta/muse-spark-1.3
+        provider: openrouter
+        model: meta/muse-spark-1.3
+        family: meta
+        identity: { state: resolved, source: 'pmc-p1-fallback-contract-2026-09-26.md#s5 (legacy ordered-source entry, migrated at CUTOVER-P4)' }
+        selection_only: true
+        endpoint: { registered: https://openrouter.ai/api/v1, catalogue: null, alignment: unknown }
+        data_classes: { state: declared, value: [public, internal, restricted], source: 'pmc-p1-fallback-contract-2026-09-26.md#s2-item-3 (pre-cutover eligibility lists, transcribed; CUTOVER-P4)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        max_output_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        cost: { state: unknown, residual: COST_UNKNOWN }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+  nemotron-3.5-lightning:
+    family: nvidia
+    bindings:
+      - id: openrouter/nvidia/nemotron-3.5-lightning
+        provider: openrouter
+        model: nvidia/nemotron-3.5-lightning
+        family: nvidia
+        identity: { state: resolved, source: 'pmc-p1-fallback-contract-2026-09-26.md#s5 (legacy ordered-source entry, migrated at CUTOVER-P4)' }
+        selection_only: true
+        endpoint: { registered: https://openrouter.ai/api/v1, catalogue: null, alignment: unknown }
+        data_classes: { state: declared, value: [public, internal, restricted], source: 'pmc-p1-fallback-contract-2026-09-26.md#s2-item-3 (pre-cutover eligibility lists, transcribed; CUTOVER-P4)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        max_output_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        cost: { state: unknown, residual: COST_UNKNOWN }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+  gpt-5.6-luna:
+    family: openai
+    bindings:
+      - id: openrouter/openai/gpt-5.6-luna
+        provider: openrouter
+        model: openai/gpt-5.6-luna
+        family: openai
+        identity: { state: resolved, source: 'pmc-p1-fallback-contract-2026-09-26.md#s5 (legacy ordered-source entry, migrated at CUTOVER-P4)' }
+        selection_only: true
+        endpoint: { registered: https://openrouter.ai/api/v1, catalogue: null, alignment: unknown }
+        data_classes: { state: declared, value: [public, internal, restricted], source: 'pmc-p1-fallback-contract-2026-09-26.md#s2-item-3 (pre-cutover eligibility lists, transcribed; CUTOVER-P4)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        max_output_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        cost: { state: unknown, residual: COST_UNKNOWN }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+  gemini-3.1-flash-lite:
+    family: google
+    bindings:
+      - id: openrouter/google/gemini-3.1-flash-lite
+        provider: openrouter
+        model: google/gemini-3.1-flash-lite
+        family: google
+        identity: { state: resolved, source: 'pmc-p1-fallback-contract-2026-09-26.md#s5 (legacy ordered-source entry, migrated at CUTOVER-P4)' }
+        selection_only: true
+        endpoint: { registered: https://openrouter.ai/api/v1, catalogue: null, alignment: unknown }
+        data_classes: { state: declared, value: [public, internal, restricted], source: 'pmc-p1-fallback-contract-2026-09-26.md#s2-item-3 (pre-cutover eligibility lists, transcribed; CUTOVER-P4)' }
+        capabilities: { tool-use: unverified, structured-output: unverified }
+        context_window_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        max_output_tokens: { state: unknown, residual: CONTEXT_UNKNOWN }
+        cost: { state: unknown, residual: COST_UNKNOWN }
+        availability: { state: unproven, residual: AVAILABILITY_UNVERIFIED }
+        quality: { state: unproven, residual: QUALITY_UNRECORDED }
+
+lane_routes:
+  # One route per lane and provider, exactly as the charter matrix declares
+  # (provider-local primary -> fallback; cross-provider failover is a new,
+  # recorded attempt under D3, never a fallback). No L6 route exists: the lane
+  # is refused/disabled (M2), and any declaration is rejected.
+  # `comparability` is the rubric's "comparable or higher" verdict: it stays
+  # typed-unproven while any comparison input (including delta_L) is
+  # unavailable, per the evidence threshold.
+  - lane: L1
+    provider: opencode
+    primary: { type: binding, ref: opencode/claude-opus-5-5 }
+    fallback: { type: binding, ref: opencode/gpt-6-astra }
+    comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
+  - lane: L1
+    provider: openrouter
+    primary: { type: binding, ref: openrouter/openai/gpt-6-astra }
+    fallback: { type: binding, ref: openrouter/anthropic/claude-opus-5.5 }
+    comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
+  - lane: L2
+    provider: opencode
+    primary: { type: binding, ref: opencode/gpt-6-astra }
+    fallback: { type: binding, ref: opencode/claude-opus-5-5 }
+    comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
+  - lane: L2
+    provider: openrouter
+    primary: { type: binding, ref: openrouter/anthropic/claude-opus-5.5 }
+    fallback: { type: binding, ref: openrouter/openai/gpt-6-astra }
+    comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
+  - lane: L3
+    provider: opencode
+    primary: { type: binding, ref: opencode/gpt-5.6-sol }
+    fallback: { type: binding, ref: opencode/claude-sonnet-5 }
+    comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
+  - lane: L3
+    provider: openrouter
+    primary: { type: binding, ref: openrouter/anthropic/claude-sonnet-5 }
+    fallback: { type: binding, ref: openrouter/openai/gpt-5.6-sol }
+    comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
+  - lane: L4
+    provider: opencode
+    primary: { type: binding, ref: opencode/deepseek-v4-pro }
+    fallback: { type: binding, ref: opencode/gpt-5.6-terra }
+    comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
+  - lane: L4
+    provider: openrouter
+    primary: { type: binding, ref: openrouter/openai/gpt-5.6-terra }
+    fallback: { type: binding, ref: openrouter/google/gemini-3.8-flash }
+    comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
+  - lane: L5
+    provider: opencode
+    primary: { type: binding, ref: opencode/qwen3.8-flash }
+    fallback: { type: binding, ref: opencode/glm-5.3-flash }
+    comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
+  - lane: L5
+    provider: openrouter
+    primary: { type: binding, ref: openrouter/google/gemini-3.8-flash }
+    fallback: { type: binding, ref: openrouter/anthropic/claude-haiku-4.5 }
+    comparability: { state: unproven, residual: FALLBACK_SUITABILITY_UNPROVEN }
+
+# ---------------------------------------------------------------------------
+# RCM schema v0.4 (RCM-P3/RCM-P9) — expertise bindings.
+#
+# Shipped EMPTY on purpose: actual binding content is RCM-P9's, must be
+# proposed shadow/evidence-only (each with a cited, dated source and explicit
+# admissibility statement), and any promotion to a dispatch default is human
+# Gate 3 — explicitly out of the RCM goal. Semantics (D3/OQ2, enforced by the
+# validator and the resolver): a non-shadow entry narrows the already-eligible
+# set within its routing class and expertise area; missing bindings never
+# invent a preference; an unsatisfiable binding refuses rather than silently
+# falling back; shadow entries are evidence-only and never route.
+expertise_bindings: []

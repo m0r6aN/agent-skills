@@ -1,0 +1,28 @@
+{
+  "name": "chain-invalid",
+  "description": "R1 chain-invalid: an unparseable chain member invalidates the chain outright.",
+  "now": "2026-09-26T12:00:00.000Z",
+  "goal": {
+    "slug": "goal-broken",
+    "queue": ["1. **P1** dispatch in flight."]
+  },
+  "specs": [{ "name": "P1-alpha.md", "location": "active", "updated": "2026-09-25" }],
+  "chains": [
+    {
+      "workflowId": "00000000-0000-4000-8000-000000000002",
+      "parcel": "P1",
+      "stages": ["A", "B", "C"],
+      "timestampOffsetHours": [-3, -2, -1],
+      "corrupt": 2
+    }
+  ],
+  "expected": [
+    {
+      "parcel": "P1",
+      "state": "failed",
+      "rule": "R1",
+      "failureCode": "chain-invalid",
+      "chainEvidence": "present"
+    }
+  ]
+}

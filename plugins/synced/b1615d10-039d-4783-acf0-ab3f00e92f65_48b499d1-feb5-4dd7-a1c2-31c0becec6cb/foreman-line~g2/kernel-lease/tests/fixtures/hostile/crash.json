@@ -1,0 +1,76 @@
+{
+  "records": [
+    {
+      "id": "CR-01",
+      "scenario": "claim",
+      "fault": {
+        "afterStatement": "INSERT INTO events",
+        "kill": "pre-commit"
+      },
+      "expectedOutcome": {
+        "state": "fully-absent",
+        "retry": "applies"
+      }
+    },
+    {
+      "id": "CR-02",
+      "scenario": "claim",
+      "fault": {
+        "afterStatement": "UPDATE goals",
+        "kill": "pre-commit"
+      },
+      "expectedOutcome": {
+        "state": "fully-absent",
+        "retry": "applies"
+      }
+    },
+    {
+      "id": "CR-03",
+      "scenario": "claim",
+      "fault": {
+        "afterStatement": "INSERT INTO idempotency_keys",
+        "kill": "pre-commit"
+      },
+      "expectedOutcome": {
+        "state": "fully-absent",
+        "retry": "applies"
+      }
+    },
+    {
+      "id": "CR-04",
+      "scenario": "claim",
+      "fault": {
+        "afterStatement": "COMMIT",
+        "kill": "post-commit-pre-result"
+      },
+      "expectedOutcome": {
+        "state": "fully-applied",
+        "retry": "replays"
+      }
+    },
+    {
+      "id": "CR-05",
+      "scenario": "requestTransition",
+      "fault": {
+        "afterStatement": "UPDATE goals",
+        "kill": "pre-commit"
+      },
+      "expectedOutcome": {
+        "state": "fully-absent",
+        "retry": "applies"
+      }
+    },
+    {
+      "id": "CR-06",
+      "scenario": "claim",
+      "fault": {
+        "afterStatement": "INSERT INTO leases",
+        "kill": "pre-commit"
+      },
+      "expectedOutcome": {
+        "state": "fully-absent",
+        "retry": "applies"
+      }
+    }
+  ]
+}

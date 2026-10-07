@@ -88,6 +88,11 @@ risk: standard                    # Required: low | standard | elevated | critic
 surfaces: [docs/SPEC-CONVENTION.md]  # Required, non-empty array of path/glob strings
 routing_class: standard-feature   # Required: boilerplate | standard-feature | architecture/risk | implementation/standard
 permission_profile: null          # Optional until the permission-profile registry ships
+# --- schema v0.4 fields (added 2026-09-27, RCM-P2; all optional) ---
+expertise: engineering            # Optional: one closed-vocabulary expertise area (see §4.9)
+inputs: [text]                    # Optional: text | image; omitted = text-only
+min_context: 200000               # Optional: positive integer, tokens; override upward only
+thinking_level: low               # Optional: off | minimal | low | medium | high | xhigh | max
 ---
 ```
 
@@ -133,6 +138,46 @@ repo-relative paths; globs and directory-wide shorthand are prohibited.
 If implementation requires a path not listed in `Allowed Files`, work stops
 until the coordinator ratifies a spec amendment. An agent must not expand its
 own authority because a related edit appears useful.
+
+### 4.9 `expertise:`, `inputs:`, `min_context:`, `thinking_level:` (schema v0.4, added 2026-09-27 — RCM-P2)
+
+Four optional fields extend the schema for routing-currency-and-merit (charter D7/D8, OQ1/OQ5/OQ6
+ratified 2026-09-20). They follow §4.6's additive pattern: optional first, enum validation once
+the value registry ships. All four are machine-validated by `plugins/foreman-line/spec-linter/`.
+**A spec that omits all four remains valid** — legacy omission has defined routing semantics
+(D8), it is not an error.
+
+- **`expertise:`** — **Optional.** A single expertise area drawn from the closed
+  `foreman-config` vocabulary (`plugins/foreman-line/foreman-config/src/expertise.ts`), never
+  free text: `engineering | architecture | security | legal | finance | writing | research |
+  data`. Each value has a written definition and at least one routing consequence there; new
+  values are added only when a parcel needs them (an expertise with no distinct routing
+  consequence is a label, not a dimension). An `expertise:` value outside the vocabulary is a
+  **schema rejection** (the vocabulary ships with this amendment; the closed set is the ratified
+  OQ1 answer). Semantics: a declared area may narrow the already-eligible routing tier via the
+  policy's `expertise_bindings` block; missing bindings never invent a preference, and an
+  unsatisfiable binding refuses rather than silently falling back. Absent `expertise:` = no
+  expertise narrowing.
+- **`inputs:`** — **Optional, non-empty array of `text | image`, unique values.** The input
+  modalities the parcel's work requires. Omitted = **text-only** (D8). Any other value is a
+  schema rejection: the provider catalogs carry exactly these two modalities, so a richer
+  vocabulary would declare requirements the harness can never satisfy. A parcel whose surfaces
+  bear images must declare `image` explicitly or it will resolve only against text-capable
+  models — and refuse rather than silently downgrade when none is eligible.
+- **`min_context:`** — **Optional positive integer (tokens).** The context floor the parcel
+  requires. The floor is *derived* from `surfaces:` and the spec body at shaping time; this
+  field is a declared override and may only be overridden **upward**, never downward. The
+  lint checks shape only (positive integer); the upward-only rule is a shaping obligation and a
+  resolve-time floor (`min_context` feeds the resolver's context predicate).
+- **`thinking_level:`** — **Optional.** One of `off | minimal | low | medium | high | xhigh |
+  max` — the Pi `ThinkingLevel` names as carried by the catalog's `thinkingLevelMap` (D8:
+  "maps to `thinkingLevelMap`"). Omitted = the routing-class thinking default (OQ5: `minimal`
+  for `boilerplate`, `low` for `standard-feature` and `implementation/standard`, `high` for
+  `architecture/risk`). A model that lacks the requested thinking level **refuses** — never a
+  silent downgrade. Any other value is a schema rejection.
+
+No model identity belongs in frontmatter (RCM D9): a parcel that names a model is a lint
+refusal. Parcels declare requirements; `routing-policy.yaml` decides identity.
 
 Required body sections, in order:
 

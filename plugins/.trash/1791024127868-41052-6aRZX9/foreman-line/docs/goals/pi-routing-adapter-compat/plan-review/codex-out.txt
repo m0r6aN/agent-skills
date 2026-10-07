@@ -1,0 +1,12 @@
+TOP 5 BRUTAL FINDINGS
+1. HIGH — One parcel is exactly right for a memo-only deliverable, but PRAC-P0 is not executable: it combines discovery, negative API proof, equivalence mapping, and provenance capture without declaring the evidence artifact that makes those claims reproducible.
+2. HIGH — D4 is load-bearing and unexamined: searching `docs/extensions.md` cannot prove an API is absent from Pi 0.86.1; it only proves one document lacks a string, so the required “absent” verdict can be false while every stated check passes.
+3. HIGH — The missing work is an immutable runtime-evidence snapshot: record resolved package root, package version, inspected files/paths and hashes, command output, and probe exit status; otherwise an npm/global-install update silently changes the thing the memo purports to describe.
+4. MEDIUM — “Real equivalents named” silently invites design: `pi.setModel`/`pi.setThinkingLevel` may be documented extension calls but are not demonstrated equivalents for a `beforeLLMTurn` session hook; calling them equivalents can authorize the rejected adapter by implication.
+5. MEDIUM — The memo’s governance paragraph will collide with boundary-routing/RCM ownership, and `compat-memo.md` plus unreserved evidence filenames can collide with a later compatibility pass; pointer-only language and a versioned, owned evidence directory are not yet an explicit interface.
+TOP 5 MOVES
+1. Make PRAC-P0 a single package with two owned outputs: `compat-memo.md` and `evidence/pi-0.86.1/`; retain one parcel and one review.
+2. Add a Node-stdlib, read-only probe that resolves the installed package, verifies `package.json` is 0.86.1, enumerates the exact docs/types/examples searched, emits SHA-256 hashes and exits nonzero on any missing expected path.
+3. Replace “APIs absent” with a bounded claim: absent from enumerated 0.86.1 public docs/types/examples and no supported hook found by the recorded probe; state the search boundary in the memo.
+4. Require an API-to-semantics table distinguishing documented calls from a lifecycle/session interception equivalent; if no semantic equivalent is evidenced, record “none established,” not an inferred substitute.
+5. Lock a namespaced evidence path and a one-sentence pointer template approved by the live authority; negative-control grep must reject routing verbs/config keys outside that verbatim template.

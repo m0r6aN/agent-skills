@@ -59,7 +59,7 @@
       "row": {
         "eventId": "evt-0002",
         "goalId": "goal-0001",
-        "kind": "updated",
+        "kind": "transition.applied",
         "payload": "{\"b\":2,\"a\":1}",
         "payloadDigest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "principalRef": "principal-1",
@@ -72,7 +72,7 @@
       "row": {
         "eventId": "evt-0001",
         "goalId": "goal-0001",
-        "kind": "created",
+        "kind": "transition.requested",
         "payload": "{\"n\":1}",
         "payloadDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "principalRef": "principal-1",
@@ -132,7 +132,7 @@
     {
       "op": "setProjectionCursor",
       "row": {
-        "projectionId": "proj-0001",
+        "projectionId": "md-goals-index",
         "goalId": "goal-0001",
         "lastAppliedEventSeq": 2,
         "updatedAtMicros": 1700000000000007
@@ -184,8 +184,8 @@
     "domain": "foreman-line.kernel-state.storage-export",
     "apiVersion": "0.1.0",
     "payload": {
-      "schemaVersion": 4,
-      "migrationHistoryDigest": "sha256:f1266619e39327abdc12e0ba90646e03af73d90e970654d56349612bc262f410",
+      "schemaVersion": 5,
+      "migrationHistoryDigest": "sha256:cc2b4b1b3d12c28e39fa8537a6a457b67a8f3435076fccf4e147e90f05d88af5",
       "tables": {
         "schema_migrations": [
           {
@@ -211,6 +211,12 @@
             "name": "idempotency-recorded-result",
             "digest": "sha256:0839f71e18af1fe93c9bc993573f5bc643a6ae0925722d47ba89fc0bb7a1d1ca",
             "applied_at_micros": 1700000000000100
+          },
+          {
+            "version": 5,
+            "name": "events-kind-checks",
+            "digest": "sha256:ce33d146cdc354545ebe605188e5ed4d86bf9f6fda4c92b706591200300b7b91",
+            "applied_at_micros": 1700000000000100
           }
         ],
         "goals": [
@@ -234,7 +240,7 @@
             "event_seq": 1,
             "event_id": "evt-0002",
             "goal_id": "goal-0001",
-            "kind": "updated",
+            "kind": "transition.applied",
             "payload": "{\"b\":2,\"a\":1}",
             "payload_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             "principal_ref": "principal-1",
@@ -245,7 +251,7 @@
             "event_seq": 2,
             "event_id": "evt-0001",
             "goal_id": "goal-0001",
-            "kind": "created",
+            "kind": "transition.requested",
             "payload": "{\"n\":1}",
             "payload_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "principal_ref": "principal-1",
@@ -322,7 +328,7 @@
         ],
         "projection_cursors": [
           {
-            "projection_id": "proj-0001",
+            "projection_id": "md-goals-index",
             "goal_id": "goal-0001",
             "last_applied_event_seq": 2,
             "updated_at_micros": 1700000000000007
@@ -351,6 +357,6 @@
       }
     }
   },
-  "exportDocumentBytes": "{\"apiVersion\":\"0.1.0\",\"domain\":\"foreman-line.kernel-state.storage-export\",\"payload\":{\"migrationHistoryDigest\":\"sha256:f1266619e39327abdc12e0ba90646e03af73d90e970654d56349612bc262f410\",\"schemaVersion\":4,\"tables\":{\"artifacts\":[{\"artifact_id\":\"art-0001\",\"digest\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"goal_id\":\"goal-0001\",\"kind\":\"evidence\",\"locator\":\"evidence/run-1/log.txt\",\"recorded_at_micros\":1700000000000006,\"recorded_by\":\"principal-1\"}],\"events\":[{\"event_id\":\"evt-0002\",\"event_seq\":1,\"goal_id\":\"goal-0001\",\"kind\":\"updated\",\"operation_id\":\"op-0002\",\"payload\":\"{\\\"b\\\":2,\\\"a\\\":1}\",\"payload_digest\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"principal_ref\":\"principal-1\",\"recorded_at_micros\":1700000000000002},{\"event_id\":\"evt-0001\",\"event_seq\":2,\"goal_id\":\"goal-0001\",\"kind\":\"created\",\"operation_id\":\"op-0001\",\"payload\":\"{\\\"n\\\":1}\",\"payload_digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"principal_ref\":\"principal-1\",\"recorded_at_micros\":1700000000000001}],\"goals\":[{\"goal_id\":\"goal-0001\",\"pending_transition_id\":null,\"revision\":1,\"status\":\"active\",\"updated_at_micros\":1700000000000000},{\"goal_id\":\"goal-0002\",\"pending_transition_id\":\"tr-0001\",\"revision\":0,\"status\":\"awaiting-human\",\"updated_at_micros\":1700000000000001}],\"idempotency_keys\":[{\"completed_at_micros\":null,\"effect_digest\":null,\"operation_id\":\"op-0001\",\"payload_digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"principal_ref\":\"principal-1\",\"recorded_at_micros\":1700000000000005,\"recorded_result\":null,\"repository_ref\":\"repo-1\",\"worktree_ref\":\"wt-1\"},{\"completed_at_micros\":1700000000000012,\"effect_digest\":null,\"operation_id\":\"op-2\",\"payload_digest\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"principal_ref\":\"principal-1\",\"recorded_at_micros\":1700000000000011,\"recorded_result\":\"eyJjb2RlIjoiRUZGRUNUX05PT1AiLCJkZWNpc2lvbiI6Ik5PT1AiLCJlZmZlY3REaWdlc3QiOm51bGwsImdvYWxSZXZpc2lvbiI6MX0=\",\"repository_ref\":\"repo-1\",\"worktree_ref\":\"wt-1\"}],\"leases\":[{\"acquired_at_micros\":1700000000000004,\"cas_revision\":3,\"expires_at_micros\":null,\"goal_id\":\"goal-0001\",\"lease_id\":\"lease-0001\",\"owner_principal_ref\":\"principal-1\",\"released_at_micros\":null},{\"acquired_at_micros\":1700000000000002,\"cas_revision\":2,\"expires_at_micros\":1700000000000009,\"goal_id\":\"goal-0001\",\"lease_id\":\"lease-0002\",\"owner_principal_ref\":\"principal-2\",\"released_at_micros\":1700000000000008}],\"projection_cursors\":[{\"goal_id\":\"goal-0001\",\"last_applied_event_seq\":2,\"projection_id\":\"proj-0001\",\"updated_at_micros\":1700000000000007}],\"schema_migrations\":[{\"applied_at_micros\":1700000000000100,\"digest\":\"sha256:b7b01bd6ecbc4a6b4cf960d60adacdcefa537ed4aa7dd8b8c683ec35bdf08661\",\"name\":\"initial\",\"version\":1},{\"applied_at_micros\":1700000000000100,\"digest\":\"sha256:dc7c541cc5f71962f0646c65ee11a3769f81453f277506e99e8f0baf78a481c6\",\"name\":\"goal-status-checks\",\"version\":2},{\"applied_at_micros\":1700000000000100,\"digest\":\"sha256:577c914dd5536a71d868518a5086e9a005c3931eacf932bd94507138bae9b741\",\"name\":\"transitions-status-checks\",\"version\":3},{\"applied_at_micros\":1700000000000100,\"digest\":\"sha256:0839f71e18af1fe93c9bc993573f5bc643a6ae0925722d47ba89fc0bb7a1d1ca\",\"name\":\"idempotency-recorded-result\",\"version\":4}],\"transitions\":[{\"created_at_micros\":1700000000000003,\"decided_at_micros\":null,\"goal_id\":\"goal-0001\",\"operation_id\":\"op-0003\",\"payload_digest\":\"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"requested_by\":\"principal-1\",\"status\":\"completed\",\"transition_id\":\"tr-0001\"}],\"wakeup_handoffs\":[{\"consumed_at_micros\":null,\"created_at_micros\":1700000000000008,\"from_session_ref\":\"sess-1\",\"goal_id\":\"goal-0001\",\"kind\":\"wakeup\",\"to_session_ref\":\"sess-2\",\"wakeup_id\":\"wk-0001\"},{\"consumed_at_micros\":1700000000000010,\"created_at_micros\":1700000000000009,\"from_session_ref\":\"sess-2\",\"goal_id\":\"goal-0002\",\"kind\":\"handoff\",\"to_session_ref\":null,\"wakeup_id\":\"wk-0002\"}]}}}",
-  "storageExportDigest": "sha256:cf9bc7e2f3ff4b5f385f85fdd14b6d1e5f2aa8b08a2a356e9f60f2b6639e67f3"
+  "exportDocumentBytes": "{\"apiVersion\":\"0.1.0\",\"domain\":\"foreman-line.kernel-state.storage-export\",\"payload\":{\"migrationHistoryDigest\":\"sha256:cc2b4b1b3d12c28e39fa8537a6a457b67a8f3435076fccf4e147e90f05d88af5\",\"schemaVersion\":5,\"tables\":{\"artifacts\":[{\"artifact_id\":\"art-0001\",\"digest\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"goal_id\":\"goal-0001\",\"kind\":\"evidence\",\"locator\":\"evidence/run-1/log.txt\",\"recorded_at_micros\":1700000000000006,\"recorded_by\":\"principal-1\"}],\"events\":[{\"event_id\":\"evt-0002\",\"event_seq\":1,\"goal_id\":\"goal-0001\",\"kind\":\"transition.applied\",\"operation_id\":\"op-0002\",\"payload\":\"{\\\"b\\\":2,\\\"a\\\":1}\",\"payload_digest\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"principal_ref\":\"principal-1\",\"recorded_at_micros\":1700000000000002},{\"event_id\":\"evt-0001\",\"event_seq\":2,\"goal_id\":\"goal-0001\",\"kind\":\"transition.requested\",\"operation_id\":\"op-0001\",\"payload\":\"{\\\"n\\\":1}\",\"payload_digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"principal_ref\":\"principal-1\",\"recorded_at_micros\":1700000000000001}],\"goals\":[{\"goal_id\":\"goal-0001\",\"pending_transition_id\":null,\"revision\":1,\"status\":\"active\",\"updated_at_micros\":1700000000000000},{\"goal_id\":\"goal-0002\",\"pending_transition_id\":\"tr-0001\",\"revision\":0,\"status\":\"awaiting-human\",\"updated_at_micros\":1700000000000001}],\"idempotency_keys\":[{\"completed_at_micros\":null,\"effect_digest\":null,\"operation_id\":\"op-0001\",\"payload_digest\":\"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"principal_ref\":\"principal-1\",\"recorded_at_micros\":1700000000000005,\"recorded_result\":null,\"repository_ref\":\"repo-1\",\"worktree_ref\":\"wt-1\"},{\"completed_at_micros\":1700000000000012,\"effect_digest\":null,\"operation_id\":\"op-2\",\"payload_digest\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"principal_ref\":\"principal-1\",\"recorded_at_micros\":1700000000000011,\"recorded_result\":\"eyJjb2RlIjoiRUZGRUNUX05PT1AiLCJkZWNpc2lvbiI6Ik5PT1AiLCJlZmZlY3REaWdlc3QiOm51bGwsImdvYWxSZXZpc2lvbiI6MX0=\",\"repository_ref\":\"repo-1\",\"worktree_ref\":\"wt-1\"}],\"leases\":[{\"acquired_at_micros\":1700000000000004,\"cas_revision\":3,\"expires_at_micros\":null,\"goal_id\":\"goal-0001\",\"lease_id\":\"lease-0001\",\"owner_principal_ref\":\"principal-1\",\"released_at_micros\":null},{\"acquired_at_micros\":1700000000000002,\"cas_revision\":2,\"expires_at_micros\":1700000000000009,\"goal_id\":\"goal-0001\",\"lease_id\":\"lease-0002\",\"owner_principal_ref\":\"principal-2\",\"released_at_micros\":1700000000000008}],\"projection_cursors\":[{\"goal_id\":\"goal-0001\",\"last_applied_event_seq\":2,\"projection_id\":\"md-goals-index\",\"updated_at_micros\":1700000000000007}],\"schema_migrations\":[{\"applied_at_micros\":1700000000000100,\"digest\":\"sha256:b7b01bd6ecbc4a6b4cf960d60adacdcefa537ed4aa7dd8b8c683ec35bdf08661\",\"name\":\"initial\",\"version\":1},{\"applied_at_micros\":1700000000000100,\"digest\":\"sha256:dc7c541cc5f71962f0646c65ee11a3769f81453f277506e99e8f0baf78a481c6\",\"name\":\"goal-status-checks\",\"version\":2},{\"applied_at_micros\":1700000000000100,\"digest\":\"sha256:577c914dd5536a71d868518a5086e9a005c3931eacf932bd94507138bae9b741\",\"name\":\"transitions-status-checks\",\"version\":3},{\"applied_at_micros\":1700000000000100,\"digest\":\"sha256:0839f71e18af1fe93c9bc993573f5bc643a6ae0925722d47ba89fc0bb7a1d1ca\",\"name\":\"idempotency-recorded-result\",\"version\":4},{\"applied_at_micros\":1700000000000100,\"digest\":\"sha256:ce33d146cdc354545ebe605188e5ed4d86bf9f6fda4c92b706591200300b7b91\",\"name\":\"events-kind-checks\",\"version\":5}],\"transitions\":[{\"created_at_micros\":1700000000000003,\"decided_at_micros\":null,\"goal_id\":\"goal-0001\",\"operation_id\":\"op-0003\",\"payload_digest\":\"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"requested_by\":\"principal-1\",\"status\":\"completed\",\"transition_id\":\"tr-0001\"}],\"wakeup_handoffs\":[{\"consumed_at_micros\":null,\"created_at_micros\":1700000000000008,\"from_session_ref\":\"sess-1\",\"goal_id\":\"goal-0001\",\"kind\":\"wakeup\",\"to_session_ref\":\"sess-2\",\"wakeup_id\":\"wk-0001\"},{\"consumed_at_micros\":1700000000000010,\"created_at_micros\":1700000000000009,\"from_session_ref\":\"sess-2\",\"goal_id\":\"goal-0002\",\"kind\":\"handoff\",\"to_session_ref\":null,\"wakeup_id\":\"wk-0002\"}]}}}",
+  "storageExportDigest": "sha256:7a7c5f4eb72c84c422c08c361f2f41b7473f930adfe06bb2304a1515ad4fb545"
 }

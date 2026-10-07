@@ -110,6 +110,47 @@
         "type": "string",
         "pattern": "\\S"
       }
+    },
+    "expertise": {
+      "type": "string",
+      "enum": [
+        "engineering",
+        "architecture",
+        "security",
+        "legal",
+        "finance",
+        "writing",
+        "research",
+        "data"
+      ]
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "text",
+          "image"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "min_context": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "thinking_level": {
+      "type": "string",
+      "enum": [
+        "off",
+        "minimal",
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ]
     }
   }
 }

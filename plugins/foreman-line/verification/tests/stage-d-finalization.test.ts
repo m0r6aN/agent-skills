@@ -816,7 +816,14 @@ test('actual captured aggregate bytes accept exactly 16 MiB and refuse plus one'
         ),
       )
       // Additional closed receipt documents exercise scanning only; they are not claimed as owner outputs.
-      for (let sequence = 4; sequence < 16; sequence++) {
+      // Union-derived probe numbering (merge 2026-10-04): theirs' chain placed
+      // the BuildResult at sequence 3, so the probes were numbered 4..15. With
+      // ours' MRC-05 C1 routing-event entries interleaved before the
+      // DispatchOrder, the probes continue from the actual tip (the captured
+      // BuildResult sequence + 1) instead of the literal 4 — the same twelve
+      // closed documents in the same scanning-only role.
+      const firstProbeSequence = Number(previous.sequence) + 1
+      for (let sequence = firstProbeSequence; sequence < firstProbeSequence + 12; sequence++) {
         const { hash: previousHash, ...fields } = previous
         const draft = {
           ...fields,

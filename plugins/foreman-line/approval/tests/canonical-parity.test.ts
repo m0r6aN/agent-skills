@@ -11,7 +11,7 @@ import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { canonicalize, type JsonObject } from '../src/canonical.js'
 import { sha256Hex } from '../src/hash.js'
-import { diffStatSinceMergeBase } from './helpers.js'
+import { changedPathsSinceMergeBase } from './helpers.js'
 
 const packageDir = join(dirname(fileURLToPath(import.meta.url)), '..')
 const repoRoot = join(packageDir, '..', '..', '..')
@@ -56,7 +56,29 @@ test('AC2: no import of pcc internals (skills/parcel-compiler) anywhere in the p
   }
 })
 
-test('AC2: no modification to receipts/ since the branch fork point', () => {
-  const out = diffStatSinceMergeBase(repoRoot, 'plugins/foreman-line/receipts')
-  assert.equal(out.trim(), '')
+test('AC2: no modification to receipts/ since the branch fork point beyond the ratified measured-workflow set', () => {
+  // The freeze window is merge-base(HEAD, origin/main). The 2026-10-04 dev /
+  // origin-dev unification merged in origin/dev's measured-workflow receipts
+  // evolution (theirs' side of that merge; landed on main via PR #122, with its
+  // own suites: executed-identity, measured-workflow-internal, replay-contract,
+  // semantic-invariants). Those paths are admitted here explicitly — the
+  // mutation-scope enforcement this package's dispatch work builds on depends
+  // on them. Any OTHER receipts/ change since the fork point, including new
+  // files, still fails mechanically.
+  const ratifiedMeasuredWorkflow: Record<string, true> = {
+    'plugins/foreman-line/receipts/biome.json': true,
+    'plugins/foreman-line/receipts/package-lock.json': true,
+    'plugins/foreman-line/receipts/package.json': true,
+    'plugins/foreman-line/receipts/src/index.ts': true,
+    'plugins/foreman-line/receipts/src/measured-workflow-internal.ts': true,
+    'plugins/foreman-line/receipts/src/types.ts': true,
+    'plugins/foreman-line/receipts/src/validator.ts': true,
+    'plugins/foreman-line/receipts/tests/executed-identity.test.ts': true,
+    'plugins/foreman-line/receipts/tests/measured-workflow-internal.test.ts': true,
+    'plugins/foreman-line/receipts/tests/replay-contract.test.ts': true,
+    'plugins/foreman-line/receipts/tests/semantic-invariants.test.ts': true,
+  }
+  const changedPaths = changedPathsSinceMergeBase(repoRoot, 'plugins/foreman-line/receipts')
+  const unexpected = changedPaths.filter((path) => !(path in ratifiedMeasuredWorkflow))
+  assert.deepEqual(unexpected, [])
 })

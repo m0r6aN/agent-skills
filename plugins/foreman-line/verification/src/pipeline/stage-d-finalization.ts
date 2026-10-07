@@ -30,7 +30,12 @@ import type {
   VerificationVerdict,
 } from '../../../contracts/src/stages/d-verification.js'
 import { branchForParcel } from '../../../permission-profiles/src/emitter.js'
-import { receiptPath, validateReceiptDocument } from '../../../receipts/src/index.js'
+import {
+  ROUTING_EVENT_SUBJECT_KINDS,
+  receiptPath,
+  validateEventSubject,
+  validateReceiptDocument,
+} from '../../../receipts/src/index.js'
 import {
   type AckV1,
   type CodeV1,
@@ -42,6 +47,7 @@ import {
   readMeasuredSessionV1,
   type SealV1,
 } from '../../../receipts/src/measured-workflow-internal.js'
+import { THINKING_DEFAULT_BY_CLASS } from '../../../routing-policy/src/types.js'
 import {
   type CollectResult,
   collectAdversarialFindings,
@@ -1145,15 +1151,50 @@ function verifyInitial(
   const build = rows.find((row) =>
     refMatches(row, input.registration.buildReceiptRef),
   ) as ReceiptRow
-  const initialKinds = ['ShapingResult', 'RegistrationResult', 'DispatchOrder']
+  // ── Union chain layout (merge 2026-10-04) ──────────────────────────────────
+  // theirs' offline chain placed the DispatchOrder at sequence 2 immediately
+  // after Stage-B; ours' dispatch (MRC-05 C1) appends routing event entries to
+  // the same chain BEFORE the DispatchOrder — "the Stage-C DispatchOrder
+  // receipt and the routing event entries COEXIST on that chain ... At the
+  // legacy tip (no entries landed after Stage-B) the derived values are
+  // exactly 2 ... byte-identical to the historical
+  // `000002-C-dispatch-order.json` outcome" (dispatch approval-cli C1
+  // invariant). Both layouts are admitted here: rows[0..1] keep their exact
+  // A/B identity pins; every stage-C entry between Stage-B and the DispatchOrder
+  // must be one of ours' ruled routing event entries, its subject held to the
+  // shipped receipts validateEventSubject shape (identity + kind + value); the
+  // DispatchOrder and BuildResult keep their exact subject pins below. Trailing
+  // closed claim documents (the bound probes) remain tolerated as before.
+  const initialKinds = ['ShapingResult', 'RegistrationResult']
   for (let index = 0; index < initialKinds.length; index++) {
     const row = rows[index] as ReceiptRow | undefined
     if (
       row === undefined ||
       row.document.kind !== 'stage' ||
       row.document.claimRef !== null ||
-      row.document.stage !== (['A', 'B', 'C'][index] as string) ||
+      row.document.stage !== (['A', 'B'][index] as string) ||
       row.document.subjectKind !== initialKinds[index]
+    )
+      throw new Refusal()
+    const correlation = row.document.correlation as Record<string, unknown>
+    if (
+      correlation.workflowId !== input.registration.workflowId ||
+      correlation.correlationId !== input.registration.correlationId
+    )
+      throw new Refusal()
+  }
+  const dispatchIndex = rows.indexOf(dispatch)
+  for (let index = 2; index < dispatchIndex; index++) {
+    const row = rows[index] as ReceiptRow | undefined
+    const subjectKind = row?.document.subjectKind as string | undefined
+    if (
+      row === undefined ||
+      subjectKind === undefined ||
+      row.document.kind !== 'stage' ||
+      row.document.claimRef !== null ||
+      row.document.stage !== 'C' ||
+      !(ROUTING_EVENT_SUBJECT_KINDS as readonly string[]).includes(subjectKind) ||
+      !validateEventSubject(subjectKind, row.document.subject).valid
     )
       throw new Refusal()
     const correlation = row.document.correlation as Record<string, unknown>
@@ -1208,7 +1249,15 @@ function verifyInitial(
     structureBudget,
     byteBudget,
   )
-  const routing = exact(routingCapture.value, [
+  const routingRaw: unknown = routingCapture.value
+  // Union (merge 2026-10-04): theirs' sidecar pin admits exactly the eight
+  // ruled fields below; ours' dispatch (HRO-P3 decision provenance) keeps
+  // those eight byte-for-byte and ADDS the spec-mandated summary field
+  // `replayBindings` plus, when the evaluator supplied candidates,
+  // `evaluations` — admitted with the same conditional-shape discipline
+  // parseInput applies to `order.permissionProfile`. Every pinned field keeps
+  // its ruled semantics below.
+  const routing = exact(routingRaw, [
     'workflowId',
     'routing_class',
     'data_classification',
@@ -1217,7 +1266,19 @@ function verifyInitial(
     'transportRequirements',
     'timestamp',
     'policyRef',
+    'replayBindings',
+    ...(typeof routingRaw === 'object' &&
+    routingRaw !== null &&
+    Object.hasOwn(routingRaw, 'evaluations')
+      ? ['evaluations']
+      : []),
   ])
+  if (
+    typeof routing.replayBindings !== 'object' ||
+    routing.replayBindings === null ||
+    ('evaluations' in routing && !Array.isArray(routing.evaluations))
+  )
+    throw new Refusal()
   const compression = exact(compressionCapture.value, [
     'workflowId',
     'artifactId',
@@ -1270,22 +1331,63 @@ function verifyInitial(
   stringValue(c.compressedText)
   stringValue(compression.artifactId)
   stringValue(routing.resolvedModelId)
+  // Union (merge 2026-10-04): theirs' step-0 reconstruction carried five
+  // lines; ours' dispatch (C2.4) additionally surfaces the resolved thinking
+  // level — the declared `thinking_level:` or the routing-class default
+  // (THINKING_DEFAULT_BY_CLASS, the resolver's identical computation) — as
+  // its fourth line. The value is recomputed with the producer's own formula
+  // and cross-checked against the digest-pinned routing summary's bound
+  // `replayBindings.effective_requirements.required_thinking_level`.
+  // The frontmatter carries unknown-valued fields; the thinking level is the
+  // declared `thinking_level:` or the routing-class default (the producer's
+  // formula). The class-default table is a union-keyed constant, read here as
+  // a plain string index (missing class → undefined, refused below).
+  const classDefaults = THINKING_DEFAULT_BY_CLASS as Readonly<Record<string, string | undefined>>
+  const routingClassInput: unknown = fm.routing_class
+  const thinkingLevelInput: unknown = fm.thinking_level
+  const resolvedThinkingLevel: unknown =
+    typeof thinkingLevelInput === 'string'
+      ? thinkingLevelInput
+      : typeof routingClassInput === 'string'
+        ? classDefaults[routingClassInput]
+        : undefined
+  const replayBindings: unknown = routing.replayBindings
+  let boundThinkingLevel: unknown
+  if (
+    typeof replayBindings === 'object' &&
+    replayBindings !== null &&
+    'effective_requirements' in replayBindings
+  ) {
+    const requirements: unknown = replayBindings.effective_requirements
+    if (
+      typeof requirements === 'object' &&
+      requirements !== null &&
+      'required_thinking_level' in requirements
+    ) {
+      boundThinkingLevel = requirements.required_thinking_level
+    }
+  }
+  if (typeof resolvedThinkingLevel !== 'string' || boundThinkingLevel !== resolvedThinkingLevel)
+    throw new Refusal()
   const stepZero = [
     `Parcel: ${input.ticketKey}`,
     `Workflow ID: ${input.registration.workflowId}`,
     `Resolved model: ${routing.resolvedModelId}`,
+    `Resolved thinking level: ${resolvedThinkingLevel}`,
     `Injected skills: ${input.order.injectedSkills.join(', ')}`,
     `Kompress artifact ID: ${compression.artifactId}`,
   ].join('\n')
   if (input.order.stepZeroRestatement !== stepZero) throw new Refusal()
+  // theirs' literal slots 2/3 generalize: readRows already pins every row's
+  // sequence to its position, so the DispatchOrder follows the ruled routing
+  // event entries (walk above) and the BuildResult is the very next entry.
   if (
     dispatch.document.stage !== 'C' ||
     dispatch.document.kind !== 'stage' ||
-    dispatch.document.sequence !== 2 ||
     build.document.stage !== 'D' ||
     build.document.kind !== 'claim' ||
     build.document.claimRef !== 'build-result' ||
-    build.document.sequence !== 3 ||
+    build.document.sequence !== (dispatch.document.sequence as number) + 1 ||
     build.document.subjectKind !== 'BuildResult' ||
     sha256Hex(canonicalize(build.document.subject as JsonValue)) !==
       sha256Hex(canonicalize(input.buildResult as unknown as JsonValue))

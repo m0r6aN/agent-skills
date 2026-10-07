@@ -1,0 +1,29 @@
+{
+  "name": "closure-drift",
+  "description": "R1 closure-drift: the mapped chain is sealed but the spec is still in active/ (the F receipt's asserted lifecycle move disagrees with disk).",
+  "now": "2026-09-26T12:00:00.000Z",
+  "goal": {
+    "slug": "goal-drift",
+    "queue": ["1. **P1** chain sealed, spec move pending."]
+  },
+  "specs": [{ "name": "P1-alpha.md", "location": "active", "status": "active", "updated": "2026-09-20" }],
+  "chains": [
+    {
+      "workflowId": "00000000-0000-4000-8000-000000000004",
+      "parcel": "P1",
+      "stages": ["A", "B", "C", "D", "E", "F"],
+      "timestampOffsetHours": [-6, -5, -4, -3, -2, -1],
+      "verdict": "pass",
+      "mergeSha": "hex40"
+    }
+  ],
+  "expected": [
+    {
+      "parcel": "P1",
+      "state": "failed",
+      "rule": "R1",
+      "failureCode": "closure-drift",
+      "chainEvidence": "present"
+    }
+  ]
+}

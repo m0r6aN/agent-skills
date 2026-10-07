@@ -76,3 +76,23 @@ Sunset record: both bypass entries exist only to merge the pull requests of the 
 77e0d9e; the candidate-pin PR and the final-pin PR). They are removed again immediately after the final-pin merge and the tag
 move, or earlier if the baseline turns green and code scanning is configured. Removal is recorded as ruleset GET evidence
 in Addendum C.
+
+## Addendum C (2026-10-02, after the final tag move) - sunset executed, final live state
+
+The temporary pull-request-only bypass of Addendum B was removed from both rulesets after the last pull request of the
+A-U1.8.27 sequence (#137) merged and the tag moved to ed848ba0595f7c8f6e01c1655babc725a73c2ef2, and after the final-tag
+smoke run (37065869917). Evidence (GET after the change):
+
+| Object | State |
+|---|---|
+| ruleset 22369510 `main-pr-gate` | active, `bypass_actors: []`, rules pull_request + required_status_checks |
+| ruleset 24257508 `agent-skills-default` | active, `bypass_actors: []`, rules deletion, non_fast_forward, pull_request, code_scanning, code_quality, copilot_code_review |
+| ruleset 24378879 `u1-verifier-pin` | active, tag, bypass: user 35229880 `always` (custodian, needed to move the pin tag), rules update, deletion, non_fast_forward |
+| environment `u1-verifier` deployment policies | one: id 61684968, type tag, `u1-verifier-pin` |
+| `refs/tags/u1-verifier-pin` target | ed848ba0595f7c8f6e01c1655babc725a73c2ef2 |
+
+Consequence to know: with no bypass, a pull request to `main` cannot merge while code scanning is not configured
+(ruleset 24257508 requires code-scanning results) and while `test`/`integration-report` are red. That is a repository
+state outside U1; it needs a decision (configure code scanning, or change that rule) before any further `main` change.
+Note: this file's `main` copy ends at Addendum B; Addendum C is recorded on `dev` because adding it to `main` would
+have needed a new bypass.

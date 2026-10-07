@@ -1,0 +1,218 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://foreman-line.local/schemas/kernel-contracts/admitted-context.schema.json",
+  "$defs": {
+    "AdmittedContext": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AdmittedContextAuthenticated"
+        },
+        {
+          "$ref": "#/$defs/AdmittedContextAnonymousContent"
+        }
+      ]
+    },
+    "AdmittedContextAuthenticated": {
+      "type": "object",
+      "properties": {
+        "principalKind": {
+          "const": "authenticated"
+        },
+        "principalRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9._-]+$"
+        },
+        "principalClass": {
+          "enum": [
+            "coordinator",
+            "shaper",
+            "builder",
+            "human-developer",
+            "independent-reviewer",
+            "ci-service",
+            "host-adapter",
+            "kernel-operator"
+          ]
+        },
+        "capabilityRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9._-]+$"
+        },
+        "capabilityGeneration": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "capabilityValidUntilMicros": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "capabilityRevocationRef": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9._-]+$"
+        },
+        "admissionIssuerRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9._-]+$"
+        },
+        "admittedEndpoint": {
+          "enum": [
+            "control",
+            "read"
+          ]
+        },
+        "boundRepositoryRef": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9._-]+$"
+        },
+        "boundWorktreeRef": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9._-]+$"
+        },
+        "boundSessionRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9._-]+$"
+        },
+        "permittedOperationIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9._-]+$"
+          },
+          "maxItems": 64
+        },
+        "roleSelection": {
+          "enum": [
+            "developer",
+            "coordinator",
+            "shaper",
+            "builder",
+            "reviewer",
+            "ci",
+            "host-adapter",
+            "kernel",
+            "operator"
+          ]
+        },
+        "stageSelection": {
+          "enum": [
+            "stage-zero",
+            "shaping",
+            "step-zero",
+            "build",
+            "deterministic-verify",
+            "adversarial-review",
+            "merge",
+            "closure",
+            "runtime"
+          ]
+        },
+        "provenanceRef": {
+          "type": "object",
+          "properties": {
+            "provenanceId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9._-]+$"
+            },
+            "hostAdapterRef": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9._-]+$"
+            },
+            "provenanceDigest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "provenanceId",
+            "hostAdapterRef",
+            "provenanceDigest"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "principalKind",
+        "principalRef",
+        "principalClass",
+        "capabilityRef",
+        "capabilityGeneration",
+        "capabilityValidUntilMicros",
+        "capabilityRevocationRef",
+        "admissionIssuerRef",
+        "admittedEndpoint",
+        "boundRepositoryRef",
+        "boundWorktreeRef",
+        "boundSessionRef",
+        "permittedOperationIds",
+        "roleSelection",
+        "stageSelection",
+        "provenanceRef"
+      ],
+      "additionalProperties": false
+    },
+    "AdmittedContextAnonymousContent": {
+      "type": "object",
+      "properties": {
+        "principalKind": {
+          "const": "anonymous-content"
+        },
+        "principalClass": {
+          "const": "anonymous-read"
+        },
+        "admittedEndpoint": {
+          "const": "read"
+        },
+        "boundSessionRef": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9._-]+$"
+        }
+      },
+      "required": [
+        "principalKind",
+        "principalClass",
+        "admittedEndpoint",
+        "boundSessionRef"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

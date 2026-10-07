@@ -18,7 +18,7 @@ import { Ajv } from 'ajv'
 // re-declared here. Relative ESM specifier (W0-P4 precedent); the bare scoped
 // specifier does not resolve across plugins/foreman-line/* and is banned (see README).
 import { type ShapingResult, shapingResultSchema } from '../../contracts/src/index.js'
-import { assertAbsoluteRoot } from './errors.js'
+import { assertAbsoluteRoot, assertContainedRootPath } from './errors.js'
 
 /** Repo root, resolved from this module's location: src -> shaping -> foreman-line -> plugins -> root. */
 export const DEFAULT_REPO_ROOT = join(
@@ -156,6 +156,9 @@ export function emitShapingResult(options: EmitOptions): EmitResult {
 
   const artifactRef = `${specsDir}/${sessionSlug}.shaping-result.json`
   const activeDir = join(repoRoot, ...specsDir.split('/'))
+  // Path containment (D1): the caller-supplied specsDir must resolve beneath
+  // repoRoot — refused before any existence probe or write.
+  assertContainedRootPath(repoRoot, activeDir, specsDir)
   const artifactPath = join(activeDir, `${sessionSlug}.shaping-result.json`)
 
   // Collision policy: never silently overwrite; the caller picks a distinct slug.
