@@ -299,13 +299,30 @@ of that machinery.
 git push origin --delete measure/cff-p0-read-graph
 git branch -D measure/cff-p0-read-graph
 ```
-Final scratch-branch SHA before deletion: `2d81d9264ba69df92e96fe331b227cc103eb3e8a`
-(the fixed consolidate-step commit; its parent `6388486a60d1b25e2e11cba65c1f58bf7fb81cd5`
-was the first, shard-0-crashing commit). Capture-of-record run ID:
-`37768165017` (superseding the shard-0-crashed `37764594545`). Both runs'
-artifacts remain downloadable from the Actions UI for 90 days independent
-of the branch's existence (GitHub retains workflow runs and their artifacts
-by run ID, not by branch ref).
+**This session's two vehicle commits, in order:**
+`6388486a60d1b25e2e11cba65c1f58bf7fb81cd5` (the first, shard-0-crashing
+commit) then `2d81d9264ba69df92e96fe331b227cc103eb3e8a` (the stream-dedupe
+fix). Capture-of-record run ID: `37768165017` (superseding the
+shard-0-crashed `37764594545`), built from `2d81d9264ba69df92e96fe331b227cc103eb3e8a`.
+
+**Actual final branch SHA at deletion: `8b49202a0f3c9c04a2f1e77e59bc1a1b601b57f4`
+— one commit ahead of this session's vehicle work.** Between this session's
+last push to the scratch branch and its deletion, an unrelated commit
+(`docs(specs): hygiene sync — drop stale active/ duplicates, regenerate
+INDEX (done/ authority)`) landed on `origin/measure/cff-p0-read-graph`,
+authored by a different, concurrent process in this shared repository (the
+same commit message pattern appears independently elsewhere in this
+repo's history — e.g. `032f8a4a`, `4d845ff8` — confirming it is a routine
+repo-wide hygiene sync unrelated to this vehicle, not something this session
+produced or requested). It touched only `plugins/foreman-line/docs/specs/**`
+— none of the two vehicle files, and nothing this vehicle measured. Recorded
+here for honesty rather than silently reporting the SHA this session
+expected; the branch was still deleted per ruling condition 6 regardless
+(a scratch branch dies with the ruling, including whatever unrelated commit
+happened to land on it in the interim). Both capture runs' artifacts remain
+downloadable from the Actions UI for 90 days independent of the branch's
+existence (GitHub retains workflow runs and their artifacts by run ID, not
+by branch ref).
 
 ---
 
