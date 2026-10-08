@@ -1,7 +1,7 @@
 ---
 ticket: CFF-P0
 title: Recon and baseline — ci-fail-fast
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-10-07
 updated: 2026-10-07
