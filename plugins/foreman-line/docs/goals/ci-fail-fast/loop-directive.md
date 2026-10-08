@@ -23,8 +23,26 @@
 
 ## State
 
-`cff_h1_building__p0_rework_pending__p1_rework_r1_step0__p3_reviews_in_flight__devdrop_shipped`
-— 2026-10-08 (seventh iteration). **E1/E2 DISPOSED by the developer
+`cff_h1_in_review__p0_reducer_amendment_step0__p1_rework_r1_building__p3_reviews_in_flight`
+— 2026-10-08 (seventh iteration, cont.). **CFF-H1 build DELIVERED and
+closure-checked** (`e34cc380` on `fix/cff-h1-reader-set-goal-docs`: exactly
+the five measured entries, alphabetized, triage-cited comment, mutation-bound
+regression test; Allowed-Files exact; coordinator deterministic pass
+298/298 exit 0, +2 over the 296 base); single reviewer dispatched
+(`cff_h1_review`, opus-5-5, kickstarter `foreman-line-review-CFF-H1.md`).
+Compatibility note recorded: pre-change reuse evidence becomes incompatible
+→ falls back to normal validation (safe direction; one-time reuse loss on
+old-base PRs). **CFF-P1 rework r1 building** (`cff_p1_rework1_r1` pid
+1254638 — Step-0 restate RULED CORRECT; HEAD-mismatch flag resolved: the
+delta was the coordinator's own docs-only kickstarter commit, directive
+patched to the standing "docs-only on top" pattern). **Reducer amendment
+(CFF-P0 triage items 1–2) Step-0 in flight** (`cff_p0_reducer1_step0`,
+kickstarter `foreman-line-build-CFF-P0-reducer1.md`: ci-phase repo-manifest
+reads kept per-package + `--verify-primary` byte-exact reproduction proof
+against the retained raw capture). P0 rework R1 dispatches when it lands.
+
+Seventh-iteration header state:
+`cff_h1_building__p0_rework_pending__p1_rework_r1_step0__p3_reviews_in_flight__devdrop_shipped`.  **E1/E2 DISPOSED by the developer
 ("ratify Q1 / amend Q2 as proposed"):** E2's D7 amendment is installed in
 the charter (scoped Gate-1 re-open, re-ratified — CFF-P2 exclusion becomes
 positive-coverage-only + `ALWAYS_RUN` manifest {approval, verification,
