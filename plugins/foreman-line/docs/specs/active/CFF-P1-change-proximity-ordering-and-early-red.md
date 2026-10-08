@@ -107,8 +107,9 @@ the all-artifact verdict is decided (D6/D8's invariant).
   confirmed byte-identical to pure round-robin); `WAIVED_EXCLUSIONS` :517 (4
   entries, confirmed); `sameSet` :962, call sites :1047/:1089/:1108;
   `sanitizeField` :140 (control chars → space, bidi overrides → `?`, `::` →
-  `: :`, capped); `sanitizeOutput` :175 (keeps newlines/tabs, same `::`
-  neutralization, 200k cap); `verdict()` :1150 (`gateResult !== 'success'` →
+  `: :`, capped); `sanitizeOutput` :169 (keeps newlines/tabs, same `::`
+  neutralization, 200k cap — citation corrected from :175 at builder flag F1
+  / coordinator erratum E4, 2026-10-08); `verdict()` :1150 (`gateResult !== 'success'` →
   `gate-failed` at :1151); `EXPECTED_SKIPS` :623 (empty, confirmed);
   `reconcile`'s `missing-checks`/`unexpected-skip`/`shard-fail`/`shard-error`
   codes :1058-1083; `runShard` :837 (today runs every check for every
@@ -196,11 +197,22 @@ this parcel's build or run time), the consumption code is built against the
   `plugins/foreman-line/docs/goals/ci-fail-fast/read-graph/read-graph.json`
   if and only if that file exists. A present file whose top-level `schema`
   field is not exactly the string `foreman-line-ci/read-graph@1`, or that
-  fails to parse as JSON, or whose per-package entries are not an object
-  structurally capable of expressing only **positive** coverage (no
-  `excludes`/`not-affected` field of any name or shape — confirmed by
-  CFF-P0's own AC5.6 property: "schema can express positive coverage only"),
-  is a **malformed pin**.
+  fails to parse as JSON, is a **malformed pin**. **Amendment CFF-P1-A1
+  (coordinator-ruled 2026-10-08, committed alone):** the per-package shape is
+  pinned against the measured artifact, not an assumed one — `packages` is an
+  object mapping each package name to a **JSON array of repo-relative path
+  strings** (the package's full positive-coverage read-set, own + external),
+  and `named_variance_edges` is an array of flat `{ "package": <string>,
+  "path": <string> }` objects (shape pinned here first; CFF-P0's rework
+  records the same shape in the artifact's `variance_edge_rule`). The
+  proximity input for a package is the union of its `packages[name]` entry
+  and any `projections.affection_pin[name]` entries (the affection pin lists
+  external-only edges; `packages[name]` is what makes a package proximate to
+  changes in its own source — without it a package's own edits never run it
+  first). A `packages` entry that is not an array of strings, any
+  exclusion-shaped field of any name anywhere (`excludes`, `not-affected`,
+  ...), or a variance entry not matching the pinned shape is a **malformed
+  pin** — the schema can express positive coverage only (CFF-P0 AC5.6).
 - **R15 variance edges.** Per D7/R15, an edge proven under only one
   environment is a *named variance edge*: it always counts toward a
   package's affection (always-affect), and its absence from a clean pass
