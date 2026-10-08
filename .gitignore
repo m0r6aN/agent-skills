@@ -40,3 +40,9 @@ node_modules/
 /shell-snapshots/
 /jobs/
 /teams/
+
+# Untracked 2026-10-08 (ci-fail-fast hygiene): harness trash + pi plugin sync state.
+# Both were accidentally committed (7403 + 2351 files); nothing consumes them
+# (spec-linter/grandfather.test.ts excludes both trees explicitly).
+plugins/.trash/
+plugins/synced/

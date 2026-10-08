@@ -1,6 +1,0 @@
-export type { MutationScopeErrorCode } from './errors.js'
-export { MutationScopeError } from './errors.js'
-export type { AuthorizedPath, MutationScopeResult, ScopeEnvelope } from './guard.js'
-export { postHocCheck, preflightCheck } from './guard.js'
-export type { MatchArm, MatchResult } from './match.js'
-export { allMalformed, isWellFormedPath, matchAny, matchEntry } from './match.js'
