@@ -16,6 +16,7 @@
 import assert from 'node:assert/strict'
 import { lstatSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
+import { createHash } from 'node:crypto'
 import { basename, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { test } from 'node:test'
@@ -2336,4 +2337,181 @@ test('AC3 re-pin: the table prices the three post-CI-P2 packages, 30 entries, an
     delete without[name]
     assert.deepEqual(assignShards(names, 4, without), roundRobin, `without ${name}`)
   }
+})
+
+// ─── CFF-P1 AC7: D3 conformance (cff-p0-waiver-input-contract.md §3) ───────
+//
+// One fixture, run under three PROXIMITY-INDUCED orders that all end with
+// delta (so the rejected pair, delta/lint, is the last pair in every order and
+// every pair runs). Every passing pair's output carries its own identity and a
+// would-be intruder failure line, so ANY cross-pair leak into a waived or
+// rejected pair's captured output changes its waiver verdict and its hash.
+
+const D3_ORDERS = [
+  { proximate: ['gamma'], order: ['gamma', 'alpha', 'beta', 'delta'] },
+  { proximate: ['beta', 'gamma'], order: ['beta', 'gamma', 'alpha', 'delta'] },
+  { proximate: ['alpha', 'gamma'], order: ['alpha', 'gamma', 'beta', 'delta'] },
+]
+const D3_DELTA_PIN = {
+  identity: 'delta',
+  location: 'plugins/foreman-line/delta/',
+  checks: { lint: { markers: ['DELTA-LINT-MARKER'], counts: {}, failTotal: [1, 2], failingSet: ['delta lint failure'], flaky: [] } },
+}
+const D3_WAIVERS = [PINNED, D3_DELTA_PIN]
+function d3Streams(name, check) {
+  if (name === 'alpha' && check === 'test') return { stdout: pinnedOutput(PINNED.checks.test), stderr: '\nERR<alpha/test>\n', status: 1 }
+  // rejected: the marker is present but an intruder failure appears (set-subset)
+  if (name === 'delta' && check === 'lint') return { stdout: 'DELTA-LINT-MARKER\n\u2716 delta lint failure (1.0ms)\n\u2716 delta intruder (1.0ms)\n\u2139 fail 2', stderr: '\nERR<delta/lint>\n', status: 1 }
+  return { stdout: `OUT<${name}/${check}>\n\u2716 leaked from ${name}/${check} (1.0ms)\n`, stderr: `ERR<${name}/${check}>\n`, status: 0 }
+}
+const d3Output = (name, check) => { const s = d3Streams(name, check); return `${s.stdout}${s.stderr}` }
+
+function d3Run({ proximate, spawn = null }) {
+  const echoed = []
+  let inFlight = 0
+  let maxInFlight = 0
+  const run_ = pxRun({
+    changedPaths: changedFor(proximate),
+    readGraph: SELF_PIN,
+    waivers: D3_WAIVERS,
+    echo: (name, check, text) => echoed.push({ name, check, text }),
+    spawn: spawn ?? ((cmd, args, options) => {
+      inFlight += 1
+      maxInFlight = Math.max(maxInFlight, inFlight)
+      try {
+        if (args[1] !== 'run') return { status: 0 }
+        const { stdout, stderr, status } = d3Streams(basename(options.cwd), args[2])
+        return { status, stdout, stderr }
+      } finally {
+        inFlight -= 1
+      }
+    }),
+  })
+  return { ...run_, echoed, maxInFlight }
+}
+const sha = (text) => createHash('sha256').update(text).digest('hex')
+const D3_RUNS = D3_ORDERS.map((o) => ({ ...o, run: d3Run(o) }))
+
+test('AC7 fixture sanity: the three orders are distinct proximity-induced orders and every pair runs in each', () => {
+  for (const { order, run: r } of D3_RUNS) {
+    assert.deepEqual(r.order, order)
+    assert.equal(r.result.ordering.mode, 'proximity')
+    assert.equal(r.pairs.length, PX.length * CHECKS.length)
+    assert.equal(r.result.outcomes.find((o) => o.name === 'alpha').checks.test, 'waived')
+    assert.equal(r.result.outcomes.find((o) => o.name === 'delta').checks.lint, 'fail')
+  }
+  assert.equal(new Set(D3_RUNS.map((r) => r.run.order.join())).size, 3)
+})
+
+test('AC7 D3.1 per-package capture unchanged: identical per-pair captured output and waiver results in every order', () => {
+  const [first, ...rest] = D3_RUNS.map((r) => r.run)
+  for (const other of rest) {
+    assert.deepEqual(other.result.artifact, first.result.artifact, 'artifacts (waivers + rejections + statuses) are order-invariant')
+    const key = (e) => `${e.name}/${e.check}`
+    assert.deepEqual(
+      Object.fromEntries(other.echoed.map((e) => [key(e), e.text])),
+      Object.fromEntries(first.echoed.map((e) => [key(e), e.text])),
+    )
+  }
+  for (const { run: r } of D3_RUNS) {
+    // each failing pair's captured output is exactly its OWN streams — no other pair's identity leaks in
+    for (const e of r.echoed) {
+      const [name, check] = [e.name, e.check.split(' ')[0]]
+      assert.equal(e.text, d3Output(name, check))
+      for (const n of PX) for (const c of CHECKS) if (`${n}/${c}` !== `${name}/${check}`) assert.ok(!e.text.includes(`<${n}/${c}>`))
+    }
+  }
+})
+
+test('AC7 D3.2 same stream concatenation: output is stdout then stderr of exactly one pair', () => {
+  for (const { run: r } of D3_RUNS) {
+    const alpha = r.result.outcomes.find((o) => o.name === 'alpha')
+    const { stdout, stderr } = d3Streams('alpha', 'test')
+    assert.equal(alpha.waivers[0].output_sha256, sha(`${stdout}${stderr}`))
+    assert.notEqual(alpha.waivers[0].output_sha256, sha(`${stderr}${stdout}`), 'order of streams is part of the contract')
+    const rejected = r.echoed.find((e) => e.name === 'delta' && e.check.startsWith('lint'))
+    assert.equal(rejected.text, d3Output('delta', 'lint'))
+  }
+})
+
+test('AC7 D3.3 same granularity: one invoke and at most one waiver evaluation per (package, check) pair', () => {
+  for (const { run: r } of D3_RUNS) {
+    const counts = new Map()
+    for (const p of r.pairs) counts.set(p, (counts.get(p) ?? 0) + 1)
+    assert.ok([...counts.values()].every((n) => n === 1), 'each pair is invoked exactly once')
+    for (const [, args] of r.calls.filter(([, a]) => a[1] === 'run')) {
+      assert.deepEqual(args.slice(1), ['run', args[2], '--ignore-scripts'])
+      assert.ok(CHECKS.includes(args[2]), 'one check per invocation, never a batch')
+    }
+    // the only evaluated pairs are the two failing ones, once each
+    assert.deepEqual(r.echoed.map((e) => `${e.name}/${e.check.split(' ')[0]}`).sort(), ['alpha/test', 'delta/lint'])
+    const alpha = r.result.outcomes.find((o) => o.name === 'alpha')
+    assert.deepEqual(alpha.waivers.map((w) => w.check), ['test'])
+  }
+})
+
+test('AC7 D3.4 same waiver parsing: waived and rejected verdicts equal the unmodified nine-layer evaluateWaiver in every order', () => {
+  const directWaived = evaluateWaiver('alpha', 'plugins/foreman-line/alpha/', 'test', d3Output('alpha', 'test'), 'exit', D3_WAIVERS)
+  const directRejected = evaluateWaiver('delta', 'plugins/foreman-line/delta/', 'lint', d3Output('delta', 'lint'), 'exit', D3_WAIVERS)
+  assert.equal(directWaived.layer, null)
+  assert.equal(directRejected.layer, 'set-subset')
+  assert.deepEqual(directRejected.evidence.observed, { intruders: ['delta intruder'] })
+  assert.equal(sumFailTotals(d3Output('alpha', 'test')), 3)
+  assert.deepEqual(failingTestNames(d3Output('alpha', 'test')), ['failing one', 'failing two', 'flaky member'])
+  for (const { run: r } of D3_RUNS) {
+    const alpha = r.result.outcomes.find((o) => o.name === 'alpha')
+    const { output_sha256: _hash, ...record } = alpha.waivers[0]
+    assert.deepEqual(record, directWaived.record)
+    const delta = r.result.outcomes.find((o) => o.name === 'delta')
+    assert.deepEqual(delta.waiver_rejected.lint, {
+      layer: directRejected.layer,
+      observed: directRejected.evidence.observed,
+      expected: directRejected.evidence.expected,
+      names: directRejected.evidence.names,
+    })
+  }
+})
+
+test('AC7 D3.5 output_sha256 is a per-run audit hash, never pinned and never read by ordering code', () => {
+  for (const { run: r } of D3_RUNS) {
+    assert.match(r.result.outcomes.find((o) => o.name === 'alpha').waivers[0].output_sha256, /^[0-9a-f]{64}$/)
+  }
+  // a different run's bytes (stderr noise) change the hash but not the waiver: the hash pins nothing
+  const noisy = d3Run({ proximate: ['gamma'], spawn: (cmd, args, options) => {
+    if (args[1] !== 'run') return { status: 0 }
+    const st = d3Streams(basename(options.cwd), args[2])
+    return { ...st, stderr: `${st.stderr}per-run noise\n` }
+  } })
+  const noisyAlpha = noisy.result.outcomes.find((o) => o.name === 'alpha')
+  assert.equal(noisyAlpha.checks.test, 'waived')
+  assert.notEqual(noisyAlpha.waivers[0].output_sha256, D3_RUNS[0].run.result.outcomes.find((o) => o.name === 'alpha').waivers[0].output_sha256)
+  assert.ok(!JSON.stringify(D3_WAIVERS).includes('sha256'), 'no waiver pin carries a hash')
+  // grep: the ordering code never reads output_sha256 or captured output, and the order is fixed before any check runs
+  const source = readFileSync(fileURLToPath(new URL('./foreman-line-ci.mjs', import.meta.url)), 'utf8')
+  const orderingCode = source.slice(source.indexOf('// ─── CFF-P1 AC1/AC2'), source.indexOf('// ─── CFF-P1 AC5'))
+  assert.ok(orderingCode.length > 0)
+  assert.ok(!orderingCode.includes('output_sha256') && !orderingCode.includes('.output'))
+  const runShardBody = source.slice(source.indexOf('export function runShard('), source.indexOf('// ─── AC3: reconciliation'))
+  assert.ok(runShardBody.indexOf('computeShardOrder(') < runShardBody.indexOf("invoke(name, ['run', check"), 'order fixed before the first check')
+})
+
+test('AC7 D3.6 no interleaving: invocations are strictly sequential; a would-be concurrent (async) spawn is never awaited and fails closed', () => {
+  for (const { run: r } of D3_RUNS) {
+    assert.equal(r.maxInFlight, 1, 'never two invocations in flight')
+    // each package's checks are contiguous (no package-level interleaving)
+    assert.deepEqual(r.pairs, r.order.flatMap((n) => CHECKS.map((c) => `${n}/${c}`)))
+  }
+  // hostile: a spawn that tries to go async (returns a Promise) to overlap with the next package
+  let late = null
+  const hostile = d3Run({ proximate: ['gamma'], spawn: (cmd, args) => {
+    if (args[1] !== 'run') return { status: 0 }
+    late = new Promise((resolve) => setImmediate(() => resolve({ status: 0, stdout: 'LATE-OUTPUT' })))
+    return late
+  } })
+  assert.equal(hostile.pairs.length, 1, 'the first non-sync result is treated as an error and the shard stops (no overlap)')
+  assert.equal(hostile.result.outcomes.find((o) => o.name === 'gamma').checks.test, 'fail')
+  assert.equal(hostile.result.outcomes.find((o) => o.name === 'gamma').waiver_rejected.test.layer, 'kind-gate')
+  return late.then(() => {
+    assert.ok(!JSON.stringify(hostile.result).includes('LATE-OUTPUT'), 'late output never reaches any record')
+  })
 })
