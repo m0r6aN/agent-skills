@@ -10,7 +10,7 @@
 |---|---|---|---|
 | BRINV-1 | [Branch inventory and merge/abandon recommendations](active/BRINV-1-branch-inventory.md) | `draft` | `active/` |
 | CFF-P0 | [Recon and baseline — ci-fail-fast](active/CFF-P0-recon-and-baseline.md) | `active` | `active/` |
-| CFF-P1 | [Change-proximity ordering and early-red signal](active/CFF-P1-change-proximity-ordering-and-early-red.md) | `draft` | `active/` |
+| CFF-P1 | [Change-proximity ordering and early-red signal](active/CFF-P1-change-proximity-ordering-and-early-red.md) | `active` | `active/` |
 | CFF-P3 | [Gate-job surface-pin precheck and read-graph drift seam](active/CFF-P3-gate-surface-pin-precheck.md) | `active` | `active/` |
 | CI-P1 | [Safe Documentation-Only Push Reuse](done/CI-P1-docs-only-push-reuse.md) | `done` | `done/` |
 | CI-P2 | [Deterministic full-sweep sharding](done/CI-P2-deterministic-sweep-sharding.md) | `done` | `done/` |
