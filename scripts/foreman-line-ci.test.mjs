@@ -1787,10 +1787,13 @@ test('R17: the pinned cost table is measured data (golden)', () => {
     'integration': 7.8,
     'jev-decisions': 1.6,
     'kernel-contracts': 3.8,
+    'kernel-import': 18.0, // CFF-P1 AC3 re-pin (run 37768165017, windows-latest / Node 24.19.0)
     'kernel-lease': 67.0,
     'kernel-state': 8.1,
     'mutation-scope-guard': 33.9,
+    'ops-console': 6.5, // CFF-P1 AC3 re-pin
     'permission-profiles': 13.7,
+    'project-scaffold': 20.5, // CFF-P1 AC3 re-pin
     'projection': 4.8,
     'receipts': 12.4,
     'registration': 18.0,
@@ -2318,4 +2321,19 @@ test('AC3: costKnown is all-or-nothing — one unpriced name flips assignment to
   const roundRobin = [['a', 'c', 'e'], ['b', 'd']]
   assert.deepEqual(assignShards(names, 2, { a: 100, b: 1, c: 1, d: 1 }), roundRobin, 'e unpriced -> round-robin')
   assert.deepEqual(assignShards(names, 2, priced), [['a'], ['b', 'c', 'd', 'e']], 'all priced -> cost-aware')
+})
+
+test('AC3 re-pin: the table prices the three post-CI-P2 packages, 30 entries, and the 27 prior entries are untouched', () => {
+  assert.equal(Object.keys(COST_TABLE).length, 30)
+  for (const name of ['kernel-import', 'ops-console', 'project-scaffold']) assert.ok(Number.isFinite(COST_TABLE[name]) && COST_TABLE[name] > 0, name)
+  // with all 30 priced, assignment over the table's names is cost-aware, not round-robin
+  const names = Object.keys(COST_TABLE).sort()
+  const roundRobin = Array.from({ length: 4 }, (_, s) => names.filter((_, i) => i % 4 === s))
+  assert.notDeepEqual(assignShards(names, 4), roundRobin, 'costKnown flipped: the live mechanism is cost-aware')
+  // and dropping any one of the three re-pinned entries flips it back (all-or-nothing gate)
+  for (const name of ['kernel-import', 'ops-console', 'project-scaffold']) {
+    const without = { ...COST_TABLE }
+    delete without[name]
+    assert.deepEqual(assignShards(names, 4, without), roundRobin, `without ${name}`)
+  }
 })

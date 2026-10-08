@@ -276,6 +276,13 @@ export const MAX_SHARDS = 4
  * (authority-registry = completion mean of the 10 measured runs at node
  * 24.19.0; dispatch = the live completion values). Pinned data — golden-tested
  * like the waiver pins. The assignment is deterministic in this table.
+ * CFF-P1 AC3 / D10(a) re-pin (2026-10-08): `kernel-import`, `ops-console`,
+ * `project-scaffold` added from the pinned environment (windows-latest, Node
+ * 24.19.0) — the per-package phase-2 wall window (test + typecheck + lint) of
+ * the CFF-P0 capture-of-record run 37768165017 (methodology and calibration in
+ * cff-p1-completion-record-2026-10-08.md). With all 30 discovered names
+ * priced, costKnown flips true and live assignment returns from the
+ * round-robin fallback to the ratified cost-aware mechanism — deliberately.
  */
 export const COST_TABLE = Object.freeze({
   'approval': 14.3,
@@ -289,10 +296,13 @@ export const COST_TABLE = Object.freeze({
   'integration': 7.8,
   'jev-decisions': 1.6,
   'kernel-contracts': 3.8,
+  'kernel-import': 18.0,
   'kernel-lease': 67.0,
   'kernel-state': 8.1,
   'mutation-scope-guard': 33.9,
+  'ops-console': 6.5,
   'permission-profiles': 13.7,
+  'project-scaffold': 20.5,
   'projection': 4.8,
   'receipts': 12.4,
   'registration': 18.0,
