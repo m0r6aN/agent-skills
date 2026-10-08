@@ -185,3 +185,17 @@ conditions per COORDINATOR-PATTERN also apply.
   supplementary triage input — one informational finding, no blockers);
   spec-duplicate + `.trash`/`synced` hygiene PR authorized; ping-based wake
   protocol confirmed.
+- 2026-10-08 — directives executed: **PR #159** (paper trail, docs-only,
+  this branch) and **PR #160** (hygiene: 5 stale `active/` duplicates
+  removed, `docs/specs/INDEX.md` created with done/ folder authority,
+  `plugins/.trash/` + `plugins/synced/` untracked + gitignored after
+  verifying `spec-linter/tests/grandfather.test.ts` excludes both) opened;
+  parcel branches hygiene-synced (`8b49202a` P0, `032f8a4a` P1, `4d845ff8`
+  P3 — identical INDEX + deletions, merge-clean by construction). Sonnet
+  `cff_p3_review_a` stopped under the model policy; **frontier review pair
+  re-dispatched**: `cff_p3_review_a2` + `cff_p3_review_b2`
+  (`anthropic/claude-opus-5-5`). **CFF-P1 shaping DELIVERED** by
+  `cff_p1_shaping_r1` (`CFF-P1-change-proximity-ordering-and-early-red.md`
+  + shaping-result, 8 ACs) — awaiting coordinator lint (next queue item).
+  `cff_p0_builder_r2` (AC5 measurement) still in flight on its dispatched
+  model (policy applies to new dispatches).
