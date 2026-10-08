@@ -23,8 +23,34 @@
 
 ## State
 
-`cff_p3_reviews_p0_measurement_p1_shaping_running` — 2026-10-08 (third
-iteration). **Full-graph Gate 2 GRANTED** (verbatim: "full-graph Gate 2
+`cff_p0_complete_reviews_queued__p3_reviews_in_flight__p1_active_build_dispatch_pending`
+— 2026-10-08 (fourth iteration). **CFF-P0 build COMPLETE (AC1–AC6):** the
+AC5 measured-capture delivery landed (`f34c5e74` + `500b8f54`) and passed
+the coordinator closure check against disk (run `37768165017` success @
+`2d81d926` verified via `gh`; scratch branch confirmed deleted; fixture
+arithmetic 2,263,596 → 104,020 → 3,044 reconciles; 30/30 packages, 28/28
+affection-pin entries with externals; READER_SET re-counted 25 and all five
+reader-set-delta paths classify `ordinary_documentation`; AC5.6 reproduced
+exactly: `code`/`code`/`ordinary_documentation`/`ordinary_documentation`).
+Two-review mandate (charter, incl. the D7 measurement deliverable):
+kickstarters `foreman-line-review-CFF-P0-A.md` (measurement
+integrity/provenance) + `foreman-line-review-CFF-P0-B.md`
+(contract/scope soundness) issued, **dispatch pending** (opus-5-5 per the
+model policy). **CFF-P1 shaping lint PASS** with three coordinator-ruled
+errata (E1 `hybrid-routing` "stale" claim REFUTED — it is discovered and
+live; E2 kind-gate path description corrected; E3 CI-P2 reference moved to
+`done/`) — none touch a locked decision; spec promoted `active` @ `41b927de`
+on `feat/foreman-line-CFF-P1`; builder kickstarter
+`foreman-line-build-CFF-P1.md` issued, **dispatch pending**. **CFF-P3
+review pair (a2/b2, opus-5-5): nothing delivered on disk** as of this
+iteration — still in flight per the dispatch record; wake protocol is
+developer-ping, no polling. **Pending inputs:** dev-Windows supplementary
+pass (`read-graph/dev-drop/` still empty); Gate 3 human, batched cadence
+(PR #159 open, docs-only paper trail; merge waits for a second ready chain
+per the batching ruling).
+
+Prior state `cff_p3_reviews_p0_measurement_p1_shaping_running` — 2026-10-08
+(third iteration). **Full-graph Gate 2 GRANTED** (verbatim: "full-graph Gate 2
 granted") — CFF-P1/P2/P4 within the ratified sequencing (P2 shapes after P1
 merges; P4 gates on P1+P2+P3). **Merge reality reconciled against the
 developer's "all PRs have been merged"** (verified via `gh pr list`): PR #157
@@ -199,3 +225,25 @@ conditions per COORDINATOR-PATTERN also apply.
   + shaping-result, 8 ACs) — awaiting coordinator lint (next queue item).
   `cff_p0_builder_r2` (AC5 measurement) still in flight on its dispatched
   model (policy applies to new dispatches).
+- 2026-10-08 — **CFF-P0 AC5 DELIVERED** by `cff_p0_builder_r2` (`f34c5e74` +
+  `500b8f54` on `feat/foreman-line-cff-p0`): measured capture of record (run
+  `37768165017`, windows-latest/Node 24.19.0, 30/30 green, zero waivers
+  consulted), single-capture dual projections, 5-edge READER_SET delta
+  recorded-not-installed (D10 routing), dev-pass fixture intentionally
+  absent (named pending input), vehicle torn down (teardown-SHA deviation
+  recorded honestly: concurrent hygiene-sync `8b49202a` on the scratch
+  branch, docs-only, touched nothing measured). Coordinator closure check
+  **PASS** (every claim re-verified on disk + via `gh`; see State).
+- 2026-10-08 — **CFF-P1 shaping lint PASS → promoted** (`41b927de`):
+  `cff-p1-shaping-lint-2026-10-08.md` (all 25+ line citations exact; 30/27
+  gap, missing-three, 8/8/7/7 round-robin identity, 4 waiver identities,
+  runShard phase split, runCli write-before-exit, `!cancelled()` upload,
+  no-`additionalProperties`, rule-0 `:746` re-cite, seam `:1086`, no
+  existing diff export — all CONFIRMED on disk; spec-linter exit 0;
+  lesson-#33 diff strengthening-only). Errata E1–E3 corrected in place at
+  promotion. Builder kickstarter issued (Step 0 gate first).
+- 2026-10-08 — CFF-P0 review kickstarters A/B issued (paper trail
+  `91480ae7` on the parcel branch); **dispatches pending the developer's
+  session spawner** — this coordinator session (pi harness) cannot spawn
+  the fresh opus-5-5 review/build sessions itself; kickstarters are
+  dispatch-ready.
