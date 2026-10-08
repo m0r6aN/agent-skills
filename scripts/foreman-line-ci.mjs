@@ -296,13 +296,14 @@ export const COST_TABLE = Object.freeze({
   'integration': 7.8,
   'jev-decisions': 1.6,
   'kernel-contracts': 3.8,
+  // kernel-import / ops-console / project-scaffold: single instrumented measurement (fs/module tracing on), capture-of-record run 37768165017, unscaled.
   'kernel-import': 18.0,
   'kernel-lease': 67.0,
   'kernel-state': 8.1,
   'mutation-scope-guard': 33.9,
-  'ops-console': 6.5,
+  'ops-console': 6.5, // single instrumented measurement, run 37768165017, unscaled
   'permission-profiles': 13.7,
-  'project-scaffold': 20.5,
+  'project-scaffold': 20.5, // single instrumented measurement, run 37768165017, unscaled
   'projection': 4.8,
   'receipts': 12.4,
   'registration': 18.0,
@@ -862,10 +863,35 @@ function isPlainObject(value) {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
-/** A key that could carry negative coverage (exclusion semantics) of any spelling. */
-function isExclusionShapedKey(key) {
-  const k = String(key).toLowerCase().replace(/[^a-z]/g, '')
-  return ['exclu', 'notaffect', 'unaffect', 'skip', 'omit', 'negative'].some((stem) => k.includes(stem))
+/**
+ * Amendment CFF-P1-A2 item 2: the named exclusion-shaped key set, matched
+ * EXACTLY (case-insensitive) — never by substring, so legitimate keys such as
+ * `platform_skips` do not trip the scan.
+ */
+const EXCLUSION_KEYS = new Set(['excludes', 'excluded', 'not-affected', 'not_affected', 'notaffected', 'exempt', 'ignore'])
+
+/**
+ * A2 item 2: recursive (iterative — no stack-depth hazard on hostile nesting)
+ * scan of the WHOLE parsed pin: true when any object key at any depth, inside
+ * objects or arrays, is in EXCLUSION_KEYS.
+ */
+function hasExclusionKeyAnywhere(root) {
+  const stack = [root]
+  const seen = new Set()
+  while (stack.length > 0) {
+    const node = stack.pop()
+    if (typeof node !== 'object' || node === null || seen.has(node)) continue
+    seen.add(node)
+    if (Array.isArray(node)) {
+      for (const item of node) stack.push(item)
+      continue
+    }
+    for (const [key, value] of Object.entries(node)) {
+      if (EXCLUSION_KEYS.has(key.toLowerCase())) return true
+      stack.push(value)
+    }
+  }
+  return false
 }
 
 /** Read the pin from disk, read-only. Missing/unreadable/unparseable -> doc null + named reason. */
@@ -890,16 +916,19 @@ export function loadReadGraph({ root, readFile = readFileSync } = {}) {
  * set, own directory included — a shape that can express positive coverage
  * only). The optional `projections.affection_pin` (CFF-P0's external-only
  * projection, a subset of `packages`) must have the same positive-only shape
- * and is unioned in; the optional `named_variance_edges` are `{ package, path }`
- * objects (R15: a variance edge ALWAYS adds affection, never removes). Any
- * exclusion-shaped key or any other shape is a malformed pin. Returns the
- * affection relation as Map<name, path[]> — union only, never subtraction.
+ * and is unioned in; the optional `named_variance_edges` are shape-strict
+ * `{ package, path }` objects — exactly those two keys, both strings (A2 item
+ * 2; R15: a variance edge ALWAYS adds affection, never removes). Any
+ * exclusion-shaped key ANYWHERE in the document (A2 item 2's exact key set,
+ * recursive) or any other shape is a malformed pin. Returns the affection
+ * relation as Map<name, path[]> — union only, never subtraction — plus
+ * `covered`, the Set of names with their own `packages` entry (A2 item 1:
+ * a swept package outside it is an uncovered package).
  */
 export function validateReadGraph(doc) {
-  const bad = (reason) => ({ ok: false, reason, affection: null })
+  const bad = (reason) => ({ ok: false, reason, affection: null, covered: null })
   if (!isPlainObject(doc)) return bad('pin-malformed')
   if (doc.schema !== READ_GRAPH_SCHEMA) return bad('pin-schema-mismatch')
-  if (Object.keys(doc).some(isExclusionShapedKey)) return bad('pin-exclusion-shaped')
   const affection = new Map()
   const addEntries = (relation) => {
     for (const [name, paths] of Object.entries(relation)) {
@@ -910,10 +939,10 @@ export function validateReadGraph(doc) {
   }
   if (!isPlainObject(doc.packages)) return bad('pin-malformed')
   if (!addEntries(doc.packages)) return bad('pin-entry-not-positive')
+  const covered = new Set(Object.keys(doc.packages))
   const projections = doc.projections
   if (projections !== undefined) {
     if (!isPlainObject(projections)) return bad('pin-malformed')
-    if (Object.keys(projections).some(isExclusionShapedKey)) return bad('pin-exclusion-shaped')
     const pin = projections.affection_pin
     if (pin !== undefined) {
       if (!isPlainObject(pin)) return bad('pin-malformed')
@@ -924,14 +953,15 @@ export function validateReadGraph(doc) {
   if (edges !== undefined) {
     if (!Array.isArray(edges)) return bad('pin-malformed')
     for (const edge of edges) {
-      if (!isPlainObject(edge) || typeof edge.package !== 'string' || typeof edge.path !== 'string') {
+      const keys = isPlainObject(edge) ? Object.keys(edge) : []
+      if (keys.length !== 2 || typeof edge.package !== 'string' || typeof edge.path !== 'string') {
         return bad('pin-variance-edge-shape')
       }
-      if (Object.keys(edge).some(isExclusionShapedKey)) return bad('pin-exclusion-shaped')
       affection.set(edge.package, [...(affection.get(edge.package) ?? []), edge.path])
     }
   }
-  return { ok: true, reason: null, affection }
+  if (hasExclusionKeyAnywhere(doc)) return bad('pin-exclusion-shaped')
+  return { ok: true, reason: null, affection, covered }
 }
 
 function normalizeProximityPath(path) {
@@ -975,7 +1005,10 @@ export function orderShardPackages(mine, proximate) {
 
 /**
  * AC1/AC2 total ordering decision for one shard. Missing changed paths (the
- * D11 seam's fail-closed null), a missing or malformed pin, or ANY error while
+ * D11 seam's fail-closed null), a missing or malformed pin, an uncovered
+ * package (A2 item 1: any package in `mine` without its own `packages` entry
+ * disables proximity for the whole run, reason `pin-uncovered-package:<first
+ * uncovered name>` — distinct from `pin-missing`), or ANY error while
  * computing proximity falls back to `mine` exactly as assigned (today's
  * ascending-name order, by reference — never a snapshot). The partition
  * property is re-asserted after reordering; a violation also falls back.
@@ -987,6 +1020,8 @@ export function computeShardOrder({ mine, changedPaths = null, readGraph = null 
     if (readGraph === null || readGraph === undefined) return fallback('pin-unavailable')
     const validated = validateReadGraph(readGraph)
     if (!validated.ok) return fallback(validated.reason)
+    const uncovered = mine.find((n) => !validated.covered.has(n))
+    if (uncovered !== undefined) return fallback(`pin-uncovered-package:${uncovered}`)
     const proximate = proximatePackages(validated.affection, changedPaths)
     const order = orderShardPackages(mine, proximate)
     if (order.length !== mine.length || !sameSet(order, mine)) return fallback('partition-violation')
@@ -1089,11 +1124,23 @@ export function runShard({
       return { status: 'fail', kind: 'error', output: '', cause: new ForemanCiError('Package process failed', cause) }
     }
   }
+  // Amendment CFF-P1-A2 item 3 (D8 hardening): log emission is best-effort.
+  // A throwing echo/annotate sink is caught and recorded (channel + pair, no
+  // error text); the loop continues and the artifact is still built. The
+  // verdict path is untouched (records/exit code never depend on emission).
+  const emitFailures = []
+  function emitSafely(channel, name, check, fn) {
+    try {
+      fn()
+    } catch {
+      emitFailures.push({ channel, package: sanitizeField(name, 120), check: sanitizeField(check, 40) })
+    }
+  }
   function echoCheck(name, check, output) {
-    if (typeof echo === 'function') echo(name, check, sanitizeOutput(output))
+    if (typeof echo === 'function') emitSafely('echo', name, check, () => echo(name, check, sanitizeOutput(output)))
   }
   function annotateCheck(level, name, check, layer) {
-    if (typeof annotate === 'function') annotate(buildAnnotation(level, name, check, layer))
+    if (typeof annotate === 'function') emitSafely('annotate', name, check, () => annotate(buildAnnotation(level, name, check, layer)))
   }
 
   // Phase 1: ALL installs before ANY check (per-shard barrier, AC4).
@@ -1170,6 +1217,7 @@ export function runShard({
     outcomes: packages,
     ordering: { mode: ordering.mode, reason: ordering.reason, order: [...ordering.order], proximate: [...ordering.proximate] },
     earlyExit,
+    emitFailures: [...emitFailures],
     artifact: buildShardOutcomes({
       shardIndex,
       shardCount,
@@ -1517,19 +1565,31 @@ export async function runCli(argv, env = process.env, deps = {}) {
       annotate: (line) => stdout(`${line}\n`),
     })
     const ord = result.ordering
-    stdout(
+    // A2 item 3: the informational lines before the artifact write are
+    // best-effort too, so a broken stdout can never lose the partial artifact.
+    const logSafely = (text) => {
+      try {
+        stdout(text)
+      } catch {
+        // swallowed: the artifact write below is what the verdict depends on
+      }
+    }
+    logSafely(
       ord.mode === 'proximity'
         ? `shard ordering: proximity (${ord.proximate.length} proximate first: ${sanitizeField(ord.proximate.join(', '), 2000)})\n`
-        : `shard ordering: ascending-name fallback (${sanitizeField(ord.reason, 60)}; diff: ${sanitizeField(diff?.reason ?? 'ok', 60)}; pin: ${sanitizeField(pin?.reason ?? 'present', 60)})\n`,
+        : `shard ordering: ascending-name fallback (${sanitizeField(ord.reason, 160)}; diff: ${sanitizeField(diff?.reason ?? 'ok', 60)}; pin: ${sanitizeField(pin?.reason ?? 'present', 60)})\n`,
     )
     if (result.earlyExit !== null) {
-      stdout(`shard early exit at ${sanitizeField(result.earlyExit.package, 120)}/${sanitizeField(result.earlyExit.check, 40)}: unreached checks stay skipped; the aggregate verdict reconciles them (unexpected-skip)\n`)
+      logSafely(`shard early exit at ${sanitizeField(result.earlyExit.package, 120)}/${sanitizeField(result.earlyExit.check, 40)}: unreached checks stay skipped; the aggregate verdict reconciles them (unexpected-skip)\n`)
     }
     const dir = outDir === undefined || outDir === '--offline' ? 'shard-outcomes' : outDir
     makeDir(dir, { recursive: true })
     writeFile(join(dir, 'shard-outcomes.json'), `${JSON.stringify(result.artifact, null, 2)}\n`)
+    if (result.emitFailures.length > 0) {
+      logSafely(`shard log emission failures (best-effort, recorded): ${sanitizeField(result.emitFailures.map((f) => `${f.channel}:${f.package}/${f.check}`).join(', '), 2000)}\n`)
+    }
     const summary = buildSummary([result.artifact])
-    stdout(`${summary}\n`)
+    logSafely(`${summary}\n`)
     if (env.GITHUB_STEP_SUMMARY) {
       try {
         appendFile(env.GITHUB_STEP_SUMMARY, summary)
