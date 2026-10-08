@@ -44,6 +44,14 @@ jobs:
         with:
           node-version: '24.19.0'
 
+      # CFF-P3 Unit A: gate-job surface-pin precheck (D5/D10 seam). Pure hash
+      # comparison against the single plain-data pin source; no install, no
+      # build, no test execution; never greens anything and never touches
+      # the all-artifact verdict — it can only surface drift red, earlier.
+      - name: Surface-pin precheck (fail-closed drift; no test execution)
+        shell: pwsh
+        run: node scripts/surface-pin-precheck.mjs
+
       # CI-P1: sole reuse-decision point (spec C12). Outputs: decision,
       # fallback_reason, base_sha, head_sha, evidence_record.
       - name: Decide reuse or fallback from Actions-API evidence
