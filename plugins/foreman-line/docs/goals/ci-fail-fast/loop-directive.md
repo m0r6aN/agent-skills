@@ -23,23 +23,37 @@
 
 ## State
 
-`cff_p0_p3_promoted_builders_step0_dispatched` — 2026-10-08 (second resume
-iteration). Both shaping outputs linted PASS (`cff-p0-shaping-lint-2026-10-08.md`,
-`cff-p3-shaping-lint-2026-10-08.md`), specs promoted `draft → active`, specs
-`INDEX.md` created (129 rows generated from frontmatter; 5 stale `active/`
-duplicates flagged — see the manifest's warning section, routed to owning
-lines). **Unit B vehicle RULED: Amendment `CFF-P3-A1` (§4.8)** — content
-ratified alone before Unit B code when CFF-P0's read-graph artifact is
-in-tree. Builder kickstarters issued; Step-0 restate-and-stop dispatches live:
-`cff_p0_builder`, `cff_p3_builder` (2026-10-08, session dir
-`/home/cmorgan76/Repos/agent-skills-coordination/sessions`). Next: rule the
-Step 0 restates → re-dispatch builds → closure checks → deterministic passes →
-two independent adversarial reviews each (CFF-P0's D7 deliverable: two
-reviews on the measurement) → Gate 3 is human. CFF-P1/P2/P4 hold for the
-full-graph Gate 2 request.
+`cff_p3_reviews_p0_measurement_p1_shaping_running` — 2026-10-08 (third
+iteration). **Full-graph Gate 2 GRANTED** (verbatim: "full-graph Gate 2
+granted") — CFF-P1/P2/P4 within the ratified sequencing (P2 shapes after P1
+merges; P4 gates on P1+P2+P3). **Merge reality reconciled against the
+developer's "all PRs have been merged"** (verified via `gh pr list`): PR #157
+(charter/paper-trail) and #158 (version-validator) are merged; **CFF-P0 and
+CFF-P3 never had PRs** — their branches carry built-but-unreviewed work
+(P3 Unit A complete; P0 complete except AC5) and the coordinator's own
+records on `chore/ci-fail-fast-charter` are local-only (unpushed). Gate 3 for
+P0/P3 therefore still PENDS reviews + PR — nothing was assumed merged. Live
+now: `cff_p3_review_a` + `cff_p3_review_b` (two independent adversarial
+reviews of Unit A), `cff_p0_builder_r2` (AC5 measurement under the vehicle
+ruling, below), `cff_p1_shaping` (Step 0 gate first). CFF-P3 Unit A
+deterministic pass PASSED on the coordinator's own run (pin suite 9/9; pin
+mutation → 8/9 fail-closed → 9/9 restored; precheck mutation → `PIN_DRIFT
+standing-constraints` exit 1 → restored exit 0; closure shape 4 of 5 Allowed
+Files — the test needed no edit, import surface preserved). **AC5 loop-stop
+RULED (2026-10-08):** the primary instrumented pass runs via a measurement
+vehicle — scratch branch `measure/cff-p0-read-graph` carrying ONE separate
+measurement workflow file (the pinned workflow is never edited, not even on
+the scratch branch), observing file opens via a loader seam (D2: never forks
+or modifies the runner), windows-latest/Node 24.19.0, both projections from
+the single capture, vehicle files deleted with the branch, deviation recorded
+in `read-graph/measurement-log.md`; the dev-Windows supplementary pass
+remains a named pending input for the developer. P1 worktree cut by the
+permission-profiles emitter (`feat/foreman-line-CFF-P1` @ `4a436603`,
+paper trail committed).
 
-Prior state `cff_resume_p0_lint_pass_p3_shaping_undelivered` (2026-10-08
-first resume iteration) preceded; before that
+Prior state `cff_p0_p3_promoted_builders_step0_dispatched` (2026-10-08,
+second iteration) preceded; before that
+`cff_resume_p0_lint_pass_p3_shaping_undelivered`, then
 `cff_gate2_granted_p0_p3_dispatched`:
 
 Amendment package re-ratified ("1. ratify as written") and installed:
@@ -64,6 +78,13 @@ each kickstarter, never ambient; rework directives mandate "every X"; the
 charter's review requirements bind (two reviews where named, incl. CFF-P0's D7
 measurement deliverable). **Any work beyond CFF-P0 and CFF-P3 requires the
 full-graph Gate 2 request.**
+
+**Gate 2 — FULL-GRAPH GRANT 2026-10-08.** Verbatim: "full-graph Gate 2
+granted" (developer directive, same message as "all PRs have been merged").
+Supersedes the scoped grant's limitation: dispatch approval now covers
+**CFF-P1, CFF-P2, and CFF-P4** within the ratified graph's sequencing (CFF-P2
+shapes only after CFF-P1 merges; CFF-P4 gates on P1+P2+P3). Same contingencies
+as above bind; Gate 3 remains human.
 
 **Gate 3 — NOT delegated.** Verbatim from the ratified charter: "Every merge to
 a workflow, the CI runner, or the reuse/waiver machinery remains human-owned."
@@ -113,6 +134,17 @@ conditions per COORDINATOR-PATTERN also apply.
   `4fa8e5aa…` CFF-P0), Allowed Files exact (5 / 9 paths), inventories
   accurate, zero writes before ruling. Builds re-dispatched:
   `cff_p3_builder_r1` (Unit A) and `cff_p0_builder_r1` (AC1–AC6 recon).
-  Review dispatches follow each completion claim (two independent
-  adversarial reviews each; CFF-P0's D7 measurement: two reviews on the
-  deliverable). Gate 3 remains human.
+- 2026-10-08 — builds delivered: CFF-P3 Unit A complete (3 commits
+  `4ab10ffe..e08ddbb3`, value-identity proof 0 mismatches, named gaps:
+  live windows-latest end-to-end pending the PR run; channels-gate's 7
+  pre-existing `ajv` failures confirmed unchanged); CFF-P0 complete except
+  **AC5 at the named loop-stop** (reported honestly; no substituted data
+  committed). Merge reality checked: no PRs existed for either branch —
+  the "all PRs merged" statement covers #157/#158 only.
+- 2026-10-08 — CFF-P3 deterministic pass (coordinator's own run) + closure
+  check: **PASS** (details in the State section).
+- 2026-10-08 — dispatches under the full-graph grant: `cff_p3_review_a` /
+  `cff_p3_review_b` (two independent adversarial reviews of Unit A — gate
+  integrity / extraction purity angles; reviewers never fix or commit),
+  `cff_p0_builder_r2` (AC5 measurement vehicle), `cff_p1_shaping` (Step 0
+  gate first). Gate 3 remains human.

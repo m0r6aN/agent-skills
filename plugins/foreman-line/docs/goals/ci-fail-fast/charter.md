@@ -152,8 +152,10 @@ This goal exits only when:
 - **Gate 2:** GRANTED 2026-10-07 — early and scoped (verbatim: "gate 2 early
   grant issued"), covering dispatch of **CFF-P0 and CFF-P3** (see
   `loop-directive.md` for the verbatim grant, its contingencies, and the
-  coordinator's stated scope interpretation). The full-graph Gate 2 request
-  (CFF-P1/P2/P4) follows the re-ratified graph.
+  coordinator's stated scope interpretation). **FULL-GRAPH GATE 2 GRANTED
+  2026-10-08** (verbatim: "full-graph Gate 2 granted") — covers **CFF-P1,
+  CFF-P2, CFF-P4** within the ratified sequencing (P2 shapes after P1 merges;
+  P4 gates on P1+P2+P3).
 - **Gate 3:** not delegated. Every merge to a workflow, the CI runner, or the
   reuse/waiver machinery remains human-owned.
 
