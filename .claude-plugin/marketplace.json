@@ -24,7 +24,7 @@
     {
       "name": "audit-suite",
       "source": "./plugins/audit-suite",
-      "version": "0.6.9",
+      "version": "1.2.0",
       "description": "Security and compliance audit suite with decision-ready reporting, remediation planning, and Jira integration.",
       "keywords": ["security", "compliance", "audit", "remediation", "jira"]
     }
