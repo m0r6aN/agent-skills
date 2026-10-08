@@ -286,9 +286,20 @@ All fields pass through `sanitizeField`.
     (`%`→`%25`, `,`→`%2C`, `:`→`%3A`). The message is escaped with `%`→`%25`.
   - Hostile inputs were tested in every field: `::`, CR/LF, `,title=`
     property smuggling, pre-encoded `%0A`, bidi overrides, C0/ESC. In every
-    case the result is one line, has exactly the two literal `::` delimiters,
-    has exactly `file=` and `title=`, and carries no bidi or control
-    characters.
+    case the result is one line, has exactly `file=` and `title=`, and
+    carries no bidi or control characters.
+  - **r2 correction (Review B, B-5).** An earlier draft claimed every line has
+    "exactly the two literal `::` delimiters". That is false for odd colon
+    runs: `sanitizeField(':::')` is `': ::'`, so the *message* of a hostile
+    name such as `:::error file=x::forged` still contains a `::`. The safety
+    mechanism is **property escaping**, not a literal delimiter count. Every
+    `:` in `file=`/`title=` becomes `%3A`, so the property section can never
+    contain `::`. The first `::` after the command is therefore always the
+    single real delimiter. A mid-message `::` cannot mint a command, because
+    the runner's grammar requires `::` at line start. This is now pinned by
+    the r2 test `B-5: odd colon runs …` and mutation MA (see the r2 section).
+    The `sanitizeField` odd-run behavior is a named pre-existing item and was
+    not changed.
   - Raw captured output never enters an annotation. The test injects
     `RAW-OUTPUT-SENTINEL ::error::forged` into check output and asserts it is
     absent from every annotation. Probe M16, which routes `result.output` into
@@ -372,8 +383,13 @@ median ratio of measured to pinned is **1.13** (min 0.36, max 3.19, n = 27).
 The capture ran with `NODE_OPTIONS=--require=<probe>` fs/module
 instrumentation. That inflates I/O-heavy suites: `verification` measured
 2.35×, `spec-linter` 3.19×. For the three new packages I recorded the
-measured values unscaled, because scaling would be a guess. The bias is in
-the conservative direction (overweighting light packages). Outliers below
+measured values unscaled, because scaling would be a guess. (r2
+correction, Review A: an earlier draft called this bias "conservative". It is
+not. Cost entries only affect LPT balance, never coverage or the verdict, so
+neither direction is safer. The impact is small, since the three entries
+total 45 s inside shards of about 200 s. The 0.36–3.19 spread also shows that
+the measurement *conditions* differ from the existing pins, even though the
+*definition* (test + typecheck + lint wall time) matches.) Outliers below
 1.0 (`kernel-lease` 0.36, `mutation-scope-guard` 0.46) are packages whose
 prior entries were measured in a failing or cap-killed era. They are flagged
 for the next D10 cost re-measurement and were not touched (AC3: the 27 stay
@@ -491,6 +507,17 @@ from …` failure line. A cross-pair leak into the waived pair (`alpha/test`)
 or the rejected pair (`delta/lint`, layer `set-subset`) therefore changes the
 waiver verdict and the hash. Each point is bound by a code mutation; the full
 list is under AC8.
+
+**r2 scope note (Review A, Q1).** The spec's "D3 preserved by construction"
+and this section's conformance hold **inside the runner**. That covers
+per-pair capture, concatenation, granularity, parsing, hashing, and
+sequencing. AC7 stubs `spawn`, so it cannot exclude **inter-package
+filesystem coupling**. If package A's test writes a file that package B's
+test reads, reordering can change B's real output. Under the nine-layer pin,
+such a change could at most flip a pinned waiver (fail-closed, or the
+reverse on an exact full-value match). This is a **named residual risk**, not
+a property this parcel proves. It is not new to CFF-P1: the AC3 re-pin
+already changes package adjacency (8/8/7/7 → 1/1/13/15).
 
 | Point | Bound by |
 |---|---|
@@ -623,3 +650,109 @@ Fixture-level mutation is also built into the shipped tests:
 - No `WAIVED_EXCLUSIONS` value edit.
 - No change to `reconcile`, `verdict`, `assignShards`, or `discoverPackages`.
 - No sibling cancellation, no Checks API use, and no early-green path.
+
+---
+
+## r2 rework (review findings, Amendment CFF-P1-A2), 2026-10-08
+
+**Authority:** the rework dispatch
+`docs/kickstarters/foreman-line-build-CFF-P1-rework1.md`, Amendment
+CFF-P1-A2 (`ca934c48`), and Review A/B findings. The spec at G3 has SHA-256
+`157335954cfcd957445939dca8089b4397b0e66e4cf502e8539186208f801a2d`
+(A2-amended, `status: active`, confirmed at start). The coordinator ruled
+Step 0 GO.
+
+### HEAD start / end
+
+- **Start:** `33e538ad` = `ca934c48` plus one docs-only paper-trail commit
+  (the kickstarter). `git log --oneline ca934c48..HEAD` showed no code commit.
+  The worktree was clean on `feat/foreman-line-CFF-P1`.
+- `a8d8270c` `fix(foreman-line-ci): implement Amendment CFF-P1-A2 …`
+  touches only `scripts/foreman-line-ci.mjs` and
+  `scripts/foreman-line-ci.test.mjs`.
+- **End:** the docs commit carrying this section, directly on top of
+  `a8d8270c`. It touches only this record.
+- No rebase, reset, amend, or push.
+
+### Test counts: 367 → 373 (+6, every addition named)
+
+Command: `node --test scripts/foreman-line-ci.test.mjs scripts/ci-reuse.test.mjs`
+→ `ℹ tests 373 ℹ pass 373 ℹ fail 0`. Run on Linux with Node v26.8.2; the
+environment gap is unchanged from above.
+
+New tests:
+1. `CFF-P1-A2.1: an uncovered swept package disables proximity for the whole run (pin-uncovered-package:<name>, distinct from pin-missing)`
+2. `CFF-P1-A2.2: the exclusion scan is recursive and exact-key over the whole pin; Review B accepted-today cases now fail closed; variance edges are shape-strict`
+3. `CFF-P1-A2.2 false-positive guard: legitimate keys (platform_skips and similar) never trip the exact-key scan`
+4. `CFF-P1-A2.3: a throwing echo/annotate sink is caught and recorded; the loop continues; the artifact is built and the exit stays non-zero`
+5. `CFF-P1-A2.3 CLI: a throwing stdout still writes the partial artifact and returns the non-zero exit`
+6. `B-5: odd colon runs never forge a second delimiter; the property section is fully escaped and parses to exactly the sanitized file/title`
+
+**Existing tests modified.** These are fixture repairs that A2 forced. The
+count did not change. Each of these four broke on the first A2 run, as
+predicted, which is itself evidence that the A2 behavior binds:
+- `AC2/AC8 fail-closed … exclusion-shaped variance edge (skip flag)`. The row
+  is now labeled `variance edge with an extra key (skip flag) is shape-strict
+  malformed`, and the expected reason changed from `pin-exclusion-shaped` to
+  `pin-variance-edge-shape`. `skip` is no longer an exclusion key under A2's
+  exact set. The edge still fails closed, now by shape.
+- `AC1: the read-graph entry is the package's full measured read set …`. The
+  fixture's `packages` gained `alpha`/`beta` own-directory entries, so every
+  swept package is covered. Without them, A2.1 correctly falls back.
+- `AC2 R15: a variance-marked edge always ADDS …`. `base` now covers all four
+  packages, and alpha's reads do not contain the env-only path, so the edge
+  alone still makes alpha proximate. The pure-seam union assertion is now
+  `[pxDir('alpha'), env-only]`. It is still a union, never a subtraction.
+- `AC1/AC2 CLI wiring …`. The proximity row's pin covers every discovered
+  package. Before, it covered `verification` only, which is uncovered under
+  A2.1.
+
+### Items: expected vs observed
+
+| # | Item | Expected | Observed |
+|---|---|---|---|
+| 1 | A2.1 uncovered package | Any package in the shard's `mine` with no own `packages[name]` entry falls back for the whole run to ascending-name order, with reason `pin-uncovered-package:<name>` (distinct from `pin-missing`). A non-array entry is already `pin-entry-not-positive`. | `validateReadGraph` returns `covered` (the own-key Set of `packages`). `computeShardOrder` names the first uncovered `mine` entry. Test 1: for each of the 4 packages, spawns and artifact are byte-identical to today, and the reason is `pin-uncovered-package:<name>`. A coverage only through `affection_pin` or a variance edge is still uncovered. Packages outside the shard's `mine` do not trigger. Mutate-the-fixture: restoring only the `packages` entry restores proximity. **Real CFF-P0 pin** (`feat/foreman-line-cff-p0`): all 30 discovered packages are covered; every shard stays `proximity`. |
+| 2 | A2.2 exclusion scan | Recursive scan of the whole parsed pin, exact case-insensitive key match on {excludes, excluded, not-affected, not_affected, notAffected, exempt, ignore}. Variance edges are exactly `{package, path}`, both strings. There must be no false positive on `platform_skips` and similar keys. | The stem/substring heuristic was removed. `hasExclusionKeyAnywhere` is iterative, so a 20,000-deep nest causes no stack overflow, and it runs after the structural checks. Edges require exactly 2 keys. Test 2 covers Review B's accepted-today cases, which now fail closed: nested `projections.reader_set_delta.excludes`, `environments[0].excludes`, `exempt`, `Ignore`, deep `notAffected`/`not-affected`, an `affection_pin` key `not_affected`, a `packages` key `excluded`, `{package,path,affects:false}`, and `{package,path,env}`. Test 3 is the false-positive guard: `platform_skips`, `negative_controls`, `skip`/`omit` keys, `excluded_packages_note`, `ignore_case`, `exemptions_note`, and exclusion words used as *values* all keep `proximity`. The real CFF-P0 pin validates `ok`. |
+| 3 | A2.3 best-effort emission | A throwing emit is caught and recorded, the loop continues, and the partial artifact is never lost. | `runShard` wraps both echo and annotate (the same class: B-7 showed `echo` runs first on both paths). Failures go to the result's `emitFailures` as `{channel, package, check}`, sanitized and without error text. Test 4: both sinks throw, yet the pairs and the artifact equal the quiet run, the early exit is `delta/lint`, and the exit is 1. `runCli` makes its own log lines best-effort (ordering line, early-exit line, summary line, plus a new emission-failure line after the write), so a broken stdout cannot skip `writeFile`. Test 5: a throwing stdout still writes the artifact and returns 1. The `GITHUB_STEP_SUMMARY` append failure stays a typed throw, unchanged. |
+| 4 | B-5 escaping | Odd colon runs never forge a delimiter, and the escaping test fails when the `:` escape is removed. The record claim is corrected. | Test 6 covers `:::`, `:::::`, `:::error file=x::forged`, `a:::b,title=x`, `::::`, `:`, and more in every field. The property section has no raw `:`, splits into exactly `file=`/`title=`, and each value round-trips to `sanitizeField(...)`. **MA** (`:`→`%3A` removed) is killed **only** by test 6; the shipped AC5(b)/SC31 test survives it, which confirms B-5. Under MA the name `:::error file=x::forged` yields `::error file=: ::error file=x: :forged,title=test::…`. Properties truncate at the first `::`, which is property smuggling. At the tip it yields `::error file=%3A %3A%3Aerror file=x%3A %3Aforged,title=test::…`. The AC5(b) claim is corrected in place (above). |
+| 5 | COST_TABLE provenance | A comment at the three entries: single instrumented measurement, run `37768165017`, unscaled. | A comment line above `kernel-import`, plus trailing comments on `ops-console` and `project-scaffold`. Values are unchanged; the golden test passes. |
+| — | Prose corrections | "Conservative direction" and unscoped "D3 preserved by construction". | Both corrected in place: the AC3 calibration paragraph and the AC7 scope note. |
+
+### Mutation probes (r2): each applied in place, full suite run, file restored by `git checkout`
+
+| Probe | Mutation | Expected killer | Observed |
+|---|---|---|---|
+| MA | `annotationProperty` loses `:`→`%3A` | test 6 | ✔ killed (372/1): test 6 only |
+| MB | uncovered-package check deleted | test 1 | ✔ killed (372/1) |
+| MC | uncovered reason → `pin-missing` | test 1 (distinct reason) | ✔ killed (372/1) |
+| MD | scan stops after the top-level object | test 2 | ✔ killed (371/2): test 2, plus the `not_affected` projection row |
+| ME | scan reverts to substring stems | test 3 | ✔ killed (372/1) |
+| MF | edge shape `keys.length < 2` (extra keys allowed) | test 2 | ✔ killed (371/2): test 2, plus the shape-strict `skip` row |
+| MG | `emitSafely` no longer catches | tests 4, 5 | ✔ killed (371/2) |
+| MH | `runCli` `logSafely` no longer catches | test 5 | ✔ killed (372/1) |
+
+### Hard-stop and surface audit
+
+- `reconcile`, `verdict`, `assignShards`, `evaluateWaiver`, and
+  `discoverPackages` are byte-identical between `33e538ad` and `a8d8270c`
+  (per-function body hashes match). There is no workflow diff (0 lines) and
+  no shard-membership change: `mine` is still computed before any pin read,
+  and every fallback returns `[...mine]`.
+- No export was added or removed. The added surface is the `covered` field on
+  `validateReadGraph`'s result (A2.1) and the `emitFailures` field on
+  `runShard`'s result (A2.3). The CLI fallback-reason display cap went from
+  60 to 160 characters so `pin-uncovered-package:<name>` is never truncated.
+- The AC1 grep invariant still holds: pin fields are read only inside
+  `validateReadGraph`, and coverage is computed there.
+
+### Named, not built (per dispatch)
+
+- **B-6** (legacy `##[…]` runner-command neutralization) is the
+  coordinator's live CI observation for the PR run.
+- **`sanitizeField` odd-run defect** (`':::'` → `': ::'`) is pre-existing and
+  not changed. It is harmless at the annotation site because of property
+  escaping, which test 6 pins.
+- **Inter-package filesystem coupling under reordering** is a residual risk
+  (AC7 scope note above).
+- **B-1** (the D11 seam drops D7-measured "ordinary" reads) is a cross-parcel
+  item for CFF-P0/CFF-P2. It was not touched.
