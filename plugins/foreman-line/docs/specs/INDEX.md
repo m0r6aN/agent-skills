@@ -1,20 +1,18 @@
 # Spec Index — plugins/foreman-line
 
-> **Generated 2026-10-08** by the ci-fail-fast coordinator at CFF-P3 promotion.
-> The corpus predates this manifest (SPEC-CONVENTION §2 requires it); rows below are
-> parsed from each spec's frontmatter — `ticket`, `title`, `status` — with the folder
-> as the lifecycle authority (§3 rule 1). Regenerate or hand-update on every spec state
-> change. **One row per file per folder** — a spec that exists in both folders is a
-> lifecycle defect and appears twice (see the warning section).
+> **Generated 2026-10-08** (ci-fail-fast coordinator). Rows are parsed from each
+> spec's frontmatter — `ticket`, `title`, `status` — with the folder as the lifecycle
+> authority (SPEC-CONVENTION §3 rule 1): a filename present in both `active/` and
+> `done/` is listed as `done/` (the stale `active/` duplicates were removed in the
+> 2026-10-08 hygiene pass). Regenerate or hand-update on every spec state change.
 
 | Ticket | Title | Status | Location |
 |---|---|---|---|
 | BRINV-1 | [Branch inventory and merge/abandon recommendations](active/BRINV-1-branch-inventory.md) | `draft` | `active/` |
 | CFF-P0 | [Recon and baseline — ci-fail-fast](active/CFF-P0-recon-and-baseline.md) | `active` | `active/` |
+| CFF-P1 | [Change-proximity ordering and early-red signal](active/CFF-P1-change-proximity-ordering-and-early-red.md) | `draft` | `active/` |
 | CFF-P3 | [Gate-job surface-pin precheck and read-graph drift seam](active/CFF-P3-gate-surface-pin-precheck.md) | `active` | `active/` |
-| CI-P1 | [Safe Documentation-Only Push Reuse](active/CI-P1-docs-only-push-reuse.md) | `active` | `active/` |
 | CI-P1 | [Safe Documentation-Only Push Reuse](done/CI-P1-docs-only-push-reuse.md) | `done` | `done/` |
-| CI-P2 | [Deterministic full-sweep sharding](active/CI-P2-deterministic-sweep-sharding.md) | `active` | `active/` |
 | CI-P2 | [Deterministic full-sweep sharding](done/CI-P2-deterministic-sweep-sharding.md) | `done` | `done/` |
 | E6-R1 | [Current-repository identity normalization and observable A-to-F evidence rerun](done/E6-R1-current-repository-identity-and-evidence-rerun.md) | `done` | `done/` |
 | EVAL-1 | [Eval coverage green gate (Tier-2 trigger and routing)](active/EVAL-1-eval-coverage-green-gate.md) | `draft` | `active/` |
@@ -45,8 +43,8 @@
 | HRO-P1C | [Evidence-only context assembly for the PMC owner resolver](done/HRO-P1c-owner-bridge.md) | `done` | `done/` |
 | HRO-P2 | [Exact reusable choice hints with owner verification of the current winner](active/HRO-P2-deterministic-cache.md) | `draft` | `active/` |
 | HRO-P3A | [Authenticated measured Stage D finalization](active/HRO-P3A-authenticated-stage-d-finalization.md) | `active` | `active/` |
-| HRO-P3 | [Correlate governed routing observations at existing receipt checkpoints](active/HRO-P3-correlated-receipts.md) | `draft` | `active/` |
 | HRO-P3B | [Measured Stage D integration and closure profile](active/HRO-P3B-measured-integration-profile.md) | `draft` | `active/` |
+| HRO-P3 | [Correlate governed routing observations at existing receipt checkpoints](active/HRO-P3-correlated-receipts.md) | `draft` | `active/` |
 | HRO-P4A1 | [Durable admission for bounded recovery bootstrap](done/HRO-P4A1-durable-recovery-admission.md) | `done` | `done/` |
 | HRO-P4A | [Bounded unknown-model recovery before launch custody](active/HRO-P4A-bounded-model-recovery.md) | `draft` | `active/` |
 | JEV-P0 | [Jev alpha Decisions contract and evidence boundary](active/JEV-P0-alpha-decisions-contract-and-evidence-boundary.md) | `active` | `active/` |
@@ -56,20 +54,19 @@
 | JEV-P4 | [Jev portable-container boundary and security scenarios](active/JEV-P4-container-boundary-security.md) | `active` | `active/` |
 | JEV-P5 | [Jev portable-container release closure](active/JEV-P5-portable-container-release.md) | `active` | `active/` |
 | KEO-155 | [P1 Review and Sprint packaging closure](done/KEO-155-P1-review-sprint-packaging-closure.md) | `done` | `done/` |
-| KEO-156 | [P5 minimum verifier implementation](active/KEO-156-P5-minimum-verifier-implementation.md) | `active` | `active/` |
 | KEO-156 | [P2 minimum verifier compatibility and canon freeze](done/KEO-156-P2-minimum-verifier-compatibility-canon-freeze.md) | `done` | `done/` |
+| KEO-156 | [P5 minimum verifier implementation](active/KEO-156-P5-minimum-verifier-implementation.md) | `active` | `active/` |
 | KEO-197 | [BrowseAhead domain/path slop-squatting contract freeze](active/KEO-197-browseahead-domain-path-slop-squatting-contract-freeze.md) | `active` | `active/` |
 | KEO-59 | [P0V portable semantic claims-validation repair](done/KEO-59-P0V-claims-validation-repair.md) | `done` | `done/` |
 | KEO-59 | [Keon proof-led control-plane reconciliation (P0)](done/KEO-59-proof-led-control-plane-reconciliation.md) | `done` | `done/` |
 | KONE-23195 | [Foreman Line - shared test-scaffold extraction (SCAF-P2)](done/SCAF-P2-shared-test-scaffold-extraction.md) | `done` | `done/` |
 | KONE-23209 | [Foreman Line - receipt-chain walker (SCAF-P3 exit proof)](done/SCAF-P3-receipt-chain-walker.md) | `draft` | `done/` |
-| KONE-TBD | [Cerebras shadow route operational dispatch completion](active/KONE-TBD-cerebras-shadow-operational-dispatch.md) | `active` | `active/` |
-| KONE-TBD | [Plugin manifest and skill relocation (P1, plugin-packaging-and-scaffolder)](active/P1-plugin-packaging.md) | `active` | `active/` |
-| KONE-TBD | [WF-P0 topology and authority inventory](active/WF-P0-topology-and-authority-inventory.md) | `active` | `active/` |
 | KONE-TBD | [Foreman Line - CLOSE-P1 minted-chain exit vehicle (live seam wiring + real A->F run)](done/CLOSE-P1-minted-chain-exit-vehicle.md) | `active` | `done/` |
 | KONE-TBD | [Foreman Line - CLOSE-P2 spec-linter corpus reconciliation (grandfather rule, data_classification, CI re-enable)](done/CLOSE-P2-spec-linter-corpus-reconciliation.md) | `active` | `done/` |
 | KONE-TBD | [Foreman Line - CLOSE-P3 biome in CI (per-package lint loop) + always-report jobs (D4 precondition)](done/CLOSE-P3-biome-ci-always-report.md) | `active` | `done/` |
+| KONE-TBD | [Cerebras shadow route operational dispatch completion](active/KONE-TBD-cerebras-shadow-operational-dispatch.md) | `active` | `active/` |
 | KONE-TBD | [Foreman Line - permission-profile registry schema + validator (P1)](done/P1-permission-profile-registry-schema.md) | `done` | `done/` |
+| KONE-TBD | [Plugin manifest and skill relocation (P1, plugin-packaging-and-scaffolder)](active/P1-plugin-packaging.md) | `active` | `active/` |
 | KONE-TBD | [Foreman Line - DispatchOrder permissionProfile field (P2)](done/P2-dispatch-order-permission-profile-field.md) | `done` | `done/` |
 | KONE-TBD | [Foreman Line - dispatch-time permission-profile emitter (P3)](done/P3-dispatch-time-emitter.md) | `done` | `done/` |
 | KONE-TBD | [Foreman Line - spec-linter permission_profile enum upgrade (P4)](done/P4-spec-linter-permission-profile-enum.md) | `done` | `done/` |
@@ -97,6 +94,7 @@
 | KONE-TBD | [Foreman Line - W4-P2 DocSpine CI hook (doc-claims validation against repo state via pinned runVerify; hermetic + wiring-deferred)](done/W4-P2-docspine-ci-hook.md) | `active` | `done/` |
 | KONE-TBD | [Foreman Line - W4-P3 Risk-driven audit triggers (max(declared,derived) engine + PR→governing-spec resolution + report entrypoint)](done/W4-P3-risk-driven-audit-triggers.md) | `active` | `done/` |
 | KONE-TBD | [Foreman Line - W4-P4 GitHub gate assembly + Stage-F closure (required-check composition + branch-protection diff + merge->Jira->closure receipt sealing the chain)](done/W4-P4-github-gate-stage-f-closure.md) | `active` | `done/` |
+| KONE-TBD | [WF-P0 topology and authority inventory](active/WF-P0-topology-and-authority-inventory.md) | `active` | `active/` |
 | MRC-01 | [Rulings A/B/C/D/F propagation into the named owning records](active/MRC-01-rulings-propagation.md) | `active` | `active/` |
 | MRC-02 | [HRO-P3 decision/attempt events + receipt/replay contract (absorbs RCM-P8A) + PiModelContract enrichment + baseline data](active/MRC-02-hro-p3-events-receipt-replay.md) | `active` | `active/` |
 | MRC-03 | [RCM-P4 acceptance closure — named negative controls + DA-1 resolve-time FALLBACK_SELF_REFERENCE mirror over the Window-R predicate implementation](active/MRC-03-rcm-p4-acceptance-closure.md) | `active` | `active/` |
@@ -110,7 +108,6 @@
 | MRC-20 | [RB-6 catalogue bytes capture (carried nit) — preserved public catalogue GET with digest provenance](active/MRC-20-rb6-catalogue-bytes-capture.md) | `active` | `active/` |
 | OR-P01 | [Independently verify keon-systems build integrity at 2b6c755](active/OR-P01-keon-systems-build-integrity.md) | `active` | `active/` |
 | OR-P02 | [Restore keon.collective build and test integrity at the ratified current base](active/OR-P02-collective-build-integrity.md) | `active` | `active/` |
-| PMC-P0 | [Pi capability and catalogue baseline](active/PMC-P0-pi-capability-and-catalogue-baseline.md) | `active` | `active/` |
 | PMC-P0 | [Pi capability and catalogue baseline](done/PMC-P0-pi-capability-and-catalogue-baseline.md) | `done` | `done/` |
 | PMC-P1A | [Provider-neutral binding contract schema and validation](done/PMC-P1a-provider-binding-contract.md) | `done` | `done/` |
 | PMC-P1B | [Lossless provider binding projection and consumer compatibility inventory](done/PMC-P1b-provider-binding-projection.md) | `done` | `done/` |
@@ -126,7 +123,6 @@
 | PRAC-P0 | [Pi extension/hook API surface compatibility memo](done/PRAC-P0-pi-extension-hook-surface-compat.md) | `done` | `done/` |
 | RCM-HRO | [Private authenticated public catalog publication](active/RCM-HRO-authenticated-catalog-publication.md) | `active` | `active/` |
 | RCM-P0 | [Current-instance routing reconnaissance](done/RCM-P0-current-instance-recon.md) | `done` | `done/` |
-| RCM-P1 | [Pure catalog-snapshot reader and eligibility projector](active/RCM-P1-models-store-eligibility-projector.md) | `active` | `active/` |
 | RCM-P1A | [Supported bounded catalog eligibility wrapper](done/RCM-P1A-sanitized-snapshot-adapter.md) | `done` | `done/` |
 | RCM-P1B | [Scoped public-observation canonical snapshot producer](done/RCM-P1B-public-observation-producer.md) | `done` | `done/` |
 | RCM-P1 | [Pure catalog-snapshot reader and eligibility projector](done/RCM-P1-models-store-eligibility-projector.md) | `done` | `done/` |
@@ -135,17 +131,7 @@
 | SUPERCHARGE-P1 | [Phase 1 — authorize live-verified model families in routing surface](active/SUPERCHARGE-P1-phase1-models.md) | `active` | `active/` |
 | SUPERCHARGE-P2 | [Phase 2 — routing + frontmatter comprehensiveness analysis](active/SUPERCHARGE-P2-routing-analysis.md) | `active` | `active/` |
 | WGT-P0A | [Foreman record reconciliation](done/WGT-P0A-foreman-record-reconciliation.md) | `done` | `done/` |
-| WGT-P0BOOT | [Tracked Foreman Line bootstrap](active/WGT-P0BOOT-tracked-foreman-bootstrap.md) | `active` | `active/` |
 | WGT-P0BOOT | [Tracked Foreman Line bootstrap](done/WGT-P0BOOT-tracked-foreman-bootstrap.md) | `done` | `done/` |
 | WGT-R1 | [Foreman current-state and queue reconciliation](active/WGT-R1-foreman-current-state-reconciliation.md) | `active` | `active/` |
 
-> **WARNING — duplicate filenames across `active/` and `done/` (5):**
-> - `CI-P1-docs-only-push-reuse.md` — the `done/` copy is authoritative (`status: done`); the stale `active/` copy
-> - `CI-P2-deterministic-sweep-sharding.md` — the `done/` copy is authoritative (`status: done`); the stale `active/` copy
-> - `PMC-P0-pi-capability-and-catalogue-baseline.md` — the `done/` copy is authoritative (`status: done`); the stale `active/` copy
-> - `RCM-P1-models-store-eligibility-projector.md` — the `done/` copy is authoritative (`status: done`); the stale `active/` copy
-> - `WGT-P0BOOT-tracked-foreman-bootstrap.md` — the `done/` copy is authoritative (`status: done`); the stale `active/` copy
->   violates SPEC-CONVENTION §3 rule 2 ("moves to done/", not copies). Removal is routed to
->   the owning goal line / the developer — not fixed by this manifest.
-
-Total: 129 file rows (60 in active/, 69 in done/); 124 unique filenames.
+Total: 125 specs (56 active/, 69 done/).
