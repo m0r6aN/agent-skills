@@ -23,6 +23,35 @@
 
 ## State
 
+`cff_h1_building__p0_rework_pending__p1_rework_r1_step0__p3_reviews_in_flight__devdrop_shipped`
+— 2026-10-08 (seventh iteration). **E1/E2 DISPOSED by the developer
+("ratify Q1 / amend Q2 as proposed"):** E2's D7 amendment is installed in
+the charter (scoped Gate-1 re-open, re-ratified — CFF-P2 exclusion becomes
+positive-coverage-only + `ALWAYS_RUN` manifest {approval, verification,
+schema-scaffold; evidence-bound at P2 shaping}; probe `child_process`
+coverage = named follow-up, not scope growth; blocks CFF-P2 shaping only,
+all other work orthogonal). E1's hotfix is **CFF-H1** — micro-parcel off
+`main` (`fix/cff-h1-reader-set-goal-docs`, worktree
+`../agent-skills-cff-h1`): exactly the five measured goal-doc paths into
+`READER_SET` + mutate-bound regression test; Step-0 restate RULED CORRECT
+(HEAD `dab6967e`, anchors :129/:157/:175/:190 verified coordinator-side,
+defect re-confirmed on base); `cff_h1_builder_r1` building. Unbatched human
+Gate 3 (batching suspended for the hotfix, per the ratification). **CFF-P1
+reviews A+B DELIVERED, triaged** (`cff-p1-review-triage-2026-10-08.md`): no
+verdict-integrity blockers; one lesson-#33 catch (spec weakened charter
+D7's uncovered-package fail-closed clause) → **Amendment CFF-P1-A2** ruled
+and committed alone (`ca934c48`: whole-run fallback trigger, concrete
+recursive exclusion scan, best-effort annotations, E4 base correction) →
+rework r1 dispatched (5 items, tripwire baseline 367; `cff_p1_rework1_step0`
+in flight). **Dev-drop package SHIPPED**: closure check PASS (probe
+byte-verbatim hash `3105d304`, Allowed-Files exact, host-gated refusal +
+dry-run demonstrated, honest gaps incl. Node ≥ 24.2 requirement), scratch
+branch merged to charter (`43c9bf8e`, pushed) — **the developer's Windows
+act is now unblocked**: pull `chore/ci-fail-fast-charter`, `npm ci`, one
+command per `read-graph/dev-drop/README.md`. P0 rework R1 dispatchable now
+(the reducer exists); P3 review pair still in flight.
+
+Prior state
 `cff_p0_triage_done_rework_pending_devdrop__p1_built_reviews_running__p3_reviews_in_flight__e1_e2_pending_dev`
 — 2026-10-08 (sixth iteration). **CFF-P0 reviews A+B DELIVERED and TRIAGED**
 (`cff-p0-review-triage-2026-10-08.md`): two blockers, both reproduced
