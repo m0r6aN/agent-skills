@@ -23,6 +23,24 @@
 
 ## State
 
+`cff_p0_reviews_ab_running__p1_build_r1_running__p3_reviews_in_flight`
+— 2026-10-08 (fifth iteration). **Dispatch mechanism established (developer
+Q1, 2026-10-08):** fresh sessions are spawned headlessly from this pi harness
+— `pi --model anthropic/claude-opus-5-5 -n <name> -p "<prompt>"` detached via
+`setsid nohup`, logs at `~/.pi/dispatch-logs/ci-fail-fast/<name>.log`
+(mechanism smoke-tested before first dispatch). Dispatched: `cff_p0_review_a`
+(pid 797295) + `cff_p0_review_b` (pid 797575) per kickstarters A/B;
+`cff_p1_builder_step0` restated and held — **Step 0 restate RULED CORRECT**
+(spec SHA `ed40b2c4`, brief SHA `bf7e1ecc`/8196B identical in both checkouts,
+HEAD `41b927de`, worktree clean, Allowed Files exact, zero writes — all
+re-verified coordinator-side) — build re-dispatched as `cff_p1_builder_r1`
+(pid 799411). Findings/records arrive as files on disk (reviewers write
+their named findings file only, no commits — coordinator commits).
+**PR #159 MERGED by the developer** (Gate 3, `dab6967e`, 2026-10-08T13:00:28Z)
+— docs-only paper trail on main. Dev-drop packaging question asked of the
+developer (see evidence trail); answer pending.
+
+Prior state
 `cff_p0_complete_reviews_queued__p3_reviews_in_flight__p1_active_build_dispatch_pending`
 — 2026-10-08 (fourth iteration). **CFF-P0 build COMPLETE (AC1–AC6):** the
 AC5 measured-capture delivery landed (`f34c5e74` + `500b8f54`) and passed
@@ -243,7 +261,13 @@ conditions per COORDINATOR-PATTERN also apply.
   lesson-#33 diff strengthening-only). Errata E1–E3 corrected in place at
   promotion. Builder kickstarter issued (Step 0 gate first).
 - 2026-10-08 — CFF-P0 review kickstarters A/B issued (paper trail
-  `91480ae7` on the parcel branch); **dispatches pending the developer's
-  session spawner** — this coordinator session (pi harness) cannot spawn
-  the fresh opus-5-5 review/build sessions itself; kickstarters are
-  dispatch-ready.
+  `91480ae7` on the parcel branch).
+- 2026-10-08 — developer answers: (1) dispatch mechanism = `pi --model
+  anthropic/claude-opus-5-5` headless (verified, used); (2) P3 reviews
+  confirmed in flight; (3) dev-Windows pass: developer unsure what is needed
+  — coordinator question + recommendation asked (turnkey run package in
+  `read-graph/dev-drop/`; answer pending); (4) **PR #159 merged**
+  (`dab6967e`).
+- 2026-10-08 — dispatches live: `cff_p0_review_a` + `cff_p0_review_b`
+  (opus-5-5, kickstarters A/B); `cff_p1_builder_step0` → restate RULED
+  CORRECT → `cff_p1_builder_r1` building (opus-5-5).
