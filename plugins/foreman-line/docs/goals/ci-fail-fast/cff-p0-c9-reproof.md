@@ -79,7 +79,34 @@ Reads outside the temp repo, checked explicitly:
   path into the real repository tree.
 
 No check in `ops-console` reads real repository Markdown/README content at
-test time — confirmed, not asserted.
+test time — confirmed, not asserted **for the files this static sweep
+checked explicitly** (`corpus.test.ts`, `read-only.test.ts`, and `src/*.ts`'s
+caller-supplied `readFileSync` call sites).
+
+> **ADDENDUM (2026-10-08, AC5's instrumented pass, measured — not a revision
+> of the static method above, a correction of its scope):** the list at the
+> top of this section names `live-goal.test.ts` among the files that import
+> `materialize`/`withTempRepo`, but this static sweep did not separately
+> check whether `live-goal.test.ts` **also** reads outside its materialized
+> temp repo the way `corpus.test.ts` and `read-only.test.ts` were checked.
+> It does: `live-goal.test.ts:35` calls `scanGoal(config, 'w4-closeout')`
+> against the **real** repository tree (not the materialized temp repo),
+> which reads `plugins/foreman-line/docs/goals/w4-closeout/charter.md` and
+> `.../loop-directive.md` — both currently classified
+> `ordinary_documentation`. AC5's instrumented sweep
+> (`read-graph/read-graph.json`, `projections.reader_set_delta`;
+> narrative: `read-graph/measurement-log.md`) proved this by live
+> execution on the pinned environment; this static re-proof's grep pattern
+> (scoped to `mkdtemp|tmpdir|materializ`) was never going to surface a
+> same-file *non*-materialized read, which is exactly why AC5.1 requires a
+> dynamic capture, not a reading, for the final pin — **the Stage Zero /
+> static-sweep method is a hint, never the evidence**, and this is the
+> concrete instance where the hint undershot. The conclusion below
+> ("no shrink required") is **superseded** for `ops-console` by AC5's
+> measured finding; `routing-policy` (outside this AC6 doc's three-package
+> scope) carries the same kind of finding. Both are recorded as the actual
+> `READER_SET` delta in `read-graph.json`, not here — this parcel installs
+> no `READER_SET` edit either way (Out of Scope: no `scripts/**` edits).
 
 ### `project-scaffold`
 
@@ -138,21 +165,27 @@ ordinary-documentation set (the safe direction). Across all three packages:
 - `kernel-import`: zero reads of real repository Markdown (all `.md`-looking
   strings are synthetic fixture identifiers, never filesystem paths).
 - `ops-console`: zero reads of real repository Markdown outside
-  package-local JSON fixtures and its own `src/` (both already outside the
-  ordinary-documentation classification's scope).
+  package-local JSON fixtures and its own `src/` **for the files this static
+  sweep checked explicitly** — see the ADDENDUM above: `live-goal.test.ts`
+  independently reads real `docs/goals/w4-closeout/*.md`, found by AC5's
+  instrumented pass, not by this static sweep.
 - `project-scaffold`: reads real Markdown (the `templates/` tree) but every
   path involved already classifies `code` under the existing `READER_SET`
   (`scripts/ci-reuse.mjs:129-155`) and `classifyPath` rules — confirmed by
   direct evaluation above, not by inference.
 
-**No newly discovered doc-reading check was found. The ordinary-documentation
-classification's reader coverage still holds for `kernel-import`,
-`ops-console`, `project-scaffold`. No entry is added to `READER_SET` and no
-shrink is recorded in AC5's READER_SET delta projection** (AC5 itself is a
-named loop-stop — see `read-graph/measurement-log.md` — so no AC5 projection
-artifact exists this session to carry a delta; this finding is recorded here
-so CFF-P1/CFF-P2 and a future AC5 pass start from "re-verified: no change,"
-not "unverified").
+**This static sweep's own conclusion, as originally written, was: no newly
+discovered doc-reading check was found for `kernel-import` or
+`project-scaffold`, and the ordinary-documentation classification's reader
+coverage holds for both.** For `ops-console`, see the ADDENDUM above — this
+conclusion is **superseded**: AC5's instrumented pass did find a newly
+discovered doc-reading check (`live-goal.test.ts`), and the actual
+`READER_SET` delta (covering `ops-console` and, outside this AC6 doc's
+three-package scope, `routing-policy` too) is recorded in
+`read-graph/read-graph.json`'s `projections.reader_set_delta`, narrated in
+`read-graph/measurement-log.md`. This parcel records that finding; it does
+not install the `READER_SET` edit (Out of Scope: no `scripts/**` edits) —
+that edit is the runner-touching parcel's Stage-F bookkeeping per D10.
 
 ## Environment discipline (#48)
 
@@ -161,8 +194,9 @@ call-site analysis), identical regardless of host OS or Node version — there
 is no environment-gated behavior in an `import` statement or a string
 literal. No environment variance is named here because none exists at this
 level of measurement; any environment-gated *runtime* difference (e.g. a
-conditional `readFileSync` behind `process.platform`) would be a D7-level
-concern for the (blocked) AC5 dynamic capture, not this static AC6 re-proof.
+conditional `readFileSync` behind `process.platform`) is a D7-level concern
+for AC5's dynamic capture (now complete — `read-graph/read-graph.json`,
+`read-graph/measurement-log.md`), not this static AC6 re-proof.
 `grep`/`node -e` commands above were run on `linux`, Node `v26.8.2`, this
 session, and are reproducible on any host since they inspect source text and
 pure classification logic only.
