@@ -963,6 +963,31 @@ export function computeShardOrder({ mine, changedPaths = null, readGraph = null 
   }
 }
 
+// ─── CFF-P1 AC5: D8 early-red annotations (signal only) ───────────────────
+
+/** GitHub workflow-command property escaping, applied AFTER sanitizeField. */
+function annotationProperty(value) {
+  return value.split('%').join('%25').split(',').join('%2C').split(':').join('%3A')
+}
+
+/**
+ * D8 named early-red surface: one GitHub Actions `::error` (fail/error) or
+ * `::warning` (waived) log command. Every interpolated field is fixed-shape
+ * data — package name, check name, the waiver-evaluation layer code — run
+ * through sanitizeField (SC #4/SC31) and then property-escaped; captured check
+ * output is NEVER an input. The `::error`/`::warning`/`file=`/`title=` tokens
+ * are literals of this function. Log-level only: no Checks API, no status.
+ */
+export function buildAnnotation(level, name, check, layer = null) {
+  if (level !== 'error' && level !== 'warning') throw new ForemanCiError('Refusing annotation: unknown level')
+  const pkg = sanitizeField(name, 120)
+  const chk = sanitizeField(check, 40)
+  const message = level === 'error'
+    ? `foreman-line ${pkg}/${chk} failed (waiver layer: ${sanitizeField(layer ?? 'none', 40)}); shard early exit - unreached checks stay skipped and the aggregate verdict still decides`
+    : `foreman-line ${pkg}/${chk} waived (run-then-waive pin matched; output echoed for audit)`
+  return `::${level} file=${annotationProperty(pkg)},title=${annotationProperty(chk)}::${message.split('%').join('%25')}`
+}
+
 // ─── per-shard executor (AC4) ──────────────────────────────────────────────
 
 /**
@@ -987,6 +1012,7 @@ export function runShard({
   echo = null,
   changedPaths = null,
   readGraph = null,
+  annotate = null,
 } = {}) {
   if (typeof npmCli !== 'string' || npmCli.length === 0) {
     throw new ForemanCiError('Refusing shard run: npmCli must be a non-empty string')
@@ -1032,6 +1058,9 @@ export function runShard({
   function echoCheck(name, check, output) {
     if (typeof echo === 'function') echo(name, check, sanitizeOutput(output))
   }
+  function annotateCheck(level, name, check, layer) {
+    if (typeof annotate === 'function') annotate(buildAnnotation(level, name, check, layer))
+  }
 
   // Phase 1: ALL installs before ANY check (per-shard barrier, AC4).
   let installsOk = true
@@ -1050,8 +1079,14 @@ export function runShard({
   // The order is fixed here, before any check runs, from the changed paths and
   // the pin alone (no check output is ever read to decide it).
   const ordering = computeShardOrder({ mine, changedPaths, readGraph })
+  // CFF-P1 AC5 (D8): shard-early-exit at the first NON-WAIVED failure. Every
+  // unreached pair keeps its pre-populated `skipped` (reconcile fails those as
+  // `unexpected-skip`); the artifact is still built from `records` and the
+  // exit code is still derived from recorded fail/error only — early exit can
+  // only ever stop work after a red, never produce a green.
+  let earlyExit = null
   if (installsOk) {
-    for (const name of ordering.order) {
+    phase2: for (const name of ordering.order) {
       for (const check of CHECKS) {
         const result = invoke(name, ['run', check, '--ignore-scripts'])
         if (result.status === 'pass') {
@@ -1069,6 +1104,7 @@ export function runShard({
           // R2: the waived output is echoed (sanitized) — an audit trail, never
           // a silent waiver.
           echoCheck(name, `${check} [waived]`, result.output)
+          annotateCheck('warning', name, check, null)
         } else {
           records.get(name).checks[check] = 'fail'
           // R18: the exact layer with its compared values and the observed
@@ -1086,6 +1122,9 @@ export function runShard({
           const json = JSON.stringify(records.get(name).waiver_rejected[check])
           const payload = json.length > 4000 ? `${sanitizeField(json, 3999)}…` : sanitizeField(json, 4000)
           echoCheck(name, `${sanitizeField(check, 40)} [rejected: ${payload}]`, result.output)
+          annotateCheck('error', name, check, evaluation.layer)
+          earlyExit = { package: name, check }
+          break phase2
         }
       }
     }
@@ -1096,6 +1135,7 @@ export function runShard({
     exitCode: failed ? 1 : 0,
     outcomes: packages,
     ordering: { mode: ordering.mode, reason: ordering.reason, order: [...ordering.order], proximate: [...ordering.proximate] },
+    earlyExit,
     artifact: buildShardOutcomes({
       shardIndex,
       shardCount,
@@ -1427,6 +1467,8 @@ export async function runCli(argv, env = process.env, deps = {}) {
       echo: (name, check, text) => stdout(`\n=== ${sanitizeField(name)} / ${sanitizeField(check, 4200)} output ===\n${text}\n`),
       changedPaths: Array.isArray(diff?.paths) ? diff.paths : null,
       readGraph: pin?.doc ?? null,
+      // D8: sanitized fixed-shape annotations, emitted at failure/waive time
+      annotate: (line) => stdout(`${line}\n`),
     })
     const ord = result.ordering
     stdout(
@@ -1434,6 +1476,9 @@ export async function runCli(argv, env = process.env, deps = {}) {
         ? `shard ordering: proximity (${ord.proximate.length} proximate first: ${sanitizeField(ord.proximate.join(', '), 2000)})\n`
         : `shard ordering: ascending-name fallback (${sanitizeField(ord.reason, 60)}; diff: ${sanitizeField(diff?.reason ?? 'ok', 60)}; pin: ${sanitizeField(pin?.reason ?? 'present', 60)})\n`,
     )
+    if (result.earlyExit !== null) {
+      stdout(`shard early exit at ${sanitizeField(result.earlyExit.package, 120)}/${sanitizeField(result.earlyExit.check, 40)}: unreached checks stay skipped; the aggregate verdict reconciles them (unexpected-skip)\n`)
+    }
     const dir = outDir === undefined || outDir === '--offline' ? 'shard-outcomes' : outDir
     makeDir(dir, { recursive: true })
     writeFile(join(dir, 'shard-outcomes.json'), `${JSON.stringify(result.artifact, null, 2)}\n`)

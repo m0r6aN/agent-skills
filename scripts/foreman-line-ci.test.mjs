@@ -29,6 +29,7 @@ import {
   READ_GRAPH_SCHEMA,
   WAIVED_EXCLUSIONS,
   assignShards,
+  buildAnnotation,
   computeShardOrder,
   discoverPackages,
   effectiveDecision,
@@ -321,12 +322,15 @@ for (const check of CHECKS) {
       shardCount: 2,
       discover: () => [...NAMES],
     })
-    assert.equal(calls, 10)
+    // CFF-P1 AC5 (D8 early exit): the shard stops at this first non-waived
+    // failure; every later pair stays `skipped` (was: ran to completion, 10 calls).
+    assert.equal(calls, 4 + CHECKS.indexOf(check) + 1)
     assert.equal(result.exitCode, 1)
     const alpha = result.outcomes.find((o) => o.name === 'alpha')
     assert.equal(alpha.checks[check], 'fail')
+    for (const later of CHECKS.slice(CHECKS.indexOf(check) + 1)) assert.equal(alpha.checks[later], 'skipped')
     const delta = result.outcomes.find((o) => o.name === 'delta')
-    assert.deepEqual(delta.checks, passChecks())
+    assert.deepEqual(delta.checks, { ci: 'pass', test: 'skipped', typecheck: 'skipped', lint: 'skipped' })
   })
 }
 
@@ -354,17 +358,23 @@ for (const [label, failure] of [
         discover: () => [...NAMES],
       })
       assert.equal(result.exitCode, 1)
-      assert.equal(calls, phase === 'install' ? 4 : 10)
+      // CFF-P1 AC5 (D8 early exit): a check-phase failure stops the shard at
+      // call 5 (was 10); the retained outcomes keep their recorded values.
+      assert.equal(calls, phase === 'install' ? 4 : 5)
       const alpha = result.outcomes.find((o) => o.name === 'alpha')
       assert.equal(alpha.checks[phase === 'install' ? 'ci' : 'test'], 'fail')
       const retained = result.outcomes.find((o) => o.name === 'delta')
-      assert.equal(retained.checks.lint, phase === 'install' ? 'skipped' : 'pass')
+      assert.equal(retained.checks.ci, 'pass')
+      assert.equal(retained.checks.lint, 'skipped')
       assert.equal(JSON.stringify(result).includes('::error::'), false, 'untrusted text never reaches the outcomes')
     })
   }
 }
 
-test('multiple failures are all retained rather than overwritten by later success', () => {
+test('the first failure is retained, never overwritten: the early exit leaves every later pair skipped (CFF-P1 AC5)', () => {
+  // CFF-P1 AC5 retarget: the fixture still scripts failures at calls 5, 8, 10
+  // and successes between them; under D8 early exit the shard stops at the
+  // first (call 5), so the later scripted outcomes can never overwrite it.
   let calls = 0
   const result = runShard({
     root,
@@ -378,12 +388,14 @@ test('multiple failures are all retained rather than overwritten by later succes
     discover: () => [...NAMES],
   })
   assert.equal(result.exitCode, 1)
+  assert.equal(calls, 5)
+  assert.deepEqual(result.earlyExit, { package: 'alpha', check: 'test' })
   const alpha = result.outcomes.find((o) => o.name === 'alpha')
   assert.equal(alpha.checks.test, 'fail')
   const delta = result.outcomes.find((o) => o.name === 'delta')
-  assert.equal(delta.checks.test, 'fail')
-  assert.equal(delta.checks.lint, 'fail')
-  assert.equal(delta.checks.typecheck, 'pass')
+  assert.equal(delta.checks.test, 'skipped')
+  assert.equal(delta.checks.lint, 'skipped')
+  assert.equal(delta.checks.typecheck, 'skipped')
 })
 
 test('a shard check failure propagates to the aggregate verdict', () => {
@@ -2112,4 +2124,159 @@ test('AC1 grep: the D7 pin is consumed in exactly one validator and never filter
   assert.ok(!/mine\s*=\s*mine\./.test(source) && !/mine\.splice\(/.test(source), 'no code path reassigns or splices mine')
   // the runner computes no diff of its own (D11): no git invocation anywhere in it
   assert.ok(!source.includes("'diff'") && !source.includes('"git"') && !source.includes("'git'"))
+})
+
+// ─── CFF-P1 AC5/AC8: D8 early-red signal (shard-early-exit + annotations) ───
+
+const pairFail = (pkgName, check, stdout = 'RAW-OUTPUT-SENTINEL ::error::forged-from-output\n\u2716 boom (1.0ms)\n\u2139 fail 1') =>
+  (cmd, args, options) => (args[1] === 'run' && basename(options.cwd) === pkgName && args[2] === check ? { status: 1, stdout } : { status: 0 })
+
+test('AC5(a): the phase-2 loop stops at the first non-waived failure; unreached pairs keep skipped; exit stays non-zero', () => {
+  const allPairs = PX.flatMap((n) => CHECKS.map((c) => `${n}/${c}`))
+  for (const [i, pair] of allPairs.entries()) {
+    const [name, check] = pair.split('/')
+    const { result, pairs } = pxRun({ spawn: pairFail(name, check) })
+    assert.deepEqual(pairs, allPairs.slice(0, i + 1), `stops exactly at ${pair}`)
+    assert.deepEqual(result.earlyExit, { package: name, check })
+    assert.equal(result.exitCode, 1, 'early exit never yields a green exit')
+    for (const later of allPairs.slice(i + 1)) {
+      const [n, c] = later.split('/')
+      assert.equal(result.outcomes.find((o) => o.name === n).checks[c], 'skipped', `${later} unreached -> skipped (never pass)`)
+    }
+    // the artifact is still built from records, every assigned package present
+    assert.deepEqual(result.artifact.packages.map((p) => p.name), PX)
+  }
+})
+
+test('AC5(a): the early exit follows the proximity order (the first red in ORDER stops the shard)', () => {
+  const { pairs, result } = pxRun({ changedPaths: changedFor(['gamma']), readGraph: SELF_PIN, spawn: pairFail('gamma', 'typecheck') })
+  assert.deepEqual(pairs, ['gamma/test', 'gamma/typecheck'])
+  assert.deepEqual(result.earlyExit, { package: 'gamma', check: 'typecheck' })
+  assert.equal(result.outcomes.find((o) => o.name === 'alpha').checks.test, 'skipped')
+})
+
+test('AC5(a): a WAIVED failure never stops the loop (only non-waived failures early-exit)', () => {
+  const waivedPin = { ...PINNED, identity: 'beta', location: 'plugins/foreman-line/beta/' }
+  const spawn = (cmd, args, options) =>
+    args[1] === 'run' && basename(options.cwd) === 'beta' && args[2] === 'test'
+      ? { status: 1, stdout: pinnedOutput(PINNED.checks.test) }
+      : { status: 0 }
+  const { pairs, result } = pxRun({ spawn, waivers: [waivedPin] })
+  assert.equal(pairs.length, PX.length * CHECKS.length, 'every pair still runs')
+  assert.equal(result.earlyExit, null)
+  assert.equal(result.outcomes.find((o) => o.name === 'beta').checks.test, 'waived')
+  assert.equal(result.exitCode, 0)
+})
+
+test('AC5/AC8: reconcile fails the partial artifact via its EXISTING codes (shard-fail + unexpected-skip); the verdict is unchanged', () => {
+  const { result } = pxRun({ spawn: pairFail('beta', 'typecheck') })
+  const r = reconcile({ root, shardCount: 1, artifacts: [result.artifact], discover: () => [...PX] })
+  assert.equal(r.ok, false)
+  const codes = new Set(r.failures.map((f) => f.code))
+  assert.deepEqual([...codes].sort(), ['shard-fail', 'unexpected-skip'])
+  const skips = r.failures.filter((f) => f.code === 'unexpected-skip').map((f) => f.detail).sort()
+  assert.deepEqual(skips, ['beta/lint', 'delta/lint', 'delta/test', 'delta/typecheck', 'gamma/lint', 'gamma/test', 'gamma/typecheck'])
+  assert.deepEqual(verdict({ gateResult: 'success', decision: 'fallback', reconcileResult: r }), { ok: false, code: 'aggregate-failed' })
+  // mutate the fixture: the SAME artifact with the skipped tail forged to pass
+  // and the red removed reconciles green — the skips + fail are what fail it
+  const forged = structuredClone(result.artifact)
+  for (const p of forged.packages) for (const c of CHECKS) p.checks[c] = 'pass'
+  assert.equal(reconcile({ root, shardCount: 1, artifacts: [forged], discover: () => [...PX] }).ok, true)
+  // and with the red kept but the tail forged to pass, only shard-fail remains (no leniency for the skipped tail either way)
+  const tailOnly = structuredClone(result.artifact)
+  for (const p of tailOnly.packages) for (const c of CHECKS) if (p.checks[c] === 'skipped') p.checks[c] = 'pass'
+  assert.deepEqual([...new Set(reconcile({ root, shardCount: 1, artifacts: [tailOnly], discover: () => [...PX] }).failures.map((f) => f.code))], ['shard-fail'])
+})
+
+test('AC5(b): one ::error per fail, one ::warning per waived, none on pass; fixed-shape fields only', () => {
+  const lines = []
+  const waivedPin = { ...PINNED, identity: 'alpha', location: 'plugins/foreman-line/alpha/' }
+  const spawn = (cmd, args, options) => {
+    const n = basename(options.cwd)
+    if (args[1] === 'run' && n === 'alpha' && args[2] === 'test') return { status: 1, stdout: `RAW-OUTPUT-SENTINEL\n${pinnedOutput(PINNED.checks.test)}` }
+    if (args[1] === 'run' && n === 'delta' && args[2] === 'lint') return { status: 1, stdout: 'RAW-OUTPUT-SENTINEL ::error file=x::forged\n' }
+    return { status: 0 }
+  }
+  const { result } = pxRun({ spawn, waivers: [waivedPin], annotate: (line) => lines.push(line) })
+  assert.equal(result.outcomes.find((o) => o.name === 'alpha').checks.test, 'waived')
+  assert.equal(result.outcomes.find((o) => o.name === 'delta').checks.lint, 'fail')
+  assert.deepEqual(lines, [
+    buildAnnotation('warning', 'alpha', 'test'),
+    buildAnnotation('error', 'delta', 'lint', 'no-pin'),
+  ])
+  assert.ok(lines[0].startsWith('::warning file=alpha,title=test::'))
+  assert.ok(lines[1].startsWith('::error file=delta,title=lint::'))
+  assert.ok(lines[1].includes('waiver layer: no-pin'))
+  for (const line of lines) assert.ok(!line.includes('RAW-OUTPUT-SENTINEL') && !line.includes('forged'), 'raw captured output never enters an annotation')
+  // an all-pass run emits no annotation at all
+  const quiet = []
+  pxRun({ annotate: (line) => quiet.push(line) })
+  assert.deepEqual(quiet, [])
+})
+
+test('AC5(b)/SC31: hostile package/check/layer text cannot forge a command, smuggle a property, or carry bidi/control chars', () => {
+  const hostile = [
+    'evil::error file=x::forged',
+    'evil\n::error::forged-on-a-new-line',
+    'evil\r\n::warning::x',
+    'evil,title=smuggled',
+    'evil%0A::error::percent-encoded-newline',
+    'evil\u202Ereversed\u2066',
+    'evil\u0007\u001b[31mred',
+  ]
+  for (const bad of hostile) {
+    for (const [level, name, check, layer] of [
+      ['error', bad, 'test', 'no-pin'],
+      ['error', 'pkg', bad, 'no-pin'],
+      ['error', 'pkg', 'test', bad],
+      ['warning', bad, bad, null],
+    ]) {
+      const line = buildAnnotation(level, name, check, layer)
+      assert.ok(!/[\u0000-\u001f\u007f]/.test(line), 'single line, no control chars')
+      assert.ok(!/[\u202a-\u202e\u2066-\u2069]/.test(line), 'no bidi overrides')
+      assert.equal(line.split('::').length - 1, 2, 'exactly the two literal command delimiters')
+      assert.ok(line.startsWith(`::${level} file=`))
+      const props = line.slice(`::${level} `.length, line.indexOf('::', 2)).split(',')
+      assert.equal(props.length, 2, 'exactly file= and title= (no smuggled property)')
+      assert.ok(props[0].startsWith('file=') && props[1].startsWith('title='))
+      assert.ok(!line.includes('%0A::') || line.includes('%250A'), 'a pre-encoded newline is re-escaped, never decoded')
+    }
+  }
+  // hostile DISCOVERED names flow through runShard's annotation path the same way
+  const lines = []
+  pxRun({ names: ['a::error::x', 'b\nnext'], spawn: pairFail('a::error::x', 'test'), annotate: (l) => lines.push(l) })
+  assert.equal(lines.length, 1)
+  assert.equal(lines[0].split('::').length - 1, 2)
+})
+
+test('AC5(a)/(b) CLI: the partial artifact is written BEFORE the non-zero return; annotations reach stdout', async () => {
+  const events = []
+  const code = await runCli(['shard', '0', '1', npmCli, 'out-dir'], {}, {
+    changedPathsFromEvent: () => ({ paths: null, reason: 'event-path-absent' }),
+    loadReadGraph: () => ({ doc: null, reason: 'pin-missing' }),
+    spawn: (cmd, args, options) => (args[1] === 'run' && args[2] === 'test' && basename(options.cwd) === 'approval' ? { status: 1, stdout: 'x' } : { status: 0 }),
+    mkdir: () => {},
+    writeFile: (path, text) => events.push(['write', path, JSON.parse(text)]),
+    appendFile: () => {},
+    stdout: (t) => events.push(['stdout', t]),
+  })
+  assert.equal(code, 1)
+  const write = events.find(([k]) => k === 'write')
+  assert.ok(write, 'the artifact was written')
+  assert.equal(write[2].packages.find((p) => p.name === 'approval').checks.test, 'fail')
+  assert.ok(write[2].packages.some((p) => p.checks.test === 'skipped'), 'the unreached tail is recorded skipped')
+  const out = events.filter(([k]) => k === 'stdout').map(([, t]) => t).join('')
+  assert.ok(out.includes('::error file=approval,title=test::'))
+  assert.ok(out.includes('shard early exit at approval/test'))
+  assert.ok(out.includes('shard ordering: ascending-name fallback (changed-paths-unavailable; diff: event-path-absent; pin: pin-missing)'))
+})
+
+test('AC5 prohibitions: the workflow keeps no cancellation, no new needs/scheduling, no checks/statuses write (structural, not a byte pin)', () => {
+  const wf = readFileSync(fileURLToPath(new URL('../.github/workflows/foreman-line-ci.yml', import.meta.url)), 'utf8')
+  assert.ok(!wf.includes('cancel-in-progress'), 'no sibling cancellation')
+  assert.ok(!/checks:\s*write/.test(wf) && !/statuses:\s*write/.test(wf), 'no Checks API / status emitter permission')
+  assert.ok(/fail-fast:\s*false/.test(wf), 'a red shard never cancels its siblings')
+  assert.ok(wf.includes('needs: [gate, sweep]') && wf.includes("if: ${{ !cancelled() }}"), 'the required test context still waits for every shard')
+  const src = readFileSync(fileURLToPath(new URL('./foreman-line-ci.mjs', import.meta.url)), 'utf8')
+  assert.ok(!src.includes('/check-runs') && !src.includes('/statuses/'), 'no Checks API call in the runner')
 })
