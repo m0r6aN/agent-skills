@@ -23,14 +23,24 @@
 
 ## State
 
-`cff_resume_p0_lint_pass_p3_shaping_undelivered` — resume 2026-10-08.
-CFF-P0 shaping output linted by the coordinator (`cff-p0-shaping-lint-2026-10-08.md`,
-PASS; every factual claim re-measured on disk) and committed docs-only on
-`feat/foreman-line-cff-p0`. Next: CFF-P0 build dispatch under the standing
-Gate 2 grant; CFF-P3 shaping re-dispatch (or developer re-issue) before its
-build. CFF-P1/P2/P4 still hold for the full-graph Gate 2 request.
+`cff_p0_p3_promoted_builders_step0_dispatched` — 2026-10-08 (second resume
+iteration). Both shaping outputs linted PASS (`cff-p0-shaping-lint-2026-10-08.md`,
+`cff-p3-shaping-lint-2026-10-08.md`), specs promoted `draft → active`, specs
+`INDEX.md` created (129 rows generated from frontmatter; 5 stale `active/`
+duplicates flagged — see the manifest's warning section, routed to owning
+lines). **Unit B vehicle RULED: Amendment `CFF-P3-A1` (§4.8)** — content
+ratified alone before Unit B code when CFF-P0's read-graph artifact is
+in-tree. Builder kickstarters issued; Step-0 restate-and-stop dispatches live:
+`cff_p0_builder`, `cff_p3_builder` (2026-10-08, session dir
+`/home/cmorgan76/Repos/agent-skills-coordination/sessions`). Next: rule the
+Step 0 restates → re-dispatch builds → closure checks → deterministic passes →
+two independent adversarial reviews each (CFF-P0's D7 deliverable: two
+reviews on the measurement) → Gate 3 is human. CFF-P1/P2/P4 hold for the
+full-graph Gate 2 request.
 
-Prior state `cff_gate2_granted_p0_p3_dispatched`:
+Prior state `cff_resume_p0_lint_pass_p3_shaping_undelivered` (2026-10-08
+first resume iteration) preceded; before that
+`cff_gate2_granted_p0_p3_dispatched`:
 
 Amendment package re-ratified ("1. ratify as written") and installed:
 D7/D8/D9/D10/D11 + Objective wording + graph edits + exit-criterion-7 clause.
@@ -86,3 +96,23 @@ conditions per COORDINATOR-PATTERN also apply.
   [`cff-p0-shaping-lint-2026-10-08.md`](cff-p0-shaping-lint-2026-10-08.md)
   (PASS; 30/27 gap, four dead waivers, CLI surface, D11 seams, and the AC5.6
   classification safety property all re-measured on disk).
+- 2026-10-08 — CFF-P3 coordinator lint + Unit B ruling:
+  [`cff-p3-shaping-lint-2026-10-08.md`](cff-p3-shaping-lint-2026-10-08.md)
+  (PASS; Amendment `CFF-P3-A1` named as the Unit B vehicle).
+- 2026-10-08 — promotions: CFF-P0 spec → `active` (`f9788222` on
+  `feat/foreman-line-cff-p0`), CFF-P3 spec → `active` (`12993dc3` on
+  `feat/foreman-line-cff-p3`); specs `INDEX.md` created in both; builder
+  kickstarters [`foreman-line-build-CFF-P0.md`](../../kickstarters/foreman-line-build-CFF-P0.md)
+  and [`foreman-line-build-CFF-P3.md`](../../kickstarters/foreman-line-build-CFF-P3.md)
+  (`df1ff702` on `chore/ci-fail-fast-charter`, copied into both worktrees).
+- 2026-10-08 — dispatches (Gate 2 standing grant): `cff_p0_builder` and
+  `cff_p3_builder` Step-0 restate-and-stop sessions (lesson #8); build
+  re-dispatch follows each ruled restate.
+- 2026-10-08 — **Step 0 restates RULED CORRECT** (both builders): gates G1–G4
+  verified, brief digests match coordinator-side sha256 (`5f351378…` CFF-P3,
+  `4fa8e5aa…` CFF-P0), Allowed Files exact (5 / 9 paths), inventories
+  accurate, zero writes before ruling. Builds re-dispatched:
+  `cff_p3_builder_r1` (Unit A) and `cff_p0_builder_r1` (AC1–AC6 recon).
+  Review dispatches follow each completion claim (two independent
+  adversarial reviews each; CFF-P0's D7 measurement: two reviews on the
+  deliverable). Gate 3 remains human.
