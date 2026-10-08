@@ -1,0 +1,132 @@
+name: cff-p0-readgraph-measure
+
+# CFF-P0 D7 read-graph MEASUREMENT VEHICLE — COORDINATOR RULING (2026-10-08).
+# This workflow lives SOLELY on the scratch branch `measure/cff-p0-read-graph`
+# cut for this ruling; it never merges anywhere and dies with that branch.
+# It is ADDITIVE ONLY — the pinned `.github/workflows/foreman-line-ci.yml` is
+# never read, imported, or modified by this file, and this file never forks
+# or modifies runner logic (D2): it runs the SAME `node
+# scripts/foreman-line-ci.mjs shard <i> <count> <npmCli> <outDir>` invocation
+# the pinned workflow runs, with ONE additive observation seam — a
+# NODE_OPTIONS loader/require hook (`tools/cff-p0-read-graph-probe.mjs`) that
+# only OBSERVES file opens at test time (imports and non-import couplings);
+# it never changes what runs or how it is scored.
+#
+# Trigger: push to the scratch branch only (ruling condition 4).
+# Environment: windows-latest, Node 24.19.0 — the TRUE pinned environment
+# from `.github/workflows/foreman-line-ci.yml` (ruling condition 3; lessons
+# #47/#48 — no substitution, no averaging).
+# Shape: the SAME 4-way shard matrix the pinned workflow's `sweep` job uses
+# (MAX_SHARDS=4; the gate/reuse-decision seam is skipped here on purpose —
+# this vehicle always runs the full discovery-order sweep over every
+# package, one measurement pass covering the entire swept set).
+
+on:
+  push:
+    branches:
+      - measure/cff-p0-read-graph
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  measure:
+    name: measure (shard ${{ matrix.shard }})
+    runs-on: windows-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3]
+    steps:
+      - name: Preserve repository LF bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24.19.0'
+
+      - name: Record host fingerprint (condition 4)
+        shell: pwsh
+        run: |
+          node -e "fs=require('fs');fs.writeFileSync('read-graph-fingerprint.json', JSON.stringify({ node: process.version, versions: process.versions, platform: process.platform, arch: process.arch, release: process.release, env_os: process.env.RUNNER_OS, env_arch: process.env.RUNNER_ARCH, run_id: process.env.GITHUB_RUN_ID, run_attempt: process.env.GITHUB_RUN_ATTEMPT, job: process.env.GITHUB_JOB, sha: process.env.GITHUB_SHA, shard: '${{ matrix.shard }}' }, null, 2) + String.fromCharCode(10))"
+          Get-Content read-graph-fingerprint.json
+
+      - name: Run the instrumented sweep (observe-only; NODE_OPTIONS loader seam — D2)
+        shell: pwsh
+        run: |
+          $npmCli = Join-Path (Split-Path (Get-Command node).Source) 'node_modules/npm/bin/npm-cli.js'
+          $probe = Join-Path $PWD 'tools/cff-p0-read-graph-probe.mjs'
+          $captureDir = Join-Path $PWD 'read-graph-capture'
+          New-Item -ItemType Directory -Force -Path $captureDir | Out-Null
+          $env:NODE_OPTIONS = "--require=$probe"
+          $env:READGRAPH_CAPTURE_DIR = $captureDir
+          node scripts/foreman-line-ci.mjs shard ${{ matrix.shard }} 4 "$npmCli" read-graph-shard-outcomes
+          "SWEEP_EXIT_CODE=$LASTEXITCODE" | Out-File -FilePath read-graph-sweep-exit.txt -Encoding utf8
+          Remove-Item Env:NODE_OPTIONS -ErrorAction SilentlyContinue
+          Remove-Item Env:READGRAPH_CAPTURE_DIR -ErrorAction SilentlyContinue
+          Write-Output "sweep exit code (observational only — not a job failure signal): $LASTEXITCODE"
+
+      - name: Consolidate this shard's raw capture (condition 4/5)
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        run: |
+          node -e "
+          const fs = require('fs');
+          const path = require('path');
+          const dir = 'read-graph-capture';
+          const files = fs.existsSync(dir) ? fs.readdirSync(dir).filter(f => f.endsWith('.jsonl')) : [];
+          const records = [];
+          for (const f of files) {
+            const text = fs.readFileSync(path.join(dir, f), 'utf8');
+            for (const line of text.split(/\r?\n/)) {
+              if (!line) continue;
+              try { records.push(JSON.parse(line)); } catch {}
+            }
+          }
+          const outcomesPath = path.join('read-graph-shard-outcomes', 'shard-outcomes.json');
+          const outcomes = fs.existsSync(outcomesPath) ? JSON.parse(fs.readFileSync(outcomesPath, 'utf8')) : null;
+          const fingerprint = fs.existsSync('read-graph-fingerprint.json') ? JSON.parse(fs.readFileSync('read-graph-fingerprint.json', 'utf8')) : null;
+          const exitLine = fs.existsSync('read-graph-sweep-exit.txt') ? fs.readFileSync('read-graph-sweep-exit.txt', 'utf8').trim() : null;
+          const payload = {
+            schema: 'foreman-line-ci/read-graph-raw-capture@1',
+            vehicle_branch: 'measure/cff-p0-read-graph',
+            commit_sha: process.env.GITHUB_SHA,
+            run_id: process.env.GITHUB_RUN_ID,
+            run_attempt: process.env.GITHUB_RUN_ATTEMPT,
+            job: process.env.GITHUB_JOB,
+            shard: ${{ matrix.shard }},
+            shard_count: 4,
+            sweep_exit: exitLine,
+            fingerprint,
+            record_count: records.length,
+            records,
+            shard_outcomes: outcomes,
+          };
+          fs.mkdirSync('read-graph-raw', { recursive: true });
+          fs.writeFileSync(path.join('read-graph-raw', 'read-graph-raw-capture-shard-${{ matrix.shard }}.json'), JSON.stringify(payload, null, 2));
+          console.log('shard ${{ matrix.shard }} records:', records.length);
+          "
+
+      - name: Upload raw capture artifact (condition 4)
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: read-graph-raw-capture-shard-${{ matrix.shard }}
+          path: read-graph-raw/read-graph-raw-capture-shard-${{ matrix.shard }}.json
+          if-no-files-found: error
+
+      - name: Upload shard outcomes artifact (observational parity with pinned workflow)
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: read-graph-shard-outcomes-${{ matrix.shard }}
+          path: read-graph-shard-outcomes/shard-outcomes.json
+          if-no-files-found: warn
