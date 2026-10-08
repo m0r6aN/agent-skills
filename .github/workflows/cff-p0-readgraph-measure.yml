@@ -74,7 +74,7 @@ jobs:
           Remove-Item Env:READGRAPH_CAPTURE_DIR -ErrorAction SilentlyContinue
           Write-Output "sweep exit code (observational only — not a job failure signal): $LASTEXITCODE"
 
-      - name: Consolidate this shard's raw capture (condition 4/5)
+      - name: Dedupe and shrink this shard's raw capture (streaming — avoid in-memory JSON blowup)
         if: ${{ !cancelled() }}
         shell: pwsh
         run: |
@@ -83,44 +83,37 @@ jobs:
           const path = require('path');
           const dir = 'read-graph-capture';
           const files = fs.existsSync(dir) ? fs.readdirSync(dir).filter(f => f.endsWith('.jsonl')) : [];
-          const records = [];
+          const seen = new Set();
+          const out = fs.createWriteStream(path.join(dir, '__deduped.jsonl'));
+          let kept = 0, total = 0;
           for (const f of files) {
             const text = fs.readFileSync(path.join(dir, f), 'utf8');
             for (const line of text.split(/\r?\n/)) {
               if (!line) continue;
-              try { records.push(JSON.parse(line)); } catch {}
+              total++;
+              let rec;
+              try { rec = JSON.parse(line); } catch { continue; }
+              const key = rec.kind + ':' + rec.path;
+              if (seen.has(key)) continue;
+              seen.add(key);
+              kept++;
+              out.write(JSON.stringify({ kind: rec.kind, path: rec.path, thread: rec.thread }) + String.fromCharCode(10));
             }
           }
-          const outcomesPath = path.join('read-graph-shard-outcomes', 'shard-outcomes.json');
-          const outcomes = fs.existsSync(outcomesPath) ? JSON.parse(fs.readFileSync(outcomesPath, 'utf8')) : null;
-          const fingerprint = fs.existsSync('read-graph-fingerprint.json') ? JSON.parse(fs.readFileSync('read-graph-fingerprint.json', 'utf8')) : null;
-          const exitLine = fs.existsSync('read-graph-sweep-exit.txt') ? fs.readFileSync('read-graph-sweep-exit.txt', 'utf8').trim() : null;
-          const payload = {
-            schema: 'foreman-line-ci/read-graph-raw-capture@1',
-            vehicle_branch: 'measure/cff-p0-read-graph',
-            commit_sha: process.env.GITHUB_SHA,
-            run_id: process.env.GITHUB_RUN_ID,
-            run_attempt: process.env.GITHUB_RUN_ATTEMPT,
-            job: process.env.GITHUB_JOB,
-            shard: ${{ matrix.shard }},
-            shard_count: 4,
-            sweep_exit: exitLine,
-            fingerprint,
-            record_count: records.length,
-            records,
-            shard_outcomes: outcomes,
-          };
-          fs.mkdirSync('read-graph-raw', { recursive: true });
-          fs.writeFileSync(path.join('read-graph-raw', 'read-graph-raw-capture-shard-${{ matrix.shard }}.json'), JSON.stringify(payload, null, 2));
-          console.log('shard ${{ matrix.shard }} records:', records.length);
+          out.end();
+          console.log('shard ${{ matrix.shard }}: total records', total, 'unique (kind,path) edges', kept, 'from', files.length, 'per-pid files');
           "
 
-      - name: Upload raw capture artifact (condition 4)
+      - name: Upload raw capture artifact (condition 4) — raw per-pid jsonl + deduped edges + outcomes + fingerprint
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: read-graph-raw-capture-shard-${{ matrix.shard }}
-          path: read-graph-raw/read-graph-raw-capture-shard-${{ matrix.shard }}.json
+          path: |
+            read-graph-capture/
+            read-graph-shard-outcomes/shard-outcomes.json
+            read-graph-fingerprint.json
+            read-graph-sweep-exit.txt
           if-no-files-found: error
 
       - name: Upload shard outcomes artifact (observational parity with pinned workflow)
