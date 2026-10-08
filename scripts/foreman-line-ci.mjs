@@ -885,27 +885,40 @@ export function loadReadGraph({ root, readFile = readFileSync } = {}) {
 
 /**
  * AC2 consumption contract. Accepts ONLY a document whose `schema` is exactly
- * READ_GRAPH_SCHEMA, whose `projections.affection_pin` maps package name ->
- * array of path strings (a shape that can express positive coverage only), and
- * whose optional `named_variance_edges` are `{ package, path }` objects (R15:
- * a variance edge ALWAYS adds affection, never removes). Any exclusion-shaped
- * key or any other shape is a malformed pin. Returns the affection relation as
- * Map<name, path[]> (variance edges merged in — union, never subtraction).
+ * READ_GRAPH_SCHEMA and whose per-package read-graph entries `packages` map
+ * package name -> array of path strings (the package's full measured read
+ * set, own directory included — a shape that can express positive coverage
+ * only). The optional `projections.affection_pin` (CFF-P0's external-only
+ * projection, a subset of `packages`) must have the same positive-only shape
+ * and is unioned in; the optional `named_variance_edges` are `{ package, path }`
+ * objects (R15: a variance edge ALWAYS adds affection, never removes). Any
+ * exclusion-shaped key or any other shape is a malformed pin. Returns the
+ * affection relation as Map<name, path[]> — union only, never subtraction.
  */
 export function validateReadGraph(doc) {
   const bad = (reason) => ({ ok: false, reason, affection: null })
   if (!isPlainObject(doc)) return bad('pin-malformed')
   if (doc.schema !== READ_GRAPH_SCHEMA) return bad('pin-schema-mismatch')
   if (Object.keys(doc).some(isExclusionShapedKey)) return bad('pin-exclusion-shaped')
-  const projections = doc.projections
-  if (!isPlainObject(projections)) return bad('pin-malformed')
-  if (Object.keys(projections).some(isExclusionShapedKey)) return bad('pin-exclusion-shaped')
-  const pin = projections.affection_pin
-  if (!isPlainObject(pin)) return bad('pin-malformed')
   const affection = new Map()
-  for (const [name, paths] of Object.entries(pin)) {
-    if (!Array.isArray(paths) || !paths.every((p) => typeof p === 'string')) return bad('pin-entry-not-positive')
-    affection.set(name, [...paths])
+  const addEntries = (relation) => {
+    for (const [name, paths] of Object.entries(relation)) {
+      if (!Array.isArray(paths) || !paths.every((p) => typeof p === 'string')) return false
+      affection.set(name, [...(affection.get(name) ?? []), ...paths])
+    }
+    return true
+  }
+  if (!isPlainObject(doc.packages)) return bad('pin-malformed')
+  if (!addEntries(doc.packages)) return bad('pin-entry-not-positive')
+  const projections = doc.projections
+  if (projections !== undefined) {
+    if (!isPlainObject(projections)) return bad('pin-malformed')
+    if (Object.keys(projections).some(isExclusionShapedKey)) return bad('pin-exclusion-shaped')
+    const pin = projections.affection_pin
+    if (pin !== undefined) {
+      if (!isPlainObject(pin)) return bad('pin-malformed')
+      if (!addEntries(pin)) return bad('pin-entry-not-positive')
+    }
   }
   const edges = doc.named_variance_edges
   if (edges !== undefined) {

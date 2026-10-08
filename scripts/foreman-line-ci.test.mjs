@@ -1950,8 +1950,13 @@ test('a failing check re-emits its complete captured stdout and stderr in a fail
 const PX = ['alpha', 'beta', 'delta', 'gamma'] // code-point sorted; shardCount 1 -> mine === PX
 const pxDir = (name) => `plugins/foreman-line/${name}`
 
+// CFF-P0's artifact shape: `packages` = each package's full measured read set
+// (own directory included); `projections.affection_pin` = the external-only
+// subset. The fixture mirrors that: affection_pin carries only the
+// non-own-directory paths of each entry.
 function pinDoc(affection, extra = {}) {
-  return { schema: READ_GRAPH_SCHEMA, projections: { affection_pin: affection }, named_variance_edges: [], ...extra }
+  const external = Object.fromEntries(Object.entries(affection).map(([n, ps]) => [n, ps.filter((p) => !p.startsWith(pxDir(n)))]))
+  return { schema: READ_GRAPH_SCHEMA, packages: affection, projections: { affection_pin: external }, named_variance_edges: [], ...extra }
 }
 
 // A pin where each package reads only its own directory: changing a file under
@@ -2030,11 +2035,13 @@ for (const [label, broken, repaired, changed = PROXIMATE_GAMMA] of [
   ['malformed schema id (@2)', { ...SELF_PIN, schema: 'foreman-line-ci/read-graph@2' }, SELF_PIN],
   ['schema field absent ($schema only)', (() => { const d = { ...SELF_PIN, $schema: READ_GRAPH_SCHEMA }; delete d.schema; return d })(), SELF_PIN],
   ['non-object pin (array)', [SELF_PIN], SELF_PIN],
-  ['affection_pin absent', { schema: READ_GRAPH_SCHEMA, projections: {} }, SELF_PIN],
+  ['per-package read-graph entries absent (no packages field)', { schema: READ_GRAPH_SCHEMA, projections: SELF_PIN.projections }, SELF_PIN],
+  ['non-object projections', { ...SELF_PIN, projections: [] }, SELF_PIN],
   ['exclusion-shaped top-level field (excludes)', { ...SELF_PIN, excludes: { gamma: [] } }, SELF_PIN],
   ['exclusion-shaped projection (not_affected)', { ...SELF_PIN, projections: { ...SELF_PIN.projections, not_affected: {} } }, SELF_PIN],
-  ['exclusion-shaped per-package entry (object, not a positive path list)', pinDoc({ ...SELF_PIN.projections.affection_pin, beta: { paths: [pxDir('beta')], excludes: ['x'] } }), SELF_PIN],
-  ['non-string path inside an entry', pinDoc({ ...SELF_PIN.projections.affection_pin, beta: [42] }), SELF_PIN],
+  ['exclusion-shaped per-package entry (object, not a positive path list)', { ...SELF_PIN, packages: { ...SELF_PIN.packages, beta: { paths: [pxDir('beta')], excludes: ['x'] } } }, SELF_PIN],
+  ['non-string path inside an entry', { ...SELF_PIN, packages: { ...SELF_PIN.packages, beta: [42] } }, SELF_PIN],
+  ['exclusion-shaped affection_pin entry', { ...SELF_PIN, projections: { affection_pin: { beta: { excludes: [pxDir('beta')] } } } }, SELF_PIN],
   ['exclusion-shaped variance edge (skip flag)', { ...SELF_PIN, named_variance_edges: [{ package: 'beta', path: pxDir('beta'), skip: true }] }, SELF_PIN],
   ['malformed variance edge (no path)', { ...SELF_PIN, named_variance_edges: [{ package: 'beta' }] }, SELF_PIN],
   ['thrown error mid-computation (throwing accessor)', { schema: READ_GRAPH_SCHEMA, get projections() { throw new Error('boom') } }, SELF_PIN],
@@ -2050,6 +2057,20 @@ for (const [label, broken, repaired, changed = PROXIMATE_GAMMA] of [
     assert.deepEqual(control.order, ['gamma', 'alpha', 'beta', 'delta'])
   })
 }
+
+test('AC1: the read-graph entry is the package\'s full measured read set — an OWN-source change makes it proximate, and external affection_pin edges add', () => {
+  // the CFF-P0 shape: packages[x] holds own-directory + external reads; affection_pin[x] holds the external subset only
+  const doc = {
+    schema: READ_GRAPH_SCHEMA,
+    packages: { delta: [pxDir('delta'), `${pxDir('delta')}/src/index.ts`], gamma: [pxDir('gamma')] },
+    projections: { affection_pin: { gamma: ['plugins/foreman-line/shared/lib.ts'] } },
+  }
+  assert.deepEqual(pxRun({ changedPaths: [`${pxDir('delta')}/src/deep/file.ts`], readGraph: doc }).order, ['delta', 'alpha', 'beta', 'gamma'])
+  assert.deepEqual(pxRun({ changedPaths: ['plugins/foreman-line/shared/lib.ts'], readGraph: doc }).order, ['gamma', 'alpha', 'beta', 'delta'])
+  // projections are optional (packages alone is a complete entry); an absent affection_pin never removes a package
+  const noProjection = { schema: READ_GRAPH_SCHEMA, packages: doc.packages }
+  assert.deepEqual(pxRun({ changedPaths: [`${pxDir('delta')}/src/x.ts`], readGraph: noProjection }).order, ['delta', 'alpha', 'beta', 'gamma'])
+})
 
 test('AC2 R15: a variance-marked edge always ADDS a package to the proximate group; its absence never removes one', () => {
   const base = pinDoc({ beta: [pxDir('beta')] })
@@ -2124,7 +2145,10 @@ test('AC1/AC2 CLI wiring: the shard CLI consumes the D11 seam + the pin and neve
 
 test('AC1 grep: the D7 pin is consumed in exactly one validator and never filters `mine` (no exclusion path)', () => {
   const source = readFileSync(fileURLToPath(new URL('./foreman-line-ci.mjs', import.meta.url)), 'utf8')
-  assert.equal(source.split('affection_pin').length - 1, 2, 'affection_pin is read only inside validateReadGraph (doc + read)')
+  const validator = source.slice(source.indexOf('export function validateReadGraph('), source.indexOf('function normalizeProximityPath'))
+  const outside = source.replace(validator, '')
+  assert.ok(!/\bdoc\./.test(outside) && !/\breadGraph\./.test(source) && !/\breadGraph\[/.test(source), 'the pin document\'s fields are read only inside validateReadGraph')
+  assert.ok(validator.includes('doc.packages') && validator.includes('projections.affection_pin') && validator.includes('doc.named_variance_edges'))
   const runShardBody = source.slice(source.indexOf('export function runShard('), source.indexOf('// ─── AC3: reconciliation'))
   assert.ok(runShardBody.includes('for (const name of ordering.order)'), 'phase 2 iterates the ordering')
   assert.ok(runShardBody.includes('packages.filter((p) => mine.includes(p.name))'), 'the artifact still carries every assigned package')
