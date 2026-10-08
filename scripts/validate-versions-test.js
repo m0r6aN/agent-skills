@@ -7,80 +7,185 @@ const os = require("node:os");
 const path = require("node:path");
 const test = require("node:test");
 
-const manifestPaths = [
-  "plugin.json",
-  ".codex-plugin/plugin.json",
-  ".claude-plugin/plugin.json",
-  ".claude-plugin/marketplace.json",
-  ".agents/plugins/marketplace.json",
-];
+const validator = path.join(__dirname, "validate-versions.js");
 
-function readManifestVersions(manifestPath) {
-  const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
-  if (Array.isArray(manifest.plugins)) {
-    return manifest.plugins.map((plugin, index) => ({
-      label: plugin?.name ?? `#${index}`,
-      version: plugin?.version,
-    }));
-  }
-  return [{ label: manifestPath, version: manifest.version }];
+// Per-plugin version model: root manifests track the release tag; every
+// marketplace entry binds the version of the plugin manifest it points at.
+function makeFixtureRepo() {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "versions-"));
+  const write = (rel, obj) => {
+    const full = path.join(dir, rel);
+    fs.mkdirSync(path.dirname(full), { recursive: true });
+    fs.writeFileSync(full, JSON.stringify(obj));
+  };
+  write("plugin.json", { version: "9.9.9" });
+  write(".codex-plugin/plugin.json", { version: "9.9.9" });
+  write(".claude-plugin/plugin.json", { version: "9.9.9" });
+  write("plugins/foreman-line/.claude-plugin/plugin.json", { version: "9.9.9" });
+  write("plugins/foreman-line/.codex-plugin/plugin.json", { version: "9.9.9" });
+  write("plugins/audit-suite/.claude-plugin/plugin.json", { version: "9.9.9" });
+  write(".claude-plugin/marketplace.json", {
+    plugins: [
+      { name: "agent-skills", source: "./", version: "9.9.9" },
+      {
+        name: "foreman-line",
+        source: "./plugins/foreman-line",
+        version: "9.9.9",
+      },
+      {
+        name: "audit-suite",
+        source: "./plugins/audit-suite",
+        version: "9.9.9",
+      },
+    ],
+  });
+  write(".agents/plugins/marketplace.json", {
+    plugins: [
+      {
+        name: "agent-skills",
+        source: { source: "local", path: "./" },
+        version: "9.9.9",
+      },
+      {
+        name: "foreman-line",
+        source: { source: "local", path: "./plugins/foreman-line" },
+        version: "9.9.9",
+      },
+    ],
+  });
+  const git = (args) => execFileSync("git", args, { cwd: dir, stdio: "pipe" });
+  git(["init", "-q"]);
+  git(["config", "user.email", "test@example.com"]);
+  git(["config", "user.name", "test"]);
+  git(["add", "."]);
+  git(["commit", "-qm", "fixture"]);
+  git(["tag", "9.9.9"]);
+  return { dir, write };
 }
 
-test("all plugin manifests use the latest release tag", () => {
-  const expectedVersion = execFileSync(
-    "git",
-    ["describe", "--tags", "--abbrev=0", "--match", "[0-9]*.[0-9]*.[0-9]*"],
-    { encoding: "utf8" },
-  ).trim();
+function runValidator(dir) {
+  return execFileSync(process.execPath, [validator], {
+    cwd: dir,
+    stdio: "pipe",
+  });
+}
 
-  for (const manifestPath of manifestPaths) {
-    for (const { label, version } of readManifestVersions(manifestPath)) {
-      assert.equal(
-        version,
-        expectedVersion,
-        `${manifestPath} [${label}] must use version ${expectedVersion}`,
-      );
-    }
+test("validate-versions passes on the repository", () => {
+  const out = runValidator(path.join(__dirname, ".."));
+  assert.match(String(out), /All plugin manifests are consistent/);
+});
+
+test("fixture repo passes with per-plugin versions (positive control)", () => {
+  const { dir, write } = makeFixtureRepo();
+  try {
+    write(".claude-plugin/marketplace.json", {
+      plugins: [
+        { name: "agent-skills", source: "./", version: "9.9.9" },
+        {
+          name: "foreman-line",
+          source: "./plugins/foreman-line",
+          version: "0.2.0",
+        },
+        {
+          name: "audit-suite",
+          source: "./plugins/audit-suite",
+          version: "9.9.9",
+        },
+      ],
+    });
+    write("plugins/foreman-line/.claude-plugin/plugin.json", {
+      version: "0.2.0",
+    });
+    write("plugins/foreman-line/.codex-plugin/plugin.json", {
+      version: "0.2.0",
+    });
+    write(".agents/plugins/marketplace.json", {
+      plugins: [
+        {
+          name: "agent-skills",
+          source: { source: "local", path: "./" },
+          version: "9.9.9",
+        },
+        {
+          name: "foreman-line",
+          source: { source: "local", path: "./plugins/foreman-line" },
+          version: "0.2.0",
+        },
+      ],
+    });
+    runValidator(dir);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
   }
 });
 
 test("rejects a stale non-first marketplace entry (negative probe)", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "versions-neg-"));
+  const { dir, write } = makeFixtureRepo();
   try {
-    const write = (rel, obj) => {
-      const full = path.join(dir, rel);
-      fs.mkdirSync(path.dirname(full), { recursive: true });
-      fs.writeFileSync(full, JSON.stringify(obj));
-    };
-    write("plugin.json", { version: "9.9.9" });
-    write(".codex-plugin/plugin.json", { version: "9.9.9" });
-    write(".claude-plugin/plugin.json", { version: "9.9.9" });
     write(".claude-plugin/marketplace.json", {
       plugins: [
-        { name: "foreman-line", version: "9.9.9" },
-        { name: "audit-suite", version: "0.0.0" },
+        { name: "agent-skills", source: "./", version: "9.9.9" },
+        {
+          name: "foreman-line",
+          source: "./plugins/foreman-line",
+          version: "9.9.9",
+        },
+        {
+          name: "audit-suite",
+          source: "./plugins/audit-suite",
+          version: "0.0.0",
+        },
       ],
     });
+    assert.throws(() => runValidator(dir), /\[audit-suite\] has version 0\.0\.0/);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("rejects a cross-marketplace entry drift (negative probe)", () => {
+  const { dir, write } = makeFixtureRepo();
+  try {
     write(".agents/plugins/marketplace.json", {
-      plugins: [{ name: "agent-skills", version: "9.9.9" }],
+      plugins: [
+        {
+          name: "agent-skills",
+          source: { source: "local", path: "./" },
+          version: "9.9.9",
+        },
+        {
+          name: "foreman-line",
+          source: { source: "local", path: "./plugins/foreman-line" },
+          version: "0.6.9",
+        },
+      ],
     });
-    const git = (args) =>
-      execFileSync("git", args, { cwd: dir, stdio: "pipe" });
-    git(["init", "-q"]);
-    git(["config", "user.email", "test@example.com"]);
-    git(["config", "user.name", "test"]);
-    git(["add", "."]);
-    git(["commit", "-qm", "fixture"]);
-    git(["tag", "9.9.9"]);
     assert.throws(
-      () =>
-        execFileSync(
-          process.execPath,
-          [path.join(__dirname, "validate-versions.js")],
-          { cwd: dir, stdio: "pipe" },
-        ),
-      /\[audit-suite\] has version 0\.0\.0/,
+      () => runValidator(dir),
+      /\.agents\/plugins\/marketplace\.json \[foreman-line\] has version 0\.6\.9/,
     );
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("rejects disagreeing plugin manifests (negative probe)", () => {
+  const { dir, write } = makeFixtureRepo();
+  try {
+    write("plugins/foreman-line/.codex-plugin/plugin.json", {
+      version: "8.8.8",
+    });
+    assert.throws(() => runValidator(dir), /plugin manifests disagree/);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("rejects a root manifest drift from the release tag (negative probe)", () => {
+  const { dir, write } = makeFixtureRepo();
+  try {
+    write("plugin.json", { version: "8.8.8" });
+    assert.throws(() => runValidator(dir), /\[root\] has version 8\.8\.8/);
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
