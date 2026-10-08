@@ -26,16 +26,23 @@ import {
   ForemanCiError,
   MAX_SHARDS,
   OUTCOMES_SCHEMA,
+  READ_GRAPH_SCHEMA,
   WAIVED_EXCLUSIONS,
   assignShards,
+  computeShardOrder,
   discoverPackages,
   effectiveDecision,
+  evaluateWaiver,
   failingTestNames,
+  loadReadGraph,
+  orderShardPackages,
+  proximatePackages,
   reconcile,
   run,
   runCli,
   runShard,
   sumFailTotals,
+  validateReadGraph,
   verdict,
   waiverFor,
 } from './foreman-line-ci.mjs'
@@ -1917,4 +1924,192 @@ test('a failing check re-emits its complete captured stdout and stderr in a fail
   assert.match(emitted, / {4}at tests\/example\.test\.ts:7:3/)
   assert.match(emitted, /stderr tail/)
   assert.deepEqual(result.failures, [{ package: 'approval', check: 'test', detail: 'exit code 1' }])
+})
+
+// ─── CFF-P1 AC1/AC2/AC8: change-proximity ordering + fail-closed pin contract ─
+
+const PX = ['alpha', 'beta', 'delta', 'gamma'] // code-point sorted; shardCount 1 -> mine === PX
+const pxDir = (name) => `plugins/foreman-line/${name}`
+
+function pinDoc(affection, extra = {}) {
+  return { schema: READ_GRAPH_SCHEMA, projections: { affection_pin: affection }, named_variance_edges: [], ...extra }
+}
+
+// A pin where each package reads only its own directory: changing a file under
+// a package's directory makes exactly that package proximate.
+const SELF_PIN = pinDoc(Object.fromEntries(PX.map((n) => [n, [pxDir(n)]])))
+const changedFor = (subset) => subset.map((n) => `${pxDir(n)}/src/changed.ts`)
+
+function pxRun({ changedPaths = null, readGraph = null, spawn = () => ({ status: 0 }), waivers = [], echo = null, annotate = null, names = PX } = {}) {
+  const calls = []
+  const result = runShard({
+    root,
+    npmCli,
+    spawn: (...args) => {
+      calls.push(args)
+      return spawn(...args)
+    },
+    shardIndex: 0,
+    shardCount: 1,
+    discover: () => [...names],
+    waivers,
+    echo,
+    annotate,
+    changedPaths,
+    readGraph,
+  })
+  const checkCalls = calls.filter(([, args]) => args[1] === 'run')
+  const pairs = checkCalls.map(([, args, options]) => `${basename(options.cwd)}/${args[2]}`)
+  const order = []
+  for (const [, , options] of checkCalls) {
+    const name = basename(options.cwd)
+    if (order[order.length - 1] !== name) order.push(name)
+  }
+  return { result, calls, pairs, order }
+}
+
+const TODAY = pxRun() // no proximity inputs: today's order, the fallback reference
+
+test('AC1: proximate packages run before non-proximate; each group ascending; checks stay contiguous per package', () => {
+  const pin = pinDoc({ gamma: [pxDir('gamma')], beta: ['plugins/foreman-line/shared/x.ts'], alpha: [pxDir('alpha')], delta: [pxDir('delta')] })
+  const { order, pairs, result } = pxRun({ changedPaths: [`${pxDir('gamma')}/src/a.ts`, 'plugins/foreman-line/shared/x.ts'], readGraph: pin })
+  assert.deepEqual(order, ['beta', 'gamma', 'alpha', 'delta'])
+  assert.deepEqual(result.ordering.mode, 'proximity')
+  assert.deepEqual(result.ordering.proximate, ['beta', 'gamma'])
+  // no interleaving: every package's three checks are contiguous, in CHECKS order
+  assert.deepEqual(pairs, order.flatMap((n) => CHECKS.map((c) => `${n}/${c}`)))
+})
+
+test('AC1/AC8: for EVERY proximate subset the order is asc(subset) ++ asc(rest) and no package is dropped (partition)', () => {
+  for (let mask = 0; mask < 1 << PX.length; mask += 1) {
+    const subset = PX.filter((_, i) => (mask >> i) % 2 === 1)
+    const { order, pairs, result } = pxRun({ changedPaths: changedFor(subset), readGraph: SELF_PIN })
+    const rest = PX.filter((n) => !subset.includes(n))
+    assert.deepEqual(order, [...subset, ...rest], `mask ${mask}`)
+    // partition re-asserted post-reorder: every assigned package runs every check exactly once
+    assert.deepEqual([...pairs].sort(), PX.flatMap((n) => CHECKS.map((c) => `${n}/${c}`)).sort(), `mask ${mask}`)
+    assert.deepEqual(result.artifact.packages.map((p) => p.name), PX, 'the artifact stays in discovery order')
+    assert.equal(result.exitCode, 0)
+  }
+})
+
+test('AC1: the tie-break is ascending code-point order within each group (not discovery index, not pin order)', () => {
+  // pin lists packages in reverse; changed paths listed in reverse; the result is still ascending per group
+  const reversed = pinDoc(Object.fromEntries([...PX].reverse().map((n) => [n, [pxDir(n)]])))
+  const { order } = pxRun({ changedPaths: changedFor(['gamma', 'alpha']).reverse(), readGraph: reversed })
+  assert.deepEqual(order, ['alpha', 'gamma', 'beta', 'delta'])
+  assert.deepEqual(orderShardPackages(['a', 'b', 'c'], new Set(['c', 'a'])), ['a', 'c', 'b'])
+})
+
+// Every fail-closed row: the full spawn sequence is byte-identical to today's
+// order; the paired CONTROL (the same fixture with only the named defect
+// repaired) DOES reorder — so the equality is not vacuous (SC #11).
+const PROXIMATE_GAMMA = changedFor(['gamma'])
+for (const [label, broken, repaired, changed = PROXIMATE_GAMMA] of [
+  ['missing pin file (readGraph null)', null, SELF_PIN],
+  ['changed paths unavailable (D11 fail-closed null)', SELF_PIN, SELF_PIN, null],
+  ['malformed schema id (@2)', { ...SELF_PIN, schema: 'foreman-line-ci/read-graph@2' }, SELF_PIN],
+  ['schema field absent ($schema only)', (() => { const d = { ...SELF_PIN, $schema: READ_GRAPH_SCHEMA }; delete d.schema; return d })(), SELF_PIN],
+  ['non-object pin (array)', [SELF_PIN], SELF_PIN],
+  ['affection_pin absent', { schema: READ_GRAPH_SCHEMA, projections: {} }, SELF_PIN],
+  ['exclusion-shaped top-level field (excludes)', { ...SELF_PIN, excludes: { gamma: [] } }, SELF_PIN],
+  ['exclusion-shaped projection (not_affected)', { ...SELF_PIN, projections: { ...SELF_PIN.projections, not_affected: {} } }, SELF_PIN],
+  ['exclusion-shaped per-package entry (object, not a positive path list)', pinDoc({ ...SELF_PIN.projections.affection_pin, beta: { paths: [pxDir('beta')], excludes: ['x'] } }), SELF_PIN],
+  ['non-string path inside an entry', pinDoc({ ...SELF_PIN.projections.affection_pin, beta: [42] }), SELF_PIN],
+  ['exclusion-shaped variance edge (skip flag)', { ...SELF_PIN, named_variance_edges: [{ package: 'beta', path: pxDir('beta'), skip: true }] }, SELF_PIN],
+  ['malformed variance edge (no path)', { ...SELF_PIN, named_variance_edges: [{ package: 'beta' }] }, SELF_PIN],
+  ['thrown error mid-computation (throwing accessor)', { schema: READ_GRAPH_SCHEMA, get projections() { throw new Error('boom') } }, SELF_PIN],
+  ['thrown error mid-computation (non-string changed path)', SELF_PIN, SELF_PIN, [...PROXIMATE_GAMMA, 7]],
+]) {
+  test(`AC2/AC8 fail-closed -> byte-identical today's order: ${label}`, () => {
+    const broken_ = pxRun({ changedPaths: changed, readGraph: broken })
+    assert.deepEqual(broken_.calls, TODAY.calls, 'every spawn (installs + checks) is byte-identical to today')
+    assert.equal(broken_.result.ordering.mode, 'fallback')
+    assert.deepEqual(broken_.result.artifact, TODAY.result.artifact)
+    const control = pxRun({ changedPaths: PROXIMATE_GAMMA, readGraph: repaired })
+    assert.notDeepEqual(control.calls, TODAY.calls, 'control: the repaired fixture does reorder')
+    assert.deepEqual(control.order, ['gamma', 'alpha', 'beta', 'delta'])
+  })
+}
+
+test('AC2 R15: a variance-marked edge always ADDS a package to the proximate group; its absence never removes one', () => {
+  const base = pinDoc({ beta: [pxDir('beta')] })
+  // alpha has NO affection_pin entry at all; only a variance edge -> proximate
+  const withEdge = { ...base, named_variance_edges: [{ package: 'alpha', path: 'plugins/foreman-line/shared/env-only.json' }] }
+  const changed = [`${pxDir('beta')}/x.ts`, 'plugins/foreman-line/shared/env-only.json']
+  assert.deepEqual(pxRun({ changedPaths: changed, readGraph: withEdge }).order, ['alpha', 'beta', 'delta', 'gamma'])
+  // remove the variance edge: alpha drops back to non-proximate, beta (ordinary edge) is unaffected
+  assert.deepEqual(pxRun({ changedPaths: changed, readGraph: base }).order, ['beta', 'alpha', 'delta', 'gamma'])
+  // a variance edge on a package that also has ordinary edges never subtracts them
+  const unrelated = { ...base, named_variance_edges: [{ package: 'beta', path: 'elsewhere/never-changed' }] }
+  assert.deepEqual(pxRun({ changedPaths: changed, readGraph: unrelated }).result.ordering.proximate, ['beta'])
+  // the pure seam: a variance edge contributes to affection by union
+  const v = validateReadGraph(withEdge)
+  assert.ok(v.ok)
+  assert.deepEqual(v.affection.get('alpha'), ['plugins/foreman-line/shared/env-only.json'])
+})
+
+test('AC1: proximity is binary path containment, over-approximating on case and separators only', () => {
+  const affection = new Map([['p', ['Plugins\\Foreman-Line\\P']], ['q', ['plugins/foreman-line/q/file.ts']], ['r', ['plugins/foreman-line/rx']]])
+  assert.deepEqual([...proximatePackages(affection, ['plugins/foreman-line/p/src/a.ts'])], ['p'])
+  assert.deepEqual([...proximatePackages(affection, ['plugins/foreman-line/q/file.ts'])], ['q'])
+  // a sibling with a shared name prefix is NOT a directory prefix
+  assert.deepEqual([...proximatePackages(affection, ['plugins/foreman-line/rxy/a.ts'])], [])
+  assert.deepEqual([...proximatePackages(affection, [])], [])
+})
+
+test('AC2: the pin is read read-only, if and only if present; missing/unparseable resolve to null with a named reason', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'cff-p1-pin-'))
+  try {
+    assert.deepEqual(loadReadGraph({ root: dir }), { doc: null, reason: 'pin-missing' })
+    const pinDir = join(dir, 'plugins', 'foreman-line', 'docs', 'goals', 'ci-fail-fast', 'read-graph')
+    mkdirSync(pinDir, { recursive: true })
+    writeFileSync(join(pinDir, 'read-graph.json'), '{ not json')
+    assert.deepEqual(loadReadGraph({ root: dir }), { doc: null, reason: 'pin-unparseable' })
+    writeFileSync(join(pinDir, 'read-graph.json'), JSON.stringify(SELF_PIN))
+    const loaded = loadReadGraph({ root: dir })
+    assert.equal(loaded.reason, null)
+    assert.deepEqual(loaded.doc, SELF_PIN)
+    // read-only: the loader leaves the file byte-identical
+    assert.equal(readFileSync(join(pinDir, 'read-graph.json'), 'utf8'), JSON.stringify(SELF_PIN))
+  } finally {
+    rmSync(dir, { recursive: true, force: true })
+  }
+})
+
+test('AC1/AC2 CLI wiring: the shard CLI consumes the D11 seam + the pin and never throws on their failure', async () => {
+  for (const [label, seams, expectProximity] of [
+    ['proximity', { changedPathsFromEvent: () => ({ paths: ['plugins/foreman-line/verification/src/x.ts'], reason: null }), loadReadGraph: () => ({ doc: pinDoc({ verification: ['plugins/foreman-line/verification'] }), reason: null }) }, true],
+    ['diff seam throws', { changedPathsFromEvent: () => { throw new Error('boom') }, loadReadGraph: () => ({ doc: SELF_PIN, reason: null }) }, false],
+    ['loader throws', { changedPathsFromEvent: () => ({ paths: [], reason: null }), loadReadGraph: () => { throw new Error('boom') } }, false],
+    ['pin missing', { changedPathsFromEvent: () => ({ paths: [], reason: null }), loadReadGraph: () => ({ doc: null, reason: 'pin-missing' }) }, false],
+  ]) {
+    const out = []
+    const calls = []
+    const code = await runCli(['shard', '0', '1', npmCli, 'out-dir'], {}, {
+      ...seams,
+      spawn: (...args) => { calls.push(args); return { status: 0 } },
+      mkdir: () => {},
+      writeFile: () => {},
+      appendFile: () => {},
+      stdout: (t) => out.push(t),
+    })
+    assert.equal(code, 0, label)
+    const line = out.find((t) => t.startsWith('shard ordering: '))
+    assert.ok(line, label)
+    assert.equal(line.startsWith('shard ordering: proximity'), expectProximity, label)
+    const firstCheck = calls.find(([, args]) => args[1] === 'run')
+    if (expectProximity) assert.equal(basename(firstCheck[2].cwd), 'verification', 'the proximate package runs first')
+  }
+})
+
+test('AC1 grep: the D7 pin is consumed in exactly one validator and never filters `mine` (no exclusion path)', () => {
+  const source = readFileSync(fileURLToPath(new URL('./foreman-line-ci.mjs', import.meta.url)), 'utf8')
+  assert.equal(source.split('affection_pin').length - 1, 2, 'affection_pin is read only inside validateReadGraph (doc + read)')
+  const runShardBody = source.slice(source.indexOf('export function runShard('), source.indexOf('// ─── AC3: reconciliation'))
+  assert.ok(runShardBody.includes('for (const name of ordering.order)'), 'phase 2 iterates the ordering')
+  assert.ok(runShardBody.includes('packages.filter((p) => mine.includes(p.name))'), 'the artifact still carries every assigned package')
+  assert.ok(!/mine\s*=\s*mine\./.test(source) && !/mine\.splice\(/.test(source), 'no code path reassigns or splices mine')
+  // the runner computes no diff of its own (D11): no git invocation anywhere in it
+  assert.ok(!source.includes("'diff'") && !source.includes('"git"') && !source.includes("'git'"))
 })

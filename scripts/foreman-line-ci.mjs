@@ -35,6 +35,9 @@ import { appendFileSync, lstatSync, readFileSync, readdirSync, statSync, writeFi
 import { join } from 'node:path'
 import { createHash } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
+// D11 (CFF-P1 AC6): the ONE changed-paths source lives in ci-reuse.mjs; this
+// runner never computes a diff itself.
+import { changedPathsFromEvent } from './ci-reuse.mjs'
 
 export class ForemanCiError extends Error {
   constructor(message, cause) {
@@ -823,6 +826,143 @@ export function buildShardOutcomes({ shardIndex, shardCount, headSha, packages }
   }
 }
 
+// ─── CFF-P1 AC1/AC2: change-proximity ordering (D7 pin, consumed fail-safe) ─
+
+/**
+ * The D7 measured read graph (CFF-P0's artifact) — consumed READ-ONLY, if and
+ * only if present and schema-exact. Never written, never assumed present, and
+ * never used to exclude a package (ordering only — D7's fail-safe consumer).
+ */
+export const READ_GRAPH_SCHEMA = 'foreman-line-ci/read-graph@1'
+export const READ_GRAPH_PATH = Object.freeze([
+  'plugins', 'foreman-line', 'docs', 'goals', 'ci-fail-fast', 'read-graph', 'read-graph.json',
+])
+
+function isPlainObject(value) {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+/** A key that could carry negative coverage (exclusion semantics) of any spelling. */
+function isExclusionShapedKey(key) {
+  const k = String(key).toLowerCase().replace(/[^a-z]/g, '')
+  return ['exclu', 'notaffect', 'unaffect', 'skip', 'omit', 'negative'].some((stem) => k.includes(stem))
+}
+
+/** Read the pin from disk, read-only. Missing/unreadable/unparseable -> doc null + named reason. */
+export function loadReadGraph({ root, readFile = readFileSync } = {}) {
+  let raw
+  try {
+    raw = readFile(join(root, ...READ_GRAPH_PATH), 'utf8')
+  } catch (cause) {
+    return { doc: null, reason: cause && cause.code === 'ENOENT' ? 'pin-missing' : 'pin-unreadable' }
+  }
+  try {
+    return { doc: JSON.parse(raw), reason: null }
+  } catch {
+    return { doc: null, reason: 'pin-unparseable' }
+  }
+}
+
+/**
+ * AC2 consumption contract. Accepts ONLY a document whose `schema` is exactly
+ * READ_GRAPH_SCHEMA, whose `projections.affection_pin` maps package name ->
+ * array of path strings (a shape that can express positive coverage only), and
+ * whose optional `named_variance_edges` are `{ package, path }` objects (R15:
+ * a variance edge ALWAYS adds affection, never removes). Any exclusion-shaped
+ * key or any other shape is a malformed pin. Returns the affection relation as
+ * Map<name, path[]> (variance edges merged in — union, never subtraction).
+ */
+export function validateReadGraph(doc) {
+  const bad = (reason) => ({ ok: false, reason, affection: null })
+  if (!isPlainObject(doc)) return bad('pin-malformed')
+  if (doc.schema !== READ_GRAPH_SCHEMA) return bad('pin-schema-mismatch')
+  if (Object.keys(doc).some(isExclusionShapedKey)) return bad('pin-exclusion-shaped')
+  const projections = doc.projections
+  if (!isPlainObject(projections)) return bad('pin-malformed')
+  if (Object.keys(projections).some(isExclusionShapedKey)) return bad('pin-exclusion-shaped')
+  const pin = projections.affection_pin
+  if (!isPlainObject(pin)) return bad('pin-malformed')
+  const affection = new Map()
+  for (const [name, paths] of Object.entries(pin)) {
+    if (!Array.isArray(paths) || !paths.every((p) => typeof p === 'string')) return bad('pin-entry-not-positive')
+    affection.set(name, [...paths])
+  }
+  const edges = doc.named_variance_edges
+  if (edges !== undefined) {
+    if (!Array.isArray(edges)) return bad('pin-malformed')
+    for (const edge of edges) {
+      if (!isPlainObject(edge) || typeof edge.package !== 'string' || typeof edge.path !== 'string') {
+        return bad('pin-variance-edge-shape')
+      }
+      if (Object.keys(edge).some(isExclusionShapedKey)) return bad('pin-exclusion-shaped')
+      affection.set(edge.package, [...(affection.get(edge.package) ?? []), edge.path])
+    }
+  }
+  return { ok: true, reason: null, affection }
+}
+
+function normalizeProximityPath(path) {
+  let p = path.split('\\').join('/').toLowerCase()
+  while (p.endsWith('/')) p = p.slice(0, -1)
+  return p
+}
+
+/**
+ * AC1 binary, per-package proximity: a package is proximate when any of its
+ * pinned read paths equals a changed path or is a directory prefix of one.
+ * Matching is case-insensitive and separator-normalized — both only ever ADD
+ * matches (over-approximation). Returns the proximate Set; it is only ever
+ * used to ORDER, never to filter.
+ */
+export function proximatePackages(affection, changedPaths) {
+  const changed = changedPaths.map(normalizeProximityPath).filter((p) => p.length > 0)
+  const proximate = new Set()
+  for (const [name, paths] of affection) {
+    for (const raw of paths) {
+      const p = normalizeProximityPath(raw)
+      if (p.length === 0) continue
+      if (changed.some((c) => c === p || c.startsWith(`${p}/`))) {
+        proximate.add(name)
+        break
+      }
+    }
+  }
+  return proximate
+}
+
+/**
+ * AC1 ordering rule: proximate packages first, then non-proximate, each group
+ * in `mine`'s own (ascending code-point) order — a stable split of the input,
+ * so the two groups partition `mine` by construction. Ordering never excludes.
+ */
+export function orderShardPackages(mine, proximate) {
+  if (!(proximate instanceof Set)) return [...mine]
+  return [...mine.filter((n) => proximate.has(n)), ...mine.filter((n) => !proximate.has(n))]
+}
+
+/**
+ * AC1/AC2 total ordering decision for one shard. Missing changed paths (the
+ * D11 seam's fail-closed null), a missing or malformed pin, or ANY error while
+ * computing proximity falls back to `mine` exactly as assigned (today's
+ * ascending-name order, by reference — never a snapshot). The partition
+ * property is re-asserted after reordering; a violation also falls back.
+ */
+export function computeShardOrder({ mine, changedPaths = null, readGraph = null } = {}) {
+  const fallback = (reason) => ({ order: [...mine], mode: 'fallback', reason, proximate: [] })
+  try {
+    if (!Array.isArray(changedPaths)) return fallback('changed-paths-unavailable')
+    if (readGraph === null || readGraph === undefined) return fallback('pin-unavailable')
+    const validated = validateReadGraph(readGraph)
+    if (!validated.ok) return fallback(validated.reason)
+    const proximate = proximatePackages(validated.affection, changedPaths)
+    const order = orderShardPackages(mine, proximate)
+    if (order.length !== mine.length || !sameSet(order, mine)) return fallback('partition-violation')
+    return { order, mode: 'proximity', reason: null, proximate: order.filter((n) => proximate.has(n)) }
+  } catch {
+    return fallback('proximity-error')
+  }
+}
+
 // ─── per-shard executor (AC4) ──────────────────────────────────────────────
 
 /**
@@ -845,6 +985,8 @@ export function runShard({
   discover = discoverPackages,
   waivers = WAIVED_EXCLUSIONS,
   echo = null,
+  changedPaths = null,
+  readGraph = null,
 } = {}) {
   if (typeof npmCli !== 'string' || npmCli.length === 0) {
     throw new ForemanCiError('Refusing shard run: npmCli must be a non-empty string')
@@ -903,8 +1045,13 @@ export function runShard({
     }
   }
   // Phase 2: this shard's checks only; a failed install stops every check.
+  // CFF-P1 AC1/AC2: iteration ORDER only — proximate packages first, each
+  // group ascending; any unavailability/error falls back to `mine` as assigned.
+  // The order is fixed here, before any check runs, from the changed paths and
+  // the pin alone (no check output is ever read to decide it).
+  const ordering = computeShardOrder({ mine, changedPaths, readGraph })
   if (installsOk) {
-    for (const name of mine) {
+    for (const name of ordering.order) {
       for (const check of CHECKS) {
         const result = invoke(name, ['run', check, '--ignore-scripts'])
         if (result.status === 'pass') {
@@ -948,6 +1095,7 @@ export function runShard({
   return {
     exitCode: failed ? 1 : 0,
     outcomes: packages,
+    ordering: { mode: ordering.mode, reason: ordering.reason, order: [...ordering.order], proximate: [...ordering.proximate] },
     artifact: buildShardOutcomes({
       shardIndex,
       shardCount,
@@ -1251,8 +1399,23 @@ export async function runCli(argv, env = process.env, deps = {}) {
     const offline = extra.includes('--offline')
     const shardIndex = Number(index)
     const shardCount = Number(count)
+    const repoRoot = fileURLToPath(new URL('../', import.meta.url))
+    // CFF-P1 AC1/AC2/AC6: ordering inputs. Both seams are fail-closed (never
+    // throw); any failure here only disables proximity ordering for this run.
+    let diff = { paths: null, reason: 'diff-error' }
+    try {
+      diff = (deps.changedPathsFromEvent ?? changedPathsFromEvent)({ env })
+    } catch {
+      diff = { paths: null, reason: 'diff-error' }
+    }
+    let pin = { doc: null, reason: 'pin-unreadable' }
+    try {
+      pin = (deps.loadReadGraph ?? loadReadGraph)({ root: repoRoot })
+    } catch {
+      pin = { doc: null, reason: 'pin-unreadable' }
+    }
     const result = runShard({
-      root: fileURLToPath(new URL('../', import.meta.url)),
+      root: repoRoot,
       npmCli,
       spawn,
       shardIndex,
@@ -1262,7 +1425,15 @@ export async function runCli(argv, env = process.env, deps = {}) {
       // The rejection label carries its 4k payload (artifact parity, the
       // ruling's cap); plain check names are composed capped at 40 upstream.
       echo: (name, check, text) => stdout(`\n=== ${sanitizeField(name)} / ${sanitizeField(check, 4200)} output ===\n${text}\n`),
+      changedPaths: Array.isArray(diff?.paths) ? diff.paths : null,
+      readGraph: pin?.doc ?? null,
     })
+    const ord = result.ordering
+    stdout(
+      ord.mode === 'proximity'
+        ? `shard ordering: proximity (${ord.proximate.length} proximate first: ${sanitizeField(ord.proximate.join(', '), 2000)})\n`
+        : `shard ordering: ascending-name fallback (${sanitizeField(ord.reason, 60)}; diff: ${sanitizeField(diff?.reason ?? 'ok', 60)}; pin: ${sanitizeField(pin?.reason ?? 'present', 60)})\n`,
+    )
     const dir = outDir === undefined || outDir === '--offline' ? 'shard-outcomes' : outDir
     makeDir(dir, { recursive: true })
     writeFile(join(dir, 'shard-outcomes.json'), `${JSON.stringify(result.artifact, null, 2)}\n`)
