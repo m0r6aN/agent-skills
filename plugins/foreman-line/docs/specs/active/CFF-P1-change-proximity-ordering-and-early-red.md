@@ -107,9 +107,11 @@ the all-artifact verdict is decided (D6/D8's invariant).
   confirmed byte-identical to pure round-robin); `WAIVED_EXCLUSIONS` :517 (4
   entries, confirmed); `sameSet` :962, call sites :1047/:1089/:1108;
   `sanitizeField` :140 (control chars → space, bidi overrides → `?`, `::` →
-  `: :`, capped); `sanitizeOutput` :169 (keeps newlines/tabs, same `::`
-  neutralization, 200k cap — citation corrected from :175 at builder flag F1
-  / coordinator erratum E4, 2026-10-08); `verdict()` :1150 (`gateResult !== 'success'` →
+  `: :`, capped); `sanitizeOutput` :166 (keeps newlines/tabs, same `::`
+  neutralization, 200k cap — at this block's pinned base `145da132`; :175
+  was a body-line mis-citation, builder flag F1; the post-build tip shows
+  the export at :169 after this parcel's import-block growth — erratum E4
+  corrected under Amendment A2, 2026-10-08); `verdict()` :1150 (`gateResult !== 'success'` →
   `gate-failed` at :1151); `EXPECTED_SKIPS` :623 (empty, confirmed);
   `reconcile`'s `missing-checks`/`unexpected-skip`/`shard-fail`/`shard-error`
   codes :1058-1083; `runShard` :837 (today runs every check for every
@@ -221,13 +223,39 @@ this parcel's build or run time), the consumption code is built against the
   for the "is this package proximate" test — it only ever adds a package to
   the proximate group, never removes one.
 - **Fail-closed, per D6, by reference.** A **missing file**, a **malformed
-  pin**, or any error raised while computing the proximate set for the
-  current diff (§AC6) disables proximity computation for that run: every
-  package in the shard falls back to the single non-proximate group,
-  ascending-name order — i.e. **today's order**, named in D6 by reference to
-  `assignShards`/`runShard` as ratified, never a snapshot. This is NOT a
-  shard-membership fallback (AC2 never touches `assignShards`) — it is
-  scoped to ordering alone.
+  pin**, an **uncovered package** (Amendment CFF-P1-A2, below), or any error
+  raised while computing the proximate set for the current diff (§AC6)
+  disables proximity computation for that run: every package in the shard
+  falls back to the single non-proximate group, ascending-name order — i.e.
+  **today's order**, named in D6 by reference to `assignShards`/`runShard`
+  as ratified, never a snapshot. This is NOT a shard-membership fallback
+  (AC2 never touches `assignShards`) — it is scoped to ordering alone.
+
+- **Amendment CFF-P1-A2 (coordinator-ruled 2026-10-08, committed alone —
+  closes the lesson-#33 weakening Reviewer A caught between this spec and
+  charter D7/exit criterion 6):**
+  1. **Uncovered package = whole-run fallback.** Charter D7: "any uncovered
+     package, path, or environment-gated read fails closed to the full
+     discovery-order sweep." The pre-A2 text named only
+     missing/malformed/error as fallback triggers; a swept package with no
+     `packages[name]` entry (or a non-array entry) is an **uncovered
+     package** and now triggers the same whole-run fallback — per-package
+     silent degradation to the non-proximate group is NOT sufficient (a
+     package the pin doesn't cover gets no proximity decision made about
+     it at all). A changed *path* no package reads needs no trigger: every
+     group computation already lands those runs in ascending-name order.
+  2. **"Anywhere" made concrete (A1's exclusion-scan).** The malformed-pin
+     scan is recursive over the whole parsed structure, matching this named
+     key set exactly (case-insensitive): `excludes`, `excluded`,
+     `not-affected`, `not_affected`, `notAffected`, `exempt`, `ignore`.
+     Exact-key matching only — substring matching would false-positive on
+     legitimate keys like `platform_skips`. Variance entries are
+     shape-strict: exactly `{package, path}`, both strings; any extra or
+     missing key is malformed.
+  3. **Annotation emission is best-effort (D8 hardening).** A throwing
+     `::error`/`::warning` emit never aborts the phase-2 loop and never
+     loses the partial artifact — the failure is recorded and the loop
+     continues; the verdict path is untouched (it already fails closed).
 - **Criticality grading matches D7.** This parcel is the fail-safe consumer
   named in D7: a wrong proximity computation can only **mis-order** a
   shard's checks (latency effect), never skip one (coverage effect) — the
