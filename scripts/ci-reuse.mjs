@@ -436,6 +436,87 @@ export function parseNameStatusZ(raw) {
   return records
 }
 
+// ─── D11 shared diff seam (CFF-P1 AC6) ───────────────────────────────────────
+
+const ZERO_SHA = '0'.repeat(40)
+
+function defaultRepoGit(args, opts) {
+  return spawnSync('git', args, {
+    cwd: fileURLToPath(new URL('../', import.meta.url)),
+    encoding: 'buffer',
+    maxBuffer: 1 << 28,
+    input: opts?.input,
+  })
+}
+
+/**
+ * D11 (ci-fail-fast charter): the ONE changed-paths source for a CI run. No
+ * other file computes a diff; consumers (the sweep runner's change-proximity
+ * ordering) call this export and never `git diff` themselves.
+ *
+ * Base selection reads the event payload at `GITHUB_EVENT_PATH`: on
+ * `pull_request` the PR's `pull_request.base.sha`; on `push` `event.before`.
+ * Head is the run's `GITHUB_SHA`. The diff is `git diff --name-status -z
+ * <base> <head>`, parsed by `parseNameStatusZ`; every path (both sides of a
+ * rename/copy) is classified by `classifyPath` over `READER_SET`, and paths
+ * proven `ordinary_documentation` are dropped — no second classification
+ * engine, no divergent notion of "this path matters".
+ *
+ * Fail-closed: an absent `GITHUB_EVENT_PATH`, an unreadable or unparseable
+ * payload, any other event class, a missing / non-hex40 / all-zeros base or
+ * head SHA, a failed git invocation, or malformed diff output each return
+ * `paths: null` with a named `reason` — never a throw, and never an empty
+ * "no changes" set. Consumers must treat `paths: null` as proximity
+ * unavailable (full ascending-name order). Never reads gate-job output (rule 0
+ * empties it on push).
+ */
+export function changedPathsFromEvent({ env = process.env, readFile = readFileSync, git = defaultRepoGit } = {}) {
+  const failClosed = (reason) => ({ paths: null, reason })
+  try {
+    const eventPath = envString(env ?? {}, 'GITHUB_EVENT_PATH')
+    if (eventPath.length === 0) return failClosed('event-path-absent')
+    let raw
+    try {
+      raw = readFile(eventPath, 'utf8')
+    } catch {
+      return failClosed('event-unreadable')
+    }
+    let event
+    try {
+      event = JSON.parse(raw)
+    } catch {
+      return failClosed('event-unparseable')
+    }
+    if (typeof event !== 'object' || event === null || Array.isArray(event)) return failClosed('event-unparseable')
+    const eventName = envString(env, 'GITHUB_EVENT_NAME')
+    let baseSha
+    if (eventName === 'pull_request') {
+      const pr = event.pull_request
+      const base = typeof pr === 'object' && pr !== null ? pr.base : undefined
+      baseSha = typeof base === 'object' && base !== null ? base.sha : undefined
+    } else if (eventName === 'push') {
+      baseSha = event.before
+    } else {
+      return failClosed('event-class-unsupported')
+    }
+    if (typeof baseSha !== 'string' || !HEX40_RE.test(baseSha) || baseSha === ZERO_SHA) return failClosed('base-unresolved')
+    const headSha = envString(env, 'GITHUB_SHA')
+    if (!HEX40_RE.test(headSha) || headSha === ZERO_SHA) return failClosed('head-unresolved')
+    const diff = gitBytes(git, ['diff', '--name-status', '-z', baseSha, headSha])
+    if (diff.status !== 0) return failClosed('diff-failed')
+    const paths = new Set()
+    for (const change of parseNameStatusZ(diff.stdout)) {
+      for (const bytes of change.paths) {
+        const path = bytes.toString('latin1')
+        if (classifyPath(path) !== CLASS.ORDINARY) paths.add(path)
+      }
+    }
+    return { paths: [...paths].sort(), reason: null, eventName, baseSha, headSha }
+  } catch {
+    return failClosed('diff-error')
+  }
+}
+
 // ─── API seam boundary (fetch-shaped: url, init -> { status, text }) ──────────
 
 async function apiGet(api, url) {
