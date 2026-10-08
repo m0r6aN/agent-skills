@@ -88,6 +88,34 @@ as above bind; Gate 3 remains human.
 
 **Gate 3 — NOT delegated.** Verbatim from the ratified charter: "Every merge to
 a workflow, the CI runner, or the reuse/waiver machinery remains human-owned."
+**Merge cadence (developer, 2026-10-08, "batch them"):** PRs are BATCHED —
+the coordinator holds each merge-ready chain until a second chain is ready,
+then presents both in one review round-trip. Accepted tradeoff (named): CFF-P2
+shapes only after CFF-P1 merges, so batching delays P2's shaping clock.
+
+**Reviewer model policy (developer, 2026-10-08, "now and always, until it
+advances"):** adversarial review sessions run `anthropic/claude-opus-5-5`.
+Standing dispatch policy from 2026-10-08: new sessions default to
+`anthropic/claude-opus-5-5` unless the developer directs otherwise; sessions
+already in flight at the policy's arrival finish on their dispatched model;
+charter-mandated FRONTIER review pairs dispatched before the policy are
+re-dispatched on `claude-opus-5-5` (the frontier mandate is charter-binding —
+sonnet-5 runs become supplementary triage input only).
+
+**AC5 measurement vehicle — RATIFIED (developer, 2026-10-08, "ratify as
+ruled"):** the scratch-branch vehicle (rule below in the dispatch record) is
+confirmed. Verbatim: "ratify as ruled".
+
+**Dev-machine supplementary pass (developer, 2026-10-08):** "my windows pc is
+reachable. I can execute something on it and drop the results into a
+designated drop spot in the repo." Drop spot designated:
+`read-graph/dev-drop/` under this goal's directory (README there carries the
+run contract). The developer's drop is a human input act; the parcel builder
+consumes it into `read-graph/fixtures/dev-pass-raw.json` (Allowed Files).
+
+**Wake protocol (developer, 2026-10-08):** the developer pings the
+coordinator to check the loop; the coordinator never polls background
+sessions.
 
 ## Stop conditions (charter §Stop conditions, binding here)
 
@@ -148,3 +176,12 @@ conditions per COORDINATOR-PATTERN also apply.
   integrity / extraction purity angles; reviewers never fix or commit),
   `cff_p0_builder_r2` (AC5 measurement vehicle), `cff_p1_shaping` (Step 0
   gate first). Gate 3 remains human.
+- 2026-10-08 — developer directives installed (9-question blocker round):
+  merge reading confirmed; **batched Gate 3 cadence**; **AC5 vehicle
+  ratified as ruled**; dev-drop spot designated (`read-graph/dev-drop/`);
+  charter branch pushed + docs-only PR; **reviewer/dispatch model policy
+  `anthropic/claude-opus-5-5` now and always** (P3's frontier review pair
+  re-dispatched on it; the earlier sonnet-5 ReviewB report is retained as
+  supplementary triage input — one informational finding, no blockers);
+  spec-duplicate + `.trash`/`synced` hygiene PR authorized; ping-based wake
+  protocol confirmed.
