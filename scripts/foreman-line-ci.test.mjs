@@ -2029,28 +2029,29 @@ test('AC1: the tie-break is ascending code-point order within each group (not di
 // order; the paired CONTROL (the same fixture with only the named defect
 // repaired) DOES reorder — so the equality is not vacuous (SC #11).
 const PROXIMATE_GAMMA = changedFor(['gamma'])
-for (const [label, broken, repaired, changed = PROXIMATE_GAMMA] of [
-  ['missing pin file (readGraph null)', null, SELF_PIN],
-  ['changed paths unavailable (D11 fail-closed null)', SELF_PIN, SELF_PIN, null],
-  ['malformed schema id (@2)', { ...SELF_PIN, schema: 'foreman-line-ci/read-graph@2' }, SELF_PIN],
-  ['schema field absent ($schema only)', (() => { const d = { ...SELF_PIN, $schema: READ_GRAPH_SCHEMA }; delete d.schema; return d })(), SELF_PIN],
-  ['non-object pin (array)', [SELF_PIN], SELF_PIN],
-  ['per-package read-graph entries absent (no packages field)', { schema: READ_GRAPH_SCHEMA, projections: SELF_PIN.projections }, SELF_PIN],
-  ['non-object projections', { ...SELF_PIN, projections: [] }, SELF_PIN],
-  ['exclusion-shaped top-level field (excludes)', { ...SELF_PIN, excludes: { gamma: [] } }, SELF_PIN],
-  ['exclusion-shaped projection (not_affected)', { ...SELF_PIN, projections: { ...SELF_PIN.projections, not_affected: {} } }, SELF_PIN],
-  ['exclusion-shaped per-package entry (object, not a positive path list)', { ...SELF_PIN, packages: { ...SELF_PIN.packages, beta: { paths: [pxDir('beta')], excludes: ['x'] } } }, SELF_PIN],
-  ['non-string path inside an entry', { ...SELF_PIN, packages: { ...SELF_PIN.packages, beta: [42] } }, SELF_PIN],
-  ['exclusion-shaped affection_pin entry', { ...SELF_PIN, projections: { affection_pin: { beta: { excludes: [pxDir('beta')] } } } }, SELF_PIN],
-  ['exclusion-shaped variance edge (skip flag)', { ...SELF_PIN, named_variance_edges: [{ package: 'beta', path: pxDir('beta'), skip: true }] }, SELF_PIN],
-  ['malformed variance edge (no path)', { ...SELF_PIN, named_variance_edges: [{ package: 'beta' }] }, SELF_PIN],
-  ['thrown error mid-computation (throwing accessor)', { schema: READ_GRAPH_SCHEMA, get projections() { throw new Error('boom') } }, SELF_PIN],
-  ['thrown error mid-computation (non-string changed path)', SELF_PIN, SELF_PIN, [...PROXIMATE_GAMMA, 7]],
+for (const [label, broken, repaired, reason, changed = PROXIMATE_GAMMA] of [
+  ['missing pin file (readGraph null)', null, SELF_PIN, 'pin-unavailable'],
+  ['changed paths unavailable (D11 fail-closed null)', SELF_PIN, SELF_PIN, 'changed-paths-unavailable', null],
+  ['malformed schema id (@2)', { ...SELF_PIN, schema: 'foreman-line-ci/read-graph@2' }, SELF_PIN, 'pin-schema-mismatch'],
+  ['schema field absent ($schema only)', (() => { const d = { ...SELF_PIN, $schema: READ_GRAPH_SCHEMA }; delete d.schema; return d })(), SELF_PIN, 'pin-schema-mismatch'],
+  ['non-object pin (array)', [SELF_PIN], SELF_PIN, 'pin-malformed'],
+  ['per-package read-graph entries absent (no packages field)', { schema: READ_GRAPH_SCHEMA, projections: SELF_PIN.projections }, SELF_PIN, 'pin-malformed'],
+  ['non-object projections', { ...SELF_PIN, projections: [] }, SELF_PIN, 'pin-malformed'],
+  ['exclusion-shaped top-level field (excludes)', { ...SELF_PIN, excludes: { gamma: [] } }, SELF_PIN, 'pin-exclusion-shaped'],
+  ['exclusion-shaped projection (not_affected)', { ...SELF_PIN, projections: { ...SELF_PIN.projections, not_affected: {} } }, SELF_PIN, 'pin-exclusion-shaped'],
+  ['exclusion-shaped per-package entry (object, not a positive path list)', { ...SELF_PIN, packages: { ...SELF_PIN.packages, beta: { paths: [pxDir('beta')], excludes: ['x'] } } }, SELF_PIN, 'pin-entry-not-positive'],
+  ['non-string path inside an entry', { ...SELF_PIN, packages: { ...SELF_PIN.packages, beta: [42] } }, SELF_PIN, 'pin-entry-not-positive'],
+  ['exclusion-shaped affection_pin entry', { ...SELF_PIN, projections: { affection_pin: { beta: { excludes: [pxDir('beta')] } } } }, SELF_PIN, 'pin-entry-not-positive'],
+  ['exclusion-shaped variance edge (skip flag)', { ...SELF_PIN, named_variance_edges: [{ package: 'beta', path: pxDir('beta'), skip: true }] }, SELF_PIN, 'pin-exclusion-shaped'],
+  ['malformed variance edge (no path)', { ...SELF_PIN, named_variance_edges: [{ package: 'beta' }] }, SELF_PIN, 'pin-variance-edge-shape'],
+  ['thrown error mid-computation (throwing accessor)', { schema: READ_GRAPH_SCHEMA, get packages() { throw new Error('boom') } }, SELF_PIN, 'proximity-error'],
+  ['thrown error mid-computation (non-string changed path)', SELF_PIN, SELF_PIN, 'proximity-error', [...PROXIMATE_GAMMA, 7]],
 ]) {
   test(`AC2/AC8 fail-closed -> byte-identical today's order: ${label}`, () => {
     const broken_ = pxRun({ changedPaths: changed, readGraph: broken })
     assert.deepEqual(broken_.calls, TODAY.calls, 'every spawn (installs + checks) is byte-identical to today')
     assert.equal(broken_.result.ordering.mode, 'fallback')
+    assert.equal(broken_.result.ordering.reason, reason, 'the row exercises its own named branch')
     assert.deepEqual(broken_.result.artifact, TODAY.result.artifact)
     const control = pxRun({ changedPaths: PROXIMATE_GAMMA, readGraph: repaired })
     assert.notDeepEqual(control.calls, TODAY.calls, 'control: the repaired fixture does reorder')
