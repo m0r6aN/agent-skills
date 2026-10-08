@@ -23,6 +23,35 @@
 
 ## State
 
+`cff_p0_triage_done_rework_pending_devdrop__p1_built_reviews_running__p3_reviews_in_flight__e1_e2_pending_dev`
+— 2026-10-08 (sixth iteration). **CFF-P0 reviews A+B DELIVERED and TRIAGED**
+(`cff-p0-review-triage-2026-10-08.md`): two blockers, both reproduced
+coordinator-side — E1 (READER_SET five-path hole LIVE in the merge gate;
+charter stop condition "relevance coverage incomplete for a package class"
+FIRED; developer question Q1 asked, hotfix recommended) and E2 (D7 pin's
+exclusion-consumption by CFF-P2 is structurally exclusion-by-absence under
+probe blindness; scoped Gate-1 re-open recommended, Q2). CFF-P0 is NOT
+Gate-3-ready: rework R1 queued (re-derived fixture with ci-phase manifest
+reads included, canonical reducer named, docs errata F3/F5/F7, blind-class
+disclosure, AC1 timing corrections, c9-reproof corrections,
+`dev_pass_status:"pending"` marker) — dispatch held until the dev-drop
+reducer lands on `chore/cff-p0-dev-drop` (`cff_p0_devdrop_r1` building; its
+Step-0 restate was RULED CORRECT with the G3 methodology-source ruling:
+read the measurement log read-only from `feat/foreman-line-cff-p0`).
+**CFF-P1 build DELIVERED** (`665b03bc..f953ecd3`, 10 commits, Allowed-Files
+exact, tripwire 296→367 coordinator-verified at base and tip, deterministic
+pass 367/367 on the coordinator's own run, exit 0) — **Amendment CFF-P1-A1**
+ruled and committed alone (`73f9f624`): AC2 pinned to the measured
+read-graph shape (`packages[name]` array ∪ `affection_pin[name]`),
+variance-edge shape pinned `{package, path}`, E4 sanitizeOutput citation
+(:175→:169). Two adversarial reviews dispatched (`cff_p1_review_a` pid
+1201314 verdict-integrity angle, `cff_p1_review_b` pid 1201315
+pin-consumption/hostile-input angle, both opus-5-5). **CFF-P2 shaping now
+ALSO holds on E1/E2 disposition** (in addition to the P1-merge gate).
+CFF-P3 review pair still in flight. Local `main` ref fast-forwarded
+(`fb25630c..dab6967e`).
+
+Prior state
 `cff_p0_reviews_ab_running__p1_build_r1_running__p3_reviews_in_flight`
 — 2026-10-08 (fifth iteration). **Dispatch mechanism established (developer
 Q1, 2026-10-08):** fresh sessions are spawned headlessly from this pi harness
