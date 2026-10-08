@@ -816,14 +816,24 @@ export function outcomeRecord(name, checks, waivers = [], rejections = {}) {
   }
 }
 
-export function buildShardOutcomes({ shardIndex, shardCount, headSha, packages }) {
+export function buildShardOutcomes({ shardIndex, shardCount, headSha, packages, costTableMissing = [] }) {
   return {
     schema: OUTCOMES_SCHEMA,
     shard_index: shardIndex,
     shard_count: shardCount,
     head_sha: headSha ?? null,
     packages,
+    // CFF-P1 AC3 / D10(c): cost-table coverage loudness (additive field) — the
+    // discovered names absent from COST_TABLE for this run. Non-empty means
+    // assignShards' all-or-nothing costKnown gate fell back to round-robin.
+    cost_table_missing: [...costTableMissing],
   }
+}
+
+/** D10(c): discovered names with no finite COST_TABLE entry (sorted). */
+export function costTableMissing(names, costTable = COST_TABLE) {
+  const table = costTable !== null && typeof costTable === 'object' ? costTable : {}
+  return names.filter((name) => !Number.isFinite(table[name])).sort()
 }
 
 // ─── CFF-P1 AC1/AC2: change-proximity ordering (D7 pin, consumed fail-safe) ─
@@ -1013,6 +1023,7 @@ export function runShard({
   changedPaths = null,
   readGraph = null,
   annotate = null,
+  costTable = COST_TABLE,
 } = {}) {
   if (typeof npmCli !== 'string' || npmCli.length === 0) {
     throw new ForemanCiError('Refusing shard run: npmCli must be a non-empty string')
@@ -1025,7 +1036,7 @@ export function runShard({
     throw new ForemanCiError('Refusing shard run: shardIndex out of range')
   }
   const names = discover({ root })
-  const mine = assignShards(names, shardCount)[shardIndex]
+  const mine = assignShards(names, shardCount, costTable)[shardIndex]
   const records = new Map(
     names.map((name) => [
       name,
@@ -1141,6 +1152,7 @@ export function runShard({
       shardCount,
       headSha,
       packages: packages.filter((p) => mine.includes(p.name)),
+      costTableMissing: costTableMissing(names, costTable),
     }),
   }
 }
@@ -1364,7 +1376,18 @@ export function buildSummary(artifacts) {
     '| --- | --- | --- | --- | --- |',
     ...rows,
     '',
+    costCoverageLine(artifacts),
+    '',
   ].join('\n')
+}
+
+/** CFF-P1 AC3 / D10(c): the step-summary coverage line — never silent. */
+export function costCoverageLine(artifacts) {
+  const reported = artifacts.filter((a) => a && Array.isArray(a.cost_table_missing))
+  if (reported.length === 0) return 'Cost-table coverage: not reported by these shard artifacts.'
+  const missing = [...new Set(reported.flatMap((a) => a.cost_table_missing))].map((n) => sanitizeField(n, 120)).sort()
+  if (missing.length === 0) return 'Cost-table coverage: every discovered package is priced (cost_table_missing: []) - cost-aware shard assignment in effect.'
+  return `Cost-table coverage: ${missing.length} discovered package(s) missing from COST_TABLE (cost_table_missing: ${JSON.stringify(missing)}) - round-robin shard assignment fallback in effect.`
 }
 
 // ─── CLI (thin): shard and aggregate ───────────────────────────────────────

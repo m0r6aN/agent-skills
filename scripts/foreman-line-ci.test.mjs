@@ -30,7 +30,10 @@ import {
   WAIVED_EXCLUSIONS,
   assignShards,
   buildAnnotation,
+  buildSummary,
   computeShardOrder,
+  costCoverageLine,
+  costTableMissing,
   discoverPackages,
   effectiveDecision,
   evaluateWaiver,
@@ -2279,4 +2282,40 @@ test('AC5 prohibitions: the workflow keeps no cancellation, no new needs/schedul
   assert.ok(wf.includes('needs: [gate, sweep]') && wf.includes("if: ${{ !cancelled() }}"), 'the required test context still waits for every shard')
   const src = readFileSync(fileURLToPath(new URL('./foreman-line-ci.mjs', import.meta.url)), 'utf8')
   assert.ok(!src.includes('/check-runs') && !src.includes('/statuses/'), 'no Checks API call in the runner')
+})
+
+// ─── CFF-P1 AC3/AC8: D10(c) cost-table coverage loudness ───────────────────
+
+test('AC3 loudness: the artifact names every discovered package absent from the cost table, and [] when all are priced', () => {
+  const partial = { alpha: 1, beta: 2, delta: 3 } // gamma unpriced
+  const pre = pxRun().result // default COST_TABLE prices none of the fixture names
+  assert.deepEqual(pre.artifact.cost_table_missing, PX)
+  const missingOne = runShard({ root, npmCli, spawn: () => ({ status: 0 }), shardIndex: 0, shardCount: 2, discover: () => [...PX], costTable: partial })
+  assert.deepEqual(missingOne.artifact.cost_table_missing, ['gamma'])
+  const full = runShard({ root, npmCli, spawn: () => ({ status: 0 }), shardIndex: 0, shardCount: 2, discover: () => [...PX], costTable: { ...partial, gamma: 4 } })
+  assert.deepEqual(full.artifact.cost_table_missing, [])
+  // additive: every pre-existing field is unchanged and reconcile still accepts the artifact
+  assert.deepEqual(Object.keys(full.artifact), ['schema', 'shard_index', 'shard_count', 'head_sha', 'packages', 'cost_table_missing'])
+  assert.deepEqual(costTableMissing(['b', 'a', 'c'], { c: 1 }), ['a', 'b'])
+  assert.deepEqual(costTableMissing(['a'], null), ['a'])
+})
+
+test('AC3 loudness: the step summary carries the coverage line in both states (never silent)', () => {
+  const pre = buildSummary([{ packages: [], cost_table_missing: ['kernel-import', 'ops-console', 'project-scaffold'] }, { packages: [], cost_table_missing: ['ops-console'] }])
+  assert.ok(pre.includes('Cost-table coverage: 3 discovered package(s) missing from COST_TABLE (cost_table_missing: ["kernel-import","ops-console","project-scaffold"]) - round-robin shard assignment fallback in effect.'))
+  const post = buildSummary([{ packages: [], cost_table_missing: [] }])
+  assert.ok(post.includes('cost_table_missing: []'))
+  assert.ok(post.includes('cost-aware shard assignment in effect'))
+  // artifacts without the field (pre-CFF-P1 shape) are named as unreported, not read as covered
+  assert.equal(costCoverageLine([{ packages: [] }]), 'Cost-table coverage: not reported by these shard artifacts.')
+  // hostile names in the field are sanitized before reaching the summary
+  assert.ok(!costCoverageLine([{ cost_table_missing: ['x\n::error::y'] }]).includes('\n'))
+})
+
+test('AC3: costKnown is all-or-nothing — one unpriced name flips assignment to round-robin; pricing it flips back to cost-aware', () => {
+  const names = ['a', 'b', 'c', 'd', 'e']
+  const priced = { a: 100, b: 1, c: 1, d: 1, e: 1 }
+  const roundRobin = [['a', 'c', 'e'], ['b', 'd']]
+  assert.deepEqual(assignShards(names, 2, { a: 100, b: 1, c: 1, d: 1 }), roundRobin, 'e unpriced -> round-robin')
+  assert.deepEqual(assignShards(names, 2, priced), [['a'], ['b', 'c', 'd', 'e']], 'all priced -> cost-aware')
 })
