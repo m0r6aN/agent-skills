@@ -38,7 +38,7 @@ because independent frontier reviews, exact Allowed Files, and acceptance
 evidence remain mandatory. This does not add the models to the global roster,
 weaken other goals, or claim a loaded Claude permission envelope in a Pi session.
 
-Shaping workers have read/grep/find/ls tools only, no bash/edit/write, MCP,
+Shaping workers in these actual launches have no tools at all, no bash/edit/write, MCP,
 extension tools, or persisted session. Builder tools and containment will be
 specified before each builder launch, with its isolated worktree named.
 External runtime invocation is bounded by a coordinator timeout and output cap.

@@ -27,4 +27,8 @@ requirements are the screening source for the dispatches below.
 - Coordinator clarifications supplied: use existing goal-detail response for
   designated documents on parcel-less goals; spec lint applies to the parcel
   spec, not arbitrary companion prose. No new route or authority.
-- Outcome/usage/cost: pending until a terminal result is captured.
+- Outcome: exit 0, terminal stop reason `stop`; complete shaping draft captured.
+- Runtime accounting: 9,700 input and 1,303 output tokens; estimated USD
+  0.048645. This is provider-runtime reporting, not a settled billing audit.
+- Coordinator corrections: paths/links, supersession metadata and literal lint
+  command; recorded in the materialized spec. No acceptance claim.

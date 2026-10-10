@@ -6,7 +6,7 @@
 2026-10-10. Planning worktree and branch are named in charter.md.
 One goal, one coordinator. Transfers occur at recorded parcel boundaries.
 
-**State:** `plan_review_closed_to_p0_shaping`; D1–D8 and graph ratified 2026-10-10;
+**State:** `to_p0_shaped_builder_ready`; D1–D8 and graph ratified 2026-10-10;
 A1 merge/decision delegation and cost routing recorded; no implementation accepted.
 
 ## Authority
@@ -52,14 +52,15 @@ Use completion notifications for active workers. This session has no configured
 scheduled wakeup; do not claim a persistent loop was installed. Human gates are
 stop conditions with a report, not conditions an agent can satisfy itself.
 
-## Current stop report / handoff
+## Current handoff
 
-Charter and graph ratified; merge/decision delegation and preferred routing
-persisted. Initial independent plan review returned changes; PR-1–PR-8 disposition recorded.
-MiMo and Ember catalog/auth ready; Jev/Drex not live in this runtime. Review
-closure is next, then preferred-worker TO-P0 shaping.
-No code or dependencies changed; original worktrees preserved.
-
-Next safe action: fresh plan review, then TO-P0 shaping after triage and baseline
-reconciliation. No further owner confirmation is required for already granted
-non-destructive scope. Record worker unavailability and scoped recovery honestly.
+Independent plan review accepted TO-P0 shaping after PR1–PR8 disposition.
+MiMo transport failed; Ember completed shaping. Coordinator corrected metadata,
+paths and commands, then spec-linter and advisory self-check passed; bare shaping
+result emitted. Standing Gate 2 authorizes active TO-P0 dispatch under A1.
+No implementation accepted. Builder worktree: /home/cmorgan76/Work/foreman-to-p0,
+branch docs/foreman-to-p0. Tool-free public-source Ember drafting is mechanically
+contained; coordinator materializes only three Allowed Files. This is a scoped
+host boundary, not a claim of loaded Claude builder-architecture permissions.
+Dual independent architecture reviews remain mandatory before acceptance.
+Original worktrees preserved; local dependency installation changed no manifests.
