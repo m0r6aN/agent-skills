@@ -1,6 +1,6 @@
 # Execution Plan — Trustworthy Observation
 
-Status: ratified 2026-10-10; plan review closed; TO-P0 independently accepted, baseline repaired; TO-P0 publication/merge pending. [Charter](../charter.md) owns the scope,
+Status: ratified 2026-10-10; plan review closed; baseline repaired; TO-P0 merged78c8b41f; TO-P1 scope ready, Step0 pending. [Charter](../charter.md) owns the scope,
 decision list, graph, gates, and exit criteria. Tasks live in [todo.md](todo.md).
 This goal-local location follows Foreman's goal organization; no existing
 repository-level plan or task list is replaced.

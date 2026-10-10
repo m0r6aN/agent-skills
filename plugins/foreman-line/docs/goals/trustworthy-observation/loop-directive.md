@@ -6,7 +6,7 @@
 2026-10-10. Planning worktree and branch are named in charter.md.
 One goal, one coordinator. Transfers occur at recorded parcel boundaries.
 
-**State:** `to_p0_contract_accepted_publication_pending`; D1–D8 and graph ratified 2026-10-10;
+**State:** `to_p1_scope_ready_step0_pending`; D1–D8 and graph ratified 2026-10-10;
 A1 merge/decision delegation and cost routing recorded; no implementation accepted.
 
 ## Authority
@@ -154,3 +154,9 @@ Prepared worktree /home/cmorgan76/Work/foreman-to-p1, branch feat/foreman-to-p1-
 Independent preparation update: P1 unchanged baseline92tests/typecheck/lint pass; clean worktree. Real membership target reproduced at96ffadc5: console reports six members plus three genuine sidecars, valid/sealed tipF with zero errors; receipts directory CLI exits1 because it selects all nine JSON files. Independent SHA256/size/mtime snapshots show all files unchanged. This is the baseline defect, not TO-P3 or goal-exit acceptance. Evidence /tmp/to-p1-baseline-readiness-summary.txt and /tmp/to-p3-baseline-readiness-summary.txt.
 
 Next actual action remains PR167 exactheadf4a46e21 green required CI then normal merge. Watcher session77279 writes /tmp/to-p0-pr167-ci-watch.log for workflow38071623009. Local preparation commits5455e66d/a787613a and subsequent checkpoint are intentionally unpushed; carry them onto P1 after main parent merge, preserving PR167 head. Candidate /tmp/to-p1-active-spec-candidate.md passes frontmatter lint only under /tmp root; it is not active authority and must replace pending-parent language with actual merge/source/owner preflight before committed activation. Original checkout/CFF worktrees preserved. Goal remains active and incomplete.
+
+## Actual contract merge and P1 activation preflight
+
+PR167 MERGED78c8b41feb07e4b274d402b54376ebf5b934ce4b at2026-10-10T17:56:37Z, exactheadf4a46e21. Full CI38071623009/38071621557 passed all four shards plus requiredtest/integration-report; normalmatch-headmerge, no bypass. P0task checked. Earlier pending-merge checkpoints are superseded by this actual closure. P0spec/artifact already done in merged PR, historicalartifactbytes retained.
+
+P1worktree rebased78c8b41f; carried four local preparation commits. Original overlap bytes rechecked against actualmain/FCA and unchanged, CFF scopedconsole paths clean. No queue/canon ownership transfer or original dirty edit. Exact P1spec/body/evidence shape and nine AllowedFiles bind this isolated sourcewindow. Fresh preferred-worker Step0 must restate and stop before code; flags require coordinator disposition. Independent baseline92tests/typecheck/lint green; no observation code accepted. Goal remains active with P1–P7 incomplete.
