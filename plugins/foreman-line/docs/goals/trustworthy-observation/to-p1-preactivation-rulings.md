@@ -15,3 +15,9 @@ Independent source/consumer preflight: /tmp/to-p1-independent-preactivation.txt.
 Original checkout remains untouched. Five original dirty/untracked paths overlap the draft, but byte comparison establishes original scan/status/remedy/types/app.js exactly equal published main96ffadc5. Original multi-root/remedy tests exactly equal already merged FCA d86ade55; differences from main are the independently reviewed TO-B0 additions/formatting already merged96ffadc5. This is preserved landed-baseline residue, not evidence of unmerged new console implementation. No discard, reset, stash, commit, or service change is performed there.
 
 Inspected CFF worktrees have clean exact console paths; their active CI ownership remains intact. Existing FOC directive records Phase1 implemented and excludes Phase2. Clinton's explicit new observation scope covers the current source changes; no FOC Phase2 queue or CFF canon is transferred. Coordinator reserves only TO-P1 exact Allowed Files in a new isolated worktree branched from actual main AFTER PR167 merge. Recheck main and overlapping worktree bytes at actual activation; any new difference or concrete live claim holds dispatch for collision resolution. Current preflight is not a certification that all sessions are inactive.
+
+## Independent disposition and preparation baseline
+
+Independent verifier reviewed these rulings and confirmed the seven recorded byte comparisons. P6 now explicitly includes unknown-only banner wording and a meaningful test. P7 preserves the seven charter exit bullets verbatim after whitespace normalization.
+
+Prepared P1 worktree at unchanged96ffadc5: 92tests pass, lint passes, typecheck passes after locked no-script schema-scaffold dependencies installed. Tracked worktree clean. Test-count tripwire92; no P1 implementation acceptance or activation. Evidence /tmp/to-p1-baseline-readiness-summary.txt and /tmp/to-p1-preactivation-rulings-review.txt.
