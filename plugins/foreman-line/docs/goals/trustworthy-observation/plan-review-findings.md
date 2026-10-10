@@ -13,7 +13,7 @@ implementation. Findings below preserve the returned meaning.
 | PR-3 | Preferred worker admission has no owner or scoped prerequisite; blocker. | FIX: coordinator-owned dispatch-preflight.md, under explicit A1 owner routing/decision grant, admits exact discovered host bindings for this goal's public source inputs. No global policy edits or other-goal scope. Frontier independent reviews retained. |
 | PR-4 | Real exit evidence targets are unbound; blocker. | FIX: dispatch-preflight.md names the existing w4 chain, biostack native/initiative layouts, agent-task native layout, and installed Chromium. Verify readiness before each dependent dispatch. |
 | PR-5 | Refresh commit and partial-failure semantics ambiguous; required. | FIX: one generation waits for all requests to settle, commits only current selection/generation; per-panel last-success/error metadata. Selection change clears prior-goal panels; vanished selection clears detail. TO-P0 freezes exact behavior. |
-| PR-6 | Locator safety/browser delivery undefined; required. | FIX: scoped source-document projection over existing GET logs route; only designated parcel spec + goal charter/directive, no arbitrary path endpoint. Root-relative real paths, symlink escapes refuse, missing files diagnostic. D2 route table retained. |
+| PR-6 | Locator safety/browser delivery undefined; required. | FIX: scoped source-document projection over existing GET goal-detail and logs routes; only designated parcel spec + goal charter/directive, no arbitrary path endpoint. Root-relative real paths, symlink escapes refuse, missing files diagnostic. D2 route table retained. |
 | PR-7 | Remedy and invocation consumers can disagree; required. | FIX: TO-P5 inventories/tests both; invocation root restriction stays primary-only, external-root execution withheld explicitly. Presentation handoffs use approved root without claiming executable console support. Preserve-first options unchanged. |
 | PR-8 | Classifier limitation UI/docs deliverable unassigned; suggestion. | FIX: TO-P6 owns explanatory limitation presentation; TO-P7 checks it. |
 
@@ -32,3 +32,12 @@ Acceptance is plan-level only. TO-P0 dual reviews must verify unknown-attention
 consistency, API/UI reachability of unmapped chains, parcel-less document
 navigation under frozen routes, symlink containment, freshness metadata, exact
 clause amendments, live collisions, and real-target readiness.
+
+### Parcel-less navigation ruling
+
+MiMo's partial (unaccepted) draft exposed that a parcel-only logs route cannot
+represent a goal with no parcels. The existing goal-detail GET route can carry
+additive designated charter/directive documents; parcel logs can carry the spec.
+TO-P0 must explicitly amend response contracts for this; no route is added.
+TO-P4 owns the consumer implementation and real navigation proof. This resolves
+the reviewer focus without pretending a nonexistent parcel key is available.

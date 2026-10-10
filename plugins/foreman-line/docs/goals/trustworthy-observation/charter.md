@@ -142,7 +142,8 @@ effect beyond the eventual standing grant. Write a durable stop report and stop.
 Within A1's non-destructive decision delegation, incorporate PR-1–PR-8 from
 plan-review-findings.md. Unknown ratification remains separately attention-bearing;
 unmapped invalid chains remain visible without invented parcel identity; source
-navigation uses designated documents projected through the existing logs route,
+navigation uses designated documents projected through existing goal-detail
+and parcel-logs responses,
 never an arbitrary file endpoint. TO-P5 covers remedy and invocation consumers.
 Refresh waits for the current generation to settle and discloses panel freshness.
 TO-P6 owns the classifier/liveness limitation explanation. dispatch-preflight.md
