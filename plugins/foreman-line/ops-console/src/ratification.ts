@@ -82,6 +82,17 @@ function pipeCells(line: string): string[] | null {
   return cells.length > 0 ? cells : null
 }
 
+/** Bounded existing block starts that end table bodies. HTML/setext and
+ * indented-code grammar are intentionally outside this observation reader. */
+function endsTable(text: string): boolean {
+  return (
+    !text.trim() ||
+    HEADING.test(text) ||
+    /^ {0,3}(?:>|`{3,}|~{3,}|[-+*][ \t]+|[0-9]{1,9}[.)][ \t]+)/.test(text) ||
+    /^ {0,3}(?:(?:\*[ \t]*){3,}|(?:-[ \t]*){3,}|(?:_[ \t]*){3,})$/.test(text)
+  )
+}
+
 /** Tables are identified by header + delimiter, never by an incidental bar. */
 function tableLines(lines: readonly string[]): Set<number> {
   const excluded = new Set<number>()
@@ -93,9 +104,8 @@ function tableLines(lines: readonly string[]): Set<number> {
       !delimiter ||
       !header ||
       delimiter.length !== header.length ||
-      !delimiter.every((cell) => /^\s*:?-{3,}:?\s*$/.test(cell)) ||
-      HEADING.test(headerText) ||
-      /^\s*(?:>|`{3,}|~{3,})/.test(headerText)
+      !delimiter.every((cell) => /^\s*:?-+:?\s*$/.test(cell)) ||
+      endsTable(headerText)
     )
       continue
     excluded.add(index - 1)
@@ -103,13 +113,9 @@ function tableLines(lines: readonly string[]): Set<number> {
     let body = index + 1
     while (body < lines.length) {
       const text = lines[body] ?? ''
-      if (
-        !text.trim() ||
-        HEADING.test(text) ||
-        /^\s*(?:>|`{3,}|~{3,})/.test(text) ||
-        !pipeCells(text)
-      )
-        break
+      // GFM Examples 199/202: even an unpiped row supplies the first cell;
+      // remaining cells are empty. Only a blank or supported block ends it.
+      if (endsTable(text)) break
       excluded.add(body++)
     }
     index = body - 1

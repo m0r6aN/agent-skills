@@ -1236,3 +1236,101 @@ test('long current-denial corpus conflicts when an eligible grant precedes headi
   assert.equal(result.evidence.filter((item) => item.kind === 'grant').length, 1)
   assert.equal(result.evidence.filter((item) => item.kind === 'denial').length, 500)
 })
+
+for (const [name, charter, expected, lines] of [
+  [
+    'unpiped missing-cell grant is table content',
+    'Current | Evidence\n--- | ---\nStatus: RATIFIED',
+    'unknown',
+    [],
+  ],
+  [
+    'one-hyphen aligned delimiter excludes grant',
+    'Current | Evidence\n:-: | -:\nStatus: RATIFIED | sample',
+    'unknown',
+    [],
+  ],
+  [
+    'genuine grant plus unpiped table denial',
+    'Status: RATIFIED\nCurrent | Evidence\n--- | ---\nStatus: NOT RATIFIED',
+    'granted',
+    [['grant', 1]],
+  ],
+  [
+    'short delimiter and unpiped table denial',
+    'Status: RATIFIED\nCurrent | Evidence\n- | :\u002d:\nStatus: NOT GRANTED',
+    'granted',
+    [['grant', 1]],
+  ],
+] as const) {
+  test(`remaining GFM table forms: ${name}`, () => {
+    const result = readText(charter)
+    assert.equal(result.ratification.status, expected)
+    assert.deepEqual(
+      result.evidence.map((item) => [item.kind, item.line]),
+      lines,
+    )
+    withTempRepo(scenario(`table-${name}`, { queue: [] }), ({ config }) => {
+      writeFileSync(join(config.goalsDir, 'goal-rat', 'charter.md'), charter)
+      const goal = scanGoal(config, 'goal-rat')
+      assert.equal(goal?.ratification.status, expected)
+      assert.deepEqual(
+        goal?.evidence?.map((item) => [item.kind, item.line]),
+        lines,
+      )
+    })
+  })
+}
+
+for (const [name, boundary] of [
+  ['blank', ''],
+  ['ATX heading', '## Current'],
+  ['fence', '```md\nStatus: NOT RATIFIED\n```'],
+  ['blockquote', '> Status: NOT RATIFIED'],
+  ['unordered dash list', '- Context'],
+  ['unordered plus list', '+ Context'],
+  ['unordered star list', '* Context'],
+  ['ordered dot list', '1. Context'],
+  ['ordered parenthesis list', '1) Context'],
+  ['thematic break', '***'],
+] as const) {
+  test(`actual ${name} block ends table before current denial`, () => {
+    const prefix = 'Status: RATIFIED\nCurrent | Evidence\n--- | ---\nStatus: NOT RATIFIED'
+    const excluded = readText(prefix)
+    assert.equal(excluded.ratification.status, 'granted')
+    assert.deepEqual(
+      excluded.evidence.map((item) => [item.kind, item.line]),
+      [['grant', 1]],
+    )
+    const charter = `${prefix}\n${boundary}\nStatus: NOT GRANTED`
+    const result = readText(charter)
+    assert.equal(result.ratification.status, 'unknown')
+    assert.deepEqual(
+      result.evidence.map((item) => [item.kind, item.line]),
+      [
+        ['grant', 1],
+        ['denial', charter.split('\n').length],
+      ],
+    )
+  })
+}
+
+test('blank ends table and allows genuine first Status metadata to grant', () => {
+  const result = readText('Current | Evidence\n:-: | -:\nStatus: NOT RATIFIED\n\nStatus: RATIFIED')
+  assert.equal(result.ratification.status, 'granted')
+  assert.deepEqual(
+    result.evidence.map((item) => [item.kind, item.line]),
+    [['grant', 5]],
+  )
+})
+
+test('unpiped rows remain table content until blank even with inline code/escaped pipes', () => {
+  const result = readText(
+    'Current | Evidence\n- | -\nplain body\nStatus: RATIFIED `a|b`\nStatus: NOT RATIFIED \\| sample\n\nStatus: RATIFIED',
+  )
+  assert.equal(result.ratification.status, 'granted')
+  assert.deepEqual(
+    result.evidence.map((item) => [item.kind, item.line]),
+    [['grant', 7]],
+  )
+})
