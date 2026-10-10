@@ -86,3 +86,25 @@ requirements are the screening source for the dispatches below.
   against /tmp correctly refused outside-root input; no validation was claimed
   for that attempt. The in-repo draft passes structurally; implementation review
   and behavioral verification remain future work after both parents land.
+
+## TO-P2 prerequisite-window shaping draft
+
+- Preferred exact host fireworks/accounts/fireworks/models/ember-1 via tool-free
+  Pi; public tracked source attachments only, no tools/extensions/MCP/session.
+- Bounded initial call completed 79.9s, terminal stop, 19,945 input+6,007 output
+  tokens, runtime estimate USD 0.14994. Returned a draft candidate surrounded by
+  planning rather than a clean final handoff; not activated or materialized.
+- Bounded formatting/factual finalization completed 27.8s, terminal stop,
+  2,585 input+1,963 output tokens, estimate USD 0.0372. Returned clean complete
+  990-word draft. All estimates are runtime reporting, not settled billing.
+- Finalization removes invented key-length/build requirements, corrects
+  schema-invalid consumer/authoritative parcel distinction. Coordinator adds
+  missing surfaces metadata, full source paths, and source/member alignment
+  preflight from actual gates.ts; list diagnostics remain accessible without
+  an active selectable goal. No implementation generated or accepted.
+- Six implementation files are explicitly flagged over the five-file shaping
+  target; owner-delegated scope ruling is reserved until parents land and
+  actual source closure is reconciled. No extra parcel or locked decision added.
+- Materialized only goal/to-p2-shaping-draft.md outside active/ specs; actual
+  spec-linter passes. No emitted shaping result, receipt, active spec or builder
+  dispatch. No Jev/Drex classifier ran and no frontier classification simulated.

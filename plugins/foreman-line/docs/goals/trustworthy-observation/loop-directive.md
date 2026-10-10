@@ -89,3 +89,11 @@ activate TO-P1. A cheap Ember TO-P1 shaping draft is persisted as to-p1-shaping-
 active/ specs and passes actual spec-linter preflight. It has no emitted shaping
 result, active spec, builder dispatch, or acceptance. Parents must land first.
 No further owner confirmation required for ratified non-destructive scope.
+
+Preparation update: TO-P2 Ember shaping/finalization is persisted as
+to-p2-shaping-draft.md outside active/ specs; actual spec-linter passes. Six-file
+scope exception remains unruled before activation; current gate consumer
+source/member alignment and list-only unreadable goal UI access are flagged.
+No builder dispatched. Corrected PR CI shard 0 passed (job 114261381275); shard 1
+114261381225 remains live, so baseline merge and TO-P0 publication still wait
+for effective green requirements. PR #168 head remains389f3f6c.
