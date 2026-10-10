@@ -32,3 +32,39 @@ requirements are the screening source for the dispatches below.
   0.048645. This is provider-runtime reporting, not a settled billing audit.
 - Coordinator corrections: paths/links, supersession metadata and literal lint
   command; recorded in the materialized spec. No acceptance claim.
+
+## TO-P0 builder
+
+- Exact host: fireworks/accounts/fireworks/models/ember-1, tool-free Pi.
+- Worktree: /home/cmorgan76/Work/foreman-to-p0, docs/foreman-to-p0.
+- Bound: 180 seconds; completed exit 0 in 117.2 seconds, terminal stop.
+- Runtime accounting: 15,046 input + 9,441 output tokens; estimate USD 0.186753,
+  not settled billing. The requested prose length was exceeded; next prompts
+  should use tighter per-document/output bounds.
+- Step 0 scope matched three Allowed Files; no new semantic conflict flagged;
+  unknown external live evidence remains pending. Coordinator accepts scope
+  under standing dispatch authority before any materialization.
+- Output transport: missing final outer JSON brace and repeated identical
+  scenarios field. Coordinator added the brace, verified duplicate bytes equal,
+  and enforced exact three-path whitelist. No document prose changed.
+- Three documents materialized; two fresh independent architecture reviewers
+  dispatched. No acceptance or implementation completion is claimed.
+
+## TO-P0 rework and scoped reasoning escalation
+
+- Ember rework1 ended stop with only an acknowledgement (17,616 input, 26
+  output tokens; runtime estimate $0.053238). No handoff accepted/materialized.
+- Deeper contract synthesis required after dual review; fresh Codex inherited
+  reasoning builder /root/to_p0_contract_rework_builder edited only three docs.
+  This was execution/synthesis, never Jev/Drex classification. Runtime/model
+  billing not reported by this agent interface; no external host alias invented.
+- Fresh dual reviewers evaluated d4e73028: one accepted, one required a precise
+  negative-position correction. Coordinator reproduced/rule recorded separately.
+- Bounded correction returned to Ember: first patch12.3s estimate $0.026403
+  (4,731input/814output) was not materialized because negative-token scope was
+  too broad and exact hostileexample absent. Second corrected patch12.7s,
+  $0.018429 (1,703input/888output); exact two-file string whitelist applied.
+- Both independent reviewers accept final019ab92c documentation contract.
+  Independent docs verifier: spec lint0,71links/41anchors/30targets/0failures,
+  seven paired scenario rules, zero behavioral tests. Coordinator review record
+  is separate from the builder's three AllowedFiles; no code accepted.
