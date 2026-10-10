@@ -14,11 +14,15 @@ export {
   type ConsoleConfig,
   ConsoleRootUnresolvedError,
   defaultConfig,
+  type GoalTree,
+  goalTrees,
   PLUGIN_TREE_REF,
   packageRoot,
+  resolveGoalKey,
   STATE_FILES,
   type StateFile,
   stateFilePath,
+  treeConfigFor,
 } from './config.js'
 export { type DeriveInput, deriveParcel, type ThresholdView } from './derive.js'
 export { type GateInputs, gateProxies } from './gates.js'
@@ -40,6 +44,7 @@ export {
   syncAlerts,
 } from './notifications.js'
 export { projectGoal } from './project.js'
+export { type Remedy, type RemedyOption, remediesFor } from './remedy.js'
 export {
   loadRoutingPolicy,
   type PolicyClass,
@@ -58,6 +63,7 @@ export {
   scanSpecs,
 } from './scan.js'
 export { type BindTarget, createConsoleServer, resolveBind, resolveRepoRoot } from './server.js'
+export { type GoalAttention, type GoalStatus, goalStatus } from './status.js'
 export type {
   ChainMemberSummary,
   ChainSummary,

@@ -148,7 +148,14 @@ if (isMain) {
   })
   let config: ConsoleConfig
   try {
-    config = defaultConfig(resolveRepoRoot(process.env), process.env.FOC_STATE_DIR)
+    // FCA-1: optional additional roots (`FOC_EXTRA_ROOTS`, colon-separated
+    // absolute paths) project their own goal trees (e.g. agent-task's
+    // docs/goals). Each entry is asserted absolute exactly like the primary.
+    const extraRoots = (process.env.FOC_EXTRA_ROOTS ?? '')
+      .split(':')
+      .map((entry) => entry.trim())
+      .filter((entry) => entry.length > 0)
+    config = defaultConfig(resolveRepoRoot(process.env), process.env.FOC_STATE_DIR, extraRoots)
   } catch (err) {
     if (!(err instanceof ConsoleRootUnresolvedError)) throw err
     process.stderr.write(`error: [${err.reason}] ${err.message}\n`)
@@ -158,5 +165,8 @@ if (isMain) {
   server.listen(bind.port, bind.host, () => {
     process.stdout.write(`foreman ops console listening on http://${bind.host}:${bind.port}/\n`)
     process.stdout.write(`repo root: ${config.repoRoot}\n`)
+    for (const tree of config.trees ?? []) {
+      process.stdout.write(`goal tree: ${tree.key ?? '(primary)'} → ${tree.goalsDir}\n`)
+    }
   })
 }
