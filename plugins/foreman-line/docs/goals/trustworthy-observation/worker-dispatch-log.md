@@ -123,3 +123,20 @@ requirements are the screening source for the dispatches below.
   spec-linter passes. No shaping-result emission, active spec, receipt, builder
   dispatch or implementation acceptance. Parent reconciliation and receipts
   code-owner collision preflight remain mandatory before activation.
+
+## TO-P4 prerequisite-window shaping draft
+
+- Fresh preferred host fireworks/accounts/fireworks/models/ember-1 via tool-free
+  Pi; public tracked source only, bounded 150s. Completed 21.8s, terminal stop,
+  clean 964-word draft; 14,672 input+1,742 output tokens, estimated USD 0.070146
+  from runtime reporting, not settled billing. No classifier ran.
+- Coordinator corrections: required created/updated dates, explicit test Allowed
+  Files, existing TO-P2 Locator/diagnostics naming, accepted DOC link, preserve
+  existing assertions while extending tests, and component-boundary containment
+  rather than unsafe text-prefix comparison. Concrete dual review questions.
+- Five implementation files plus bounded tests; source/join/type interfaces and
+  owner windows must reconcile after all parents land. No additional file or
+  authority silently granted. No implementation generated or accepted.
+- Materialized only goal/to-p4-shaping-draft.md outside active/ specs; actual
+  spec-linter passes. No shaping-result emission, receipt, Gate-2 activation or
+  builder dispatch. Real API/browser source-content proof remains future work.

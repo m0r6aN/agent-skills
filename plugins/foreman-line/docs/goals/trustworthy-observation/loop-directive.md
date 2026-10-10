@@ -104,3 +104,10 @@ pure selection helper shared by both CLI/console; tests bounded separately.
 No activation/dispatch. Parent sources and receipts-owner windows must reconcile
 before active spec emission. Required corrected-head shard 1 remains live in
 both PR/push runs; no baseline merge claim.
+
+Preparation update: TO-P4 fresh Ember draft persisted as to-p4-shaping-draft.md
+and passes actual spec-linter. Five-file source-document closure is provisional
+until parent source/type/join/owner-window reconciliation. Component-boundary
+containment and real API/browser navigation proof are explicit; no raw string
+link counts as proof. Draft only, no activation or builder. Final prerequisite
+CI shard 1 remains live; baseline merge has not occurred.
