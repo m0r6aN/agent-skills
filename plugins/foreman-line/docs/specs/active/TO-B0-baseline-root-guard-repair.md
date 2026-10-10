@@ -12,6 +12,7 @@ surfaces:
   - plugins/foreman-line/ops-console/src/config.ts
   - plugins/foreman-line/ops-console/tests/multi-root.test.ts
   - plugins/foreman-line/ops-console/tests/remedy.test.ts
+  - plugins/foreman-line/verification/tests/scaffold.test.ts
 routing_class: architecture/risk
 verification_class: equivalence-provable
 permission_profile: builder-architecture
@@ -27,7 +28,7 @@ Repair the FCA d86ade55 configuration baseline so the unchanged audit no longer 
 - Do not modify the audit itself, encoding rules, permission model, route definitions, layouts, or any observable behavior.
 - No unsafe normalization: every root must remain absolute and caller-supplied; a relative path must still be refused before any `resolve` executes.
 - The literal replacement must use the existing exported `PLUGIN_TREE_REF` constant; no new constants or literal spellings are introduced.
-- All changes must remain inside the three Allowed Files; no auxiliary files, no JSON output, and no receipt claims.
+- All changes must remain inside the four Allowed Files; no auxiliary files, no JSON output, and no receipt claims.
 - The outer `assertAbsoluteRoot` on `extra` stays in place; the repair adds the missing same-function assertion on the resolved value, plus the entry assertion inside the `forEach` callback.
 - Source checkout stays dirty; work proceeds only in the isolated worktree on branch `fix/foreman-observation-baseline`.
 
@@ -63,6 +64,8 @@ Repair the FCA d86ade55 configuration baseline so the unchanged audit no longer 
 - plugins/foreman-line/ops-console/tests/multi-root.test.ts
 - plugins/foreman-line/ops-console/tests/remedy.test.ts
 
+- plugins/foreman-line/verification/tests/scaffold.test.ts
+
 ## Verification Plan
 
 1. Run the ops-console package checks: `npm test`, `npm run typecheck`, and `npm run lint` inside `plugins/foreman-line/ops-console/`.
@@ -73,10 +76,14 @@ Repair the FCA d86ade55 configuration baseline so the unchanged audit no longer 
    - Does the `forEach` callback assert `extraRoot` at entry so the outer assertion is not the sole guard against a relative path?
    - Is the literal `plugins/foreman-line` fully replaced by `PLUGIN_TREE_REF` in the routing policy path construction, with no other literals introduced?
    - Do the new tests prove exact native and initiative tree paths and confirm that a relative root still triggers `ConsoleRootUnresolvedError` with the correct reason?
-   - Are all changes confined to the three Allowed Files, with no drift into audit, encoding, permission, or routing code?
+   - Are all changes confined to the four Allowed Files, with no drift into audit, encoding, permission, or routing code?
 
 Coordinator corrections: inaccurate callback description corrected; path-equivalence acceptance binds exact native/initiative paths; audit cwd and AC7 purpose corrected. Baseline direct audit reproduced exit 1 with the same five sites; audit/source Git blobs match d86ade55. Auxiliary release prerequisite approved under standing non-destructive decision authority; locked D1–D8 unaffected.
 
 
 
 B0 amendment: independent npm lint found baseline remedy.test.ts formatting failure: collapse its multiline type import to the pinned Biome output. Exactly this style-only file is added to Allowed Files; no assertion or runtime behavior changes. Both reviews must assess the amended diff before merge. Other guards/audit untouched. Locked sibling contract/schema dependencies installed for compiler resolution, no manifests changed.
+
+B0 CI prerequisite amendment: sweep shard 0 reproduces an inherited scaffold golden mismatch (681 pass, 1 fail). Fleet commit 60617cef5bdbc74aa516cf54a54e91e3e3228365 already pins verification and dispatch Biome to 2.5.14; baseline d86ade55 and this branch have identical manifests and scaffold test. Add exactly verification/tests/scaffold.test.ts to scope: align only the Biome expected value to 2.5.14 and replace the stale provenance comment. Preserve all other expected versions, exact dependency key sets, sibling parity assertions, and negative controls. No manifest, lockfile, audit, permission, or runtime changes. Focused AC-1 with negative controls and pinned formatter validation are required independently, followed by both incremental architecture reviews and the full required CI chain. This amendment overrides the earlier three-file/comment exclusions solely for this correction.
+
+Ownership disposition: exact scaffold test has no uncommitted edits in the original checkout or inspected CFF h1/p0/p1/p3 worktrees. This is alignment to the already merged fleet pin under Clinton Morgan's standing non-destructive authority, not a transfer of CI/kernel goal ownership or permission to change their canon, queues, or working files. Work remains isolated in this prerequisite branch. No separate parcel or runtime feature is added.
