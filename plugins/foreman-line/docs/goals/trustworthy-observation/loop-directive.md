@@ -6,7 +6,7 @@
 2026-10-10. Planning worktree and branch are named in charter.md.
 One goal, one coordinator. Transfers occur at recorded parcel boundaries.
 
-**State:** `to_p1_rework_independent_verification_pending`; D1–D8 and graph ratified 2026-10-10;
+**State:** `to_p1_architecture_rework_pending`; D1–D8 and graph ratified 2026-10-10;
 A1 merge/decision delegation and cost routing recorded; no implementation accepted.
 
 ## Authority
@@ -176,3 +176,5 @@ Reasoning rework Step0 accepted after explicit pre-code stop. Exact9 files resta
 Rework handoff committed54e5bd52 after Step0 disposition ae14f046. Six exact allowed files changed, no helper/manifest/API/UI/audit changes. Deeper reasoning builder replaced lexer and added real missing/unreadable IO plus adversarial/root/attention tests; static estimate180cases is not runtime evidence. Independent full deterministic verifier dispatched against immutable54e5bd52; architecture reviews and acceptance remain pending. Second preferred candidate never materialized.
 
 Second independent pass code54e5bd52:180tests/179pass/1fail, type/lint/D19/read-only PASS. Required corrective findings: test should allow Ask the owner without losing meaning/order; unauthorized archived/examples/instructions exclusion hides current denials; conditions after provenance falsely grant. Preferred Ember corrective Step0(s) restated exact3existing Allowed Files and stopped, no code. Formatting/schema irregularities inspected explicitly; no implied test claims. Ruling before code: use exact whole-word canonical exclusion set; add 3 unlisted-heading negative regressions; optional-the assertion correction mandatory; anchored grant-targeting condition clauses after provenance must be unknown, with irrelevant review/parcel/Gate2/3 conditions remaining granted. Indented-code behavior unchanged: accepted canon does not explicitly require it; no silent grammar expansion. Existing RAT/ATT/scope unchanged. Runtime estimates Step0 USD0.054195 and amendedStep0 USD0.055212, not billing. No classifier ran.
+
+Dual architecture review on ac406ecc REJECT despite201 deterministicPASS. A1tables, A2/B1conditions, A3fullactualcompatibility OPEN; exact findings/rulings in to-p1-review-findings.md. Builder corrective Step0 halted, only parser/test authorized after separate rulings commit. No implementation acceptance; PR169 draft. Rejected-head CI canceled, corrected head must receive full requirements.
