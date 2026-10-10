@@ -23,7 +23,7 @@ surfaces:
 Implement the accepted REF (observation-contract-amendment.md) in the
 dependency-free ops-console UI: every refresh issues list/status counts, board,
 alerts/remedies, routing, and (when a parcel is selected) detail/chain/logs/docs
-requests as one generation; all current-generation requests settle before any
+requests as one generation. Goal-detail evidence diagnostics, unmapped chains, and charter/directive source documents introduced by parents also refresh in that generation even without a selected parcel. All current-generation requests settle before any
 of them commit; commit applies only to the captured generation and the captured
 goal/parcel selection. Selection is snapshotted immutably before any await, so
 a user switching goal or parcel mid-flight cannot have stale (A-key) data
@@ -127,6 +127,7 @@ DOM stub and a controllable fake `fetch` (per-URL deferred promises), covering:
 - List failure with prior success: selection retained, panels labeled stale.
 - First-load failure: null data, `unavailable`, visible error, no crash.
 - Recovery: success after failure clears error, freshness `current`.
+- Goal-without-parcel: goal source documents, diagnostics, and unmapped evidence refresh with the same generation/goal guard; a late old-goal response cannot populate the current goal.
 - Detail-missing: board success without selected parcel clears detail; a late
   stale logs response cannot resurrect it.
 - Inactive vs missing: distinct notices; inactive is deliberately cleared on successful reconciliation;
