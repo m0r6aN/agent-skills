@@ -49,3 +49,26 @@ changes no locked observation behavior, route, status, or mutation authority.
 
 Local checks accepted; GitHub required checks and actual merge remain pending.
 No behavioral observation parcel is accepted by this prerequisite alone.
+
+## Incremental CI prerequisite correction
+
+Required CI shard 0 on cbfcf7cb reported 681 verification tests passed and one
+failed: scaffold expected Biome 2.5.3 while both sibling manifests use 2.5.14
+since merged fleet commit 60617cef5bdbc74aa516cf54a54e91e3e3228365.
+Baseline d86ade55 and this branch share the same manifest and test blobs.
+Scope amendment fe7153c9 preceded a mechanical expected-value/comment repair;
+no model dispatch was needed for this exact canonical pin alignment.
+Both independent architecture reviewers accept the complete four-file diff.
+
+Independent verifier at fe7153c9 plus working golden patch: focused actual AC-1
+passes (1/1); full scaffold passes 8/8 with embedded negative controls under
+Node 26 test-isolation=none (default isolation reports only the file result).
+Scoped pinned Biome passes (1 file); full verification lint passes (32 files,
+8 informational notices); amended spec-linter passes. Byte comparison from
+DISPATCH_ONLY_DEV_DEPENDENCIES onward proves all controls and test bodies
+unchanged. Manifests/locks unchanged. Needed sibling dependencies installed
+with locked npm ci --ignore-scripts; no tracked dependency changes.
+Verifier evidence: /tmp/to-b0-verifier-scaffold-diagnosis.txt and incremental
+verifier summary; these local paths are provenance, not portable artifacts.
+Remaining GitHub shard 1 still running at this recording; no green-chain or
+merge claim. Unattributed /tmp shard outcomes were explicitly excluded.
