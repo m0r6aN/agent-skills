@@ -111,3 +111,108 @@ Other reviewed boundaries:
 Optional findings: none independently established that warrant scope expansion. The explicit indented-code ruling is preserved; no extra exclusion is demanded. I do not treat the 34 shaping corpus candidates as verified facts or require a new parser grammar beyond RAT.
 
 Review exit control: HEAD remains ac406ecc2c21bcd2d6c539b4d3ff948c3759462b; git status --short empty. No tracked changes, commits, record rewriting, or fixture mutation by reviewer. Saved only this /tmp report.
+
+## Exact-head re-review929bb772 and residual A1 rulings
+
+B independently accepts929bb772 after24 bounded probes; A closes A2/A3 but keeps A1 OPEN. A reports valid one-hyphen delimiter and no-pipe/missing-cell table body still fabricate grant/conflict. Coordinator separately checked official primary GFM tables Examples199/202 at https://github.github.com/gfm/#tables-extension-; accepted table exclusion already covers these forms, no token/authority expansion. No required finding waived.
+
+Residual builder Step0 stopped before writes, exact parser/test only. Ruling: delimiter cells accept one-or-more hyphens; no-pipe body continuation remains excluded until blank or an actual bounded block-start. Implement the existing ATX/fence/blockquote starts plus unordered/ordered-list and thematic-break starts, with paired table-end genuine-record tests. Preserve header eligibility, narrative/escaped/code pipes and multiline exclusion. No indented-code, HTML-content or setext-heading parser expansion is authorized without concrete required reproduction against accepted record grammar. HTML/setext are flagged grammar boundaries beyond the existing bounded reader; do not claim a full GFM parser. The demonstrated table forms and list/thematic boundaries are concrete current-table mechanics; future unsupported block forms require an explicit evidence-backed ruling rather than invented complete-language support.
+
+Deeper same parser execution remains justified; source/test only, no dependency or historical changes. Independent full pass and both exact-head reviews required.
+
+### Re-review A
+
+Independent TO-P1 architecture/security re-review A
+
+Exact HEAD: 929bb772c44481dbf58d22b06af29f656c392b1c
+Worktree: /home/cmorgan76/Work/foreman-to-p1
+Decision: REJECT / REQUEST CHANGES. R-A1 remains OPEN; R-A2 and R-A3 CLOSED.
+
+Re-read corrective ruling to-p1-review-findings.md and source/test diff from rejected ac406ecc. Confirmed only ratification.ts and ratification.test.ts console paths changed; mechanical final import order does not alter parser behavior. Consumed independent actual235/235,type/lint,D19/read-only/probe report including historical lint failure and final mechanical-only pass. No full-suite repetition. Ran11 bounded pure-reader original/paired/new probes and actual full-document scanGoal for all4 required public goals. No source/test/record edits, commits, link following, authorization claims or simulated classifier review. Exact HEAD and clean tracked status confirmed.
+
+R-A1 OPEN — original examples fixed, standard table boundary gaps remain.
+Confidence: high; reproduced on exact HEAD and checked against primary GFM documentation.
+Code: plugins/foreman-line/ops-console/src/ratification.ts:96 and110.
+
+Remaining repro1 (charter exact lines; directive is ## Queue):
+1 Current | Evidence
+2 --- | ---
+3 Status: RATIFIED
+Actual: granted, evidence grant line3. Expected: unknown, no grant: line3 remains a table body row with the missing second cell padded empty, not a new standalone Status record. Current tableLines stops merely because that body row lacks a pipe (line110).
+
+Remaining repro2:
+1 Current | Evidence
+2 :-: | -:
+3 Status: RATIFIED | sample
+Actual: granted, evidence grant line3. Expected: unknown, no grant. Valid table delimiters may have one hyphen; current line96 requires three.
+
+Remaining repro3 demonstrates false conflict as well:
+1 Status: RATIFIED
+2 Current | Evidence
+3 --- | ---
+4 Status: NOT RATIFIED
+Actual: unknown, grant line1 plus denial line4. Expected: granted, only true current grant line1; line4 is a missing-cell table row.
+
+Primary verification: https://github.github.com/gfm/#tables-extension-
+Example199 shows the valid one-hyphen :-: alignment delimiter. Example202 explicitly renders an unpiped `bar` continuation line as a table row with empty second cell. The documented table break is an empty line or another block-level structure, not lack of a pipe. This source was consulted only to verify concrete Markdown table semantics; accepted RAT already mandates exclusion of tables. No request to add full GFM parsing or broaden indented-code policy.
+
+Impact: table contents can still fabricate a current grant or negative conflict, despite new structural exclusion coverage. Therefore A1 is partially corrected, not closed;235 deterministic passes do not cover these forms.
+Recommendation: permit supported delimiter cells containing one-or-more hyphens, and preserve body scope across missing-cell/no-pipe continuation rows until an actual table-ending boundary. Add both false-grant and genuine-grant/table-denial controls through pure reader and scanGoal. Preserve genuine Status after a blank line/heading, narrative pipes, escaped/code-span pipes, and multiline-emphasis table boundary behavior. No extra implementation file/dependency or historical rewrite is required.
+
+A1 correction evidence already successful: original `Current | Evidence\n--- | ---\nStatus: RATIFIED | sample` now unknown with no evidence. Original real Status followed by a table denial with a pipe now granted, only line1 grant. Original optional-outer-pipe header grant is covered by meaningful new tests. These successes do not resolve remaining forms above.
+
+R-A2 CLOSED on exact head.
+Direct original repro `Status: RATIFIED (conditional on funding)` now unknown with unsupported line1. `Status: RATIFIED — granted only if funding is approved` and `Status: RATIFIED; but Gate 1 is revoked` likewise unknown. Paired `Status: RATIFIED; review is conditional; if funding is approved` remains granted. Genuine anchored denial still conflicts; bare in-section Gate1 positive still cannot grant alone. New end-to-end tests assert the corrected direct conditional inputs force active,unknown1,total1 and one null-parcel ratification-evidence remedy in reconcile/owner/park order. Review/Gate2/3/parcel/quoted clauses remain meaningful paired controls. This follows pre-code ruling and accepted direct-current-qualification scope.
+
+R-A3 CLOSED on exact head.
+Direct read-only scanGoal of complete unchanged charter+directive for foreman-ops-console, trustworthy-observation, ci-fail-fast and w4-closeout all returns granted. New tracked full-source tests read original documents (not truncated replacements), compare full pure-reader result to scanGoal evidence, and establish genuine required compatibility. Benign ineligible positive/descriptive corroboration confers no grant alone and no unsupported veto, as explicitly dispositioned before code. Paired tests preserve true denial, revoked and direct conditional conflicts. No actual public record rewritten. The prior long hostile case correctly becomes pending because no positive is eligible after firstH2; new500-denial case begins with genuine eligible metadata and still produces unknown with1grant and500denials. Equal-level B-end unknown test still proves lack of grant, not a fabricated conflict.
+
+Architecture/security/performance assessment of correction
+The lexer remains pure and isolated. Table helper precomputes exclusions and uses escaped-character/code-run accounting without dependencies or filesystem effects; qualifier helper tracks direct/provenance scope without document-wide condition scans. No obvious new exponential path found in bounded source inspection. All other original source boundaries, attention/activity arithmetic, pending remedy, source failures/locators and authority/read-only limitations are unchanged. Indented-code handling remains optional documented limitation O-A1, not a mandatory exclusion. No optional finding promoted into contract scope.
+
+Required ledger: R-A1 OPEN (two residual standard table forms; three exact repros); R-A2 CLOSED; R-A3 CLOSED. No waived blocker. Overall exact-head architecture acceptance withheld pending narrow A1 correction and independent verification/re-review.
+
+### Re-review B
+
+Independent TO-P1 exact-head architecture/risk re-review B
+HEAD: 929bb772c44481dbf58d22b06af29f656c392b1c
+Worktree: /home/cmorgan76/Work/foreman-to-p1
+Decision: ACCEPT this parcel's reviewed implementation at this exact head.
+
+Required findings: B1 CLOSED; independently checked A1/A2/A3 corrections CLOSED. No new required or optional finding established by this bounded re-review. This is architecture acceptance, not authorization to merge or a goal-completion claim.
+
+Basis: original fresh independent review/canon retained; reread committed corrective rulings in to-p1-review-findings.md, complete corrected reader, corrective test additions and scope diff. Rulings commit3f6 predates implementation4b55. Head929 only mechanically organizes imports/consolidates type imports in ratification.test.ts; no assertions, parser, fixture, or other source changes from independently verified4b55. Independent verifier's actual235/235/typecheck/unchangedD19/read-only controls and exact-head lint PASS consumed with its explicit import-only carry-forward limitation. No redundant full suite run.
+
+B1 and A2 closure:
+Executed actual scanGoal + goalStatus + remediesFor through shipped node/tsx imports with real temporary configured docs/INITIATIVES/g files and alias.2 tree label. Nine direct conditional/revocation statements each return unknown, unsupported evidence line1 with actual temp root and contained docs/INITIATIVES/g/charter.md, active:true, ratificationUnknown1, total1, exactly one parcel:null ratification-evidence remedy in inspect/reconcile -> owner -> park order; every option commands empty.
+Exact probe inputs:
+- Status: RATIFIED; if funding is approved
+- Status: RATIFIED — only if funding is approved
+- Status: RATIFIED — subject to owner confirmation
+- Status: RATIFIED (conditional on funding)
+- Status: RATIFIED — granted only if funding is approved
+- Status: RATIFIED; but Gate 1 is revoked
+- Status: RATIFIED; provided funding is approved
+- Status: RATIFIED (only if funded)
+- Status: RATIFIED; Gate 1: REVOKED
+Directive for all: ## Queue, blank line, **Goal complete — queue empty**.
+This reproduces the original false-inactive/no-remedy integrations and establishes their correction, rather than simulating a classifier or inspecting only helpers.
+
+Mechanism now retains grant scope across empty delimiter clauses, normalizes direct opening parenthesis/only-if/granted-only-if/subject-to forms, preserves explicit owner/date continuation, and recognizes explicitly targeted Gate1 revoked clauses with connective but. Review/Gate2/Gate3/parcel clauses end general grant scope; the targeted Gate1 check remains separately anchored. Independent actual scanGoal controls keep granted for review-is-conditional followed by if, Gate2 conditional, Gate3 subject-to, scoped TO-P1 conditional, and quoted only-if. No arbitrary document-wide keyword veto was added.
+
+A1 closure:
+Independently ran actual scanGoal optional-outer-pipe table header grant and body grant examples: unknown, no fabricated supported grant. A genuine Status:RATIFIED plus table body Status:NOT RATIFIED remains granted. Reviewed pipeCells/tableLines: actual header+delimiter structure governs exclusion; escapes and matched code spans prevent incidental pipes becoming separators; header/body line indices are skipped before firstStatus/evidence consumption and multiline joining stops at excluded table boundary. Tests cover mixed outer pipes, escaped/code-span pipes, incidental non-table pipe metadata, unmatched backticks and original metadata line preservation. No blanket pipe exclusion or indented-code scope expansion.
+
+A3 closure:
+Read complete actual unchanged tracked charter/directive bytes through actual scanGoal using defaultConfig for this exact worktree, no excerpt substitution or historical rewriting. All four results granted with one grant:
+- foreman-ops-console: charter line7
+- trustworthy-observation: charter line6
+- ci-fail-fast: charter line6
+- w4-closeout: charter line3
+Locators retain actual configured worktree root and plugin-relative charter paths. Corrective shipped tests independently read entire tracked files, assert granted both via reader and scanGoal and compare evidence, replacing header-only compatibility as the load-bearing proof. Ineligible benign positive corroboration is ignored for establishing approval and for vetoing eligible metadata, consistent with the pre-code ruling. Paired actual probe confirms such a record alone remains unknown; real current NOT GRANTED still conflicts. Corrective tests additionally retain REVOKED and GRANTED-only-if veto controls. Descriptive arbitrary Gate1 text now does not fabricate either a supported grant or a conflict.
+
+Independent bounded execution total:24 probes passed (nine full unknown/status/remedy integrations, eleven table/no-veto/negative/unrelated controls, four actual full public goal scans). Temporary files removed. No full suite rerun or original document mutation.
+
+Unchanged architecture controls retain original review conclusions: pure isolated reader; only selected charter/directive; zero reference recursion; additive evidence and attention; configured-root component containment and actual source identity; required directive null versus optional charter missing/unreadable unknown; no authenticated authority claim; exact one unknown remedy, unchanged pending remedy; no API route/state/registry/schema/permission/audit or write authority changes. Exactly nine allowed console source/test paths differ from709dd4fb. Corrective source/test change confined to parser and its tests; coordinator records distinct. Designated-document realpath/size policies and unknown-only board banner remain later-parcel scope, not silently claimed complete here.
+
+Final reviewer control: HEAD929bb772c44481dbf58d22b06af29f656c392b1c unchanged, git status --short empty, git diff --check passes. No reviewer fixes, commits, fixture mutation or scope expansion. Only this report saved under /tmp. Exact-head CI and authorized merge remain separate coordinator gates.
