@@ -40,6 +40,7 @@ Environment:
 |---|---|---|
 | `FOC_REPO_ROOT` | **required — no default** | Absolute root whose `docs/receipts/` and `plugins/foreman-line/docs/` are projected. Absent (`root-absent`) or relative (`root-not-absolute`) values are refused before startup with a typed `ConsoleRootUnresolvedError` (exit 2) — the console never derives the repo root from the working directory or its own module location (D1) |
 | `FOC_STATE_DIR` | `ops-console/state` | The ONLY writable directory (two fixed files) |
+| `FOC_EXTRA_ROOTS` | *(empty)* | FCA-1: colon-separated absolute roots whose goal trees project too (`docs/goals`, `docs/INITIATIVES`, `plugins/foreman-line/docs/goals` per root). Goal keys qualify as `alias.slug` (alias = root directory name); bare slugs keep resolving to the primary root. |
 | `PORT` | `8081` | Listen port (`8080` inside the container) |
 | `FOC_HOST` | `127.0.0.1` | Loopback only; non-loopback requires `FOC_CONTAINER=1` and is refused otherwise |
 | `FOC_CONTAINER` | unset | `1` permits container-internal `0.0.0.0`; publication must still pin loopback |

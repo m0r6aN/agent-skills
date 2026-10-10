@@ -188,7 +188,11 @@ export function listGoalSlugs(config: ConsoleConfig): string[] {
     .sort()
 }
 
-export function scanGoal(config: ConsoleConfig, slug: string): GoalRecord | null {
+export function scanGoal(
+  config: ConsoleConfig,
+  slug: string,
+  treeRef = PLUGIN_TREE_REF,
+): GoalRecord | null {
   const goalDir = join(config.goalsDir, slug)
   let loopDirective: string
   try {
@@ -204,8 +208,8 @@ export function scanGoal(config: ConsoleConfig, slug: string): GoalRecord | null
   }
   return {
     slug,
-    charterRef: `${PLUGIN_TREE_REF}/docs/goals/${slug}/charter.md`,
-    loopDirectiveRef: `${PLUGIN_TREE_REF}/docs/goals/${slug}/loop-directive.md`,
+    charterRef: `${treeRef}/docs/goals/${slug}/charter.md`,
+    loopDirectiveRef: `${treeRef}/docs/goals/${slug}/loop-directive.md`,
     items: parseQueueItems(loopDirective),
     hungThreshold: hungThreshold(loopDirective),
     stateLines: stateLines(loopDirective),

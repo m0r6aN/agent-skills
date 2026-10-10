@@ -28,6 +28,25 @@ pi-model-configuration wave 2 (Amendments 06–09, owner-ratified):
 
 ## Unreleased
 
+- FCA-1 multi-root goal discovery (ops-console): optional `FOC_EXTRA_ROOTS`
+  (colon-separated absolute roots, D1-asserted like `FOC_REPO_ROOT`) projects
+  additional goal trees — `plugins/foreman-line/docs/goals`, `docs/goals`,
+  `docs/INITIATIVES` per root — under alias-qualified keys
+  (`agent-task.intelligence-layer`); bare keys keep resolving to the primary
+  tree. Frozen route table and R1–R5 derivation untouched
+  (spec `active/FCA-P0-ops-console-multi-root-and-status-index.md`).
+- FCA-2 goal status index (ops-console): `/api/goals` gains the additive
+  `statuses` sibling (tree-qualified key, `active`, attention counts) derived
+  from the frozen per-parcel rules; the UI goal picker lists active goals only,
+  grouped per tree and attention-first, and the board foregrounds what needs
+  the human (banner + `needs` card treatment).
+- FCA-3 remediation advisor (ops-console): `/api/alerts` gains the additive
+  `remedies` sibling — a triage question per blocker with answer-branch
+  recommendations and copy-pasteable commands (real verbs only; presented,
+  never executed). Branch lists are ordered per owner directive: preserve and
+  complete the existing work first, close/re-dispatch fresh last
+  (spec `active/FCA-P1-remediation-advisor.md`).
+
 - The CI aggregation now captures each package check's complete stdout/stderr and
   re-emits every failing check in a failure section before the summary matrix, so
   the failing assertion is always visible in the job log.

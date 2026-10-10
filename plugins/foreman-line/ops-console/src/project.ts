@@ -89,8 +89,11 @@ export function projectGoal(
   config: ConsoleConfig,
   goalSlug: string,
   now: number,
+  goalKey: string = goalSlug,
+  treeRef?: string,
 ): GoalProjection | null {
-  const goal = scanGoal(config, goalSlug)
+  const goal =
+    treeRef === undefined ? scanGoal(config, goalSlug) : scanGoal(config, goalSlug, treeRef)
   if (goal === null) return null
 
   const specs = scanSpecs(config)
@@ -119,7 +122,7 @@ export function projectGoal(
     )
     parcels.push(
       deriveParcel({
-        goal: goalSlug,
+        goal: goalKey,
         parcel: item.key,
         itemText: item.text,
         spec,
