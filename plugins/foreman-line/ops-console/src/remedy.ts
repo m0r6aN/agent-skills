@@ -282,7 +282,7 @@ function ratificationUnknownRemedy(projection: GoalProjection): Remedy | null {
   const evidence = projection.goal.evidence ?? []
   const identities = evidence.map(
     (item) =>
-      `${item.source} ${item.locator.relativePath}${item.line === null ? '' : `:${item.line}`}`,
+      `${item.source} root=${item.locator.root} ${item.locator.relativePath}${item.line === null ? '' : `:${item.line}`}`,
   )
   const where = identities.length === 0 ? 'no readable goal sources' : identities.join('; ')
   const withhold =
@@ -290,7 +290,7 @@ function ratificationUnknownRemedy(projection: GoalProjection): Remedy | null {
   return {
     goal: projection.goal.slug,
     parcel: null,
-    cause: `ratification evidence inconclusive — ${projection.goal.ratification.detail}`,
+    cause: 'ratification-evidence',
     question: 'Which current record actually states this goal’s Gate-1 ratification?',
     options: [
       {

@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict'
+import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
+import { join } from 'node:path'
 import test from 'node:test'
-import { projectGoal } from '../src/project.js'
-import { type RatificationSource, readRatification } from '../src/ratification.js'
+import { readRatification } from '../src/ratification.js'
+import { scanGoal } from '../src/scan.js'
 import type { Locator } from '../src/types.js'
 import { type Scenario, withTempRepo } from './support/materialize.js'
 
@@ -35,17 +37,6 @@ function scenario(
     specs: [],
     expected: [],
   }
-}
-
-function withGoal(
-  scenarioDef: Scenario,
-  run: (projection: import('../src/types.js').GoalProjection) => void,
-): void {
-  withTempRepo(scenarioDef, ({ config, now }) => {
-    const projection = projectGoal(config, scenarioDef.goal.slug, now)
-    assert.ok(projection !== null, 'projection exists')
-    run(projection)
-  })
 }
 
 test('dialect A: current top metadata RATIFIED grants', () => {
@@ -703,8 +694,7 @@ test('Gate 2/3 negation is irrelevant to Gate 1', () => {
 })
 
 test('long hostile input does not hang', () => {
-  const filler =
-    '## Section\n'.repeat(1000) + 'Status: RATIFIED\n' + 'Status: NOT RATIFIED\n'.repeat(500)
+  const filler = `${'## Section\n'.repeat(1000)}Status: RATIFIED\n${'Status: NOT RATIFIED\n'.repeat(500)}`
   const result = readRatification([
     {
       source: 'charter',
@@ -721,37 +711,254 @@ test('long hostile input does not hang', () => {
 })
 
 test('scanGoal integration: missing charter yields unknown with missing evidence', () => {
-  withGoal(scenario('missing-charter'), (projection) => {
-    assert.equal(projection.goal.ratification.status, 'unknown')
+  withTempRepo(scenario('missing-charter'), ({ config }) => {
+    rmSync(join(config.goalsDir, 'goal-rat', 'charter.md'))
+    const goal = scanGoal(config, 'goal-rat')
+    assert.equal(goal?.ratification.status, 'unknown')
     assert.ok(
-      projection.goal.evidence?.some(
+      goal?.evidence?.some(
         (e) => e.kind === 'missing' && e.source === 'charter' && e.line === null,
       ),
     )
   })
 })
 
-test('scanGoal integration: actual relative locator root, not alias', () => {
-  withGoal(scenario('locator-root'), (projection) => {
-    assert.ok(projection.goal.evidence !== undefined)
-    for (const item of projection.goal.evidence ?? []) {
-      assert.ok(item.locator.root.length > 0, 'root is actual configured root')
-      assert.ok(!item.locator.root.includes('agent-task'), 'root is not an alias')
-      assert.ok(
-        item.locator.relativePath.startsWith('plugins/foreman-line/docs/goals/'),
-        'relativePath is repo-relative',
+test('scanGoal integration: actual relative locator root equals configured root', () => {
+  withTempRepo(scenario('locator-root', { charterStatus: 'RATIFIED' }), ({ config }) => {
+    const goal = scanGoal(config, 'goal-rat')
+    assert.equal(goal?.ratification.status, 'granted')
+    assert.ok(goal?.evidence?.length)
+    for (const item of goal?.evidence ?? []) {
+      assert.equal(item.locator.root, config.repoRoot)
+      assert.equal(
+        item.locator.relativePath,
+        `plugins/foreman-line/docs/goals/goal-rat/${item.source === 'charter' ? 'charter' : 'loop-directive'}.md`,
       )
     }
   })
 })
 
-test('scanGoal integration: missing directive yields unknown with unreadable evidence', () => {
-  withGoal(scenario('missing-directive', { charterStatus: 'RATIFIED' }), (projection) => {
-    assert.equal(projection.goal.ratification.status, 'unknown')
-    assert.ok(
-      projection.goal.evidence?.some(
-        (e) => e.kind === 'unreadable' && e.source === 'loop-directive' && e.line === null,
-      ),
+for (const file of ['charter.md', 'loop-directive.md']) {
+  for (const failure of ['missing', 'unreadable']) {
+    test(`scanGoal integration: actual ${failure} ${file} preserves required-source behavior`, () => {
+      withTempRepo(scenario('actual-io', { charterStatus: 'RATIFIED' }), ({ config }) => {
+        const path = join(config.goalsDir, 'goal-rat', file)
+        rmSync(path)
+        if (failure === 'unreadable') mkdirSync(path)
+        // The other source grants, so an optional source failure must override it.
+        if (file === 'charter.md')
+          writeFileSync(
+            join(config.goalsDir, 'goal-rat', 'loop-directive.md'),
+            '## Gate 1 record\n- Gate 1: GRANTED\n',
+          )
+        const goal = scanGoal(config, 'goal-rat')
+        if (file === 'loop-directive.md') assert.equal(goal, null)
+        else {
+          assert.equal(goal?.ratification.status, 'unknown')
+          assert.ok(goal?.evidence?.some((e) => e.kind === failure && e.line === null))
+        }
+      })
+    })
+  }
+}
+
+function readText(text: string, directive: string | null = '## Queue\n') {
+  return readRatification([
+    { source: 'charter', locator: LOC, text },
+    {
+      source: 'loop-directive',
+      locator: { ...LOC, relativePath: 'docs/goals/g/loop-directive.md' },
+      text: directive,
+    },
+  ])
+}
+
+for (const [name, text, expected] of [
+  ['Status after first H2 cannot grant', '## Queue\nStatus: RATIFIED', 'unknown'],
+  [
+    'first unsupported Status consumes positive position',
+    'Status: unknown\nStatus: RATIFIED',
+    'unknown',
+  ],
+  ['bare B line cannot grant', '## Gate 1 record\nGate 1: GRANTED', 'unknown'],
+  [
+    'B survives nested unexcluded subsection',
+    '## Gate 1 record\n### Details\n- Gate 1: GRANTED',
+    'granted',
+  ],
+  ['B ends at equal-level heading', '## Gate 1 record\n## Current\n- Gate 1: GRANTED', 'unknown'],
+  [
+    'excluded parent survives nested excluded child',
+    '## Historical\n### Example\n### Gate 1 record\n- Gate 1: GRANTED',
+    'unknown',
+  ],
+  [
+    'excluded parent ends at equal-level heading',
+    '## Historical\n### Example\n## Gate 1 record\n- Gate 1: GRANTED',
+    'granted',
+  ],
+  [
+    'unmatched emphasis cannot borrow closing delimiter across heading',
+    'Status: **RATIFIED\n## Current\n**',
+    'unknown',
+  ],
+  ['quoted denial token cannot become denial', 'Status: "NOT RATIFIED"', 'unknown'],
+  ['backtick grant cannot become grant', 'Status: `RATIFIED`', 'unknown'],
+  ['linked token cannot become grant', 'Status: [RATIFIED](older.md)', 'unknown'],
+  [
+    'standalone Status revocation conflicts after H2',
+    'Status: RATIFIED\n## Current\nStatus: REVOKED',
+    'unknown',
+  ],
+  [
+    'anchored condition blocks B',
+    '## Gate 1 record\n- Gate 1: GRANTED provided review passes',
+    'unknown',
+  ],
+  [
+    'quoted qualifier is not a current condition',
+    'Status: RATIFIED — owner said "if needed"',
+    'granted',
+  ],
+  [
+    'review qualification does not qualify grant',
+    'Status: RATIFIED — review is unresolved',
+    'granted',
+  ],
+  [
+    'arbitrary prose cannot revoke grant',
+    'Status: RATIFIED\nGate 1 was revoked in an example.',
+    'granted',
+  ],
+  ['all negative positions collected', 'Status: RATIFIED\n## Current\nGate 1: DRAFT', 'unknown'],
+  [
+    'historical-note literal requires delimiter',
+    'Status: RATIFIED\nHistorical notebook\nStatus: NOT RATIFIED',
+    'unknown',
+  ],
+] as const) {
+  test(name, () => {
+    const result = readText(text)
+    assert.equal(result.ratification.status, expected)
+    if (name.includes('cannot become'))
+      assert.ok(result.evidence.every((e) => e.kind !== 'grant' && e.kind !== 'denial'))
+  })
+}
+
+test('balanced multiline emphasis keeps the originating evidence line', () => {
+  const result = readText('# Charter\n\n**Status:** **\nRATIFIED\n**\n## Queue')
+  assert.equal(result.ratification.status, 'granted')
+  assert.equal(result.evidence[0]?.line, 3)
+})
+
+test('missing charter overrides a supported directive grant', () => {
+  const result = readRatification([
+    { source: 'charter', locator: LOC, text: null },
+    { source: 'loop-directive', locator: LOC, text: '## Gate 1 record\n- Gate 1: GRANTED' },
+  ])
+  assert.equal(result.ratification.status, 'unknown')
+  assert.ok(result.evidence.some((item) => item.kind === 'missing'))
+  assert.ok(result.evidence.some((item) => item.kind === 'grant'))
+})
+
+const publicHeaders = [
+  [
+    'foreman-ops-console',
+    '**Status:** RATIFIED — Gate 1 granted 2026-09-16 (owner: OQ1–OQ4 ruled per attached recommendations, charter ratified); plan-level adversarial review NOT run (mandatory next step)',
+  ],
+  [
+    'ci-fail-fast',
+    '**Status:** **RATIFIED 2026-10-07 — Gate 1 granted twice**: initial\nratification ("Gate 1 granted. Ratify all recommendations, as written") and\nscoped re-ratification after the plan-level adversarial review',
+  ],
+  [
+    'w4-closeout',
+    '**Status:** FULLY RATIFIED — Gate 1 (D1–D6) ratified 2026-07-28 11:17 EDT; plan-adversarial review complete (RATIFY-WITH-AMENDMENTS — `plan-review-findings.md`, all amendments applied); D4-R1 review **HOLD**; D4-R2B sole-owner compromise **RATIFIED 2026-09-05**.\n**Historical note — the 2026-07-28 header record:**\nStatus: NOT RATIFIED',
+  ],
+  [
+    'trustworthy-observation',
+    '**Status:** RATIFIED 2026-10-10 — D1–D8 and TO-P0–TO-P7 approved; owner amendment A1 below applies',
+  ],
+] as const
+
+for (const [name, header] of publicHeaders) {
+  test(`scanGoal public supported ${name} header`, () => {
+    withTempRepo(scenario(`public-${name}`), ({ config }) => {
+      writeFileSync(
+        join(config.goalsDir, 'goal-rat', 'charter.md'),
+        `# Charter\n${header}\n## Objective\n`,
+      )
+      const goal = scanGoal(config, 'goal-rat')
+      assert.equal(goal?.ratification.status, 'granted')
+      assert.ok(goal?.evidence?.some((item) => item.kind === 'grant' && item.line === 2))
+    })
+  })
+}
+
+for (const layout of ['docs/goals', 'docs/INITIATIVES']) {
+  test(`scanGoal actual root and ${layout} evidence locators`, () => {
+    withTempRepo(scenario('native-locator'), ({ config }) => {
+      const goalsDir = join(config.repoRoot, layout)
+      const goalDir = join(goalsDir, 'g')
+      mkdirSync(goalDir, { recursive: true })
+      writeFileSync(join(goalDir, 'charter.md'), 'Status: RATIFIED')
+      writeFileSync(join(goalDir, 'loop-directive.md'), '## Gate 1 record\n- Gate 1: NOT RATIFIED')
+      const goal = scanGoal({ ...config, goalsDir }, 'g', 'alias.2')
+      assert.equal(goal?.ratification.status, 'unknown')
+      assert.equal(goal?.evidence?.length, 2)
+      for (const item of goal?.evidence ?? []) {
+        assert.equal(item.locator.root, config.repoRoot)
+        assert.equal(
+          item.locator.relativePath,
+          `${layout}/g/${item.source === 'charter' ? 'charter' : 'loop-directive'}.md`,
+        )
+      }
+    })
+  })
+}
+
+for (const text of [
+  'Status: "**RATIFIED**"',
+  "Status: '**RATIFIED**'",
+  'Status: `**RATIFIED**`',
+  '## Gate 1 record\n- Gate 1: "**GRANTED**"',
+  '## **Gate 1 record\n- Gate 1: GRANTED',
+]) {
+  test(`quoted or unmatched-heading emphasis never establishes grant: ${text}`, () => {
+    const result = readText(text)
+    assert.equal(result.ratification.status, 'unknown')
+    assert.ok(result.evidence.every((item) => item.kind !== 'grant'))
+  })
+}
+
+test('current supported denial alone outside B heading remains pending', () => {
+  const result = readText('## Queue\nGate 1: NOT GRANTED')
+  assert.equal(result.ratification.status, 'pending')
+  assert.equal(result.evidence[0]?.line, 2)
+})
+
+test('scanGoal exclusion fixture preserves a grant without reading example denials', () => {
+  withTempRepo(scenario('exclusions'), ({ config }) => {
+    writeFileSync(
+      join(config.goalsDir, 'goal-rat', 'charter.md'),
+      'Status: RATIFIED\n## Historical\n### Example\n### Current\nStatus: NOT RATIFIED\n## Objective\n> Gate 1: NOT GRANTED\n',
+    )
+    const goal = scanGoal(config, 'goal-rat')
+    assert.equal(goal?.ratification.status, 'granted')
+    assert.deepEqual(
+      goal?.evidence?.map((item) => [item.kind, item.line]),
+      [['grant', 1]],
     )
   })
 })
+
+for (const text of [
+  'Status: NOT RATIFIED provided another review fails',
+  'Status: RATIFIED — Gate 1 is NOT GRANTED',
+  'Status: RATIFIED; Gate 1 grant is revoked',
+]) {
+  test(`anchored conditional or contradictory grant remains unknown: ${text}`, () => {
+    const result = readText(text)
+    assert.equal(result.ratification.status, 'unknown')
+    assert.ok(result.evidence.some((item) => item.kind === 'unsupported'))
+  })
+}

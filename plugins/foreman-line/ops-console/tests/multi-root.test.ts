@@ -282,3 +282,45 @@ test('multi-root: relative extra roots are refused typed, exactly like the prima
     )
   })
 })
+
+for (const state of ['empty', 'all complete', 'closed narrative']) {
+  test(`goalStatus: unknown ratification retains ${state} goal attention and activity`, () => {
+    const candidate = projection(state === 'all complete' ? [parcel({})] : [], 'unknown', 0)
+    const closed = {
+      ...candidate,
+      goal: {
+        ...candidate.goal,
+        stateLines: state === 'closed narrative' ? ['**State: GOAL CLOSED; queue empty.**'] : [],
+      },
+    }
+    const status = goalStatus('g', null, closed)
+    assert.equal(status.active, true)
+    assert.deepEqual(status.attention, {
+      hung: 0,
+      failed: 0,
+      awaitingGate: 0,
+      ratificationPending: 0,
+      ratificationUnknown: 1,
+      total: 1,
+    })
+  })
+}
+
+test('goalStatus: unknown count adds to existing parcel attention', () => {
+  const status = goalStatus(
+    'g',
+    null,
+    projection(
+      [parcel({ state: 'hung' }), parcel({ state: 'failed' }), parcel({ state: 'awaiting-gate' })],
+      'unknown',
+    ),
+  )
+  assert.deepEqual(status.attention, {
+    hung: 1,
+    failed: 1,
+    awaitingGate: 1,
+    ratificationPending: 0,
+    ratificationUnknown: 1,
+    total: 4,
+  })
+})

@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs'
-import { basename, join, relative, sep } from 'node:path'
+import { basename, isAbsolute, join, relative, sep } from 'node:path'
 import { type ConsoleConfig, PLUGIN_TREE_REF } from './config.js'
 import { parseFrontmatter } from './frontmatter.js'
 import { parseSidecarDoc, type SidecarDoc } from './guards.js'
@@ -157,8 +157,11 @@ function stateLines(loopDirective: string): string[] {
 }
 
 function locator(root: string, absPath: string): Locator {
-  const rel = relative(root, absPath).split(sep).join('/')
-  return { root, relativePath: rel }
+  const rel = relative(root, absPath)
+  if (isAbsolute(rel) || rel === '..' || rel.startsWith(`..${sep}`)) {
+    throw new Error('ratification evidence locator must be contained in configured root')
+  }
+  return { root, relativePath: rel.split(sep).join('/') }
 }
 
 export function listGoalSlugs(config: ConsoleConfig): string[] {
@@ -197,13 +200,20 @@ export function scanGoal(
   const charterPath = join(goalDir, 'charter.md')
   const directivePath = join(goalDir, 'loop-directive.md')
   let charterText: string | null = null
+  let failureKind: 'missing' | 'unreadable' | undefined
   try {
     charterText = readFileSync(charterPath, 'utf8')
-  } catch {
-    // Charter optional for projection; ratification renders as unknown.
+  } catch (error) {
+    // Optional source: preserve the goal, but never grant on incomplete evidence.
+    failureKind = (error as NodeJS.ErrnoException).code === 'ENOENT' ? 'missing' : 'unreadable'
   }
   const result = readRatification([
-    { source: 'charter', locator: locator(config.repoRoot, charterPath), text: charterText },
+    {
+      source: 'charter',
+      locator: locator(config.repoRoot, charterPath),
+      text: charterText,
+      failureKind,
+    },
     {
       source: 'loop-directive',
       locator: locator(config.repoRoot, directivePath),
