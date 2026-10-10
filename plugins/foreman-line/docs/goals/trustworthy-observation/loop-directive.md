@@ -6,8 +6,8 @@
 2026-10-10. Planning worktree and branch are named in charter.md.
 One goal, one coordinator. Transfers occur at recorded parcel boundaries.
 
-**State:** `to_p1_architecture_rework_pending`; D1–D8 and graph ratified 2026-10-10;
-A1 merge/decision delegation and cost routing recorded; no implementation accepted.
+**State:** `to_p1_verified_reviewed_publication_pending`; D1–D8 and graph ratified 2026-10-10;
+A1 merge/decision delegation and cost routing recorded; TO-P1 implementation independently accepted, exact-head CI and merge pending.
 
 ## Authority
 
@@ -178,3 +178,5 @@ Rework handoff committed54e5bd52 after Step0 disposition ae14f046. Six exact all
 Second independent pass code54e5bd52:180tests/179pass/1fail, type/lint/D19/read-only PASS. Required corrective findings: test should allow Ask the owner without losing meaning/order; unauthorized archived/examples/instructions exclusion hides current denials; conditions after provenance falsely grant. Preferred Ember corrective Step0(s) restated exact3existing Allowed Files and stopped, no code. Formatting/schema irregularities inspected explicitly; no implied test claims. Ruling before code: use exact whole-word canonical exclusion set; add 3 unlisted-heading negative regressions; optional-the assertion correction mandatory; anchored grant-targeting condition clauses after provenance must be unknown, with irrelevant review/parcel/Gate2/3 conditions remaining granted. Indented-code behavior unchanged: accepted canon does not explicitly require it; no silent grammar expansion. Existing RAT/ATT/scope unchanged. Runtime estimates Step0 USD0.054195 and amendedStep0 USD0.055212, not billing. No classifier ran.
 
 Dual architecture review on ac406ecc REJECT despite201 deterministicPASS. A1tables, A2/B1conditions, A3fullactualcompatibility OPEN; exact findings/rulings in to-p1-review-findings.md. Builder corrective Step0 halted, only parser/test authorized after separate rulings commit. No implementation acceptance; PR169 draft. Rejected-head CI canceled, corrected head must receive full requirements.
+
+Final TO-P1 implementation a840914f:251/251,type/lint/unchangedD19/read-only PASS; both independent final architecture reviews ACCEPT, required findings open0. Same-PR spec/shaping-history/index/lesson lifecycle prepared; artifact bytes preserved. PR169 publication/exact-head CI/normal merge pending; TO-P1 task remains unchecked until actual merge. TO-P2–TO-P7 unactivated. Earlier review/CI statements above are historical checkpoints.

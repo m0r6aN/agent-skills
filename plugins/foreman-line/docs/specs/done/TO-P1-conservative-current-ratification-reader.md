@@ -1,7 +1,7 @@
 ---
 ticket: TO-P1
 title: Conservative current ratification reader
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-10-10
 updated: 2026-10-10
@@ -152,3 +152,7 @@ Run the unchanged D19 audit/read-only negative controls after source changes; do
 3. Standalone historical-note markers: after normal Markdown exclusions and balanced-bold normalization, a line begins with case-insensitive literal Historical note or Historical-note, followed by end-of-line or an optional-whitespace colon/hyphen/en-dash/em-dash delimiter and explanation. Both the corpus Historical note: form and real w4 Historical note — ...: form are supported; suppression continues until the next heading. Do not broaden this to arbitrary standalone historical/archive words or incidental prose; such a superset could suppress a current denial. Heading-scoped exclusion markers remain the accepted whole-word set unchanged.
 
 These clarify the existing accepted standalone historical-note rule and implementation mechanics; they do not change RAT/ATT outcomes, grant grammar, route/state/permission boundaries, or Allowed Files. Meaningful tests include actual W4-style marker, colon form, heading reset, and an incidental historical word that must not discard a current denial.
+
+## Reviewed lifecycle closure
+
+Implementation a840914f independently verified:251/251 tests, typecheck/lint, unchanged D19 and read-only controls PASS. Both independent architecture reviewers accept exact head; all required findings closed. Goal evidence in docs/goals/trustworthy-observation/to-p1-verification.md and to-p1-review-findings.md. Same-PR lifecycle move prepared after acceptance; exact-head required CI and actual merge remain pending. This does not close TO-P2–TO-P7 or claim UI/goal exit proof.

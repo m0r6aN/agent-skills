@@ -217,3 +217,8 @@ exact keys, sibling parity and hostile negative controls rather than weakening
 the test. Independent local checks, two reviewers and both full required CI
 chains passed before actual merge96ffadc5. Disposition: closed baseline repair;
 not observation implementation acceptance or a change to another goal's scope.
+
+
+## 2026-10-10 — Complete current records and Markdown exclusions (TO-P1)
+
+Header excerpts passed while complete live goal documents falsely became unknown: benign ineligible corroboration was wrongly treated as a revocation veto. Independent full-document probes exposed the discrepancy. The accepted reader distinguishes no-authority corroboration from actual current denial/conditional/revoked evidence, and full unchanged FOC/TO/CFF/W4 charter plus directive tests exercise the shipped scanner. Markdown table exclusions require structural delimiter/body coverage including optional outer pipes, short delimiters and missing-cell rows; leading-pipe filters and happy-path table fixtures leaked grants/conflicts. Disposition installed in ops-console/src/ratification.ts and its tests, with actual scanGoal→status→remedy regression assertions.251tests and fresh dual architecture review pass at a840914f; actual CI/merge pending in the parcel evidence. The bounded reader makes no authority-authentication or full Markdown-conformance claim.

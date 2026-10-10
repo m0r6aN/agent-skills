@@ -134,7 +134,7 @@ Own TO-B0/TO-P0/TO-P1 lifecycle rows maintained 2026-10-10; other rows retain th
 | SUPERCHARGE-P2 | [Phase 2 — routing + frontmatter comprehensiveness analysis](active/SUPERCHARGE-P2-routing-analysis.md) | `active` | `active/` |
 | TO-B0 | [Baseline root guard repair](done/TO-B0-baseline-root-guard-repair.md) | `done` | `done/` |
 | TO-P0 | [Observation contract amendment](done/TO-P0-observation-contract-amendment.md) | `done` | `done/` |
-| TO-P1 | [Conservative current ratification reader](active/TO-P1-conservative-current-ratification-reader.md) | `active` | `active/` |
+| TO-P1 | [Conservative current ratification reader](done/TO-P1-conservative-current-ratification-reader.md) | `done` | `done/` |
 | WGT-P0A | [Foreman record reconciliation](done/WGT-P0A-foreman-record-reconciliation.md) | `done` | `done/` |
 | WGT-P0BOOT | [Tracked Foreman Line bootstrap](done/WGT-P0BOOT-tracked-foreman-bootstrap.md) | `done` | `done/` |
 | WGT-R1 | [Foreman current-state and queue reconciliation](active/WGT-R1-foreman-current-state-reconciliation.md) | `active` | `active/` |

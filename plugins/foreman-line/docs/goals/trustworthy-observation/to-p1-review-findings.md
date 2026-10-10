@@ -216,3 +216,73 @@ Independent bounded execution total:24 probes passed (nine full unknown/status/r
 Unchanged architecture controls retain original review conclusions: pure isolated reader; only selected charter/directive; zero reference recursion; additive evidence and attention; configured-root component containment and actual source identity; required directive null versus optional charter missing/unreadable unknown; no authenticated authority claim; exact one unknown remedy, unchanged pending remedy; no API route/state/registry/schema/permission/audit or write authority changes. Exactly nine allowed console source/test paths differ from709dd4fb. Corrective source/test change confined to parser and its tests; coordinator records distinct. Designated-document realpath/size policies and unknown-only board banner remain later-parcel scope, not silently claimed complete here.
 
 Final reviewer control: HEAD929bb772c44481dbf58d22b06af29f656c392b1c unchanged, git status --short empty, git diff --check passes. No reviewer fixes, commits, fixture mutation or scope expansion. Only this report saved under /tmp. Exact-head CI and authorized merge remain separate coordinator gates.
+
+## Final exact-head closure a840914f
+
+Both independent reviewers ACCEPT. A1/A2/A3/B1 CLOSED, required findings open0. Final exact-head reports follow; their acceptance does not bypass CI or authorize an early goal-completion claim.
+
+### Final A
+
+Independent TO-P1 final architecture/security review A
+
+Exact head: a840914f8fd0b4838f0682288c4c0c40995eeaa6
+Worktree: /home/cmorgan76/Work/foreman-to-p1
+Decision: ACCEPT for this bounded TO-P1 architecture review. All required findings CLOSED. Effective exact-head CI, authorized merge and lifecycle evidence remain coordinator requirements; this is not overall goal completion or authenticated authority.
+
+Evidence and method
+Reinspected incremental parser/test diff from929bb772, pre-code residual ruling and independent residual-table verifier summary. Actual independent251/251,typecheck/lint,unchangedD19 and four read-only controls PASS. Only two console paths changed in this correction; no API/UI/helper/audit/dependency/authority expansion. Ran20 additional direct bounded pure-reader cases plus4 real full-document scanGoal reads on exact head; all asserted outcomes passed. Confirmed tracked clean. No repository edits, commits, fixture changes, public-record rewrites or link recursion.
+
+R-A1 CLOSED.
+All three remaining exact repros now match accepted outcomes:
+1 `Current | Evidence\n--- | ---\nStatus: RATIFIED` -> unknown, evidence empty.
+2 `Current | Evidence\n:-: | -:\nStatus: RATIFIED | sample` -> unknown, evidence empty.
+3 `Status: RATIFIED\nCurrent | Evidence\n--- | ---\nStatus: NOT RATIFIED` -> granted, only grant line1.
+The table delimiter now accepts one-or-more hyphens and table body includes unpiped missing-cell rows. endsTable uses bounded blank/ATX/fence/blockquote/list/thematic starts rather than absence of a pipe. This implements the original table exclusion: GFM Example199 and202 factual basis at https://github.github.com/gfm/#tables-extension- established in preceding review; no additional grammar requirement introduced.
+Verified table lifetime controls independently: after an unpiped body, blank permits genuine metadata grant line5; ATX permits standalone denial line5; bullet permits genuine metadata grant line4; ordered list and thematic boundary permit genuine metadata grant line5. Quote and fence contents still yield no grant. Narrative pipe, escaped pipe and matched-code pipe metadata each remain granted line1. New tests exercise all three remaining examples through both readRatification and scanGoal, exact evidence identities,10 block-ending controls, blank reset and unpiped escaped/code content. These tests preserve true outside-table current-denial detection instead of merely asserting absence of evidence everywhere.
+
+R-A2 CLOSED; closure carried forward and directly reconfirmed.
+Parenthetical conditional, granted-only-if and explicit `but Gate 1 is revoked` still unknown, unsupported line1. Unrelated review conditional followed by if still granted. True current denial still produces grant+denial unknown. Qualifier logic unchanged by residual table patch; existing end-to-end unknown activity/count/exact-one-remedy assertions remain meaningful and independent251-suite PASS.
+
+R-A3 CLOSED; closure carried forward and directly reconfirmed.
+All four complete original selected-tree charter+directive pairs read through actual scanGoal: foreman-ops-console, trustworthy-observation, ci-fail-fast and w4-closeout return granted. Ineligible positive corroboration alone remains unknown with no grant; genuine metadata plus same corroboration remains granted only line1. Full-document tests read unchanged actual tracked files, compare scanGoal evidence with pure-reader full sources; genuine current denial/revocation/conditional controls preserved. No abbreviated-header-only compatibility claim or historical rewrite.
+
+Architecture/security/performance
+The incremental helper remains local to the pure reader and adds no persistence, recursion, timestamp arbitration or authentication. Table block lifetime consumes each body once, with existing cell/backtick scanning retained; no new obviously pathological nested or exponential search found in bounded inspection. Source failure behavior, actual-root locators, original line diagnostics, ATT arithmetic/activity and ordered withheld-command unknown remedy remain unchanged. Exact original nine-path implementation scope remains intact.
+
+Bounded limitations: HTML/setext and indented-code grammar are explicitly outside this correction; no full GFM conformance/absence-of-parser-bugs claim. Original optional indented-code observation remains documented, not a new mandatory exclusion. No additional concrete required AC failure reproduced in this final bounded review and no speculative scope expansion requested.
+
+Final required ledger: R-A1 CLOSED; R-A2 CLOSED; R-A3 CLOSED. Required findings open:0. Optional O-A1 documented unchanged. Independent architecture ACCEPT at exact a840914f; subject to remaining coordinator gates above.
+
+### Final B
+
+Independent final incremental TO-P1 architecture/risk review B
+Exact HEAD: a840914f8fd0b4838f0682288c4c0c40995eeaa6
+Worktree: /home/cmorgan76/Work/foreman-to-p1
+Decision: ACCEPT reviewed parcel implementation at this exact head.
+Required ledger: B1 CLOSED; A2/A3 remain CLOSED; residual A1 corrections independently verified CLOSED. No new required or optional finding established in this bounded review. My preceding929 acceptance covered the initial A1 examples but missed A's standard short-delimiter/unpiped-row gaps; this report explicitly verifies those residual cases rather than carrying forward that incomplete table conclusion.
+
+Read committed residual ruling in to-p1-review-findings.md (pre-code d3d441), complete incremental source/test diff and independent residual-table verifier report. Correction confines console modifications to src/ratification.ts and tests/ratification.test.ts (114 additions/10 deletions); coordinator findings record is distinct. No other source/API/UI/manifest/audit path changed incrementally. Verifier reports actual251/251, typecheck/lint/unchangedD19/read-only PASS at exacta840. Consumed those observations without redundant full-suite execution.
+
+Residual A1:
+Delimiter cells now accept one-or-more hyphens with optional alignment colons. Real header+delimiter identity remains necessary; incidental narrative, escaped and code-span pipes are not blanket exclusions. Table body continues through missing-cell/unpiped rows instead of ending merely on lack of pipe. New endsTable recognizes bounded blank, ATX, fence, blockquote, unordered/ordered-list and thematic-break boundaries before following genuine records. Multiline emphasis remains stopped by precomputed table exclusions. Source changes do not alter grant grammar, evidence identity or qualifier scope.
+
+Independent actual scanGoal probes using real temporary docs/goals/g files proved:
+1 A | B / - | - / Status: RATIFIED => unknown, no evidence.
+2 A | B / :-: | -: / Status: RATIFIED | x => unknown, no evidence.
+3 Genuine Status:RATIFIED line1 plus table with unpiped Status:NOT RATIFIED => granted, only grant line1.
+4 Table with short delimiters and unpiped denial, then blank and first genuine Status:RATIFIED => granted, grant line5.
+For each of twelve boundaries (blank, ## Current, blockquote, fenced block, dash/plus/star lists, ordered-dot/ordered-parenthesis lists, ***, ---, ___), a genuine Status:NOT GRANTED after the boundary conflicts with the preceding genuine grant, yielding unknown; the earlier unpiped table denial stays excluded and following denial retains its exact original line. These probes cover real scanner IO, not merely a copied classifier.
+
+B1/A2 unaffected:
+Repeated actual scanGoal -> goalStatus -> remediesFor integrations for Status:RATIFIED with direct semicolon-if, only-if, subject-to, parenthetical conditional, and 'but Gate 1 is revoked'. Every case returns unknown, active:true, ratificationUnknown1,total1 and exactly one parcel:null ratification-evidence remedy with reconcile/owner/park ordering and all commands empty, despite complete/empty narrative. These helper sources are unchanged by residual table correction; existing paired unrelated/quoted controls remain in the full verified suite.
+
+A3 and identity:
+Repeated read-only actual full unchanged tracked charter+directive scans for foreman-ops-console, trustworthy-observation, ci-fail-fast and w4-closeout. All granted and all evidence roots equal actual configured worktree root. No excerpt replacement, actual-record editing, alias filesystem identity, reference recursion or authenticated-authority assertion. Benign ineligible corroboration/no-grant-alone correction remains unchanged.
+
+Actual independent bounded execution:25 passed (five unknown attention/remedy integrations, four residual table integrations, twelve boundary integrations, four actual full public scans). Temporary probe files removed. No tracked fixtures or original records modified.
+
+Architecture conclusions retained: pure isolated current two-source reader; additive GoalRecord evidence/status attention; actual configured-root component containment; required directive null and optional charter missing/unreadable unknown preserved; exactly one ordered unknown remedy and existing pending remedy unchanged; five parcel states, route/registry/schema/permissions/write authority/audit behavior unchanged. Read-only controls independently verified as stated above. No scope expansion or new dependency.
+
+Explicit limitations: HTML/setext/indented-code grammar remains outside this bounded reader per committed ruling. This acceptance makes no full GFM parser or unrestricted absence-of-bugs claim and does not demand unsupported language expansion. Designated-document policy and UI banner work remain later parcels.
+
+Reviewer exit control: git status --short empty, git diff --check PASS, exact HEAD unchanged a840914f8fd0b4838f0682288c4c0c40995eeaa6. No reviewer edit/commit; only this /tmp report saved. Effective exact-head CI, authorized merge and lifecycle/goal completion remain separate coordinator gates.

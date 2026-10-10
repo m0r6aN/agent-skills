@@ -1,6 +1,6 @@
 # Task List — Trustworthy Observation
 
-Charter ratified; plan review closed; baseline repaired; TO-P0 merged; TO-P1 scope preparation.
+Charter ratified; plan review closed; baseline repaired; TO-P0 merged; TO-P1 independently verified/reviewed, merge pending.
 Acceptance details trace to charter.md; shaped specs supply exact Allowed Files.
 
 - [x] Read relevant canon and preserve original dirty checkout.
