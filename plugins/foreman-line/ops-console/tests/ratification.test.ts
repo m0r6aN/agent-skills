@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict'
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { dirname, join, resolve } from 'node:path'
 import test from 'node:test'
+import { fileURLToPath } from 'node:url'
+import { defaultConfig } from '../src/config.js'
+import { remediesFor } from '../src/remedy.js'
+import { goalStatus } from '../src/status.js'
+import type { GoalProjection } from '../src/types.js'
 import { readRatification } from '../src/ratification.js'
 import { scanGoal } from '../src/scan.js'
 import type { Locator } from '../src/types.js'
@@ -208,7 +213,7 @@ test('dialect B: bold label grants', () => {
   assert.equal(result.ratification.status, 'granted')
 })
 
-test('bare Gate 1 grant outside heading is unsupported', () => {
+test('bare Gate 1 grant outside heading cannot establish a grant', () => {
   const result = readRatification([
     {
       source: 'charter',
@@ -222,10 +227,10 @@ test('bare Gate 1 grant outside heading is unsupported', () => {
     },
   ])
   assert.equal(result.ratification.status, 'unknown')
-  assert.ok(result.evidence.some((e) => e.kind === 'unsupported'))
+  assert.ok(result.evidence.every((e) => e.kind !== 'grant'))
 })
 
-test('Gate 1 grant in wrong heading is unsupported', () => {
+test('Gate 1 grant in wrong heading cannot establish a grant', () => {
   const result = readRatification([
     {
       source: 'charter',
@@ -239,7 +244,7 @@ test('Gate 1 grant in wrong heading is unsupported', () => {
     },
   ])
   assert.equal(result.ratification.status, 'unknown')
-  assert.ok(result.evidence.some((e) => e.kind === 'unsupported'))
+  assert.ok(result.evidence.every((e) => e.kind !== 'grant'))
 })
 
 test('quoted value is unsupported', () => {
@@ -707,7 +712,7 @@ test('long hostile input does not hang', () => {
       text: '## Queue\n',
     },
   ])
-  assert.equal(result.ratification.status, 'unknown')
+  assert.equal(result.ratification.status, 'pending')
 })
 
 test('scanGoal integration: missing charter yields unknown with missing evidence', () => {
@@ -1019,3 +1024,216 @@ for (const text of [
     assert.ok(result.evidence.every((item) => item.kind === 'grant'))
   })
 }
+
+for (const [name, text, expected] of [
+  [
+    'optional outer-pipe table body grant',
+    'Current | Evidence\n--- | ---\nStatus: RATIFIED | sample',
+    'unknown',
+  ],
+  [
+    'optional outer-pipe table header grant',
+    'Status: RATIFIED | Notes\n--- | ---\ncurrent | sample',
+    'unknown',
+  ],
+  [
+    'optional outer-pipe table denial',
+    'Status: RATIFIED\n\nCurrent | Evidence\n--- | ---\nStatus: NOT RATIFIED | sample',
+    'granted',
+  ],
+  [
+    'mixed outer-pipe table',
+    'Status: RATIFIED\n\n| Current | Evidence\n:--- | ---:\nStatus: NOT RATIFIED | sample |',
+    'granted',
+  ],
+  [
+    'code-span pipe in table cell',
+    'Current `a|b` | Evidence\n--- | ---\nStatus: RATIFIED | sample',
+    'unknown',
+  ],
+  [
+    'escaped pipe in table cell',
+    'Current a\\|b | Evidence\n--- | ---\nStatus: RATIFIED | sample',
+    'unknown',
+  ],
+  ['pipe metadata without delimiter is real evidence', 'Status: RATIFIED | owner/date', 'granted'],
+  ['escaped pipe metadata without table', 'Status: RATIFIED \\| owner/date', 'granted'],
+  ['code pipe metadata without table', 'Status: RATIFIED `a|b`', 'granted'],
+  [
+    'table boundary stops unclosed multiline emphasis',
+    'Status: **RATIFIED\nCurrent | Evidence\n--- | ---\n** | sample',
+    'unknown',
+  ],
+] as const) {
+  test(`structural table exclusion: ${name}`, () => {
+    const result = readText(text)
+    assert.equal(result.ratification.status, expected)
+    if (
+      name.includes('table body grant') ||
+      name.includes('table header grant') ||
+      name.includes('pipe in table cell')
+    )
+      assert.ok(result.evidence.every((item) => item.kind !== 'grant'))
+    if (expected === 'granted')
+      assert.deepEqual(
+        result.evidence.map((item) => [item.kind, item.line]),
+        [['grant', 1]],
+      )
+  })
+}
+
+for (const text of [
+  'Status: RATIFIED; if funding is approved',
+  'Status: RATIFIED — only if funding is approved',
+  'Status: RATIFIED (conditional on funding)',
+  'Status: RATIFIED — granted only if funding is approved',
+  'Status: RATIFIED — subject to owner confirmation',
+  'Status: RATIFIED; but Gate 1 is revoked',
+]) {
+  test(`direct anchored qualification reaches unknown attention and remedy: ${text}`, () => {
+    withTempRepo(scenario('direct-qualification', { queue: [] }), ({ config }) => {
+      writeFileSync(join(config.goalsDir, 'goal-rat', 'charter.md'), text)
+      writeFileSync(
+        join(config.goalsDir, 'goal-rat', 'loop-directive.md'),
+        '## Queue\n\n**Goal complete — queue empty**',
+      )
+      const goal = scanGoal(config, 'goal-rat')
+      assert.ok(goal)
+      assert.equal(goal.ratification.status, 'unknown')
+      assert.deepEqual(
+        goal.evidence?.map((item) => [item.kind, item.line]),
+        [['unsupported', 1]],
+      )
+      const projection: GoalProjection = { goal, parcels: [], unmappedChains: [] }
+      const status = goalStatus('goal-rat', null, projection)
+      assert.equal(status.active, true)
+      assert.equal(status.attention.ratificationUnknown, 1)
+      assert.equal(status.attention.total, 1)
+      const remedies = remediesFor(config, projection)
+      assert.equal(remedies.length, 1)
+      assert.equal(remedies[0]?.parcel, null)
+      assert.equal(remedies[0]?.cause, 'ratification-evidence')
+      assert.match(remedies[0]?.options[0]?.recommendation ?? '', /inspect|reconcile/i)
+      assert.match(remedies[0]?.options[1]?.recommendation ?? '', /ask (?:the )?owner/i)
+      assert.match(remedies[0]?.options.at(-1)?.recommendation ?? '', /park/i)
+    })
+  })
+}
+
+for (const text of [
+  'Status: RATIFIED; review is conditional on funding',
+  'Status: RATIFIED (review conditional on funding)',
+  'Status: RATIFIED; Gate 2 is conditional on funding',
+  'Status: RATIFIED; Gate 3 is subject to owner confirmation',
+  'Status: RATIFIED; TO-P1 is conditional on funding',
+  'Status: RATIFIED; "only if funding is approved"',
+  'Status: RATIFIED (`conditional on funding`)',
+]) {
+  test(`unrelated or quoted direct clauses do not qualify goal grant: ${text}`, () => {
+    assert.equal(readText(text).ratification.status, 'granted')
+  })
+}
+
+for (const record of [
+  '- Gate 1: GRANTED',
+  '- **Gate 1:** D1–D8, TO-P0–TO-P7 graph, and exit criterion explicitly ratified',
+  'Gate 1: RATIFIED',
+]) {
+  test(`ineligible benign corroboration cannot grant or veto: ${record}`, () => {
+    assert.equal(readText(`## Ratification record\n${record}`).ratification.status, 'unknown')
+    const supported = readText(`Status: RATIFIED\n## Ratification record\n${record}`)
+    assert.equal(supported.ratification.status, 'granted')
+    assert.deepEqual(
+      supported.evidence.map((item) => [item.kind, item.line]),
+      [['grant', 1]],
+    )
+    assert.equal(
+      readText(`Status: RATIFIED\n## Ratification record\n${record}\nGate 1: NOT GRANTED`)
+        .ratification.status,
+      'unknown',
+    )
+    assert.equal(
+      readText(`Status: RATIFIED\n## Ratification record\n${record}\nGate 1: REVOKED`).ratification
+        .status,
+      'unknown',
+    )
+    assert.equal(
+      readText(
+        `Status: RATIFIED\n## Ratification record\n${record}\nGate 1: GRANTED only if funded`,
+      ).ratification.status,
+      'unknown',
+    )
+  })
+}
+
+const trackedRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..')
+for (const slug of [
+  'foreman-ops-console',
+  'trustworthy-observation',
+  'ci-fail-fast',
+  'w4-closeout',
+]) {
+  test(`unchanged full tracked ${slug} charter and directive are compatible`, () => {
+    const config = defaultConfig(trackedRoot)
+    // Read-only tracked source; no truncated header replacement or fixture rewrite.
+    const charter = readFileSync(join(config.goalsDir, slug, 'charter.md'), 'utf8')
+    const directive = readFileSync(join(config.goalsDir, slug, 'loop-directive.md'), 'utf8')
+    assert.ok(charter.length > 1000 && directive.length > 1000)
+    const result = readRatification([
+      {
+        source: 'charter',
+        locator: {
+          root: trackedRoot,
+          relativePath: `plugins/foreman-line/docs/goals/${slug}/charter.md`,
+        },
+        text: charter,
+      },
+      {
+        source: 'loop-directive',
+        locator: {
+          root: trackedRoot,
+          relativePath: `plugins/foreman-line/docs/goals/${slug}/loop-directive.md`,
+        },
+        text: directive,
+      },
+    ])
+    assert.equal(result.ratification.status, 'granted')
+    const goal = scanGoal(config, slug)
+    assert.equal(goal?.ratification.status, 'granted')
+    assert.deepEqual(goal?.evidence, result.evidence)
+  })
+}
+
+for (const table of [
+  'Current | Evidence\n--- | ---\nStatus: RATIFIED | sample',
+  'Current | Evidence\n--- | ---\nStatus: NOT RATIFIED | sample',
+]) {
+  test(`scanGoal excludes complete optional-pipe table without fabricating current evidence: ${table}`, () => {
+    withTempRepo(scenario('table-integration', { queue: [] }), ({ config }) => {
+      const positive = table.includes('NOT RATIFIED')
+      writeFileSync(
+        join(config.goalsDir, 'goal-rat', 'charter.md'),
+        `${positive ? 'Status: RATIFIED\n\n' : ''}${table}`,
+      )
+      const goal = scanGoal(config, 'goal-rat')
+      assert.equal(goal?.ratification.status, positive ? 'granted' : 'unknown')
+      assert.deepEqual(
+        goal?.evidence?.map((item) => [item.kind, item.line]),
+        positive ? [['grant', 1]] : [],
+      )
+    })
+  })
+}
+
+test('unmatched code tick does not hide a real table separator', () => {
+  const result = readText('Current `sample | Evidence\n--- | ---\nStatus: RATIFIED | sample')
+  assert.equal(result.ratification.status, 'unknown')
+  assert.deepEqual(result.evidence, [])
+})
+
+test('long current-denial corpus conflicts when an eligible grant precedes headings', () => {
+  const result = readText(`Status: RATIFIED\n${'## Current\nStatus: NOT RATIFIED\n'.repeat(500)}`)
+  assert.equal(result.ratification.status, 'unknown')
+  assert.equal(result.evidence.filter((item) => item.kind === 'grant').length, 1)
+  assert.equal(result.evidence.filter((item) => item.kind === 'denial').length, 500)
+})

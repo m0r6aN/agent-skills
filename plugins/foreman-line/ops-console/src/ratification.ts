@@ -34,43 +34,120 @@ function unquoted(text: string): string {
   return text.replace(/!?\[[^\]]*\]\([^)]*\)|"[^"\n]*"|'[^'\n]*'|`[^`\n]*`/g, ' ')
 }
 
+/** Pipe cells require a real unescaped separator outside code spans. */
+function pipeCells(line: string): string[] | null {
+  const cells: string[] = []
+  let cell = ''
+  const nextTick = new Map<number, number>()
+  const lastTick = new Map<number, number>()
+  const ticks = [...line.matchAll(/`+/g)].filter((run) => {
+    let backslashes = 0
+    for (let before = run.index - 1; before >= 0 && line[before] === '\\'; before--) backslashes++
+    return backslashes % 2 === 0
+  })
+  for (let index = ticks.length - 1; index >= 0; index--) {
+    const run = ticks[index]
+    if (!run) continue
+    const next = lastTick.get(run[0].length)
+    if (next !== undefined) nextTick.set(run.index, next)
+    lastTick.set(run[0].length, run.index)
+  }
+  let separator = false
+  for (let index = 0; index < line.length; index++) {
+    const char = line[index] ?? ''
+    if (char === '\\' && index + 1 < line.length) {
+      cell += line.slice(index, index + 2)
+      index++
+    } else if (char === '`') {
+      let length = 1
+      while (line[index + length] === '`') length++
+      const close = nextTick.get(index)
+      if (close !== undefined) {
+        cell += line.slice(index, close + length)
+        index = close + length - 1
+      } else {
+        cell += '`'.repeat(length)
+        index += length - 1
+      }
+    } else if (char === '|') {
+      cells.push(cell)
+      cell = ''
+      separator = true
+    } else cell += char
+  }
+  if (!separator) return null
+  cells.push(cell)
+  if (cells[0]?.trim() === '') cells.shift()
+  if (cells[cells.length - 1]?.trim() === '') cells.pop()
+  return cells.length > 0 ? cells : null
+}
+
+/** Tables are identified by header + delimiter, never by an incidental bar. */
+function tableLines(lines: readonly string[]): Set<number> {
+  const excluded = new Set<number>()
+  for (let index = 1; index < lines.length; index++) {
+    const delimiter = pipeCells(lines[index] ?? '')
+    const headerText = lines[index - 1] ?? ''
+    const header = pipeCells(headerText)
+    if (
+      !delimiter ||
+      !header ||
+      delimiter.length !== header.length ||
+      !delimiter.every((cell) => /^\s*:?-{3,}:?\s*$/.test(cell)) ||
+      HEADING.test(headerText) ||
+      /^\s*(?:>|`{3,}|~{3,})/.test(headerText)
+    )
+      continue
+    excluded.add(index - 1)
+    excluded.add(index)
+    let body = index + 1
+    while (body < lines.length) {
+      const text = lines[body] ?? ''
+      if (
+        !text.trim() ||
+        HEADING.test(text) ||
+        /^\s*(?:>|`{3,}|~{3,})/.test(text) ||
+        !pipeCells(text)
+      )
+        break
+      excluded.add(body++)
+    }
+    index = body - 1
+  }
+  return excluded
+}
+
 function qualified(value: string, positive: RegExp): boolean {
   const tail = unquoted(value.replace(positive, '')).trim()
-  // A qualifier immediately following the value/date targets that grant.
-  const first = tail.replace(
-    /^(?:\d{4}-\d{2}-\d{2}(?:\s+\d\d:\d\d(?:\s+[A-Z]+)?)?)?\s*[-–—:,]?\s*/,
-    '',
-  )
-  if (QUALIFIED.test(first)) return true
-  // Only explicit owner/date provenance can carry the grant's qualification
-  // across comma/semicolon boundaries. A review/gate/parcel clause ends that
-  // provenance scope; never search arbitrary narrative for condition words.
-  let afterProvenance = false
-  for (const clause of tail.split(/[;,\n]/)) {
-    const current = clause.trim().replace(/^[-–—:]\s*/, '')
-    if (afterProvenance && QUALIFIED.test(current)) return true
-    afterProvenance = /^(?:owner(?:\/date)?\b|date\s*:|\d{4}-\d{2}-\d{2}(?:\s|$))/.test(
-      current.toLowerCase(),
+  // A direct clause, or one carried through explicit owner/date provenance,
+  // qualifies the current grant. An unrelated review/gate/parcel clause ends
+  // that scope; no arbitrary narrative search is performed.
+  let grantScope = true
+  for (const raw of tail.split(/[;,\n]/)) {
+    const clause = raw.trim().replace(/^[-–—:(]\s*/, '')
+    if (!clause) continue
+    const withoutDate = clause.replace(
+      /^\d{4}-\d{2}-\d{2}(?:\s+\d\d:\d\d(?:\s+[A-Z]+)?)?\s*[-–—:(]?\s*/,
+      '',
     )
+    const direct = withoutDate
+      .replace(/^(?:granted\s+)?only\s+(?=if\b)/i, '')
+      .replace(/^granted\s+(?=(?:if|provided|conditional)\b)/i, '')
+    if (grantScope && (QUALIFIED.test(direct) || /^subject\s+to\b/i.test(direct))) return true
+    const target = clause.replace(/^but\s+/i, '')
+    const gate =
+      /^(?:goal(?:'s)?\s+)?gate\s*1\s*(?:ratification|grant)?\s*(?::|is|was|remains)?\s*/i.exec(
+        target,
+      )
+    if (
+      gate &&
+      (QUALIFIED.test(target.slice(gate[0].length)) ||
+        /^subject\s+to\b/i.test(target.slice(gate[0].length)))
+    )
+      return true
+    grantScope = /^(?:owner(?:\/date)?\b|date\s*:|\d{4}-\d{2}-\d{2}(?:\s|$))/i.test(clause)
   }
-  // Further clauses must explicitly target goal Gate 1, rather than a review,
-  // Gate 2/3, or a parcel's HOLD. Restrict this to anchored record contents.
-  return unquoted(tail)
-    .split(/[;\n]/)
-    .some(
-      (clause) =>
-        /^(?:\s*[-–—:,]\s*)?(?:goal(?:'s)?\s+)?gate\s*1\s*(?:ratification|grant)?\s*(?::|is|was|remains)?\s*/i.test(
-          clause.trim(),
-        ) &&
-        QUALIFIED.test(
-          clause
-            .trim()
-            .replace(
-              /^(?:[-–—:,]\s*)?(?:goal(?:'s)?\s+)?gate\s*1\s*(?:ratification|grant)?\s*(?::|is|was|remains)?\s*/i,
-              '',
-            ),
-        ),
-    )
+  return false
 }
 
 export interface RatificationResult {
@@ -93,6 +170,7 @@ export function readRatification(sources: readonly RatificationSource[]): Ratifi
       continue
     }
     const lines = source.text.split(/\r?\n/)
+    const tables = tableLines(lines)
     let fence: { char: string; length: number } | null = null
     let excludedLevel: number | null = null
     let bLevel: number | null = null
@@ -117,7 +195,7 @@ export function readRatification(sources: readonly RatificationSource[]): Ratifi
         fence = { char: marker[1]?.[0] ?? '`', length: marker[1]?.length ?? 3 }
         continue
       }
-      if (/^\s*>/.test(original) || /^\s*\|/.test(original)) continue
+      if (/^\s*>/.test(original) || tables.has(index)) continue
       const heading = HEADING.exec(original)
       if (heading) {
         const level = heading[1]?.length ?? 1
@@ -150,6 +228,7 @@ export function readRatification(sources: readonly RatificationSource[]): Ratifi
       while (unmatched && index + 1 < lines.length) {
         const next = lines[index + 1] ?? ''
         if (
+          tables.has(index + 1) ||
           HEADING.test(next) ||
           /^\s*(?:>|\||`{3,}|~{3,})/.test(next) ||
           RECORD.test(unbold(next.trim()))
@@ -184,16 +263,16 @@ export function readRatification(sources: readonly RatificationSource[]): Ratifi
       const boldOrBullet = /^(?:[-*+]\s+|\*\*Gate 1(?:\*\*)?\s*:)/i.test(trimmed)
       const eligible = label === 'status' ? metadata : bLevel !== null && boldOrBullet
       if (positive.test(fullValue)) {
-        if (!eligible || qualified(fullValue, positive)) {
+        if (qualified(fullValue, positive)) {
           add(
             line,
             'unsupported',
             `unsupported or conditional current ${label} grant: ${normalized}`,
           )
-        } else {
+        } else if (eligible) {
           add(line, 'grant', `current ${label} grant: ${normalized}`)
         }
-      } else if (metadata || label === 'gate 1' || QUALIFIED.test(fullValue)) {
+      } else if (metadata || QUALIFIED.test(fullValue) || qualified(fullValue, /^(?=.)/)) {
         add(line, 'unsupported', `unsupported current ${label} record: ${normalized}`)
       }
     }
