@@ -160,3 +160,16 @@ requirements are the screening source for the dispatches below.
 - Materialized only goal/to-p5-shaping-draft.md outsideactive; actualspec-linter
   passes. No shaping-result emission, receipt, Gate2activation, builderdispatch
   or implementationacceptance. RealCLI/shellproof remainsfutureverification.
+
+## TO-P6 prerequisite-window shaping draft
+
+- Fresh preferred Ember host fireworks/accounts/fireworks/models/ember-1, tool-free Pi, public published attachments only; bounded150s, completed23.5s, terminalstop, 10,173input+1,755output tokens, runtimeestimateUSD0.056844 (not settled billing). No classifier ran.
+- Initial external call rejected by automatic approval review because public status of attachments was unestablished. Read-only GitHub metadata confirmed repository PUBLIC, all attachments byte-matched published main/PR HEAD, then retry approved. No private targets, configuration, credentials, or browser data exported.
+- Coordinator corrected inactive selection clearing, removed unnamed additional Allowed Files, fixed invented existing-harness claim/full references/current verification-class enum, and supplied concrete review questions. Three exact files (two implementation, one new test); no source changes.
+- Draft persisted outside active; actual spec-linter passes. No emitted shaping result, activation, receipt, builder dispatch or implementation acceptance. Source/owner reconciliation follows parent landing. Published PR167 remains unchanged atf4a46e21 while CI runs.
+
+## TO-P7 prerequisite-window shaping draft
+
+- Fresh preferred Ember host fireworks/accounts/fireworks/models/ember-1, tool-free Pi, only published public-charter exit criteria attached; bounded150s, completed23.1s, terminalstop, 1,412input+1,613output tokens, runtimeestimateUSD0.028431 (not settled billing). No classifier ran.
+- Coordinator corrected invented short source/evidence paths, actual registry spelling, and shell-copy support vs environment evidence. Seven charter exit bullets preserved verbatim; real chain/browser/multi-root evidence cannot be replaced by fixtures or string counts.
+- Draft outside active; no receipt, ShapingResult, activation, builder, test run or exit proof. Current implementation source closure follows P0–P6 merges. Independent verifier produces actual runtime proof; coordinator consumes.

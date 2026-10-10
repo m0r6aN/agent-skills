@@ -142,3 +142,11 @@ preserved. This is branch state; actual PR #167 merge remains pending. Companion
 preamble updates review status and own scope link only; RAT–REF normative text
 and scenarios remain unchanged. TO-P0 task checkbox stays open until actual
 merge. Historical builder handoff/check commands retain their recorded context.
+
+## Local successor preparation while published contract CI runs
+
+PR167 is ready at exact published headf4a46e21; required runs38071623009/38071621557 are in progress, with shards2/3 green at last check. Final independent105link/51anchor documentation verification and dual incremental reviews accept; actual contract merge remains pending.
+
+Local-only P6/P7 preferred Ember drafts are outside active and pass current spec-linter. Worker accounting and exact corrections recorded in worker-dispatch-log.md; not part of published PR167 head. TO-P1 independent preactivation gaps and narrow source window are recorded in to-p1-preactivation-rulings.md. Original overlapping paths match already landed FCA/main bytes; original checkout stays untouched. P6 explicitly owns unknown-only banner wording/test deferred from P1.
+
+Prepared worktree /home/cmorgan76/Work/foreman-to-p1, branch feat/foreman-to-p1-ratification, from main96ffadc5 with locked no-script dependencies installed. No active spec or builder; it must rebase onto actual PR167 merge and rerun current main/source/owner preflight before activation. Independent baseline verification is pending. Carry local preparation records into this successor after actual parent merge; do not update PR167 head merely to publish future drafts.
