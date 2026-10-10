@@ -11,7 +11,6 @@ risk: elevated
 surfaces:
   - plugins/foreman-line/ops-console/src/config.ts
   - plugins/foreman-line/ops-console/tests/multi-root.test.ts
-- plugins/foreman-line/ops-console/tests/remedy.test.ts
   - plugins/foreman-line/ops-console/tests/remedy.test.ts
 routing_class: architecture/risk
 verification_class: equivalence-provable
