@@ -173,3 +173,9 @@ requirements are the screening source for the dispatches below.
 - Fresh preferred Ember host fireworks/accounts/fireworks/models/ember-1, tool-free Pi, only published public-charter exit criteria attached; bounded150s, completed23.1s, terminalstop, 1,412input+1,613output tokens, runtimeestimateUSD0.028431 (not settled billing). No classifier ran.
 - Coordinator corrected invented short source/evidence paths, actual registry spelling, and shell-copy support vs environment evidence. Seven charter exit bullets preserved verbatim; real chain/browser/multi-root evidence cannot be replaced by fixtures or string counts.
 - Draft outside active; no receipt, ShapingResult, activation, builder, test run or exit proof. Current implementation source closure follows P0–P6 merges. Independent verifier produces actual runtime proof; coordinator consumes.
+
+## TO-P1 Step0 scope gate
+
+- Actual preferred Ember host fireworks/accounts/fireworks/models/ember-1, tool-free Pi; completed28.0s, terminalstop,17,428input+2,068output tokens, runtimeestimateUSD0.083304 (not settled billing). JSON exact nine Allowed Files, three genuine pre-code flags; no code/tests/acceptance. No classifier ran.
+- Automatic review initially rejected unpublished local-spec export. Coordinator used existing public-push/draft-PR authority to publish d92ebed6 as PR169, confirmed exact public GitHub blob, then approved retry; no private inputs or workaround export.
+- Coordinator dispositions bind existing helper proof, unknown-command withholding, and canonical historical-note forms; spec ruling committed separately before code. Actual scope self-check valid:true, frontmatter/body pass; first wrapper erroneously tested nonexistent ok field, corrected wrapper exited0 on valid:true. No check result invented.

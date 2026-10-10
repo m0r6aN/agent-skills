@@ -21,3 +21,7 @@ Inspected CFF worktrees have clean exact console paths; their active CI ownershi
 Independent verifier reviewed these rulings and confirmed the seven recorded byte comparisons. P6 now explicitly includes unknown-only banner wording and a meaningful test. P7 preserves the seven charter exit bullets verbatim after whitespace normalization.
 
 Prepared P1 worktree at unchanged96ffadc5: 92tests pass, lint passes, typecheck passes after locked no-script schema-scaffold dependencies installed. Tracked worktree clean. Test-count tripwire92; no P1 implementation acceptance or activation. Evidence /tmp/to-p1-baseline-readiness-summary.txt and /tmp/to-p1-preactivation-rulings-review.txt.
+
+## Preferred-worker Step0 dispositions
+
+Ember returned valid JSON, exact nine Allowed Files, three flags, and stopped with no code/tests. Materializer line248 proves top-metadata Status rendering, so no helper scope change. Unknown remedy withholds commands and explains evidence locators in text. Historical-note marker is bounded to the actual W4/corpus literal forms (colon or dash-separated explanation, balanced bold, case-insensitive); reject arbitrary historical/archive-word suppression that could discard current denials. Exact dispositions appended to active spec before code; accepted RAT/ATT canon unchanged.

@@ -6,7 +6,7 @@
 2026-10-10. Planning worktree and branch are named in charter.md.
 One goal, one coordinator. Transfers occur at recorded parcel boundaries.
 
-**State:** `to_p1_scope_ready_step0_pending`; D1–D8 and graph ratified 2026-10-10;
+**State:** `to_p1_step0_disposed_code_pending`; D1–D8 and graph ratified 2026-10-10;
 A1 merge/decision delegation and cost routing recorded; no implementation accepted.
 
 ## Authority
@@ -160,3 +160,5 @@ Next actual action remains PR167 exactheadf4a46e21 green required CI then normal
 PR167 MERGED78c8b41feb07e4b274d402b54376ebf5b934ce4b at2026-10-10T17:56:37Z, exactheadf4a46e21. Full CI38071623009/38071621557 passed all four shards plus requiredtest/integration-report; normalmatch-headmerge, no bypass. P0task checked. Earlier pending-merge checkpoints are superseded by this actual closure. P0spec/artifact already done in merged PR, historicalartifactbytes retained.
 
 P1worktree rebased78c8b41f; carried four local preparation commits. Original overlap bytes rechecked against actualmain/FCA and unchanged, CFF scopedconsole paths clean. No queue/canon ownership transfer or original dirty edit. Exact P1spec/body/evidence shape and nine AllowedFiles bind this isolated sourcewindow. Fresh preferred-worker Step0 must restate and stop before code; flags require coordinator disposition. Independent baseline92tests/typecheck/lint green; no observation code accepted. Goal remains active with P1–P7 incomplete.
+
+TO-P1draft PR169 published d92ebed6 to establish public worker inputs. Ember Step0 stopped with three flags; exact dispositions appended to spec before code. No helper scope expansion, no runnable unknown editor command, no broad historical-word suppression. Code continuation follows separately published ruling. No implementation accepted.
