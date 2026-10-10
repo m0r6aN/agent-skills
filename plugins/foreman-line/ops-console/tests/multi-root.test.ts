@@ -216,6 +216,27 @@ test('multi-root: /api/goals carries the additive statuses index and /api/parcel
         'queued parcels keep these goals active',
       )
 
+      // Exact per-tree paths: native docs/goals tree and initiative
+      // docs/INITIATIVES tree derive from the extra root, with the routing
+      // policy anchored under the plugin tree ref (PLUGIN_TREE_REF).
+      const trees = config.trees ?? []
+      const native = trees.find((tree) => tree.key === 'agent-task')
+      assert.equal(native?.goalsDir, join(extraRoot, 'docs', 'goals'))
+      assert.equal(native?.specsDir, join(extraRoot, 'docs', 'specs'))
+      assert.equal(native?.receiptsDir, join(extraRoot, 'docs', 'receipts'))
+      assert.equal(
+        native?.routingPolicyPath,
+        join(extraRoot, 'plugins', 'foreman-line', 'routing-policy', 'routing-policy.yaml'),
+      )
+      const initiative = trees.find((tree) => tree.key === 'agent-task.1')
+      assert.equal(initiative?.goalsDir, join(extraRoot, 'docs', 'INITIATIVES'))
+      assert.equal(initiative?.specsDir, join(extraRoot, 'docs', 'specs'))
+      assert.equal(initiative?.receiptsDir, join(extraRoot, 'docs', 'receipts'))
+      assert.equal(
+        initiative?.routingPolicyPath,
+        join(extraRoot, 'plugins', 'foreman-line', 'routing-policy', 'routing-policy.yaml'),
+      )
+
       // Qualified-key projection: the parcel carries the qualified goal key so
       // alert identities stay unique across trees.
       const projected = handleApi(
