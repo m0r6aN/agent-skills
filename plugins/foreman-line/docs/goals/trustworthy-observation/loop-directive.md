@@ -6,7 +6,7 @@
 2026-10-10. Planning worktree and branch are named in charter.md.
 One goal, one coordinator. Transfers occur at recorded parcel boundaries.
 
-**State:** `to_p1_step0_disposed_code_pending`; D1–D8 and graph ratified 2026-10-10;
+**State:** `to_p1_first_verification_failed_rework_pending`; D1–D8 and graph ratified 2026-10-10;
 A1 merge/decision delegation and cost routing recorded; no implementation accepted.
 
 ## Authority
@@ -162,3 +162,9 @@ PR167 MERGED78c8b41feb07e4b274d402b54376ebf5b934ce4b at2026-10-10T17:56:37Z, exa
 P1worktree rebased78c8b41f; carried four local preparation commits. Original overlap bytes rechecked against actualmain/FCA and unchanged, CFF scopedconsole paths clean. No queue/canon ownership transfer or original dirty edit. Exact P1spec/body/evidence shape and nine AllowedFiles bind this isolated sourcewindow. Fresh preferred-worker Step0 must restate and stop before code; flags require coordinator disposition. Independent baseline92tests/typecheck/lint green; no observation code accepted. Goal remains active with P1–P7 incomplete.
 
 TO-P1draft PR169 published d92ebed6 to establish public worker inputs. Ember Step0 stopped with three flags; exact dispositions appended to spec before code. No helper scope expansion, no runnable unknown editor command, no broad historical-word suppression. Code continuation follows separately published ruling. No implementation accepted.
+
+## TO-P1 first implementation and corrective disposition
+
+Public implementation HEAD2927f32f8b86d30478d625d809656ce50fcaa01e, PR169. Independent verifier:136tests,130pass,6fail; typecheck fails undefined options; lint, unchanged D19 and read-only controls pass. Additional false grants: Status after first H2, bare B record, quoted value, other source missing. Multiline emphasis and unknown remedy cause fail. Missing-source integration tests never remove files. No acceptance; PR explicitly draft.
+
+Preferred Ember corrective run completed76.1s,26,790input+6,303output tokens, runtimeestimate USD0.174915 (not settled billing). Artifact refused BEFORE writes because multiple required fixes omitted and field initialization inconsistent. Current code remains2927f32f. Corrective retry uses complete replacements and only published source/spec; no classifier ran. Escalate deeper execution if preferred retry cannot produce a coherent candidate. No new authority, route, audit weakening or scope expansion. Superseded scope-only CI38074233358/38074229433 cancellation requested; current-head CI untouched.
