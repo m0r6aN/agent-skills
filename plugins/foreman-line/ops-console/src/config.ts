@@ -166,10 +166,12 @@ export function defaultConfig(
     const extraRoot = resolve(extra)
     assertAbsoluteRoot(extraRoot, 'defaultConfig extraRoots resolved entry')
     const baseAlias = extraRoot.split(/[\\/]/).filter(Boolean).pop() ?? 'root'
-    const layoutHits = GOAL_TREE_LAYOUTS.filter((layout) =>
-      hasGoalRecords(resolve(extraRoot, ...layout.tree)),
-    )
+    const layoutHits = GOAL_TREE_LAYOUTS.filter((layout) => {
+      assertAbsoluteRoot(extraRoot, 'defaultConfig extraRoots resolved entry')
+      return hasGoalRecords(resolve(extraRoot, ...layout.tree))
+    })
     layoutHits.forEach((layout, index) => {
+      assertAbsoluteRoot(extraRoot, 'defaultConfig extraRoots resolved entry')
       // Alias is the root's directory name; a second tree inside the same
       // repo gets a deterministic `alias.N` suffix (layout scan order) so
       // keys stay unique. Resolution prefers the longest key prefix.
@@ -183,8 +185,7 @@ export function defaultConfig(
         receiptsDir: resolve(extraRoot, 'docs', 'receipts'),
         routingPolicyPath: resolve(
           extraRoot,
-          'plugins',
-          'foreman-line',
+          PLUGIN_TREE_REF,
           'routing-policy',
           'routing-policy.yaml',
         ),
