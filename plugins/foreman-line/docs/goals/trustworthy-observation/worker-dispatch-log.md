@@ -140,3 +140,23 @@ requirements are the screening source for the dispatches below.
 - Materialized only goal/to-p4-shaping-draft.md outside active/ specs; actual
   spec-linter passes. No shaping-result emission, receipt, Gate-2 activation or
   builder dispatch. Real API/browser source-content proof remains future work.
+
+## TO-P5 prerequisite-window shaping draft
+
+- Fresh preferred host fireworks/accounts/fireworks/models/ember-1 via tool-free
+  Pi; public tracked sources only, bounded150s. Completed26.6s, terminalstop,
+  clean862-word draft;16,238input+1,655output, runtimeestimateUSD0.073539
+  (not settled billing). No classifier ran.
+- Coordinator corrected actualUI/testpaths, implementation surfaces and explicit
+  testAllowedFiles, optionalrejectionreason/approve-onlyTTY requirements,
+  primaryinvoke refusal vs extra-rootadvisor presentation, readonlygrounding
+  vs purequoting, sourcecontractlink, and concretecriticalreview questions.
+- ActualapprovalCLI inspection confirms specsDir libraryoption is not passed by
+  CLI; frozen homeplugin argv mismatch remains withheld as accepted INV allows.
+  No inventedflag or implicitadapteramendment. PowerShellcalloperator required.
+- Five-file target remains provisional until parents/source/ownerlookups reconcile.
+  Ancillaryunverifiable editor/gh templates are not newexecutableflows. No
+  projectionoption, ownerinput forging, gatecapture or approvalwriting permitted.
+- Materialized only goal/to-p5-shaping-draft.md outsideactive; actualspec-linter
+  passes. No shaping-result emission, receipt, Gate2activation, builderdispatch
+  or implementationacceptance. RealCLI/shellproof remainsfutureverification.

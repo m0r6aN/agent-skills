@@ -111,3 +111,11 @@ until parent source/type/join/owner-window reconciliation. Component-boundary
 containment and real API/browser navigation proof are explicit; no raw string
 link counts as proof. Draft only, no activation or builder. Final prerequisite
 CI shard 1 remains live; baseline merge has not occurred.
+
+Preparation update: TO-P5 fresh Ember draft persisted as to-p5-shaping-draft.md
+and passes actualspec-linter. Frozenregistry/requestargv/modes remain; plugin
+approvaldefault-path mismatch withheld without an implicitadapter amendment.
+Ownerinputrequirements and extra-root advisor-vs-invoke refusal distinguished.
+Source/ownerwindow reconciliation required beforeactivation, no builderdispatch.
+Requiredcorrected-head finalCIshard1 remainslive at last inspection; main still
+d86ade55 and no baseline/contract merge has occurred.
