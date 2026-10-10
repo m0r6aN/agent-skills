@@ -6,7 +6,7 @@
 2026-10-10. Planning worktree and branch are named in charter.md.
 One goal, one coordinator. Transfers occur at recorded parcel boundaries.
 
-**State:** `to_p1_first_verification_failed_rework_pending`; D1–D8 and graph ratified 2026-10-10;
+**State:** `to_p1_rework_independent_verification_pending`; D1–D8 and graph ratified 2026-10-10;
 A1 merge/decision delegation and cost routing recorded; no implementation accepted.
 
 ## Authority
@@ -172,3 +172,5 @@ Preferred Ember corrective run completed76.1s,26,790input+6,303output tokens, ru
 TO-P1 corrective retry: preferred Ember completed173.1s,33,084input+15,530output tokens, runtimeestimate USD0.332202 (not settled billing). Complete-file artifact still leaves quote stripping, per-line multiline rejection, bare B eligibility and missing-source override unchanged. Refused BEFORE writes; no partial adoption or acceptance. Deeper execution escalated to fresh reasoning builder with separate Step0 stop and exact nine-file scope. This is execution/code synthesis, not classification; no Jev/Drex classifier claimed. Original source remains2927f32f.
 
 Reasoning rework Step0 accepted after explicit pre-code stop. Exact9 files restated; no code before disposition. Existing contract dispositions: B/excluded section ends at equal/higher heading; deeper exclusions cannot reset parent lifetime; current anchored record syntax only for conditions/revocations; deterministic unreadable directory-instead-of-file tests permitted within allowed tests; missing required directive remains null. Evidence locator containment only existing scan seam; no slug/API/P2 expansion. These resolve implementation mechanics without changing RAT/ATT or Allowed Files. Builder authorized to proceed, no self-certification or commit.
+
+Rework handoff committed54e5bd52 after Step0 disposition ae14f046. Six exact allowed files changed, no helper/manifest/API/UI/audit changes. Deeper reasoning builder replaced lexer and added real missing/unreadable IO plus adversarial/root/attention tests; static estimate180cases is not runtime evidence. Independent full deterministic verifier dispatched against immutable54e5bd52; architecture reviews and acceptance remain pending. Second preferred candidate never materialized.
