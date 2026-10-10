@@ -73,10 +73,15 @@ No audit bypass or repository setting change. Original worktrees preserved.
 
 CI shard 0 exposed another inherited prerequisite: verification scaffold golden
 still expects Biome 2.5.3 after fleet commit 60617 pins 2.5.14. Scope amendment
-fe7153c9 precedes a mechanical golden/comment alignment; both incremental
-architecture reviews accept, independent focused execution pending. Other pins,
-key-set checks, negative controls, manifests, and audit remain unchanged. Shard 1
-is still running; its result must be inspected before claiming baseline green.
+fe7153c9 precedes mechanical golden/comment alignment committed 389f3f6c; both
+incremental architecture reviews accept. Independent scaffold 8/8 (including
+negative controls), focused AC-1, scoped/full lint and spec lint pass. Other pins,
+key-set checks, negative controls, manifests, and audit remain unchanged. Old PR
+shard 1 completed successfully; no additional failure found in that run. Corrected
+head 389f3f6cd9f949934838cb69bece08572dc5b99c pushed to PR #168. New exact-head
+CI runs 38068623643 and 38068621135 are in progress; merge remains pending.
+Independent evidence: /tmp/to-b0-verifier-scaffold-final.txt, recorded in PR #168's
+goal evidence. Local planning branch remains clean of implementation changes.
 
 Next: finish baseline verification and inspect remaining CI, merge TO-B0 behind
 GitHub requirements, advance observation base, publish exact docs/evidence; then
