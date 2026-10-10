@@ -28,6 +28,24 @@
     .card:hover { border-color: var(--accent); }
     .card .key { font-weight: 600; }
     .card .meta { color: var(--muted); font-size: 12px; }
+    /* FCA-2 attention treatment: cards that need the human stand out. */
+    .card.needs-red { border-left: 3px solid var(--bad); }
+    .card.needs-red:hover { border-color: var(--bad); }
+    .card.needs-amber { border-left: 3px solid var(--gate); }
+    .card.needs-amber:hover { border-color: var(--gate); }
+    .chip { display: inline-block; border-radius: 999px; padding: 0 8px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; vertical-align: middle; }
+    .chip-red { color: var(--bad); border: 1px solid var(--bad); }
+    .chip-amber { color: var(--gate); border: 1px solid var(--gate); }
+    .banner { background: color-mix(in srgb, var(--bad) 14%, transparent); border: 1px solid var(--bad); color: var(--text); border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; font-weight: 600; }
+    .banner-inline { color: var(--warn); font-weight: 600; }
+    optgroup { font-weight: 600; }
+    /* FCA-3 remediation advisor: question + answer branches with commands. */
+    .remedy { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; }
+    .remedy summary { cursor: pointer; font-weight: 600; }
+    .remedy-q { margin: 8px 0 6px; font-weight: 600; color: var(--accent); }
+    .remedy-opt { border-left: 2px solid var(--line); padding: 4px 10px; margin: 6px 0; }
+    .remedy-a { font-weight: 600; }
+    pre.cmd { background: var(--panel2); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; margin: 4px 0; font-size: 12px; user-select: all; }
     .flags { color: var(--warn); font-size: 11px; }
     section { margin-top: 22px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
     section h2 { margin: 0 0 10px; font-size: 15px; }
@@ -52,6 +70,7 @@
       <select id="goal-select"></select>
     </label>
     <button id="refresh">Refresh</button>
+    <span class="muted" id="attn-summary"></span>
     <span class="muted" id="clock"></span>
   </header>
   <main>
