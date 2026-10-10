@@ -68,3 +68,21 @@ requirements are the screening source for the dispatches below.
   Independent docs verifier: spec lint0,71links/41anchors/30targets/0failures,
   seven paired scenario rules, zero behavioral tests. Coordinator review record
   is separate from the builder's three AllowedFiles; no code accepted.
+
+## TO-P1 prerequisite-window shaping draft
+
+- Requested preference fireworks/ember-1; actual host
+  fireworks/accounts/fireworks/models/ember-1 via tool-free Pi.
+- Role: bounded public-source shaping draft while TO-P0/TO-B0 wait on CI;
+  no classifier ran and no execution authority activated.
+- Completed 24.3s, terminal stop; runtime 12,640 input+1,809 output tokens,
+  estimated USD 0.065055, not settled billing.
+- Coordinator corrected required headings, exact B-positive heading constraint,
+  kept EVD out of scope, corrected package name and an invented source-hash
+  verification phrase. Source authority remains accepted TO-P0 grammar.
+- Materialized only goal/to-p1-shaping-draft.md, outside active/ specs; no
+  emitted shaping result, receipt, Gate-2 activation or builder dispatch.
+- Actual spec-linter validate with observation --repo-root passes. First attempt
+  against /tmp correctly refused outside-root input; no validation was claimed
+  for that attempt. The in-repo draft passes structurally; implementation review
+  and behavioral verification remain future work after both parents land.

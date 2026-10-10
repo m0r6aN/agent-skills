@@ -85,6 +85,7 @@ goal evidence. Local planning branch remains clean of implementation changes.
 
 Next: finish baseline verification and inspect remaining CI, merge TO-B0 behind
 GitHub requirements, advance observation base, publish exact docs/evidence; then
-activate TO-P1. A cheap Ember TO-P1 shaping draft exists only in /tmp; it has no
-active spec, builder dispatch, or acceptance. Parents must land first.
+activate TO-P1. A cheap Ember TO-P1 shaping draft is persisted as to-p1-shaping-draft.md outside
+active/ specs and passes actual spec-linter preflight. It has no emitted shaping
+result, active spec, builder dispatch, or acceptance. Parents must land first.
 No further owner confirmation required for ratified non-destructive scope.
