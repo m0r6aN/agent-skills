@@ -243,6 +243,51 @@
       "parcel": "JEV-P5",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
       "createdAt": "2026-10-10T22:04:15.809Z"
+    },
+    {
+      "id": "ntf-trustworthy-observation:TO-P3:hung",
+      "alertId": "trustworthy-observation:TO-P3:hung",
+      "kind": "hung",
+      "goal": "trustworthy-observation",
+      "parcel": "TO-P3",
+      "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
+      "createdAt": "2026-10-10T22:04:45.952Z"
+    },
+    {
+      "id": "ntf-trustworthy-observation:TO-P4:hung",
+      "alertId": "trustworthy-observation:TO-P4:hung",
+      "kind": "hung",
+      "goal": "trustworthy-observation",
+      "parcel": "TO-P4",
+      "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
+      "createdAt": "2026-10-10T22:04:45.952Z"
+    },
+    {
+      "id": "ntf-trustworthy-observation:TO-P5:hung",
+      "alertId": "trustworthy-observation:TO-P5:hung",
+      "kind": "hung",
+      "goal": "trustworthy-observation",
+      "parcel": "TO-P5",
+      "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
+      "createdAt": "2026-10-10T22:04:45.952Z"
+    },
+    {
+      "id": "ntf-trustworthy-observation:TO-P6:hung",
+      "alertId": "trustworthy-observation:TO-P6:hung",
+      "kind": "hung",
+      "goal": "trustworthy-observation",
+      "parcel": "TO-P6",
+      "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
+      "createdAt": "2026-10-10T22:04:45.952Z"
+    },
+    {
+      "id": "ntf-trustworthy-observation:TO-P7:hung",
+      "alertId": "trustworthy-observation:TO-P7:hung",
+      "kind": "hung",
+      "goal": "trustworthy-observation",
+      "parcel": "TO-P7",
+      "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
+      "createdAt": "2026-10-10T22:04:45.952Z"
     }
   ]
 }
