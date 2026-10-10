@@ -160,3 +160,36 @@ requirements are the screening source for the dispatches below.
 - Materialized only goal/to-p5-shaping-draft.md outsideactive; actualspec-linter
   passes. No shaping-result emission, receipt, Gate2activation, builderdispatch
   or implementationacceptance. RealCLI/shellproof remainsfutureverification.
+
+## TO-P6 prerequisite-window shaping draft
+
+- Fresh preferred Ember host fireworks/accounts/fireworks/models/ember-1, tool-free Pi, public published attachments only; bounded150s, completed23.5s, terminalstop, 10,173input+1,755output tokens, runtimeestimateUSD0.056844 (not settled billing). No classifier ran.
+- Initial external call rejected by automatic approval review because public status of attachments was unestablished. Read-only GitHub metadata confirmed repository PUBLIC, all attachments byte-matched published main/PR HEAD, then retry approved. No private targets, configuration, credentials, or browser data exported.
+- Coordinator corrected inactive selection clearing, removed unnamed additional Allowed Files, fixed invented existing-harness claim/full references/current verification-class enum, and supplied concrete review questions. Three exact files (two implementation, one new test); no source changes.
+- Draft persisted outside active; actual spec-linter passes. No emitted shaping result, activation, receipt, builder dispatch or implementation acceptance. Source/owner reconciliation follows parent landing. Published PR167 remains unchanged atf4a46e21 while CI runs.
+
+## TO-P7 prerequisite-window shaping draft
+
+- Fresh preferred Ember host fireworks/accounts/fireworks/models/ember-1, tool-free Pi, only published public-charter exit criteria attached; bounded150s, completed23.1s, terminalstop, 1,412input+1,613output tokens, runtimeestimateUSD0.028431 (not settled billing). No classifier ran.
+- Coordinator corrected invented short source/evidence paths, actual registry spelling, and shell-copy support vs environment evidence. Seven charter exit bullets preserved verbatim; real chain/browser/multi-root evidence cannot be replaced by fixtures or string counts.
+- Draft outside active; no receipt, ShapingResult, activation, builder, test run or exit proof. Current implementation source closure follows P0–P6 merges. Independent verifier produces actual runtime proof; coordinator consumes.
+
+## TO-P1 Step0 scope gate
+
+- Actual preferred Ember host fireworks/accounts/fireworks/models/ember-1, tool-free Pi; completed28.0s, terminalstop,17,428input+2,068output tokens, runtimeestimateUSD0.083304 (not settled billing). JSON exact nine Allowed Files, three genuine pre-code flags; no code/tests/acceptance. No classifier ran.
+- Automatic review initially rejected unpublished local-spec export. Coordinator used existing public-push/draft-PR authority to publish d92ebed6 as PR169, confirmed exact public GitHub blob, then approved retry; no private inputs or workaround export.
+- Coordinator dispositions bind existing helper proof, unknown-command withholding, and canonical historical-note forms; spec ruling committed separately before code. Actual scope self-check valid:true, frontmatter/body pass; first wrapper erroneously tested nonexistent ok field, corrected wrapper exited0 on valid:true. No check result invented.
+
+## TO-P1 first implementation and rework
+
+- Preferred Ember source candidate64.2s,29,206input+5,406output, USD0.168708 estimate; source-only output refused before writes. Preferred tests rework94.6s,23,802input+7,988output, USD0.191226 estimate; single framing wrapper removed for schema inspection, originals retained. Combined exact9-path candidate validated in memory, mechanically materialized and safely formatted, committed2927f32f. Workers ran no checks.
+- Independent first pass136/130/6, compiler undefined options, lint/D19/read-only PASS. Full report /tmp/to-p1-implementation-verifier-summary.txt; no implementation acceptance.
+- Corrective Ember run76.1s,26,790input+6,303output, USD0.174915 runtimeestimate, not settled billing. Refused whole artifact before writes: omissions, inconsistent renamed context fields, still undefined test variable, weak/invented locator assertion. Complete-file retry pending; deeper execution escalation if it fails. No Jev/Drex binding or classifier run claimed.
+
+TO-P1 corrective retry: preferred Ember completed173.1s,33,084input+15,530output tokens, runtimeestimate USD0.332202 (not settled billing). Complete-file artifact still leaves quote stripping, per-line multiline rejection, bare B eligibility and missing-source override unchanged. Refused BEFORE writes; no partial adoption or acceptance. Deeper execution escalated to fresh reasoning builder with separate Step0 stop and exact nine-file scope. This is execution/code synthesis, not classification; no Jev/Drex classifier claimed. Original source remains2927f32f.
+
+- Deeper reasoning execution: existing isolated builder /root/to_p0_contract_rework_builder, inherited session model (no invented provider identity or cost), Step0 halted and disposed ae14f046 before source. Exact six of nine allowed files changed; no commit or runtime verification by builder. Coordinator committed54e5bd52 for independent verification. Actual usage/cost unavailable; no cheap classifier simulated. Escalation reason: two preferred corrective attempts omitted critical load-bearing grammar fixes.
+
+## TO-P1 final bounded correction attempt
+
+Preferred Ember Step0 completed6.1s,16,475input+318output USD0.054195 estimate; amended Step0 completed7.0s,16,454input+390output USD0.055212. Framing/shape irregularities inspected explicitly; actual scope restated, no code. Coordinator rulings committed6a05be05 before code. Preferred bounded code completed16.0s,16,572input+1,089output USD0.066051, no tests run. Artifact refused before writes: heading tests do not place denial inside affected section, provenance expression misses required delimiter case. Exact three-file deeper execution follow-up Step0 stopped and accepted under existing committed ruling; no broad classifier or scope change. All estimates runtime, not billing.
