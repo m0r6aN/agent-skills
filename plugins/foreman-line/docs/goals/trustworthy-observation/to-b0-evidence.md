@@ -72,3 +72,14 @@ Verifier evidence: /tmp/to-b0-verifier-scaffold-diagnosis.txt and incremental
 verifier summary; these local paths are provenance, not portable artifacts.
 Remaining GitHub shard 1 still running at this recording; no green-chain or
 merge claim. Unattributed /tmp shard outcomes were explicitly excluded.
+
+## Actual release
+
+PR #168 merged2026-10-10T17:12:42Z at96ffadc560914c762da01dbb84508e7fc624a31a.
+Exacthead389f3f6cd9f949934838cb69bece08572dc5b99c had all four shards and
+required test/integration-report green in both push/PR runs38068621135 and
+38068623643. Effective main rules rechecked before normal --merge with
+--match-head-commit; no bypass/auto-merge setting change. Spec moved to done
+in this immediate documentation follow-up; no Stage-F receipt invented.
+Worktree retained temporarily for installed linter/verifier tooling used by
+TO-P0; cleanup follows once dependencies exist in the successor worktree.
