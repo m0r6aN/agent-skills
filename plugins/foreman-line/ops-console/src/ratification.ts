@@ -10,8 +10,7 @@ export interface RatificationSource {
 }
 
 const HEADING = /^ {0,3}(#{1,6})\s+(.+?)\s*#*\s*$/
-const EXCLUDED =
-  /\b(historical|archive|archived|example|examples|instruction|instructions|superseded)\b/i
+const EXCLUDED = /\b(historical|archive|example|instruction|superseded)\b/i
 const B_HEADING = /^(gate 1 record|gates and standing authorizations)\s*(?:[-–—].*)?$/i
 const NOTE = /^historical[- ]note\s*(?:$|[:\-–—])/i
 const RECORD = /^(?:[-*+]\s+)?(Status|Gate 1)\s*:\s*(.*)$/i
@@ -43,6 +42,17 @@ function qualified(value: string, positive: RegExp): boolean {
     '',
   )
   if (QUALIFIED.test(first)) return true
+  // Only explicit owner/date provenance can carry the grant's qualification
+  // across comma/semicolon boundaries. A review/gate/parcel clause ends that
+  // provenance scope; never search arbitrary narrative for condition words.
+  let afterProvenance = false
+  for (const clause of tail.split(/[;,\n]/)) {
+    const current = clause.trim().replace(/^[-–—:]\s*/, '')
+    if (afterProvenance && QUALIFIED.test(current)) return true
+    afterProvenance = /^(?:owner(?:\/date)?\b|date\s*:|\d{4}-\d{2}-\d{2}(?:\s|$))/.test(
+      current.toLowerCase(),
+    )
+  }
   // Further clauses must explicitly target goal Gate 1, rather than a review,
   // Gate 2/3, or a parcel's HOLD. Restrict this to anchored record contents.
   return unquoted(tail)

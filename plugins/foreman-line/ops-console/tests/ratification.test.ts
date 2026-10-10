@@ -962,3 +962,60 @@ for (const text of [
     assert.ok(result.evidence.some((item) => item.kind === 'unsupported'))
   })
 }
+
+for (const heading of ['archived', 'examples', 'instructions']) {
+  test(`unlisted ${heading} heading retains its actual current denial`, () => {
+    const result = readText(`Status: RATIFIED\n## ${heading}\nStatus: NOT RATIFIED\n`)
+    assert.equal(result.ratification.status, 'unknown')
+    assert.deepEqual(
+      result.evidence.map((item) => [item.kind, item.line]),
+      [
+        ['grant', 1],
+        ['denial', 3],
+      ],
+    )
+  })
+}
+
+for (const heading of ['historical', 'archive', 'example', 'instruction', 'superseded']) {
+  test(`canonical ${heading} heading excludes its denial`, () => {
+    const result = readText(`Status: RATIFIED\n## ${heading}\nStatus: NOT RATIFIED\n`)
+    assert.equal(result.ratification.status, 'granted')
+    assert.deepEqual(
+      result.evidence.map((item) => [item.kind, item.line]),
+      [['grant', 1]],
+    )
+  })
+}
+
+for (const text of [
+  'Status: RATIFIED — owner: Clinton; provided funding is approved',
+  'Status: RATIFIED — owner/date, if funding is approved',
+  'Status: RATIFIED — owner: Clinton, if funding is approved',
+  'Status: RATIFIED 2026-10-10, provided funding is approved',
+  '## Gate 1 record\n- Gate 1: GRANTED — owner: Clinton; provided funding is approved',
+]) {
+  test(`current grant qualification after explicit provenance is unknown: ${text}`, () => {
+    const result = readText(text)
+    assert.equal(result.ratification.status, 'unknown')
+    assert.ok(result.evidence.some((item) => item.kind === 'unsupported'))
+    assert.ok(result.evidence.every((item) => item.kind !== 'grant'))
+  })
+}
+
+for (const text of [
+  'Status: RATIFIED — owner: Clinton; review is conditional',
+  'Status: RATIFIED — owner/date, review if funding is approved',
+  'Status: RATIFIED — owner: Clinton; Gate 2: NOT GRANTED',
+  'Status: RATIFIED — owner/date, Gate 3: NOT GRANTED',
+  'Status: RATIFIED — owner: Clinton; TO-P1 Status: HOLD',
+  'Status: RATIFIED — owner: Clinton; "provided funding is approved"',
+  'Status: RATIFIED — owner/date, `if funding is approved`',
+  'Status: RATIFIED — owner: Clinton; review is conditional; if funding is approved',
+]) {
+  test(`unrelated or quoted clauses after provenance do not condition Gate 1: ${text}`, () => {
+    const result = readText(text)
+    assert.equal(result.ratification.status, 'granted')
+    assert.ok(result.evidence.every((item) => item.kind === 'grant'))
+  })
+}

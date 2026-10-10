@@ -195,7 +195,7 @@ test('remedy: unknown ratification yields exactly one goal-level ratification-ev
   assert.equal(remedy?.cause, 'ratification-evidence')
   assert.ok((remedy?.options.length ?? 0) >= 2)
   assert.match(remedy?.options[0]?.recommendation ?? '', /inspect|reconcile/i)
-  assert.match(remedy?.options[1]?.recommendation ?? '', /ask owner/i)
+  assert.match(remedy?.options[1]?.recommendation ?? '', /ask (?:the )?owner/i)
   assert.match(
     remedy?.options[(remedy?.options.length ?? 0) - 1]?.recommendation ?? '',
     /park|leave/i,
