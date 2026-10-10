@@ -6,7 +6,7 @@
 2026-10-10. Planning worktree and branch are named in charter.md.
 One goal, one coordinator. Transfers occur at recorded parcel boundaries.
 
-**State:** `to_p0_contract_rework_baseline_ci_pending`; D1–D8 and graph ratified 2026-10-10;
+**State:** `to_p0_contract_accepted_baseline_ci_pending`; D1–D8 and graph ratified 2026-10-10;
 A1 merge/decision delegation and cost routing recorded; no implementation accepted.
 
 ## Authority
@@ -57,9 +57,11 @@ stop conditions with a report, not conditions an agent can satisfy itself.
 Independent plan review closed; preferred Ember completed shaping and initial
 TO-P0 docs build. Two independent architecture reviewers requested concrete
 contract changes. Rulings recorded separately; Ember rework returned only an
-acknowledgement, no handoff. Fresh inherited reasoning builder synthesizes the
-contract in /home/cmorgan76/Work/foreman-to-p0 under exact three-file authority.
-No observation implementation accepted; independent re-review remains required.
+acknowledgement, no handoff. Fresh inherited reasoning builder synthesized the
+contract under exact three-file authority. Final bounded Ember correction
+019ab92c is accepted by both independent reviewers; spec and link verification
+pass. Local documentation/evidence integrated at e22650bb; publication and merge
+remain pending. No observation implementation accepted.
 
 TO-B0 auxiliary baseline prerequisite independently reproduced five existing FCA
 D19 violations. Preferred Ember shaped/built/reworked exact bounded patch;
@@ -69,6 +71,15 @@ lints. PR #168 is ready, required CI pending, actual delegated merge not yet don
 Auto-merge is unavailable; coordinator will perform normal merge after green.
 No audit bypass or repository setting change. Original worktrees preserved.
 
-Next: consume TO-P0 rework, independent dual review; merge TO-B0 behind GitHub
-requirements, advance observation base, publish exact docs/evidence; then TO-P1.
+CI shard 0 exposed another inherited prerequisite: verification scaffold golden
+still expects Biome 2.5.3 after fleet commit 60617 pins 2.5.14. Scope amendment
+fe7153c9 precedes a mechanical golden/comment alignment; both incremental
+architecture reviews accept, independent focused execution pending. Other pins,
+key-set checks, negative controls, manifests, and audit remain unchanged. Shard 1
+is still running; its result must be inspected before claiming baseline green.
+
+Next: finish baseline verification and inspect remaining CI, merge TO-B0 behind
+GitHub requirements, advance observation base, publish exact docs/evidence; then
+activate TO-P1. A cheap Ember TO-P1 shaping draft exists only in /tmp; it has no
+active spec, builder dispatch, or acceptance. Parents must land first.
 No further owner confirmation required for ratified non-destructive scope.

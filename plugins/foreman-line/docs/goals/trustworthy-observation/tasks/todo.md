@@ -1,6 +1,6 @@
 # Task List — Trustworthy Observation
 
-Charter ratified; plan review closed; TO-P0 rework and baseline CI pending.
+Charter ratified; plan review closed; TO-P0 independently accepted, publication/merge pending baseline CI repair.
 Acceptance details trace to charter.md; shaped specs supply exact Allowed Files.
 
 - [x] Read relevant canon and preserve original dirty checkout.
