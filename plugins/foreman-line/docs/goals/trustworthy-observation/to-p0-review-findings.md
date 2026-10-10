@@ -22,3 +22,14 @@ proposed until independent re-review and green release.
 Rework worker: Ember same observed host, no tools, exact three-output whitelist,
 180-second timeout. Test count tripwire: docs only, zero behavioral tests
 claimed; both original reviews were source/contract inspection.
+
+## Re-review d4e73028
+
+Fresh reviewer A requests one clarification: first eligible positive Status
+could ignore a second current Status denial. Reproduced contract ambiguity with
+Status RATIFIED followed by Status NOT RATIFIED before Queue. FIX: positive
+position cannot suppress recognized current negative/conflicting evidence. Add
+exact same-source and cross-source repeated-current negative scenarios. No new
+state, route, or authority. Other focus questions accepted at contract level.
+Independent docs verifier passes spec lint and 71 links/41 anchors, exact three
+original Allowed Files, zero implementation edits/tests. Reviewer B pending.
