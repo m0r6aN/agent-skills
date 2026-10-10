@@ -16,6 +16,7 @@ export interface GoalAttention {
   readonly failed: number
   readonly awaitingGate: number
   readonly ratificationPending: number
+  readonly ratificationUnknown: number
   readonly total: number
 }
 
@@ -48,6 +49,9 @@ export function goalStatus(
     else if (parcel.state === 'awaiting-gate') awaitingGate += 1
   }
   const ratificationPending = projection.goal.ratification.status === 'pending' ? 1 : 0
+  // ATT: unknown forces the goal active even with an empty/all-complete queue
+  // or a closed narrative.
+  const ratificationUnknown = projection.goal.ratification.status === 'unknown' ? 1 : 0
   const anyOpen = projection.parcels.some((parcel) => parcel.state !== 'complete')
   const queuedUnplaced = projection.goal.items.length > 0 && projection.parcels.length === 0
   // Narrative activity: a goal with no parsed parcels but live state lines
@@ -61,13 +65,19 @@ export function goalStatus(
   return {
     key,
     tree,
-    active: anyOpen || queuedUnplaced || ratificationPending === 1 || narrativeActive,
+    active:
+      anyOpen ||
+      queuedUnplaced ||
+      ratificationPending === 1 ||
+      ratificationUnknown === 1 ||
+      narrativeActive,
     attention: {
       hung,
       failed,
       awaitingGate,
       ratificationPending,
-      total: hung + failed + awaitingGate + ratificationPending,
+      ratificationUnknown,
+      total: hung + failed + awaitingGate + ratificationPending + ratificationUnknown,
     },
   }
 }

@@ -6,8 +6,8 @@
 2026-10-10. Planning worktree and branch are named in charter.md.
 One goal, one coordinator. Transfers occur at recorded parcel boundaries.
 
-**State:** `to_p0_contract_accepted_publication_pending`; D1–D8 and graph ratified 2026-10-10;
-A1 merge/decision delegation and cost routing recorded; no implementation accepted.
+**State:** `to_p1_verified_reviewed_publication_pending`; D1–D8 and graph ratified 2026-10-10;
+A1 merge/decision delegation and cost routing recorded; TO-P1 implementation independently accepted, exact-head CI and merge pending.
 
 ## Authority
 
@@ -142,3 +142,41 @@ preserved. This is branch state; actual PR #167 merge remains pending. Companion
 preamble updates review status and own scope link only; RAT–REF normative text
 and scenarios remain unchanged. TO-P0 task checkbox stays open until actual
 merge. Historical builder handoff/check commands retain their recorded context.
+
+## Local successor preparation while published contract CI runs
+
+PR167 is ready at exact published headf4a46e21; required runs38071623009/38071621557 are in progress, with shards2/3 green at last check. Final independent105link/51anchor documentation verification and dual incremental reviews accept; actual contract merge remains pending.
+
+Local-only P6/P7 preferred Ember drafts are outside active and pass current spec-linter. Worker accounting and exact corrections recorded in worker-dispatch-log.md; not part of published PR167 head. TO-P1 independent preactivation gaps and narrow source window are recorded in to-p1-preactivation-rulings.md. Original overlapping paths match already landed FCA/main bytes; original checkout stays untouched. P6 explicitly owns unknown-only banner wording/test deferred from P1.
+
+Prepared worktree /home/cmorgan76/Work/foreman-to-p1, branch feat/foreman-to-p1-ratification, from main96ffadc5 with locked no-script dependencies installed. No active spec or builder; it must rebase onto actual PR167 merge and rerun current main/source/owner preflight before activation. Independent baseline verification is pending. Carry local preparation records into this successor after actual parent merge; do not update PR167 head merely to publish future drafts.
+
+Independent preparation update: P1 unchanged baseline92tests/typecheck/lint pass; clean worktree. Real membership target reproduced at96ffadc5: console reports six members plus three genuine sidecars, valid/sealed tipF with zero errors; receipts directory CLI exits1 because it selects all nine JSON files. Independent SHA256/size/mtime snapshots show all files unchanged. This is the baseline defect, not TO-P3 or goal-exit acceptance. Evidence /tmp/to-p1-baseline-readiness-summary.txt and /tmp/to-p3-baseline-readiness-summary.txt.
+
+Next actual action remains PR167 exactheadf4a46e21 green required CI then normal merge. Watcher session77279 writes /tmp/to-p0-pr167-ci-watch.log for workflow38071623009. Local preparation commits5455e66d/a787613a and subsequent checkpoint are intentionally unpushed; carry them onto P1 after main parent merge, preserving PR167 head. Candidate /tmp/to-p1-active-spec-candidate.md passes frontmatter lint only under /tmp root; it is not active authority and must replace pending-parent language with actual merge/source/owner preflight before committed activation. Original checkout/CFF worktrees preserved. Goal remains active and incomplete.
+
+## Actual contract merge and P1 activation preflight
+
+PR167 MERGED78c8b41feb07e4b274d402b54376ebf5b934ce4b at2026-10-10T17:56:37Z, exactheadf4a46e21. Full CI38071623009/38071621557 passed all four shards plus requiredtest/integration-report; normalmatch-headmerge, no bypass. P0task checked. Earlier pending-merge checkpoints are superseded by this actual closure. P0spec/artifact already done in merged PR, historicalartifactbytes retained.
+
+P1worktree rebased78c8b41f; carried four local preparation commits. Original overlap bytes rechecked against actualmain/FCA and unchanged, CFF scopedconsole paths clean. No queue/canon ownership transfer or original dirty edit. Exact P1spec/body/evidence shape and nine AllowedFiles bind this isolated sourcewindow. Fresh preferred-worker Step0 must restate and stop before code; flags require coordinator disposition. Independent baseline92tests/typecheck/lint green; no observation code accepted. Goal remains active with P1–P7 incomplete.
+
+TO-P1draft PR169 published d92ebed6 to establish public worker inputs. Ember Step0 stopped with three flags; exact dispositions appended to spec before code. No helper scope expansion, no runnable unknown editor command, no broad historical-word suppression. Code continuation follows separately published ruling. No implementation accepted.
+
+## TO-P1 first implementation and corrective disposition
+
+Public implementation HEAD2927f32f8b86d30478d625d809656ce50fcaa01e, PR169. Independent verifier:136tests,130pass,6fail; typecheck fails undefined options; lint, unchanged D19 and read-only controls pass. Additional false grants: Status after first H2, bare B record, quoted value, other source missing. Multiline emphasis and unknown remedy cause fail. Missing-source integration tests never remove files. No acceptance; PR explicitly draft.
+
+Preferred Ember corrective run completed76.1s,26,790input+6,303output tokens, runtimeestimate USD0.174915 (not settled billing). Artifact refused BEFORE writes because multiple required fixes omitted and field initialization inconsistent. Current code remains2927f32f. Corrective retry uses complete replacements and only published source/spec; no classifier ran. Escalate deeper execution if preferred retry cannot produce a coherent candidate. No new authority, route, audit weakening or scope expansion. Superseded scope-only CI38074233358/38074229433 cancellation requested; current-head CI untouched.
+
+TO-P1 corrective retry: preferred Ember completed173.1s,33,084input+15,530output tokens, runtimeestimate USD0.332202 (not settled billing). Complete-file artifact still leaves quote stripping, per-line multiline rejection, bare B eligibility and missing-source override unchanged. Refused BEFORE writes; no partial adoption or acceptance. Deeper execution escalated to fresh reasoning builder with separate Step0 stop and exact nine-file scope. This is execution/code synthesis, not classification; no Jev/Drex classifier claimed. Original source remains2927f32f.
+
+Reasoning rework Step0 accepted after explicit pre-code stop. Exact9 files restated; no code before disposition. Existing contract dispositions: B/excluded section ends at equal/higher heading; deeper exclusions cannot reset parent lifetime; current anchored record syntax only for conditions/revocations; deterministic unreadable directory-instead-of-file tests permitted within allowed tests; missing required directive remains null. Evidence locator containment only existing scan seam; no slug/API/P2 expansion. These resolve implementation mechanics without changing RAT/ATT or Allowed Files. Builder authorized to proceed, no self-certification or commit.
+
+Rework handoff committed54e5bd52 after Step0 disposition ae14f046. Six exact allowed files changed, no helper/manifest/API/UI/audit changes. Deeper reasoning builder replaced lexer and added real missing/unreadable IO plus adversarial/root/attention tests; static estimate180cases is not runtime evidence. Independent full deterministic verifier dispatched against immutable54e5bd52; architecture reviews and acceptance remain pending. Second preferred candidate never materialized.
+
+Second independent pass code54e5bd52:180tests/179pass/1fail, type/lint/D19/read-only PASS. Required corrective findings: test should allow Ask the owner without losing meaning/order; unauthorized archived/examples/instructions exclusion hides current denials; conditions after provenance falsely grant. Preferred Ember corrective Step0(s) restated exact3existing Allowed Files and stopped, no code. Formatting/schema irregularities inspected explicitly; no implied test claims. Ruling before code: use exact whole-word canonical exclusion set; add 3 unlisted-heading negative regressions; optional-the assertion correction mandatory; anchored grant-targeting condition clauses after provenance must be unknown, with irrelevant review/parcel/Gate2/3 conditions remaining granted. Indented-code behavior unchanged: accepted canon does not explicitly require it; no silent grammar expansion. Existing RAT/ATT/scope unchanged. Runtime estimates Step0 USD0.054195 and amendedStep0 USD0.055212, not billing. No classifier ran.
+
+Dual architecture review on ac406ecc REJECT despite201 deterministicPASS. A1tables, A2/B1conditions, A3fullactualcompatibility OPEN; exact findings/rulings in to-p1-review-findings.md. Builder corrective Step0 halted, only parser/test authorized after separate rulings commit. No implementation acceptance; PR169 draft. Rejected-head CI canceled, corrected head must receive full requirements.
+
+Final TO-P1 implementation a840914f:251/251,type/lint/unchangedD19/read-only PASS; both independent final architecture reviews ACCEPT, required findings open0. Same-PR spec/shaping-history/index/lesson lifecycle prepared; artifact bytes preserved. PR169 publication/exact-head CI/normal merge pending; TO-P1 task remains unchecked until actual merge. TO-P2–TO-P7 unactivated. Earlier review/CI statements above are historical checkpoints.

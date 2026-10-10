@@ -187,6 +187,48 @@ test('remedy: pending goal ratification gets a goal-level remedy and complete pa
   assert.equal(done.length, 0)
 })
 
+test('remedy: unknown ratification yields exactly one goal-level ratification-evidence remedy', () => {
+  const remedies = remediesFor(config, projection([], 'unknown'))
+  assert.equal(remedies.length, 1)
+  const remedy = remedies[0]
+  assert.equal(remedy?.parcel, null)
+  assert.equal(remedy?.cause, 'ratification-evidence')
+  assert.ok((remedy?.options.length ?? 0) >= 2)
+  assert.match(remedy?.options[0]?.recommendation ?? '', /inspect|reconcile/i)
+  assert.match(remedy?.options[1]?.recommendation ?? '', /ask (?:the )?owner/i)
+  assert.match(
+    remedy?.options[(remedy?.options.length ?? 0) - 1]?.recommendation ?? '',
+    /park|leave/i,
+  )
+  for (const option of remedy?.options ?? []) {
+    assert.deepEqual(option.commands, [])
+  }
+})
+
 test.after(() => {
   rmSync(root, { recursive: true, force: true })
+})
+
+test('remedy: unknown explains exact source root and withholds all commands', () => {
+  const candidate = projection([], 'unknown')
+  const goal = {
+    ...candidate.goal,
+    evidence: [
+      {
+        source: 'charter' as const,
+        locator: { root: '/actual/root', relativePath: 'docs/INITIATIVES/g/charter.md' },
+        line: 3,
+        kind: 'unsupported' as const,
+        detail: 'current record',
+      },
+    ],
+  }
+  const remedies = remediesFor(config, { ...candidate, goal })
+  assert.equal(remedies.length, 1)
+  assert.equal(remedies[0]?.cause, 'ratification-evidence')
+  assert.match(
+    remedies[0]?.options[0]?.recommendation ?? '',
+    /root=\/actual\/root docs\/INITIATIVES\/g\/charter.md:3/,
+  )
+  assert.ok(remedies[0]?.options.every((option) => option.commands.length === 0))
 })
