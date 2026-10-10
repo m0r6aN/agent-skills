@@ -5,11 +5,7 @@ import { join } from 'node:path'
 import test from 'node:test'
 import { defaultConfig } from '../src/config.js'
 import { remediesFor } from '../src/remedy.js'
-import type {
-  FailureCode,
-  GoalProjection,
-  ParcelProjection,
-} from '../src/types.js'
+import type { FailureCode, GoalProjection, ParcelProjection } from '../src/types.js'
 
 /**
  * FCA-3 remediation advisor: questions + recommendations per blocker,
