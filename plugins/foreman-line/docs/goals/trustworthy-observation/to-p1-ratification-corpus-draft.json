@@ -1,0 +1,209 @@
+{
+  "status": "unexecuted contract-derived draft; not implementation evidence",
+  "cases": [
+    {
+      "name": "A current top metadata",
+      "charter": "**Status:** RATIFIED \u2014 owner/date\n## Queue\n",
+      "directive": "## Queue\n",
+      "expected": "granted"
+    },
+    {
+      "name": "A fully ratified case insensitive",
+      "charter": "status: fully ratified\n## Queue\n",
+      "directive": "## Queue\n",
+      "expected": "granted"
+    },
+    {
+      "name": "A balanced multiline emphasis",
+      "charter": "**Status:** **\nRATIFIED\n**\n## Queue\n",
+      "directive": "## Queue\n",
+      "expected": "granted"
+    },
+    {
+      "name": "A draft alone",
+      "charter": "Status: DRAFT\n## Queue\n",
+      "directive": "## Queue\n",
+      "expected": "pending"
+    },
+    {
+      "name": "later current denial",
+      "charter": "Status: RATIFIED\nStatus: NOT RATIFIED\n## Queue\n",
+      "directive": "## Queue\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "cross-source denial",
+      "charter": "Status: RATIFIED\n## Queue\n",
+      "directive": "## Current\n- Gate 1: NOT GRANTED\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "denial after later heading",
+      "charter": "Status: RATIFIED\n## Queue\n**Status:** NOT RATIFIED\n",
+      "directive": "## Queue\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "B exact gate record",
+      "charter": "## Gate 1 record\n- Gate 1: GRANTED\n",
+      "directive": "## Queue\n",
+      "expected": "granted"
+    },
+    {
+      "name": "B authorization heading with suffix",
+      "charter": "## Gates and standing authorizations \u2014 owner amendment\n+ Gate 1: RATIFIED\n",
+      "directive": "## Queue\n",
+      "expected": "granted"
+    },
+    {
+      "name": "B bold label",
+      "charter": "## Gate 1 record\n**Gate 1:** GRANTED\n",
+      "directive": "## Queue\n",
+      "expected": "granted"
+    },
+    {
+      "name": "bare gate grant unsupported",
+      "charter": "- Gate 1: GRANTED\n",
+      "directive": "## Queue\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "wrong heading grant unsupported",
+      "charter": "## Old gate notes\n- Gate 1: GRANTED\n",
+      "directive": "## Queue\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "quoted value",
+      "charter": "Status: \"RATIFIED\"\n",
+      "directive": "## Queue\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "blockquote grant",
+      "charter": "> Status: RATIFIED\n",
+      "directive": "## Queue\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "fenced grant",
+      "charter": "```md\nStatus: RATIFIED\n```\n",
+      "directive": "## Queue\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "tilde fenced grant",
+      "charter": "~~~md\nStatus: RATIFIED\n~~~\n",
+      "directive": "## Queue\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "table grant",
+      "charter": "| Status: RATIFIED |\n",
+      "directive": "## Queue\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "historical section grant",
+      "charter": "## Historical record\n### Gate 1 record\n- Gate 1: GRANTED\n",
+      "directive": "## Queue\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "example section grant",
+      "charter": "## Example\n### Gate 1 record\n- Gate 1: GRANTED\n",
+      "directive": "## Queue\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "instruction section grant",
+      "charter": "## Instruction\n### Gate 1 record\n- Gate 1: GRANTED\n",
+      "directive": "## Queue\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "superseded section grant",
+      "charter": "## Superseded\n### Gate 1 record\n- Gate 1: GRANTED\n",
+      "directive": "## Queue\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "historical note suppresses later denial",
+      "charter": "Status: RATIFIED\n**Historical note:** prior record\nStatus: NOT RATIFIED\n",
+      "directive": "## Queue\n",
+      "expected": "granted"
+    },
+    {
+      "name": "historical grant followed current B",
+      "charter": "## Historical\n- Gate 1: NOT GRANTED\n## Gate 1 record\n- Gate 1: GRANTED\n",
+      "directive": "## Queue\n",
+      "expected": "granted"
+    },
+    {
+      "name": "review negation irrelevant",
+      "charter": "Status: RATIFIED \u2014 plan-level review NOT run\n## Queue\n",
+      "directive": "## Queue\n",
+      "expected": "granted"
+    },
+    {
+      "name": "scoped parcel hold irrelevant",
+      "charter": "Status: RATIFIED\n## Queue\nTO-P1 Status: HOLD\n",
+      "directive": "## Queue\n",
+      "expected": "granted"
+    },
+    {
+      "name": "conditional grant",
+      "charter": "Status: RATIFIED if checks pass\n",
+      "directive": "## Queue\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "revoked current grant",
+      "charter": "Status: RATIFIED\n## Gate 1 record\n- Gate 1: REVOKED\n",
+      "directive": "## Queue\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "unmatched emphasis",
+      "charter": "**Status: RATIFIED\n",
+      "directive": "## Queue\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "token boundary",
+      "charter": "Status: RATIFIEDness\n",
+      "directive": "## Queue\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "linked-only grant",
+      "charter": "[Gate 1 RATIFIED](charter-archive.md)\n",
+      "directive": "## Queue\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "missing charter",
+      "charter": null,
+      "directive": "## Queue\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "missing directive",
+      "charter": "Status: RATIFIED\n",
+      "directive": null,
+      "expected": "unknown"
+    },
+    {
+      "name": "later positive cannot replace first metadata",
+      "charter": "Status: unsupported\nStatus: RATIFIED\n",
+      "directive": "## Queue\n",
+      "expected": "unknown"
+    },
+    {
+      "name": "excluded current-looking denial",
+      "charter": "Status: RATIFIED\n## Example\nStatus: NOT RATIFIED\n",
+      "directive": "## Queue\n",
+      "expected": "granted"
+    }
+  ]
+}

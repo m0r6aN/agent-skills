@@ -89,6 +89,8 @@ The current implementation in `plugins/foreman-line/ops-console/src/scan.ts` use
 
 References:
 
+- `plugins/foreman-line/docs/goals/trustworthy-observation/to-p1-ratification-corpus-draft.json` — 34 unexecuted contract-derived candidate fixtures; reconcile against RAT before using as assertions. This is a read-only shaping input, not an additional builder Allowed File.
+
 - `plugins/foreman-line/docs/goals/trustworthy-observation/observation-contract-amendment.md`
 - `plugins/foreman-line/docs/goals/trustworthy-observation/observation-scenarios.md`
 - `plugins/foreman-line/ops-console/src/scan.ts`
