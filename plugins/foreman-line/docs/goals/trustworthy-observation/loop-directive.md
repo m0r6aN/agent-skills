@@ -97,3 +97,10 @@ source/member alignment and list-only unreadable goal UI access are flagged.
 No builder dispatched. Corrected PR CI shard 0 passed (job 114261381275); shard 1
 114261381225 remains live, so baseline merge and TO-P0 publication still wait
 for effective green requirements. PR #168 head remains389f3f6c.
+
+Preparation update: TO-P3 fresh Ember draft persisted as to-p3-shaping-draft.md
+and passes actual spec-linter. Four implementation files preserve a receipts-owned
+pure selection helper shared by both CLI/console; tests bounded separately.
+No activation/dispatch. Parent sources and receipts-owner windows must reconcile
+before active spec emission. Required corrected-head shard 1 remains live in
+both PR/push runs; no baseline merge claim.

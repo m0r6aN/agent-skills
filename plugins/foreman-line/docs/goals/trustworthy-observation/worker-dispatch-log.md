@@ -108,3 +108,18 @@ requirements are the screening source for the dispatches below.
 - Materialized only goal/to-p2-shaping-draft.md outside active/ specs; actual
   spec-linter passes. No emitted shaping result, receipt, active spec or builder
   dispatch. No Jev/Drex classifier ran and no frontier classification simulated.
+
+## TO-P3 prerequisite-window shaping draft
+
+- Fresh preferred host fireworks/accounts/fireworks/models/ember-1 via tool-free
+  Pi, bounded 150s, public tracked attachments only. Completed 20.8s, terminal
+  stop, clean 691-word draft; 7,723 input+1,652 output tokens, runtime estimate
+  USD 0.047949 (not settled billing). No classifier ran.
+- Coordinator corrections: four implementation files rather than five, actual
+  goal-local source references, explicit pure filename-array selection helper,
+  preserve CLI stderr/exit contract separately from TO-P2 console diagnostics,
+  concrete dual-review questions. No public route/schema/gate expansion.
+- Materialized only goal/to-p3-shaping-draft.md outside active/ specs; actual
+  spec-linter passes. No shaping-result emission, active spec, receipt, builder
+  dispatch or implementation acceptance. Parent reconciliation and receipts
+  code-owner collision preflight remain mandatory before activation.
