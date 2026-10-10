@@ -1,6 +1,6 @@
 # Execution Plan — Trustworthy Observation
 
-Status: ratified 2026-10-10; plan review pending. [Charter](../charter.md) owns the scope,
+Status: ratified 2026-10-10; plan review closed; TO-P0 drafting. [Charter](../charter.md) owns the scope,
 decision list, graph, gates, and exit criteria. Tasks live in [todo.md](todo.md).
 This goal-local location follows Foreman's goal organization; no existing
 repository-level plan or task list is replaced.
@@ -52,6 +52,13 @@ re-proposed before dispatch, not expanded at build time.
 
 Each parcel requires a green-chain merge under delegated Gate 3 (A1). Checkpoints aggregate evidence; they
 do not add a redundant permission gate for reversible prescribed checks.
+
+## Baseline CI dependency
+
+PR #167 sweep diagnostics report five D19 audit violations in unchanged FCA
+config.ts (d86ade55 baseline). Independent read-only reproduction is dispatched.
+No merge may bypass green requirements. A confirmed baseline repair must receive
+its own scoped spec/build/review before an observation release; no audit weakening.
 
 ## Risks
 

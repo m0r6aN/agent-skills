@@ -13,7 +13,7 @@ Deleted records are recoverable in git history.
 
 | Goal | State | Entry | Authority |
 | --- | --- | --- | --- |
-| [trustworthy-observation](trustworthy-observation/charter.md) | `plan_review_closed_to_p0_shaping` | `/goal resume trustworthy-observation` | Codex root owns this isolated goal; D1–D8 / TO-P0–P7 ratified; standing dispatch and green-chain merges delegated; preferred MiMo/Ember workers, Jev/Drex advisory screening only. [Persistent three-goal grant](ops-console-roadmap-authority.md). |
+| [trustworthy-observation](trustworthy-observation/charter.md) | `to_p0_contract_rework_baseline_ci_pending` | `/goal resume trustworthy-observation` | Codex root owns this isolated goal; D1–D8 / TO-P0–P7 ratified; standing dispatch and green-chain merges delegated; preferred MiMo/Ember workers, Jev/Drex advisory screening only. [Persistent three-goal grant](ops-console-roadmap-authority.md). |
 
 ## Coordinator pickup queue
 

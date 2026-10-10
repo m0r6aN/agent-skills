@@ -6,7 +6,7 @@
 2026-10-10. Planning worktree and branch are named in charter.md.
 One goal, one coordinator. Transfers occur at recorded parcel boundaries.
 
-**State:** `to_p0_shaped_builder_ready`; D1–D8 and graph ratified 2026-10-10;
+**State:** `to_p0_contract_rework_baseline_ci_pending`; D1–D8 and graph ratified 2026-10-10;
 A1 merge/decision delegation and cost routing recorded; no implementation accepted.
 
 ## Authority
@@ -54,13 +54,21 @@ stop conditions with a report, not conditions an agent can satisfy itself.
 
 ## Current handoff
 
-Independent plan review accepted TO-P0 shaping after PR1–PR8 disposition.
-MiMo transport failed; Ember completed shaping. Coordinator corrected metadata,
-paths and commands, then spec-linter and advisory self-check passed; bare shaping
-result emitted. Standing Gate 2 authorizes active TO-P0 dispatch under A1.
-No implementation accepted. Builder worktree: /home/cmorgan76/Work/foreman-to-p0,
-branch docs/foreman-to-p0. Tool-free public-source Ember drafting is mechanically
-contained; coordinator materializes only three Allowed Files. This is a scoped
-host boundary, not a claim of loaded Claude builder-architecture permissions.
-Dual independent architecture reviews remain mandatory before acceptance.
-Original worktrees preserved; local dependency installation changed no manifests.
+Independent plan review closed; preferred Ember completed shaping and initial
+TO-P0 docs build. Two independent architecture reviewers requested concrete
+contract changes. Rulings recorded separately; Ember rework returned only an
+acknowledgement, no handoff. Fresh inherited reasoning builder synthesizes the
+contract in /home/cmorgan76/Work/foreman-to-p0 under exact three-file authority.
+No observation implementation accepted; independent re-review remains required.
+
+TO-B0 auxiliary baseline prerequisite independently reproduced five existing FCA
+D19 violations. Preferred Ember shaped/built/reworked exact bounded patch;
+independent verifier: 92 console tests, typecheck/lint, unchanged audit and 3 AC7
+checks pass. Dual architecture reviews accept implementation; corrected metadata
+lints. PR #168 is ready, required CI pending, actual delegated merge not yet done.
+Auto-merge is unavailable; coordinator will perform normal merge after green.
+No audit bypass or repository setting change. Original worktrees preserved.
+
+Next: consume TO-P0 rework, independent dual review; merge TO-B0 behind GitHub
+requirements, advance observation base, publish exact docs/evidence; then TO-P1.
+No further owner confirmation required for ratified non-destructive scope.
