@@ -6,7 +6,7 @@
 2026-10-10. Planning worktree and branch are named in charter.md.
 One goal, one coordinator. Transfers occur at recorded parcel boundaries.
 
-**State:** `to_p0_contract_accepted_baseline_ci_pending`; D1–D8 and graph ratified 2026-10-10;
+**State:** `to_p0_contract_accepted_publication_pending`; D1–D8 and graph ratified 2026-10-10;
 A1 merge/decision delegation and cost routing recorded; no implementation accepted.
 
 ## Authority
@@ -119,3 +119,26 @@ Ownerinputrequirements and extra-root advisor-vs-invoke refusal distinguished.
 Source/ownerwindow reconciliation required beforeactivation, no builderdispatch.
 Requiredcorrected-head finalCIshard1 remainslive at last inspection; main still
 d86ade55 and no baseline/contract merge has occurred.
+
+## Current state after prerequisite merge
+
+TO-B0 PR #168 is MERGED at96ffadc560914c762da01dbb84508e7fc624a31a
+2026-10-10T17:12:42Z, exacthead389f3f6c, both full required CI chains green.
+Observation branch rebased onto main96ffadc5, accepted three companion files
+byte-identical to019ab92c before lifecycle updates. Earlier pending-CI entries
+above describe their recorded checkpoints and are superseded by this state.
+TO-B0 spec lifecycle closure and own TO-B0/TO-P0 index rows prepared; original
+plus inspected CFF worktrees have no dirty index/lesson files. Only own rows
+are added; no other goal's index/canon/queue is reconciled or transferred.
+Next: independent final docs/link verification, publish reviewed TO-P0/authority
+PR #167, merge behind effective exact-head green requirements, then activate
+TO-P1 with parent/owner/source/AllowedFiles preflight. TO-P1–TO-P5 drafts outside
+active/ remain unactivated. No observation code accepted. Retain baseline
+worktree temporarily for installed tooling, then perform owned cleanup.
+
+TO-P0 same-PR lifecycle closure is staged: spec/frontmatter and historical bare
+shaping artifact moved to done/, artifact bytes and original emitted refs
+preserved. This is branch state; actual PR #167 merge remains pending. Companion
+preamble updates review status and own scope link only; RAT–REF normative text
+and scenarios remain unchanged. TO-P0 task checkbox stays open until actual
+merge. Historical builder handoff/check commands retain their recorded context.

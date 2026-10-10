@@ -1,6 +1,6 @@
 # TO-P0 observation contract amendment
 
-Proposed companion amendment, documentation only; independent re-review pending. [TO-P0 scope](../../specs/active/TO-P0-observation-contract-amendment.md#constraints), [charter D1–D8/A2](charter.md#locked-decisions), and [rework rulings](to-p0-rework-rulings.md) govern. Source clauses below are paraphrased, not quotations. Amendments retain loopback observation, existing routes, five parcel states and R1→R5 precedence, two console-local writable files, and present-only human gates. No authority authentication, crypto verification, historical-record rewriting, or new executable rights.
+Reviewed companion amendment, documentation only; independent dual acceptance recorded in [review findings](to-p0-review-findings.md), publication/merge pending. [TO-P0 scope](../../specs/done/TO-P0-observation-contract-amendment.md#constraints), [charter D1–D8/A2](charter.md#locked-decisions), and [rework rulings](to-p0-rework-rulings.md) govern. Source clauses below are paraphrased, not quotations. Amendments retain loopback observation, existing routes, five parcel states and R1→R5 precedence, two console-local writable files, and present-only human gates. No authority authentication, crypto verification, historical-record rewriting, or new executable rights.
 
 ## RAT — current ratification grammar
 

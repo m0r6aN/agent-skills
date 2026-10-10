@@ -29,3 +29,7 @@ Incremental scope d4e73028..019ab92c: amendment two replaced lines, scenarios on
 Only remaining working-tree modification is coordinator worker-dispatch-log.md, untouched. Link targets unchanged by incremental deliverable replacements. Final docs-only behavioral test count remains 0; no implementation tests warranted or executed. Deterministic pass does not confer semantic acceptance, ratification, or independent adversarial review closure.
 
 Independent dual semantics reviews accept019ab92c; see to-p0-review-findings.md. GitHubrequirements/actualmerge pending. No applicationbehavior or exitcriterion proof claimed.
+
+## Final publication verification after baseline merge
+
+Independent verifier checked d960fd7b plus lifecycle/link changes against main96ffadc5: seven spec/draft lints pass; 105 owned local links, 51 anchors, 39 targets, zero failures; documentation-only prospective PR scope (31 paths), whitespace clean. RAT–REF normative text, complete scenarios, and historical bare shaping artifact remain byte-identical to019ab92c. Draft corpus remains 34 unexecuted candidate cases; behavioral tests: 0. Report: /tmp/to-p0-final-doc-verifier-summary.txt. These are documentation checks, not observation implementation proof. Publication and actual PR167 merge remain pending.

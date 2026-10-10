@@ -202,3 +202,18 @@ addition must produce insertions.
 (`docs/goals/ci-optimization/goal-closure-2026-10-02.md`); OPEN install
 candidate: the closure checklist in the coordinator carryover /
 COORDINATOR-PATTERN at next touch.
+
+
+## 2026-10-10 — Callback-local root guards and fleet golden reconciliation (TO-B0)
+
+FCA config introduced five unchanged D19 violations despite outer absolute-root
+checks: filter/forEach callbacks needed their own same-function assertion, and
+a routing path duplicated the canonical plugin-layout spelling. The unchanged
+audit caught the prerequisite; PR #168 repaired guards and exact path assertions
+without relaxing audit rules. The next CI pass exposed a stale verification
+scaffold golden after fleet60617 already pinned Biome2.5.14. Reconcile test
+goldens and provenance commentary with accepted manifest/lock changes; preserve
+exact keys, sibling parity and hostile negative controls rather than weakening
+the test. Independent local checks, two reviewers and both full required CI
+chains passed before actual merge96ffadc5. Disposition: closed baseline repair;
+not observation implementation acceptance or a change to another goal's scope.

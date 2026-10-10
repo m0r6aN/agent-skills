@@ -83,7 +83,7 @@ The change is additive to existing read-only projection surfaces. It must not al
 
 ## Context & References
 
-TO-P0 final `019ab92c` has dual review acceptance for docs, but main landing and TO-B0 CI are still pending. This parcel is therefore a draft only and must not be treated as active implementation authority.
+TO-P0 final `019ab92c` has dual review acceptance for docs, TO-B0 is merged at96ffadc5; TO-P0 main landing is still pending. This parcel is therefore a draft only and must not be treated as active implementation authority.
 
 The current implementation in `plugins/foreman-line/ops-console/src/scan.ts` uses a broad line scan for `Gate 1` plus `ratified|granted`; that is intentionally being replaced by the conservative reader described in the accepted companion grammar and scenarios.
 

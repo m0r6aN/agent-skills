@@ -43,3 +43,7 @@ Independent docs verifier passed currentspec and71links/41anchors. Deliverable
 changes remain exactly three original AllowedFiles; coordinatorreview/ruling
 records are separately scoped administrative artifacts. No behavior certified.
 Release waits on TO-B0 baseline merge and effective GitHubrequirements.
+
+## Final publication lifecycle review
+
+Two independent reviewers inspected the rebased publication/lifecycle changes. Reviewer A accepts unchanged normative semantics and separated administrative scope. Reviewer B requested correction of three dependency links after the move to done/; coordinator changed only those links to ../active/, and reviewer B then ACCEPTED with no required findings. Both preserve prior019ab92c normative acceptance; neither certifies implementation behavior. TO-B0 is actually merged; TO-P0 same-PR done state remains explicitly publication/merge pending. Independent final documentation verification passes.

@@ -1,6 +1,6 @@
 # Task List — Trustworthy Observation
 
-Charter ratified; plan review closed; TO-P0 independently accepted, publication/merge pending baseline CI repair.
+Charter ratified; plan review closed; baseline repaired; TO-P0 independently accepted, publication/merge pending.
 Acceptance details trace to charter.md; shaped specs supply exact Allowed Files.
 
 - [x] Read relevant canon and preserve original dirty checkout.
@@ -11,7 +11,7 @@ Acceptance details trace to charter.md; shaped specs supply exact Allowed Files.
 - [x] Confirm FCA merged and advance planning base; inventory live collision surfaces.
 - [x] Close plan-review findings before TO-P0 shaping.
 - [x] Bind exact amendment ownership/readiness before TO-P0 builder dispatch.
-- [ ] TO-B0 auxiliary: merge independently verified baseline CI repair (PR #168).
+- [x] TO-B0 auxiliary: merge independently verified baseline CI repair (PR #168).
 - [ ] TO-P0: shape and review exact companion amendment; authorized merge.
   - Accept: explicit clause mapping and supported/negative/unsupported scenarios.
   - Verify: independent dual contract review and no code changes.

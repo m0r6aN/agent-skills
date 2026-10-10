@@ -1,7 +1,7 @@
 ---
 ticket: TO-B0
 title: Baseline root guard repair
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-10-10
 updated: 2026-10-10
@@ -87,3 +87,5 @@ B0 amendment: independent npm lint found baseline remedy.test.ts formatting fail
 B0 CI prerequisite amendment: sweep shard 0 reproduces an inherited scaffold golden mismatch (681 pass, 1 fail). Fleet commit 60617cef5bdbc74aa516cf54a54e91e3e3228365 already pins verification and dispatch Biome to 2.5.14; baseline d86ade55 and this branch have identical manifests and scaffold test. Add exactly verification/tests/scaffold.test.ts to scope: align only the Biome expected value to 2.5.14 and replace the stale provenance comment. Preserve all other expected versions, exact dependency key sets, sibling parity assertions, and negative controls. No manifest, lockfile, audit, permission, or runtime changes. Focused AC-1 with negative controls and pinned formatter validation are required independently, followed by both incremental architecture reviews and the full required CI chain. This amendment overrides the earlier three-file/comment exclusions solely for this correction.
 
 Ownership disposition: exact scaffold test has no uncommitted edits in the original checkout or inspected CFF h1/p0/p1/p3 worktrees. This is alignment to the already merged fleet pin under Clinton Morgan's standing non-destructive authority, not a transfer of CI/kernel goal ownership or permission to change their canon, queues, or working files. Work remains isolated in this prerequisite branch. No separate parcel or runtime feature is added.
+
+Closure: PR #168 merged 2026-10-10T17:12:42Z at 96ffadc560914c762da01dbb84508e7fc624a31a after both exact-head test/integration-report chains passed for389f3f6c. This is source-control/spec lifecycle evidence, not a fabricated Stage-F receipt.

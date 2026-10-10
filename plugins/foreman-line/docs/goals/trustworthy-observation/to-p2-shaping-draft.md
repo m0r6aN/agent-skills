@@ -65,7 +65,7 @@ Implement the accepted EVD "isolation and accessible diagnostics" in the ops con
 - Unsafe cast: `plugins/foreman-line/ops-console/src/chain.ts` (`parsed as ReceiptDocument`, `docs.push(doc)`, `validateChain(docs)`, `isSealed(docs)`).
 - Directive-dependent discovery: `plugins/foreman-line/ops-console/src/scan.ts` (`listGoalSlugs`, `scanGoal`).
 - Projection authority (charter D4): `plugins/foreman-line/ops-console/src/project.ts`.
-- Parents: TO-B0/TO-P0 (CI/landing pending), TO-P1 (draft).
+- Parents: TO-B0 merged96ffadc5; TO-P0 landing pending, TO-P1 draft.
 
 ## Allowed Files
 

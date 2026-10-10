@@ -1,7 +1,7 @@
 ---
 ticket: TO-P0
 title: Observation contract amendment
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-10-10
 updated: 2026-10-10
@@ -61,9 +61,9 @@ TO-P0 produces the documentation-only companion amendment that freezes how ratif
 - [Charter](../../goals/trustworthy-observation/charter.md)
 - [Plan review findings](../../goals/trustworthy-observation/plan-review-findings.md)
 - [SPEC-CONVENTION](../../SPEC-CONVENTION.md)
-- [FOC-P0](./FOC-P0-projection-contract-and-discovery-inventory.md)
-- [FCA-P0](./FCA-P0-ops-console-multi-root-and-status-index.md)
-- [FCA-P1](./FCA-P1-remediation-advisor.md)
+- [FOC-P0](../active/FOC-P0-projection-contract-and-discovery-inventory.md)
+- [FCA-P0](../active/FCA-P0-ops-console-multi-root-and-status-index.md)
+- [FCA-P1](../active/FCA-P1-remediation-advisor.md)
 
 ## Allowed Files
 
@@ -94,3 +94,5 @@ Mandated reviewer focus questions:
 - Are unsupported cases explicit enough that later parcels cannot silently reinterpret the contract?
 
 Coordinator shaping rulings: Ember supplied the draft; coordinator corrected repository paths, reference links, nullable supersession metadata, executable validation command, and required judgment/architecture metadata. PR1–PR8 dispositions remain mandatory, including unmapped invalid chain diagnostics visible through API/UI, unknown ratification retaining attention/remedies, and designated goal documents through existing goal detail. TO-P3 introduces shared receipt membership; no existing helper is assumed. No acceptance is claimed by shaping.
+
+Lifecycle staged for PR #167: documentation semantics independently accepted at019ab92c; actual publication/green-chain merge remains pending. Folder/status move ships atomically with the reviewed companion under SPEC-CONVENTION same-PR closure. No implementation or Stage-F receipt is claimed.
