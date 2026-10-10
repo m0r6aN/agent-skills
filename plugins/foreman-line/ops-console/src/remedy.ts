@@ -277,6 +277,44 @@ function gateRemedy(
   }
 }
 
+function ratificationUnknownRemedy(projection: GoalProjection): Remedy | null {
+  if (projection.goal.ratification.status !== 'unknown') return null
+  const evidence = projection.goal.evidence ?? []
+  const identities = evidence.map(
+    (item) =>
+      `${item.source} ${item.locator.relativePath}${item.line === null ? '' : `:${item.line}`}`,
+  )
+  const where = identities.length === 0 ? 'no readable goal sources' : identities.join('; ')
+  const withhold =
+    'No editor command is offered: the conflicting evidence spans actual source files that must be reconciled by hand, and an unverified command could rewrite the wrong record.'
+  return {
+    goal: projection.goal.slug,
+    parcel: null,
+    cause: `ratification evidence inconclusive — ${projection.goal.ratification.detail}`,
+    question: 'Which current record actually states this goal’s Gate-1 ratification?',
+    options: [
+      {
+        answer: 'The records conflict or are unreadable — I will reconcile them',
+        recommendation: `Inspect and reconcile the actual sources first (${where}). Make one current record authoritative; never rewrite historical evidence to fit the parser. ${withhold}`,
+        commands: [],
+      },
+      {
+        answer: 'I cannot resolve it from the records alone',
+        recommendation:
+          'Ask the owner for a ruling on the current Gate-1 status, then record that ruling as a fresh current record. ' +
+          withhold,
+        commands: [],
+      },
+      {
+        answer: 'Leave it unresolved for now',
+        recommendation:
+          'Park the goal with an honest state line (why ratification is unknown and what would resolve it). Last resort: prefer either option above.',
+        commands: [],
+      },
+    ],
+  }
+}
+
 function ratificationRemedy(config: ConsoleConfig, projection: GoalProjection): Remedy | null {
   if (projection.goal.ratification.status !== 'pending') return null
   return {
@@ -309,6 +347,8 @@ function ratificationRemedy(config: ConsoleConfig, projection: GoalProjection): 
 /** All remedies for one goal, most-blocking first; empty when nothing needs the human. */
 export function remediesFor(config: ConsoleConfig, projection: GoalProjection): Remedy[] {
   const remedies: Remedy[] = []
+  const unknown = ratificationUnknownRemedy(projection)
+  if (unknown !== null) remedies.push(unknown)
   const ratification = ratificationRemedy(config, projection)
   if (ratification !== null) remedies.push(ratification)
   for (const parcel of projection.parcels) {

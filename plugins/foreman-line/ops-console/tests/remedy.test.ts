@@ -187,6 +187,21 @@ test('remedy: pending goal ratification gets a goal-level remedy and complete pa
   assert.equal(done.length, 0)
 })
 
+test('remedy: unknown ratification yields exactly one goal-level ratification-evidence remedy', () => {
+  const remedies = remediesFor(config, projection([], 'unknown'))
+  assert.equal(remedies.length, 1)
+  const remedy = remedies[0]
+  assert.equal(remedy?.parcel, null)
+  assert.equal(remedy?.cause, 'ratification-evidence')
+  assert.ok((remedy?.options.length ?? 0) >= 2)
+  assert.match(remedy?.options[0]?.recommendation ?? '', /inspect|reconcile/i)
+  assert.match(remedy?.options[1]?.recommendation ?? '', /ask owner/i)
+  assert.match(remedy?.options[options.length - 1]?.recommendation ?? '', /park|leave/i)
+  for (const option of remedy?.options ?? []) {
+    assert.deepEqual(option.commands, [])
+  }
+})
+
 test.after(() => {
   rmSync(root, { recursive: true, force: true })
 })

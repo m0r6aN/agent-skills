@@ -89,6 +89,7 @@ test('goalStatus: hung, failed, and awaiting-gate parcels keep the goal active a
     failed: 1,
     awaitingGate: 1,
     ratificationPending: 0,
+    ratificationUnknown: 0,
     total: 3,
   })
 })
