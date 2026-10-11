@@ -4,7 +4,7 @@
 **Recorded:** 2026-10-10  
 **Owner:** Clinton Morgan  
 **Coordinator:** Pi session `01a12b4f-c8e9-70a4-811b-0cd7eb889457`, explicitly appointed at the stopped pre-P0 boundary; recorded predecessor stopped/released per owner report; see `owner-resume-2026-10-11-01a12b4f.md` and `loop-directive.md`  
-**State:** prior requirements/grants/budgets/limits and original Stage A preserved; migration defaults 1–3 ratified; NEW bounded admission task #179 assigned to this coordinator, initial static diagnosis/proposal produced; actual auth/data-policy and IR-P0 contract/bootstrap disposition pending; G6/review/process admission unproved; P0 draft  
+**State:** prior requirements/grants/budgets/limits/original Stage A preserved; migration defaults ratified; #179 initial diagnosis and authorized IR-P0 exact drafts produced; owner selected subscription/OAuth, application/data/billing gates remain held; contract/bootstrap amendment not ratified/applied; #178 observed merged; P0 draft  
 **Mode:** multi-project initiative; authorized pre-P0 preparation/private evaluation publication, with build/operational execution still behind actual predecessor gates
 
 ## Objective and priority
@@ -13,7 +13,7 @@ Give short-lived Pi agents selectively recalled, durable memory belonging to lon
 
 Preserve the topology: Pi extension → local container adapter → Azure MCP Gateway as sole agent-facing service ingress → Azure Cortex → existing Neon Postgres. Cortex owns memory semantics, lineage, verification, gravity, and authoritative persistence; Gateway owns trusted identity/scope and required governance; the adapter owns pending delivery state; Pi owns lifecycle context and operator interaction.
 
-This charter records existing ratifications and the owner's approved planning decomposition. The exact first plan-review envelope is now conditionally approved in `owner-decisions-2026-10-11.md`; actual route eligibility/launch admission is still unproved. Numerical/API/canon contracts, production-supported source disposition, P0 completion-review routes and runtime designs remain gated evidence/decisions. Latest G5–G12 rulings grant P0/Git/merge authority and choose GitHub—not Jira—tracking. Exact reconnaissance revisions are selected in `source-publication-2026-10-11.md`; a real GitHub process/registration contract still requires reviewed reconciliation. No independent-review or route receipt is inferred.
+This charter records existing ratifications and the owner's approved planning decomposition. The exact first plan-review envelope is now conditionally approved in `owner-decisions-2026-10-11.md`; actual route eligibility/launch admission is still unproved. Numerical/API/canon contracts, production-supported source disposition, P0 completion-review routes and runtime designs remain gated evidence/decisions. Latest G5–G12 rulings grant P0/Git/merge authority and choose GitHub—not Jira—tracking. Exact reconnaissance revisions are selected in `source-publication-2026-10-11.md`; a real GitHub process/registration contract still requires reviewed reconciliation. No independent-review or route receipt is inferred. Latest drafting-only owner direction and OAuth choice are recorded in `../internal-frontier-review-admission/owner-ir-p0-drafting-2026-10-11.md`; exact drafts/current held state are linked from `ir-p0-draft-checkpoint-2026-10-11.md`. Publishing the proposal does not ratify it or activate a route.
 
 ## Authority and preserved artifacts
 

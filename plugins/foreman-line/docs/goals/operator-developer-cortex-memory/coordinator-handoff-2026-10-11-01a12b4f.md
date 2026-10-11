@@ -3,7 +3,7 @@
 **Session:** Pi `01a12b4f-c8e9-70a4-811b-0cd7eb889457`  
 **Accountable owner:** Clinton Morgan  
 **State:** migration defaults ratified; NEW bounded admission task #179 assigned here, initial diagnosis/exact proposal produced; implementation/worker dispatch NOT started
-**Latest checkpoint:** `ratification-and-admission-checkpoint-2026-10-11.md` supersedes historical next-decision requests below  
+**Latest checkpoint:** `ir-p0-draft-checkpoint-2026-10-11.md` and `../internal-frontier-review-admission/ir-p0-drafting-handoff-2026-10-11.md` supersede the earlier nomination/auth/drafting requests below. IR-P0 exact drafts are produced, owner chose subscription/OAuth, and #178 is observed merged. New draft branch is non-operative; no construction/activation.  
 **Ownership:** this session remains sole OPMEM coordinator while waiting at the pre-P0 boundary; no background wakeup or worker
 
 ## Starting state
