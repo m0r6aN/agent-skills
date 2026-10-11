@@ -6,6 +6,7 @@ import { listGoalSlugs } from './scan.js'
 import { goalHygieneProvider } from './signals-goal.js'
 import { releaseHygieneProvider } from './signals-release.js'
 import { scmCiProvider } from './signals-scm.js'
+import { sessionStateProvider } from './signals-session.js'
 import { worktreeHygieneProvider } from './signals-worktree.js'
 import type { ParcelProjection, ParcelStateValue } from './types.js'
 
@@ -175,6 +176,7 @@ function defaultProviders(): SignalProvider[] {
     worktreeHygieneProvider,
     scmCiProvider,
     goalHygieneProvider,
+    sessionStateProvider,
   ]
 }
 

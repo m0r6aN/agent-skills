@@ -80,7 +80,12 @@ function hasGoalRecords(goalsDir: string): boolean {
   return false
 }
 
-export const STATE_FILES = ['notifications.json', 'invocation-audit.json', 'fleet.json'] as const
+export const STATE_FILES = [
+  'notifications.json',
+  'invocation-audit.json',
+  'fleet.json',
+  'spawns.json',
+] as const
 
 export type StateFile = (typeof STATE_FILES)[number]
 

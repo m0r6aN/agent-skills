@@ -198,7 +198,7 @@ the FCA-2 attention counts.
 
 ---
 
-## Task 9: ActionSpec registry + typed refusals + audit entries
+## Task 9: ActionSpec registry + typed refusals + audit entries ✅ (2026-10-11)
 
 **Description:** `actions.ts` — closed registry mapping (class × verb) →
 `ActionSpec { invocation, promptTemplate, autonomy, destructive }`. Baseline
@@ -207,13 +207,13 @@ audit entry (executed/presented/spawned/refused). `execute` registration for
 mutating verbs must be impossible.
 
 **Acceptance criteria:**
-- [ ] unregistered (class, verb) pairs refused typed + audited
-- [ ] `execute` cannot be registered for any mutating verb (type + runtime guard)
-- [ ] audit entries cover all four outcomes with reason/argv
+- [x] unregistered (class, verb) pairs refused typed + audited
+- [x] `execute` cannot be registered for any mutating verb (type + runtime guard)
+- [x] audit entries cover all four outcomes with reason/argv
 
 **Verification:**
-- [ ] Tests pass: `tests/actions.test.ts` (new)
-- [ ] Package sweep green
+- [x] Tests pass: `tests/actions.test.ts` (new — 5/5)
+- [x] Package sweep green (297/297, typecheck, lint)
 
 **Dependencies:** Task 4
 **Files likely touched:** `src/actions.ts`, `src/invoke.ts`, `src/guards.ts`, `tests/actions.test.ts`
@@ -221,7 +221,7 @@ mutating verbs must be impossible.
 
 ---
 
-## Task 10: Prompt templates + composition for baseline verbs
+## Task 10: Prompt templates + composition for baseline verbs ✅ (2026-10-11)
 
 **Description:** Kickstarter-style plain-text templates per baseline verb:
 signal evidence, restated task, boundaries (no self-graded verification),
@@ -229,13 +229,13 @@ autonomy envelope verbatim, Stage-F fail-closed sentence for merge. Optional
 textbox text appended verbatim.
 
 **Acceptance criteria:**
-- [ ] composition is pure and snapshot-tested per verb
-- [ ] autonomy envelope appears verbatim; merge sentence present regardless of merge toggle
-- [ ] textbox text appended verbatim to every composed prompt
+- [x] composition is pure and snapshot-tested per verb
+- [x] autonomy envelope appears verbatim; merge sentence present regardless of merge toggle
+- [x] textbox text appended verbatim to every composed prompt
 
 **Verification:**
-- [ ] Tests pass: `tests/prompts.test.ts` (new)
-- [ ] Package sweep green
+- [x] Tests pass: `tests/prompts.test.ts` (new — 3/3)
+- [x] Package sweep green (304/304, typecheck, lint)
 
 **Dependencies:** Task 9
 **Files likely touched:** `src/prompts.ts`, `tests/prompts.test.ts`
@@ -243,20 +243,20 @@ textbox text appended verbatim.
 
 ---
 
-## Task 11: Destructive guard + typed-confirmation contract
+## Task 11: Destructive guard + typed-confirmation contract ✅ (2026-10-11)
 
 **Description:** `close-delete` (and any future destructive verb) requires an
 explicit typed intent before any request is honored; never silent. Shared
 contract used by the API and mirrored by the UI later.
 
 **Acceptance criteria:**
-- [ ] destructive dispatch without typed confirmation refused + audited
-- [ ] confirmation token binds to the specific subject (replay of another subject refused)
-- [ ] non-destructive verbs unaffected
+- [x] destructive dispatch without typed confirmation refused + audited
+- [x] confirmation token binds to the specific subject (replay of another subject refused)
+- [x] non-destructive verbs unaffected
 
 **Verification:**
-- [ ] Tests pass: `tests/guards-destructive.test.ts` (new)
-- [ ] Package sweep green
+- [x] Tests pass: `tests/guards-destructive.test.ts` (new — 4/4)
+- [x] Package sweep green (304/304, typecheck, lint)
 
 **Dependencies:** Task 9
 **Files likely touched:** `src/guards.ts`, `src/api.ts`, `tests/guards-destructive.test.ts`
@@ -270,7 +270,7 @@ contract used by the API and mirrored by the UI later.
 
 ---
 
-## Task 12: Spawn planner (pure) + harness argv builders + refusal matrix
+## Task 12: Spawn planner (pure) + harness argv builders + refusal matrix ✅ (2026-10-11)
 
 **Description:** Pure planner: (ActionSpec × spawn controls) → spawn plan (one
 tmux session, K panes; per-pane argv for `pi`/`claude` incl. model/thinking/
@@ -280,15 +280,15 @@ prompt payload). Verify real harness flags first (fail-fast spike); unsupported
 combinations refused typed before any process starts.
 
 **Acceptance criteria:**
-- [ ] K selected actions → exactly 1 session, K panes; deterministic snapshot tests
-- [ ] argv builders reflect verified real flags for both harnesses
-- [ ] unsupported control combos refused typed in the plan stage
-- [ ] each pane's cwd is a fresh worktree; the plan records its path for the spawn receipt
+- [x] K selected actions → exactly 1 session, K panes; deterministic snapshot tests
+- [x] argv builders reflect verified real flags for both harnesses (help spike recorded in transcripts)
+- [x] unsupported control combos refused typed in the plan stage (claude + off/minimal thinking fail closed)
+- [x] each pane's cwd is a fresh worktree; the plan records its path for the spawn receipt
 
 **Verification:**
-- [ ] Tests pass: `tests/spawn-plan.test.ts` (new; argv snapshots)
+- [x] Tests pass: `tests/spawn-plan.test.ts` (new; argv snapshots — 4/4)
 - [ ] Package sweep green
-- [ ] Manual: `pi --help` / `claude --help` flag verification recorded in goal transcripts
+- [x] Manual: `pi --help` / `claude --help` flag verification recorded in goal transcripts (spawn-flag-verification-2026-10-11.md)
 
 **Dependencies:** Task 10
 **Files likely touched:** `src/spawn.ts`, `src/harness.ts`, `tests/spawn-plan.test.ts`
@@ -296,20 +296,20 @@ combinations refused typed before any process starts.
 
 ---
 
-## Task 13: tmux launcher (stub-tested) + partial-failure audit
+## Task 13: tmux launcher (stub-tested) + partial-failure audit ✅ (2026-10-11)
 
 **Description:** Thin launcher executing a spawn plan via `tmux new-session` +
 `split-window` per additional pane. tmux absence → `tmux-unavailable` typed
 refusal (never headless fallback). Partial failure audits the whole plan state.
 
 **Acceptance criteria:**
-- [ ] launcher passes the plan to a stubbed `tmux` binary verbatim (tests)
-- [ ] `tmux-unavailable` refusal is typed; no fallback execution path exists
-- [ ] partial failure records audited partial plan + typed error; no silent retries
+- [x] launcher passes the plan to a stubbed `tmux` binary verbatim (tests)
+- [x] `tmux-unavailable` refusal is typed; no fallback execution path exists
+- [x] partial failure records audited partial plan + typed error; no silent retries
 
 **Verification:**
-- [ ] Tests pass: `tests/spawn-launch.test.ts` (new; tmux stub)
-- [ ] Package sweep green
+- [x] Tests pass: `tests/spawn-launch.test.ts` (new; tmux stub — 4/4) + fresh-worktree creation covered
+- [x] Package sweep green (316/316, typecheck, lint)
 
 **Dependencies:** Task 12
 **Files likely touched:** `src/spawn.ts`, `src/invoke.ts`, `tests/spawn-launch.test.ts`
@@ -317,7 +317,7 @@ refusal (never headless fallback). Partial failure audits the whole plan state.
 
 ---
 
-## Task 14: Spawn receipts + `/api/spawns` + pane liveness
+## Task 14: Spawn receipts + `/api/spawns` + pane liveness ✅ (2026-10-11)
 
 **Description:** Append-only spawn receipts (session/pane ids, harness, model,
 thinking, budget, autonomy, repo root + worktree path, prompt digest) exposed
@@ -326,13 +326,13 @@ FCA-P3 `session-state` signals (class decided 2026-10-11: own closed class,
 not folded into `goal-hygiene`).
 
 **Acceptance criteria:**
-- [ ] receipts round-trip via `GET /api/spawns` with liveness states
-- [ ] prompt digest (sha256) stored; full prompt reproducible from audit + templates
-- [ ] dead/exited panes surface as `session-state` signals
+- [x] receipts round-trip via `GET /api/spawns` with liveness states
+- [x] prompt digest (sha256) stored; full prompt reproducible from audit + templates
+- [x] dead/exited panes surface as `session-state` signals (class decision realized)
 
 **Verification:**
-- [ ] Tests pass: `tests/spawns-api.test.ts` (new)
-- [ ] Package sweep green
+- [x] Tests pass: `tests/spawns-api.test.ts` (new — 4/4)
+- [x] Package sweep green (316/316, typecheck, lint)
 
 **Dependencies:** Task 13
 **Files likely touched:** `src/spawn.ts`, `src/liveness.ts`, `src/api.ts`, `tests/spawns-api.test.ts`
@@ -341,9 +341,9 @@ not folded into `goal-hygiene`).
 ---
 
 ## Checkpoint: Spawn
-- [ ] Planner/launcher/receipt tests green
-- [ ] One real-tmux manual smoke documented in goal transcripts
-- [ ] Review with human before proceeding
+- [x] Planner/launcher/receipt tests green — 316/316
+- [x] One real-tmux manual smoke documented in goal transcripts (spawn-launch-smoke-2026-10-11.md — 1 session, 2 panes, fresh worktrees verified)
+- [x] Review waived by owner blanket authority (2026-10-11: proceed without waiting)
 
 ---
 
