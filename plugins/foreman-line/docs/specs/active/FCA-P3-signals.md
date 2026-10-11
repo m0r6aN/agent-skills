@@ -37,6 +37,13 @@ Surface version-staleness, working-tree, release-backlog, and PR/CI findings as
 console signals; "maintain local repo hygiene" is an explicit objective; use
 the `lumber-jack` skill where appropriate.
 
+**Seed remediation (landed 2026-10-11):** `ops-console/state/` is untracked
+and gitignored (root `.gitignore`) — the tracked `notifications.json` runtime
+store churned the working tree on every console run and was itself a
+`worktree-hygiene` finding. This is the first remediation of this signal class;
+it is also the reference case for the `long-lived dirty state files` fixture
+below.
+
 ## 3. Additive surface (the ONLY changes)
 
 - `signals.ts` (new): `Signal` type — `{ id, class, severity, repo, subject,
