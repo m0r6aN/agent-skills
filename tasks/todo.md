@@ -29,20 +29,20 @@ env keeps working. Typed refusals per FCA-P2 (D1-style).
 
 ---
 
-## Task 2: Fleet API (identity + liveness, add/remove)
+## Task 2: Fleet API (identity + liveness, add/remove) ✅ (2026-10-11)
 
 **Description:** Wire `GET /api/fleet`, `POST /api/fleet/add|remove` through
 `api.ts`/`server.ts` reusing existing request/validation patterns.
 
 **Acceptance criteria:**
-- [ ] `GET /api/fleet` returns every root with identity + liveness
-- [ ] add/remove validate before write; refusals typed and non-mutating
-- [ ] Body/method handling matches existing API conventions (POST-only writes)
+- [x] `GET /api/fleet` returns every root with identity + liveness
+- [x] add/remove validate before write; refusals typed and non-mutating
+- [x] Body/method handling matches existing API conventions (POST-only writes)
 
 **Verification:**
-- [ ] Tests pass: extend `tests/api.test.ts`
+- [x] Tests pass: `tests/fleet-api.test.ts` (new, handler-level — 6/6; kept separate from `api.test.ts` for focus)
 - [ ] Package sweep green
-- [ ] Manual: curl GET shows the seeded fleet
+- [x] Manual: real-repo smoke — identity `m0r6aN/agent-skills`/`main`, scratch-repo add/remove, duplicate + primary-immutable refusals
 
 **Dependencies:** Task 1
 **Files likely touched:** `src/api.ts`, `src/server.ts`, `tests/api.test.ts`
@@ -50,21 +50,21 @@ env keeps working. Typed refusals per FCA-P2 (D1-style).
 
 ---
 
-## Task 3: Sandboxed filesystem browse + folder qualification
+## Task 3: Sandboxed filesystem browse + folder qualification ✅ (2026-10-11)
 
 **Description:** `GET /api/fs/browse?path=` — one-level read-only listing
 (name, type, git-worktree flag). Absolute paths only; symlink escapes refused;
 no file contents ever.
 
 **Acceptance criteria:**
-- [ ] One level per call; git work trees flagged (`.git` present)
-- [ ] relative paths and symlink escapes refused typed
-- [ ] no file contents returned in any response shape
+- [x] One level per call; git work trees flagged (`.git` present)
+- [x] relative paths and symlink escapes refused typed
+- [x] no file contents returned in any response shape
 
 **Verification:**
-- [ ] Tests pass: `tests/browse.test.ts` (new; symlink fixture)
+- [x] Tests pass: `tests/browse.test.ts` (new; symlink fixture — 4/4)
 - [ ] Package sweep green
-- [ ] Manual: browse `/` then a repo dir in a terminal curl
+- [x] Manual: browse smoke over `/tmp/fleet-smoke` — work-tree flags + `path-not-absolute`/`path-absent` refusals
 
 **Dependencies:** Task 2
 **Files likely touched:** `src/browse.ts`, `src/api.ts`, `tests/browse.test.ts`

@@ -47,12 +47,13 @@ UI slices also follow `frontend-ui-engineering`.
 
 ### Phase 1: Fleet foundation
 - [x] Task 1: Fleet registry model + persistence
-- [ ] Task 2: Fleet API (identity + liveness, add/remove)
-- [ ] Task 3: Sandboxed filesystem browse + folder qualification
+- [x] Task 2: Fleet API (identity + liveness, add/remove)
+- [x] Task 3: Sandboxed filesystem browse + folder qualification
 
 ### Checkpoint: Foundation
-- [ ] Full sweep green (`npm test`, `typecheck`, `lint`; root validators)
-- [ ] Manual: add + remove a real repo through the API
+- [x] Full sweep green (`npm test`, `typecheck`, `lint`; root validators) — 269/269
+- [x] Manual: add + remove a real repo through the API (smoked 2026-10-11: real identity `m0r6aN/agent-skills`/`main`, scratch-repo add/remove, duplicate + primary-immutable refusals, browse refusals)
+- [ ] Review with human before proceeding
 
 ### Phase 2: Signals
 - [ ] Task 4: Signal type, provider interface, `/api/signals` shell, parcel-state wrapper

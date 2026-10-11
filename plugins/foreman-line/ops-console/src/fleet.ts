@@ -66,7 +66,11 @@ export class FleetRefusalError extends Error {
 export const defaultFleetProbe: FleetProbe = {
   exists: (root) => existsSync(root),
   isGitWorkTree: (root) => existsSync(join(root, '.git')),
-  git: (root, args) => execFileSync('git', ['-C', root, ...args], { encoding: 'utf8' }).trim(),
+  git: (root, args) =>
+    execFileSync('git', ['-C', root, ...args], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim(),
 }
 
 const STORE_NAME: StateFile = 'fleet.json'

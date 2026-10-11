@@ -96,6 +96,10 @@ function exerciseEveryRoute(config: ConsoleConfig): void {
       path: '/api/invoke',
       body: { flow: 'approval-mint-receipt', argv: ['show', 'x', '--repo-root', config.repoRoot] },
     },
+    { method: 'GET', path: '/api/fleet' },
+    { method: 'POST', path: '/api/fleet/add', body: { root: 'rel/ative' } },
+    { method: 'POST', path: '/api/fleet/remove', body: { root: '/no/such/project' } },
+    { method: 'GET', path: '/api/fs/browse?path=%2Fnonexistent' },
   ]
   for (const route of routes) {
     const url = new URL(route.path, 'http://localhost')
