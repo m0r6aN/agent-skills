@@ -3,11 +3,11 @@
 **Task slug:** `internal-frontier-review-admission`  
 **Owner:** Clinton Morgan  
 **Coordinator:** Pi `01a12b4f-c8e9-70a4-811b-0cd7eb889457`  
-**Authority:** owner response `Assign the bounded prerequisite as recommended.` on 2026-10-11; exact mapping in `../foreman-github-tracking-migration/owner-ratification-2026-10-11.md`  
-**State:** initial read-only diagnosis / exact change proposal produced; implementation/activation not authorized
+**Authority:** initial bounded assignment remains recorded in `../foreman-github-tracking-migration/owner-ratification-2026-10-11.md`; latest IR-P0 drafting-only direction and subscription/OAuth choice are verbatim in `owner-ir-p0-drafting-2026-10-11.md`  
+**State:** initial diagnosis AND IR-P0 exact contract/bootstrap drafts produced; proposed amendment NOT ratified/applied; OAuth route HELD; implementation/activation not authorized
 **Tracking:** [agent-skills #179](https://github.com/m0r6aN/agent-skills/issues/179), NEW bounded task; not a registration/launch receipt or old HRO restart  
-**Source base:** `97effb4eb4719b18a6ba78ad9962c78929d46f97`; current coordinator document branch at intake `255eb8c68644e76305932e7df39967c4c2a91a24`, with unchanged source  
-**Scheduling:** one bounded foreground pass; stop when the report/proposal is produced, or earlier on missing required authority. No background loop/wakeup or HRO continuation.
+**Source base:** drafting branch `coord/ir-p0-draft-20261011-01a12b4f` at main `77318a0921b68f6199d9b4db7277c0a53976e2c7`; #178 observed merged by a separate action. Scoped runtime/directive/schema/convention comparison to diagnosis base `97effb4e` is empty. Worktree `D:/Repos/agent-skills-worktrees/ir-p0-drafting-20261011-01a12b4f`.  
+**Scheduling:** bounded foreground drafting pass complete; stop after returning exact drafts and the held facts. No construction, background loop/wakeup or HRO continuation.
 
 ## Objective / observable initial deliverable
 
@@ -17,8 +17,8 @@ Find the smallest source-backed gap preventing the already conditionally approve
 
 - Independent initial reviewer remains `anthropic/claude-fable-5-1` primary -> sole fallback `anthropic/claude-opus-5-5`, OpenAI-family excluded, internal credential-free subject, 200k context capability floor, existing xhigh requirement conditional on real compatibility, 48k aggregate input / 8k aggregate output-reasoning per attempt, at most one primary/one fallback, USD 5 aggregate within USD 25 P0 cap. This task does not activate that envelope.
 - No model/provider probe or delegate inference; no additional delegate/probe spending grant. Existing interactive-session costs/liabilities are uninspected, not declared zero.
-- Inspect local committed source, typed declarations, repository evidence and installed Pi public docs/examples only. No auth/settings/model-store/session-history inspection, secret resolution, service starts, provider requests, installation or cloud writes.
-- Write only this task's planning records and the current coordinator/migration decision checkpoints on the isolated coordination branch; leave routing/dispatch/provider/permission-profile source, other goals, original main/index and preserved Stage A artifacts unchanged.
+- Inspect local source/public runtime documentation and applicable first-party public terms; no auth/settings/model-store/session-history inspection, secret resolution, service starts, provider-model requests, installation or cloud writes.
+- Latest grant permits visibly non-operative `docs/contracts/internal-review-launch-v1.md`, this task's exact proposed amendment/unapplied patch/evidence/handoff, and current coordinator checkpoints on the isolated drafting branch. Live template/routing/dispatch/provider/profile source, other goals, original main/index and preserved Stage A artifacts remain unchanged.
 - No auth-mode inference from a provider name, API-key variable name, successful old ping or repository visibility. API key possession alone does not prove no-training/ZDR, billing mode or eligibility.
 - Do not delete public-only/L1/L2/tool/thinking guards to make an unsupported route appear supported. No model alias/provider substitution, family-independence relaxation, xhigh downgrade, default CLI/SDK launch, synthetic receipt or break-glass reinterpretation.
 
@@ -30,4 +30,4 @@ Find the smallest source-backed gap preventing the already conditionally approve
 - The next smallest owner-only facts/decisions are named without re-requesting already-ratified migration defaults or existing P0/Git consent.
 - No operational launch/readiness or independent verification claim is produced by this author-only static pass. Ending diff is planning/checkpoint-only and publication preserves the original Stage A bytes.
 
-The diagnosis is agent-completable. Implementing the proposal or certifying the launch is NOT this initial task's exit condition and requires separately reviewed scopes, accepted evidence and explicit bounded execution authority.
+The initial diagnosis and latest drafting deliverable are agent-completable, not operational readiness. Exact drafts: `../../contracts/internal-review-launch-v1.md`, `ir-p0-contract-and-bootstrap-amendment.md` and `pi-routing-directive.ir-p0.patch`; public-source/auth limits: `oauth-eligibility-evidence-2026-10-11.md`; ending baton: `ir-p0-drafting-handoff-2026-10-11.md`. Implementing, applying the amendment, granting its construction exception or certifying launch requires new exact disposition/evidence/authority; none follows from drafting.
