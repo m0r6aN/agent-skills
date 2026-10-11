@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
  * Disk-truth roots for the projection. Everything is derived from these
  * directories on every call — the library stores no status and writes nothing
  * (charter D2/D3; contract non-goals). The only writable paths in the whole
- * package are the two console-local state files named in `STATE_FILES`.
+ * package are the console-local state files named in `STATE_FILES`.
  */
 export interface ConsoleConfig {
   readonly repoRoot: string
@@ -80,7 +80,7 @@ function hasGoalRecords(goalsDir: string): boolean {
   return false
 }
 
-export const STATE_FILES = ['notifications.json', 'invocation-audit.json'] as const
+export const STATE_FILES = ['notifications.json', 'invocation-audit.json', 'fleet.json'] as const
 
 export type StateFile = (typeof STATE_FILES)[number]
 
@@ -266,11 +266,14 @@ export function treeConfigFor(config: ConsoleConfig, tree: GoalTree): ConsoleCon
 }
 
 /**
- * Write guard (D2/M1): the ONLY writable paths in the package are
- * `state/notifications.json` and `state/invocation-audit.json`. The closed
+ * Write guard (D2/M1): the ONLY writable paths in the package are the
+ * console-local state files named in `STATE_FILES`
+ * (`state/notifications.json`, `state/invocation-audit.json`,
+ * `state/fleet.json`). The closed
  * filename set is enforced at runtime (not just by the type), and the resolved
  * path must live directly inside `stateDir` — any other target throws before a
- * write is attempted. `notifications.ts` and `invoke.ts` are the sole callers.
+ * write is attempted. `notifications.ts`, `invoke.ts`, and `fleet.ts` are the
+ * sole callers.
  */
 export function stateFilePath(stateDir: string, name: StateFile): string {
   if (!(STATE_FILES as readonly string[]).includes(name)) {

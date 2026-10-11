@@ -16,7 +16,8 @@ import type { ChainSummary, GoalProjection } from './types.js'
  * FOC-P2 HTTP route table — frozen by the FOC-P0 contract (X1): no route may
  * be added without amending that contract. Every route is read-only over
  * goal/receipt/spec data (charter D2); the only effects are console-local
- * state writes (`state/notifications.json`, `state/invocation-audit.json`)
+ * state writes (`state/notifications.json`, `state/invocation-audit.json`,
+ * `state/fleet.json`)
  * through the FOC-P3 modules.
  */
 export interface ApiRequest {
