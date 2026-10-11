@@ -2,7 +2,7 @@
 
 **Goal slug:** `operator-developer-cortex-memory`  
 **Recorded:** 2026-10-10; ownership/resume checkpoint updated 2026-10-11  
-**State:** `PRE-P0 — OWNER-TRANSFERRED TO 01a12b4f; ORIGINAL STAGE A REUSED; PRIOR GRANTS/LIMITS RETAINED; REPOSITORY NOW VERIFIED PRIVATE; SEPARATE GITHUB MIGRATION AUTHORIZED; OLD HRO RECIPIENT ARCHIVED (#175); G6/REVIEW/P0 DISPATCH HELD ON ADMISSION AND PROCESS GATES`  
+**State:** `PRE-P0 — COORDINATOR 01a12b4f; ORIGINAL STAGE A REUSED; PRIOR GRANTS/LIMITS RETAINED; PRIVATE COORDINATION PUBLICATION IN DRAFT PR #178; SEPARATE GITHUB MIGRATION PROPOSED UNDER #174; AWAITING CONTRACT DISPOSITIONS AND CONFIRMED/NEW BOUNDED ADMISSION OWNER; NO WORKER OR WAKEUP`  
 **Scheduling:** no background loop or wakeup armed; stop at human authorization gates
 
 ## COORDINATOR OWNERSHIP — read before any dispatch
@@ -26,7 +26,7 @@ This directive is generated early solely to persist the explicitly authorized pr
 
 ## Read on resume
 
-1. `owner-resume-2026-10-11-01a12b4f.md` — latest verbatim appointment, continuing grants, separate migration direction, private visibility and archived-upstream evidence.
+1. `publication-2026-10-11-01a12b4f.md` and `owner-resume-2026-10-11-01a12b4f.md` — actual draft PR/ref/issue checkpoint, exact next decisions, latest appointment/grants and archived-upstream evidence.
 2. This ownership block/current state and `charter.md` — ratified scope/queue, source references, approval ledger, exit criteria.
 3. `owner-rulings-g5-g12-2026-10-11.md` — latest verbatim authority; `source-publication-2026-10-11.md` — real GitHub/pin/preservation evidence; `bridge-owner-handoff-2026-10-11.md` — prepared, not dispatched. `owner-decisions-2026-10-11.md` supplies decisions 1–4 and the conditional USD 5 envelope. `unblock-proposal-2026-10-11.md` and preflight are historical proposals/evidence, not current ungranted-authority sources or route receipts.
 4. The explicit original P0 spec and Stage A handoff paths named in the charter.
@@ -176,5 +176,6 @@ Independent plan review, coordinator lint, W1 projection/approval/registration, 
 - **Separate task:** owner dictates GitHub-only process migration, accepts Foreman ownership and requests actual reviewed implementation/publication. Prepare a separate bounded work package against #174; never expand P0's seven-document Allowed Files or allocate its model cap silently to a different goal.
 - **Admission:** registered-tool search found no admitted Pi worker/existing-session message tool; MCP cached gateway is not listening. No CLI/SDK bypass, config change, delegate/probe inference, worker or wakeup.
 - **Separate migration package prepared:** in the named coordinator worktree, `../foreman-github-tracking-migration/scope-proposal.md` and its read-only inventory pin remote base `97effb4e`: 3,258 tracked paths, 268 removal-content matches, 246 legacy-tracker-content matches, 401 unique candidates, 14 explicit binary/encoding/size coverage gaps. This is not an approved mutation manifest or a completed cleanup. Proposed identity/hierarchy/historical-proof choices remain explicit owner decisions.
-- **Next safe work:** publish scoped coordinator records after content/byte-preservation preflight; obtain disposition of the migration's three proposed contract choices and a confirmed/new bounded admission owner, not a relay to archived HRO. OPMEM dispatch remains behind fresh independent plan review/lint, GitHub registration, actual human W1 approval and admitted execution envelopes. No implementation or model spend is claimed. Publication/handoff evidence belongs in the coordinator worktree.
+- **Actual publication:** initial commit `f296e44c1c7c7a7367d54d3f4e74a63dcb236ffa` pushed/read back; OPEN/DRAFT PR #178 created; #174 comment `6110214914` links the separate proposal. Publication checkpoint/handoff are in the named worktree and copied to the original goal directory for safe resume. No merge, implementation, independent review or admission is claimed; initial CI was still in progress.
+- **Loop stop / next safe action:** obtain disposition of the migration's three proposed contract choices and a confirmed/new bounded admission owner, not a relay to archived HRO. OPMEM dispatch remains behind fresh independent plan review/lint, supported GitHub registration, actual human W1 approval and admitted execution envelopes. No model/probe inference, polling or wakeup. The next concrete envelope must state migration spend separately; existing OPMEM grants are not re-requested.
 - **Evidence limits:** this is administrative/static/remote metadata reconciliation, not independent review, coordinator lint, a minted receipt, a verified runtime integration or goal completion. No zero-cost/remaining-balance assertion.
