@@ -270,7 +270,7 @@ contract used by the API and mirrored by the UI later.
 
 ---
 
-## Task 12: Spawn planner (pure) + harness argv builders + refusal matrix
+## Task 12: Spawn planner (pure) + harness argv builders + refusal matrix ✅ (2026-10-11)
 
 **Description:** Pure planner: (ActionSpec × spawn controls) → spawn plan (one
 tmux session, K panes; per-pane argv for `pi`/`claude` incl. model/thinking/
@@ -280,15 +280,15 @@ prompt payload). Verify real harness flags first (fail-fast spike); unsupported
 combinations refused typed before any process starts.
 
 **Acceptance criteria:**
-- [ ] K selected actions → exactly 1 session, K panes; deterministic snapshot tests
-- [ ] argv builders reflect verified real flags for both harnesses
-- [ ] unsupported control combos refused typed in the plan stage
-- [ ] each pane's cwd is a fresh worktree; the plan records its path for the spawn receipt
+- [x] K selected actions → exactly 1 session, K panes; deterministic snapshot tests
+- [x] argv builders reflect verified real flags for both harnesses (help spike recorded in transcripts)
+- [x] unsupported control combos refused typed in the plan stage (claude + off/minimal thinking fail closed)
+- [x] each pane's cwd is a fresh worktree; the plan records its path for the spawn receipt
 
 **Verification:**
-- [ ] Tests pass: `tests/spawn-plan.test.ts` (new; argv snapshots)
+- [x] Tests pass: `tests/spawn-plan.test.ts` (new; argv snapshots — 4/4)
 - [ ] Package sweep green
-- [ ] Manual: `pi --help` / `claude --help` flag verification recorded in goal transcripts
+- [x] Manual: `pi --help` / `claude --help` flag verification recorded in goal transcripts (spawn-flag-verification-2026-10-11.md)
 
 **Dependencies:** Task 10
 **Files likely touched:** `src/spawn.ts`, `src/harness.ts`, `tests/spawn-plan.test.ts`

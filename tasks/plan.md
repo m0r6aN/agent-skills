@@ -78,7 +78,7 @@ UI slices also follow `frontend-ui-engineering`.
 - [x] Registry matrix + prompt snapshots green; `execute` cannot be registered for mutating verbs — 304/304
 
 ### Phase 4: Spawn
-- [ ] Task 12: Spawn planner (pure) + harness argv builders + refusal matrix
+- [x] Task 12: Spawn planner (pure) + harness argv builders + refusal matrix
 - [ ] Task 13: tmux launcher (stub-tested) + partial-failure audit
 - [ ] Task 14: Spawn receipts + `/api/spawns` + pane liveness
 
