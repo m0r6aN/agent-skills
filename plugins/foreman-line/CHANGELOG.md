@@ -45,6 +45,12 @@ pi-model-configuration wave 2 (Amendments 06–09, owner-ratified):
 
 ## Unreleased
 
+- Control-center initiative shaping (owner-ratified 2026-10-11): charter
+  amendment (`spawn` invocation mode, fleet-wide control-center scope,
+  close/delete blast radius, shared spawn-control contract) and the ratified
+  capability map under `docs/goals/foreman-ops-console/`; specs FCA-P2–FCA-P6
+  (fleet registry, unified attention signals, action registry, tmux spawner,
+  control-center UI) admitted to `docs/specs/active/`.
 - FCA-1 multi-root goal discovery (ops-console): optional `FOC_EXTRA_ROOTS`
   (colon-separated absolute roots, D1-asserted like `FOC_REPO_ROOT`) projects
   additional goal trees — `plugins/foreman-line/docs/goals`, `docs/goals`,
