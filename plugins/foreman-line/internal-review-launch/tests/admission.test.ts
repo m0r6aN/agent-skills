@@ -366,7 +366,9 @@ for (const [path, code] of evidencePaths)
 // Closed-schema negative controls at EVERY object and property, not just the root.
 function registerClosedControls(value: unknown, path: string[] = []): void {
   if (Array.isArray(value)) {
-    value.forEach((item, index) => registerClosedControls(item, [...path, String(index)]))
+    value.forEach((item, index) => {
+      registerClosedControls(item, [...path, String(index)])
+    })
     return
   }
   if (!value || typeof value !== 'object') return
