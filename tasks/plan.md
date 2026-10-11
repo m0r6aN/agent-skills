@@ -27,8 +27,13 @@ UI slices also follow `frontend-ui-engineering`.
   prompts and launches real interactive sessions; the frozen `execute` set is
   unchanged and destructive verbs are `spawn`/`present` only (FCA-P4).
 - **Shared spawn controls.** One control set (Harness / Model / Thinking /
-  Budget+Unlimited / optional textbox) per spawn request; per-action state is
-  only the checkbox + autonomy envelope (FCA-P5, owner-ratified contract).
+  Budget cap `$1–$100` max-USD presets — unlimited withdrawn / optional
+  textbox) per spawn request; per-action state is only the checkbox + autonomy
+  envelope (FCA-P5, owner-ratified contract as revised 2026-10-11).
+- **Fresh git worktree per action** (owner: "hygiene is a must"): panes never
+  share a dirty checkout; spawn receipts record worktree paths for reaping.
+- **`session-state` is its own closed signal class** (delegated decision): spawn
+  lifecycle is independently filterable and distinct from goal state.
 - **Autonomy envelopes are prompt data with a fail-closed floor.** The envelope
   travels verbatim into prompts; merge autonomy never removes the Stage-F
   fail-closed sentence (FCA-P4/P5).
@@ -41,7 +46,7 @@ UI slices also follow `frontend-ui-engineering`.
 ## Task List (index — full structures in `tasks/todo.md`)
 
 ### Phase 1: Fleet foundation
-- [ ] Task 1: Fleet registry model + persistence
+- [x] Task 1: Fleet registry model + persistence
 - [ ] Task 2: Fleet API (identity + liveness, add/remove)
 - [ ] Task 3: Sandboxed filesystem browse + folder qualification
 
@@ -102,17 +107,16 @@ UI slices also follow `frontend-ui-engineering`.
 | Destructive actions harming repo state | High | Typed confirmation + destructive guard + append-only audit; destructive verbs never `execute`; Stage-F fail-closed merge retained |
 | Parallel/overlapping sessions mutating fleet or state | Med | State stores single-writer via the console process; spawn receipts are append-only |
 
-## Open Questions (human input wanted)
+## Open Questions — resolved 2026-10-11 (owner rulings)
 
-1. **Budget presets:** what concrete ranges for the Budget dropdown besides
-   `Unlimited` (e.g. `$1 / $5 / $20`, or token-based)? Placeholder until ruled.
-2. **Model dropdown source of truth:** static registry (seeded from the
-   known-frontier registry) vs live harness catalogue? Default: static registry
-   with a freeform fallback.
-3. **Spawn working directory:** the signal's repo root (simple) vs a fresh
-   worktree per action (isolation + hygiene, matches lumber-jack philosophy)?
-4. **`session-state` signal class:** new closed-vocabulary class vs folding pane
-   liveness into `goal-hygiene` (noted open in FCA-P5 §3).
+1. **Budget presets:** max-USD `$1 | $5 | $10 | $20 | $50 | $100`;
+   the `Unlimited` option is withdrawn.
+2. **Model dropdown:** static registry seeded from the known-frontier
+   registry + freeform fallback (delegated default accepted).
+3. **Spawn working directory:** fresh git worktree per action — "hygiene is
+   a must" (Task 12 scope updated accordingly).
+4. **`session-state` signal class:** its own closed-vocabulary class
+   (delegated to shaping; decided — not folded into `goal-hygiene`).
 
 ## Parallelization Opportunities
 

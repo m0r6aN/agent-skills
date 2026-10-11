@@ -48,8 +48,9 @@ data storage when a capability requires them.
   (FCA-P4) + a checkbox; Shift-select ranges; per-action autonomy popover;
   destructive verbs require typed confirmation (guard mirrored from FCA-P4).
 - **Spawn panel (shared controls):** Harness · Model · Thinking level · Budget
-  range (incl. Unlimited) dropdowns + optional textbox + Spawn button
-  (count of selected actions). Never repeated per action.
+  cap (max-USD presets `$1–$100`, no unlimited — owner revision) dropdowns +
+  optional textbox + Spawn button (count of selected actions). Never repeated
+  per action.
 - **Fleet view:** browse widget (`/api/fs/browse`) with folder picker →
   add/remove roots; per-repo identity + liveness tiles.
 - **Session tray:** spawns from `GET /api/spawns` — pane liveness, harness,

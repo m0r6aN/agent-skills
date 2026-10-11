@@ -64,11 +64,13 @@ action; never repeated per action:
 1. **Harness** dropdown (e.g. `pi`, `claude`; extensible registry)
 2. **Model** dropdown (harness-scoped ids; known-frontier registry where available)
 3. **Thinking level** dropdown (`off | minimal | low | medium | high | xhigh | max`)
-4. **Budget range** dropdown (bounded presets, plus `Unlimited`)
+4. **Budget cap** dropdown — max-USD presets `$1 | $5 | $10 | $20 | $50 |
+   $100` (**no unlimited option** — owner revision 2026-10-11, see §6)
 5. **Optional free-text textbox** — appended verbatim to each composed prompt
 
 Each actionable row carries a **checkbox**; the spawn button launches one tmux
-session with **one pane per selected action**. Each action additionally
+session with **one pane per selected action**, each pane starting from a
+**fresh git worktree** cut from the signal's repo root (owner revision §6). Each action additionally
 configures an **autonomy envelope**: decisions (`full | partial`) and repo
 actions (`commit`, `push`, `open-PR`, `merge` — each y/n, merge subject to the
 fail-closed Stage F rule above).
@@ -81,3 +83,18 @@ fail-closed Stage F rule above).
 
 Recorded in `control-center-capability-map.md` §5. Not dispatched by this
 initiative; require their own charters/shaping.
+
+## 6. Owner revisions (2026-10-11, same session)
+
+1. **Budget: hard max-USD presets only** — `$1 | $5 | $10 | $20 | $50 | $100`.
+   The previously ratified "plus `Unlimited`" option is withdrawn: "No
+   'unlimited' spend (I changed my mind)."
+2. **Spawn working directory: fresh git worktree per action** — "hygiene is a
+   must." Worktrees are cut from the signal's repo root at spawn time and
+   reaped by hygiene flows (lumber-jack), never left behind.
+3. **Model dropdown source of truth:** static registry seeded from the
+   known-frontier registry, with a freeform fallback (delegated default
+   accepted).
+4. **`session-state` signal class:** delegated to the shaping agent — decided
+   as its own closed-vocabulary class (not folded into `goal-hygiene`): spawn
+   lifecycle is independently filterable and distinct from goal state.

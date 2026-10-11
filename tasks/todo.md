@@ -6,7 +6,7 @@ Companion to `tasks/plan.md`. Verification commands unless noted:
 
 ---
 
-## Task 1: Fleet registry model + persistence
+## Task 1: Fleet registry model + persistence ✅ (2026-10-11)
 
 **Description:** `fleet.ts` — declared, ordered, deduplicated fleet of absolute
 repo roots with identity (remote, default branch, HEAD) and liveness
@@ -14,14 +14,14 @@ repo roots with identity (remote, default branch, HEAD) and liveness
 env keeps working. Typed refusals per FCA-P2 (D1-style).
 
 **Acceptance criteria:**
-- [ ] add/remove round-trips; primary root removal refused (`root-primary-immutable`)
-- [ ] relative/absent/non-git/duplicate roots refused typed, registry unchanged
-- [ ] corrupt persisted state refused typed; clean round-trip on valid state
+- [x] add/remove round-trips; primary root removal refused (`root-primary-immutable`)
+- [x] relative/absent/non-git/duplicate roots refused typed, registry unchanged
+- [x] corrupt persisted state refused typed; clean round-trip on valid state
 
 **Verification:**
-- [ ] Tests pass: `tests/fleet.test.ts` (new)
-- [ ] Package sweep + root validators green
-- [ ] Manual: `FOC_FLEET` with one bad root logs the typed refusal
+- [x] Tests pass: `tests/fleet.test.ts` (new) — 8/8
+- [x] Package sweep + root validators green (259/259, typecheck, lint)
+- [x] Manual: typed refusals exercised via probe fakes (root-not-absolute / root-absent / not-a-git-work-tree / duplicate-root / fleet-state-corrupt)
 
 **Dependencies:** None
 **Files likely touched:** `src/fleet.ts`, `src/config.ts`, `tests/fleet.test.ts`
@@ -274,7 +274,8 @@ contract used by the API and mirrored by the UI later.
 
 **Description:** Pure planner: (ActionSpec × spawn controls) → spawn plan (one
 tmux session, K panes; per-pane argv for `pi`/`claude` incl. model/thinking/
-budget flags, cwd = signal repo root (or worktree — see open question 3),
+budget flags, cwd = a fresh git worktree cut from the signal's repo root
+(2026-10-11 owner ruling — "hygiene is a must"; path recorded for reaping),
 prompt payload). Verify real harness flags first (fail-fast spike); unsupported
 combinations refused typed before any process starts.
 
@@ -282,6 +283,7 @@ combinations refused typed before any process starts.
 - [ ] K selected actions → exactly 1 session, K panes; deterministic snapshot tests
 - [ ] argv builders reflect verified real flags for both harnesses
 - [ ] unsupported control combos refused typed in the plan stage
+- [ ] each pane's cwd is a fresh worktree; the plan records its path for the spawn receipt
 
 **Verification:**
 - [ ] Tests pass: `tests/spawn-plan.test.ts` (new; argv snapshots)
@@ -318,14 +320,15 @@ refusal (never headless fallback). Partial failure audits the whole plan state.
 ## Task 14: Spawn receipts + `/api/spawns` + pane liveness
 
 **Description:** Append-only spawn receipts (session/pane ids, harness, model,
-thinking, budget, autonomy, repo root, prompt digest) exposed via
-`GET /api/spawns`; pane liveness (alive/dead/exited) projects back into
-signals per the FCA-P5 note (resolution of open question 4 recorded here).
+thinking, budget, autonomy, repo root + worktree path, prompt digest) exposed
+via `GET /api/spawns`; pane liveness (alive/dead/exited) projects back as
+FCA-P3 `session-state` signals (class decided 2026-10-11: own closed class,
+not folded into `goal-hygiene`).
 
 **Acceptance criteria:**
 - [ ] receipts round-trip via `GET /api/spawns` with liveness states
 - [ ] prompt digest (sha256) stored; full prompt reproducible from audit + templates
-- [ ] dead/exited panes surface as signals
+- [ ] dead/exited panes surface as `session-state` signals
 
 **Verification:**
 - [ ] Tests pass: `tests/spawns-api.test.ts` (new)
@@ -391,8 +394,9 @@ autonomy popovers per action, typed confirmation flow for destructive verbs.
 ## Task 17: Spawn panel (shared controls + autonomy popovers) + spawn wiring
 
 **Description:** The four shared dropdowns (Harness, Model, Thinking, Budget
-incl. Unlimited) + optional textbox + Spawn button with selected count; never
-repeated per action. Emits one `/api/spawn` request per FCA-P5.
+cap — presets `$1–$100`, no unlimited) + optional textbox + Spawn button with
+selected count; never repeated per action. Emits one `/api/spawn` request per
+FCA-P5.
 
 **Acceptance criteria:**
 - [ ] one spawn request carries K actions + the shared controls + textbox verbatim

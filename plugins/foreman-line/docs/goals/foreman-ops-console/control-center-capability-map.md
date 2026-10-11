@@ -26,9 +26,10 @@ frozen by `actions`.
 One shared spawn panel; per-action checkboxes; applied to every selected action:
 
 1. Harness dropdown — `pi` | `claude` | (extensible registry)
-2. Model dropdown — harness-scoped model ids
+2. Model dropdown — static registry (known-frontier seeded) + freeform fallback
 3. Thinking level dropdown — `off | minimal | low | medium | high | xhigh | max`
-4. Budget range dropdown — bounded presets | `Unlimited`
+4. Budget cap dropdown — max-USD presets `$1 | $5 | $10 | $20 | $50 | $100`
+   (**no unlimited option** — owner revision 2026-10-11)
 5. Optional textbox — extra directive, appended verbatim
 
 **Autonomy envelope per action:** decisions `full | partial`; repo actions
@@ -36,7 +37,9 @@ One shared spawn panel; per-action checkboxes; applied to every selected action:
 Stage F fail-closed rule (verified agent authority or human-owned merge).
 
 **Spawn mechanics:** one tmux session, one pane per selected action; each pane
-gets a real interactive harness session with the composed prompt.
+gets a real interactive harness session in a **fresh git worktree** cut from
+the signal's repo root (owner revision 2026-10-11: "fresh worktree. hygiene is
+a must"), with the composed prompt.
 
 ### Safety invariants (all modules)
 

@@ -32,9 +32,9 @@ sessions; it never becomes one.
 ## 2. Owner directive (2026-10-11)
 
 "Start a new tmux session and add a pane for each selected action." Shared
-controls (not repeated per action): Harness, Model, Thinking level, Budget
-range (with Unlimited), optional textbox. Per-action autonomy options for
-decisions and repo actions.
+controls (not repeated per action): Harness, Model, Thinking level, Budget cap
+(max-USD presets — revised same day, see §4), optional textbox. Per-action
+autonomy options for decisions and repo actions.
 
 ## 3. Additive surface (the ONLY changes)
 
@@ -43,8 +43,10 @@ decisions and repo actions.
     tmux session, N panes; per pane: harness command line (harness id →
     argv builder for `pi`/`claude` incl. model + thinking-level + budget
     flags; unsupported flag combinations refused typed), working directory
-    (the signal's repo root), prompt payload (composed prompt + optional
-    textbox text appended verbatim).
+    (a fresh git worktree cut from the signal's repo root at spawn time —
+    owner ruling 2026-10-11: "fresh worktree. hygiene is a must"; the
+    worktree path lands in the spawn receipt so hygiene flows can reap it),
+    prompt payload (composed prompt + optional textbox text appended verbatim).
   - **Launcher (thin):** execute the plan via `tmux new-session` +
     `tmux split-window` per additional pane; tmux absence is a typed refusal
     (`tmux-unavailable`), never a fallback to headless execution.
@@ -52,8 +54,9 @@ decisions and repo actions.
 - `liveness.ts`: spawn receipts record session/pane ids, harness, model,
   thinking level, budget, autonomy envelope, repo root, prompt digest; pane
   liveness (alive/dead/exited) projects back as `parcel-state`-adjacent
-  signals (FCA-P3 class `session-state`, folded into `goal-hygiene` if the
-  class vocabulary stays closed — resolution recorded at shaping).
+  signals (FCA-P3 class `session-state` — class decision 2026-10-11, delegated
+  to the shaping agent: a separate closed-vocabulary class, not folded into
+  `goal-hygiene`, because spawn lifecycle is independently filterable).
 - `api.ts`: `POST /api/spawn` (validated plan only), `GET /api/spawns`.
 
 ## 4. Contracts
@@ -62,8 +65,13 @@ decisions and repo actions.
   no piped confirmation phrases, no auto-approval (charter, unchanged).
 - **Controls are shared, not repeated.** One control set per spawn request;
   per-action state is limited to the checkbox and the autonomy envelope.
-- **Budget `Unlimited`** means no spend cap is asserted in the prompt; it
-  never disables harness-level or repo-level policy.
+- **Budget is a hard max-USD cap** (`$1 | $5 | $10 | $20 | $50 | $100`); the
+  unlimited option is withdrawn (owner revision 2026-10-11). The cap is
+  asserted in the prompt and passed as a harness flag where supported; it
+  never relaxes harness-level or repo-level policy.
+- **Fresh worktree per action.** Each pane starts in a git worktree cut from
+  the signal's repo root at spawn time (hygiene-isolation, owner ruling
+  2026-10-11); the receipt records the path for later reaping.
 - **Prompt digest** (sha256) is stored, not the full prompt, in spawn
   receipts; full prompt is reproducible from the audit entry + templates.
 
