@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { basename, join } from 'node:path'
+import { type AutonomyEnvelope, dispatchAction } from './actions.js'
 import { deriveAlerts } from './alerts.js'
 import { type BrowseRefusalError, browseDirectory } from './browse.js'
 import { type ConsoleConfig, goalTrees, resolveGoalKey, treeConfigFor } from './config.js'
@@ -341,6 +342,30 @@ export function handleApi(config: ConsoleConfig, request: ApiRequest, now: numbe
       return { status: 200, json: browseDirectory(path) }
     } catch (err) {
       return refusalResult(err)
+    }
+  }
+
+  // FCA-P4 action dispatch (control-center amendment): the closed registry
+  // with the Task-11 destructive confirmation contract. Refusals ride inside
+  // the outcome JSON (same shape as `/api/invoke`).
+  if (pathname === '/api/actions/dispatch') {
+    if (method !== 'POST') return methodNotAllowed('POST')
+    const body = isRecord(request.body) ? request.body : {}
+    return {
+      status: 200,
+      json: dispatchAction(
+        config,
+        {
+          verb: typeof body.verb === 'string' ? body.verb : '',
+          signalClass: typeof body.signalClass === 'string' ? body.signalClass : '',
+          subject: typeof body.subject === 'string' ? body.subject : '',
+          confirmation: typeof body.confirmation === 'string' ? body.confirmation : null,
+          autonomy: isRecord(body.autonomy)
+            ? (body.autonomy as Partial<AutonomyEnvelope>)
+            : undefined,
+        },
+        now,
+      ),
     }
   }
 

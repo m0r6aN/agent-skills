@@ -198,7 +198,7 @@ the FCA-2 attention counts.
 
 ---
 
-## Task 9: ActionSpec registry + typed refusals + audit entries
+## Task 9: ActionSpec registry + typed refusals + audit entries ✅ (2026-10-11)
 
 **Description:** `actions.ts` — closed registry mapping (class × verb) →
 `ActionSpec { invocation, promptTemplate, autonomy, destructive }`. Baseline
@@ -207,13 +207,13 @@ audit entry (executed/presented/spawned/refused). `execute` registration for
 mutating verbs must be impossible.
 
 **Acceptance criteria:**
-- [ ] unregistered (class, verb) pairs refused typed + audited
-- [ ] `execute` cannot be registered for any mutating verb (type + runtime guard)
-- [ ] audit entries cover all four outcomes with reason/argv
+- [x] unregistered (class, verb) pairs refused typed + audited
+- [x] `execute` cannot be registered for any mutating verb (type + runtime guard)
+- [x] audit entries cover all four outcomes with reason/argv
 
 **Verification:**
-- [ ] Tests pass: `tests/actions.test.ts` (new)
-- [ ] Package sweep green
+- [x] Tests pass: `tests/actions.test.ts` (new — 5/5)
+- [x] Package sweep green (297/297, typecheck, lint)
 
 **Dependencies:** Task 4
 **Files likely touched:** `src/actions.ts`, `src/invoke.ts`, `src/guards.ts`, `tests/actions.test.ts`
@@ -221,7 +221,7 @@ mutating verbs must be impossible.
 
 ---
 
-## Task 10: Prompt templates + composition for baseline verbs
+## Task 10: Prompt templates + composition for baseline verbs ✅ (2026-10-11)
 
 **Description:** Kickstarter-style plain-text templates per baseline verb:
 signal evidence, restated task, boundaries (no self-graded verification),
@@ -229,13 +229,13 @@ autonomy envelope verbatim, Stage-F fail-closed sentence for merge. Optional
 textbox text appended verbatim.
 
 **Acceptance criteria:**
-- [ ] composition is pure and snapshot-tested per verb
-- [ ] autonomy envelope appears verbatim; merge sentence present regardless of merge toggle
-- [ ] textbox text appended verbatim to every composed prompt
+- [x] composition is pure and snapshot-tested per verb
+- [x] autonomy envelope appears verbatim; merge sentence present regardless of merge toggle
+- [x] textbox text appended verbatim to every composed prompt
 
 **Verification:**
-- [ ] Tests pass: `tests/prompts.test.ts` (new)
-- [ ] Package sweep green
+- [x] Tests pass: `tests/prompts.test.ts` (new — 3/3)
+- [x] Package sweep green (304/304, typecheck, lint)
 
 **Dependencies:** Task 9
 **Files likely touched:** `src/prompts.ts`, `tests/prompts.test.ts`
@@ -243,20 +243,20 @@ textbox text appended verbatim.
 
 ---
 
-## Task 11: Destructive guard + typed-confirmation contract
+## Task 11: Destructive guard + typed-confirmation contract ✅ (2026-10-11)
 
 **Description:** `close-delete` (and any future destructive verb) requires an
 explicit typed intent before any request is honored; never silent. Shared
 contract used by the API and mirrored by the UI later.
 
 **Acceptance criteria:**
-- [ ] destructive dispatch without typed confirmation refused + audited
-- [ ] confirmation token binds to the specific subject (replay of another subject refused)
-- [ ] non-destructive verbs unaffected
+- [x] destructive dispatch without typed confirmation refused + audited
+- [x] confirmation token binds to the specific subject (replay of another subject refused)
+- [x] non-destructive verbs unaffected
 
 **Verification:**
-- [ ] Tests pass: `tests/guards-destructive.test.ts` (new)
-- [ ] Package sweep green
+- [x] Tests pass: `tests/guards-destructive.test.ts` (new — 4/4)
+- [x] Package sweep green (304/304, typecheck, lint)
 
 **Dependencies:** Task 9
 **Files likely touched:** `src/guards.ts`, `src/api.ts`, `tests/guards-destructive.test.ts`

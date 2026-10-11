@@ -70,12 +70,12 @@ UI slices also follow `frontend-ui-engineering`.
 - [x] All five classes emit evidence-backed signals; `/api/signals` filters work — real-repo smoke: 62 signals / 5 classes
 
 ### Phase 3: Actions
-- [ ] Task 9: ActionSpec registry + typed refusals + audit entries
-- [ ] Task 10: Prompt templates + composition for baseline verbs
-- [ ] Task 11: Destructive guard + typed-confirmation contract
+- [x] Task 9: ActionSpec registry + typed refusals + audit entries
+- [x] Task 10: Prompt templates + composition for baseline verbs
+- [x] Task 11: Destructive guard + typed-confirmation contract
 
 ### Checkpoint: Actions
-- [ ] Registry matrix + prompt snapshots green; `execute` cannot be registered for mutating verbs
+- [x] Registry matrix + prompt snapshots green; `execute` cannot be registered for mutating verbs — 304/304
 
 ### Phase 4: Spawn
 - [ ] Task 12: Spawn planner (pure) + harness argv builders + refusal matrix
