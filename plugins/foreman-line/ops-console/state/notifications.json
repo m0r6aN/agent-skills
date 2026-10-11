@@ -8,7 +8,7 @@
       "goal": "foreman-ops-console",
       "parcel": "FOC-P0",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.164Z"
+      "createdAt": "2026-10-10T22:04:15.476Z"
     },
     {
       "id": "ntf-foreman-ops-console:FOC-P1:hung",
@@ -17,7 +17,7 @@
       "goal": "foreman-ops-console",
       "parcel": "FOC-P1",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.164Z"
+      "createdAt": "2026-10-10T22:04:15.476Z"
     },
     {
       "id": "ntf-foreman-ops-console:FOC-P2:hung",
@@ -26,7 +26,7 @@
       "goal": "foreman-ops-console",
       "parcel": "FOC-P2",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.164Z"
+      "createdAt": "2026-10-10T22:04:15.476Z"
     },
     {
       "id": "ntf-foreman-ops-console:FOC-P3:hung",
@@ -35,7 +35,7 @@
       "goal": "foreman-ops-console",
       "parcel": "FOC-P3",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.164Z"
+      "createdAt": "2026-10-10T22:04:15.476Z"
     },
     {
       "id": "ntf-foreman-ops-console:FOC-P4:hung",
@@ -44,7 +44,7 @@
       "goal": "foreman-ops-console",
       "parcel": "FOC-P4",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.164Z"
+      "createdAt": "2026-10-10T22:04:15.476Z"
     },
     {
       "id": "ntf-model-routing-chain-wrapper:MRC-01:hung",
@@ -53,7 +53,7 @@
       "goal": "model-routing-chain-wrapper",
       "parcel": "MRC-01",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.314Z"
+      "createdAt": "2026-10-10T22:04:15.606Z"
     },
     {
       "id": "ntf-model-routing-chain-wrapper:MRC-02:hung",
@@ -62,7 +62,7 @@
       "goal": "model-routing-chain-wrapper",
       "parcel": "MRC-02",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.314Z"
+      "createdAt": "2026-10-10T22:04:15.606Z"
     },
     {
       "id": "ntf-model-routing-chain-wrapper:MRC-03:hung",
@@ -71,7 +71,7 @@
       "goal": "model-routing-chain-wrapper",
       "parcel": "MRC-03",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.314Z"
+      "createdAt": "2026-10-10T22:04:15.606Z"
     },
     {
       "id": "ntf-routing-currency-and-merit:RCM-P0:hung",
@@ -80,7 +80,7 @@
       "goal": "routing-currency-and-merit",
       "parcel": "RCM-P0",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.495Z"
+      "createdAt": "2026-10-10T22:04:15.771Z"
     },
     {
       "id": "ntf-routing-currency-and-merit:RCM-P1:hung",
@@ -89,7 +89,7 @@
       "goal": "routing-currency-and-merit",
       "parcel": "RCM-P1",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.495Z"
+      "createdAt": "2026-10-10T22:04:15.771Z"
     },
     {
       "id": "ntf-routing-currency-and-merit:RCM-P2:hung",
@@ -98,7 +98,7 @@
       "goal": "routing-currency-and-merit",
       "parcel": "RCM-P2",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.495Z"
+      "createdAt": "2026-10-10T22:04:15.771Z"
     },
     {
       "id": "ntf-routing-currency-and-merit:RCM-P3:hung",
@@ -107,7 +107,7 @@
       "goal": "routing-currency-and-merit",
       "parcel": "RCM-P3",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.495Z"
+      "createdAt": "2026-10-10T22:04:15.771Z"
     },
     {
       "id": "ntf-routing-currency-and-merit:RCM-P4:hung",
@@ -116,7 +116,7 @@
       "goal": "routing-currency-and-merit",
       "parcel": "RCM-P4",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.495Z"
+      "createdAt": "2026-10-10T22:04:15.771Z"
     },
     {
       "id": "ntf-routing-currency-and-merit:RCM-P4A:hung",
@@ -125,7 +125,7 @@
       "goal": "routing-currency-and-merit",
       "parcel": "RCM-P4A",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.495Z"
+      "createdAt": "2026-10-10T22:04:15.771Z"
     },
     {
       "id": "ntf-routing-currency-and-merit:RCM-P5:hung",
@@ -134,7 +134,7 @@
       "goal": "routing-currency-and-merit",
       "parcel": "RCM-P5",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.495Z"
+      "createdAt": "2026-10-10T22:04:15.771Z"
     },
     {
       "id": "ntf-routing-currency-and-merit:RCM-P6:hung",
@@ -143,7 +143,7 @@
       "goal": "routing-currency-and-merit",
       "parcel": "RCM-P6",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.495Z"
+      "createdAt": "2026-10-10T22:04:15.771Z"
     },
     {
       "id": "ntf-routing-currency-and-merit:RCM-P7:hung",
@@ -152,7 +152,7 @@
       "goal": "routing-currency-and-merit",
       "parcel": "RCM-P7",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.495Z"
+      "createdAt": "2026-10-10T22:04:15.771Z"
     },
     {
       "id": "ntf-routing-currency-and-merit:RCM-P8A:hung",
@@ -161,7 +161,7 @@
       "goal": "routing-currency-and-merit",
       "parcel": "RCM-P8A",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.495Z"
+      "createdAt": "2026-10-10T22:04:15.771Z"
     },
     {
       "id": "ntf-routing-currency-and-merit:RCM-P8:hung",
@@ -170,7 +170,7 @@
       "goal": "routing-currency-and-merit",
       "parcel": "RCM-P8",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.495Z"
+      "createdAt": "2026-10-10T22:04:15.771Z"
     },
     {
       "id": "ntf-routing-currency-and-merit:RCM-P9:hung",
@@ -179,7 +179,7 @@
       "goal": "routing-currency-and-merit",
       "parcel": "RCM-P9",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.495Z"
+      "createdAt": "2026-10-10T22:04:15.771Z"
     },
     {
       "id": "ntf-routing-currency-and-merit:RCM-P10:hung",
@@ -188,7 +188,7 @@
       "goal": "routing-currency-and-merit",
       "parcel": "RCM-P10",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.495Z"
+      "createdAt": "2026-10-10T22:04:15.771Z"
     },
     {
       "id": "ntf-routing-currency-and-merit-jev-alpha:JEV-P0:hung",
@@ -197,7 +197,7 @@
       "goal": "routing-currency-and-merit-jev-alpha",
       "parcel": "JEV-P0",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.535Z"
+      "createdAt": "2026-10-10T22:04:15.809Z"
     },
     {
       "id": "ntf-routing-currency-and-merit-jev-alpha:JEV-P1:hung",
@@ -206,7 +206,7 @@
       "goal": "routing-currency-and-merit-jev-alpha",
       "parcel": "JEV-P1",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.535Z"
+      "createdAt": "2026-10-10T22:04:15.809Z"
     },
     {
       "id": "ntf-routing-currency-and-merit-jev-alpha:JEV-P2:hung",
@@ -215,7 +215,7 @@
       "goal": "routing-currency-and-merit-jev-alpha",
       "parcel": "JEV-P2",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.535Z"
+      "createdAt": "2026-10-10T22:04:15.809Z"
     },
     {
       "id": "ntf-routing-currency-and-merit-jev-alpha:JEV-P3:hung",
@@ -224,7 +224,7 @@
       "goal": "routing-currency-and-merit-jev-alpha",
       "parcel": "JEV-P3",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.535Z"
+      "createdAt": "2026-10-10T22:04:15.809Z"
     },
     {
       "id": "ntf-routing-currency-and-merit-jev-alpha:JEV-P4:hung",
@@ -233,7 +233,7 @@
       "goal": "routing-currency-and-merit-jev-alpha",
       "parcel": "JEV-P4",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.535Z"
+      "createdAt": "2026-10-10T22:04:15.809Z"
     },
     {
       "id": "ntf-routing-currency-and-merit-jev-alpha:JEV-P5:hung",
@@ -242,7 +242,52 @@
       "goal": "routing-currency-and-merit-jev-alpha",
       "parcel": "JEV-P5",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
-      "createdAt": "2026-10-09T14:57:35.535Z"
+      "createdAt": "2026-10-10T22:04:15.809Z"
+    },
+    {
+      "id": "ntf-trustworthy-observation:TO-P3:hung",
+      "alertId": "trustworthy-observation:TO-P3:hung",
+      "kind": "hung",
+      "goal": "trustworthy-observation",
+      "parcel": "TO-P3",
+      "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
+      "createdAt": "2026-10-10T22:04:45.952Z"
+    },
+    {
+      "id": "ntf-trustworthy-observation:TO-P4:hung",
+      "alertId": "trustworthy-observation:TO-P4:hung",
+      "kind": "hung",
+      "goal": "trustworthy-observation",
+      "parcel": "TO-P4",
+      "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
+      "createdAt": "2026-10-10T22:04:45.952Z"
+    },
+    {
+      "id": "ntf-trustworthy-observation:TO-P5:hung",
+      "alertId": "trustworthy-observation:TO-P5:hung",
+      "kind": "hung",
+      "goal": "trustworthy-observation",
+      "parcel": "TO-P5",
+      "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
+      "createdAt": "2026-10-10T22:04:45.952Z"
+    },
+    {
+      "id": "ntf-trustworthy-observation:TO-P6:hung",
+      "alertId": "trustworthy-observation:TO-P6:hung",
+      "kind": "hung",
+      "goal": "trustworthy-observation",
+      "parcel": "TO-P6",
+      "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
+      "createdAt": "2026-10-10T22:04:45.952Z"
+    },
+    {
+      "id": "ntf-trustworthy-observation:TO-P7:hung",
+      "alertId": "trustworthy-observation:TO-P7:hung",
+      "kind": "hung",
+      "goal": "trustworthy-observation",
+      "parcel": "TO-P7",
+      "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
+      "createdAt": "2026-10-10T22:04:45.952Z"
     }
   ]
 }

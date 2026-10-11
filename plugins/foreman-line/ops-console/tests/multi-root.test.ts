@@ -89,6 +89,7 @@ test('goalStatus: hung, failed, and awaiting-gate parcels keep the goal active a
     failed: 1,
     awaitingGate: 1,
     ratificationPending: 0,
+    ratificationUnknown: 0,
     total: 3,
   })
 })
@@ -216,6 +217,27 @@ test('multi-root: /api/goals carries the additive statuses index and /api/parcel
         'queued parcels keep these goals active',
       )
 
+      // Exact per-tree paths: native docs/goals tree and initiative
+      // docs/INITIATIVES tree derive from the extra root, with the routing
+      // policy anchored under the plugin tree ref (PLUGIN_TREE_REF).
+      const trees = config.trees ?? []
+      const native = trees.find((tree) => tree.key === 'agent-task')
+      assert.equal(native?.goalsDir, join(extraRoot, 'docs', 'goals'))
+      assert.equal(native?.specsDir, join(extraRoot, 'docs', 'specs'))
+      assert.equal(native?.receiptsDir, join(extraRoot, 'docs', 'receipts'))
+      assert.equal(
+        native?.routingPolicyPath,
+        join(extraRoot, 'plugins', 'foreman-line', 'routing-policy', 'routing-policy.yaml'),
+      )
+      const initiative = trees.find((tree) => tree.key === 'agent-task.1')
+      assert.equal(initiative?.goalsDir, join(extraRoot, 'docs', 'INITIATIVES'))
+      assert.equal(initiative?.specsDir, join(extraRoot, 'docs', 'specs'))
+      assert.equal(initiative?.receiptsDir, join(extraRoot, 'docs', 'receipts'))
+      assert.equal(
+        initiative?.routingPolicyPath,
+        join(extraRoot, 'plugins', 'foreman-line', 'routing-policy', 'routing-policy.yaml'),
+      )
+
       // Qualified-key projection: the parcel carries the qualified goal key so
       // alert identities stay unique across trees.
       const projected = handleApi(
@@ -258,5 +280,47 @@ test('multi-root: relative extra roots are refused typed, exactly like the prima
       (err: unknown) =>
         err instanceof ConsoleRootUnresolvedError && err.reason === 'root-not-absolute',
     )
+  })
+})
+
+for (const state of ['empty', 'all complete', 'closed narrative']) {
+  test(`goalStatus: unknown ratification retains ${state} goal attention and activity`, () => {
+    const candidate = projection(state === 'all complete' ? [parcel({})] : [], 'unknown', 0)
+    const closed = {
+      ...candidate,
+      goal: {
+        ...candidate.goal,
+        stateLines: state === 'closed narrative' ? ['**State: GOAL CLOSED; queue empty.**'] : [],
+      },
+    }
+    const status = goalStatus('g', null, closed)
+    assert.equal(status.active, true)
+    assert.deepEqual(status.attention, {
+      hung: 0,
+      failed: 0,
+      awaitingGate: 0,
+      ratificationPending: 0,
+      ratificationUnknown: 1,
+      total: 1,
+    })
+  })
+}
+
+test('goalStatus: unknown count adds to existing parcel attention', () => {
+  const status = goalStatus(
+    'g',
+    null,
+    projection(
+      [parcel({ state: 'hung' }), parcel({ state: 'failed' }), parcel({ state: 'awaiting-gate' })],
+      'unknown',
+    ),
+  )
+  assert.deepEqual(status.attention, {
+    hung: 1,
+    failed: 1,
+    awaitingGate: 1,
+    ratificationPending: 0,
+    ratificationUnknown: 1,
+    total: 4,
   })
 })

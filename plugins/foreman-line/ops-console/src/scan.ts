@@ -1,9 +1,10 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs'
-import { basename, join } from 'node:path'
+import { basename, isAbsolute, join, relative, sep } from 'node:path'
 import { type ConsoleConfig, PLUGIN_TREE_REF } from './config.js'
 import { parseFrontmatter } from './frontmatter.js'
 import { parseSidecarDoc, type SidecarDoc } from './guards.js'
-import type { GoalRatification, GoalRecord, QueueItem } from './types.js'
+import { readRatification } from './ratification.js'
+import type { GoalRecord, Locator, QueueItem } from './types.js'
 
 /**
  * FOC-P0 C1 discovery: specs join parcels by filename-stem prefix `<KEY>-`
@@ -155,16 +156,12 @@ function stateLines(loopDirective: string): string[] {
     .map((line) => line.trim())
 }
 
-function ratification(charterText: string): GoalRatification {
-  for (const line of charterText.split(/\r?\n/)) {
-    if (/gate\s*1/i.test(line) && /(ratified|granted)/i.test(line)) {
-      return { status: 'granted', detail: line.trim() }
-    }
+function locator(root: string, absPath: string): Locator {
+  const rel = relative(root, absPath)
+  if (isAbsolute(rel) || rel === '..' || rel.startsWith(`..${sep}`)) {
+    throw new Error('ratification evidence locator must be contained in configured root')
   }
-  if (charterText.includes('Gate 1')) {
-    return { status: 'pending', detail: 'Gate 1 referenced but no RATIFIED/GRANTED text found' }
-  }
-  return { status: 'unknown', detail: 'no Gate 1 ratification text in goal charter' }
+  return { root, relativePath: rel.split(sep).join('/') }
 }
 
 export function listGoalSlugs(config: ConsoleConfig): string[] {
@@ -200,12 +197,29 @@ export function scanGoal(
   } catch {
     return null
   }
-  let charterText = ''
+  const charterPath = join(goalDir, 'charter.md')
+  const directivePath = join(goalDir, 'loop-directive.md')
+  let charterText: string | null = null
+  let failureKind: 'missing' | 'unreadable' | undefined
   try {
-    charterText = readFileSync(join(goalDir, 'charter.md'), 'utf8')
-  } catch {
-    // Charter optional for projection; ratification renders as unknown.
+    charterText = readFileSync(charterPath, 'utf8')
+  } catch (error) {
+    // Optional source: preserve the goal, but never grant on incomplete evidence.
+    failureKind = (error as NodeJS.ErrnoException).code === 'ENOENT' ? 'missing' : 'unreadable'
   }
+  const result = readRatification([
+    {
+      source: 'charter',
+      locator: locator(config.repoRoot, charterPath),
+      text: charterText,
+      failureKind,
+    },
+    {
+      source: 'loop-directive',
+      locator: locator(config.repoRoot, directivePath),
+      text: loopDirective,
+    },
+  ])
   return {
     slug,
     charterRef: `${treeRef}/docs/goals/${slug}/charter.md`,
@@ -213,6 +227,7 @@ export function scanGoal(
     items: parseQueueItems(loopDirective),
     hungThreshold: hungThreshold(loopDirective),
     stateLines: stateLines(loopDirective),
-    ratification: ratification(charterText),
+    ratification: result.ratification,
+    evidence: result.evidence,
   }
 }
