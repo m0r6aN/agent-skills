@@ -23,6 +23,100 @@
 
 ## State
 
+`cff_h1_in_review__p0_reducer_amendment_step0__p1_rework_r1_building__p3_reviews_in_flight`
+— 2026-10-08 (seventh iteration, cont.). **CFF-H1 build DELIVERED and
+closure-checked** (`e34cc380` on `fix/cff-h1-reader-set-goal-docs`: exactly
+the five measured entries, alphabetized, triage-cited comment, mutation-bound
+regression test; Allowed-Files exact; coordinator deterministic pass
+298/298 exit 0, +2 over the 296 base); single reviewer dispatched
+(`cff_h1_review`, opus-5-5, kickstarter `foreman-line-review-CFF-H1.md`).
+Compatibility note recorded: pre-change reuse evidence becomes incompatible
+→ falls back to normal validation (safe direction; one-time reuse loss on
+old-base PRs). **CFF-P1 rework r1 building** (`cff_p1_rework1_r1` pid
+1254638 — Step-0 restate RULED CORRECT; HEAD-mismatch flag resolved: the
+delta was the coordinator's own docs-only kickstarter commit, directive
+patched to the standing "docs-only on top" pattern). **Reducer amendment
+(CFF-P0 triage items 1–2) Step-0 in flight** (`cff_p0_reducer1_step0`,
+kickstarter `foreman-line-build-CFF-P0-reducer1.md`: ci-phase repo-manifest
+reads kept per-package + `--verify-primary` byte-exact reproduction proof
+against the retained raw capture). P0 rework R1 dispatches when it lands.
+
+Seventh-iteration header state:
+`cff_h1_building__p0_rework_pending__p1_rework_r1_step0__p3_reviews_in_flight__devdrop_shipped`.  **E1/E2 DISPOSED by the developer
+("ratify Q1 / amend Q2 as proposed"):** E2's D7 amendment is installed in
+the charter (scoped Gate-1 re-open, re-ratified — CFF-P2 exclusion becomes
+positive-coverage-only + `ALWAYS_RUN` manifest {approval, verification,
+schema-scaffold; evidence-bound at P2 shaping}; probe `child_process`
+coverage = named follow-up, not scope growth; blocks CFF-P2 shaping only,
+all other work orthogonal). E1's hotfix is **CFF-H1** — micro-parcel off
+`main` (`fix/cff-h1-reader-set-goal-docs`, worktree
+`../agent-skills-cff-h1`): exactly the five measured goal-doc paths into
+`READER_SET` + mutate-bound regression test; Step-0 restate RULED CORRECT
+(HEAD `dab6967e`, anchors :129/:157/:175/:190 verified coordinator-side,
+defect re-confirmed on base); `cff_h1_builder_r1` building. Unbatched human
+Gate 3 (batching suspended for the hotfix, per the ratification). **CFF-P1
+reviews A+B DELIVERED, triaged** (`cff-p1-review-triage-2026-10-08.md`): no
+verdict-integrity blockers; one lesson-#33 catch (spec weakened charter
+D7's uncovered-package fail-closed clause) → **Amendment CFF-P1-A2** ruled
+and committed alone (`ca934c48`: whole-run fallback trigger, concrete
+recursive exclusion scan, best-effort annotations, E4 base correction) →
+rework r1 dispatched (5 items, tripwire baseline 367; `cff_p1_rework1_step0`
+in flight). **Dev-drop package SHIPPED**: closure check PASS (probe
+byte-verbatim hash `3105d304`, Allowed-Files exact, host-gated refusal +
+dry-run demonstrated, honest gaps incl. Node ≥ 24.2 requirement), scratch
+branch merged to charter (`43c9bf8e`, pushed) — **the developer's Windows
+act is now unblocked**: pull `chore/ci-fail-fast-charter`, `npm ci`, one
+command per `read-graph/dev-drop/README.md`. P0 rework R1 dispatchable now
+(the reducer exists); P3 review pair still in flight.
+
+Prior state
+`cff_p0_triage_done_rework_pending_devdrop__p1_built_reviews_running__p3_reviews_in_flight__e1_e2_pending_dev`
+— 2026-10-08 (sixth iteration). **CFF-P0 reviews A+B DELIVERED and TRIAGED**
+(`cff-p0-review-triage-2026-10-08.md`): two blockers, both reproduced
+coordinator-side — E1 (READER_SET five-path hole LIVE in the merge gate;
+charter stop condition "relevance coverage incomplete for a package class"
+FIRED; developer question Q1 asked, hotfix recommended) and E2 (D7 pin's
+exclusion-consumption by CFF-P2 is structurally exclusion-by-absence under
+probe blindness; scoped Gate-1 re-open recommended, Q2). CFF-P0 is NOT
+Gate-3-ready: rework R1 queued (re-derived fixture with ci-phase manifest
+reads included, canonical reducer named, docs errata F3/F5/F7, blind-class
+disclosure, AC1 timing corrections, c9-reproof corrections,
+`dev_pass_status:"pending"` marker) — dispatch held until the dev-drop
+reducer lands on `chore/cff-p0-dev-drop` (`cff_p0_devdrop_r1` building; its
+Step-0 restate was RULED CORRECT with the G3 methodology-source ruling:
+read the measurement log read-only from `feat/foreman-line-cff-p0`).
+**CFF-P1 build DELIVERED** (`665b03bc..f953ecd3`, 10 commits, Allowed-Files
+exact, tripwire 296→367 coordinator-verified at base and tip, deterministic
+pass 367/367 on the coordinator's own run, exit 0) — **Amendment CFF-P1-A1**
+ruled and committed alone (`73f9f624`): AC2 pinned to the measured
+read-graph shape (`packages[name]` array ∪ `affection_pin[name]`),
+variance-edge shape pinned `{package, path}`, E4 sanitizeOutput citation
+(:175→:169). Two adversarial reviews dispatched (`cff_p1_review_a` pid
+1201314 verdict-integrity angle, `cff_p1_review_b` pid 1201315
+pin-consumption/hostile-input angle, both opus-5-5). **CFF-P2 shaping now
+ALSO holds on E1/E2 disposition** (in addition to the P1-merge gate).
+CFF-P3 review pair still in flight. Local `main` ref fast-forwarded
+(`fb25630c..dab6967e`).
+
+Prior state
+`cff_p0_reviews_ab_running__p1_build_r1_running__p3_reviews_in_flight`
+— 2026-10-08 (fifth iteration). **Dispatch mechanism established (developer
+Q1, 2026-10-08):** fresh sessions are spawned headlessly from this pi harness
+— `pi --model anthropic/claude-opus-5-5 -n <name> -p "<prompt>"` detached via
+`setsid nohup`, logs at `~/.pi/dispatch-logs/ci-fail-fast/<name>.log`
+(mechanism smoke-tested before first dispatch). Dispatched: `cff_p0_review_a`
+(pid 797295) + `cff_p0_review_b` (pid 797575) per kickstarters A/B;
+`cff_p1_builder_step0` restated and held — **Step 0 restate RULED CORRECT**
+(spec SHA `ed40b2c4`, brief SHA `bf7e1ecc`/8196B identical in both checkouts,
+HEAD `41b927de`, worktree clean, Allowed Files exact, zero writes — all
+re-verified coordinator-side) — build re-dispatched as `cff_p1_builder_r1`
+(pid 799411). Findings/records arrive as files on disk (reviewers write
+their named findings file only, no commits — coordinator commits).
+**PR #159 MERGED by the developer** (Gate 3, `dab6967e`, 2026-10-08T13:00:28Z)
+— docs-only paper trail on main. Dev-drop packaging question asked of the
+developer (see evidence trail); answer pending.
+
+Prior state
 `cff_p0_complete_reviews_queued__p3_reviews_in_flight__p1_active_build_dispatch_pending`
 — 2026-10-08 (fourth iteration). **CFF-P0 build COMPLETE (AC1–AC6):** the
 AC5 measured-capture delivery landed (`f34c5e74` + `500b8f54`) and passed
@@ -243,7 +337,13 @@ conditions per COORDINATOR-PATTERN also apply.
   lesson-#33 diff strengthening-only). Errata E1–E3 corrected in place at
   promotion. Builder kickstarter issued (Step 0 gate first).
 - 2026-10-08 — CFF-P0 review kickstarters A/B issued (paper trail
-  `91480ae7` on the parcel branch); **dispatches pending the developer's
-  session spawner** — this coordinator session (pi harness) cannot spawn
-  the fresh opus-5-5 review/build sessions itself; kickstarters are
-  dispatch-ready.
+  `91480ae7` on the parcel branch).
+- 2026-10-08 — developer answers: (1) dispatch mechanism = `pi --model
+  anthropic/claude-opus-5-5` headless (verified, used); (2) P3 reviews
+  confirmed in flight; (3) dev-Windows pass: developer unsure what is needed
+  — coordinator question + recommendation asked (turnkey run package in
+  `read-graph/dev-drop/`; answer pending); (4) **PR #159 merged**
+  (`dab6967e`).
+- 2026-10-08 — dispatches live: `cff_p0_review_a` + `cff_p0_review_b`
+  (opus-5-5, kickstarters A/B); `cff_p1_builder_step0` → restate RULED
+  CORRECT → `cff_p1_builder_r1` building (opus-5-5).
