@@ -90,6 +90,7 @@ test('goalStatus: hung, failed, and awaiting-gate parcels keep the goal active a
     awaitingGate: 1,
     ratificationPending: 0,
     ratificationUnknown: 0,
+    signals: { info: 0, attention: 0, urgent: 0 },
     total: 3,
   })
 })
@@ -301,6 +302,7 @@ for (const state of ['empty', 'all complete', 'closed narrative']) {
       awaitingGate: 0,
       ratificationPending: 0,
       ratificationUnknown: 1,
+      signals: { info: 0, attention: 0, urgent: 0 },
       total: 1,
     })
   })
@@ -321,6 +323,7 @@ test('goalStatus: unknown count adds to existing parcel attention', () => {
     awaitingGate: 1,
     ratificationPending: 0,
     ratificationUnknown: 1,
+    signals: { info: 0, attention: 0, urgent: 0 },
     total: 4,
   })
 })

@@ -114,6 +114,8 @@ export function handleApi(config: ConsoleConfig, request: ApiRequest, now: numbe
     // tree-qualified keys, activity, and attention counts per goal.
     const goals: unknown[] = []
     const statuses: unknown[] = []
+    // FCA-2: one signal scan feeds every goal's severity breakdown.
+    const allSignals = collectSignals(config, now)
     for (const tree of goalTrees(config)) {
       const treeConfig = treeConfigFor(config, tree)
       for (const slug of listGoalSlugs(treeConfig)) {
@@ -122,7 +124,7 @@ export function handleApi(config: ConsoleConfig, request: ApiRequest, now: numbe
         const key = tree.key === null ? slug : `${tree.key}.${slug}`
         goals.push(record)
         const projection = projectGoal(treeConfig, slug, now, key, tree.treeRef)
-        if (projection !== null) statuses.push(goalStatus(key, tree.key, projection))
+        if (projection !== null) statuses.push(goalStatus(key, tree.key, projection, allSignals))
       }
     }
     return { status: 200, json: { goals, statuses } }

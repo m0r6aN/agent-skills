@@ -149,7 +149,7 @@ in as provider evidence where appropriate (owner directive).
 
 ---
 
-## Task 7: scm-ci provider (`gh` read-only + graceful degradation)
+## Task 7: scm-ci provider (`gh` read-only + graceful degradation) ✅ (2026-10-11)
 
 **Description:** PR/CI semantics: green-but-do-not-merge, conflicting+red,
 BEHIND under strict ruleset, merged missing a release event. Read-only `gh`
@@ -157,13 +157,13 @@ queries behind an injectable client (mocked in tests); `gh`/network absence
 degrades to one `info` signal.
 
 **Acceptance criteria:**
-- [ ] mocked `gh` fixtures produce each named signal class correctly
-- [ ] no live network in tests; injectable client seam
-- [ ] `gh` absence produces exactly one `info` signal, no throw
+- [x] mocked `gh` fixtures produce each named signal class correctly
+- [x] no live network in tests; injectable client seam
+- [x] `gh` absence produces exactly one `info` signal, no throw
 
 **Verification:**
-- [ ] Tests pass: `tests/signals-scm.test.ts` (new)
-- [ ] Package sweep green
+- [x] Tests pass: `tests/signals-scm.test.ts` (new — 5/5)
+- [x] Package sweep green (292/292, typecheck, lint)
 
 **Dependencies:** Task 4
 **Files likely touched:** `src/signals-scm.ts`, `tests/signals-scm.test.ts`
@@ -171,20 +171,20 @@ degrades to one `info` signal.
 
 ---
 
-## Task 8: goal-hygiene provider + FCA-2 attention-count integration
+## Task 8: goal-hygiene provider + FCA-2 attention-count integration ✅ (2026-10-11)
 
 **Description:** Goal records needing attention beyond parcel state (missing
 ratification records, stale loop-directive states). Feed signal severities into
 the FCA-2 attention counts.
 
 **Acceptance criteria:**
-- [ ] goal-hygiene fixtures yield evidence-backed signals
-- [ ] FCA-2 attention counts include signal severities (updated snapshot tests)
-- [ ] board `needs` treatment reflects urgent signals
+- [x] goal-hygiene fixtures yield evidence-backed signals
+- [x] FCA-2 attention counts include signal severities (snapshot updates in `multi-root.test.ts` — `derive.ts` stays frozen)
+- [x] board `needs` treatment reflects urgent signals (`ui/needs.js` pure rule, unit-tested)
 
 **Verification:**
-- [ ] Tests pass: `tests/signals-goal.test.ts` + updated derive snapshots
-- [ ] Package sweep green
+- [x] Tests pass: `tests/signals-goal.test.ts` (5/5) + updated `multi-root.test.ts` snapshots
+- [x] Package sweep green (292/292, typecheck, lint)
 
 **Dependencies:** Task 4
 **Files likely touched:** `src/signals-goal.ts`, `src/derive.ts`, `tests/signals-goal.test.ts`
@@ -193,7 +193,7 @@ the FCA-2 attention counts.
 ---
 
 ## Checkpoint: Signals (complete)
-- [ ] All five classes emit evidence-backed signals; filters verified
+- [x] All five classes emit evidence-backed signals; filters verified — real-repo smoke: 62 signals across 5 classes
 - [ ] Review with human before proceeding
 
 ---

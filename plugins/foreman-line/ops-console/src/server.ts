@@ -104,6 +104,10 @@ export function buildHandler(config: ConsoleConfig, now: () => number): RequestL
       sendUi(response, 'app.js', 'text/javascript; charset=utf-8')
       return
     }
+    if (pathname === '/needs.js') {
+      sendUi(response, 'needs.js', 'text/javascript; charset=utf-8')
+      return
+    }
     const body = method === 'POST' ? await readBody(request) : undefined
     const result = handleApi(
       config,
