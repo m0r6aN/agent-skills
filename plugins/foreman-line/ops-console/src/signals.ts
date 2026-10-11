@@ -1,6 +1,9 @@
 import { type ConsoleConfig, goalTrees, treeConfigFor } from './config.js'
 import { projectGoal } from './project.js'
 import { listGoalSlugs } from './scan.js'
+// Provider modules register here; they import only `makeSignal`/types from
+// this module (hoisted declarations), so the cycle resolves safely.
+import { releaseHygieneProvider } from './signals-release.js'
 import type { ParcelProjection, ParcelStateValue } from './types.js'
 
 /**
@@ -157,12 +160,19 @@ export const parcelStateProvider: SignalProvider = {
   },
 }
 
-export const DEFAULT_PROVIDERS: readonly SignalProvider[] = [parcelStateProvider]
+/**
+ * Default provider set — assembled lazily at call time. Provider modules
+ * (e.g. `signals-release.js`) register into this one; building the array at
+ * module load would hit the registration cycle's temporal dead zone.
+ */
+function defaultProviders(): SignalProvider[] {
+  return [parcelStateProvider, releaseHygieneProvider]
+}
 
 export function collectSignals(
   config: ConsoleConfig,
   now: number,
-  providers: readonly SignalProvider[] = DEFAULT_PROVIDERS,
+  providers?: readonly SignalProvider[],
 ): Signal[] {
-  return providers.flatMap((provider) => provider.collect(config, now))
+  return (providers ?? defaultProviders()).flatMap((provider) => provider.collect(config, now))
 }

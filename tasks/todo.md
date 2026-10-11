@@ -101,19 +101,19 @@ parcel projection as the first provider.
 
 ---
 
-## Task 5: release-hygiene provider
+## Task 5: release-hygiene provider ✅ (2026-10-11)
 
 **Description:** Detect manifest/marketplace version disagreement, stale
 version references in docs, content landed under a stale version string, and
 unclaimed CHANGELOG backlog vs released version (the 0.2.1 finding class).
 
 **Acceptance criteria:**
-- [ ] version-drift fixture yields one signal per stale location (manifest, marketplace, README)
-- [ ] unclaimed-backlog signal cites the `Unreleased` section and released version
-- [ ] clean fixture yields zero signals
+- [x] version-drift fixture yields one signal per stale location (manifest, marketplace, README)
+- [x] unclaimed-backlog signal cites the `Unreleased` section and released version
+- [x] clean fixture yields zero signals
 
 **Verification:**
-- [ ] Tests pass: `tests/signals-release.test.ts` (new)
+- [x] Tests pass: `tests/signals-release.test.ts` (new — 3/3; real-repo smoke: 1 true backlog signal, 0 false drift)
 - [ ] Package sweep green
 
 **Dependencies:** Task 4

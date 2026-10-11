@@ -57,7 +57,7 @@ UI slices also follow `frontend-ui-engineering`.
 
 ### Phase 2: Signals
 - [x] Task 4: Signal type, provider interface, `/api/signals` shell, parcel-state wrapper
-- [ ] Task 5: release-hygiene provider (version drift, stale refs, unclaimed backlog)
+- [x] Task 5: release-hygiene provider (version drift, stale refs, unclaimed backlog)
 - [ ] Task 6: worktree-hygiene provider + lumber-jack evidence mapping
 
 ### Checkpoint: Signals (mid)
