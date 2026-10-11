@@ -18,6 +18,13 @@ Own TO-B0/TO-P0/TO-P1 lifecycle rows maintained 2026-10-10; other rows retain th
 | CI-P2 | [Deterministic full-sweep sharding](done/CI-P2-deterministic-sweep-sharding.md) | `done` | `done/` |
 | E6-R1 | [Current-repository identity normalization and observable A-to-F evidence rerun](done/E6-R1-current-repository-identity-and-evidence-rerun.md) | `done` | `done/` |
 | EVAL-1 | [Eval coverage green gate (Tier-2 trigger and routing)](active/EVAL-1-eval-coverage-green-gate.md) | `draft` | `active/` |
+| FCA-P0 | [Ops-console multi-root goal discovery and goal status index (additive)](active/FCA-P0-ops-console-multi-root-and-status-index.md) | `active` | `active/` |
+| FCA-P1 | [Remediation advisor for blockers and hung parcels (additive)](active/FCA-P1-remediation-advisor.md) | `active` | `active/` |
+| FCA-P2 | [Fleet registry and filesystem browse (multi-repo control scope)](active/FCA-P2-fleet.md) | `active` | `active/` |
+| FCA-P3 | [Unified attention model for repo-hygiene and process signals](active/FCA-P3-signals.md) | `active` | `active/` |
+| FCA-P4 | [Action registry — verbs, invocation classes, autonomy envelopes, audit](active/FCA-P4-actions.md) | `active` | `active/` |
+| FCA-P5 | [tmux session spawner with shared spawn controls](active/FCA-P5-spawn.md) | `active` | `active/` |
+| FCA-P6 | [Control-center UI — dense layout, action buttons, spawn panel, session tray](active/FCA-P6-console-ui.md) | `active` | `active/` |
 | FK-P0 | [Foreman Kernel - canon authority and enforcement registry](active/FK-P0-canon-authority-enforcement-registry.md) | `active` | `active/` |
 | FK-P10 | [Foreman Kernel - lease and transition engine](done/FK-P10-lease-transition-engine.md) | `done` | `done/` |
 | FK-P11 | [Foreman Kernel - legacy import and projection engine](done/FK-P11-legacy-import-projection.md) | `done` | `done/` |

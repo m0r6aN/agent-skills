@@ -46,3 +46,9 @@ node_modules/
 # (spec-linter/grandfather.test.ts excludes both trees explicitly).
 plugins/.trash/
 plugins/synced/
+
+# Untracked 2026-10-11 (control-center shaping, first FCA-P3 worktree-hygiene
+# fix): ops-console runtime state stores. Written by the console at run time
+# (FOC-P3/OQ3 closed vocabulary: notifications.json, invocation-audit.json);
+# the tracked copy churned the working tree on every run. Local copies kept.
+plugins/foreman-line/ops-console/state/

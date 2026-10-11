@@ -1,7 +1,18 @@
 import { readFileSync } from 'node:fs'
 import { basename, join } from 'node:path'
 import { deriveAlerts } from './alerts.js'
+import { type BrowseRefusalError, browseDirectory } from './browse.js'
 import { type ConsoleConfig, goalTrees, resolveGoalKey, treeConfigFor } from './config.js'
+import {
+  addFleetRoot,
+  defaultFleetProbe,
+  describeRoot,
+  type FleetRefusalError,
+  type FleetState,
+  loadFleetState,
+  removeFleetRoot,
+  saveFleetState,
+} from './fleet.js'
 import { isRecord } from './guards.js'
 import { invokeFlow, listAuditEntries } from './invoke.js'
 import { deleteNotification, listNotifications, syncAlerts } from './notifications.js'
@@ -9,14 +20,19 @@ import { projectGoal } from './project.js'
 import { remediesFor } from './remedy.js'
 import { loadRoutingPolicy } from './routing.js'
 import { listGoalSlugs, scanGoal } from './scan.js'
+import { collectSignals, SIGNAL_CLASSES, SIGNAL_SEVERITIES } from './signals.js'
 import { goalStatus } from './status.js'
 import type { ChainSummary, GoalProjection } from './types.js'
 
 /**
  * FOC-P2 HTTP route table — frozen by the FOC-P0 contract (X1): no route may
- * be added without amending that contract. Every route is read-only over
+ * be added without amending that contract. The FCA-P2 fleet + fs-browse routes
+ * below are added under the owner-ratified control-center amendment
+ * (`AMENDMENT-2026-10-11-control-center.md`); FCA-P3/P5 routes follow the same
+ * path. Every route is read-only over
  * goal/receipt/spec data (charter D2); the only effects are console-local
- * state writes (`state/notifications.json`, `state/invocation-audit.json`)
+ * state writes (`state/notifications.json`, `state/invocation-audit.json`,
+ * `state/fleet.json`)
  * through the FOC-P3 modules.
  */
 export interface ApiRequest {
@@ -244,5 +260,112 @@ export function handleApi(config: ConsoleConfig, request: ApiRequest, now: numbe
     return { status: 200, json: invokeFlow(config, { flow, argv }, now) }
   }
 
+  // FCA-P3 unified attention model (control-center amendment): derived signal
+  // snapshots over every provider class. Read-only; filters are typed
+  // (`reason: unknown-class | unknown-severity`).
+  if (pathname === '/api/signals') {
+    if (method !== 'GET') return methodNotAllowed('GET')
+    const classFilter = query.get('class')
+    const severityFilter = query.get('severity')
+    const repoFilter = query.get('repo')
+    if (classFilter !== null && !(SIGNAL_CLASSES as readonly string[]).includes(classFilter)) {
+      return {
+        status: 400,
+        json: {
+          error: `unknown signal class ${JSON.stringify(classFilter)}`,
+          reason: 'unknown-class',
+        },
+      }
+    }
+    if (
+      severityFilter !== null &&
+      !(SIGNAL_SEVERITIES as readonly string[]).includes(severityFilter)
+    ) {
+      return {
+        status: 400,
+        json: {
+          error: `unknown signal severity ${JSON.stringify(severityFilter)}`,
+          reason: 'unknown-severity',
+        },
+      }
+    }
+    const signals = collectSignals(config, now).filter(
+      (signal) =>
+        (classFilter === null || signal.class === classFilter) &&
+        (severityFilter === null || signal.severity === severityFilter) &&
+        (repoFilter === null || signal.repo === repoFilter),
+    )
+    return { status: 200, json: { signals } }
+  }
+
+  // FCA-P2 fleet registry (control-center amendment): declared multi-repo
+  // scope. Refusals are typed (4xx + `reason`); the only write target is
+  // `state/fleet.json`.
+  if (pathname === '/api/fleet') {
+    if (method !== 'GET') return methodNotAllowed('GET')
+    return { status: 200, json: { roots: fleetRoots(config) } }
+  }
+
+  if (pathname === '/api/fleet/add') {
+    if (method !== 'POST') return methodNotAllowed('POST')
+    const body = isRecord(request.body) ? request.body : {}
+    const root = typeof body.root === 'string' ? body.root : ''
+    return fleetMutation(config, () =>
+      addFleetRoot(loadFleetState(config.stateDir, config.repoRoot), root, defaultFleetProbe),
+    )
+  }
+
+  if (pathname === '/api/fleet/remove') {
+    if (method !== 'POST') return methodNotAllowed('POST')
+    const body = isRecord(request.body) ? request.body : {}
+    const root = typeof body.root === 'string' ? body.root : ''
+    return fleetMutation(config, () =>
+      removeFleetRoot(loadFleetState(config.stateDir, config.repoRoot), root),
+    )
+  }
+
+  // FCA-P2 sandboxed browse (fleet folder picker): one level, read-only,
+  // symlinks never followed.
+  if (pathname === '/api/fs/browse') {
+    if (method !== 'GET') return methodNotAllowed('GET')
+    const path = query.get('path')
+    if (path === null || path.length === 0) {
+      return {
+        status: 400,
+        json: { error: 'missing required query parameter path=<absolute dir>' },
+      }
+    }
+    try {
+      return { status: 200, json: browseDirectory(path) }
+    } catch (err) {
+      return refusalResult(err)
+    }
+  }
+
   return { status: 404, json: { error: `no such route ${method} ${pathname}` } }
+}
+
+function fleetRoots(config: ConsoleConfig): unknown[] {
+  const state = loadFleetState(config.stateDir, config.repoRoot)
+  return state.roots.map((root) => describeRoot(root, defaultFleetProbe))
+}
+
+function fleetMutation(config: ConsoleConfig, mutate: () => FleetState): ApiResult {
+  try {
+    saveFleetState(config.stateDir, mutate())
+    return { status: 200, json: { ok: true, roots: fleetRoots(config) } }
+  } catch (err) {
+    return refusalResult(err)
+  }
+}
+
+/** Typed refusals become 4xx/5xx JSON with their `reason`; anything else rethrows. */
+function refusalResult(err: unknown): ApiResult {
+  const refusal = err as FleetRefusalError | BrowseRefusalError
+  if (typeof refusal?.reason === 'string') {
+    const status =
+      refusal.reason === 'root-unknown' ? 404 : refusal.reason === 'fleet-state-corrupt' ? 500 : 400
+    return { status, json: { error: refusal.message, reason: refusal.reason } }
+  }
+  throw err
 }
