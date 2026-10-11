@@ -4,7 +4,7 @@ Foreman Line is an installable, contract-first coordination plugin for carrying 
 development goal through shaping, parcel dispatch, external verification,
 integration, and closure.
 
-This `0.1.0` release is an **alpha**. Its pipeline packages are implemented and
+This `0.2.1` release is an **alpha**. Its pipeline packages are implemented and
 tested, while some integrations remain profile-specific. Receipt chains are
 structurally validated; cryptographic recomputation and signature verification
 remain future Parcel Compiler work. Stage F validates supplied merge metadata
