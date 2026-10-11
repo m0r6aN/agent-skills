@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.2.1 — 2026-10-11
+
+Version event for the CI-fail-fast materials landed by PR #170 (merged
+2026-10-11) under the stale `0.2.0` version string — goal documentation,
+dispatch prompts, and goal-local tooling only; no pipeline-package or contract
+changes:
+
+- `ci-fail-fast` goal: loop directive expanded; read-graph dev-drop capture
+  (`capture-dev-pass.mjs`) plus read-graph probe script; charter touch-up.
+- Review findings and triage for CFF-H1, CFF-P0, and CFF-P1 (A/B reviews).
+- New `parcel-queue-and-claim` goal charter.
+- Kickstarters: build CFF-H1, CFF-P0-devdrop, CFF-P0-reducer1, CFF-P1-rework1;
+  review CFF-H1, CFF-P1-A, CFF-P1-B.
+
+The `Unreleased` backlog (FCA-1/2/3 and verification-package work) is
+unchanged and remains unclaimed by this release.
+
 ## 0.2.0 — 2026-10-07
 
 pi-model-configuration wave 2 (Amendments 06–09, owner-ratified):
