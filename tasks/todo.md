@@ -198,7 +198,7 @@ the FCA-2 attention counts.
 
 ---
 
-## Task 9: ActionSpec registry + typed refusals + audit entries
+## Task 9: ActionSpec registry + typed refusals + audit entries ✅ (2026-10-11)
 
 **Description:** `actions.ts` — closed registry mapping (class × verb) →
 `ActionSpec { invocation, promptTemplate, autonomy, destructive }`. Baseline
@@ -207,13 +207,13 @@ audit entry (executed/presented/spawned/refused). `execute` registration for
 mutating verbs must be impossible.
 
 **Acceptance criteria:**
-- [ ] unregistered (class, verb) pairs refused typed + audited
-- [ ] `execute` cannot be registered for any mutating verb (type + runtime guard)
-- [ ] audit entries cover all four outcomes with reason/argv
+- [x] unregistered (class, verb) pairs refused typed + audited
+- [x] `execute` cannot be registered for any mutating verb (type + runtime guard)
+- [x] audit entries cover all four outcomes with reason/argv
 
 **Verification:**
-- [ ] Tests pass: `tests/actions.test.ts` (new)
-- [ ] Package sweep green
+- [x] Tests pass: `tests/actions.test.ts` (new — 5/5)
+- [x] Package sweep green (297/297, typecheck, lint)
 
 **Dependencies:** Task 4
 **Files likely touched:** `src/actions.ts`, `src/invoke.ts`, `src/guards.ts`, `tests/actions.test.ts`

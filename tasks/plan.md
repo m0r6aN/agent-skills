@@ -70,7 +70,7 @@ UI slices also follow `frontend-ui-engineering`.
 - [x] All five classes emit evidence-backed signals; `/api/signals` filters work — real-repo smoke: 62 signals / 5 classes
 
 ### Phase 3: Actions
-- [ ] Task 9: ActionSpec registry + typed refusals + audit entries
+- [x] Task 9: ActionSpec registry + typed refusals + audit entries
 - [ ] Task 10: Prompt templates + composition for baseline verbs
 - [ ] Task 11: Destructive guard + typed-confirmation contract
 
