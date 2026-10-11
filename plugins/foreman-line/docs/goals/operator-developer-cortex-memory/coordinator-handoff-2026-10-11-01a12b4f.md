@@ -3,7 +3,7 @@
 **Session:** Pi `01a12b4f-c8e9-70a4-811b-0cd7eb889457`  
 **Accountable owner:** Clinton Morgan  
 **State:** migration defaults ratified; NEW bounded admission task #179 assigned here, initial diagnosis/exact proposal produced; implementation/worker dispatch NOT started
-**Latest checkpoint:** `ir-p0-draft-checkpoint-2026-10-11.md` and `../internal-frontier-review-admission/ir-p0-drafting-handoff-2026-10-11.md` supersede the earlier nomination/auth/drafting requests below. IR-P0 exact drafts are produced, owner chose subscription/OAuth, and #178 is observed merged. New draft branch is non-operative; no construction/activation.  
+**Latest checkpoint:** `native-pi-revision-checkpoint-2026-10-11.md` and `../internal-frontier-review-admission/native-pi-revision-handoff-2026-10-11.md` supersede earlier nomination/auth/data/accounting/reasoning requests below. Six choices are disposed; native Pi/no separate broker revision is returned, Pro/off/off owner facts accepted, IR-B01 scope approved conditionally on whole revised IR-A01 ratification FIRST. #181 observed merged; new document branch is non-operative and no code/activation has begun.  
 **Ownership:** this session remains sole OPMEM coordinator while waiting at the pre-P0 boundary; no background wakeup or worker
 
 ## Starting state

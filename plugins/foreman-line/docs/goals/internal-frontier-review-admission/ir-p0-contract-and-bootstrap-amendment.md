@@ -1,32 +1,42 @@
-# Contract amendment IR-A01 / bootstrap exception IR-B01 — proposed exact text
+# IR-A01 native Pi revision / conditional IR-B01 offline bootstrap
 
-**Status:** PROPOSED / NOT RATIFIED / PATCH NOT APPLIED
-**Draft authority:** `owner-ir-p0-drafting-2026-10-11.md`; drafting only, no implementation, launch or additional delegate/probe spend
+**Status:** SCOPED OWNER CHOICES DISPOSED; FULL REVISED IR-A01 HEAD RATIFICATION PENDING; IR-B01 SCOPE CONDITIONALLY APPROVED; PATCH NOT APPLIED
+**Authority:** `owner-native-pi-decisions-2026-10-11.md`, exact six-question mapping/verbatim response; earlier drafting grant preserved
 **Owner / coordinator:** Clinton Morgan / Pi `01a12b4f-c8e9-70a4-811b-0cd7eb889457`
-**Pinned source:** main `77318a0921b68f6199d9b4db7277c0a53976e2c7`
-**Existing directive blob:** `57a863049e6c395ad1dd17688634b747785ce438`
+**Source:** main `846179a7e54ea4df49d72badd11b937f739ef0bb`, #181 observed merged by a separate action
+**Existing live directive blob:** `57a863049e6c395ad1dd17688634b747785ce438`
 
-## Contract / reason / exact change
+## Contract / reason / ratified scoped changes
 
-Contract affected: Foreman Pi dispatch canon (`templates/pi-routing-directive.md`, Amendment 06 N2) and the new draft `docs/contracts/internal-review-launch-v1.md`. The companion is additive: it does not amend PMC/public-v1 wire/provider schemas, legacy residual gates, standing model-family requirements, P0 scope, original Stage A or provider/account terms.
+Affected candidate contract: `docs/contracts/internal-review-launch-v1.md`; exact proposed live-canon edit: `pi-routing-directive.ir-p0.patch` targeting `templates/pi-routing-directive.md` / Amendment 06 N2. All changes are additive/purpose-bound; no PMC/public-v1 schema, legacy residual gate, global policy, original Stage A or provider term is modified.
 
-Reason: existing inspected paths cannot admit the exact internal L2 first-party review. Normal canon requires CLI dispatch; explicit least-resource Pi SDK confinement needs a narrowly versioned exception. The new launcher must not authorize its own construction/review, and the owner's OAuth selection must remain an explicit unresolved application/data/billing gate rather than be mistaken for API eligibility.
+Owner decisions now DISPOSED:
 
-### IR-A01 — candidate owner ratification text
+- Pro, existing native Pi OAuth authentication, model improvement OFF and paid extra usage OFF for this work, OWNER-ATTESTED, not independently inspected.
+- Owner's own internal credential-free initial OPMEM review packet may use `owner-accepted-subscription-policy` with applicable nonzero retention/training exceptions instead of absolute ZDR. Exclude customer/client/restricted/regulated data; never claim ZDR or change classification to public. Only this companion/purpose gets the exception, not global policy.
+- Existing USD 5 review / USD 25 P0 caps measure attributable INCREMENTAL charges; exclude already-paid subscription fee, quota separate; no paid-extra/API/upgrade transition or invented zero balance.
+- Installed Pi native Anthropic provider/auth mechanics ONLY; NO separate broker, custom OAuth/HTTP implementation, token copies, API switch or authentication repair.
+- Highest VERIFIED native reasoning per exact model when `xhigh` is unsupported; explicit mapping, all existing token/model/family/context/attempt bounds retained.
 
-> I ratify `internal-review-launch/v1` only at the exact immutable proposal head I identify, including its closed OPMEM initial-plan-review scope, exact Anthropic primary/sole fallback, subscription/OAuth choice, existing token/money/family/data controls and proposed eight-request/30-minute per-attempt limits. I approve the exact companion-only CLI-to-controlled-SDK amendment in `pi-routing-directive.ir-p0.patch` against the named directive blob. Publication is not activation. Application permission, required data controls, actual account/billable bounds, trusted installation/custody and independent acceptance remain prerequisites. I authorize no provider request, credential handling/change, implementing phase or downstream dispatch by this ratification.
+Those choices must not be re-requested. They do not by themselves adopt every clause/head of the newly revised contract or grant live tests. Eight-request/30-minute attempt pacing and the controlled-SDK companion remain in the exact candidate IR-A01 for whole-contract ratification. Public provider permission, actual native capabilities/isolation/pre-send/accounting/custody are still operational evidence, not user yes/no substitutes.
 
-This is proposed text for a future explicit owner decision, not a quotation of authority already granted. The live directive is unchanged in this drafting phase. The unapplied patch is the exact proposed edit; it adds only a conditional companion section and the corresponding narrow qualification of normal CLI dispatch. All existing identity/fallback/default/config/public-v1 rules are retained. Applying it later requires exact-head owner disposition and the reviewed document-change scope; do not apply it during this draft.
+## IR-A01 — one remaining exact-head contract ratification
 
-### IR-B01 — proposed human-supervised offline construction exception
+Proposed next owner text (NOT already granted):
 
-This exception is a separate owner choice. IR-A01 ratification does not grant it. It proposes one bounded **offline IR-P1 prototype**, not a production launcher or an accepted/registered Foreman parcel.
+> I ratify the whole revised `internal-review-launch/v1` contract and IR-A01 companion amendment at the exact returned immutable commit I identify, including the already-disposed Pro/native-Pi/scoped-data/incremental-charge/native-reasoning choices, existing exact OPMEM review pair/family/context/token/attempt/dollar bounds and proposed eight-request/30-minute-per-attempt limits. I approve the exact UNAPPLIED directive patch against the pinned live blob for later controlled adoption, not immediate activation. This satisfies the revised-contract prerequisite of my already-approved IR-B01 offline scope. It grants no provider request, credential/config change, separate broker, live proof, implementing native-provider/worker phase or downstream dispatch; all actual operational evidence/process gates remain.
 
-> For IR-B01 only, I name Clinton Morgan as the accountable bootstrap approver and current human-driven Pi session `01a12b4f-c8e9-70a4-811b-0cd7eb889457` as the temporary offline prototype constructor. At the exact ratified IR-A01 head and exact ten-file IR-P1 manifest below, I permit that session to construct local admission/schema-parity fixtures without dispatching a new builder or using the unbuilt launcher. This is a one-use exception to the normal fresh routed builder/coordinator-no-construction rules for that offline prototype only; it is not independent verification or Foreman registration. Limit it to one foreground construction pass, at most two local validation/rework passes, and 90 minutes from construction start. No additional delegate/probe spending, provider traffic, credential/config inspection or mutation, network dependency installation, live broker/worker or activation is allowed. On completion or any limit/gap, return actual artifacts and test results to me at an immutable head, then stop. Human prototype disposition is not a frontier-review verdict; operational acceptance still requires the normal independent/security/process gates or a separately explicit bounded amendment.
+This revision remains non-operative pending that decision. The patch is returned, not applied; approving its content does not imply applying it during the offline prototype. Publishing/merging a draft is not this ratification. Source/body bindings use the actual returned commit, not a moving branch alias or self-authored approval receipt.
 
-The constructor's current `openai/gpt-6.1-sol` interactive provenance is not an admitted worker route or permission to spawn more sessions. Existing interactive cost is not declared zero. No new paid roster/budget is supplied by this text. If the current session changes/terminates, the exception stops; it cannot be inherited by an unnamed successor.
+## IR-B01 — approved scope, explicit condition still unsatisfied
 
-Exact proposed construction manifest (NEW only):
+Owner answer 6 approves the published bounded scope by reference, **conditional on the revised contract being explicitly ratified FIRST**. Do not treat the condition as waived or ask again for unchanged scope. The previous proposed construction text is retained below as its scoped terms, now conditionally approved; it is not yet exercisable.
+
+> For IR-B01 only, Clinton Morgan is accountable bootstrap approver and current human-driven Pi session `01a12b4f-c8e9-70a4-811b-0cd7eb889457` is the temporary offline prototype constructor. At the ratified revised IR-A01 head and exact manifest below, construct one offline admission/schema-parity prototype without dispatching a new builder or using an unbuilt launcher. One-use exception to fresh-routed-builder/coordinator-no-construction rules for this prototype only, not independent verification or Foreman registration. One foreground construction pass, maximum two local validation/rework passes, 90 minutes from construction start. No provider calls/additional delegate/probe spend, auth/config inspection or mutation, network dependency installation, live provider integration/worker or activation. Return actual artifacts/results at an immutable head and stop. Human prototype disposition is not a frontier-review verdict; normal independent/security/process gates or separately exact amendments still bind acceptance.
+
+Current `openai/gpt-6.1-sol` interactive provenance is not an admitted worker route or permission to spawn more sessions. Interactive costs are uninspected, not zero. Session transfer/termination stops the named exception; no automatic successor inheritance.
+
+Exact NEW prototype manifest, unchanged from the approved reference:
 
 1. `plugins/foreman-line/internal-review-launch/package.json`
 2. `plugins/foreman-line/internal-review-launch/tsconfig.json`
@@ -39,50 +49,40 @@ Exact proposed construction manifest (NEW only):
 9. `plugins/foreman-line/internal-review-launch/tests/admission.test.ts`
 10. `plugins/foreman-line/internal-review-launch/tests/schema-parity.test.ts`
 
-Construct in a separately named branch/worktree at the ratified contract head; confirm Step 0 scope restatement and human disposition before code. No editing shared routing/dispatch/money/ledger/profile/config modules. No provider-port/worker/custody/live script implementation, receipt/capability minting, services or network. Read-only reuse of existing shared schema primitives only; missing dependency or required extra file is a stop, not an installation grant. Prove selected OAuth is HELD under missing permission/data/billable facts; a positive synthetic fixture is explicitly hypothetical and cannot become a trusted permit or runtime readiness claim.
+Exact NEW evidence records, unchanged:
 
-Proposed exact prototype bindings: branch `bootstrap/ir-p1-offline-01a12b4f`, worktree `D:/Repos/agent-skills-worktrees/ir-p1-offline-01a12b4f`, and the actual immutable IR-A01 proposal head explicitly identified by the owner's future ratification (resolve its published SHA, never a moving branch alias). The branch/worktree have not been created or reserved. In addition to the ten prototype files above, exact NEW completion records on that same prototype branch are:
+- `plugins/foreman-line/docs/goals/internal-frontier-review-admission/ir-p1-offline-construction-evidence.md`
+- `plugins/foreman-line/docs/goals/internal-frontier-review-admission/ir-p1-offline-construction-handoff.md`
 
-- `plugins/foreman-line/docs/goals/internal-frontier-review-admission/ir-p1-offline-construction-evidence.md` — actual scoped commands/results, counts, mutation checks and limitations, not receipts or independent verdicts.
-- `plugins/foreman-line/docs/goals/internal-frontier-review-admission/ir-p1-offline-construction-handoff.md` — immutable ending head, prototype-only claim, owner disposition still pending and next gates.
+Approved-by-reference prospective branch `bootstrap/ir-p1-offline-01a12b4f`, worktree `D:/Repos/agent-skills-worktrees/ir-p1-offline-01a12b4f`, start from actual revised IR-A01 ratification head after its explicit disposition. Not created in this revision. Step 0 restate-and-stop remains before code; real missing-path/contract flags stop. No wildcard outputs/ambient branch write. No shared routing/dispatch/money/profile/ledger edits; no provider-port/worker/custody/live-script implementation or executing auth/SDK import. Read-only reuse of existing schema primitives where already available; missing dependency/extra file stops, no install grant.
 
-Those two records are coordinator-owned evidence capture within the temporary construction exception, not new production source or reviewer authority. There is no wildcard evidence destination or separate ambient branch write. Owner adoption of IR-B01 must explicitly bind these proposed locations and the immutable authorization head. No prototype write or launch occurs until that exact decision and Step 0 disposition exist.
+Fixtures must distinguish accepted scoped Pro/data/accounting choices from unproved runtime permission/controls. Accepted policy cannot fail solely because it is not ZDR; out-of-scope client/restricted material cannot inherit the exception. Highest native reasoning requires exact explicit model mapping; default/unverified settings refuse. Hypothetical positive fixtures are never runtime permits/claims.
 
-### What IR-B01 explicitly does NOT waive
+## Controls NOT waived / external ordering
 
-- Provider application/automation permissions, no-training/retention/ZDR obligations, credential safety, quota/money limits, unknown-liability reconciliation, model/capability/thinking requirements or family independence.
-- W1 human approval, real registration, parcel promotion/normal dispatch or accepted release. The prototype is labeled unregistered/unaccepted experimental work; no fabricated tracker/approval/route receipt. Formal adoption must reconcile the real GitHub process when available.
-- Independent architecture/security review and exact-head green-chain requirements before acceptance/merge of implementing work. Local tests and owner prototype inspection do not replace those reviews.
-- Any IR-P2a/P2b/P3 file, G6 owner seat, completed-P0 review roster, other goal, historical HRO authority, global Pi/auth/model settings or cloud/Neon operation.
+- Provider terms/use permission, credential safety, scope/isolation/issuer/result integrity, native token/time/quota/dollar controls, unknown incremental liability, exact models/context/family independence. Native authentication is not a provider-terms waiver.
+- Real W1 approval/registration/promotion/dispatch and independent architecture/security acceptance. Prototype is unregistered/unaccepted experimental work, not a fabricated receipt. Local tests/human inspection are not independent frontier reviews.
+- IR-P2a/P2b/P3, G6, completed-P0 two-seat roster, other goals, old HRO authority, global auth/settings/model files, cloud/Neon operations.
 
-## External trust and operational bootstrap ordering
-
-| Gate | Responsible authority / required observable result | Current status |
+| Gate | Required external authority / evidence | Current state |
 |---|---|---|
-| B0 — contract disposition | Owner ratifies exact IR-A01 head; approved amendment lands separately from code under effective Git rules | Proposed, not granted |
-| B1 — offline prototype | Explicit IR-B01 owner exception with head/branch/worktree/evidence bindings; local no-send fixtures returned; owner labels disposition honestly | Proposed, no source constructed |
-| B2 — implementing boundaries | Separately reviewed scopes for broker/accounting/worker/custody/platform isolation; genuine provider permission/data/billing facts; trusted external issuer installation, never self-minted | Held, no construction grant |
-| B3 — synthetic proof | Separately approved PUBLIC synthetic packet/attempt/cost/time envelope and owned installation; actual identity/traffic/isolation/unknown-charge evidence | Held; not the internal OPMEM packet and not granted |
-| B4 — independent review | Required eligible independent frontier architecture/security reviews at exact implementation head; roster/spend and admission externally authorized | Held; the existing single review pair is not a two-seat roster |
-| B5 — ordinary internal use | All B0–B4 and internal account/data/money/custody gates pass; exact OPMEM review permit from trusted external owner-controlled authority | Held; USD 5 conditional review not activated |
+| B0 — revised IR-A01 | Explicit whole-contract exact-head ratification; companion document adoption separate from code | Pending; scoped questions 1–5 already disposed |
+| B1 — offline IR-B01 | Already-approved manifest/limits, B0 and Step 0 disposition; actual offline results returned honestly | Conditional approval, dormant; no code constructed |
+| B2 — native integration | Separately reviewed native Pi admission/isolation/accounting/custody scopes; genuine provider-use/capability/runtime evidence; no broker | Held; no implementing grant |
+| B3 — PUBLIC synthetic proof | Separate exact synthetic packet/attempt/time/money/native-control envelope and real identity/usage/isolation evidence | Held; no probe grant |
+| B4 — independent review | Eligible independent architecture/security reviewers, exact implementation head, externally admitted roster/spend | Held; initial pair is not two-seat roster |
+| B5 — ordinary INTERNAL review | B0–B4 and scoped account/data/native usage/custody gates; trusted external permit | Held; USD 5 conditional review not activated |
 
-If B4 has no existing independent admitted path, stop for an exact **bootstrap-review-use exception**, separate from IR-B01. That future decision must name the implementation/installation/issuer proof, genuinely permitted account/route, independent reviewer roster, immutable packet, attempts/time/money and custody, and restrict use to evaluating the launcher. A provisional route cannot certify itself or issue/approve its own exception. This draft does NOT grant that later exception or pretend normal B4 can be satisfied by an unaccepted self-launch. An externally trusted owner-approved boundary and proof are required; if they cannot be established, use a separately admitted review path or stay held.
+If B4 has no admitted independent path, stop for a separately exact bootstrap-review-use exception naming head/installation/issuer/native-path evidence, genuine provider permission, independent roster/packet/attempts/time/money/custody. This draft/IR-B01 does not grant that exception. The unaccepted launcher cannot approve its own construction/review or certify itself. No self-minted/digest-only authority.
 
-## Affected tracks / work items / scenarios
+## Affected tracks / scenarios / migration
 
-- Foreman review admission: IR-P0 contract draft and proposed IR-P1 offline prototype; IR-P2a broker/budget, IR-P2b isolation/custody and IR-P3 proof are held dependencies, not activated parcels.
-- OPMEM: only initial independent plan review is a future consumer. P0 remains draft; G6, later builders/two-review roster and P1–P10 are not covered.
-- GitHub migration #174: orthogonal planning may continue, but its review/registration/funding are not supplied by this OPMEM-only companion. #179 remains separate tracking, not a receipt.
-- Negative scenarios: OAuth without explicit application permission, training-opt-out mistaken for ZDR, API price used for subscription billing, human bootstrap used to waive provider terms, forged/replayed permits, unrestricted resource/tool injection, parent/subcap reset, silent auth/model/thinking fallback, fixtures called live proof, and self-accepting launcher.
+Only future OPMEM initial plan review consumes this companion. Migration #174 remains orthogonal and is not covered by its reviewer/funding/registration. #179 tracks this prerequisite, not a receipt. P0 original seven outputs/Stage A/queue/grants remain unchanged.
 
-## Required updates / migration / rollback
+Later scopes update schema/types/parity fixtures/negative scenarios together, pin native runtime/issuer/control boundaries, preserve old public-v1 refusal and historical receipt tests. Drafting creates no executing assets. Required negatives include native API/extra-use substitution, included-quota estimate called invoice, accepted data falsely refused for absent ZDR, out-of-scope data allowed, unsupported reasoning mislabeled highest, token/context/resource escape, parent-subcap reset, forged/replayed permits, uncertain send/result and self-accepting launcher.
 
-On accepted implementation scopes, update versioned schema/types/parity fixtures and tests together; pin ownership/issuer/runtime/resource/accounting mechanisms; preserve old public-v1 rejection tests and historical receipt verification. Drafting creates none of those executing assets. Each later shaped spec names exact files and required non-optional scenarios, no directory globs or implied shared edits.
+No automatic receipt/consumer migration, lane re-pin or global policy/auth change. Rollback revokes only companion permits/edit/version and preserves actual usage/liability/history; scoped data exception cannot leak into global defaults. Retain all unchanged OPMEM/migration decisions and primary-work priority.
 
-No existing consumer or receipt migrates automatically. Old CLI dispatch and public v1 are unchanged; no legacy YAML slot is filled or lane re-pinned. If the companion is withdrawn, revert only the accepted companion edit/version and revoke its permits, retaining actual evidence/usage liabilities. No history rewrite or restoration of already consumed budgets.
+## Return / next safe action
 
-## Owner disposition requested at return
-
-IR-P0 drafting is complete when this exact draft, unapplied patch and source/evidence checkpoint are returned. The current authorization does not require implementing anything or obtaining a human-only action before stopping.
-
-The next owner choice is whether to ratify IR-A01 as a fail-closed contract. IR-B01 is optional/separate, not recommended as a way to ignore the OAuth hold. For eventual operation, resolve applicable explicit permission and all required account controls for OAuth, or authorize a separately specified route/auth/data-policy amendment. Switching to API or native Claude Code is not implied and would still require fresh permission/data/budget/capability evidence. No re-ratification of migration defaults, OPMEM requirements, unchanged P0/Git grants or existing caps is requested.
+The revision pass ends by returning this exact updated contract/patch and decision mapping. One owner-only condition remains before OFFLINE construction: whole revised IR-A01 exact-head ratification. No repeat IR-B01 scope, Pro/settings, data exception, budget basis, native auth/no-broker or native-reasoning approval request. Provider-use/live-runtime validation remains a later operational gate, not a reason to reopen those disposed owner choices or require a new login/API key.

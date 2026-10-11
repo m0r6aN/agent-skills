@@ -1,7 +1,7 @@
 diff --git a/plugins/foreman-line/templates/pi-routing-directive.md b/plugins/foreman-line/templates/pi-routing-directive.md
 --- a/plugins/foreman-line/templates/pi-routing-directive.md
 +++ b/plugins/foreman-line/templates/pi-routing-directive.md
-@@ -24,19 +24,40 @@
+@@ -24,19 +24,42 @@
  declared in the approved route and recorded in the route receipt — never invented in a
  template, never silently substituted, never credential-bearing.
  
@@ -29,13 +29,15 @@ diff --git a/plugins/foreman-line/templates/pi-routing-directive.md b/plugins/fo
 +Pi SDK child instead of the CLI. No builder, G6, other goal/lane/provider or data
 +scope is covered; ordinary dispatch and every legacy/public-v1 refusal remain.
 +
-+The companion's trusted authority port and owned broker must verify its
-+single-use permit, exact model pair, account/application/data eligibility,
-+isolation, executed identity and aggregate accounting before any send.
-+The owner-selected subscription/OAuth route remains held while those facts are
-+unproved; native Claude Code permission is not permission for this Pi worker.
-+It cannot authorize or accept itself, silently switch auth/model/thinking,
-+load ambient credentials/resources, or reuse an old route receipt as a permit.
++The companion's trusted authority port and host-side admission gate must verify
++its single-use permit, exact model pair, native reasoning, scoped account/data
++policy, isolation, executed identity and incremental-charge accounting before
++invoking Pi's installed Anthropic provider/auth. Pro/OAuth is owner-attested:
++model improvement and paid extra usage off; NO separate broker or auth repair.
++The owner-accepted subscription policy is purpose-bound, NOT ZDR; prepaid quota
++is separate from incremental dollar caps. Provider-use/native-runtime evidence
++remains required. It cannot authorize or accept itself, silently switch auth,
++model or reasoning, load unrelated resources, or reuse an old receipt as a permit.
 +See `../docs/contracts/internal-review-launch-v1.md` and its explicit bootstrap
 +amendment. Publication, a human offline check or fixture output is not runtime
 +admission, an independent frontier review, or downstream execution authority.
