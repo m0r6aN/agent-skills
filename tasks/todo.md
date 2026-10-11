@@ -79,7 +79,7 @@ no file contents ever.
 
 ---
 
-## Task 4: Signal type, provider interface, `/api/signals` shell, parcel-state wrapper
+## Task 4: Signal type, provider interface, `/api/signals` shell, parcel-state wrapper ✅ (2026-10-11)
 
 **Description:** `signals.ts` — `Signal { id, class, severity, repo, subject,
 evidence[], detectedAt, actions[] }`, closed class vocabulary, provider
@@ -87,12 +87,12 @@ interface (pure derivation on scan), query endpoint. Wrap the existing FOC-P0
 parcel projection as the first provider.
 
 **Acceptance criteria:**
-- [ ] signal construction refuses empty evidence or unknown class
-- [ ] `GET /api/signals` filters by repo/class/severity
-- [ ] parcel-state provider reproduces current projection output as signals
+- [x] signal construction refuses empty evidence or unknown class
+- [x] `GET /api/signals` filters by repo/class/severity
+- [x] parcel-state provider reproduces current projection output as signals
 
 **Verification:**
-- [ ] Tests pass: `tests/signals.test.ts` (new)
+- [x] Tests pass: `tests/signals.test.ts` (new — 4/4)
 - [ ] Package sweep green
 
 **Dependencies:** Task 2

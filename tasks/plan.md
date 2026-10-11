@@ -53,10 +53,10 @@ UI slices also follow `frontend-ui-engineering`.
 ### Checkpoint: Foundation
 - [x] Full sweep green (`npm test`, `typecheck`, `lint`; root validators) — 269/269
 - [x] Manual: add + remove a real repo through the API (smoked 2026-10-11: real identity `m0r6aN/agent-skills`/`main`, scratch-repo add/remove, duplicate + primary-immutable refusals, browse refusals)
-- [ ] Review with human before proceeding
+- [x] Review with human before proceeding (2026-10-11, Foundation approved)
 
 ### Phase 2: Signals
-- [ ] Task 4: Signal type, provider interface, `/api/signals` shell, parcel-state wrapper
+- [x] Task 4: Signal type, provider interface, `/api/signals` shell, parcel-state wrapper
 - [ ] Task 5: release-hygiene provider (version drift, stale refs, unclaimed backlog)
 - [ ] Task 6: worktree-hygiene provider + lumber-jack evidence mapping
 

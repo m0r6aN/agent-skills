@@ -20,6 +20,7 @@ import { projectGoal } from './project.js'
 import { remediesFor } from './remedy.js'
 import { loadRoutingPolicy } from './routing.js'
 import { listGoalSlugs, scanGoal } from './scan.js'
+import { collectSignals, SIGNAL_CLASSES, SIGNAL_SEVERITIES } from './signals.js'
 import { goalStatus } from './status.js'
 import type { ChainSummary, GoalProjection } from './types.js'
 
@@ -257,6 +258,44 @@ export function handleApi(config: ConsoleConfig, request: ApiRequest, now: numbe
       ? body.argv.filter((entry): entry is string => typeof entry === 'string')
       : []
     return { status: 200, json: invokeFlow(config, { flow, argv }, now) }
+  }
+
+  // FCA-P3 unified attention model (control-center amendment): derived signal
+  // snapshots over every provider class. Read-only; filters are typed
+  // (`reason: unknown-class | unknown-severity`).
+  if (pathname === '/api/signals') {
+    if (method !== 'GET') return methodNotAllowed('GET')
+    const classFilter = query.get('class')
+    const severityFilter = query.get('severity')
+    const repoFilter = query.get('repo')
+    if (classFilter !== null && !(SIGNAL_CLASSES as readonly string[]).includes(classFilter)) {
+      return {
+        status: 400,
+        json: {
+          error: `unknown signal class ${JSON.stringify(classFilter)}`,
+          reason: 'unknown-class',
+        },
+      }
+    }
+    if (
+      severityFilter !== null &&
+      !(SIGNAL_SEVERITIES as readonly string[]).includes(severityFilter)
+    ) {
+      return {
+        status: 400,
+        json: {
+          error: `unknown signal severity ${JSON.stringify(severityFilter)}`,
+          reason: 'unknown-severity',
+        },
+      }
+    }
+    const signals = collectSignals(config, now).filter(
+      (signal) =>
+        (classFilter === null || signal.class === classFilter) &&
+        (severityFilter === null || signal.severity === severityFilter) &&
+        (repoFilter === null || signal.repo === repoFilter),
+    )
+    return { status: 200, json: { signals } }
   }
 
   // FCA-P2 fleet registry (control-center amendment): declared multi-repo
