@@ -2,7 +2,7 @@
 
 **Goal slug:** `operator-developer-cortex-memory`  
 **Recorded:** 2026-10-10; ownership/resume checkpoint updated 2026-10-11  
-**State:** `PRE-P0 — COORDINATOR 01a12b4f; PRIOR SCOPE/STAGE A/GRANTS/LIMITS PRESERVED; #178 OBSERVED MERGED; MIGRATION DEFAULTS RATIFIED; #179 IR-P0 DRAFTING AUTHORIZED AND EXACT CONTRACT/BOOTSTRAP DRAFTS PRODUCED; OWNER CHOSE SUBSCRIPTION/OAUTH; APPLICATION/DATA/BILLING ADMISSION HELD; NO IMPLEMENTATION/WORKER/WAKEUP`  
+**State:** `PRE-P0 — COORDINATOR 01a12b4f; PRIOR OPMEM/STAGE A/GRANTS/CAPS PRESERVED; #181 OBSERVED MERGED; PRO/NATIVE PI AUTH/SCOPED SUBSCRIPTION DATA/INCREMENTAL CHARGES/HIGHEST VERIFIED NATIVE REASONING DISPOSED; REVISED IR-A01 RETURNED FOR WHOLE-CONTRACT RATIFICATION; IR-B01 SCOPE CONDITIONALLY APPROVED, DORMANT UNTIL THAT RATIFICATION; NO CODE/PROVIDER CALL/WORKER/WAKEUP`  
 **Scheduling:** no background loop or wakeup armed; stop at human authorization gates
 
 ## COORDINATOR OWNERSHIP — read before any dispatch
@@ -16,9 +16,9 @@
 | Boundary | Recorded stopped pre-P0 planning boundary, before any OPMEM builder/reviewer dispatch; scoped local worktree/goal records show no OPMEM worker, external session liveness remains unconfirmed |
 | Appointment scope | Carry forward sole OPMEM coordination and existing D1–D18/G5–G12 scope, grants, USD 25 P0 cap INCLUDING USD 5 first-review subcap, and limits. Reuse original Stage A. Owner additionally directs separate GitHub migration work and allows internal evidence in the now-private repository. No parked-HRO restart, automatic frozen-contract amendment, route waiver or operational cloud write. See items 8–9 and latest resume record. |
 | Current session provenance | `PI_PROVIDER=openai`, `PI_MODEL=gpt-6.1-sol`, `PI_SESSION_ID=01a12b4f-c8e9-70a4-811b-0cd7eb889457`; observed metadata, not a Foreman route receipt |
-| Coordinator publication workspace | `D:/Repos/agent-skills-worktrees/ir-p0-drafting-20261011-01a12b4f`, branch `coord/ir-p0-draft-20261011-01a12b4f`, base main `77318a0921b68f6199d9b4db7277c0a53976e2c7`; non-operative documents/proposed patch only. Earlier coordination worktree/commits preserved; no P0 builder workspace. |
+| Coordinator publication workspace | `D:/Repos/agent-skills-worktrees/ir-p0-drafting-20261011-01a12b4f`, branch `coord/ir-native-pi-amendment-20261011-01a12b4f`, publication base main `7abff7772e9abfd43ae68d94cb640edad84731f5`; reviewed admission input `846179a7` unchanged through that base; revised non-operative documents/proposed patch only. Earlier coordination worktree/commits preserved; no P0 builder workspace. |
 | Transfer rule | One goal, one coordinator. Transfer only at parcel boundaries by explicit owner direction and update to this ownership block |
-| Last state change | 2026-10-11 — latest owner authorizes IR-P0 drafting only and selects Anthropic subscription/OAuth. Exact contract/bootstrap proposal and unapplied directive patch produced; public first-party evidence does not establish this Pi application's permission/data/billing eligibility. No exception adopted, implementation or launch; all prior scopes/limits preserved and HRO remains parked. |
+| Last state change | 2026-10-11 — owner answers all six native-Pi questions: Pro/improvement off/paid extra off, narrow own-internal-data exception (not ZDR), incremental cap basis, no separate broker, highest verified native reasoning; IR-B01 scope approved conditional on whole revised-contract ratification first. Exact revision returned, no construction/runtime launched; no archived HRO restart. |
 
 An incoming session is not automatically the owner. If it is not the session above, stop and ask the owner for a boundary transfer. If another live owner is discovered, stop and reconcile; directory absence is a scoped local observation, not proof about every external session.
 
@@ -26,7 +26,7 @@ This directive is generated early solely to persist the explicitly authorized pr
 
 ## Read on resume
 
-1. `ir-p0-draft-checkpoint-2026-10-11.md` and `../internal-frontier-review-admission/ir-p0-drafting-handoff-2026-10-11.md` — latest draft grant/output, OAuth choice and remaining permission/data/billing gates. Earlier ratification/publication/resume records preserve history; #178 is now observed merged, not current draft publication.
+1. `native-pi-revision-checkpoint-2026-10-11.md` and `../internal-frontier-review-admission/native-pi-revision-handoff-2026-10-11.md` — six disposed choices, exact native revision and ONE pending whole-contract ratification condition. IR-B01 scope is already approved conditionally, not open again. Earlier checkpoints are history; #181 is observed merged, not current publication.
 2. This ownership block/current state and `charter.md` — ratified scope/queue, source references, approval ledger, exit criteria.
 3. `owner-rulings-g5-g12-2026-10-11.md` — latest verbatim authority; `source-publication-2026-10-11.md` — real GitHub/pin/preservation evidence; `bridge-owner-handoff-2026-10-11.md` — prepared, not dispatched. `owner-decisions-2026-10-11.md` supplies decisions 1–4 and the conditional USD 5 envelope. `unblock-proposal-2026-10-11.md` and preflight are historical proposals/evidence, not current ungranted-authority sources or route receipts.
 4. The explicit original P0 spec and Stage A handoff paths named in the charter.
@@ -80,6 +80,18 @@ The presented approvals bound that response as follows:
 
     Mapping: `../internal-frontier-review-admission/owner-ir-p0-drafting-2026-10-11.md`. Produce non-operative contract, proposed scoped SDK/bootstrap amendment and unapplied exact directive patch. Auth is owner-selected OAuth; exact plan/permission/data/billing controls remain unknown. No API switch, provider request, credential/config access, implementing grant, human construction exception or activation. Exact drafts are returned, not ratified; legacy/public-v1 guards and live directive remain unchanged.
 
+12. **Native Pi/Pro/scoped policy and conditional IR-B01 decisions, 2026-10-11 — verbatim:**
+
+    > 1. Pro. model improvement off and paid extra usage off for this
+    >  work
+    > 2. Ratify as recommended.
+    > 3. yes, as recommended.
+    > 4. yes, no separate broker.
+    > 5. yes, as recommended.
+    > 6. yes
+
+    Exact questions/mapping: `../internal-frontier-review-admission/owner-native-pi-decisions-2026-10-11.md`. Supersedes only corresponding old assumptions: Pro/native already-authenticated Pi owner facts; initial own-internal credential-free review may use actual subscription retention/training conditions (NOT ZDR; exclude customer/client/restricted/regulated); dollar caps mean incremental charges, subscription fee excluded/quota separate; Pi native provider/auth ONLY/no broker; highest verified native reasoning with exact mapping within existing bounds. IR-B01 ten-file/two-evidence, 90-minute/max-two-pass offline scope is approved CONDITIONAL on whole revised IR-A01 explicitly ratified FIRST. That condition is not yet met; no implementation/provider call. No repeated scope/setting/policy approval request; return only exact revised-contract ratification.
+
 **P0 Gate 2 consent and Git/Gate 3 delegation are granted, not executed or independently verified.** Initial plan review, lint, exact spec/process reconciliation, actual human W1 approval, supported GitHub registration and accepted route/envelope/custody/accounting remain prerequisites. No fabricated Jira receipt or frozen-contract bypass; #174 is not registration. No broader P1–P10 build grant, route repair, production/cloud/Neon operation, credential change, protection weakening or unaccounted inference. G6's selected first-party model is recognized as a model spelling but absent from inspected frontier bindings; no spawned session or namespace substitution is claimed. Merge still requires a green exact-head verification chain and effective repository/identity constraints, but not another owner consent request.
 
 ## Queue — strict default order
@@ -104,7 +116,7 @@ The presented approvals bound that response as follows:
 2. Persist existing ratification/appointment — no new locked decisions, unsupported claims, or approval receipts.
 3. Read the current route policy, resolver/launch boundary, declared model-family/data evidence, and upstream ownership records. Separate static policy facts from current host availability and model-quality claims. Inspect no secret-bearing host files.
 4. Preserve the historical preflight and prepared review brief; update the human relay packet with item 7. No synthetic evidence, model/provider aliases, same-family substitution or direct-CLI/default-route workaround. Bound prerequisite planning to the upstream owner if the disposition is held.
-5. G5–G12, latest resume and migration defaults 1–3 are disposed: preserve prior private inputs/original Stage A; coordinate separate migration #174 without hiding it in P0. NEW bounded admission task #179 is assigned here and its initial static proposal is produced. IR-P0 drafting-only grant is now complete: exact non-operative contract/bootstrap amendment and unapplied patch returned. Auth choice is subscription/OAuth; application permission, account-specific data/billing controls and eventual contract/exception disposition remain held. No permission is inferred from native Claude Code support; implementing and paid phases remain separate. Hold G6/review/P0 dispatch on actual admission and GitHub reconciliation. No parked-HRO restart, routing repair or P0 deliverable under a planning label. Do not re-request unchanged approvals; cloud/machine readiness remains unknown.
+5. G5–G12, latest resume and migration defaults 1–3 are disposed: preserve prior private inputs/original Stage A; coordinate separate migration #174 without hiding it in P0. NEW bounded admission task #179 is assigned here and its initial static proposal is produced. Latest native-Pi decisions are now disposed and exact revised IR-A01/patch returned. Pro/settings/auth readiness are owner-attested; no new login/API key or broker. Data/accounting/native-reasoning policy choices are approved, not reopened. ONE owner condition remains before the already conditionally approved offline IR-B01: whole revised-contract exact-head ratification first. Actual provider-use/native-runtime/live-proof and broader implementing gates still bind operation. Hold G6/review/P0 dispatch on actual admission and GitHub reconciliation. No parked-HRO restart, routing repair or P0 deliverable under a planning label. Do not re-request unchanged approvals; cloud/machine readiness remains unknown.
 6. Once the exact conditionally approved envelope's eligibility/launch/isolation/custody/budget conditions are evidenced and admitted, perform fresh independent plan review. A different route needs owner approval. Triage into fix / accept-as-documented / informational and reopen only affected locked decisions.
 7. Coordinator lint follows independent plan review. Verify factual spec premises against approved source evidence; a pass must never be inferred from Stage A or the coordinator's own authored charter. Record blockers rather than run a self-review in place of the independent reviewer.
 8. Resolve the GitHub-only process/frozen-contract contradiction (#174), then applicable W1-P2/P3/P4 and promotion/dispatch prerequisites under P0 authority. W1-P3 still needs live human TTY and typed confirmation; no scripted approval. GitHub is the selected tracker; its supported registration contract/identity is not yet implemented or proved.

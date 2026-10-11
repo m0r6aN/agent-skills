@@ -2,7 +2,7 @@
 
 **Recorded:** 2026-10-11
 **Mode:** public first-party documents and owner direction only; no authenticated account inspection, credential resolution, provider-model request or independent legal/security audit
-**Owner-selected auth:** Anthropic subscription/OAuth. Exact plan/organization/custom terms are unknown; do not assume Pro/Max or commercial API use.
+**Historical owner facts at initial collection:** Anthropic subscription/OAuth, exact plan then unknown. Later owner answers establish Pro / improvement OFF / paid extra usage OFF / already authenticated in native Pi, OWNER-ATTESTED, not independently inspected. Exact decision mapping: `owner-native-pi-decisions-2026-10-11.md`. Public passages below remain source evidence; former unknown-plan/absolute-ZDR assumptions are superseded by the recorded narrow policy decision, not rewritten into privacy or billing guarantees.
 
 ## Evidence and exact passage locators
 
@@ -38,9 +38,11 @@ Source: [Use Claude Code with your Pro or Max plan](https://support.claude.com/e
 
 Published plan limits describe Claude/Claude Code shared allocation, not a verified bound for this Pi installation or the owner's additional-usage configuration. No subscription-dollar-zero inference, API list-price substitution, quota reset permission, billing/settings alteration or automatic API fallback is made. Explicit source-backed marginal-charge/fee bounds and account-mode evidence are needed before monetary admission; quota and money are distinct.
 
-## Disposition
+## Historical disposition — before the latest six owner decisions
 
-**HOLD for the proposed internal Pi review route.** Auth mode is now owner-selected, while application permission, required data controls, account-specific billable bound and executed runtime/model capability are still unestablished. Current first-party sources do not establish that ordinary subscription OAuth admits this proposed Pi companion.
+The statements below preserve the initial evidence assessment; the current scope/Pro facts, accepted subscription-data exception, incremental-charge basis and native no-broker design are governed by the latest decision record and revised IR-A01. Whole-contract ratification/native runtime/provider-use evidence remain outstanding; authentication setup/plan/privacy-policy choice are no longer unanswered owner questions.
+
+**Historical HOLD for the proposed internal Pi review route.** Auth mode is now owner-selected, while application permission, required data controls, account-specific billable bound and executed runtime/model capability are still unestablished. Current first-party sources do not establish that ordinary subscription OAuth admits this proposed Pi companion.
 
 This is an evidence-based admission hold, not a claim about the owner's account violating terms, nor a formal legal opinion. No plan settings/private agreements were inspected. The current draft must reject before credentials/network when these facts are missing. A human bootstrap exception cannot waive provider permissions, change internal data to public or assert subscription usage is free.
 
