@@ -29,6 +29,7 @@ function git(args: readonly string[]): (root: string) => string {
       // Trailing-whitespace strip only: a global trim would eat the leading
       // space of `git status --porcelain`'s first line (its two-column code).
       return execFileSync('git', ['-C', root, ...args], {
+        cwd: root,
         encoding: 'utf8',
         stdio: ['ignore', 'pipe', 'ignore'],
       }).replace(/\s+$/, '')

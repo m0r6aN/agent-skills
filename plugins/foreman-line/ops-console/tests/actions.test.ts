@@ -7,7 +7,6 @@ import {
   lookupAction,
   validateActionSpec,
 } from '../src/actions.js'
-import type { ConsoleConfig } from '../src/config.js'
 import { listAuditEntries } from '../src/invoke.js'
 import { type Scenario, withTempRepo } from './support/materialize.js'
 

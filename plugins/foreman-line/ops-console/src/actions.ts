@@ -1,9 +1,5 @@
 import type { ConsoleConfig } from './config.js'
-import {
-  type ConfirmationRefusalError,
-  destructiveConfirmationToken,
-  verifyDestructiveConfirmation,
-} from './guards.js'
+import { type ConfirmationRefusalError, verifyDestructiveConfirmation } from './guards.js'
 import { listAuditEntries, recordAuditEntry } from './invoke.js'
 import type { SignalClass, SignalVerb } from './signals.js'
 

@@ -265,23 +265,27 @@ export const defaultWorktreeRunner: WorktreeRunner = {
     execFileSync(
       'git',
       ['-C', repoRoot, 'worktree', 'add', '-b', `spawn/${basename(worktreePath)}`, worktreePath],
-      { stdio: ['ignore', 'pipe', 'ignore'] },
+      // A2.9: explicit root anchor (D19 class-4 non-instance).
+      { cwd: repoRoot, stdio: ['ignore', 'pipe', 'ignore'] },
     )
   },
 }
 
-export const defaultTmuxRunner: TmuxRunner = {
-  available: () => {
-    try {
-      execFileSync('tmux', ['-V'], { stdio: ['ignore', 'pipe', 'ignore'] })
-      return true
-    } catch {
-      return false
-    }
-  },
-  run: (args) => {
-    execFileSync('tmux', [...args], { stdio: ['ignore', 'pipe', 'ignore'] })
-  },
+/** tmux runner anchored to an explicit root (A2.9; never inherited cwd). */
+export function tmuxRunnerFor(repoRoot: string): TmuxRunner {
+  return {
+    available: () => {
+      try {
+        execFileSync('tmux', ['-V'], { cwd: repoRoot, stdio: ['ignore', 'pipe', 'ignore'] })
+        return true
+      } catch {
+        return false
+      }
+    },
+    run: (args) => {
+      execFileSync('tmux', [...args], { cwd: repoRoot, stdio: ['ignore', 'pipe', 'ignore'] })
+    },
+  }
 }
 
 export interface LaunchResult {
@@ -303,7 +307,7 @@ export function launchSpawnPlan(
   now: number,
   deps: { tmux?: TmuxRunner; worktrees?: WorktreeRunner } = {},
 ): LaunchResult {
-  const runner = deps.tmux ?? defaultTmuxRunner
+  const runner = deps.tmux ?? tmuxRunnerFor(config.repoRoot)
   const worktrees = deps.worktrees ?? defaultWorktreeRunner
   if (!runner.available()) {
     throw new SpawnRefusalError(

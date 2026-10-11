@@ -68,6 +68,7 @@ export const defaultFleetProbe: FleetProbe = {
   isGitWorkTree: (root) => existsSync(join(root, '.git')),
   git: (root, args) =>
     execFileSync('git', ['-C', root, ...args], {
+      cwd: root,
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'ignore'],
     }).trim(),
