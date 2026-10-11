@@ -1,6 +1,13 @@
 import type { ConsoleConfig } from './config.js'
+import {
+  type ConfirmationRefusalError,
+  destructiveConfirmationToken,
+  verifyDestructiveConfirmation,
+} from './guards.js'
 import { listAuditEntries, recordAuditEntry } from './invoke.js'
 import type { SignalClass, SignalVerb } from './signals.js'
+
+export { destructiveConfirmationToken } from './guards.js'
 
 /**
  * FCA-P4 action registry: the closed (class × verb) matrix mapping signals to
@@ -149,6 +156,8 @@ export interface ActionRequest {
   readonly subject: string
   /** Widens the registry default; merge can never flip to true here (Stage F). */
   readonly autonomy?: Partial<AutonomyEnvelope>
+  /** Task 11: typed intent for destructive verbs (`confirm delete <subject>`). */
+  readonly confirmation?: string | null
 }
 
 export interface ActionAttempt {
@@ -214,18 +223,43 @@ export function dispatchAction(
   } else {
     validateActionSpec(spec)
     const envelope: AutonomyEnvelope = { ...spec.autonomy, ...(request.autonomy ?? {}) }
-    const attempt = runner(spec, request, envelope)
-    outcome = {
-      id,
-      verb: request.verb,
-      signalClass: request.signalClass,
-      subject: request.subject,
-      action: attempt.action,
-      invocation: spec.invocation,
-      command: attempt.command,
-      reason: null,
-      autonomy: envelope,
-      spawnId: attempt.spawnId ?? null,
+    // Task 11: destructive verbs require typed intent bound to this subject.
+    let guardRefusal: string | null = null
+    if (spec.destructive) {
+      try {
+        verifyDestructiveConfirmation(request.subject, request.confirmation ?? null)
+      } catch (err) {
+        const refusal = err as ConfirmationRefusalError
+        guardRefusal = `${refusal.reason}: ${refusal.message}`
+      }
+    }
+    if (guardRefusal !== null) {
+      outcome = {
+        id,
+        verb: request.verb,
+        signalClass: request.signalClass,
+        subject: request.subject,
+        action: 'refused',
+        invocation: null,
+        command: '',
+        reason: guardRefusal,
+        autonomy: null,
+        spawnId: null,
+      }
+    } else {
+      const attempt = runner(spec, request, envelope)
+      outcome = {
+        id,
+        verb: request.verb,
+        signalClass: request.signalClass,
+        subject: request.subject,
+        action: attempt.action,
+        invocation: spec.invocation,
+        command: attempt.command,
+        reason: null,
+        autonomy: envelope,
+        spawnId: attempt.spawnId ?? null,
+      }
     }
   }
 
