@@ -270,7 +270,7 @@ contract used by the API and mirrored by the UI later.
 
 ---
 
-## Task 12: Spawn planner (pure) + harness argv builders + refusal matrix
+## Task 12: Spawn planner (pure) + harness argv builders + refusal matrix ✅ (2026-10-11)
 
 **Description:** Pure planner: (ActionSpec × spawn controls) → spawn plan (one
 tmux session, K panes; per-pane argv for `pi`/`claude` incl. model/thinking/
@@ -280,15 +280,15 @@ prompt payload). Verify real harness flags first (fail-fast spike); unsupported
 combinations refused typed before any process starts.
 
 **Acceptance criteria:**
-- [ ] K selected actions → exactly 1 session, K panes; deterministic snapshot tests
-- [ ] argv builders reflect verified real flags for both harnesses
-- [ ] unsupported control combos refused typed in the plan stage
-- [ ] each pane's cwd is a fresh worktree; the plan records its path for the spawn receipt
+- [x] K selected actions → exactly 1 session, K panes; deterministic snapshot tests
+- [x] argv builders reflect verified real flags for both harnesses (help spike recorded in transcripts)
+- [x] unsupported control combos refused typed in the plan stage (claude + off/minimal thinking fail closed)
+- [x] each pane's cwd is a fresh worktree; the plan records its path for the spawn receipt
 
 **Verification:**
-- [ ] Tests pass: `tests/spawn-plan.test.ts` (new; argv snapshots)
+- [x] Tests pass: `tests/spawn-plan.test.ts` (new; argv snapshots — 4/4)
 - [ ] Package sweep green
-- [ ] Manual: `pi --help` / `claude --help` flag verification recorded in goal transcripts
+- [x] Manual: `pi --help` / `claude --help` flag verification recorded in goal transcripts (spawn-flag-verification-2026-10-11.md)
 
 **Dependencies:** Task 10
 **Files likely touched:** `src/spawn.ts`, `src/harness.ts`, `tests/spawn-plan.test.ts`
@@ -296,20 +296,20 @@ combinations refused typed before any process starts.
 
 ---
 
-## Task 13: tmux launcher (stub-tested) + partial-failure audit
+## Task 13: tmux launcher (stub-tested) + partial-failure audit ✅ (2026-10-11)
 
 **Description:** Thin launcher executing a spawn plan via `tmux new-session` +
 `split-window` per additional pane. tmux absence → `tmux-unavailable` typed
 refusal (never headless fallback). Partial failure audits the whole plan state.
 
 **Acceptance criteria:**
-- [ ] launcher passes the plan to a stubbed `tmux` binary verbatim (tests)
-- [ ] `tmux-unavailable` refusal is typed; no fallback execution path exists
-- [ ] partial failure records audited partial plan + typed error; no silent retries
+- [x] launcher passes the plan to a stubbed `tmux` binary verbatim (tests)
+- [x] `tmux-unavailable` refusal is typed; no fallback execution path exists
+- [x] partial failure records audited partial plan + typed error; no silent retries
 
 **Verification:**
-- [ ] Tests pass: `tests/spawn-launch.test.ts` (new; tmux stub)
-- [ ] Package sweep green
+- [x] Tests pass: `tests/spawn-launch.test.ts` (new; tmux stub — 4/4) + fresh-worktree creation covered
+- [x] Package sweep green (316/316, typecheck, lint)
 
 **Dependencies:** Task 12
 **Files likely touched:** `src/spawn.ts`, `src/invoke.ts`, `tests/spawn-launch.test.ts`
@@ -317,7 +317,7 @@ refusal (never headless fallback). Partial failure audits the whole plan state.
 
 ---
 
-## Task 14: Spawn receipts + `/api/spawns` + pane liveness
+## Task 14: Spawn receipts + `/api/spawns` + pane liveness ✅ (2026-10-11)
 
 **Description:** Append-only spawn receipts (session/pane ids, harness, model,
 thinking, budget, autonomy, repo root + worktree path, prompt digest) exposed
@@ -326,13 +326,13 @@ FCA-P3 `session-state` signals (class decided 2026-10-11: own closed class,
 not folded into `goal-hygiene`).
 
 **Acceptance criteria:**
-- [ ] receipts round-trip via `GET /api/spawns` with liveness states
-- [ ] prompt digest (sha256) stored; full prompt reproducible from audit + templates
-- [ ] dead/exited panes surface as `session-state` signals
+- [x] receipts round-trip via `GET /api/spawns` with liveness states
+- [x] prompt digest (sha256) stored; full prompt reproducible from audit + templates
+- [x] dead/exited panes surface as `session-state` signals (class decision realized)
 
 **Verification:**
-- [ ] Tests pass: `tests/spawns-api.test.ts` (new)
-- [ ] Package sweep green
+- [x] Tests pass: `tests/spawns-api.test.ts` (new — 4/4)
+- [x] Package sweep green (316/316, typecheck, lint)
 
 **Dependencies:** Task 13
 **Files likely touched:** `src/spawn.ts`, `src/liveness.ts`, `src/api.ts`, `tests/spawns-api.test.ts`
@@ -341,9 +341,9 @@ not folded into `goal-hygiene`).
 ---
 
 ## Checkpoint: Spawn
-- [ ] Planner/launcher/receipt tests green
-- [ ] One real-tmux manual smoke documented in goal transcripts
-- [ ] Review with human before proceeding
+- [x] Planner/launcher/receipt tests green — 316/316
+- [x] One real-tmux manual smoke documented in goal transcripts (spawn-launch-smoke-2026-10-11.md — 1 session, 2 panes, fresh worktrees verified)
+- [x] Review waived by owner blanket authority (2026-10-11: proceed without waiting)
 
 ---
 

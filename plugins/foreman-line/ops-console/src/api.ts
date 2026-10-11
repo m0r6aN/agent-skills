@@ -22,6 +22,8 @@ import { remediesFor } from './remedy.js'
 import { loadRoutingPolicy } from './routing.js'
 import { listGoalSlugs, scanGoal } from './scan.js'
 import { collectSignals, SIGNAL_CLASSES, SIGNAL_SEVERITIES } from './signals.js'
+import { defaultSessionProbe } from './signals-session.js'
+import { listSpawnReceipts } from './spawn.js'
 import { goalStatus } from './status.js'
 import type { ChainSummary, GoalProjection } from './types.js'
 
@@ -342,6 +344,22 @@ export function handleApi(config: ConsoleConfig, request: ApiRequest, now: numbe
       return { status: 200, json: browseDirectory(path) }
     } catch (err) {
       return refusalResult(err)
+    }
+  }
+
+  // FCA-P5 spawn receipts (control-center amendment): append-only receipt
+  // list with derived pane liveness. Read-only route; the store is written by
+  // the launcher only.
+  if (pathname === '/api/spawns') {
+    if (method !== 'GET') return methodNotAllowed('GET')
+    return {
+      status: 200,
+      json: {
+        spawns: listSpawnReceipts(config.stateDir).map((receipt) => ({
+          ...receipt,
+          liveness: defaultSessionProbe.sessionAlive(receipt.sessionName) ? 'alive' : 'exited',
+        })),
+      },
     }
   }
 
