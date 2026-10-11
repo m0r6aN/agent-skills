@@ -154,7 +154,7 @@ test('D2 negative control: the full API surface leaves goal/receipt/spec trees b
   })
 })
 
-test('D2 structural guard: only notifications.ts, invoke.ts, and fleet.ts may call fs write APIs', () => {
+test('D2 structural guard: only notifications.ts, invoke.ts, fleet.ts, and spawn.ts may call fs write APIs', () => {
   const srcDir = fileURLToPath(new URL('../src/', import.meta.url))
   const offenders: string[] = []
   for (const name of readdirSync(srcDir)) {
@@ -163,12 +163,17 @@ test('D2 structural guard: only notifications.ts, invoke.ts, and fleet.ts may ca
     if (
       /writeFileSync|appendFileSync|mkdirSync|rmSync|unlinkSync|writeFile\(|appendFile\(/.test(text)
     ) {
-      if (name !== 'notifications.ts' && name !== 'invoke.ts' && name !== 'fleet.ts') {
+      if (
+        name !== 'notifications.ts' &&
+        name !== 'invoke.ts' &&
+        name !== 'fleet.ts' &&
+        name !== 'spawn.ts'
+      ) {
         offenders.push(name)
       }
     }
   }
-  assert.deepEqual(offenders, [], 'no module outside the three state writers touches fs write APIs')
+  assert.deepEqual(offenders, [], 'no module outside the four state writers touches fs write APIs')
 })
 
 test('D2 write guard: state writes are confined to the named state files', () => {
@@ -182,6 +187,10 @@ test('D2 write guard: state writes are confined to the named state files', () =>
       join(config.stateDir, 'invocation-audit.json'),
     )
     assert.equal(stateFilePath(config.stateDir, 'fleet.json'), join(config.stateDir, 'fleet.json'))
+    assert.equal(
+      stateFilePath(config.stateDir, 'spawns.json'),
+      join(config.stateDir, 'spawns.json'),
+    )
     assert.throws(
       () => stateFilePath(config.stateDir, '../../escape.json' as StateFile),
       /state write refused/,

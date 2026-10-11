@@ -79,8 +79,8 @@ UI slices also follow `frontend-ui-engineering`.
 
 ### Phase 4: Spawn
 - [x] Task 12: Spawn planner (pure) + harness argv builders + refusal matrix
-- [ ] Task 13: tmux launcher (stub-tested) + partial-failure audit
-- [ ] Task 14: Spawn receipts + `/api/spawns` + pane liveness
+- [x] Task 13: tmux launcher (stub-tested) + partial-failure audit
+- [x] Task 14: Spawn receipts + `/api/spawns` + pane liveness
 
 ### Checkpoint: Spawn
 - [ ] Planner/launcher tests green; one documented real-tmux manual smoke
