@@ -2,7 +2,8 @@
 
 **Session:** Pi `01a12b4f-c8e9-70a4-811b-0cd7eb889457`  
 **Accountable owner:** Clinton Morgan  
-**State:** administrative resume and separate migration proposal prepared; implementation/worker dispatch NOT started  
+**State:** migration defaults ratified; NEW bounded admission task #179 assigned here, initial diagnosis/exact proposal produced; implementation/worker dispatch NOT started
+**Latest checkpoint:** `ratification-and-admission-checkpoint-2026-10-11.md` supersedes historical next-decision requests below  
 **Ownership:** this session remains sole OPMEM coordinator while waiting at the pre-P0 boundary; no background wakeup or worker
 
 ## Starting state
@@ -17,7 +18,7 @@
 - Branch: `coord/opmem-resume-20261011-01a12b4f`.
 - Exact base: remote main `97effb4eb4719b18a6ba78ad9962c78929d46f97`, fetched without updating/resetting original main or its index.
 - Only OPMEM goal records, the byte-identical reused P0 draft/shaping result, and the separate migration's planning inventory/tool/proposal are publication candidates.
-- No source/config/test/receipt changes, application deployments, remote issues created/deleted, model calls or direct worker launches.
+- No source/config/test/receipt changes, application deployments, model calls or direct worker launches. Initial publication created no new issue; the later bounded assignment created/read back plain tracking issue #179, not a registration receipt.
 - Commit/head/PR publication is reported in a separate publication checkpoint after actual readback; this handoff does not fabricate a self-referential commit identifier or a route/approval/registration receipt.
 
 ## Changes
@@ -47,13 +48,11 @@
 - No package-wide implementation suite, independent plan review, coordinator lint, human W1 approval, real GitHub registrar, provider/billing reconciliation or live admission proof is claimed.
 - Inventory classifications are heuristic discovery. Newly committed records and raw historical locators may themselves need disposition in the final cleanup. Unknown coverage is not a passing release gate.
 
-## Decisions needed / next safe action
+## Latest disposition / next safe action
 
-1. Dispose the migration proposal's issue-identity/stable-filename, hierarchy/queue and historical-proof choices. Recommended defaults are explicit in the separate package; approve only those choices, not an unrestricted mutation manifest.
-2. Identify a confirmed review-admission successor, or explicitly appoint a new bounded owner for the smallest internal-frontier review launch gap. The old HRO coordinator is archived; relay consent continues but has no live recipient yet.
-3. Before paid migration workers or a real sandbox batch, approve their concrete route/budget/tool/write envelope. OPMEM's USD 25 cap including USD 5 first-review subcap is retained, not silently expanded or transferred to the separate task.
+Owner response `1. Ratify all 3 defaults. 2. Assign the bounded prerequisite as recommended.` ratifies the three defaults and assigns this coordinator the NEW diagnosis-only admission prerequisite. Initial report is produced under #179 at `../internal-frontier-review-admission/diagnosis-and-change-proposal.md`. The old HRO task remains archived; this is not its restart or a source-repair grant.
 
-Once these conditions are satisfied, shape exact migration parcels/amendments, obtain independent plan review and execute under supported routes; then unblock OPMEM-P0. Continue orthogonal bounded preparation rather than restart an open-ended routing program.
+Next obtain actual non-secret first-party auth/account-data-policy facts and disposition of proposed IR-P0 companion/SDK/bootstrap contract only. Exact migration manifests, implementing phases, independent reviews and paid/live-test envelopes remain separately gated. OPMEM's USD 25 cap including USD 5 conditional first-review subcap is retained and unactivated, not expanded or transferred. Read the latest checkpoint for precise boundaries; do not re-request defaults/appointment/P0/Git consent. No background loop is armed.
 
 ## Do not touch
 

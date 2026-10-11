@@ -1,7 +1,7 @@
 # Verified coordination publication / stopped planning checkpoint — 2026-10-11
 
 **Sole coordinator:** Pi `01a12b4f-c8e9-70a4-811b-0cd7eb889457`  
-**State:** resumed coordination; proposal published; awaiting specific contract dispositions and a confirmed/new bounded internal-review admission owner  
+**State:** historical initial publication checkpoint; later owner ratified defaults 1–3 and assigned NEW bounded admission task #179 here. Initial diagnosis/proposal produced; latest state is `ratification-and-admission-checkpoint-2026-10-11.md`.  
 **Scheduling:** no background worker, polling or wakeup armed; retain ownership while stopped
 
 ## Actual publication
@@ -24,7 +24,9 @@ GitHub's first post-PR readback showed the Foreman gate and command-parity check
 
 Native push also reported 142 default-branch dependency alerts (2 critical, 90 high, 48 moderate, 2 low). This is a GitHub advisory count, not independently validated technical findings or proof this documentation branch introduced vulnerabilities. No dependency changes were made. Carry security-review evidence into the appropriate release gates; do not silently expand this resume into unrelated dependency remediation.
 
-## Exact next decisions
+## Historical next decisions — items 1–2 now disposed
+
+The later owner response `1. Ratify all 3 defaults. 2. Assign the bounded prerequisite as recommended.` ratifies the defaults and assigns this coordinator the NEW diagnosis-only admission task, tracked by #179. Its initial report is produced. The list below preserves the original ask, not repeat approval requirements. Current next facts/contract disposition are in `ratification-and-admission-checkpoint-2026-10-11.md`.
 
 1. Approve or revise the three defaults in `../foreman-github-tracking-migration/scope-proposal.md`: repository-qualified issue refs with stable parcel filenames/structural receipt compatibility; parent-plus-parcel issue hierarchy with pinned queue labels; immutable historical proof preserved in Git with honest sanitized/pointer replacements in the current tree.
 2. Identify a confirmed routing/launch successor or explicitly assign a new bounded review-admission task. #175/#176 establish the old HRO coordinator archived/parked. The existing human-relay consent remains valid, but its old recipient is not a live path. A new assignment must name one deliverable and time/spend/retry stops; do not resurrect the old unlimited goal.
@@ -36,4 +38,4 @@ There is no repeat request for requirement ratification, P0/Git/merge consent, o
 
 Original main/index and unrelated worktrees are untouched by the coordinator commits. Only current-state administrative edits/new owner record were made in the original untracked OPMEM goal directory before copying to the isolated worktree; original bridge plan/advisory and Stage A draft/result were not changed. No force-push, main push, protection change, archived-task restart, provider/probe inference, direct CLI/SDK worker launch, cloud/Neon operation or historical receipt rewrite.
 
-Next safe action is the numbered decision/admission disposition above; then shape exact migration amendments/parcels under real routes and independent review, and return to OPMEM-P0. Goal incomplete; this session remains sole coordinator at the stopped pre-P0 boundary.
+Next safe action is now the actual auth/data-policy and proposed IR-P0 companion/SDK/bootstrap disposition in the latest checkpoint, not another request for historical items 1–2. Then shape exact migration amendments/parcels under real routes and independent review and return to OPMEM-P0. Goal incomplete; this session remains sole coordinator at the stopped pre-P0 boundary.

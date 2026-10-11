@@ -1,6 +1,6 @@
 # GitHub-native Foreman tracking — separate prerequisite work package
 
-**State:** owner-directed outcome; implementation contract/decomposition proposed, NOT dispatchable  
+**State:** owner-directed outcome and three contract defaults RATIFIED on 2026-10-11; exact implementation amendments/decomposition proposed, NOT dispatchable  
 **Owner:** Clinton Morgan, sole project/Foreman owner per latest direction  
 **Coordinator:** Pi `01a12b4f-c8e9-70a4-811b-0cd7eb889457`  
 **Tracking:** [agent-skills #174](https://github.com/m0r6aN/agent-skills/issues/174)  
@@ -11,7 +11,7 @@
 
 Replace the corporate tracker workflow with real GitHub Issues tracking and remove the owner-targeted corporate references from the current repository tree. The owner explicitly directs actual reviewed implementation/publication, not merely another cleanup issue. Keep this work separate from OPMEM-P0 and preserve the reused Stage A artifacts until an explicit amendment governs any later change.
 
-This package records source discovery and recommended choices. It does not imply an exact contract amendment was ratified, a worker was admitted/launched, a live test was performed, or a paid budget was allocated. Existing OPMEM money limits are not a new migration-goal budget. No history rewrite, credentials transfer, external issue deletion, branch-protection weakening, HRO restart, routing-policy repair or unrelated feature work.
+This package records source discovery and the three owner-ratified defaults (verbatim authority: `owner-ratification-2026-10-11.md`). It does not imply an exact implementing amendment/parcel queue was ratified, a worker was admitted/launched, a live test was performed, or a paid budget was allocated. Existing OPMEM money limits are not a new migration-goal budget. No history rewrite, credentials transfer, external issue deletion, branch-protection weakening, HRO restart, routing-policy repair or unrelated feature work.
 
 ## Source-grounded findings
 
@@ -35,19 +35,19 @@ This package records source discovery and recommended choices. It does not imply
 
 The inventory is NOT Allowed Files. Its own path references and newly committed planning/authority records require final-sweep disposition as well. Current-base counts do not prove a later head is clean. Proposed implementation manifests must distinguish create/edit/move/delete and include source-generated schema pairs, package metadata, tests and affected consumers.
 
-## Proposed contract decisions — owner disposal required
+## Ratified contract defaults — owner response 2026-10-11
 
-1. **Issue identity and stable spec filenames.** Recommended: keep local parcel identifiers/filenames stable; use exact `owner/repository#number` for registered `ticket:`/Stage-B `ticketKeys`/link identities, with approved repository identity supplied explicitly. Preserve existing Stage A/B structural schemas and old receipt verification. Document the filename-versus-registered-reference distinction in an exact convention amendment. Reject foreign-repository references and PR numbers presented as issues. Alternative: introduce a new versioned issue-reference schema; this costs a broader consumer migration.
-2. **Hierarchy and queue semantics.** Recommended: a parent tracking issue plus one issue per parcel, linked by explicit body references; no GitHub Projects or organization-only issue-type dependency. Typed labels encode ready/in-progress/blocked and priority; exact vocabulary is pinned in the contract before implementation. If native sub-issue linkage is used, prove capability and scope first. The query path is read-only, paginated, deterministic, and separates missing identity from an actually empty queue.
-3. **Current-tree historical evidence.** Recommended: preserve original Git history/receipt bytes at immutable commits; replace prohibited current-tree material with clearly labeled sanitized derivatives or provenance pointers. Do not edit a receipt/manifest and pretend its historical hash still verifies. Produce a reviewed old-to-new locator/disposition manifest; regenerate producer-owned derived assets through their real producers. No history rewrite or blanket exemption for old documents.
+1. **Issue identity and stable spec filenames.** Ratified default: keep local parcel identifiers/filenames stable; use exact `owner/repository#number` for registered `ticket:`/Stage-B `ticketKeys`/link identities, with approved repository identity supplied explicitly. Preserve existing Stage A/B structural schemas and old receipt verification. Document the filename-versus-registered-reference distinction in an exact convention amendment. Reject foreign-repository references and PR numbers presented as issues. Alternative: introduce a new versioned issue-reference schema; this costs a broader consumer migration.
+2. **Hierarchy and queue semantics.** Ratified default: a parent tracking issue plus one issue per parcel, linked by explicit body references; no GitHub Projects or organization-only issue-type dependency. Typed labels encode ready/in-progress/blocked and priority; exact vocabulary is pinned in the contract before implementation. If native sub-issue linkage is used, prove capability and scope first. The query path is read-only, paginated, deterministic, and separates missing identity from an actually empty queue.
+3. **Current-tree historical evidence.** Ratified default: preserve original Git history/receipt bytes at immutable commits; replace prohibited current-tree material with clearly labeled sanitized derivatives or provenance pointers. Do not edit a receipt/manifest and pretend its historical hash still verifies. Produce a reviewed old-to-new locator/disposition manifest; regenerate producer-owned derived assets through their real producers. No history rewrite or blanket exemption for old documents.
 
-These are proposed engineering choices, not reinterpretations of the already-directed GitHub-only outcome. Only affected decisions need approval; unrelated preparation continues.
+These three defaults are ratified, not open decisions or reinterpretations of the GitHub-only outcome. Do not request their approval again. Exact amendment text/manifests, label vocabulary and verification/execution envelopes still precede implementing work; unrelated preparation continues.
 
 ## Proposed dependency-ordered parcels
 
 | Parcel | Outcome | Risk / routing | Dependency |
 |---|---|---|---|
-| GH-P0 | Exact convention/config/reference and lifecycle amendment, migration fixtures and consumer manifest; documents/contract package before implementing consumers | elevated / architecture/risk | decisions 1–3; independent plan review |
+| GH-P0 | Exact convention/config/reference and lifecycle amendment, migration fixtures and consumer manifest; documents/contract package before implementing consumers | elevated / architecture/risk | defaults 1–3 ratified; independent plan review still pending |
 | GH-P1 | Provider-neutral registration orchestration with GitHub payload/gates/idempotency/reconcile fixtures; keep approval/receipt invariants and historical compatibility | elevated / architecture/risk | GH-P0 |
 | GH-P2 | Deterministic GitHub adapter using existing authenticated CLI/API infrastructure; repository allowlist, typed response validation, preview/no-network tests, retry/lost-ack/partial-state reporting | elevated / architecture/risk | GH-P1; exact auth/write envelope |
 | GH-P3 | Read-only candidate query/ranking plus human-gate/closure consumers on the same explicit repository/reference contract | elevated / architecture/risk | GH-P0–P2 |
@@ -67,4 +67,4 @@ This is a proposal, not a new ratified Foreman queue or dispatch order. Exact ma
 
 ## Immediate next action / stop
 
-Dispose decisions 1–3, nominate/authorize the smallest new bounded internal-review admission owner after the old HRO archive, then shape GH-P0 and exact follow-ons under real approved routes and a separately stated migration spend/time envelope. No model/probe calls are admitted by this work package. Preserve OPMEM scope and higher-priority AgentTask delivery.
+Defaults 1–3 are ratified, and this coordinator is explicitly assigned the NEW bounded review-admission prerequisite. Its initial static diagnosis/exact change proposal is at `../internal-frontier-review-admission/diagnosis-and-change-proposal.md`; no HRO restart or launch is authorized. Next resolve actual first-party auth/data-policy evidence and the proposed IR-P0 companion/bootstrap contract, then shape GH-P0/exact follow-ons under accepted routes and separately stated migration spend/time envelopes. No model/probe calls are admitted by this work package. Preserve OPMEM scope and higher-priority AgentTask delivery.
