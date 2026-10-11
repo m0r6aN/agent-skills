@@ -4,6 +4,7 @@ import { listGoalSlugs } from './scan.js'
 // Provider modules register here; they import only `makeSignal`/types from
 // this module (hoisted declarations), so the cycle resolves safely.
 import { releaseHygieneProvider } from './signals-release.js'
+import { worktreeHygieneProvider } from './signals-worktree.js'
 import type { ParcelProjection, ParcelStateValue } from './types.js'
 
 /**
@@ -166,7 +167,7 @@ export const parcelStateProvider: SignalProvider = {
  * module load would hit the registration cycle's temporal dead zone.
  */
 function defaultProviders(): SignalProvider[] {
-  return [parcelStateProvider, releaseHygieneProvider]
+  return [parcelStateProvider, releaseHygieneProvider, worktreeHygieneProvider]
 }
 
 export function collectSignals(

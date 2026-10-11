@@ -58,10 +58,10 @@ UI slices also follow `frontend-ui-engineering`.
 ### Phase 2: Signals
 - [x] Task 4: Signal type, provider interface, `/api/signals` shell, parcel-state wrapper
 - [x] Task 5: release-hygiene provider (version drift, stale refs, unclaimed backlog)
-- [ ] Task 6: worktree-hygiene provider + lumber-jack evidence mapping
+- [x] Task 6: worktree-hygiene provider + lumber-jack evidence mapping
 
 ### Checkpoint: Signals (mid)
-- [ ] Provider fixtures green; clean-repo negative cases pass
+- [x] Provider fixtures green; clean-repo negative cases pass — 282/282
 
 - [ ] Task 7: scm-ci provider (`gh` read-only + graceful degradation)
 - [ ] Task 8: goal-hygiene provider + FCA-2 attention-count integration

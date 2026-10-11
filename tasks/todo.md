@@ -122,19 +122,19 @@ unclaimed CHANGELOG backlog vs released version (the 0.2.1 finding class).
 
 ---
 
-## Task 6: worktree-hygiene provider + lumber-jack evidence mapping
+## Task 6: worktree-hygiene provider + lumber-jack evidence mapping ✅ (2026-10-11)
 
 **Description:** Detect uncommitted/untracked churn, long-lived dirty state
 files, unpushed commits, stale local branches. Map lumber-jack skill findings
 in as provider evidence where appropriate (owner directive).
 
 **Acceptance criteria:**
-- [ ] dirty/untracked/unpushed/stale-branch fixtures each yield the right signal with paths/refs as evidence
-- [ ] clean repo fixture yields zero signals
-- [ ] lumber-jack-derived evidence is labeled as such in `evidence[]`
+- [x] dirty/untracked/unpushed/stale-branch fixtures each yield the right signal with paths/refs as evidence
+- [x] clean repo fixture yields zero signals
+- [x] lumber-jack-derived evidence is labeled as such in `evidence[]`
 
 **Verification:**
-- [ ] Tests pass: `tests/signals-worktree.test.ts` (new)
+- [x] Tests pass: `tests/signals-worktree.test.ts` (new — 6/6 incl. real-git regression test; real-repo smoke caught + fixed 2 probe bugs)
 - [ ] Package sweep green
 
 **Dependencies:** Task 4
