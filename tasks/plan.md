@@ -63,11 +63,11 @@ UI slices also follow `frontend-ui-engineering`.
 ### Checkpoint: Signals (mid)
 - [x] Provider fixtures green; clean-repo negative cases pass — 282/282
 
-- [ ] Task 7: scm-ci provider (`gh` read-only + graceful degradation)
-- [ ] Task 8: goal-hygiene provider + FCA-2 attention-count integration
+- [x] Task 7: scm-ci provider (`gh` read-only + graceful degradation)
+- [x] Task 8: goal-hygiene provider + FCA-2 attention-count integration
 
 ### Checkpoint: Signals (complete)
-- [ ] All five classes emit evidence-backed signals; `/api/signals` filters work
+- [x] All five classes emit evidence-backed signals; `/api/signals` filters work — real-repo smoke: 62 signals / 5 classes
 
 ### Phase 3: Actions
 - [ ] Task 9: ActionSpec registry + typed refusals + audit entries

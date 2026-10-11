@@ -1,6 +1,7 @@
 // Foreman Ops Console frontend (copied UX shape from the Automations hub:
 // board + approvals + notifications + logs + models view, adapted to parcel
 // lifecycle). No build step, no dependencies: this file is served as-is.
+import { needsFor } from './needs.js'
 'use strict'
 
 const STATES = ['running', 'hung', 'awaiting-gate', 'failed', 'complete']
@@ -26,7 +27,7 @@ function renderBoard() {
   const board = document.getElementById('board')
   const parcels = (state.projection && state.projection.parcels) || []
   const status = (state.statuses || []).find((s) => s.key === state.goal) || null
-  const attention = (status && status.attention) || { hung: 0, failed: 0, awaitingGate: 0, ratificationPending: 0, total: 0 }
+  const attention = (status && status.attention) || { hung: 0, failed: 0, awaitingGate: 0, ratificationPending: 0, signals: { info: 0, attention: 0, urgent: 0 }, total: 0 }
   // FCA-2: the board leads with what needs the human — a banner above the
   // columns and a "needs" treatment on the cards that carry the attention.
   const banner = attention.total > 0
@@ -35,12 +36,14 @@ function renderBoard() {
         attention.failed ? `${attention.failed} failed` : '',
         attention.awaitingGate ? `${attention.awaitingGate} awaiting gate` : '',
         attention.ratificationPending ? 'goal charter awaiting ratification' : '',
+        (attention.signals && attention.signals.urgent) ? `${attention.signals.urgent} urgent signal(s)` : '',
+        (attention.signals && attention.signals.attention) ? `${attention.signals.attention} attention signal(s)` : '',
       ].filter(Boolean).join(' · ')}</div>`
     : ''
   board.innerHTML = banner + STATES.map((col) => {
     const cards = parcels.filter((p) => p.state === col).map((p) => {
-      const needs = p.state === 'hung' || p.state === 'failed' ? 'needs needs-red'
-        : p.state === 'awaiting-gate' ? 'needs needs-amber' : ''
+      const urgent = ((status && status.urgentSubjects) || []).some((s) => s.endsWith(`/${p.parcel}`))
+      const needs = needsFor(p.state, urgent)
       const chip = needs ? `<span class="chip ${needs.includes('red') ? 'chip-red' : 'chip-amber'}">${p.state === 'awaiting-gate' ? 'gate' : 'needs attention'}</span>` : ''
       return `
       <div class="card ${needs}" data-parcel="${esc(p.parcel)}">
