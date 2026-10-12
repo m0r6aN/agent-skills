@@ -624,6 +624,17 @@ test('A2(b)(2)/(4) Contract B — every surfaced file is adjudicated; both signa
   // and types.ts restate the enum and WOULD fail the additive lockstep test in
   // any other package; the home ruling takes precedence because they are the
   // vocabulary's typed instantiation, not a consumer of another package's.
+  //   internal-review-launch/src/types.ts — NOT declared (IR-B01-AUDIT ruling, additive
+  //                                      LOCKSTEP-negative): `readonly routingClass:
+  //                                      'architecture/risk'` (`:54`) restates the envelope's OWN
+  //                                      one fixed purpose, never an enumeration of Contract B's
+  //                                      members. ADD a class to the vocabulary and this literal is
+  //                                      unchanged — the fixed-purpose restatement basis of the
+  //                                      frozen-data rulings below.
+  //   internal-review-launch/src/schemas.ts — NOT declared (same fixed-purpose basis):
+  //                                      `routingClass: fixed('architecture/risk')` (`:63`) validates
+  //                                      that one constant purpose value in the JSON schema; it never
+  //                                      tests membership in the class set. ADD a class and unchanged.
   //   authority-registry/src/generate.ts — NOT declared (LOCKSTEP-negative): the value signal matches
   //                                      only inside a frozen normalized-excerpt locator key
   //                                      ('coordinator-pattern:md-block:...table-row:Builder
@@ -682,6 +693,8 @@ test('A2(b)(2)/(4) Contract B — every surfaced file is adjudicated; both signa
     'plugins/foreman-line/dispatch/src/pi-entry/index.ts',
     'plugins/foreman-line/dispatch/src/routing-cache.ts',
     'plugins/foreman-line/dispatch/src/routing-eval/index.ts',
+    'plugins/foreman-line/internal-review-launch/src/schemas.ts',
+    'plugins/foreman-line/internal-review-launch/src/types.ts',
     'plugins/foreman-line/ops-console/src/frontmatter.ts',
     'plugins/foreman-line/ops-console/src/project.ts',
     'plugins/foreman-line/ops-console/src/scan.ts',
@@ -739,6 +752,31 @@ test('A5(b) LOCKSTEP re-adjudication (additive) — routing-eval/index.ts is UND
       'itself, so it fails the additive lockstep test and must not be declared for Contract B under ' +
       "A5(b) — this edits Constraint 6's original declared list, ratified in A5(b)",
   )
+})
+
+test("IR-B01-AUDIT re-adjudication — internal-review-launch/src/{schemas,types}.ts are UNDECLARED for Contract B: each fixes the envelope's one purpose ('architecture/risk') and never enumerates the vocabulary", () => {
+  const declared = new Set(
+    contractB.readers.flatMap((r) => readerFiles(r).map(normalizeSeparators)),
+  )
+  const otherClasses = ['boilerplate', 'standard-feature', 'implementation/standard']
+  for (const file of [
+    'plugins/foreman-line/internal-review-launch/src/schemas.ts',
+    'plugins/foreman-line/internal-review-launch/src/types.ts',
+  ]) {
+    assert.ok(
+      !declared.has(file),
+      `${file} restates the envelope's one fixed purpose and must stay UNDECLARED for Contract B`,
+    )
+    const text = readFileSync(join(repoRoot, file), 'utf8')
+    assert.ok(text.includes('architecture/risk'), `${file} is expected to carry its fixed purpose`)
+    for (const other of otherClasses) {
+      assert.ok(
+        !text.includes(other),
+        `${file} holds class literal '${other}'; re-adjudicate it — ADDING a class would now ` +
+          'require changing this file, so the fixed-purpose UNDECLARED ruling no longer holds',
+      )
+    }
+  }
 })
 
 test("A3(d) reverse control — Contract B: every declared reader within the sweep's scope appears in a signal, or carries a recorded sweep-blind ruling", () => {
