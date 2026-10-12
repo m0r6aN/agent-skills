@@ -370,20 +370,20 @@ wired to existing endpoints; no build step; ES modules OK.
 
 ---
 
-## Task 16: Signals view + action buttons + bulk select + destructive confirm
+## Task 16: Signals view + action buttons + bulk select + destructive confirm ✅ (2026-10-11)
 
 **Description:** Signal rows/cards with evidence, severity treatment, registered
 verb buttons (only allowed verbs render), checkboxes + Shift-select ranges,
 autonomy popovers per action, typed confirmation flow for destructive verbs.
 
 **Acceptance criteria:**
-- [ ] only registered (class × verb) pairs render buttons; others absent, not disabled
-- [ ] N selected rows → request carries N actions + per-action autonomy
-- [ ] destructive actions require typed confirmation before any request is sent
+- [x] only registered (class × verb) pairs render buttons; others absent, not disabled (matrix read from ACTION_REGISTRY via GET /api/actions)
+- [x] N selected rows → request carries N actions + per-action autonomy (selectionToActions composer)
+- [x] destructive actions require typed confirmation before any request is sent (UI mirrors the guards.ts token; server re-verifies)
 
 **Verification:**
-- [ ] Tests pass: `tests/ui-signals.test.ts` (new)
-- [ ] Package sweep green
+- [x] Tests pass: `tests/ui-signals.test.ts` (new — 3/3, jsdom e2e)
+- [x] Package sweep green (323/323, typecheck, lint)
 
 **Dependencies:** Tasks 9, 15
 **Files likely touched:** `ui/views/signals.js`, `ui/app.js`, `tests/ui-signals.test.ts`

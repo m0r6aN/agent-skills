@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { basename, join } from 'node:path'
-import { type AutonomyEnvelope, dispatchAction } from './actions.js'
+import { ACTION_REGISTRY, type AutonomyEnvelope, dispatchAction } from './actions.js'
 import { deriveAlerts } from './alerts.js'
 import { type BrowseRefusalError, browseDirectory } from './browse.js'
 import { type ConsoleConfig, goalTrees, resolveGoalKey, treeConfigFor } from './config.js'
@@ -344,6 +344,24 @@ export function handleApi(config: ConsoleConfig, request: ApiRequest, now: numbe
       return { status: 200, json: browseDirectory(path) }
     } catch (err) {
       return refusalResult(err)
+    }
+  }
+
+  // FCA-P4 action registry listing (FCA-P6: the UI renders verb buttons for
+  // REGISTERED (class x verb) pairs only — the matrix is read, never guessed).
+  if (pathname === '/api/actions') {
+    if (method !== 'GET') return methodNotAllowed('GET')
+    return {
+      status: 200,
+      json: {
+        actions: ACTION_REGISTRY.map((spec) => ({
+          verb: spec.verb,
+          signalClasses: spec.signalClasses,
+          invocation: spec.invocation,
+          destructive: spec.destructive,
+          autonomy: spec.autonomy,
+        })),
+      },
     }
   }
 

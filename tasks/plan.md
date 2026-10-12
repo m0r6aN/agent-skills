@@ -87,7 +87,7 @@ UI slices also follow `frontend-ui-engineering`.
 
 ### Phase 5: Console UI
 - [x] Task 15: Layout shell (full-viewport grid, rails, view nav, density baseline)
-- [ ] Task 16: Signals view + action buttons + bulk select + destructive confirm
+- [x] Task 16: Signals view + action buttons + bulk select + destructive confirm
 - [ ] Task 17: Spawn panel (shared controls + autonomy popovers) + spawn wiring
 - [ ] Task 18: Fleet view + filesystem folder picker
 - [ ] Task 19: Session tray + attach copy + visual checklist

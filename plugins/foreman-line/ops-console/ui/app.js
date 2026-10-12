@@ -5,6 +5,12 @@ import { needsFor } from './needs.js'
 import { esc, shellHtml } from './views/shell.js'
 import { boardHtml, detailHtml } from './views/board.js'
 import { remedyHtml, remediesHtml } from './views/remedies.js'
+import {
+  actionPopoverHtml,
+  confirmationToken,
+  selectionToActions,
+  signalsHtml,
+} from './views/signals.js'
 
 const state = {
   view: 'board',
@@ -15,6 +21,9 @@ const state = {
   projection: null,
   repoRoot: '',
   posture: '',
+  signals: [],
+  registry: [],
+  selected: new Map(),
 }
 
 async function api(path, options) {
@@ -32,6 +41,7 @@ function setView(view) {
     btn.classList.toggle('active', active)
     btn.setAttribute('aria-current', active ? 'page' : 'false')
   })
+  if (view === 'signals') renderSignals()
 }
 
 function renderBoard() {
@@ -81,6 +91,124 @@ async function renderAlerts() {
   })
 }
 
+async function renderSignals() {
+  const [signalsData, actionsData] = await Promise.all([api('/api/signals'), api('/api/actions')])
+  state.signals = signalsData.signals || []
+  state.registry = actionsData.actions || []
+  const body = document.getElementById('signals-body')
+  body.innerHTML = signalsHtml(state.signals, state.registry)
+  wireSignalRows(body)
+  applySeverityFilters()
+  updateSpawnPanel()
+}
+
+function applySeverityFilters() {
+  const on = new Set(
+    [...document.querySelectorAll('input[data-sev]:checked')].map((input) => input.dataset.sev),
+  )
+  document.querySelectorAll('.signal-row').forEach((row) => {
+    row.style.display = on.has(row.dataset.severity) ? '' : 'none'
+  })
+}
+
+function selectionPayloads() {
+  return [...state.selected.values()].map((signal) => {
+    const verbs = (signal.actions || []).filter((verb) =>
+      state.registry.some((entry) => entry.verb === verb && entry.signalClasses.includes(signal.class)))
+    const verb = verbs[0] || 'investigate'
+    const entry = state.registry.find(
+      (candidate) => candidate.verb === verb && candidate.signalClasses.includes(signal.class),
+    )
+    return { signal, verb, autonomy: (entry && entry.autonomy) || {}, extraText: null }
+  })
+}
+
+function updateSpawnPanel() {
+  const panel = document.getElementById('spawn-panel')
+  if (panel === null) return
+  const actions = selectionToActions(selectionPayloads())
+  panel.innerHTML = actions.length === 0
+    ? '<p class="muted">select signal rows to configure a spawn (Task 17)</p>'
+    : `<p>${actions.length} action(s) queued</p><pre>${esc(JSON.stringify(actions, null, 2))}</pre>`
+}
+
+function wireSignalRows(body) {
+  let lastChecked = null
+  const boxes = [...body.querySelectorAll('[data-select]')]
+  boxes.forEach((box, index) => {
+    box.addEventListener('click', (event) => {
+      if (event.shiftKey && lastChecked !== null) {
+        const lo = Math.min(lastChecked, index)
+        const hi = Math.max(lastChecked, index)
+        for (let i = lo; i <= hi; i += 1) boxes[i].checked = box.checked
+      }
+      lastChecked = index
+      state.selected = new Map(
+        boxes
+          .filter((candidate) => candidate.checked)
+          .map((candidate) => [candidate.dataset.select, state.signals.find((s) => s.id === candidate.dataset.select)]),
+      )
+      updateSpawnPanel()
+    })
+  })
+  body.querySelectorAll('.action-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const signal = state.signals.find(
+        (s) => s.subject === btn.dataset.subject && s.class === btn.dataset.class,
+      )
+      const entry = state.registry.find(
+        (candidate) => candidate.verb === btn.dataset.verb && candidate.signalClasses.includes(btn.dataset.class),
+      )
+      if (!signal || !entry) return
+      const popover = document.getElementById('action-popover')
+      popover.innerHTML = actionPopoverHtml(signal, entry.verb, entry)
+      wirePopover(popover.querySelector('form'), signal, entry)
+    })
+  })
+}
+
+function wirePopover(form, signal, entry) {
+  form.querySelector('[data-cancel]').addEventListener('click', () => {
+    form.remove()
+  })
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault()
+    const checked = (name) => {
+      const el = form.querySelector(`[name="${name}"]`)
+      return el !== null && el.checked === true
+    }
+    const decisions = form.querySelector('[name="decisions"]:checked').value
+    const confirmationEl = form.querySelector('[name="confirmation"]')
+    const confirmation = confirmationEl === null ? null : confirmationEl.value
+    // Destructive gate (FCA-P4 contract mirrored): no request is EVER sent
+    // without the exact typed intent for this subject.
+    if (form.dataset.destructive === 'true' && confirmation !== confirmationToken(signal.subject)) {
+      form.querySelector('[data-confirm-error]').hidden = false
+      return
+    }
+    const outcome = await api('/api/actions/dispatch', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        verb: entry.verb,
+        signalClass: signal.class,
+        subject: signal.subject,
+        autonomy: {
+          decisions,
+          commit: checked('commit'),
+          push: checked('push'),
+          openPr: checked('openPr'),
+          merge: checked('merge'),
+        },
+        confirmation,
+      }),
+    })
+    document.getElementById('action-result').textContent = JSON.stringify(outcome, null, 2)
+    form.remove()
+    renderAlerts()
+  })
+}
+
 async function renderRouting() {
   const data = await api(`/api/routing?goal=${encodeURIComponent(state.goal)}`)
   const classRows = ((data.policy && data.policy.classes) || []).map((c) =>
@@ -103,6 +231,7 @@ async function refresh() {
   renderBoard()
   renderAlerts()
   renderRouting()
+  if (state.view === 'signals') await renderSignals()
 }
 
 function wireEvents() {
@@ -144,6 +273,9 @@ function wireEvents() {
     document.querySelectorAll('#board .card').forEach((card) => {
       card.style.display = needle === '' || card.textContent.toLowerCase().includes(needle) ? '' : 'none'
     })
+  })
+  document.querySelectorAll('input[data-sev]').forEach((input) => {
+    input.addEventListener('change', applySeverityFilters)
   })
 }
 

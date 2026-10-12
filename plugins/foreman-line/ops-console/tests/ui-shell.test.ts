@@ -149,6 +149,9 @@ test('end-to-end: all views render against mocked fetch with zero console errors
       assert.equal(section.hidden, false, `${id} visible after click`)
       assert.equal(btn.getAttribute('aria-current'), 'page')
     }
+    // Settle async view loads (the signals loader runs on first visit) before
+    // teardown — post-teardown DOM access would be an unhandled rejection.
+    await new Promise((resolve) => setTimeout(resolve, 20))
     const trayToggle = doc.getElementById('tray-toggle') as unknown as {
       click: () => void
       getAttribute: (name: string) => string | null
