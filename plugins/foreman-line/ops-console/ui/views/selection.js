@@ -10,7 +10,47 @@ const NO_WRITE = { decisions: 'partial', commit: false, push: false, openPr: fal
 export function selectTarget(signal, registry) {
   const entry = eligibleActions(signal, registry).find((e) => e.verb === 'investigate')
   return { signal, verb: entry?.verb || null, autonomy: { ...(entry?.autonomy || NO_WRITE), merge: false },
-    signature: actionSignature(entry), unavailable: null, needsReview: false }
+    signature: actionSignature(entry), unavailable: null, needsReview: false,
+    manualAction: false, manualPermissions: false, bulkIssue: null }
+}
+// Suggested changes can narrow existing authority, never widen it.
+function conservativePermissions(current, defaults) {
+  return { decisions: current.decisions === 'partial' ? 'partial' : defaults.decisions,
+    commit: current.commit && defaults.commit, push: current.push && defaults.push,
+    openPr: current.openPr && defaults.openPr, merge: false }
+}
+export function chooseAction(item, entry, suggested = true) {
+  item.verb = entry?.verb || null
+  if (suggested && !item.manualPermissions && entry) item.autonomy = conservativePermissions(item.autonomy, entry.autonomy)
+  item.signature = actionSignature(entry)
+  item.bulkIssue = null
+}
+export function applyToSelection(selected, registry, settings, suggested = true) {
+  let updated = 0, skipped = 0
+  for (const item of selected.values()) {
+    if (item.unavailable || item.needsReview || (!settings.verb && item.bulkIssue)) { skipped++; continue }
+    const choices = eligibleActions(item.signal, registry)
+    const entry = choices.find((e) => e.verb === (settings.verb || item.verb))
+    if (!entry) { item.bulkIssue = 'Requested action is not offered for this item. Choose a compatible action or remove it.'; skipped++; continue }
+    if (settings.verb) { chooseAction(item, entry, suggested); item.manualAction = true }
+    if (settings.autonomy) { item.autonomy = { ...settings.autonomy, merge: false }; item.manualPermissions = true }
+    updated++
+  }
+  return { updated, skipped }
+}
+export function useSuggestedSettings(selected, registry) {
+  let updated = 0, skipped = 0
+  for (const item of selected.values()) {
+    if (item.unavailable || item.needsReview || item.bulkIssue || (item.manualAction && item.manualPermissions)) { skipped++; continue }
+    const choices = eligibleActions(item.signal, registry)
+    const entry = choices.find((e) => e.verb === (item.manualAction ? item.verb : 'investigate'))
+    if (!entry) { skipped++; continue }
+    const before = JSON.stringify([item.verb, item.autonomy])
+    chooseAction(item, entry)
+    if (before === JSON.stringify([item.verb, item.autonomy])) skipped++
+    else updated++
+  }
+  return { updated, skipped }
 }
 export function reconcileSelection(selected, signals, registry) {
   const current = new Map(signals.map((signal) => [signal.id, signal]))

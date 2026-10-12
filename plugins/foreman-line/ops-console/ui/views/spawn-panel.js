@@ -13,6 +13,7 @@ export function launchItemHtml(item, registry) {
   return `<div class="launch-item" data-launch-item="${esc(item.signal.id)}"><div class="row"><div><strong>${esc(item.signal.subject)}</strong><span class="meta">${esc(item.signal.repo)} · ${esc(item.signal.class)}</span></div><button type="button" data-remove-selection aria-label="Remove ${esc(item.signal.subject)} from selection">Remove</button></div>
     <label class="stack-label">Action<select data-verb aria-label="Action for ${esc(item.signal.subject)}"><option value="">Choose an action</option>${choices.map((e) => `<option value="${esc(e.verb)}" ${e.verb === item.verb ? 'selected' : ''}>${esc(e.verb)}</option>`).join('')}</select></label>
     <div class="permissions"><label>Decisions<select data-permission="decisions" aria-label="Decisions for ${esc(item.signal.subject)}"><option value="partial" ${item.autonomy.decisions === 'partial' ? 'selected' : ''}>Partial</option><option value="full" ${item.autonomy.decisions === 'full' ? 'selected' : ''}>Full</option></select></label>${['commit', 'push', 'openPr', 'merge'].map((name) => `<label><input type="checkbox" data-permission="${name}" ${item.autonomy[name] ? 'checked' : ''} ${name === 'merge' ? 'disabled' : ''}>${name === 'openPr' ? 'Open PR' : name === 'merge' ? 'Merge (human-owned)' : name[0].toUpperCase() + name.slice(1)}</label>`).join('')}</div>
+    ${item.bulkIssue ? `<p class="flags" role="status">${esc(item.bulkIssue)}</p>` : ''}
     ${item.unavailable ? `<p class="flags" role="status">${esc(item.unavailable)}</p>` : ''}
     ${item.needsReview ? '<p class="flags">Action defaults changed. Your permissions were preserved. Review them again.</p><button type="button" data-ack-review>I reviewed these permissions</button>' : ''}
   </div>`
@@ -29,8 +30,8 @@ export const MODEL_SUGGESTIONS = [
   'deepseek-v4-pro',
 ]
 
-export function spawnPanelHtml({ count = 0, controls = {}, selections = [], registry = [], extra = '', error = '', page = 0, retryRequired = false, retryAcknowledged = false } = {}) {
-  const blocked = (retryRequired && !retryAcknowledged) || selections.some((item) => !item.verb || item.unavailable || item.needsReview)
+export function spawnPanelHtml({ count = 0, controls = {}, selections = [], registry = [], extra = '', error = '', page = 0, retryRequired = false, retryAcknowledged = false, suggested = true, bulk = {}, bulkResult = '' } = {}) {
+  const blocked = (retryRequired && !retryAcknowledged) || selections.some((item) => !item.verb || item.unavailable || item.needsReview || item.bulkIssue)
   const harness = controls.harness || 'pi'
   const model = controls.model || MODEL_SUGGESTIONS[0]
   const thinking = controls.thinking || 'high'
@@ -38,6 +39,15 @@ export function spawnPanelHtml({ count = 0, controls = {}, selections = [], regi
   return `
     <form id="spawn-form" aria-label="spawn controls">
       <p class="muted">One tmux session · ${count} pane${count === 1 ? '' : 's'} · one fresh worktree per selected action. Review each target and its permissions.</p>
+      <fieldset class="bulk-settings"><legend>Settings for all ${count} selected items</legend>
+        <label><input type="checkbox" data-suggested ${suggested ? 'checked' : ''} aria-describedby="suggested-help">Use suggested settings</label>
+        <p id="suggested-help" class="meta">On by default for untouched fields: registered Investigate and conservative permission defaults. Manual choices are preserved; suggestions never widen existing permissions. Turning off keeps current settings. Changed defaults still require review.</p>
+        <p class="meta">Apply explicitly replaces the corresponding manual choices on every compatible selected item, including other pages and repositories. Unavailable, incompatible or pending-review items are skipped and stay flagged.</p>
+        <div class="row"><label class="stack-label">Action for all selected<select data-bulk-verb><option value="">Choose an action</option>${[...new Set(registry.filter((e) => e.invocation === 'spawn' && !e.destructive).map((e) => e.verb))].map((verb) => `<option value="${esc(verb)}" ${bulk.verb === verb ? 'selected' : ''}>${esc(verb)}</option>`).join('')}</select></label><button type="button" data-apply-actions>Apply to all selected — action</button></div>
+        <div class="permissions"><label class="stack-label">Decisions for all selected<select data-bulk-permission="decisions"><option value="partial" ${bulk.decisions !== 'full' ? 'selected' : ''}>Partial</option><option value="full" ${bulk.decisions === 'full' ? 'selected' : ''}>Full</option></select></label>${['commit', 'push', 'openPr'].map((name) => `<label><input type="checkbox" data-bulk-permission="${name}" ${bulk[name] ? 'checked' : ''}>${name === 'openPr' ? 'Open PR' : name[0].toUpperCase() + name.slice(1)}</label>`).join('')}<span class="meta">Merge stays human-owned.</span></div>
+        <button type="button" data-apply-permissions>Apply to all selected — permissions</button>
+        <p id="bulk-result" role="status" aria-live="polite">${esc(bulkResult)}</p>
+      </fieldset>
       <div id="launch-items">${selections.slice(page * 200, page * 200 + 200).map((item) => launchItemHtml(item, registry)).join('')}</div>${paginationHtml(selections.length, page)}
       <fieldset>
         <legend>Shared launch configuration</legend><div class="control-grid">

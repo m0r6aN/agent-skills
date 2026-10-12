@@ -12,6 +12,9 @@ export declare function spawnPanelHtml(options?: {
   error?: string
   page?: number
   retryRequired?: boolean
+  suggested?: boolean
+  bulk?: { verb?: string; decisions?: string; commit?: boolean; push?: boolean; openPr?: boolean }
+  bulkResult?: string
   retryAcknowledged?: boolean
 }): string
 export declare function launchItemHtml(item: import('./selection.js').SelectedTarget, registry: import('./selection.js').RegistryEntry[]): string

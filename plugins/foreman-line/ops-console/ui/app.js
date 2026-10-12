@@ -6,7 +6,7 @@ import { actionPopoverHtml, confirmationToken, signalsHtml } from './views/signa
 import { readControls, spawnPanelHtml, spawnRequest } from './views/spawn-panel.js'
 import { browseListHtml, fleetHtml } from './views/fleet.js'
 import { trayHtml } from './views/tray.js'
-import { actionSignature, eligibleActions, reconcileSelection, selectTarget } from './views/selection.js'
+import { actionSignature, applyToSelection, chooseAction, eligibleActions, reconcileSelection, selectTarget, useSuggestedSettings } from './views/selection.js'
 
 // Shape validation only; the server remains the path/authorization authority.
 const absoluteRoot = (value) => typeof value === 'string' && /^(?:\/|[A-Za-z]:[\\/]|\\\\)/.test(value)
@@ -14,7 +14,7 @@ const absoluteRoot = (value) => typeof value === 'string' && /^(?:\/|[A-Za-z]:[\
 export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   const win = doc.defaultView
   const state = { view: 'signals', scope: '', goal: null, repoRoot: '', statuses: [], signals: [], registry: [], fleet: [], spawns: [],
-    projection: null, remedies: [], queries: {}, pages: {}, selected: new Map(), controls: {}, extra: '', browseSelection: null, launchError: '', submitting: false, launchPage: 0, highlightSession: null, revealSession: false, detailParcel: null, retryRequired: false, retryAcknowledged: false }
+    projection: null, remedies: [], queries: {}, pages: {}, selected: new Map(), suggested: true, bulk: {}, bulkResult: '', controls: {}, extra: '', browseSelection: null, launchError: '', submitting: false, launchPage: 0, highlightSession: null, revealSession: false, detailParcel: null, retryRequired: false, retryAcknowledged: false }
   let generation = 0
   let goalGeneration = 0
   let detailGeneration = 0
@@ -203,10 +203,10 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   function updateSelectionBar() {
     updateLaunchValidity()
     el('selection-bar').hidden = state.selected.size === 0
-    const blocked = [...state.selected.values()].filter((item) => item.unavailable || item.needsReview || !item.verb).length
+    const blocked = [...state.selected.values()].filter((item) => item.unavailable || item.needsReview || item.bulkIssue || !item.verb).length
     el('selection-summary').textContent = `${state.selected.size} item${state.selected.size === 1 ? '' : 's'} selected${blocked ? ` · ${blocked} need review` : ''} across all views`
   }
-  function launchBlocked() { return state.submitting || (state.retryRequired && !state.retryAcknowledged) || !state.selected.size || [...state.selected.values()].some((item) => !item.verb || item.unavailable || item.needsReview) }
+  function launchBlocked() { return state.submitting || (state.retryRequired && !state.retryAcknowledged) || !state.selected.size || [...state.selected.values()].some((item) => !item.verb || item.unavailable || item.needsReview || item.bulkIssue) }
   function updateLaunchValidity() {
     reconcileSelection(state.selected, state.signals, state.registry)
     if (el('spawn-run')) el('spawn-run').disabled = launchBlocked()
@@ -217,7 +217,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   }
   function updateSpawnPanel() {
     state.launchPage = Math.min(state.launchPage, Math.max(0, Math.ceil(state.selected.size / 200) - 1))
-    el('spawn-panel').innerHTML = spawnPanelHtml({ count: state.selected.size, controls: state.controls, selections: [...state.selected.values()], registry: state.registry, extra: state.extra, error: state.launchError, page: state.launchPage, retryRequired: state.retryRequired, retryAcknowledged: state.retryAcknowledged })
+    el('spawn-panel').innerHTML = spawnPanelHtml({ count: state.selected.size, controls: state.controls, selections: [...state.selected.values()], registry: state.registry, extra: state.extra, error: state.launchError, page: state.launchPage, suggested: state.suggested, bulk: state.bulk, bulkResult: state.bulkResult, retryRequired: state.retryRequired, retryAcknowledged: state.retryAcknowledged })
     const form = el('spawn-form')
     el('spawn-run').disabled = launchBlocked()
     function saveDraft() { state.controls = readControls(form); state.extra = form.querySelector('[name="extra"]').value }
@@ -226,21 +226,43 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       saveDraft()
       const node = event.target, wrapper = node.closest('[data-launch-item]')
       if (node.hasAttribute('data-ack-retry')) { state.retryAcknowledged = node.checked; updateLaunchValidity(); return }
+      if (node.hasAttribute('data-suggested')) {
+        state.suggested = node.checked
+        if (state.suggested) {
+          const result = useSuggestedSettings(state.selected, state.registry)
+          state.bulkResult = `Suggestions: ${result.updated} updated · ${result.skipped} skipped (manual, unchanged or flagged).`
+        }
+        updateSpawnPanel(); return
+      }
+      if (node.hasAttribute('data-bulk-verb')) state.bulk.verb = node.value
+      if (node.dataset.bulkPermission) state.bulk[node.dataset.bulkPermission] = node.dataset.bulkPermission === 'decisions' ? node.value : node.checked
       const item = wrapper && state.selected.get(wrapper.dataset.launchItem)
       if (!item) return
       if (node.matches('[data-verb]')) {
         const entry = eligibleActions(item.signal, state.registry).find((e) => e.verb === node.value)
-        item.verb = entry?.verb || null; item.autonomy = { ...(entry?.autonomy || { decisions: 'partial', commit: false, push: false, openPr: false }), merge: false }
-        item.signature = actionSignature(entry); item.needsReview = false; item.unavailable = null
+        chooseAction(item, entry, state.suggested)
+        item.manualAction = true; item.needsReview = false
         updateSpawnPanel(); return
       }
-      if (node.dataset.permission && node.dataset.permission !== 'merge') item.autonomy[node.dataset.permission] = node.dataset.permission === 'decisions' ? node.value : node.checked
+      if (node.dataset.permission && node.dataset.permission !== 'merge') {
+        item.autonomy[node.dataset.permission] = node.dataset.permission === 'decisions' ? node.value : node.checked
+        item.manualPermissions = true
+      }
       updateLaunchValidity()
     })
     on(form, 'click', (event) => {
       const node = event.target.closest('button'), wrapper = node?.closest('[data-launch-item]')
       if (!node) return
       saveDraft()
+      if (node.hasAttribute('data-apply-actions') || node.hasAttribute('data-apply-permissions')) {
+        if (state.submitting) return
+        reconcileSelection(state.selected, state.signals, state.registry)
+        if (node.hasAttribute('data-apply-actions') && !state.bulk.verb) { state.bulkResult = 'Choose an action before applying.'; updateSpawnPanel(); return }
+        const settings = node.hasAttribute('data-apply-actions') ? { verb: state.bulk.verb } : { autonomy: { decisions: state.bulk.decisions || 'partial', commit: !!state.bulk.commit, push: !!state.bulk.push, openPr: !!state.bulk.openPr, merge: false } }
+        const result = applyToSelection(state.selected, state.registry, settings, state.suggested)
+        state.bulkResult = `${result.updated} updated · ${result.skipped} skipped. Skipped items remain flagged; review or remove them.`
+        updateSpawnPanel(); return
+      }
       if (node.hasAttribute('data-inspect-sessions')) { closeDialog(el('launch-dialog')); state.scope = ''; state.queries.sessions = ''; state.pages.sessions = 0; scopeOptions(); goalOptions(); setView('sessions'); return }
       if (node.hasAttribute('data-page')) { state.launchPage = Math.max(0, state.launchPage + (node.dataset.page === 'next' ? 1 : -1)); updateSpawnPanel() }
       if (node.hasAttribute('data-remove-selection')) { state.selected.delete(wrapper.dataset.launchItem); updateSelectionBar(); updateSpawnPanel(); renderCurrent() }
@@ -300,7 +322,8 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       if (!entry.destructive && entry.invocation === 'spawn') {
         const item = state.selected.get(signal.id) || selectTarget(signal, state.registry)
         if (item.verb !== entry.verb) {
-          item.verb = entry.verb; item.autonomy = { ...entry.autonomy, merge: false }; item.signature = actionSignature(entry); item.needsReview = false
+          chooseAction(item, entry, state.suggested); item.needsReview = false
+          item.manualAction = true
         }
         state.selected.set(signal.id, item); updateSelectionBar(); updateSpawnPanel(); openDialog(el('launch-dialog'))
       } else showAction(signal, entry)

@@ -3,13 +3,100 @@ import test from 'node:test'
 import { ACTION_REGISTRY } from '../src/actions.js'
 import {
   actionSignature,
+  applyToSelection,
   eligibleActions,
   reconcileSelection,
   selectTarget,
+  useSuggestedSettings,
 } from '../ui/views/selection.js'
 import { mountConsole, signal } from './ui-fixture.js'
 
 const signals = [signal(), signal({ id: 's2', subject: 'g/P2' })]
+
+test('bulk applies to every selected page, skips flagged/incompatible targets and keeps merge human-owned', () => {
+  const selected = new Map(
+    Array.from({ length: 203 }, (_, i) => {
+      const item = selectTarget(
+        signal({ id: `bulk-${i}`, actions: i === 201 ? ['investigate'] : signal().actions }),
+        ACTION_REGISTRY,
+      )
+      if (i === 202) item.unavailable = 'Missing finding'
+      return [item.signal.id, item]
+    }),
+  )
+  assert.deepEqual(applyToSelection(selected, ACTION_REGISTRY, { verb: 'remediate' }), {
+    updated: 201,
+    skipped: 2,
+  })
+  assert.equal(selected.get('bulk-200')?.verb, 'remediate')
+  assert.match(selected.get('bulk-201')?.bulkIssue || '', /not offered/)
+  assert.equal(selected.get('bulk-202')?.unavailable, 'Missing finding')
+  assert.deepEqual(
+    applyToSelection(selected, ACTION_REGISTRY, {
+      autonomy: { decisions: 'full', commit: true, push: true, openPr: true, merge: true },
+    }),
+    { updated: 201, skipped: 2 },
+  )
+  assert.equal(selected.get('bulk-200')?.autonomy.push, true)
+  assert.equal(selected.get('bulk-200')?.autonomy.merge, false)
+})
+
+test('suggestions preserve manual action/permission choices, never widen, and leave changed defaults for review', () => {
+  const item = selectTarget(signal(), ACTION_REGISTRY)
+  const selected = new Map([[item.signal.id, item]])
+  applyToSelection(selected, ACTION_REGISTRY, { verb: 'remediate' })
+  assert.equal(item.autonomy.commit, false, 'action changes do not widen permissions')
+  applyToSelection(selected, ACTION_REGISTRY, { autonomy: { ...item.autonomy, push: true } })
+  assert.deepEqual(useSuggestedSettings(selected, ACTION_REGISTRY), { updated: 0, skipped: 1 })
+  assert.equal(item.verb, 'remediate')
+  assert.equal(item.autonomy.push, true)
+  item.needsReview = true
+  assert.deepEqual(applyToSelection(selected, ACTION_REGISTRY, { verb: 'explain' }), {
+    updated: 0,
+    skipped: 1,
+  })
+  assert.equal(item.needsReview, true)
+  assert.deepEqual(useSuggestedSettings(selected, ACTION_REGISTRY), { updated: 0, skipped: 1 })
+})
+
+test('review bulk controls cover hidden pages and suggestions do not erase manual drafts', async () => {
+  const many = Array.from({ length: 201 }, (_, i) => signal({ id: `s${i}`, subject: `g/P${i}` }))
+  const ui = await mountConsole({ '/api/signals': { signals: many } })
+  try {
+    ui.click('#signals-body [data-select-visible]')
+    ui.click('#signals-body [data-page="next"]')
+    ui.click('#signals-body [data-select-visible]')
+    ui.click('#review-launch')
+    assert.equal((ui.doc.querySelector('[data-suggested]') as HTMLInputElement).checked, true)
+    ui.input('[data-bulk-verb]', 'explain', 'change')
+    ui.click('[data-apply-actions]')
+    assert.match(ui.doc.querySelector('#bulk-result')?.textContent || '', /201 updated.*0 skipped/)
+    ui.click('[data-bulk-permission="push"]')
+    ui.click('[data-apply-permissions]')
+    ui.click('[data-suggested]')
+    ui.click('[data-suggested]')
+    ui.click('#spawn-form [data-page="next"]')
+    assert.equal(
+      (ui.doc.querySelector('#launch-items [data-verb]') as HTMLSelectElement).value,
+      'explain',
+    )
+    assert.equal(
+      (ui.doc.querySelector('[data-permission="push"]') as HTMLInputElement).checked,
+      true,
+    )
+    ui.click('#spawn-run')
+    await ui.settle()
+    const body = ui.requests.find((r) => r.path === '/api/spawn')?.body as {
+      actions: { verb: string; autonomy: { push: boolean; merge: boolean } }[]
+    }
+    assert.equal(body.actions.length, 201)
+    assert.ok(
+      body.actions.every((a) => a.verb === 'explain' && a.autonomy.push && !a.autonomy.merge),
+    )
+  } finally {
+    ui.close()
+  }
+})
 
 test('bulk eligibility excludes destructive/present/unregistered actions; never chooses first entry', () => {
   const registry = [...ACTION_REGISTRY].reverse()
