@@ -84,3 +84,7 @@ Result: documentation consistency approval held only for stale current header ab
 
 Final correction recheck:
 Coordinator replaced the current header phrase with 'TO-P1 implementation independently accepted, exact-head CI and merge pending.' Direct reread confirms correct current-state wording and removal of the contradictory clause. Source/test diff from a840 remains empty and HEAD unchanged. The sole documentation consistency finding is CLOSED. Final lifecycle/evidence inspection result: ACCEPT; implementation source acceptance preserved. No outstanding finding from this inspection. Coordinator also reports independent documentation validation3specs/106links/51anchors0fail and4actual full-goal scans granted with actual roots; those execution claims belong to its independent verifier, not a repeat run by this reviewer.
+
+## Actual merge closure
+
+PR169 normal exact-head merge b90ad84132ed3c2e3c05b07c85c47466d11479a1,2026-10-10T19:20:32Z. Published head a4d6385371533359453035741ef0df3d7a3b3b26 completeCI38077442322passedallshards+test/integration-report beforemerge; effective requiredchecks confirmedpass, reviewthreads0, noadmin/bypass. DuplicatePRCI38077445318completedSUCCESSaftermerge, allfourshards+test/integration-report; both exacta4d snapshots independently inspected from watcher records. No implementation change after accepted a840914f; done lifecycle already in mergedPR. TO-P1 taskcheckedonlyafteractualmerge; fullgoalP2-P7 remainsincomplete.

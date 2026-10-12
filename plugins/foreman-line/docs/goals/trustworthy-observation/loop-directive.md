@@ -6,8 +6,8 @@
 2026-10-10. Planning worktree and branch are named in charter.md.
 One goal, one coordinator. Transfers occur at recorded parcel boundaries.
 
-**State:** `to_p1_verified_reviewed_publication_pending`; D1–D8 and graph ratified 2026-10-10;
-A1 merge/decision delegation and cost routing recorded; TO-P1 implementation independently accepted, exact-head CI and merge pending.
+**State:** `to_p2_scope_preparation`; D1–D8 and graph ratified 2026-10-10;
+A1 merge/decision delegation and cost routing recorded; TO-P1 merged; TO-P2 exact scope and owner/source preflight in progress.
 
 ## Authority
 
@@ -180,3 +180,11 @@ Second independent pass code54e5bd52:180tests/179pass/1fail, type/lint/D19/read-
 Dual architecture review on ac406ecc REJECT despite201 deterministicPASS. A1tables, A2/B1conditions, A3fullactualcompatibility OPEN; exact findings/rulings in to-p1-review-findings.md. Builder corrective Step0 halted, only parser/test authorized after separate rulings commit. No implementation acceptance; PR169 draft. Rejected-head CI canceled, corrected head must receive full requirements.
 
 Final TO-P1 implementation a840914f:251/251,type/lint/unchangedD19/read-only PASS; both independent final architecture reviews ACCEPT, required findings open0. Same-PR spec/shaping-history/index/lesson lifecycle prepared; artifact bytes preserved. PR169 publication/exact-head CI/normal merge pending; TO-P1 task remains unchecked until actual merge. TO-P2–TO-P7 unactivated. Earlier review/CI statements above are historical checkpoints.
+
+## Actual TO-P1 merge and successor preparation
+
+PR169 MERGEDb90ad84132ed3c2e3c05b07c85c47466d11479a1 at2026-10-10T19:20:32Z, exacthead a4d6385371533359453035741ef0df3d7a3b3b26. Full published-headCI38077442322passedallfourshards+requiredtest/integration-report; normalmatch-headmerge, noadmin/bypass. DuplicatePRCI38077445318stillrunningatmerge; nosecondpassclaim. Independent251/251,type/lint/D19/read-only andtwoarchitectureACCEPT preserved. P1done lifecycle alreadylanded; taskcheckedonlyafteractualmerge. Earlierpendingentries arehistorical.
+
+IsolatedP2worktree /home/cmorgan76/Work/foreman-to-p2 branchfeat/foreman-to-p2-evidence-isolation fromactualmainb90ad841. PreferredMiMorefinement andindependentsourcepreflights/rulings carriedforward. P2draftonlyuntilcoordinatorlint/actualsource-ownerreconciliation/activation; nobuilder/code/tests/receiptaccepted. P3-P6preflightdecisionsareprovisionalparent-dependent; noactive sourceparcels. Qualifiedlistmetadata withheldfromP2 andexplicitfutureP6contractamendmentrequired. Fullgoalremainsactiveandincomplete.
+
+Duplicate PRCI38077445318 now completedSUCCESS withallfourshards+requiredtest/integration-report, exacta4d snapshots inspected. Earlier at-merge pending description remains historical and accurate; both final fullCI chains green. P2bareShapingResult emitted via shippedshaping emitter aftervalidtwo-layerselfcheck, epics[], no receipt/promotion. Draft status remains until independent preactivationchecks andpublication; authenticationreviewservice failure may require sign-in restoration for git publication and worker escalation.
