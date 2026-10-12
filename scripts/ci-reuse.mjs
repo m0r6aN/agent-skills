@@ -125,6 +125,7 @@ const ENUMERATED_CODE_BASENAMES = Object.freeze(['tsconfig.json', 'biome.json'])
  * R5 re-verification: the three `jev-p0-*.md` docs were NOT excluded —
  * `jev-decisions`' `PATHS` is an in-memory allowlist and no check reads those
  * files (measured, not asserted); they stay ordinary.
+ * CFF-H1 (cff-p0-review-triage-2026-10-08.md E1): +5 measured w4-closeout / pi-model-configuration goal-doc readers.
  */
 export const READER_SET = Object.freeze([
   'plugins/foreman-line/approval/README.md',
@@ -133,9 +134,14 @@ export const READER_SET = Object.freeze([
   'plugins/foreman-line/dispatch/README.md',
   'plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md',
   'plugins/foreman-line/docs/goals/foreman-kernel/',
+  'plugins/foreman-line/docs/goals/pi-model-configuration/a54-ratification-2026-09-26.md',
+  'plugins/foreman-line/docs/goals/pi-model-configuration/charter.md',
+  'plugins/foreman-line/docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit/rcm-p0-catalog-snapshot.v1.json',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/openrouter-rcm-v1-conservative-projection-20260926.json',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/pmc-binding-coverage-openrouter-20260926-v4.json',
+  'plugins/foreman-line/docs/goals/w4-closeout/charter.md',
+  'plugins/foreman-line/docs/goals/w4-closeout/loop-directive.md',
   'plugins/foreman-line/docs/kickstarters/foreman-shaping-template.md',
   'plugins/foreman-line/docs/transcripts/defects_lessons.md',
   'plugins/foreman-line/foreman-config/README.md',
