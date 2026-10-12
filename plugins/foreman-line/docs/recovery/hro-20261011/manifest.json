@@ -1,0 +1,244 @@
+{
+  "version": 1,
+  "date": "2026-10-11",
+  "disposition": "parked-incomplete",
+  "issue": "https://github.com/m0r6aN/agent-skills/issues/175",
+  "branch": "recovery/hro-01a0ddb6-20261011",
+  "baseCommit": "deaba2410457a3f1041dc0ff339740f6bc6d2e5a",
+  "coordinatorTask": "01a0ddb6-5fed-7d82-b2f0-075315440dc1",
+  "builderTask": "01a0ddc2-2250-70a3-82ea-6a5bb273714e",
+  "remoteReferences": [
+    {
+      "ref": "codex/hro-coordination-20260926",
+      "commit": "379f14453d44c426d4667c710c5c74bcfc0289bb",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "codex/hro-p1b-integration-20260926",
+      "commit": "5a4937e9e556cf8e5c8dc096ce6fe1124761fc5a",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "codex/hro-p1c-integration-20260926",
+      "commit": "aa17051fccb8432b45c959eec1707e2bfcb1ce07",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "codex/hro-p4a1-integration-20260926",
+      "commit": "e5cf0d7f7e6cf7196fd3f1dfb847b79ba4889c48",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "codex/hro-pmc-contract-specs-20260926",
+      "commit": "e2d4a393bca63dc93998b9a192886c09ba8e067d",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "codex/hro-pmc-e2-planner-integration-20260926",
+      "commit": "4e0d1d7fc36b9bc93f9e11cccf36327d4df05644",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "codex/hro-pmc-p1a-integration-20260926",
+      "commit": "7aeb4b7bd4c10a63b1e3972c3c5553559b299a83",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "codex/hro-pmc-p1b-20260926",
+      "commit": "a343ac54f5abad26ec055111d902ae93efcf141f",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "codex/hro-pmc-p2a-integration-20260926",
+      "commit": "725d74107642ecf510974f71d21c00bf6909f149",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "codex/hro-pmc-p2b-integration-20260926",
+      "commit": "0404ec8b19ef5864b8bbd824ffc288c2f8dddff6",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "codex/hro-pmc-p2b1-integration-20260926",
+      "commit": "0c3bae513e4a9dd1cb604b0cde3c50d651ad08ee",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "codex/hro-pmc-p2c-integration-20260926",
+      "commit": "6ac7e3c71581c316be15be650c6782b51da37bcb",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "codex/hro-pmc-p2e1-integration-20260926",
+      "commit": "92ab5bc780475038d4e1f40dfb20a14dc9202db5",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "codex/hro-pmc-p2f-integration-20260926",
+      "commit": "4bbf31360633b4350d7498bafc609565db67842f",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "codex/hro-rcm-materializer-integration-20260926",
+      "commit": "aa13b47eefa6a108745d7e453ed84a68ae2ca372",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "codex/hro-rcm-p1-integration-20260926",
+      "commit": "1d27482503ff76d5d4a0ffab3caaa075617a096b",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "codex/hro-rcm-p1a-wrapper-20260926",
+      "commit": "e23a9251b0365aeaf68302f36bb259a4a59a9ed3",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "codex/hro-rcm-p1b-integration-20260926",
+      "commit": "ea4027a1c61cecd7a8d327f75a14f0c9feeec871",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "codex/hro-rcm-source-contract-20260926",
+      "commit": "ad043990ebbd8fc55042d725af08b089d6574b51",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "recovery/hro-p3-owner-prerequisites-20260926-20260928",
+      "commit": "ea8a9ef6fcfba21446a7c175a96ee8ab2a052e77",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "recovery/hro-p3-telemetry-shaping-20260926-20260928",
+      "commit": "f41f0adfa5888a42a9a135a1eb052a38a0c7474c",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "recovery/hro-p3a-offline-runtime-20260926-20260928",
+      "commit": "adbb3a5424bf5af671c6f8ea1fd99ec3662126d6",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "recovery/hro-p4a1-closure-20260928",
+      "commit": "4f196a384f616f203805a47467ad6c2d635f6b4c",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "recovery/hro-p4a1-integration-20260926-20260928",
+      "commit": "f8d0a6929203a3f9013052fb26d3264bcf240775",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    },
+    {
+      "ref": "recovery/hro-pmc-p2d-runtime-20260926-20260928-2",
+      "commit": "6c9262298282f54f5d4197f9897b7658c3966475",
+      "ancestorOfMain": true,
+      "exclusiveCommits": 0
+    }
+  ],
+  "historicalArtifacts": [
+    {
+      "originalPath": ".audit/hro-p1-brief.md",
+      "preservedPath": "plugins/foreman-line/docs/recovery/hro-20261011/historical/planning-evidence/hro-p1-brief.md",
+      "sizeBytes": 2682,
+      "sha256": "f65dfb848e1beb0491202f2f768532a0a1aa5a9317b94470c54912461a7de368",
+      "status": "historical-only; not an active contract or acceptance claim"
+    },
+    {
+      "originalPath": ".audit/hro-p1-directive.md",
+      "preservedPath": "plugins/foreman-line/docs/recovery/hro-20261011/historical/planning-evidence/hro-p1-directive.md",
+      "sizeBytes": 2112,
+      "sha256": "602266fce3b775eecb22d90b7531574c364fdf88cbfa5f8cae44e0b0e2a6dfa3",
+      "status": "historical-only; not an active contract or acceptance claim"
+    },
+    {
+      "originalPath": "plugins/foreman-line/docs/goals/hybrid-routing-optimization/charter.md",
+      "preservedPath": "plugins/foreman-line/docs/recovery/hro-20261011/historical/plugins/foreman-line/docs/goals/hybrid-routing-optimization/charter.md",
+      "sizeBytes": 25770,
+      "sha256": "5fd998773e4732c394c6c2d7b1be0e9c3d36e57268b8ca11a762130742785f54",
+      "status": "historical-only; not an active contract or acceptance claim"
+    },
+    {
+      "originalPath": "plugins/foreman-line/docs/goals/hybrid-routing-optimization/hro-p0-inventory.md",
+      "preservedPath": "plugins/foreman-line/docs/recovery/hro-20261011/historical/plugins/foreman-line/docs/goals/hybrid-routing-optimization/hro-p0-inventory.md",
+      "sizeBytes": 7817,
+      "sha256": "ad738909ab42af218b0413b77eaa8cfa287d47de93d144cb463499e8011cdcd0",
+      "status": "historical-only; not an active contract or acceptance claim"
+    },
+    {
+      "originalPath": "plugins/foreman-line/docs/goals/hybrid-routing-optimization/hro-p1-coordination.md",
+      "preservedPath": "plugins/foreman-line/docs/recovery/hro-20261011/historical/plugins/foreman-line/docs/goals/hybrid-routing-optimization/hro-p1-coordination.md",
+      "sizeBytes": 3775,
+      "sha256": "b532a1ea20e032c44e11cf8759aef8ea37e9dfbf6c53fb4a567f89604f5a6eef",
+      "status": "historical-only; not an active contract or acceptance claim"
+    },
+    {
+      "originalPath": "plugins/foreman-line/docs/specs/active/HRO-P1-explicit-provider-mappings.md",
+      "preservedPath": "plugins/foreman-line/docs/recovery/hro-20261011/historical/plugins/foreman-line/docs/specs/active/HRO-P1-explicit-provider-mappings.md",
+      "sizeBytes": 5863,
+      "sha256": "9d86deaebc32a6c1ea4f03bda839fb74e2aaceac063e1b805e040148fe060743",
+      "status": "historical-only; not an active contract or acceptance claim"
+    },
+    {
+      "originalPath": "plugins/foreman-line/docs/specs/active/hro-p1-shaping-20260926.shaping-result.json",
+      "preservedPath": "plugins/foreman-line/docs/recovery/hro-20261011/historical/plugins/foreman-line/docs/specs/active/hro-p1-shaping-20260926.shaping-result.json",
+      "sizeBytes": 287,
+      "sha256": "ef5227b0b4012632cef032e3cbdb56a67b0f0ef54f69b9e25258a74b3a9b38ac",
+      "status": "historical-only; not an active contract or acceptance claim"
+    },
+    {
+      "originalPath": "plugins/foreman-line/docs/specs/active/HRO-P1a-mapping-contract.md",
+      "preservedPath": "plugins/foreman-line/docs/recovery/hro-20261011/historical/plugins/foreman-line/docs/specs/active/HRO-P1a-mapping-contract.md",
+      "sizeBytes": 3696,
+      "sha256": "6492612a8da7ba95a33d66bce92951120a504910c7e5baea4276e88525321e82",
+      "status": "historical-only; not an active contract or acceptance claim"
+    },
+    {
+      "originalPath": "plugins/foreman-line/docs/specs/active/HRO-P1b-mapping-consumer-integration.md",
+      "preservedPath": "plugins/foreman-line/docs/recovery/hro-20261011/historical/plugins/foreman-line/docs/specs/active/HRO-P1b-mapping-consumer-integration.md",
+      "sizeBytes": 3157,
+      "sha256": "f7ff54e17e9d962f0b3920c6a1d1bb19a5031731ee5d7c2cd7e6db6e8b44365d",
+      "status": "historical-only; not an active contract or acceptance claim"
+    }
+  ],
+  "localPreservation": {
+    "sourceCheckout": ".codex/worktrees/6d47/agent-skills",
+    "sourceBaseline": "305ecbf01a8b458a81a3ba5e04b4919e63281f94",
+    "sourceFilesInventoriedExcludingGeneratedDirectories": 1559,
+    "otherMaterial": "Retained locally in full; not published or deleted.",
+    "sessionHistory": "Retained locally; not published.",
+    "cleanup": "Supported Codex goal-clear/thread-archive and relocation outside active worktrees occur only after remote handoff is verified."
+  },
+  "verification": {
+    "remoteTips": 25,
+    "allRemoteTipsReachableFromBase": true,
+    "historicalCopiesHashVerified": 9,
+    "credentialPatternScan": "No known credential/private-key patterns in the nine copied artifacts; not a comprehensive security audit.",
+    "runtimeChanged": false,
+    "liveInferencePerformed": false,
+    "freshRuntimeAcceptanceClaimed": false
+  }
+}

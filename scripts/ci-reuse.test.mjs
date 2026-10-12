@@ -421,9 +421,14 @@ test('A3 reader set pins exactly the measured read-sweep inventory (identity + l
     'plugins/foreman-line/dispatch/README.md',
     'plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md',
     'plugins/foreman-line/docs/goals/foreman-kernel/',
+    'plugins/foreman-line/docs/goals/pi-model-configuration/a54-ratification-2026-09-26.md',
+    'plugins/foreman-line/docs/goals/pi-model-configuration/charter.md',
+    'plugins/foreman-line/docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md',
     'plugins/foreman-line/docs/goals/routing-currency-and-merit/rcm-p0-catalog-snapshot.v1.json',
     'plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/openrouter-rcm-v1-conservative-projection-20260926.json',
     'plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/pmc-binding-coverage-openrouter-20260926-v4.json',
+    'plugins/foreman-line/docs/goals/w4-closeout/charter.md',
+    'plugins/foreman-line/docs/goals/w4-closeout/loop-directive.md',
     'plugins/foreman-line/docs/kickstarters/foreman-shaping-template.md',
     'plugins/foreman-line/docs/transcripts/defects_lessons.md',
     'plugins/foreman-line/foreman-config/README.md',
@@ -1132,6 +1137,42 @@ test('R5 re-verification: jev-p0 goal docs have no check readers and stay ordina
   for (const path of jevAlphaReaders) {
     assert.equal(classifyPath(path), CLASS.ORDINARY, path)
     assert.equal(deltaFallbackReason(path), null, path)
+  }
+})
+
+// ─── CFF-H1 (cff-p0-review-triage-2026-10-08.md E1): goal-doc readers of
+// ops-console (live-goal) and routing-policy (host-settings-proposal,
+// legacy-cutover) — measured exact paths, never ordinary_documentation
+
+const cffH1Readers = [
+  'plugins/foreman-line/docs/goals/w4-closeout/charter.md',
+  'plugins/foreman-line/docs/goals/w4-closeout/loop-directive.md',
+  'plugins/foreman-line/docs/goals/pi-model-configuration/charter.md',
+  'plugins/foreman-line/docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md',
+  'plugins/foreman-line/docs/goals/pi-model-configuration/a54-ratification-2026-09-26.md',
+]
+test('CFF-H1 readers (ops-console / routing-policy goal docs): every measured path is code + test-relevant-change', () => {
+  for (const path of cffH1Readers) {
+    assert.ok(READER_SET.includes(path), `${path} is an exact READER_SET entry`)
+    assert.equal(classifyPath(path), CLASS.CODE, path)
+    assert.notEqual(classifyPath(path), CLASS.ORDINARY, path)
+    assert.equal(deltaFallbackReason(path), 'test-relevant-change', path)
+  }
+  // exact-file entries, not prefixes: siblings in the same goal trees stay ordinary
+  assert.equal(classifyPath('plugins/foreman-line/docs/goals/w4-closeout/plan-review-findings.md'), CLASS.ORDINARY)
+  assert.equal(classifyPath('plugins/foreman-line/docs/goals/pi-model-configuration/loop-directive.md'), CLASS.ORDINARY)
+})
+
+test('CFF-H1 mutate-the-fixture: removing any one entry from a test-local readers list flips that path to ordinary_documentation', () => {
+  for (const removed of cffH1Readers) {
+    const mutated = READER_SET.filter((entry) => entry !== removed)
+    assert.equal(mutated.length, READER_SET.length - 1, `${removed} was a single exact entry`)
+    assert.equal(classifyPath(removed, mutated), CLASS.ORDINARY, `${removed} flips when unlisted`)
+    assert.equal(deltaFallbackReason(removed, mutated), null, `${removed} no longer forces fallback`)
+    // the other four remain bound by their own entries
+    for (const kept of cffH1Readers) {
+      if (kept !== removed) assert.equal(classifyPath(kept, mutated), CLASS.CODE, kept)
+    }
   }
 })
 

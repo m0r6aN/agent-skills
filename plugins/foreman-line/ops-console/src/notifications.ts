@@ -8,7 +8,8 @@ import { isRecord } from './guards.js'
  * FOC-P3 console-local notification store (OQ3): `state/notifications.json`,
  * format `foc-notifications/v1`. Sole writer of that file in the package (X1).
  * Goal directories stay coordinator-owned; the console never writes into them
- * (D2) — this store is one of exactly two writable paths in the package.
+ * (D2) — this store is one of the closed set of writable paths in the package
+ * (`STATE_FILES`).
  */
 export interface Notification {
   readonly id: string

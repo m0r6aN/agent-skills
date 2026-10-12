@@ -1,0 +1,47 @@
+diff --git a/plugins/foreman-line/templates/pi-routing-directive.md b/plugins/foreman-line/templates/pi-routing-directive.md
+--- a/plugins/foreman-line/templates/pi-routing-directive.md
++++ b/plugins/foreman-line/templates/pi-routing-directive.md
+@@ -24,19 +24,42 @@
+ declared in the approved route and recorded in the route receipt — never invented in a
+ template, never silently substituted, never credential-bearing.
+ 
+-A dispatched session is launched by the Pi CLI, naming the approved route's
++Except for the explicitly ratified, versioned internal-review companion described
++below, a dispatched session is launched by the Pi CLI, naming the approved route's
+ identity:
+ 
+ ```
+ pi --model <provider>/<model-id>        # e.g. pi --model anthropic/claude-opus-5-5
+ ```
+ 
+ `--model` carries the identity; it confers no authority. The approved route
+ receipt remains the authorizing artifact and the launch boundary verifies it
+ before inference. A bare `pi` invocation with no approved route is a direct
+ invocation and is not a Foreman execution path. A session never writes Pi
+ configuration to change its own model.
+ 
++## Versioned internal review companion
++
++`internal-review-launch/v1` is a proposed additive contract, not an active route
++merely because its document is published. Only after explicit owner ratification
++and separately scoped bootstrap/installation approval may its exact
++`operator-developer-cortex-memory` initial L2 plan-review use-case use a controlled
++Pi SDK child instead of the CLI. No builder, G6, other goal/lane/provider or data
++scope is covered; ordinary dispatch and every legacy/public-v1 refusal remain.
++
++The companion's trusted authority port and host-side admission gate must verify
++its single-use permit, exact model pair, native reasoning, scoped account/data
++policy, isolation, executed identity and incremental-charge accounting before
++invoking Pi's installed Anthropic provider/auth. Pro/OAuth is owner-attested:
++model improvement and paid extra usage off; NO separate broker or auth repair.
++The owner-accepted subscription policy is purpose-bound, NOT ZDR; prepaid quota
++is separate from incremental dollar caps. Provider-use/native-runtime evidence
++remains required. It cannot authorize or accept itself, silently switch auth,
++model or reasoning, load unrelated resources, or reuse an old receipt as a permit.
++See `../docs/contracts/internal-review-launch-v1.md` and its explicit bootstrap
++amendment. Publication, a human offline check or fixture output is not runtime
++admission, an independent frontier review, or downstream execution authority.
++
+ Model IDs are first-class in four provider spellings, each recorded verbatim and
+ never normalized toward another — exact string equality within one namespace
+ only (Amendment 06 N1/N3):
