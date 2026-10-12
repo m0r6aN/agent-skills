@@ -102,9 +102,11 @@ Paths below are relative to plugins/foreman-line/ops-console.
   desktop/mobile usable, no overflow.
   Files: index.html, spawn-panel.js, goal-local browser-smoke.mjs.
   Verify: npm test/typecheck/lint, both browsers/screenshots/axe at existing widths.
-- [ ] F4 — Review, evidence, commit/push and PR #198 update (depends on F3).
+- [x] F4 — Review, evidence, commit/push and PR #198 update (depends on F3).
   Acceptance: scoped safeguards reviewed; evidence and blockers recorded; no merge.
   Verify: diff check, clean branch and remote PR handoff.
+  Evidence: `280004b3` pushed to the existing open PR, focused update comment posted;
+  implementation/self-review completed, independent/human review remains below.
 - [ ] Independent/human review of follow-up commits before merge. Automated
   read-only review attempt blocked by expired OAuth (no verdict); see verification.md.
 
