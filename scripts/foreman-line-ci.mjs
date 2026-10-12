@@ -35,6 +35,9 @@ import { appendFileSync, lstatSync, readFileSync, readdirSync, statSync, writeFi
 import { join } from 'node:path'
 import { createHash } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
+// D11 (CFF-P1 AC6): the ONE changed-paths source lives in ci-reuse.mjs; this
+// runner never computes a diff itself.
+import { changedPathsFromEvent } from './ci-reuse.mjs'
 
 export class ForemanCiError extends Error {
   constructor(message, cause) {
@@ -273,6 +276,13 @@ export const MAX_SHARDS = 4
  * (authority-registry = completion mean of the 10 measured runs at node
  * 24.19.0; dispatch = the live completion values). Pinned data — golden-tested
  * like the waiver pins. The assignment is deterministic in this table.
+ * CFF-P1 AC3 / D10(a) re-pin (2026-10-08): `kernel-import`, `ops-console`,
+ * `project-scaffold` added from the pinned environment (windows-latest, Node
+ * 24.19.0) — the per-package phase-2 wall window (test + typecheck + lint) of
+ * the CFF-P0 capture-of-record run 37768165017 (methodology and calibration in
+ * cff-p1-completion-record-2026-10-08.md). With all 30 discovered names
+ * priced, costKnown flips true and live assignment returns from the
+ * round-robin fallback to the ratified cost-aware mechanism — deliberately.
  */
 export const COST_TABLE = Object.freeze({
   'approval': 14.3,
@@ -286,10 +296,14 @@ export const COST_TABLE = Object.freeze({
   'integration': 7.8,
   'jev-decisions': 1.6,
   'kernel-contracts': 3.8,
+  // kernel-import / ops-console / project-scaffold: single instrumented measurement (fs/module tracing on), capture-of-record run 37768165017, unscaled.
+  'kernel-import': 18.0,
   'kernel-lease': 67.0,
   'kernel-state': 8.1,
   'mutation-scope-guard': 33.9,
+  'ops-console': 6.5, // single instrumented measurement, run 37768165017, unscaled
   'permission-profiles': 13.7,
+  'project-scaffold': 20.5, // single instrumented measurement, run 37768165017, unscaled
   'projection': 4.8,
   'receipts': 12.4,
   'registration': 18.0,
@@ -813,14 +827,233 @@ export function outcomeRecord(name, checks, waivers = [], rejections = {}) {
   }
 }
 
-export function buildShardOutcomes({ shardIndex, shardCount, headSha, packages }) {
+export function buildShardOutcomes({ shardIndex, shardCount, headSha, packages, costTableMissing = [] }) {
   return {
     schema: OUTCOMES_SCHEMA,
     shard_index: shardIndex,
     shard_count: shardCount,
     head_sha: headSha ?? null,
     packages,
+    // CFF-P1 AC3 / D10(c): cost-table coverage loudness (additive field) — the
+    // discovered names absent from COST_TABLE for this run. Non-empty means
+    // assignShards' all-or-nothing costKnown gate fell back to round-robin.
+    cost_table_missing: [...costTableMissing],
   }
+}
+
+/** D10(c): discovered names with no finite COST_TABLE entry (sorted). */
+export function costTableMissing(names, costTable = COST_TABLE) {
+  const table = costTable !== null && typeof costTable === 'object' ? costTable : {}
+  return names.filter((name) => !Number.isFinite(table[name])).sort()
+}
+
+// ─── CFF-P1 AC1/AC2: change-proximity ordering (D7 pin, consumed fail-safe) ─
+
+/**
+ * The D7 measured read graph (CFF-P0's artifact) — consumed READ-ONLY, if and
+ * only if present and schema-exact. Never written, never assumed present, and
+ * never used to exclude a package (ordering only — D7's fail-safe consumer).
+ */
+export const READ_GRAPH_SCHEMA = 'foreman-line-ci/read-graph@1'
+export const READ_GRAPH_PATH = Object.freeze([
+  'plugins', 'foreman-line', 'docs', 'goals', 'ci-fail-fast', 'read-graph', 'read-graph.json',
+])
+
+function isPlainObject(value) {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+/**
+ * Amendment CFF-P1-A2 item 2: the named exclusion-shaped key set, matched
+ * EXACTLY (case-insensitive) — never by substring, so legitimate keys such as
+ * `platform_skips` do not trip the scan.
+ */
+const EXCLUSION_KEYS = new Set(['excludes', 'excluded', 'not-affected', 'not_affected', 'notaffected', 'exempt', 'ignore'])
+
+/**
+ * A2 item 2: recursive (iterative — no stack-depth hazard on hostile nesting)
+ * scan of the WHOLE parsed pin: true when any object key at any depth, inside
+ * objects or arrays, is in EXCLUSION_KEYS.
+ */
+function hasExclusionKeyAnywhere(root) {
+  const stack = [root]
+  const seen = new Set()
+  while (stack.length > 0) {
+    const node = stack.pop()
+    if (typeof node !== 'object' || node === null || seen.has(node)) continue
+    seen.add(node)
+    if (Array.isArray(node)) {
+      for (const item of node) stack.push(item)
+      continue
+    }
+    for (const [key, value] of Object.entries(node)) {
+      if (EXCLUSION_KEYS.has(key.toLowerCase())) return true
+      stack.push(value)
+    }
+  }
+  return false
+}
+
+/** Read the pin from disk, read-only. Missing/unreadable/unparseable -> doc null + named reason. */
+export function loadReadGraph({ root, readFile = readFileSync } = {}) {
+  let raw
+  try {
+    raw = readFile(join(root, ...READ_GRAPH_PATH), 'utf8')
+  } catch (cause) {
+    return { doc: null, reason: cause && cause.code === 'ENOENT' ? 'pin-missing' : 'pin-unreadable' }
+  }
+  try {
+    return { doc: JSON.parse(raw), reason: null }
+  } catch {
+    return { doc: null, reason: 'pin-unparseable' }
+  }
+}
+
+/**
+ * AC2 consumption contract. Accepts ONLY a document whose `schema` is exactly
+ * READ_GRAPH_SCHEMA and whose per-package read-graph entries `packages` map
+ * package name -> array of path strings (the package's full measured read
+ * set, own directory included — a shape that can express positive coverage
+ * only). The optional `projections.affection_pin` (CFF-P0's external-only
+ * projection, a subset of `packages`) must have the same positive-only shape
+ * and is unioned in; the optional `named_variance_edges` are shape-strict
+ * `{ package, path }` objects — exactly those two keys, both strings (A2 item
+ * 2; R15: a variance edge ALWAYS adds affection, never removes). Any
+ * exclusion-shaped key ANYWHERE in the document (A2 item 2's exact key set,
+ * recursive) or any other shape is a malformed pin. Returns the affection
+ * relation as Map<name, path[]> — union only, never subtraction — plus
+ * `covered`, the Set of names with their own `packages` entry (A2 item 1:
+ * a swept package outside it is an uncovered package).
+ */
+export function validateReadGraph(doc) {
+  const bad = (reason) => ({ ok: false, reason, affection: null, covered: null })
+  if (!isPlainObject(doc)) return bad('pin-malformed')
+  if (doc.schema !== READ_GRAPH_SCHEMA) return bad('pin-schema-mismatch')
+  const affection = new Map()
+  const addEntries = (relation) => {
+    for (const [name, paths] of Object.entries(relation)) {
+      if (!Array.isArray(paths) || !paths.every((p) => typeof p === 'string')) return false
+      affection.set(name, [...(affection.get(name) ?? []), ...paths])
+    }
+    return true
+  }
+  if (!isPlainObject(doc.packages)) return bad('pin-malformed')
+  if (!addEntries(doc.packages)) return bad('pin-entry-not-positive')
+  const covered = new Set(Object.keys(doc.packages))
+  const projections = doc.projections
+  if (projections !== undefined) {
+    if (!isPlainObject(projections)) return bad('pin-malformed')
+    const pin = projections.affection_pin
+    if (pin !== undefined) {
+      if (!isPlainObject(pin)) return bad('pin-malformed')
+      if (!addEntries(pin)) return bad('pin-entry-not-positive')
+    }
+  }
+  const edges = doc.named_variance_edges
+  if (edges !== undefined) {
+    if (!Array.isArray(edges)) return bad('pin-malformed')
+    for (const edge of edges) {
+      const keys = isPlainObject(edge) ? Object.keys(edge) : []
+      if (keys.length !== 2 || typeof edge.package !== 'string' || typeof edge.path !== 'string') {
+        return bad('pin-variance-edge-shape')
+      }
+      affection.set(edge.package, [...(affection.get(edge.package) ?? []), edge.path])
+    }
+  }
+  if (hasExclusionKeyAnywhere(doc)) return bad('pin-exclusion-shaped')
+  return { ok: true, reason: null, affection, covered }
+}
+
+function normalizeProximityPath(path) {
+  let p = path.split('\\').join('/').toLowerCase()
+  while (p.endsWith('/')) p = p.slice(0, -1)
+  return p
+}
+
+/**
+ * AC1 binary, per-package proximity: a package is proximate when any of its
+ * pinned read paths equals a changed path or is a directory prefix of one.
+ * Matching is case-insensitive and separator-normalized — both only ever ADD
+ * matches (over-approximation). Returns the proximate Set; it is only ever
+ * used to ORDER, never to filter.
+ */
+export function proximatePackages(affection, changedPaths) {
+  const changed = changedPaths.map(normalizeProximityPath).filter((p) => p.length > 0)
+  const proximate = new Set()
+  for (const [name, paths] of affection) {
+    for (const raw of paths) {
+      const p = normalizeProximityPath(raw)
+      if (p.length === 0) continue
+      if (changed.some((c) => c === p || c.startsWith(`${p}/`))) {
+        proximate.add(name)
+        break
+      }
+    }
+  }
+  return proximate
+}
+
+/**
+ * AC1 ordering rule: proximate packages first, then non-proximate, each group
+ * in `mine`'s own (ascending code-point) order — a stable split of the input,
+ * so the two groups partition `mine` by construction. Ordering never excludes.
+ */
+export function orderShardPackages(mine, proximate) {
+  if (!(proximate instanceof Set)) return [...mine]
+  return [...mine.filter((n) => proximate.has(n)), ...mine.filter((n) => !proximate.has(n))]
+}
+
+/**
+ * AC1/AC2 total ordering decision for one shard. Missing changed paths (the
+ * D11 seam's fail-closed null), a missing or malformed pin, an uncovered
+ * package (A2 item 1: any package in `mine` without its own `packages` entry
+ * disables proximity for the whole run, reason `pin-uncovered-package:<first
+ * uncovered name>` — distinct from `pin-missing`), or ANY error while
+ * computing proximity falls back to `mine` exactly as assigned (today's
+ * ascending-name order, by reference — never a snapshot). The partition
+ * property is re-asserted after reordering; a violation also falls back.
+ */
+export function computeShardOrder({ mine, changedPaths = null, readGraph = null } = {}) {
+  const fallback = (reason) => ({ order: [...mine], mode: 'fallback', reason, proximate: [] })
+  try {
+    if (!Array.isArray(changedPaths)) return fallback('changed-paths-unavailable')
+    if (readGraph === null || readGraph === undefined) return fallback('pin-unavailable')
+    const validated = validateReadGraph(readGraph)
+    if (!validated.ok) return fallback(validated.reason)
+    const uncovered = mine.find((n) => !validated.covered.has(n))
+    if (uncovered !== undefined) return fallback(`pin-uncovered-package:${uncovered}`)
+    const proximate = proximatePackages(validated.affection, changedPaths)
+    const order = orderShardPackages(mine, proximate)
+    if (order.length !== mine.length || !sameSet(order, mine)) return fallback('partition-violation')
+    return { order, mode: 'proximity', reason: null, proximate: order.filter((n) => proximate.has(n)) }
+  } catch {
+    return fallback('proximity-error')
+  }
+}
+
+// ─── CFF-P1 AC5: D8 early-red annotations (signal only) ───────────────────
+
+/** GitHub workflow-command property escaping, applied AFTER sanitizeField. */
+function annotationProperty(value) {
+  return value.split('%').join('%25').split(',').join('%2C').split(':').join('%3A')
+}
+
+/**
+ * D8 named early-red surface: one GitHub Actions `::error` (fail/error) or
+ * `::warning` (waived) log command. Every interpolated field is fixed-shape
+ * data — package name, check name, the waiver-evaluation layer code — run
+ * through sanitizeField (SC #4/SC31) and then property-escaped; captured check
+ * output is NEVER an input. The `::error`/`::warning`/`file=`/`title=` tokens
+ * are literals of this function. Log-level only: no Checks API, no status.
+ */
+export function buildAnnotation(level, name, check, layer = null) {
+  if (level !== 'error' && level !== 'warning') throw new ForemanCiError('Refusing annotation: unknown level')
+  const pkg = sanitizeField(name, 120)
+  const chk = sanitizeField(check, 40)
+  const message = level === 'error'
+    ? `foreman-line ${pkg}/${chk} failed (waiver layer: ${sanitizeField(layer ?? 'none', 40)}); shard early exit - unreached checks stay skipped and the aggregate verdict still decides`
+    : `foreman-line ${pkg}/${chk} waived (run-then-waive pin matched; output echoed for audit)`
+  return `::${level} file=${annotationProperty(pkg)},title=${annotationProperty(chk)}::${message.split('%').join('%25')}`
 }
 
 // ─── per-shard executor (AC4) ──────────────────────────────────────────────
@@ -845,6 +1078,10 @@ export function runShard({
   discover = discoverPackages,
   waivers = WAIVED_EXCLUSIONS,
   echo = null,
+  changedPaths = null,
+  readGraph = null,
+  annotate = null,
+  costTable = COST_TABLE,
 } = {}) {
   if (typeof npmCli !== 'string' || npmCli.length === 0) {
     throw new ForemanCiError('Refusing shard run: npmCli must be a non-empty string')
@@ -857,7 +1094,7 @@ export function runShard({
     throw new ForemanCiError('Refusing shard run: shardIndex out of range')
   }
   const names = discover({ root })
-  const mine = assignShards(names, shardCount)[shardIndex]
+  const mine = assignShards(names, shardCount, costTable)[shardIndex]
   const records = new Map(
     names.map((name) => [
       name,
@@ -887,8 +1124,23 @@ export function runShard({
       return { status: 'fail', kind: 'error', output: '', cause: new ForemanCiError('Package process failed', cause) }
     }
   }
+  // Amendment CFF-P1-A2 item 3 (D8 hardening): log emission is best-effort.
+  // A throwing echo/annotate sink is caught and recorded (channel + pair, no
+  // error text); the loop continues and the artifact is still built. The
+  // verdict path is untouched (records/exit code never depend on emission).
+  const emitFailures = []
+  function emitSafely(channel, name, check, fn) {
+    try {
+      fn()
+    } catch {
+      emitFailures.push({ channel, package: sanitizeField(name, 120), check: sanitizeField(check, 40) })
+    }
+  }
   function echoCheck(name, check, output) {
-    if (typeof echo === 'function') echo(name, check, sanitizeOutput(output))
+    if (typeof echo === 'function') emitSafely('echo', name, check, () => echo(name, check, sanitizeOutput(output)))
+  }
+  function annotateCheck(level, name, check, layer) {
+    if (typeof annotate === 'function') emitSafely('annotate', name, check, () => annotate(buildAnnotation(level, name, check, layer)))
   }
 
   // Phase 1: ALL installs before ANY check (per-shard barrier, AC4).
@@ -903,8 +1155,19 @@ export function runShard({
     }
   }
   // Phase 2: this shard's checks only; a failed install stops every check.
+  // CFF-P1 AC1/AC2: iteration ORDER only — proximate packages first, each
+  // group ascending; any unavailability/error falls back to `mine` as assigned.
+  // The order is fixed here, before any check runs, from the changed paths and
+  // the pin alone (no check output is ever read to decide it).
+  const ordering = computeShardOrder({ mine, changedPaths, readGraph })
+  // CFF-P1 AC5 (D8): shard-early-exit at the first NON-WAIVED failure. Every
+  // unreached pair keeps its pre-populated `skipped` (reconcile fails those as
+  // `unexpected-skip`); the artifact is still built from `records` and the
+  // exit code is still derived from recorded fail/error only — early exit can
+  // only ever stop work after a red, never produce a green.
+  let earlyExit = null
   if (installsOk) {
-    for (const name of mine) {
+    phase2: for (const name of ordering.order) {
       for (const check of CHECKS) {
         const result = invoke(name, ['run', check, '--ignore-scripts'])
         if (result.status === 'pass') {
@@ -922,6 +1185,7 @@ export function runShard({
           // R2: the waived output is echoed (sanitized) — an audit trail, never
           // a silent waiver.
           echoCheck(name, `${check} [waived]`, result.output)
+          annotateCheck('warning', name, check, null)
         } else {
           records.get(name).checks[check] = 'fail'
           // R18: the exact layer with its compared values and the observed
@@ -939,6 +1203,9 @@ export function runShard({
           const json = JSON.stringify(records.get(name).waiver_rejected[check])
           const payload = json.length > 4000 ? `${sanitizeField(json, 3999)}…` : sanitizeField(json, 4000)
           echoCheck(name, `${sanitizeField(check, 40)} [rejected: ${payload}]`, result.output)
+          annotateCheck('error', name, check, evaluation.layer)
+          earlyExit = { package: name, check }
+          break phase2
         }
       }
     }
@@ -948,11 +1215,15 @@ export function runShard({
   return {
     exitCode: failed ? 1 : 0,
     outcomes: packages,
+    ordering: { mode: ordering.mode, reason: ordering.reason, order: [...ordering.order], proximate: [...ordering.proximate] },
+    earlyExit,
+    emitFailures: [...emitFailures],
     artifact: buildShardOutcomes({
       shardIndex,
       shardCount,
       headSha,
       packages: packages.filter((p) => mine.includes(p.name)),
+      costTableMissing: costTableMissing(names, costTable),
     }),
   }
 }
@@ -1176,7 +1447,18 @@ export function buildSummary(artifacts) {
     '| --- | --- | --- | --- | --- |',
     ...rows,
     '',
+    costCoverageLine(artifacts),
+    '',
   ].join('\n')
+}
+
+/** CFF-P1 AC3 / D10(c): the step-summary coverage line — never silent. */
+export function costCoverageLine(artifacts) {
+  const reported = artifacts.filter((a) => a && Array.isArray(a.cost_table_missing))
+  if (reported.length === 0) return 'Cost-table coverage: not reported by these shard artifacts.'
+  const missing = [...new Set(reported.flatMap((a) => a.cost_table_missing))].map((n) => sanitizeField(n, 120)).sort()
+  if (missing.length === 0) return 'Cost-table coverage: every discovered package is priced (cost_table_missing: []) - cost-aware shard assignment in effect.'
+  return `Cost-table coverage: ${missing.length} discovered package(s) missing from COST_TABLE (cost_table_missing: ${JSON.stringify(missing)}) - round-robin shard assignment fallback in effect.`
 }
 
 // ─── CLI (thin): shard and aggregate ───────────────────────────────────────
@@ -1251,8 +1533,23 @@ export async function runCli(argv, env = process.env, deps = {}) {
     const offline = extra.includes('--offline')
     const shardIndex = Number(index)
     const shardCount = Number(count)
+    const repoRoot = fileURLToPath(new URL('../', import.meta.url))
+    // CFF-P1 AC1/AC2/AC6: ordering inputs. Both seams are fail-closed (never
+    // throw); any failure here only disables proximity ordering for this run.
+    let diff = { paths: null, reason: 'diff-error' }
+    try {
+      diff = (deps.changedPathsFromEvent ?? changedPathsFromEvent)({ env })
+    } catch {
+      diff = { paths: null, reason: 'diff-error' }
+    }
+    let pin = { doc: null, reason: 'pin-unreadable' }
+    try {
+      pin = (deps.loadReadGraph ?? loadReadGraph)({ root: repoRoot })
+    } catch {
+      pin = { doc: null, reason: 'pin-unreadable' }
+    }
     const result = runShard({
-      root: fileURLToPath(new URL('../', import.meta.url)),
+      root: repoRoot,
       npmCli,
       spawn,
       shardIndex,
@@ -1262,12 +1559,37 @@ export async function runCli(argv, env = process.env, deps = {}) {
       // The rejection label carries its 4k payload (artifact parity, the
       // ruling's cap); plain check names are composed capped at 40 upstream.
       echo: (name, check, text) => stdout(`\n=== ${sanitizeField(name)} / ${sanitizeField(check, 4200)} output ===\n${text}\n`),
+      changedPaths: Array.isArray(diff?.paths) ? diff.paths : null,
+      readGraph: pin?.doc ?? null,
+      // D8: sanitized fixed-shape annotations, emitted at failure/waive time
+      annotate: (line) => stdout(`${line}\n`),
     })
+    const ord = result.ordering
+    // A2 item 3: the informational lines before the artifact write are
+    // best-effort too, so a broken stdout can never lose the partial artifact.
+    const logSafely = (text) => {
+      try {
+        stdout(text)
+      } catch {
+        // swallowed: the artifact write below is what the verdict depends on
+      }
+    }
+    logSafely(
+      ord.mode === 'proximity'
+        ? `shard ordering: proximity (${ord.proximate.length} proximate first: ${sanitizeField(ord.proximate.join(', '), 2000)})\n`
+        : `shard ordering: ascending-name fallback (${sanitizeField(ord.reason, 160)}; diff: ${sanitizeField(diff?.reason ?? 'ok', 60)}; pin: ${sanitizeField(pin?.reason ?? 'present', 60)})\n`,
+    )
+    if (result.earlyExit !== null) {
+      logSafely(`shard early exit at ${sanitizeField(result.earlyExit.package, 120)}/${sanitizeField(result.earlyExit.check, 40)}: unreached checks stay skipped; the aggregate verdict reconciles them (unexpected-skip)\n`)
+    }
     const dir = outDir === undefined || outDir === '--offline' ? 'shard-outcomes' : outDir
     makeDir(dir, { recursive: true })
     writeFile(join(dir, 'shard-outcomes.json'), `${JSON.stringify(result.artifact, null, 2)}\n`)
+    if (result.emitFailures.length > 0) {
+      logSafely(`shard log emission failures (best-effort, recorded): ${sanitizeField(result.emitFailures.map((f) => `${f.channel}:${f.package}/${f.check}`).join(', '), 2000)}\n`)
+    }
     const summary = buildSummary([result.artifact])
-    stdout(`${summary}\n`)
+    logSafely(`${summary}\n`)
     if (env.GITHUB_STEP_SUMMARY) {
       try {
         appendFile(env.GITHUB_STEP_SUMMARY, summary)
