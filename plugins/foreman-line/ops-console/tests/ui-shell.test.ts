@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import test from 'node:test'
 import { JSDOM } from 'jsdom'
-import { shellHtml, VIEWS } from '../ui/views/shell.js'
+import { fileLink, shellHtml, VIEWS } from '../ui/views/shell.js'
 
 test('operator shell has four explained primary destinations, named tools and no permanent spawn rail', () => {
   const doc = new JSDOM(shellHtml()).window.document
@@ -22,6 +22,20 @@ test('operator shell has four explained primary destinations, named tools and no
       `named: ${el.outerHTML}`,
     )
   }
+})
+
+test('disk evidence links preserve absolute POSIX/Windows/UNC roots and never invent a missing root', () => {
+  for (const [root, expected] of [
+    ['/repos/x', 'file:///repos/x/docs/a.md'],
+    ['C:\\repos\\x', 'file:///C:/repos/x/docs/a.md'],
+    ['\\\\server\\repo', 'file://server/repo/docs/a.md'],
+  ]) {
+    const doc = new JSDOM(fileLink(root ?? '', 'docs/a.md')).window.document
+    assert.equal(doc.querySelector('a')?.getAttribute('href'), expected)
+  }
+  const unknown = new JSDOM(fileLink('', '<img onerror="alert(1)">')).window.document
+  assert.equal(unknown.querySelector('a'), null)
+  assert.equal(unknown.querySelector('img'), null)
 })
 
 test('responsive styling includes mobile reflow, visible focus, hidden semantics and scrollable dialogs', () => {

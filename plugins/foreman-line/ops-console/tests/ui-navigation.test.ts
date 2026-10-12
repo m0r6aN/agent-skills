@@ -121,6 +121,25 @@ test('goal refresh and pending detail loads do not cancel each other or strand L
   }
 })
 
+test('absolute Windows roots remain authoritative rather than being rejected as malformed', async () => {
+  const root = 'C:\\repos\\x'
+  const ui = await mountConsole({
+    '/api/health': { ok: true, repoRoot: root, posture: 'localhost-only' },
+    '/api/goals': { statuses: [{ key: 'g', repoRoot: root, active: true }] },
+    '/api/fleet': { roots: [{ root }] },
+    '/api/signals': { signals: [signal({ repo: root })] },
+    '/api/spawns': { spawns: [] },
+  })
+  try {
+    assert.match(ui.doc.querySelector('#console-status')?.textContent ?? '', /up to date/)
+    ui.input('#fleet-select', root, 'change')
+    assert.equal(ui.doc.querySelectorAll('.signal-row').length, 1)
+    assert.match(ui.doc.querySelector('#fleet-select option:checked')?.textContent ?? '', /^x · C:/)
+  } finally {
+    ui.close()
+  }
+})
+
 test('queue pagination reaches every item and filters before paging', async () => {
   const ui = await mountConsole({
     '/api/signals': {

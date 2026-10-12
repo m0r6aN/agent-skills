@@ -22,7 +22,10 @@ export function esc(value) {
 export function fileLink(repoRoot, ref) {
   if (!ref) return '—'
   if (!repoRoot) return `<code>${esc(ref)}</code> (repository root unavailable)`
-  return `<a href="file://${esc(repoRoot)}/${esc(ref)}" title="Path on disk; browser access may be restricted">${esc(ref)}</a>`
+  const path = repoRoot.replace(/\\/g, '/')
+  const absolute = /^[A-Za-z]:\//.test(path) ? `/${path}` : path
+  const scheme = absolute.startsWith('//') ? 'file:' : 'file://'
+  return `<a href="${scheme}${esc(absolute)}/${esc(ref)}" title="Path on disk; browser access may be restricted">${esc(ref)}</a>`
 }
 export function emptyHtml(title, message) {
   return `<div class="empty-state" role="status"><strong>${esc(title)}</strong><p>${esc(message)}</p></div>`

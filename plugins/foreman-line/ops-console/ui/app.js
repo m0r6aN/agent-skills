@@ -8,6 +8,9 @@ import { browseListHtml, fleetHtml } from './views/fleet.js'
 import { trayHtml } from './views/tray.js'
 import { actionSignature, eligibleActions, reconcileSelection, selectTarget } from './views/selection.js'
 
+// Shape validation only; the server remains the path/authorization authority.
+const absoluteRoot = (value) => typeof value === 'string' && /^(?:\/|[A-Za-z]:[\\/]|\\\\)/.test(value)
+
 export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   const win = doc.defaultView
   const state = { view: 'signals', scope: '', goal: null, repoRoot: '', statuses: [], signals: [], registry: [], fleet: [], spawns: [],
@@ -68,7 +71,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   function scopeOptions() {
     const roots = new Set([...state.fleet.map((f) => f.root), ...state.signals.map((s) => s.repo), ...state.spawns.map((s) => s.repoRoot), ...state.statuses.map((s) => s.repoRoot)].filter(Boolean))
     if (state.scope) roots.add(state.scope)
-    el('fleet-select').innerHTML = '<option value="">All repositories</option>' + [...roots].sort().map((root) => `<option value="${esc(root)}">${esc(root.split('/').pop())} · ${esc(root)}</option>`).join('')
+    el('fleet-select').innerHTML = '<option value="">All repositories</option>' + [...roots].sort().map((root) => `<option value="${esc(root)}">${esc(root.split(/[\\/]/).pop())} · ${esc(root)}</option>`).join('')
     el('fleet-select').value = state.scope
   }
   function queueRows() {
@@ -163,7 +166,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
     const results = await Promise.allSettled(endpoints.map(async ([key, path]) => {
       const data = await api(path), field = { registry: 'actions', fleet: 'roots' }[key] || key
       const strings = (value) => Array.isArray(value) && value.every((part) => typeof part === 'string')
-      const root = (value) => typeof value === 'string' && value.startsWith('/')
+      const root = absoluteRoot
       const checks = {
         statuses: (row) => typeof row.key === 'string' && root(row.repoRoot) && typeof row.active === 'boolean',
         signals: (row) => typeof row.id === 'string' && typeof row.subject === 'string' && typeof row.class === 'string' && root(row.repo) && strings(row.actions) && strings(row.evidence) && ['urgent', 'attention', 'info'].includes(row.severity),
@@ -390,7 +393,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   async function initialize() {
     try {
       const health = await api('/api/health')
-      if (health.ok !== true || typeof health.repoRoot !== 'string' || !health.repoRoot.startsWith('/')) throw new Error('Invalid health response')
+      if (health.ok !== true || !absoluteRoot(health.repoRoot)) throw new Error('Invalid health response')
       state.repoRoot = health.repoRoot
       await refresh()
     }
