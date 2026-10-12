@@ -86,18 +86,18 @@ Paths below are relative to plugins/foreman-line/ops-console.
 
 ## PR #198 focused follow-up tasks
 
-- [ ] F1 — Bulk review and suggestions (depends on existing task 6).
+- [x] F1 — Bulk review and suggestions (depends on existing task 6).
   Acceptance: all selected items including page 2; updated/skipped totals;
   incompatible/unavailable/pending-review stay flagged; suggestions preserve manual
   fields and never widen existing permissions; merge false.
   Files: selection.js/.d.ts, spawn-panel.js, app.js, ui-selection-launch.test.ts.
   Verify: focused failing→passing tests, typecheck/lint.
-- [ ] F2 — Contextual help (depends on F1).
+- [x] F2 — Contextual help (depends on F1).
   Acceptance: definitions match prompt/backend contracts; named dialog, keyboard
   containment, Escape/opener return, unchanged launch drafts.
   Files: shell.js, app.js, ui-selection-launch.test.ts.
   Verify: failing→passing DOM regression and Chromium/Firefox keyboard checks.
-- [ ] F3 — Configuration spacing (depends on F2).
+- [x] F3 — Configuration spacing (depends on F2).
   Acceptance: grouped aligned labels, token gaps/padding; current style preserved;
   desktop/mobile usable, no overflow.
   Files: index.html, spawn-panel.js, goal-local browser-smoke.mjs.
@@ -105,6 +105,8 @@ Paths below are relative to plugins/foreman-line/ops-console.
 - [ ] F4 — Review, evidence, commit/push and PR #198 update (depends on F3).
   Acceptance: scoped safeguards reviewed; evidence and blockers recorded; no merge.
   Verify: diff check, clean branch and remote PR handoff.
+- [ ] Independent/human review of follow-up commits before merge. Automated
+  read-only review attempt blocked by expired OAuth (no verdict); see verification.md.
 
 ## 9. Verification and handoff
 - [x] Chromium + Firefox: primary views at 320/768/1024/1366/1920; no page overflow

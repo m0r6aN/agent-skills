@@ -1,5 +1,95 @@
 # UX redesign verification — 2026-10-12
 
+## PR #198 focused follow-up
+
+Implementation savepoints: `f50db5df` (bulk/suggestions), `1e800fa6` (help),
+`340a9972` (keyboard focus), `4d8a61f3` (spacing). Focused contract amendments
+and task acceptance criteria are in this directory’s plan.md/todo.md. Original
+verification below remains historical evidence; outstanding owner tasks remain.
+
+- Separate action and permission Apply operates on the complete selection Map,
+  including hidden pages/repositories. Updated/skipped totals remain visible.
+  Explicit Apply explains that it replaces the corresponding manual choices;
+  unavailable/incompatible/pending-review items remain flagged and block launch.
+- Suggestions are on by default for untouched fields. Manual action and permission
+  set provenance is tracked separately. Use eligible registered Investigate and
+  registered conservative autonomy, capped by existing permissions. Changing
+  actions no longer resets manual permissions or widens existing authority;
+  toggling suggestions off retains drafts. Merge stays false/human-owned.
+- Workspace/review Help uses a named native dialog, keyboard containment, Escape
+  and opener focus return without re-rendering the launch form. Bulk updates now
+  restore focus to their replacement control too (regression reproduced first).
+- Help definitions checked against src/actions.ts (separate envelope fields and
+  conservative registry), src/prompts.ts (verbatim autonomy and unconditional
+  verification/human merge boundary), src/spawn.ts (one plan/session, indexed panes,
+  per-action worktree and control block). The backend does **not** define/enforce
+  a Full/Partial decision sandbox; copy describes operator intent and explicitly
+  labels these values prompt guidance. No permission/approval enforcement changed.
+- Shared configuration has token-based padding/gaps, aligned stacked labels,
+  per-item permission grouping and a responsive two-/one-column grid. The budget
+  label now says configured per-action cap, not a promise of console spend enforcement.
+
+### Follow-up verification
+
+| Check | Result |
+|---|---|
+| `npm test` | **353/353 passed**, zero skipped |
+| `npm run typecheck` | Pass |
+| `npm run lint` | Pass |
+| `git diff --check` | Pass |
+| Chromium 152.0.7977.82 / Firefox 157.0 | Both passed mocked smoke |
+| Axe WCAG A/AA | Zero violations in 14 states/browser, including desktop/mobile help |
+
+Four new tests cover 203-target mixed eligibility, manual/suggested authority,
+201-item DOM selection→review→one mocked request, and nested help/draft/focus.
+Initial RED logs, focused GREEN logs, full package output, before/after screenshots
+and attempted review output live in `/tmp/foreman-ux-browser/followup-*` (help and
+focus RED logs also in that directory). All launch/confirmation regression tests
+remain enabled. No real operator writes, launches, cleanup or billing changes.
+
+[Follow-up raw browser report](followup-browser-report.json); the updated
+[browser-smoke.mjs](browser-smoke.mjs) is re-runnable with the tooling below.
+Both browsers checked primary views at 320/768/1024/1366/1920 CSS pixels, bulk
+updated/skipped feedback, manual settings preserved across suggestion toggles,
+Apply focus retention, nested help Tab/Shift+Tab/Escape and draft retention,
+shared configuration desktop/mobile, one mocked POST/two explicit actions,
+typed-confirmation guards and existing stale/error/reflow checks. Package tests
+separately retain partial/uncertain-launch and retry-acknowledgement coverage.
+64 screenshots were captured locally; representative new evidence:
+
+![Shared configuration desktop](screenshots/followup-configuration-desktop.png)
+
+[Shared configuration mobile](screenshots/followup-configuration-mobile.png) ·
+[Workflow help mobile (Firefox)](screenshots/followup-help-mobile.png).
+
+Before/after image inspection confirmed separated action/permission groups,
+readable label alignment, no page overflow and scrollable mobile help/configuration.
+The existing 200%-equivalent viewport check passed; actual browser zoom gestures
+and assistive-technology checks remain human follow-up, not claimed here.
+Chromium’s only console errors were two intentionally injected HTTP 503 fixtures;
+Firefox had none, and neither browser had an uncaught page exception.
+
+### Review and blockers
+
+Self-review covered correctness (all-selected identity, compatibility, refresh
+flags, conservative authority, retry/confirmation gates), readability/architecture
+(pure selection helpers, controller wiring, no new dependencies), security
+(escaped dynamic output, merge false, no destructive bulk choices) and performance
+(O(N × small registry) explicit bulk operation, 200 rendered review rows).
+No remaining required issue identified in this scoped self-review.
+An independent read-only Sonnet review was attempted but **could not authenticate**:
+OAuth session expired and could not be refreshed. It produced no review verdict;
+previous independent review below does not cover this follow-up. Human review of
+these commits remains required before merge; no authentication configuration changed.
+
+Remote CI remains externally blocked. Rechecked run `38301329465`: jobs have empty
+steps and its gate annotation says recent account payments failed or the spending
+limit must be increased. No CI checks disabled or billing changes attempted.
+Account owner must restore runners/rerun checks. Existing rollout/rollback advice
+below still applies; no production server restart/deployment performed.
+
+## Original redesign verification
+
 Implementation verified at `3422e5bc` on `feat/ops-console-ux-redesign`.
 Review handoff: [PR #198](https://github.com/m0r6aN/agent-skills/pull/198).
 Owner approved the specs and delegated non-destructive implementation decisions.
