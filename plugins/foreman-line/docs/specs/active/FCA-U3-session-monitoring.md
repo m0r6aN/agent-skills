@@ -153,6 +153,8 @@ Mandated reviewer questions:
 - plugins/foreman-line/ops-console/tests/ui-sessions.test.ts
 - plugins/foreman-line/ops-console/tests/ui-selection-launch.test.ts
 
+- plugins/foreman-line/ops-console/tests/ui-fixture.ts
+
 ## Delegated implementation amendment — 2026-10-12
 
 Owner approved this spec as written and delegated decisions and non-destructive

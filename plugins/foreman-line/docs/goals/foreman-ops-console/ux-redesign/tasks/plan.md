@@ -27,7 +27,8 @@ or bypass of the human merge gate is part of this plan.
 
 ## Ordered slices
 
-1. Goal root metadata and API tests.
+1. Goal root metadata and API tests. Verification amendment: reserve colliding
+   extra-tree aliases globally in src/config.ts; preserve all non-colliding keys.
 2. Navigation shell and accessible/responsive visual foundation.
 3. Wire scope/search/hash/refresh/errors; retain secondary tools and repository management.
    Checkpoint: full tests/typecheck/lint; desktop + narrow visual preview.
@@ -50,7 +51,8 @@ save-point commit; no unrelated backend or OS change is mixed into this work.
 - Old tests equate hard-coded layout with correctness: replace these assertions
   with operator workflows, preserve negative guards and immutable backend tests.
 - Failed launches may have side effects: never auto-retry, preserve draft, explain
-  uncertainty and offer session refresh rather than claiming no process started.
+  uncertainty and refresh Sessions. An explicit acknowledgement is required before
+  a deliberate retry; even a backend HTTP 400 launch-failure can have side effects.
 - Root aliases and same basenames: explicit absolute roots, goal-qualified joins.
 - Refresh races and drafts: generation guards, no DOM-as-state, don't rebuild an
   open confirmation or launch editor on background refresh.
@@ -63,6 +65,9 @@ save-point commit; no unrelated backend or OS change is mixed into this work.
 From plugins/foreman-line/ops-console:
 `npm test`, `npm run typecheck`, `npm run lint`.
 Focused tests: `npx tsx --test tests/ui-*.test.ts` or relevant individual files.
+Final evidence, independent review resolutions, screenshots, rollout/rollback and
+verification limits: [verification.md](verification.md). Integration/UI interfaces
+were committed together at a verified savepoint; API and alias changes are separate.
 Specs: spec-linter public validate CLI. DOM/browser fixture logs and screenshots
 are captured as evidence outside generated production state. Do not launch tests
 against the operator's app endpoint when a disposable mocked server suffices.

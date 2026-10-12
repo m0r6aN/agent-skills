@@ -177,6 +177,8 @@ Mandated reviewer questions:
 - plugins/foreman-line/ops-console/tests/ui-signals.test.ts
 - plugins/foreman-line/ops-console/tests/ui-shell.test.ts
 
+- plugins/foreman-line/ops-console/tests/ui-fixture.ts
+
 ## Delegated implementation amendment — 2026-10-12
 
 Owner approved this spec as written and delegated decisions and non-destructive

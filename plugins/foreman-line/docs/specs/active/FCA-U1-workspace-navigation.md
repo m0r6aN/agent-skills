@@ -174,6 +174,7 @@ Mandated reviewer questions:
 - plugins/foreman-line/ops-console/tests/ui-shell.test.ts
 - plugins/foreman-line/ops-console/tests/ui-fleet.test.ts
 - plugins/foreman-line/ops-console/tests/ui-navigation.test.ts
+- plugins/foreman-line/ops-console/tests/ui-fixture.ts
 
 ## Delegated implementation amendment — 2026-10-12
 
