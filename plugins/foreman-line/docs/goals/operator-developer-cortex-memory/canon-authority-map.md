@@ -73,7 +73,7 @@ Legend for **State**: `impl` = inspectable implementation at pin · `model` = da
 ### 4.1 Implemented (inspectable code paths at pin)
 
 - Cortex HTTP API (`api.py`): 7 routes — `GET /health`, `POST /v1/shards`, `POST /v1/shards/search`, `GET /v1/shards/{shard_id}`, `GET /v1/shards/{shard_id}/lineage`, `GET /v1/shards/{shard_id}/evidence`, `POST /v1/replay`.
-- Gateway shared-secret auth (`X-Keon-Cortex-Secret`, constant-time compare), per-request `X-Tenant-Id`/`X-Actor-Id`, `Idempotency-Key` reservation with conflict refusal ("idempotency key was reused with a conflicting request").
+- Gateway shared-secret auth (`X-Keon-Cortex-Secret`, constant-time compare), per-request `X-Tenant-Id`/`X-Actor-Id`, `X-Idempotency-Key` reservation with conflict refusal ("idempotency key was reused with a conflicting request").
 - Deterministic shard identity (`ingress/models.make_candidate_shard_id` / `compute_shard_id`), canonical JSON hashing (`core/canonical.canonical_json`), Ed25519 evidence packs + `proof/governed_signing.sign_receipt`.
 - Postgres authority store (`keon_cortex.shards`, `keon_cortex.api_idempotency`) with idempotent DDL migration (`initialize_schema`).
 - Gateway tool layer: six named Cortex tools with required scopes, entitlement evaluation, Runtime authorization, and directive/intent/decision/outcome receipt chain (`CortexMemoryWriteHandler.cs:107-120`).
