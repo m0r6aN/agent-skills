@@ -1,0 +1,11 @@
+{
+  "name": "foreman-line",
+  "version": "0.2.1",
+  "private": true,
+  "type": "module",
+  "description": "Foreman Line for Pi: run the plugin's skills from the prompt as /foreman-line:<skill> (e.g. /foreman-line:goal resume <goal-slug>).",
+  "keywords": ["pi-package", "foreman-line", "coordination"],
+  "pi": {
+    "extensions": ["./index.ts"]
+  }
+}
