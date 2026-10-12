@@ -1,24 +1,24 @@
 # Coordinator Directive — Operator-developer Cortex memory
 
 **Goal slug:** `operator-developer-cortex-memory`  
-**Recorded:** 2026-10-10; ownership/resume checkpoint updated 2026-10-11  
-**State:** `PRE-P0 — COORDINATOR 01a12b4f; PRIOR OPMEM/STAGE A/GRANTS/CAPS PRESERVED; #181 OBSERVED MERGED; PRO/NATIVE PI AUTH/SCOPED SUBSCRIPTION DATA/INCREMENTAL CHARGES/HIGHEST VERIFIED NATIVE REASONING DISPOSED; REVISED IR-A01 RETURNED FOR WHOLE-CONTRACT RATIFICATION; IR-B01 SCOPE CONDITIONALLY APPROVED, DORMANT UNTIL THAT RATIFICATION; NO CODE/PROVIDER CALL/WORKER/WAKEUP`  
-**Scheduling:** no background loop or wakeup armed; stop at human authorization gates
+**Recorded:** 2026-10-10; ownership/resume checkpoint updated 2026-10-12 (coordinator `01a131a9`)  
+**State:** `P0 ACCEPTED (R4 dual review) — COORDINATOR 01a131a9 UNDER OWNER BLANKET GRANT 2026-10-12; P1a ∥ P1b NEXT; CODE PARCELS MERGE TO NON-DEPLOYING opmem/integration; main PROMOTION / CLOUD = OWNER STOP ITEMS`  
+**Scheduling:** synchronous coordinator loop in the owning session (no wakeup tool in this harness); human gates are NOT stop conditions except destructive/production-affecting actions — see `ownership-transfer-2026-10-12-01a131a9.md`
 
 ## COORDINATOR OWNERSHIP — read before any dispatch
 
 | Field | Value |
 |---|---|
 | Accountable human | Clinton Morgan |
-| Sole coordinator | Pi session `01a12b4f-c8e9-70a4-811b-0cd7eb889457` |
-| Previous coordinators | Most recent: `01a12a83-24d6-7641-b3ac-52563eeb86fb`, stopped/released per latest owner report; earlier: `01a12a8f-e1f4-7645-a2d9-f10ba6cabfe0` and `01a127de-54e3-7556-9b8f-157e66a9d00a`. Previous appointments remain historical. |
-| Appointment | 2026-10-11: `I appoint this session as sole owner and coordinator, replacing the recorded coordinator, who is stopped/released.` Full verbatim direction: `owner-resume-2026-10-11-01a12b4f.md`. |
-| Boundary | Recorded stopped pre-P0 planning boundary, before any OPMEM builder/reviewer dispatch; scoped local worktree/goal records show no OPMEM worker, external session liveness remains unconfirmed |
-| Appointment scope | Carry forward sole OPMEM coordination and existing D1–D18/G5–G12 scope, grants, USD 25 P0 cap INCLUDING USD 5 first-review subcap, and limits. Reuse original Stage A. Owner additionally directs separate GitHub migration work and allows internal evidence in the now-private repository. No parked-HRO restart, automatic frozen-contract amendment, route waiver or operational cloud write. See items 8–9 and latest resume record. |
-| Current session provenance | `PI_PROVIDER=openai`, `PI_MODEL=gpt-6.1-sol`, `PI_SESSION_ID=01a12b4f-c8e9-70a4-811b-0cd7eb889457`; observed metadata, not a Foreman route receipt |
-| Coordinator publication workspace | `D:/Repos/agent-skills-worktrees/ir-p0-drafting-20261011-01a12b4f`, branch `coord/ir-native-pi-amendment-20261011-01a12b4f`, publication base main `7abff7772e9abfd43ae68d94cb640edad84731f5`; reviewed admission input `846179a7` unchanged through that base; revised non-operative documents/proposed patch only. Earlier coordination worktree/commits preserved; no P0 builder workspace. |
+| Sole coordinator | Pi session `01a131a9-5c16-724a-a016-3353a124592d` |
+| Previous coordinators | Most recent: `01a12f95-7c4b-74e5-b9a2-941efcfca605` (session aborted 2026-10-12 19:10Z mid-P0 review); before it `01a12b4f-c8e9-70a4-811b-0cd7eb889457`, `01a12a83-24d6-7641-b3ac-52563eeb86fb`, `01a12a8f-e1f4-7645-a2d9-f10ba6cabfe0`, `01a127de-54e3-7556-9b8f-157e66a9d00a`. All historical. |
+| Appointment | 2026-10-12 verbatim in `ownership-transfer-2026-10-12-01a131a9.md`: resume as coordinator and owner, delegate to workers, see the goal to the end, blanket authority for decisions and non-destructive actions, no pause for human gates unless destructive. |
+| Boundary | Mid-P0 review boundary (prior coordinator not live; only node process on host was this session). |
+| Appointment scope | All OPMEM gates owner-delegated (recorded as such, never as human receipts). Destructive / production-affecting actions (incl. merges to auto-deploying `main` of keon-cortex / keon-mcp-gateway, cloud/Neon/credential changes) remain stop-for-owner. USD 25 P0 cap retained; later parcels: recorded spend per parcel. |
+| Current session provenance | `PI_PROVIDER=anthropic`, `PI_MODEL=claude-opus-5-5`, `PI_SESSION_ID=01a131a9-5c16-724a-a016-3353a124592d`; observed metadata, not a Foreman route receipt |
+| Coordinator publication workspace | `D:/Repos/agent-skills-worktrees/opmem-p0-20261012-01a12f95`, branch `feat/opmem-p0-baseline-20261012-01a12f95` (P0 PR); dispatch scratch `D:/Repos/opmem-dispatch-01a131a9` (outside repos). |
 | Transfer rule | One goal, one coordinator. Transfer only at parcel boundaries by explicit owner direction and update to this ownership block |
-| Last state change | 2026-10-11 — owner answers all six native-Pi questions: Pro/improvement off/paid extra off, narrow own-internal-data exception (not ZDR), incremental cap basis, no separate broker, highest verified native reasoning; IR-B01 scope approved conditional on whole revised-contract ratification first. Exact revision returned, no construction/runtime launched; no archived HRO restart. |
+| Last state change | 2026-10-12 — P0 accepted after R1–R4 dual family-independent review (Anthropic + OpenAI seats; Moonshot builder); 34 triage rulings; spec moved to done/. Next: P1a ∥ P1b shaping and dispatch. |
 
 An incoming session is not automatically the owner. If it is not the session above, stop and ask the owner for a boundary transfer. If another live owner is discovered, stop and reconcile; directory absence is a scoped local observation, not proof about every external session.
 
