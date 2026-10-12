@@ -94,7 +94,8 @@ Paths below are relative to plugins/foreman-line/ops-console.
       diff check; source review, fixture harness, raw report and screenshot evidence.
 - [x] Independent core review requested changes; fixes reproduced/tested; rereview
       reported no remaining Critical/Required findings (inspection scope documented).
-- [ ] Push branch and open PR for human review; no automatic merge.
+- [x] Branch pushed; [PR #198](https://github.com/m0r6aN/agent-skills/pull/198)
+      opened for human review. No automatic merge.
 - [ ] Human merge/deploy approval; suggested actual zoom/assistive-technology check.
 - Files: goal-local plan/todo/verification, browser-smoke.mjs, browser-report.json,
   representative screenshots; spec allowed-file/lifecycle records.
