@@ -121,7 +121,8 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       if (!Array.isArray(projection.parcels) || !Array.isArray(alerts.alerts) || !Array.isArray(routing.parcels)) throw new Error('Invalid goal projection response')
       state.projection = projection
       state.remedies = alerts.remedies || []
-      el('alerts-body').innerHTML = remediesHtml(alerts.alerts || [], state.remedies, alerts.notifications || [])
+      const goalContext = `<div class="banner row"><span>Goal: <strong>${esc(goal)}</strong> · ${esc(state.statuses.find((s) => s.key === goal)?.repoRoot || 'Repository root unavailable')}</span><button type="button" data-go-board>Change goal in Goals &amp; parcels</button></div>`
+      el('alerts-body').innerHTML = goalContext + remediesHtml(alerts.alerts || [], state.remedies, alerts.notifications || [])
       el('alerts-body').querySelectorAll('[data-del]').forEach((button) => on(button, 'click', async () => {
         // Notification dismissal does not operate on goals, receipts, worktrees or PRs.
         try { await api(`/api/notifications/${encodeURIComponent(button.dataset.del)}`, { method: 'DELETE' }); loadGoal() } catch (err) { status(err.message, true) }
@@ -129,7 +130,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       const rows = (routing.parcels || []).map((p) => `<tr><td>${esc(p.parcel)}</td><td>${esc(p.routing?.routingClass)}</td><td>${esc(p.routing?.resolvedTier)}</td><td>${esc(p.routing?.resolvedModelId)}</td></tr>`).join('')
       const classes = (routing.policy?.classes || []).map((c) => `<tr><td>${esc(c.name)}</td><td>${esc(c.allowlist?.join(', '))}</td><td>${esc(c.ceilingUsd)}</td></tr>`).join('')
       const roles = (routing.policy?.roles || []).map((r) => `<tr><td>${esc(r.role)}</td><td>${esc(r.tier)}</td></tr>`).join('')
-      el('routing-body').innerHTML = `<h2>Routing classes</h2><div class="table-wrap"><table><tr><th>Class</th><th>Allowed tiers</th><th>Ceiling USD</th></tr>${classes}</table></div><h2>Role policy</h2><div class="table-wrap"><table><tr><th>Role</th><th>Tier</th></tr>${roles}</table></div><h2>Resolved parcels</h2><div class="table-wrap"><table><tr><th>Parcel</th><th>Class</th><th>Tier</th><th>Model</th></tr>${rows}</table></div>`
+      el('routing-body').innerHTML = goalContext + `<h2>Routing classes</h2><div class="table-wrap"><table><tr><th>Class</th><th>Allowed tiers</th><th>Ceiling USD</th></tr>${classes}</table></div><h2>Role policy</h2><div class="table-wrap"><table><tr><th>Role</th><th>Tier</th></tr>${roles}</table></div><h2>Resolved parcels</h2><div class="table-wrap"><table><tr><th>Parcel</th><th>Class</th><th>Tier</th><th>Model</th></tr>${rows}</table></div>`
       renderCurrent()
       if (state.detailParcel && state.view === 'board') await renderDetail(state.detailParcel)
     } catch (err) {
@@ -349,6 +350,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
     }))
   }
   el('app').innerHTML = shellHtml()
+  on(doc.querySelector('.skip-link'), 'click', (event) => { event.preventDefault(); el('main').focus(); el('main').scrollIntoView?.({ block: 'start' }) })
   doc.querySelectorAll('.nav-btn').forEach((b) => on(b, 'click', () => setView(b.dataset.view)))
   on(el('fleet-select'), 'change', () => { state.scope = el('fleet-select').value; state.pages = {}; ++goalGeneration; ++detailGeneration; goalOptions(); renderCurrent(); if (['board', 'remedies', 'settings'].includes(state.view)) loadGoal() })
   on(el('goal-status'), 'change', () => { state.pages.board = 0; goalOptions(); renderCurrent(); loadGoal() })
@@ -356,7 +358,8 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   on(el('goal-select'), 'change', () => { state.goal = el('goal-select').value; state.projection = null; state.detailParcel = null; ++detailGeneration; el('detail').hidden = true; renderCurrent(); loadGoal() })
   on(el('global-search'), 'input', () => { state.queries[state.view] = el('global-search').value.trim(); state.pages[state.view] = 0; renderCurrent() })
   doc.querySelectorAll('[data-sev]').forEach((b) => on(b, 'change', () => { state.pages.signals = 0; renderCurrent() }))
-  on(el('main'), 'click', (event) => { const b = event.target.closest('[data-page]'); if (b) { state.pages[state.view] = Math.max(0, (state.pages[state.view] || 0) + (b.dataset.page === 'next' ? 1 : -1)); renderCurrent() } if (event.target.closest('[data-go-sessions]')) {
+  on(el('main'), 'click', (event) => { const b = event.target.closest('[data-page]'); if (b) { state.pages[state.view] = Math.max(0, (state.pages[state.view] || 0) + (b.dataset.page === 'next' ? 1 : -1)); renderCurrent() } if (event.target.closest('[data-go-board]')) setView('board')
+    if (event.target.closest('[data-go-sessions]')) {
       if (event.target.closest('[data-reveal-session]')) { state.scope = ''; state.queries.sessions = ''; state.pages.sessions = 0; state.revealSession = true; scopeOptions(); goalOptions() }
       setView('sessions')
     } })

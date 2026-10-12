@@ -26,6 +26,10 @@ test('queue is the default; root scope, search and hash navigation are functiona
     ui.click('[data-view="board"].nav-btn')
     await ui.settle()
     assert.equal(ui.dom.window.location.hash, '#board')
+    ui.click('a[href="#main"]')
+    await ui.settle()
+    assert.equal(ui.dom.window.location.hash, '#board', 'skip link must not change the active view')
+    assert.equal(ui.doc.activeElement?.id, 'main')
     ui.dom.window.location.hash = '#sessions'
     await ui.settle()
     assert.equal(
