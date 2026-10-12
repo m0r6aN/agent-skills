@@ -34,7 +34,7 @@ Paths below are relative to plugins/foreman-line/ops-console.
 ## Checkpoint — workspace
 - [x] Package checks pass; existing capabilities retained.
 - [x] Verified integration savepoint `6a68cfc5`; review corrections `874a5d45`,
-      `b57f7ff6`. Interfaces were updated with behavior to keep savepoints coherent.
+      `b57f7ff6`, `3422e5bc`. Interfaces were updated with behavior to keep savepoints coherent.
 
 ## 4. Selection state (FCA-U2)
 - [x] Full-id selection, explicit offered verbs/default Investigate, no bulk delete.
@@ -90,12 +90,16 @@ Paths below are relative to plugins/foreman-line/ops-console.
       squeezing and missing metrics styling; narrow text-width regression added.
 - [x] Keyboard review/focus return, empty/stale/loading/initial-error recovery;
       200%-equivalent viewport reflow. Actual browser zoom gesture is not claimed.
-- [x] 347 tests, typecheck, lint, spec validation, audit (zero vulnerabilities),
+- [x] 349 tests, typecheck, lint, spec validation, scoped audit (zero vulnerabilities),
       diff check; source review, fixture harness, raw report and screenshot evidence.
 - [x] Independent core review requested changes; fixes reproduced/tested; rereview
       reported no remaining Critical/Required findings (inspection scope documented).
 - [x] Branch pushed; [PR #198](https://github.com/m0r6aN/agent-skills/pull/198)
       opened for human review. No automatic merge.
+- [x] Additional local CI validators, surface pins, 415 workflow-script tests and
+      192 skill eval checks pass. Absolute Windows/UNC path regressions covered.
+- [ ] Account owner restores Actions billing/runner availability and reruns remote
+      checks; jobs are blocked before steps execute (same as baseline main).
 - [ ] Human merge/deploy approval; suggested actual zoom/assistive-technology check.
 - Files: goal-local plan/todo/verification, browser-smoke.mjs, browser-report.json,
   representative screenshots; spec allowed-file/lifecycle records.

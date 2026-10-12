@@ -1,6 +1,6 @@
 # UX redesign verification — 2026-10-12
 
-Implementation verified at `b57f7ff6` on `feat/ops-console-ux-redesign`.
+Implementation verified at `3422e5bc` on `feat/ops-console-ux-redesign`.
 Review handoff: [PR #198](https://github.com/m0r6aN/agent-skills/pull/198).
 Owner approved the specs and delegated non-destructive implementation decisions.
 Root planning/task files and coordinator ownership were not changed. The three
@@ -40,7 +40,7 @@ configuration → launch one session/N panes → inspect recorded sessions.**
 | Check | Result |
 |---|---|
 | Baseline `npm test` | 333/333 passed |
-| Final `npm test` | **347/347 passed**, no skipped tests |
+| Final `npm test` | **349/349 passed**, no skipped tests |
 | `npm run typecheck` | Pass |
 | `npm run lint` | Pass |
 | `npm audit` | Zero vulnerabilities (including dev dependencies) |
@@ -48,7 +48,8 @@ configuration → launch one session/N panes → inspect recorded sessions.**
 | Spec-linter public validate CLI, FCA-U1/U2/U3 | Pass |
 
 New/updated coverage is behavioral: scope/search/hash/skip navigation, stale and
-malformed snapshots, request races, pending detail across refresh, inactive goals,
+malformed snapshots, request races, pending detail across refresh, inactive goals, absolute
+POSIX/Windows/UNC root and evidence-link compatibility,
 200+ records, identity joins, explicit action selection, permission reconciliation,
 draft retention, duplicate requests, partial success, uncertainty acknowledgement,
 server-matching typed confirmation, attach fallback and session reveal/highlight.
@@ -128,8 +129,36 @@ review streams: `/tmp/foreman-ux-browser/{review,rereview}.jsonl`.
 | Clicking the same row action erased its reviewed permissions | Reuse same-verb drafts. Changing verbs explicitly resets to that verb's conservative defaults; the tooltip and drawer identify the all-selected scope. |
 | Mobile columns passed overflow tests but were unreadable | Real screenshot inspection + a failing browser text-width assertion; responsive cards and 24px selection controls; rerun both browsers. |
 | Session metric numbers lacked layout / duplicated labels | Metric cards with one count and a separate label; screenshot inspection. |
+| Absolute Windows roots were rejected by a POSIX-only browser read guard | Accept absolute drive/UNC/POSIX shapes without changing root identity; fix presentation-only file URLs/basename labels. Local DOM/renderer regressions pass. |
 | Skip link changed the hash/view | Prevent fragment navigation, focus/scroll main without changing active view; regression reproduced and fixed. |
 | Null/malformed finding entries could crash refresh | Validate snapshot entry shapes at the browser read boundary; preserve last-known data and stale feedback. |
+
+## Remote CI blocker (outside the code change)
+
+PR checks report failure **before any job step executes**. GitHub annotations for
+both `foreman-line-ci` and `Test Plugin Installation` state that recent account
+payments failed or the spending limit must be increased. The baseline main run at
+`1b2fe2cf` has the same annotation. This is a confirmed account-level runner block,
+not a remote test failure or a claim that remote checks passed.
+
+Evidence: [foreman run](https://github.com/m0r6aN/agent-skills/actions/runs/38300301913),
+[plugin run](https://github.com/m0r6aN/agent-skills/actions/runs/38300301757),
+[baseline main run](https://github.com/m0r6aN/agent-skills/actions/runs/38278241910).
+Jobs have empty `steps`; log retrieval reports no job log. No required check was
+disabled, no billing/spending change made, and no CI approval substituted.
+An account owner must restore Actions availability and rerun checks before merge.
+
+Additional pure CI checks reproduced locally at the repository root:
+- Surface-pin precheck: all pins match or known-base; zero drift.
+- Skill, manifest-version, reference-link, command-parity and artifact-path
+  validators: all pass.
+- Seven workflow validator/reuse/runner test files: **415/415 tests pass**.
+- Skill trigger/routing evals: **192 checks pass**, rank-1 **92%** (threshold 80%).
+
+These are additional local evidence, **not a replacement for remote CI**. The full
+Windows shard sweep and actual plugin install jobs have not run on GitHub.
+Windows path compatibility has local DOM/renderer regression tests, not a claimed
+real Windows browser run. Repeated actual Linux Chromium/Firefox smoke still passes.
 
 ## Rollout and rollback (not executed)
 
