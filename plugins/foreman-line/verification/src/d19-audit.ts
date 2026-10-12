@@ -366,6 +366,13 @@ const E5_GUARDED_FILES: Record<string, true> = {
   'ops-console/src/config.ts': true,
   'ops-console/src/invoke.ts': true,
   'ops-console/src/liveness.ts': true,
+  // 2026-10-11 control-center wave (coordinator enrollment under owner
+  // blanket authority): signals-release's marketplace-entry plugin-dir
+  // resolution — `resolve(root, source)` normalizes a REQUIRED INPUT (the
+  // entry's `source` string) against the process root, and every site carries
+  // the governing `assertAbsoluteRoot(root, …)` guard immediately ahead of it
+  // in the same function (A2.4), exactly like the three 2026-09-26 files.
+  'ops-console/src/signals-release.ts': true,
 }
 
 /**

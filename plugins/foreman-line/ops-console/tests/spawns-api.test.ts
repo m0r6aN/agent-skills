@@ -3,11 +3,7 @@ import { createHash } from 'node:crypto'
 import test from 'node:test'
 import { handleApi } from '../src/api.js'
 import type { ConsoleConfig } from '../src/config.js'
-import {
-  defaultSessionProbe,
-  type SessionProbe,
-  sessionStateProvider,
-} from '../src/signals-session.js'
+import { type SessionProbe, sessionProbeFor, sessionStateProvider } from '../src/signals-session.js'
 import { launchSpawnPlan, listSpawnReceipts, planSpawn, type TmuxRunner } from '../src/spawn.js'
 import { type Scenario, withTempRepo } from './support/materialize.js'
 
@@ -95,7 +91,7 @@ test('receipts round-trip through GET /api/spawns with liveness states', () => {
     // Liveness is derived truth (real tmux), never the stub's claim.
     assert.equal(
       spawns[0]?.liveness,
-      defaultSessionProbe.sessionAlive('foc-rec') ? 'alive' : 'exited',
+      sessionProbeFor(config.repoRoot).sessionAlive('foc-rec') ? 'alive' : 'exited',
     )
     const pane = plan.panes[0]
     assert.ok(pane !== undefined)

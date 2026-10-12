@@ -16,24 +16,33 @@ export interface SessionProbe {
   readonly sessionAlive: (sessionName: string) => boolean
 }
 
-export const defaultSessionProbe: SessionProbe = {
-  sessionAlive: (sessionName) => {
-    try {
-      execFileSync('tmux', ['has-session', '-t', sessionName], {
-        stdio: ['ignore', 'pipe', 'ignore'],
-      })
-      return true
-    } catch {
-      return false
-    }
-  },
+export function sessionProbeFor(repoRoot: string): SessionProbe {
+  return {
+    // A2.9: explicit root anchor — the tmux client never inherits the
+    // console process's cwd (D19 class-4 non-instance).
+    sessionAlive: (sessionName) => {
+      try {
+        execFileSync('tmux', ['has-session', '-t', sessionName], {
+          cwd: repoRoot,
+          stdio: ['ignore', 'pipe', 'ignore'],
+        })
+        return true
+      } catch {
+        return false
+      }
+    },
+  }
 }
 
 export const sessionStateProvider: SignalProvider & {
   collect(config: ConsoleConfig, now: number, probe?: SessionProbe): Signal[]
 } = {
   class: 'session-state',
-  collect(config: ConsoleConfig, now: number, probe: SessionProbe = defaultSessionProbe): Signal[] {
+  collect(
+    config: ConsoleConfig,
+    now: number,
+    probe: SessionProbe = sessionProbeFor(config.repoRoot),
+  ): Signal[] {
     const detectedAt = new Date(now).toISOString()
     const signals: Signal[] = []
     for (const receipt of listSpawnReceipts(config.stateDir)) {

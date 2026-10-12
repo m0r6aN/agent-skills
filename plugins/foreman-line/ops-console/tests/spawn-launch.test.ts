@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { dispatchAction } from '../src/actions.js'
-import type { ConsoleConfig } from '../src/config.js'
 import { listAuditEntries } from '../src/invoke.js'
 import {
   launchSpawnPlan,

@@ -1,6 +1,6 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join, relative, resolve, sep } from 'node:path'
-import type { ConsoleConfig } from './config.js'
+import { assertAbsoluteRoot, type ConsoleConfig } from './config.js'
 import { isRecord } from './guards.js'
 import { makeSignal, type Signal, type SignalProvider } from './signals.js'
 
@@ -111,6 +111,9 @@ export const releaseHygieneProvider: SignalProvider = {
   class: 'release-hygiene',
   collect(config: ConsoleConfig, now: number): Signal[] {
     const root: string = config.repoRoot
+    // A2.4 guard for the plugin-dir resolution below: the root is absolute or
+    // refused at this seam, not merely at config load (D19 class-5 guarded).
+    assertAbsoluteRoot(root, 'release-hygiene plugin-dir root')
     const signals: Signal[] = []
     const detectedAt = new Date(now).toISOString()
 
