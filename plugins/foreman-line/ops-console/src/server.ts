@@ -108,6 +108,12 @@ export function buildHandler(config: ConsoleConfig, now: () => number): RequestL
       sendUi(response, 'needs.js', 'text/javascript; charset=utf-8')
       return
     }
+    // FCA-P6 view modules (ES modules under ui/views/; strict name shape).
+    const viewModule = /^\/views\/[a-z-]+\.js$/.exec(pathname)
+    if (viewModule !== null) {
+      sendUi(response, pathname.slice(1), 'text/javascript; charset=utf-8')
+      return
+    }
     const body = method === 'POST' ? await readBody(request) : undefined
     const result = handleApi(
       config,

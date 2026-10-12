@@ -1,21 +1,20 @@
-// Foreman Ops Console frontend (copied UX shape from the Automations hub:
-// board + approvals + notifications + logs + models view, adapted to parcel
-// lifecycle). No build step, no dependencies: this file is served as-is.
+// Foreman Ops Console frontend — control-center shell (FCA-P6 Task 15).
+// No build step, no dependencies: ES modules served as-is. Data + events live
+// here; pure rendering lives in ui/views/*.
 import { needsFor } from './needs.js'
-'use strict'
+import { esc, shellHtml } from './views/shell.js'
+import { boardHtml, detailHtml } from './views/board.js'
+import { remedyHtml, remediesHtml } from './views/remedies.js'
 
-const STATES = ['running', 'hung', 'awaiting-gate', 'failed', 'complete']
-const state = { goal: null, goals: [], statuses: [], remedies: [], projection: null, repoRoot: '' }
-
-function esc(value) {
-  return String(value == null ? '' : value).replace(/[&<>"']/g, (c) => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-  })[c])
-}
-
-function fileLink(ref) {
-  if (!ref) return '—'
-  return `<a href="file:///${esc(state.repoRoot)}/${esc(ref)}" title="open on disk">${esc(ref)}</a>`
+const state = {
+  view: 'board',
+  goal: null,
+  goals: [],
+  statuses: [],
+  remedies: [],
+  projection: null,
+  repoRoot: '',
+  posture: '',
 }
 
 async function api(path, options) {
@@ -23,125 +22,70 @@ async function api(path, options) {
   return res.json()
 }
 
-function renderBoard() {
-  const board = document.getElementById('board')
-  const parcels = (state.projection && state.projection.parcels) || []
-  const status = (state.statuses || []).find((s) => s.key === state.goal) || null
-  const attention = (status && status.attention) || { hung: 0, failed: 0, awaitingGate: 0, ratificationPending: 0, signals: { info: 0, attention: 0, urgent: 0 }, total: 0 }
-  // FCA-2: the board leads with what needs the human — a banner above the
-  // columns and a "needs" treatment on the cards that carry the attention.
-  const banner = attention.total > 0
-    ? `<div class="banner">needs attention — ${[
-        attention.hung ? `${attention.hung} hung` : '',
-        attention.failed ? `${attention.failed} failed` : '',
-        attention.awaitingGate ? `${attention.awaitingGate} awaiting gate` : '',
-        attention.ratificationPending ? 'goal charter awaiting ratification' : '',
-        (attention.signals && attention.signals.urgent) ? `${attention.signals.urgent} urgent signal(s)` : '',
-        (attention.signals && attention.signals.attention) ? `${attention.signals.attention} attention signal(s)` : '',
-      ].filter(Boolean).join(' · ')}</div>`
-    : ''
-  board.innerHTML = banner + STATES.map((col) => {
-    const cards = parcels.filter((p) => p.state === col).map((p) => {
-      const urgent = ((status && status.urgentSubjects) || []).some((s) => s.endsWith(`/${p.parcel}`))
-      const needs = needsFor(p.state, urgent)
-      const chip = needs ? `<span class="chip ${needs.includes('red') ? 'chip-red' : 'chip-amber'}">${p.state === 'awaiting-gate' ? 'gate' : 'needs attention'}</span>` : ''
-      return `
-      <div class="card ${needs}" data-parcel="${esc(p.parcel)}">
-        <div class="key">${esc(p.parcel)} ${chip}</div>
-        <div class="meta">rule ${esc(p.rule)} · chain ${esc(p.chainEvidence)}</div>
-        <div class="meta">progress ${esc(p.heartbeat.lastProgressAt || 'never')} · liveness ${p.liveness.live ? 'live' : 'none'}</div>
-        ${p.failure ? `<div class="flags">${esc(p.failure.code)}</div>` : ''}
-        ${p.flags.length ? `<div class="flags">${esc(p.flags.join(', '))}</div>` : ''}
-      </div>`
-    }).join('')
-    return `<div class="col ${col}"><h2>${col} (${parcels.filter((p) => p.state === col).length})</h2>${cards || '<div class="muted">—</div>'}</div>`
-  }).join('')
-  board.querySelectorAll('.card').forEach((card) => {
-    card.addEventListener('click', () => renderDetail(card.dataset.parcel))
+function setView(view) {
+  state.view = view
+  document.querySelectorAll('main > section[data-view]').forEach((section) => {
+    section.hidden = section.dataset.view !== view
+  })
+  document.querySelectorAll('.nav-btn').forEach((btn) => {
+    const active = btn.dataset.view === view
+    btn.classList.toggle('active', active)
+    btn.setAttribute('aria-current', active ? 'page' : 'false')
   })
 }
 
-function gatePill(gate) {
-  return `<span class="pill ${esc(gate.status)}">${esc(gate.gate)} ${esc(gate.status)}</span> ${esc(gate.detail)}`
-}
-
-// FCA-3: triage question + answer-branch recommendations. Presentation only
-// — every command is copy-pasteable and the console never executes it.
-function remedyHtml(r) {
-  return `<details class="remedy" open>
-    <summary>${esc(r.parcel || r.goal)} — ${esc(r.cause)}</summary>
-    <div class="remedy-q">${esc(r.question)}</div>
-    ${r.options.map((o) => `
-      <div class="remedy-opt">
-        <div class="remedy-a">${esc(o.answer)}</div>
-        <div>${esc(o.recommendation)}</div>
-        ${(o.commands || []).map((c) => `<pre class="cmd">${esc(c)}</pre>`).join('')}
-      </div>`).join('')}
-    <div class="muted">presented only — the console never executes these; options are ordered preserve-and-complete first</div>
-  </details>`
+function renderBoard() {
+  const board = document.getElementById('board')
+  if (board === null) return
+  const parcels = (state.projection && state.projection.parcels) || []
+  const status = (state.statuses || []).find((s) => s.key === state.goal) || null
+  board.innerHTML = boardHtml(parcels, status)
+  board.querySelectorAll('.card').forEach((card) => {
+    card.addEventListener('click', () => renderDetail(card.dataset.parcel))
+    card.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') renderDetail(card.dataset.parcel)
+    })
+  })
 }
 
 async function renderDetail(key) {
   const p = ((state.projection && state.projection.parcels) || []).find((x) => x.parcel === key)
   const section = document.getElementById('detail')
-  if (!p) { section.innerHTML = '<div class="muted">parcel not found</div>'; return }
-  const chainRows = (p.chain ? p.chain.members : []).map((m) => `
-    <tr><td>${esc(m.sequence)}</td><td>${esc(m.stage)}</td><td>${esc(m.subjectKind)}</td>
-    <td>${esc(m.timestamp)}</td><td><code>${esc(m.hash.slice(0, 16))}…</code></td><td>${fileLink(m.locator)}</td></tr>`).join('')
+  if (!p) {
+    section.innerHTML = '<div class="muted">parcel not found</div>'
+    return
+  }
   const chainDocs = await api(`/api/parcels/${encodeURIComponent(key)}/logs?goal=${encodeURIComponent(state.goal)}`)
-  const logDocs = (chainDocs.chainDocuments || []).map((d) =>
-    `<pre>${esc(d.locator)}\n${esc(JSON.stringify(d.json != null ? d.json : d, null, 2))}</pre>`).join('')
-  const audit = (chainDocs.invocationAudit || []).map((e) =>
-    `<tr><td>${esc(e.timestamp)}</td><td>${esc(e.flow)}</td><td>${esc(e.action)}</td><td><code>${esc(e.command)}</code></td><td>${esc(e.exitCode == null ? '' : e.exitCode)}</td></tr>`).join('')
-  section.innerHTML = `
-    <h2>${esc(p.parcel)} — ${esc(p.state)} <span class="muted">(rule ${esc(p.rule)})</span></h2>
-    <div class="row">
-      <span>spec: ${fileLink(p.specRef)} <span class="muted">[${esc(p.specLocation)}]</span></span>
-      <span>chain: ${p.chain ? fileLink(p.chain.locator) : 'absent'} ${p.chain && !p.chain.valid ? '<span class="flags">INVALID</span>' : ''}</span>
-      <span>goal record: ${fileLink((state.projection && state.projection.goal && state.projection.goal.loopDirectiveRef) || '')}</span>
-    </div>
-    <p>${gatePill(p.gates.G1)} · ${gatePill(p.gates.G2)} · ${gatePill(p.gates.G3)}</p>
-    ${(() => {
-      const mine = (state.remedies || []).filter((r) => r.parcel === p.parcel)
-      return mine.length ? `<h2>How to unblock</h2>${mine.map(remedyHtml).join('')}` : ''
-    })()}
-    <h2>Receipt chain walk</h2>
-    <table><tr><th>seq</th><th>stage</th><th>subject</th><th>timestamp</th><th>hash</th><th>locator</th></tr>${chainRows || '<tr><td colspan="6" class="muted">no chain</td></tr>'}</table>
-    ${p.chain && p.chain.sidecars.length ? `<p class="muted">sidecars: ${p.chain.sidecars.map(fileLink).join(' · ')}</p>` : ''}
-    <h2>Logs</h2>
-    <h3 class="muted">chain documents (members + sidecars)</h3>${logDocs || '<div class="muted">—</div>'}
-    <h3 class="muted">invocation audit</h3>
-    <table><tr><th>time</th><th>flow</th><th>action</th><th>command</th><th>exit</th></tr>${audit || '<tr><td colspan="5" class="muted">no invocations yet</td></tr>'}</table>
-    <h3 class="muted">goal loop-directive state lines</h3>
-    <pre>${esc((chainDocs.stateLines || []).join('\n'))}</pre>`
+  const mine = (state.remedies || [])
+    .filter((r) => r.parcel === p.parcel)
+    .map((r) => remedyHtml(r))
+  section.innerHTML = detailHtml(
+    p,
+    chainDocs,
+    state.repoRoot,
+    (state.projection && state.projection.goal && state.projection.goal.loopDirectiveRef) || '',
+    mine,
+  )
 }
 
 async function renderAlerts() {
   const data = await api(`/api/alerts?goal=${encodeURIComponent(state.goal)}`)
   state.remedies = data.remedies || []
-  const remedyCards = state.remedies.map(remedyHtml).join('')
-  const alertRows = (data.alerts || []).map((a) =>
-    `<tr><td>${esc(a.kind)}</td><td>${esc(a.parcel)}</td><td>${esc(a.detail)}</td><td>${esc(a.observedAt)}</td></tr>`).join('')
-  const notifRows = (data.notifications || []).map((n) => `
-    <tr><td>${esc(n.createdAt)}</td><td>${esc(n.kind)}</td><td>${esc(n.goal)}/${esc(n.parcel)}</td>
-    <td>${esc(n.message)}</td>
-    <td><button data-del="${esc(n.id)}">delete</button></td></tr>`).join('')
-  document.getElementById('alerts-body').innerHTML = `
-    ${remedyCards ? `<h3 class="muted">how to unblock — questions &amp; recommendations (ordered preserve-and-complete first)</h3>${remedyCards}` : ''}
-    <table><tr><th>kind</th><th>parcel</th><th>detail</th><th>observed</th></tr>${alertRows || '<tr><td colspan="4" class="muted">no alerts</td></tr>'}</table>
-    <h3 class="muted">console-local notification store (state/notifications.json)</h3>
-    <table><tr><th>created</th><th>kind</th><th>scope</th><th>message</th><th></th></tr>${notifRows || '<tr><td colspan="5" class="muted">empty</td></tr>'}</table>`
-  document.querySelectorAll('[data-del]').forEach((b) => b.addEventListener('click', async () => {
-    await api(`/api/notifications/${encodeURIComponent(b.dataset.del)}`, { method: 'DELETE' })
-    renderAlerts()
-  }))
+  const body = document.getElementById('alerts-body')
+  body.innerHTML = remediesHtml(data.alerts, state.remedies, data.notifications)
+  body.querySelectorAll('[data-del]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      await api(`/api/notifications/${encodeURIComponent(btn.dataset.del)}`, { method: 'DELETE' })
+      renderAlerts()
+    })
+  })
 }
 
 async function renderRouting() {
   const data = await api(`/api/routing?goal=${encodeURIComponent(state.goal)}`)
-  const classRows = (data.policy && data.policy.classes || []).map((c) =>
+  const classRows = ((data.policy && data.policy.classes) || []).map((c) =>
     `<tr><td>${esc(c.name)}</td><td>${esc(c.allowlist.join(', '))}</td><td>${esc(c.ceilingUsd)}</td></tr>`).join('')
-  const roleRows = (data.policy && data.policy.roles || []).map((r) =>
+  const roleRows = ((data.policy && data.policy.roles) || []).map((r) =>
     `<tr><td>${esc(r.role)}</td><td>${esc(r.tier)}</td></tr>`).join('')
   const parcelRows = (data.parcels || []).map((p) =>
     `<tr><td>${esc(p.parcel)}</td><td>${esc(p.routing.routingClass)}</td><td>${esc(p.routing.resolvedTier)}</td><td>${esc(p.routing.resolvedModelId)}</td></tr>`).join('')
@@ -152,48 +96,34 @@ async function renderRouting() {
 }
 
 async function refresh() {
-  document.getElementById('clock').textContent = new Date().toISOString()
+  const clock = document.getElementById('clock')
+  if (clock !== null) clock.textContent = new Date().toISOString()
   if (!state.goal) return
   state.projection = await api(`/api/parcels?goal=${encodeURIComponent(state.goal)}`)
-  if (state.projection && state.projection.goal) state.repoRoot = state.repoRoot || ''
   renderBoard()
   renderAlerts()
   renderRouting()
 }
 
-async function init() {
-  const health = await api('/api/health')
-  state.repoRoot = health.repoRoot || ''
-  const goals = await api('/api/goals')
-  state.goals = goals.goals || []
-  // FCA-2: the picker lists ACTIVE goals only (a fully shipped goal with an
-  // empty queue drops out), grouped per goal tree, attention first.
-  state.statuses = goals.statuses
-    || state.goals.map((g) => ({ key: g.slug, tree: null, active: true, attention: { total: 0 } }))
-  const active = state.statuses.filter((s) => s.active)
-  active.sort((a, b) => (b.attention.total > 0) - (a.attention.total > 0))
-  const groups = new Map()
-  for (const status of active) {
-    const label = status.tree === null ? 'foreman-line' : status.tree
-    if (!groups.has(label)) groups.set(label, [])
-    groups.get(label).push(status)
-  }
+function wireEvents() {
+  document.querySelectorAll('.nav-btn').forEach((btn) => {
+    btn.addEventListener('click', () => setView(btn.dataset.view))
+  })
   const select = document.getElementById('goal-select')
-  select.innerHTML = [...groups.entries()].map(([label, list]) =>
-    `<optgroup label="${esc(label)}">${list.map((s) => {
-      const marker = s.attention.total > 0 ? ` ● ${s.attention.total}` : ''
-      return `<option value="${esc(s.key)}">${esc(s.key)}${marker}</option>`
-    }).join('')}</optgroup>`,
-  ).join('') || '<option value="">no active goals</option>'
-  state.goal = active.length ? active[0].key : null
-  const attnGoals = state.statuses.filter((s) => s.active && s.attention.total > 0).length
-  const summary = document.getElementById('attn-summary')
-  if (summary) {
-    summary.textContent = attnGoals > 0 ? `⚠ ${attnGoals} goal${attnGoals === 1 ? '' : 's'} need attention` : ''
-    summary.className = attnGoals > 0 ? 'banner-inline' : 'muted'
-  }
-  select.addEventListener('change', () => { state.goal = select.value; refresh() })
+  select.addEventListener('change', () => {
+    state.goal = select.value
+    refresh()
+  })
   document.getElementById('refresh').addEventListener('click', refresh)
+
+  const trayToggle = document.getElementById('tray-toggle')
+  trayToggle.addEventListener('click', () => {
+    const body = document.getElementById('tray-body')
+    const opening = body.hidden
+    body.hidden = !opening
+    trayToggle.setAttribute('aria-expanded', String(opening))
+  })
+
   document.getElementById('flow-run').addEventListener('click', async () => {
     const flow = document.getElementById('flow-select').value
     const argv = ['flow-arg1', 'flow-arg2', 'flow-arg3', 'flow-arg4']
@@ -207,11 +137,61 @@ async function init() {
     document.getElementById('flow-result').textContent = JSON.stringify(result, null, 2)
     renderAlerts()
   })
+
+  const search = document.getElementById('global-search')
+  search.addEventListener('input', () => {
+    const needle = search.value.trim().toLowerCase()
+    document.querySelectorAll('#board .card').forEach((card) => {
+      card.style.display = needle === '' || card.textContent.toLowerCase().includes(needle) ? '' : 'none'
+    })
+  })
+}
+
+async function init() {
+  const app = document.getElementById('app')
+  const health = await api('/api/health')
+  state.repoRoot = health.repoRoot || ''
+  state.posture = health.posture || ''
+  app.innerHTML = shellHtml({ posture: state.posture, activeView: state.view })
+
+  const goals = await api('/api/goals')
+  state.goals = goals.goals || []
+  // FCA-2: the picker lists ACTIVE goals only, grouped per goal tree,
+  // attention first.
+  state.statuses = goals.statuses
+    || state.goals.map((g) => ({ key: g.slug, tree: null, active: true, attention: { total: 0 } }))
+  const active = state.statuses.filter((s) => s.active)
+  active.sort((a, b) => (b.attention.total > 0) - (a.attention.total > 0))
+  const groups = new Map()
+  for (const status of active) {
+    const label = status.tree === null ? 'foreman-line' : status.tree
+    if (!groups.has(label)) groups.set(label, [])
+    groups.get(label).push(status)
+  }
+  const select = document.getElementById('goal-select')
+  select.innerHTML = [...groups].map(([label, list]) =>
+    `<optgroup label="${esc(label)}">${list.map((s) => {
+      const marker = s.attention.total > 0 ? ` ● ${s.attention.total}` : ''
+      return `<option value="${esc(s.key)}">${esc(s.key)}${marker}</option>`
+    }).join('')}</optgroup>`).join('') || '<option value="">no active goals</option>'
+  state.goal = active.length ? active[0].key : null
+  select.value = state.goal ?? ''
+  const attnGoals = state.statuses.filter((s) => s.active && s.attention.total > 0).length
+  const summary = document.getElementById('attn-summary')
+  if (summary !== null) {
+    summary.textContent = attnGoals > 0 ? `⚠ ${attnGoals} goal${attnGoals === 1 ? '' : 's'} need attention` : ''
+    summary.className = attnGoals > 0 ? 'banner-inline' : 'muted'
+  }
+
+  wireEvents()
   await refresh()
-  // OQ2: poll on page load + 60s background refresh.
-  setInterval(refresh, 60000)
+  // OQ2: poll on page load + 60s background refresh (unref keeps node test
+  // runs from hanging on the timer).
+  const timer = setInterval(refresh, 60000)
+  if (typeof timer === 'object' && timer !== null && typeof timer.unref === 'function') timer.unref()
 }
 
 init().catch((err) => {
-  document.getElementById('detail').innerHTML = `<div class="flags">${esc(err.message)}</div>`
+  const detail = document.getElementById('detail')
+  if (detail !== null) detail.innerHTML = `<div class="flags">${esc(err.message)}</div>`
 })

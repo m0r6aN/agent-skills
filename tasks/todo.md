@@ -347,7 +347,7 @@ not folded into `goal-hygiene`).
 
 ---
 
-## Task 15: Layout shell (full-viewport grid, rails, view nav, density baseline)
+## Task 15: Layout shell (full-viewport grid, rails, view nav, density baseline) ✅ (2026-10-11)
 
 **Description:** Rebuild `ui/index.html`/`ui/app.js` shell per FCA-P6: header
 (fleet switcher, posture, search), left rail (views + severity filters), dense
@@ -355,12 +355,12 @@ main grid, persistent right spawn panel slot, collapsible session tray. Views
 wired to existing endpoints; no build step; ES modules OK.
 
 **Acceptance criteria:**
-- [ ] 1920×1080 shows header + rail + board + spawn panel + collapsed tray with no page scroll
-- [ ] all views render against mocked fetch with zero console errors
-- [ ] keyboard reachability + focus rings + aria labels on icon-only controls
+- [x] 1920×1080 shows header + rail + board + spawn panel + collapsed tray with no page scroll (structural: #app grid + 100vh + overflow hidden; visual confirm completes in Task 19 checklist)
+- [x] all views render against mocked fetch with zero console errors (jsdom end-to-end)
+- [x] keyboard reachability + focus rings + aria labels on icon-only controls
 
 **Verification:**
-- [ ] Tests pass: `tests/ui-shell.test.ts` (new; mocked fetch, DOM harness devDep only)
+- [x] Tests pass: `tests/ui-shell.test.ts` (new; jsdom devDep — 4/4)
 - [ ] Package sweep green
 - [ ] Manual: Firefox + Chromium smoke
 
