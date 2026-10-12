@@ -127,7 +127,12 @@ export function handleApi(config: ConsoleConfig, request: ApiRequest, now: numbe
         const key = tree.key === null ? slug : `${tree.key}.${slug}`
         goals.push(record)
         const projection = projectGoal(treeConfig, slug, now, key, tree.treeRef)
-        if (projection !== null) statuses.push(goalStatus(key, tree.key, projection, allSignals))
+        if (projection !== null) {
+          statuses.push({
+            ...goalStatus(key, tree.key, projection, allSignals),
+            repoRoot: tree.root,
+          })
+        }
       }
     }
     return { status: 200, json: { goals, statuses } }

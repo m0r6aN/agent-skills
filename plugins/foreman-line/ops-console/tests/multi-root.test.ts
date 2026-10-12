@@ -207,8 +207,14 @@ test('multi-root: /api/goals carries the additive statuses index and /api/parcel
       assert.equal(list.status, 200)
       const payload = list.json as {
         goals: { slug: string }[]
-        statuses: { key: string; active: boolean }[]
+        statuses: { key: string; active: boolean; repoRoot: string }[]
       }
+      assert.equal(
+        payload.statuses.find((s) => s.key === 'goal-primary')?.repoRoot,
+        ctx.config.repoRoot,
+      )
+      assert.equal(payload.statuses.find((s) => s.key === 'agent-task.at-1')?.repoRoot, extraRoot)
+      assert.equal(payload.statuses.find((s) => s.key === 'agent-task.1.at-2')?.repoRoot, extraRoot)
       const keys = payload.statuses.map((status) => status.key)
       assert.ok(keys.includes('goal-primary'), 'primary goal keeps its bare key')
       assert.ok(keys.includes('agent-task.at-1'), 'docs/goals tree qualified with the root alias')
