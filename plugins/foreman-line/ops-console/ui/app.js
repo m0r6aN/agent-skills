@@ -12,6 +12,7 @@ import {
   signalsHtml,
 } from './views/signals.js'
 import { readControls, spawnPanelHtml, spawnRequest } from './views/spawn-panel.js'
+import { browseListHtml, fleetHtml } from './views/fleet.js'
 
 const state = {
   view: 'board',
@@ -26,6 +27,8 @@ const state = {
   registry: [],
   selected: new Map(),
   controls: {},
+  fleet: [],
+  browseSelection: null,
 }
 
 async function api(path, options) {
@@ -44,6 +47,7 @@ function setView(view) {
     btn.setAttribute('aria-current', active ? 'page' : 'false')
   })
   if (view === 'signals') renderSignals()
+  if (view === 'fleet') renderFleet()
 }
 
 function renderBoard() {
@@ -229,6 +233,83 @@ function wirePopover(form, signal, entry) {
     document.getElementById('action-result').textContent = JSON.stringify(outcome, null, 2)
     form.remove()
     renderAlerts()
+  })
+}
+
+function fleetError(message) {
+  const slot = document.getElementById('fleet-error')
+  if (slot === null) return
+  slot.hidden = message === null
+  slot.textContent = message === null ? '' : message
+}
+
+async function renderFleet() {
+  const data = await api('/api/fleet')
+  state.fleet = data.roots || []
+  const body = document.getElementById('fleet-body')
+  body.innerHTML = fleetHtml(state.fleet)
+  wireFleet(body)
+}
+
+function wireFleet(body) {
+  const pathInput = document.getElementById('browse-path')
+  const addButton = document.getElementById('fleet-add')
+  const selectionLabel = document.getElementById('browse-selection')
+  const runBrowse = async () => {
+    fleetError(null)
+    const result = await api(`/api/fs/browse?path=${encodeURIComponent(pathInput.value)}`)
+    const list = document.getElementById('browse-list')
+    if (result.reason !== undefined) {
+      list.innerHTML = ''
+      fleetError(`${result.reason}: ${result.error}`)
+      return
+    }
+    list.innerHTML = browseListHtml(result.path, result.entries || [])
+    list.querySelectorAll('[data-open]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        pathInput.value = btn.dataset.open
+        runBrowse()
+      })
+    })
+    list.querySelectorAll('[data-pick]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        state.browseSelection = btn.dataset.pick
+        selectionLabel.textContent = `selected: ${state.browseSelection}`
+        addButton.disabled = false
+      })
+    })
+  }
+  document.getElementById('browse-run').addEventListener('click', runBrowse)
+  addButton.addEventListener('click', async () => {
+    fleetError(null)
+    const result = await api('/api/fleet/add', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ root: state.browseSelection }),
+    })
+    if (result.ok !== true) {
+      fleetError(`${result.reason}: ${result.error}`)
+      return
+    }
+    state.browseSelection = null
+    renderFleet()
+  })
+  body.querySelectorAll('[data-remove]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      fleetError(null)
+      const result = await api('/api/fleet/remove', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ root: btn.dataset.remove }),
+      })
+      if (result.ok !== true) {
+        // Typed refusal rendered inline — the primary root removal refusal is
+        // expected UI, never a crash.
+        fleetError(`${result.reason}: ${result.error}`)
+        return
+      }
+      renderFleet()
+    })
   })
 }
 
