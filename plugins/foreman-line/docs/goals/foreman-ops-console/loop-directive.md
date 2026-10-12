@@ -20,6 +20,16 @@
 > table), gates/alerts presentation via the OQ5 proxies with the console-local
 > notification + invocation-audit stores, and the S1 live exit proof against
 > goal `w4-closeout` / parcel `E6-R1` chain `a5b1975a-7497-4200-bac2-5d8a6fd6c749`.
+> **2026-10-11 (Stage F record closure): FOC-P0 ☑ SHIPPED + CLOSED.** The
+> `hung` alert (`foreman-ops-console:FOC-P0:hung`, 2026-10-10T22:04:15Z — no
+> worktree basename, no receipt progress) was a record gap, not missing work:
+> the FOC-P0 deliverables (frozen projection contract + fixture corpus) are on
+> `main` via PR #147 `chore/promotion-20261006` (merge `b840213d`, materials
+> carried by rescue commit `82ea4632`) and are consumed as frozen canon by the
+> merged FOC-P1–FOC-P4 implementation and downstream parcels (package tests
+> 251/251 green at HEAD 2026-10-11). Stage F owed nothing further: no open
+> worktree/branch; spec deliberately stays in `docs/specs/active/` as the
+> living frozen contract reference (same convention as FCA-P0/P1).
 > Package verification: `npm test` 73/73 green, `npm run typecheck` clean,
 > `npm run lint` exit 0; read-only invariant proven by negative control
 > (`tests/read-only.test.ts`). Phase 2 (FOC-P5–FOC-P8) remains OUT — charter
@@ -59,8 +69,12 @@ authorizations above.
 
 ## Queue (strict dependency order — charter Phase 1 table)
 
-1. **FOC-P0** — Projection contract + discovery inventory (architecture/risk,
-   dual review). Shapes first; FOC-P1–FOC-P4 build against its frozen rules.
+1. ☑ **FOC-P0 — SHIPPED + CLOSED** (record completed 2026-10-11) — Projection
+   contract + discovery inventory (architecture/risk, dual review). Shapes
+   first; FOC-P1–FOC-P4 build against its frozen rules. **Merge reference:**
+   PR #147 `chore/promotion-20261006` (merge `b840213d`; materials via rescue
+   commit `82ea4632`) — frozen contract + fixture corpus on `main` at
+   `docs/specs/active/FOC-P0-projection-contract-and-discovery-inventory.md`.
 2. **FOC-P1** — Projection library (standard-feature, single review). Depends
    on accepted FOC-P0.
 3. **FOC-P2** — Board API + UI + container (standard-feature, single review).
@@ -100,15 +114,21 @@ record naming the exact spec, Allowed Files, branch/worktree, and review route.
 
 ## FOC-P0 shaping checklist (contract parcel — highest care)
 
-- [ ] Every `ParcelState` value has a derivation rule naming exact inputs
+- [x] Every `ParcelState` value has a derivation rule naming exact inputs
       (receipt fields, spec frontmatter/location, goal fields, liveness signals)
-      and precedence when inputs disagree.
-- [ ] Heartbeat threshold lands the OQ1 Gate 1 ruling verbatim (or records the
-      owner's chosen alternative with its reasoning).
-- [ ] Fixtures cover each state INCLUDING `hung` vs `awaiting-gate`
-      confusion cases (idle-but-gated vs idle-and-abandoned).
-- [ ] The contract names its consumers (FOC-P1 library, FOC-P2 API) and its
-      non-goals (no writes, no authority, no stored status).
+      and precedence when inputs disagree. — verified 2026-10-11: rules R1–R5,
+      first match wins, in the shipped spec.
+- [x] Heartbeat threshold lands the OQ1 Gate 1 ruling verbatim (or records the
+      owner's chosen alternative with its reasoning). — verified 2026-10-11:
+      "Heartbeat threshold (OQ1, Gate 1 ruling landed verbatim)" in spec.
+- [x] Fixtures cover each state INCLUDING `hung` vs `awaiting-gate`
+      confusion cases (idle-but-gated vs idle-and-abandoned). — verified
+      2026-10-11: `tests/fixtures/scenarios/confusion-idle-but-gated.json` +
+      `confusion-idle-and-abandoned.json` on `main`.
+- [x] The contract names its consumers (FOC-P1 library, FOC-P2 API) and its
+      non-goals (no writes, no authority, no stored status). — verified
+      2026-10-11: T1 consumer routing + D2 read-only posture / "Zero
+      implementation" in the shipped spec.
 
 ## Stop conditions (ScheduleWakeup stop:true, then report — no mid-loop questions)
 

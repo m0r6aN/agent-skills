@@ -1,9 +1,0 @@
-{
-  "evidence_class": "refusal-record",
-  "status": "refused",
-  "reason_code": "evidence:R10",
-  "source_kind": "coordinator-review",
-  "source_ref": "src-44444444444444444444444444444444",
-  "recorded_at_utc": "2026-09-21T12:00:00.000Z",
-  "retention_until_utc": "2026-10-01T12:00:00.000Z"
-}

@@ -94,6 +94,21 @@ export interface GoalRatification {
   readonly detail: string
 }
 
+/** Actual configured root plus contained repo-relative path (never an alias). */
+export interface Locator {
+  readonly root: string
+  readonly relativePath: string
+}
+
+export interface RatificationEvidence {
+  readonly source: 'charter' | 'loop-directive'
+  readonly locator: Locator
+  /** One-based source line; null on read failure. */
+  readonly line: number | null
+  readonly kind: 'grant' | 'denial' | 'unsupported' | 'missing' | 'unreadable'
+  readonly detail: string
+}
+
 export interface GoalRecord {
   readonly slug: string
   readonly charterRef: string
@@ -107,6 +122,8 @@ export interface GoalRecord {
   /** `**…state…**` lines of the loop directive (log-viewer input). */
   readonly stateLines: readonly string[]
   readonly ratification: GoalRatification
+  /** TO-P1 additive read-only evidence; exact source/line, no authority claim. */
+  readonly evidence?: readonly RatificationEvidence[]
 }
 
 export interface GoalProjection {

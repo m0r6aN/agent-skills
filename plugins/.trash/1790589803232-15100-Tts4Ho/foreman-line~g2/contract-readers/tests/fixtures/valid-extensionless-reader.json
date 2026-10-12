@@ -1,4 +1,0 @@
-{
-  "contract": "test-fixture-contract",
-  "readers": ["plugins/foreman-line/contract-readers/Makefile"]
-}

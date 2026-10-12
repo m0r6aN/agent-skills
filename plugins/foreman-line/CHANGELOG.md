@@ -1,5 +1,32 @@
 # Changelog
 
+## Unreleased
+
+- Pi package (`pi-package/`): run the plugin's skills from a Pi prompt as
+  namespaced slash commands — `/foreman-line:goal [<concept>]`,
+  `/foreman-line:goal resume <goal-slug>`,
+  `/foreman-line:parcel-driven-development`, `/foreman-line:ai-council`,
+  `/foreman-line:foreman-shaping`. Expands like Pi's `/skill:<name>` with
+  `${CLAUDE_PLUGIN_ROOT}` resolved to the plugin root; goal commands
+  tab-complete goal slugs; `/foreman-line:probe` self-tests the install.
+
+## 0.2.1 — 2026-10-11
+
+Version event for the CI-fail-fast materials landed by PR #170 (merged
+2026-10-11) under the stale `0.2.0` version string — goal documentation,
+dispatch prompts, and goal-local tooling only; no pipeline-package or contract
+changes:
+
+- `ci-fail-fast` goal: loop directive expanded; read-graph dev-drop capture
+  (`capture-dev-pass.mjs`) plus read-graph probe script; charter touch-up.
+- Review findings and triage for CFF-H1, CFF-P0, and CFF-P1 (A/B reviews).
+- New `parcel-queue-and-claim` goal charter.
+- Kickstarters: build CFF-H1, CFF-P0-devdrop, CFF-P0-reducer1, CFF-P1-rework1;
+  review CFF-H1, CFF-P1-A, CFF-P1-B.
+
+The `Unreleased` backlog (FCA-1/2/3 and verification-package work) is
+unchanged and remains unclaimed by this release.
+
 ## 0.2.0 — 2026-10-07
 
 pi-model-configuration wave 2 (Amendments 06–09, owner-ratified):
@@ -27,6 +54,48 @@ pi-model-configuration wave 2 (Amendments 06–09, owner-ratified):
   `docs/goals/pi-model-configuration/evidence/`).
 
 ## Unreleased
+
+- Control-center implementation (FCA-P2 through FCA-P6, 2026-10-11): fleet
+  registry + sandboxed filesystem browse; the unified signal model (six closed
+  classes: parcel-state, release-hygiene, worktree-hygiene, scm-ci,
+  goal-hygiene, session-state) with the D19-adjudicated probe seams; the
+  closed action registry with typed refusals, autonomy envelopes, and the
+  destructive typed-confirmation contract; kickstarter-style prompt
+  composition with the Stage-F fail-closed merge sentence; the pure spawn
+  planner (help-verified harness argv, fresh-worktree-per-action, prompt
+  digests), tmux launcher, and append-only spawn receipts; and the
+  control-center UI (full-viewport grid, registry-driven action buttons,
+  shared spawn panel, fleet folder picker, session tray) with jsdom
+  end-to-end suites and a live-server visual checklist. All 19 plan tasks
+  complete (tasks/plan.md).
+- Control-center initiative shaping (owner-ratified 2026-10-11): charter
+  amendment (`spawn` invocation mode, fleet-wide control-center scope,
+  close/delete blast radius, shared spawn-control contract) and the ratified
+  capability map under `docs/goals/foreman-ops-console/`; specs FCA-P2–FCA-P6
+  (fleet registry, unified attention signals, action registry, tmux spawner,
+  control-center UI) admitted to `docs/specs/active/`.
+- Worktree-hygiene seed fix (first FCA-P3 remediation): `ops-console/state/`
+  untracked and gitignored — the console's runtime stores
+  (`notifications.json`, `invocation-audit.json`) were derived local state;
+  the tracked copy churned the working tree on every run.
+- FCA-1 multi-root goal discovery (ops-console): optional `FOC_EXTRA_ROOTS`
+  (colon-separated absolute roots, D1-asserted like `FOC_REPO_ROOT`) projects
+  additional goal trees — `plugins/foreman-line/docs/goals`, `docs/goals`,
+  `docs/INITIATIVES` per root — under alias-qualified keys
+  (`agent-task.intelligence-layer`); bare keys keep resolving to the primary
+  tree. Frozen route table and R1–R5 derivation untouched
+  (spec `active/FCA-P0-ops-console-multi-root-and-status-index.md`).
+- FCA-2 goal status index (ops-console): `/api/goals` gains the additive
+  `statuses` sibling (tree-qualified key, `active`, attention counts) derived
+  from the frozen per-parcel rules; the UI goal picker lists active goals only,
+  grouped per tree and attention-first, and the board foregrounds what needs
+  the human (banner + `needs` card treatment).
+- FCA-3 remediation advisor (ops-console): `/api/alerts` gains the additive
+  `remedies` sibling — a triage question per blocker with answer-branch
+  recommendations and copy-pasteable commands (real verbs only; presented,
+  never executed). Branch lists are ordered per owner directive: preserve and
+  complete the existing work first, close/re-dispatch fresh last
+  (spec `active/FCA-P1-remediation-advisor.md`).
 
 - The CI aggregation now captures each package check's complete stdout/stderr and
   re-emits every failing check in a failure section before the summary matrix, so

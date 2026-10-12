@@ -1,6 +1,7 @@
 import { spawnSync } from 'node:child_process'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
+import type { AutonomyEnvelope } from './actions.js'
 import { CHAIN_MEMBER_PATTERN } from './chain.js'
 import {
   assertAbsoluteRoot,
@@ -36,7 +37,7 @@ import { isRecord } from './guards.js'
  * auto-approves. `dispatch-execute` is `present` mode in Phase 1 because no
  * invokable bin exists on disk.
  */
-export type InvokeAction = 'executed' | 'presented' | 'refused'
+export type InvokeAction = 'executed' | 'presented' | 'refused' | 'spawned'
 
 export interface FlowRequest {
   readonly flow: string
@@ -62,10 +63,14 @@ export interface AuditEntry {
   readonly flow: string
   readonly argv: readonly string[]
   readonly action: InvokeAction
-  readonly mode: 'execute' | 'present' | null
+  readonly mode: 'execute' | 'present' | 'spawn' | null
   readonly command: string
   readonly reason: string | null
   readonly exitCode: number | null
+  /** FCA-P4 additive: autonomy envelope for action dispatches. */
+  readonly autonomy?: AutonomyEnvelope | null
+  /** FCA-P4/FCA-P5 additive: spawn id for `spawned` outcomes. */
+  readonly spawnId?: string | null
 }
 
 const SLUG_PATTERN = /^[a-z0-9-]+$/
@@ -198,7 +203,8 @@ function loadAudit(stateDir: string): AuditEntry[] {
         typeof entry.flow === 'string' &&
         (entry.action === 'executed' ||
           entry.action === 'presented' ||
-          entry.action === 'refused') &&
+          entry.action === 'refused' ||
+          entry.action === 'spawned') &&
         typeof entry.command === 'string'
       ) {
         entries.push({
@@ -207,10 +213,17 @@ function loadAudit(stateDir: string): AuditEntry[] {
           flow: entry.flow,
           argv,
           action: entry.action,
-          mode: entry.mode === 'execute' || entry.mode === 'present' ? entry.mode : null,
+          mode:
+            entry.mode === 'execute' || entry.mode === 'present' || entry.mode === 'spawn'
+              ? entry.mode
+              : null,
           command: entry.command,
           reason: typeof entry.reason === 'string' ? entry.reason : null,
           exitCode: typeof entry.exitCode === 'number' ? entry.exitCode : null,
+          autonomy: isRecord(entry.autonomy)
+            ? (entry.autonomy as unknown as AutonomyEnvelope)
+            : null,
+          spawnId: typeof entry.spawnId === 'string' ? entry.spawnId : null,
         })
       }
     }
@@ -237,6 +250,11 @@ function appendAudit(stateDir: string, entry: AuditEntry): void {
 
 export function listAuditEntries(stateDir: string): AuditEntry[] {
   return loadAudit(stateDir)
+}
+
+/** Public append seam for FCA-P4 action dispatches (same append-only store). */
+export function recordAuditEntry(stateDir: string, entry: AuditEntry): void {
+  appendAudit(stateDir, entry)
 }
 
 /** Frozen minimal environment for spawned CLIs — no caller environment passthrough (M1). */
