@@ -102,7 +102,7 @@ export function shellHtml({ posture = '', activeView = 'board' } = {}) {
   </main>
   <aside class="spawn" aria-label="spawn panel">
     <h2>spawn</h2>
-    <div id="spawn-panel"><p class="muted">select actions to configure a spawn (Task 17)</p></div>
+    <div id="spawn-panel"><p class="muted">select signal rows to configure a spawn</p></div>
   </aside>
   <footer class="tray" id="tray">
     <button type="button" id="tray-toggle" aria-expanded="false" aria-controls="tray-body">

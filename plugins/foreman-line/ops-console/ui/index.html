@@ -48,6 +48,8 @@
     button { cursor: pointer; }
     button:hover { border-color: var(--accent); }
     .board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    /* The attention banner spans the board grid instead of stealing a column. */
+    #board > .banner { grid-column: 1 / -1; }
     .col { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px; min-height: 120px; }
     .col h2 { font-size: 13px; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.06em; }
     .col.running h2 { color: var(--ok); } .col.hung h2 { color: var(--warn); }

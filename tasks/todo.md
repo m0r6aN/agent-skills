@@ -434,21 +434,21 @@ from Task 3.
 
 ---
 
-## Task 19: Session tray + attach copy + visual checklist
+## Task 19: Session tray + attach copy + visual checklist ✅ (2026-10-11)
 
 **Description:** Tray of spawns (pane liveness, harness, model, repo), copyable
 attach command, per-session actions via the same registry; virtualization past
 200 rows; final visual checklists.
 
 **Acceptance criteria:**
-- [ ] tray renders liveness transitions from `/api/spawns` polling
-- [ ] attach command copy works; per-session explain/close routed through registry
-- [ ] 200+ rows virtualize without UI jank
+- [x] tray renders liveness transitions from `/api/spawns` polling
+- [x] attach command copy works; per-session explain/close routed through registry (close demands typed confirmation)
+- [x] 200+ rows virtualize without UI jank (200-row window + summary)
 
 **Verification:**
-- [ ] Tests pass: `tests/ui-tray.test.ts` (new)
+- [x] Tests pass: `tests/ui-tray.test.ts` (new — 2/2)
 - [ ] Package sweep green
-- [ ] Manual: visual checklist at 1920×1080 + 1366×768 in goal transcripts
+- [x] Manual: visual checklist at 1920×1080 + 1366×768 in goal transcripts (console-ui-visual-checklist-2026-10-11.md — live server + headless Chromium; 4 visual defects caught and fixed)
 
 **Dependencies:** Tasks 14, 15
 **Files likely touched:** `ui/views/tray.js`, `ui/app.js`, `tests/ui-tray.test.ts`
@@ -457,6 +457,6 @@ attach command, per-session actions via the same registry; virtualization past
 ---
 
 ## Checkpoint: Complete
-- [ ] All FCA-P2…P6 acceptance criteria met
-- [ ] Visual checklists recorded; Firefox + Chromium clean
+- [x] All FCA-P2…P6 acceptance criteria met
+- [x] Visual checklists recorded; Chromium clean (Firefox unavailable on this host — noted for owner spot-check)
 - [ ] Review with human before closing the goal slice

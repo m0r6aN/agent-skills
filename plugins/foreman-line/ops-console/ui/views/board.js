@@ -21,15 +21,17 @@ export function boardHtml(parcels, status) {
   const attention = (status && status.attention) || EMPTY_ATTENTION
   // FCA-2: the board leads with what needs the human — a banner above the
   // columns and a "needs" treatment on the cards that carry the attention.
+  const parts = [
+    attention.hung ? `${attention.hung} hung` : '',
+    attention.failed ? `${attention.failed} failed` : '',
+    attention.awaitingGate ? `${attention.awaitingGate} awaiting gate` : '',
+    attention.ratificationPending ? 'goal charter awaiting ratification' : '',
+    attention.ratificationUnknown ? 'ratification record unknown' : '',
+    (attention.signals && attention.signals.urgent) ? `${attention.signals.urgent} urgent signal(s)` : '',
+    (attention.signals && attention.signals.attention) ? `${attention.signals.attention} attention signal(s)` : '',
+  ].filter(Boolean)
   const banner = attention.total > 0
-    ? `<div class="banner">needs attention — ${[
-        attention.hung ? `${attention.hung} hung` : '',
-        attention.failed ? `${attention.failed} failed` : '',
-        attention.awaitingGate ? `${attention.awaitingGate} awaiting gate` : '',
-        attention.ratificationPending ? 'goal charter awaiting ratification' : '',
-        (attention.signals && attention.signals.urgent) ? `${attention.signals.urgent} urgent signal(s)` : '',
-        (attention.signals && attention.signals.attention) ? `${attention.signals.attention} attention signal(s)` : '',
-      ].filter(Boolean).join(' · ')}</div>`
+    ? `<div class="banner">needs attention${parts.length ? ` — ${parts.join(' · ')}` : ''}</div>`
     : ''
   return banner + STATES.map((col) => {
     const cards = parcels.filter((p) => p.state === col).map((p) => {

@@ -13,6 +13,7 @@ import {
 } from './views/signals.js'
 import { readControls, spawnPanelHtml, spawnRequest } from './views/spawn-panel.js'
 import { browseListHtml, fleetHtml } from './views/fleet.js'
+import { trayHtml } from './views/tray.js'
 
 const state = {
   view: 'board',
@@ -97,6 +98,58 @@ async function renderAlerts() {
   })
 }
 
+async function copyText(text) {
+  try {
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      await navigator.clipboard.writeText(text)
+      return true
+    }
+  } catch {
+    // fall through to the failure path — the command stays selectable text
+  }
+  return false
+}
+
+async function renderTray() {
+  const data = await api('/api/spawns')
+  const spawns = data.spawns || []
+  const count = document.getElementById('tray-count')
+  if (count !== null) count.textContent = `(${spawns.length})`
+  const body = document.getElementById('tray-body')
+  body.innerHTML = trayHtml(spawns)
+  body.querySelectorAll('[data-copy]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const ok = await copyText(btn.dataset.copy)
+      btn.textContent = ok ? 'copied' : 'copy failed'
+    })
+  })
+  // Per-session actions ride the SAME registry as signal verbs (FCA-P4).
+  body.querySelectorAll('[data-session-action]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const verb = btn.dataset.sessionAction
+      const subject = btn.dataset.subject
+      let confirmation = null
+      if (verb === 'close-delete') {
+        // Destructive: exact typed intent or nothing happens.
+        confirmation = prompt(`type ${confirmationToken(subject)} to confirm`)
+        if (confirmation !== confirmationToken(subject)) return
+      }
+      await api('/api/actions/dispatch', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          verb,
+          signalClass: 'session-state',
+          subject,
+          autonomy: { decisions: 'partial', commit: false, push: false, openPr: false, merge: false },
+          confirmation,
+        }),
+      })
+      renderTray()
+    })
+  })
+}
+
 async function renderSignals() {
   const [signalsData, actionsData] = await Promise.all([api('/api/signals'), api('/api/actions')])
   state.signals = signalsData.signals || []
@@ -155,6 +208,7 @@ function updateSpawnPanel() {
         box.checked = false
       })
       updateSpawnPanel()
+      renderTray()
     }
   })
 }
@@ -330,6 +384,8 @@ async function renderRouting() {
 async function refresh() {
   const clock = document.getElementById('clock')
   if (clock !== null) clock.textContent = new Date().toISOString()
+  // Repo-scoped surfaces populate regardless of goal selection.
+  renderTray()
   if (!state.goal) return
   state.projection = await api(`/api/parcels?goal=${encodeURIComponent(state.goal)}`)
   renderBoard()
@@ -420,6 +476,16 @@ async function init() {
   }
 
   wireEvents()
+  updateSpawnPanel()
+  // Header fleet switcher: populated from the fleet registry (Task 18 data).
+  const fleetData = await api('/api/fleet')
+  const fleetSelect = document.getElementById('fleet-select')
+  if (fleetSelect !== null) {
+    const roots = fleetData.roots || []
+    fleetSelect.innerHTML = roots.length === 0
+      ? '<option value="">no repos</option>'
+      : roots.map((entry) => `<option value="${esc(entry.root)}">${esc(entry.root)}</option>`).join('')
+  }
   await refresh()
   // OQ2: poll on page load + 60s background refresh (unref keeps node test
   // runs from hanging on the timer).

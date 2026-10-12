@@ -143,6 +143,7 @@ test('spawn button posts the request: shared controls + K actions, selections cl
         actions: selection.signal.actions,
       })),
     },
+    '/api/spawns': { spawns: [] },
     '/api/actions': {
       actions: [
         {
@@ -184,7 +185,7 @@ test('spawn button posts the request: shared controls + K actions, selections cl
   }
   globalThis.fetch = (async (input: string | URL, init?: RequestInit) => {
     const path = String(input)
-    if (path.startsWith('/api/spawn')) {
+    if (path === '/api/spawn') {
       spawns.push(JSON.parse(String(init?.body)))
       return {
         json: async () => ({

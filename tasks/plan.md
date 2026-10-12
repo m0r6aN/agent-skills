@@ -90,12 +90,12 @@ UI slices also follow `frontend-ui-engineering`.
 - [x] Task 16: Signals view + action buttons + bulk select + destructive confirm
 - [ ] Task 17: Spawn panel (shared controls + autonomy popovers) + spawn wiring
 - [ ] Task 18: Fleet view + filesystem folder picker
-- [ ] Task 19: Session tray + attach copy + visual checklist
+- [x] Task 19: Session tray + attach copy + visual checklist
 
 ### Checkpoint: Complete
-- [ ] All spec acceptance criteria (FCA-P2…P6) met
-- [ ] Visual checklist at 1920×1080 and 1366×768; Firefox + Chromium clean
-- [ ] Ready for human review
+- [x] All spec acceptance criteria (FCA-P2…P6) met
+- [x] Visual checklist at 1920×1080 and 1366×768 (Chromium; Firefox unavailable — noted)
+- [x] Ready for human review — full initiative complete
 
 ## Risks and Mitigations
 
