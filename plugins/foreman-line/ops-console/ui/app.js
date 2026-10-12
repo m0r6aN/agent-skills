@@ -11,6 +11,7 @@ import {
   selectionToActions,
   signalsHtml,
 } from './views/signals.js'
+import { readControls, spawnPanelHtml, spawnRequest } from './views/spawn-panel.js'
 
 const state = {
   view: 'board',
@@ -24,6 +25,7 @@ const state = {
   signals: [],
   registry: [],
   selected: new Map(),
+  controls: {},
 }
 
 async function api(path, options) {
@@ -126,10 +128,31 @@ function selectionPayloads() {
 function updateSpawnPanel() {
   const panel = document.getElementById('spawn-panel')
   if (panel === null) return
-  const actions = selectionToActions(selectionPayloads())
-  panel.innerHTML = actions.length === 0
-    ? '<p class="muted">select signal rows to configure a spawn (Task 17)</p>'
-    : `<p>${actions.length} action(s) queued</p><pre>${esc(JSON.stringify(actions, null, 2))}</pre>`
+  panel.innerHTML = spawnPanelHtml({ count: state.selected.size, controls: state.controls })
+  const form = document.getElementById('spawn-form')
+  form.addEventListener('change', () => {
+    state.controls = readControls(form)
+  })
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault()
+    state.controls = readControls(form)
+    const extraEl = form.querySelector('[name="extra"]')
+    const extraText = extraEl === null ? '' : extraEl.value
+    const request = spawnRequest(selectionPayloads(), state.controls, extraText)
+    const result = await api('/api/spawn', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(request),
+    })
+    document.getElementById('spawn-result').textContent = JSON.stringify(result, null, 2)
+    if (result.ok === true) {
+      state.selected = new Map()
+      document.querySelectorAll('[data-select]').forEach((box) => {
+        box.checked = false
+      })
+      updateSpawnPanel()
+    }
+  })
 }
 
 function wireSignalRows(body) {

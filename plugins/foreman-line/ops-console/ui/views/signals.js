@@ -103,6 +103,7 @@ export function selectionToActions(selections) {
     signalClass: selection.signal.class,
     subject: selection.signal.subject,
     evidence: [...selection.signal.evidence],
+    repoRoot: selection.signal.repo,
     autonomy: { ...selection.autonomy },
     extraText: selection.extraText == null ? null : selection.extraText,
   }))

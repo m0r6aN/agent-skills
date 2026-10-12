@@ -238,7 +238,7 @@ test('destructive actions demand the exact typed confirmation before any request
     secondBox.dispatchEvent(evt)
     assert.equal(boxes.filter((b) => b.checked).length, 2)
     const panel = doc.getElementById('spawn-panel')?.textContent ?? ''
-    assert.ok(panel.includes('2 action(s) queued'), panel)
+    assert.ok(panel.includes('spawn 2 sessions'), panel)
     assert.deepEqual(errors, [], 'zero console errors')
   } finally {
     console.error = origError
