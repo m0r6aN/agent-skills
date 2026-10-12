@@ -216,10 +216,19 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
     }
   }
   function updateSpawnPanel() {
+    const active = doc.activeElement
+    const focusData = el('spawn-panel').contains(active) ? { ...active.dataset } : null
+    const focusItem = active?.closest('[data-launch-item]')?.dataset.launchItem
     state.launchPage = Math.min(state.launchPage, Math.max(0, Math.ceil(state.selected.size / 200) - 1))
     el('spawn-panel').innerHTML = spawnPanelHtml({ count: state.selected.size, controls: state.controls, selections: [...state.selected.values()], registry: state.registry, extra: state.extra, error: state.launchError, page: state.launchPage, suggested: state.suggested, bulk: state.bulk, bulkResult: state.bulkResult, retryRequired: state.retryRequired, retryAcknowledged: state.retryAcknowledged })
     const form = el('spawn-form')
     el('spawn-run').disabled = launchBlocked()
+    if (focusData && Object.keys(focusData).length) {
+      const replacement = [...form.querySelectorAll('button, input, select')].find((node) => !node.disabled &&
+        node.closest('[data-launch-item]')?.dataset.launchItem === focusItem &&
+        Object.entries(focusData).every(([key, value]) => node.dataset[key] === value))
+      ;(replacement || doc.querySelector('[data-close-dialog]')).focus()
+    }
     function saveDraft() { state.controls = readControls(form); state.extra = form.querySelector('[name="extra"]').value }
     on(form, 'input', saveDraft)
     on(form, 'change', (event) => {
