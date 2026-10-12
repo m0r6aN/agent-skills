@@ -1,10 +1,10 @@
 ---
 ticket: OPMEM-P0
 title: Operator-developer Cortex memory authority and contract baseline
-status: draft
+status: done
 owner: clinton.morgan
 created: 2026-10-10
-updated: 2026-10-10
+updated: 2026-10-12
 supersedes: null
 superseded_by: null
 risk: elevated
@@ -22,6 +22,10 @@ thinking_level: high
 ## Intent
 
 Establish a source-backed, implementation-ready contract baseline for shared operator-developer Cortex memory: long-lived role ancestry used selectively by short-lived Pi agents on three machines, through local container adapters, Azure MCP Gateway, Azure Cortex, and Neon Postgres. Resolve existing proposed bridge/API mismatches before any implementation, and turn the approved requirements into deterministic fixture expectations and exact follow-on mutation manifests. This parcel produces documents/fixture expectations only; it does not deploy services, change frozen contracts, or build memory functionality.
+
+## Closure
+
+Accepted 2026-10-12 by coordinator `01a131a9` under owner-delegated authority after dual family-independent review rounds R1–R4 (R4: Seat A APPROVE, Seat B APPROVE-WITH-FIXES, minor carried forward). Evidence: `plugins/foreman-line/docs/goals/operator-developer-cortex-memory/p0-closure-2026-10-12.md`. The Stage A constraints below are preserved as written; statements such as "not dispatchable" describe the pre-acceptance draft state.
 
 ## Constraints
 
@@ -63,16 +67,16 @@ These are conservative proposed interpretation rules to freeze/review in this pa
 
 ## Acceptance Criteria
 
-- [ ] **AC1 — Root/revision evidence.** `source-baseline.md` names each explicitly supplied repository root role, current commit/status where available, intended supported base, inspected evidence paths, and source ownership. Unversioned/dirty/diverged sources have explicit owner dispositions or remain blocking; no implicit source recovery occurs.
-- [ ] **AC2 — Canon authority map.** `canon-authority-map.md` resolves document/version precedence with inspectable evidence, maps D1-D18 to current contracts/code/tests, and separates implemented, model-only, unverified, and missing surfaces. Any unresolved authority contradiction is a failed gate, not a silently selected interpretation.
-- [ ] **AC3 — Service/tool seam.** `memory-boundary-contract.md` freezes real Gateway-to-Cortex and local-adapter-to-Gateway tool/auth/schema/response/readiness/version/error/idempotency boundaries, resolving the seven proposed bridge tools versus existing native Gateway Cortex handlers. It states which cognitive writes need which actual governance/receipt dependencies; no fake receipt path exists.
-- [ ] **AC4 — Identity/profile/ancestry seam.** The boundary contract defines authoritative role assignment for Foreman-dispatched and interactive Pi sessions, portable tenant/repository identifiers, role/generation continuity, private ancestry and approved shared artifacts, machine credential enrollment/revocation, and live application/family profile scope. Negative examples cover raw role impersonation and cross-role exact-ID/lineage access.
-- [ ] **AC5 — Accounting/scoring seam.** `event-and-fixture-contract.md` freezes access/consideration/application/outcome/non-applicability/correction schemas or required versioned extensions, delivery identity, explicit-time semantics, unknown feedback, decay/association fixtures, and replay rules. It documents self-reported versus verified attribution, duplicate resistance, and any required approval/amendment rather than silently changing gravity mathematics.
-- [ ] **AC6 — Governance/branch scenarios.** Fixture expectations cover correct memory used for denied action, remembered denial preventing an attempt, supported incorrect-memory attribution, non-content denial, selected/non-selected branches with dissent, executed failure versus unobserved alternative, and superseded policy applicability. No fixture converts cognitive choice into a receipt or penalty by itself.
-- [ ] **AC7 — Operational contract.** The contract defines outbox capacity/backpressure, atomic crash boundaries, lost-ack reconciliation, expiry/revocation, queued identity isolation during role/profile switches, poison-event recovery, protocol downgrade refusal, key/epoch/background-worker ownership, and migration/version/rollback seams. Unresolved numeric limits are explicit approval items before follow-on promotion.
-- [ ] **AC8 — Evidence and priority budget.** `pilot-and-validation-contract.md` freezes no-skip controlled scenarios and the 14-day real-work rubric, three-machine coverage, token/context/cache/latency measurements, baseline limitations, and owner acceptance conditions. It bounds overhead on primary work such as AgentTask without claiming an unobserved prevented mistake or causal cost saving.
-- [ ] **AC9 — Follow-on parcel manifests.** `follow-on-parcel-manifests.md` maps each proposed downstream parcel to a sole target repository/worktree, explicit exact Allowed Files, pinned base, dependencies/seam owner, verification commands, evidence, rollback, proposed risk/routing, required independent reviews, and approval requirements. Oversized cross-repository parcels are split; competing source owners are reconciled. No globs or directory-wide mutation grants.
-- [ ] **AC10 — Stop/approval ledger.** `open-decisions.md` identifies every unresolved target revision, scope/issuer design, numeric scoring/operational choice, required frozen-contract amendment, resource operation, and missing approval. Stop findings prevent follow-on promotion. Two independent architecture reviews assess the complete baseline; the author does not verify its own completion.
+- [x] **AC1 — Root/revision evidence.** `source-baseline.md` names each explicitly supplied repository root role, current commit/status where available, intended supported base, inspected evidence paths, and source ownership. Unversioned/dirty/diverged sources have explicit owner dispositions or remain blocking; no implicit source recovery occurs.
+- [x] **AC2 — Canon authority map.** `canon-authority-map.md` resolves document/version precedence with inspectable evidence, maps D1-D18 to current contracts/code/tests, and separates implemented, model-only, unverified, and missing surfaces. Any unresolved authority contradiction is a failed gate, not a silently selected interpretation.
+- [x] **AC3 — Service/tool seam.** `memory-boundary-contract.md` freezes real Gateway-to-Cortex and local-adapter-to-Gateway tool/auth/schema/response/readiness/version/error/idempotency boundaries, resolving the seven proposed bridge tools versus existing native Gateway Cortex handlers. It states which cognitive writes need which actual governance/receipt dependencies; no fake receipt path exists.
+- [x] **AC4 — Identity/profile/ancestry seam.** The boundary contract defines authoritative role assignment for Foreman-dispatched and interactive Pi sessions, portable tenant/repository identifiers, role/generation continuity, private ancestry and approved shared artifacts, machine credential enrollment/revocation, and live application/family profile scope. Negative examples cover raw role impersonation and cross-role exact-ID/lineage access.
+- [x] **AC5 — Accounting/scoring seam.** `event-and-fixture-contract.md` freezes access/consideration/application/outcome/non-applicability/correction schemas or required versioned extensions, delivery identity, explicit-time semantics, unknown feedback, decay/association fixtures, and replay rules. It documents self-reported versus verified attribution, duplicate resistance, and any required approval/amendment rather than silently changing gravity mathematics.
+- [x] **AC6 — Governance/branch scenarios.** Fixture expectations cover correct memory used for denied action, remembered denial preventing an attempt, supported incorrect-memory attribution, non-content denial, selected/non-selected branches with dissent, executed failure versus unobserved alternative, and superseded policy applicability. No fixture converts cognitive choice into a receipt or penalty by itself.
+- [x] **AC7 — Operational contract.** The contract defines outbox capacity/backpressure, atomic crash boundaries, lost-ack reconciliation, expiry/revocation, queued identity isolation during role/profile switches, poison-event recovery, protocol downgrade refusal, key/epoch/background-worker ownership, and migration/version/rollback seams. Unresolved numeric limits are explicit approval items before follow-on promotion.
+- [x] **AC8 — Evidence and priority budget.** `pilot-and-validation-contract.md` freezes no-skip controlled scenarios and the 14-day real-work rubric, three-machine coverage, token/context/cache/latency measurements, baseline limitations, and owner acceptance conditions. It bounds overhead on primary work such as AgentTask without claiming an unobserved prevented mistake or causal cost saving.
+- [x] **AC9 — Follow-on parcel manifests.** `follow-on-parcel-manifests.md` maps each proposed downstream parcel to a sole target repository/worktree, explicit exact Allowed Files, pinned base, dependencies/seam owner, verification commands, evidence, rollback, proposed risk/routing, required independent reviews, and approval requirements. Oversized cross-repository parcels are split; competing source owners are reconciled. No globs or directory-wide mutation grants.
+- [x] **AC10 — Stop/approval ledger.** `open-decisions.md` identifies every unresolved target revision, scope/issuer design, numeric scoring/operational choice, required frozen-contract amendment, resource operation, and missing approval. Stop findings prevent follow-on promotion. Two independent architecture reviews assess the complete baseline; the author does not verify its own completion.
 
 ## Out of Scope
 

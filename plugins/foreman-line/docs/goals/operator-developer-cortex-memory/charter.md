@@ -3,8 +3,8 @@
 **Goal slug:** `operator-developer-cortex-memory`  
 **Recorded:** 2026-10-10  
 **Owner:** Clinton Morgan  
-**Coordinator:** Pi session `01a12b4f-c8e9-70a4-811b-0cd7eb889457`, explicitly appointed at the stopped pre-P0 boundary; recorded predecessor stopped/released per owner report; see `owner-resume-2026-10-11-01a12b4f.md` and `loop-directive.md`  
-**State:** prior OPMEM requirements/grants/caps/Stage A preserved; six native-Pi questions disposed (Pro/off/off, own-internal subscription policy, incremental charges, no broker, highest verified native reasoning); exact revised IR-A01 returned for whole-contract ratification FIRST; IR-B01 offline scope approved conditionally, dormant; no code/runtime/launch; #181 observed merged; P0 draft  
+**Coordinator:** Pi session `01a131a9-5c16-724a-a016-3353a124592d`, appointed 2026-10-12 by explicit owner direction with blanket decision authority (`ownership-transfer-2026-10-12-01a131a9.md`); predecessors historical  
+**State:** OPMEM-P0 accepted 2026-10-12 (dual family-independent review R1–R4, `p0-closure-2026-10-12.md`); follow-on manifests P1a…P10 frozen in `follow-on-parcel-manifests.md`; code parcels land on non-deploying `opmem/integration`; production promotion and cloud work are owner stop items  
 **Mode:** multi-project initiative; authorized pre-P0 preparation/private evaluation publication, with build/operational execution still behind actual predecessor gates
 
 ## Objective and priority
