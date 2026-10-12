@@ -1,0 +1,123 @@
+# OPMEM-P0 — Canon authority map and D1–D18 contract mapping (AC2)
+
+**Parcel:** OPMEM-P0 · **Evidence base:** `source-baseline.md` (pins and digests)
+**Rule applied:** documentation is not implementation proof (the supplied verification canon's own principle: "Claims require receipts or inspectable evidence"). Every row below names inspectable evidence or is classified unverified/missing. An unresolved authority contradiction is a failed gate, recorded in `open-decisions.md` — never silently interpreted away.
+
+## 1. Canon edition resolution (the v1-named / v2-declared file)
+
+Inspected file: `keon-docs@b6211f8a:canon/keon_cortex_canon_v1_locked.json` (sha256 `adf806f8…`).
+
+Internal fields:
+
+| Field | Value |
+|---|---|
+| `document_id` | `KEON-CORTEX-VERIFICATION-CANON-v2` |
+| `file_name` | `keon_cortex_canon_v2_locked.json` |
+| `version` | `2.0.0` |
+| `status` | `locked` |
+| `intended_path` | `…\keon-docs\canon\keon_cortex_canon_v2_locked.json` |
+| `purpose` | repository-**verification** canon for Cortex v2: converts product/capability claims into evidence-backed implementation/test/CLI/CI/proof requirements for `verify-canon` |
+| `source_product_canon` | uploaded `keon_cortex_canon_v2_locked.json`, sha256 `0c53acd9f2f67b144dd2979de0dba887cf079f67d571db44ae4304d9886e54d0`, 36 capability entries, "Product canon is claim input. This verification canon is the stricter repo-evidence contract." |
+
+**Resolution adopted for OPMEM contracts:**
+
+1. The authoritative edition is **v2** (`document_id`/`version`/`intended_path` agree). The `v1` in the on-disk filename is a **path/label mismatch**, not a second edition: the file itself names its intended filename `keon_cortex_canon_v2_locked.json`. It is a *verification* canon, i.e. a repo-evidence contract, **not** the product canon.
+2. The **product canon v2** (36 capability entries, sha256 `0c53acd9…`) is claim input and is **NOT in the supplied sparse input**. Its content is therefore **unverified by this parcel**. Any OPMEM claim that needs product-canon text (capability semantics, Collective/Runtime product definitions) is gated on supplying that artifact and checking its hash. See OD-3.
+3. `keon_runtime_canon_v1_locked.json` (sha256 `e34a1f24…`) is present but not reconciled against any runtime implementation by this parcel; Runtime canon claims remain **unverified** inputs for the governance/receipt boundary.
+4. Precedence for OPMEM work (highest first): (a) locked canon artifacts as evidence-checked; (b) `keon-cortex:docs/CORTEX_INVARIANTS.md` proof invariants I1–I7 and `docs/epoch-roots/LANE-00-shared-contracts.md` INV-1…INV-6; (c) implementation source at the pinned revisions; (d) tests that assert the invariant; (e) documentation prose (README, plans) — **context only, never evidence**. Where (a) and (c) disagree, the disagreement is an open decision, not a choice.
+
+`canon/claims/CAPABILITY_REGISTRY.yaml` (v4, 2026-07-26) is the claim registry. Its own audit note establishes the standard this map follows: "Repo and path fields are location claims and are audited like any other claim"; entries whose locations were unresolvable at audit carry `location_status: unresolved` (e.g. `EVIDENCE_PACK_V1` at `keon-core/src/Keon.Evidence`, `DECISION_GATEWAY` at `keon-runtime/src/Keon.Runtime.Decide`). A registry `status: proven` is therefore **not** location proof.
+
+## 2. Frozen doctrine invariants OPMEM must preserve (evidence: LANE-00 + INVARIANTS)
+
+| ID | Statement (abridged) | Where enforced today |
+|---|---|---|
+| INV-1 | Spine records immutable/permanent; no mutate/delete path | Doctrine; `spine/` code is read-only over history (`gravity/contracts.py` docstring "READ-ONLY view… add no new truth") |
+| INV-2 | Gravity weights mutable/decaying; gravity NEVER gates access, only orders recall | `RecallService` filters only on content-hash validity + `min_weight` (a query parameter), sorts by weight |
+| INV-3 | Every scoring/selection function versioned and hash-pinned; output records the version used | `GravityScore` carries `gravity_version` + `gravity_function_hash`; `HeatScore` carries `heat_version` + `heat_function_hash`; `ReviewerVerdict` carries `doctrine_hash` |
+| INV-4 | No randomness in scoring; time is an explicit recorded parameter (no hidden `now()`) | `gravity/contracts.py`/`forces.py` pure functions, `Timestamp` passed as data |
+| INV-5 | Cognitive records (deliberation/narrative) never execution receipts; never satisfy verification | `InheritanceEvent` `inherit_` prefix; LANE-00 INV-5; see §5 |
+| INV-6 | Vocabulary discipline (tamper-evident hash tree / transparency log / attestation) | Doc-level |
+| I1–I7 (proof) | Deterministic shard identity; tenant isolation; replay/outbox durability; authority-vs-derivative index; idempotent ingestion; decay & reinforcement determinism; governed signing | `keon-cortex:src/keon/cortex/proof/*` + `cortex proof` CLI family (existence verified at pin; proof outputs not regenerated by P0) |
+| D1–D7 (impl) | Exclusive lease; lease expiry recovery; telemetry balance; tenant pre-filter on vector query; `keon_cortex` must not import `keon_cortex_governed`; decay determinism; bounded scores | `outbox/leasing.py`, `services/query.py`, import gate (CI), `decay/`, force clamps |
+
+**Four-force taxonomy is FIXED:** Occurrence, Recall, Recency, Association (`gravity/forces.py` module docstring: "do not extend without a ruling"; `GravityScore.to_dict()` key-stable shape). OPMEM adds no force and renames none.
+
+## 3. D1–D18 → current contracts / code / tests
+
+Legend for **State**: `impl` = inspectable implementation at pin · `model` = dataclass/schema/model only · `partial` = some surfaces implemented, seams missing · `missing` = nothing located · `unverified` = claim exists, evidence not inspected.
+
+| ID | Requirement (abridged) | Evidence at pin | State |
+|---|---|---|---|
+| D1 one tenant across three machines | `tenancy/enforcement.require_tenant` used by API and `RecallService`; API requires `X-Tenant-Id` | `api.py:138 _context`, `api.py` all routes; `INTEGRANTS I2` | **partial** — single-tenant-per-request enforcement exists; **no** cross-machine tenant identity, machine credential, or enrollment concept exists in any inspected surface |
+| D2 operator-profile broad sharing, project context for relevance/provenance | Bridge: `WriteScope`/`RecallScope` + `KEON_ALLOWED_PROJECTS`; Cortex: `subject_keys`, `Provenance` on `ShardRecord` | `bridge models.py:48-84`, `config.py:167`, `api.py _build_record` | **partial** — bridge-side allowlist only; no server-side project/profile grant model in Cortex/Gateway pins |
+| D3 Pi is sole initial harness | Pi installed; `clients/*.example.json` show MCP client config shapes | bridge `clients/` | **model** — integration profiles are examples; no Pi extension exists yet (P7) |
+| D4 Azure + Azure MCP Gateway sole ingress + Neon Postgres | Gateway handlers call Cortex over HTTP (`CortexOptions.BaseUrl`); Cortex Postgres provider (`providers/postgres/*`) with `asyncpg` DSN/TLS settings (`api.py:126 _asyncpg_dsn`) | gateway `CortexClient.cs`; `api.py:62-135` | **partial** — the layering is real in code; **no** Azure deployment, Neon provisioning, or environment evidence exists (P8, separately gated) |
+| D5 thin Pi extension + local adapter container w/ durable outbox | Bridge container (`Dockerfile`, `compose.yaml`, `http_port.py`); outbox lives in Cortex (`outbox/backend.py, idempotency.py, leasing.py, state.py`) — **not** in the bridge | bridge tree; cortex `outbox/` | **missing/partial** — bridge has NO durable local delivery outbox today; the required adapter outbox is unimplemented (P6) |
+| D6 Gateway-supported auth; revocable machine credentials; distinct agent provenance | Gateway: JWT + API key validators, scopes (`keon:mcp:invoke`, `keon:cortex:write`, `keon:mcp:list`); Cortex: shared service secret `X-Keon-Cortex-Secret`; bridge: startup-fixed identity | gateway `Auth/`, `CortexMemoryWriteHandler.cs:26`; `api.py:164`; bridge `config.py:193-197` | **partial** — service auth exists; machine credential enrollment/revocation and per-request agent provenance **missing** |
+| D7 invisible capture; proposals for inferred preference | — | — | **missing** (by design deferred to P7/P4; no capture path exists yet) |
+| D8 instructions/contracts outrank memory; memory grants no authority | Bridge labels recalled content `untrusted_data_not_instructions`; no tool executes content | bridge `README.md` security model, `ADVERSARIAL_GATE.md` | **partial** — enforced at bridge shell (tests exist: 39 pass); cross-surface policy conflict surfacing **missing** |
+| D9 role-private ancestral scopes | — | gateway `Auth/` has no role module; no role in any request model | **missing** — the single largest gap (see `memory-boundary-contract.md` §4) |
+| D10 bounded retrieval ≈1,000-token briefing; checkpoint capture; no per-event model call | Bridge `KEON_MAX_QUERY_BYTES`/`KEON_MAX_CONTENT_BYTES`; recall `limit` | bridge `config.py:206-208`, `RecallRequest` | **partial** — byte bounds exist; tokenizer/briefing budget rule **missing** (P0 freezes it in `event-and-fixture-contract.md` §6) |
+| D11 access ≠ use ≠ outcome; missing feedback unknown; retries don't reinforce | Gravity separates `occurrence`/`recall` forces; `SpineEvent.is_recall` distinguishes kinds | `gravity/contracts.py:24-33`, `forces.py` | **partial** — forces separate access (recall) from occurrence, but **feedback semantics are undefined** and any non-`Recall` kind counts as occurrence (see `event-and-fixture-contract.md` §2) |
+| D12 gravity/inheritance follows canon; pinned versions; replay | `GravityScore` version/hash; `EpochRef`; `decay/`; inheritance validator | `gravity/*`, `docs/inheritance/cross-generation-inheritance.md` | **partial** — scoring is versioned/pinned in models; epoch/replay integration with the recall path is not on the HTTP surface (see §4) |
+| D13 fail closed when memory unavailable; durable bounded outbox recovery | Bridge readiness `503` until backend ready; Cortex `OutboxEntry` idempotent enqueue (I3), leases (D1/D2) | bridge `server.py:172-175`; cortex `outbox/` | **partial** — server-side outbox is real; **adapter-side** pending-delivery outbox missing (D5/P6) |
+| D14 concurrent-work awareness advisory only | — | — | **missing** (deferred; no locks anywhere — correctly out of scope) |
+| D15 operator controls (status, provenance search, approve/reject, correct/supersede, pause) | Append-only corrections model exists in bridge (corrections are new records with lineage); promotion request model has approval receipt | bridge `README.md`; `promotion/models.py` | **partial** — data model direction exists; operator control surface **missing** (P7) |
+| D16 deployment profiles + admin tenant/profile registration | — | — | **missing** (P8 scope, deliberately deferred) |
+| D17 Redis deferred; caches derivative | No cache layer in any pin | — | **impl (absent by design)** — nothing to verify; no Redis dependency exists |
+| D18 controlled scenarios + 14-day pilot | `ADVERSARIAL_GATE.md` P0 gates; `VERIFICATION.md` bridge-shell record | bridge docs | **partial** — bridge-shell gates defined and locally green (2026-09-03 record); Cortex integration gates defined but **not executed**; pilot rubric frozen in `pilot-and-validation-contract.md` |
+
+## 4. Implemented vs model-only vs unverified vs missing — the load-bearing surfaces
+
+### 4.1 Implemented (inspectable code paths at pin)
+
+- Cortex HTTP API (`api.py`): 7 routes — `GET /health`, `POST /v1/shards`, `POST /v1/shards/search`, `GET /v1/shards/{shard_id}`, `GET /v1/shards/{shard_id}/lineage`, `GET /v1/shards/{shard_id}/evidence`, `POST /v1/replay`.
+- Gateway shared-secret auth (`X-Keon-Cortex-Secret`, constant-time compare), per-request `X-Tenant-Id`/`X-Actor-Id`, `Idempotency-Key` reservation with conflict refusal ("idempotency key was reused with a conflicting request").
+- Deterministic shard identity (`ingress/models.make_candidate_shard_id` / `compute_shard_id`), canonical JSON hashing (`core/canonical.canonical_json`), Ed25519 evidence packs + `proof/governed_signing.sign_receipt`.
+- Postgres authority store (`keon_cortex.shards`, `keon_cortex.api_idempotency`) with idempotent DDL migration (`initialize_schema`).
+- Gateway tool layer: six named Cortex tools with required scopes, entitlement evaluation, Runtime authorization, and directive/intent/decision/outcome receipt chain (`CortexMemoryWriteHandler.cs:107-120`).
+- Pure gravity force math (`gravity/forces.py`), history view + score model (`gravity/contracts.py`), two-plane `RecallService` (`spine/recall_service.py`), inheritance validator, promotion request validator, collective branch/verdict/dissent/heat models, temporal episode/claim/fact models, outbox lease/state machinery.
+
+### 4.2 Model-only (types, schemas, validators — no production wiring located)
+
+- `spine/` + `gravity/` join path (`RecallService`+`GravityIndex`): referenced by **no HTTP route and no service entry point**; the only importer outside their packages is `collective/spine_event.py`, plus tests (`tests/gravity/test_recall.py`, `tests/test_two_plane_storage.py`).
+- Collective/temporal branch machinery (`collective/*`, `temporal/*`): dataclasses and processors; no API/Gateway exposure located.
+- Inheritance (`inheritance/*`), promotion (`promotion/*`): models/validators; bridge `promote_memory` is disabled by default and no promotion HTTP route exists in `api.py`.
+- Bridge response models (`GravityScore`, `VerificationMeta`, `RecalledMemory`…): contract shapes for a recall response the deployed backend cannot yet produce.
+
+### 4.3 Unverified (claims not evidence)
+
+- `CAPABILITY_REGISTRY.yaml` `status: proven` entries (registry locations partially `unresolved` per its own audit).
+- Proof-module outputs (`cortex proof → proof-summary.json` etc.): modules exist at pin; P0 did not execute them, so **I1–I7 are unverified at this pin** (they were verified for a different tree per CORTEX_INVARIANTS' 2026-06-11 note).
+- The 39-test bridge-shell record (`VERIFICATION.md`, 2026-09-03) is a historical self-report for the bridge shell only.
+- Product canon v2 content (hash known, content absent).
+
+### 4.4 Missing (nothing located)
+
+- Role identity/binding/enforcement (D9) anywhere in Gateway/Cortex/bridge pins.
+- Adapter-side durable delivery outbox (D5/D13).
+- Recall as a governed operation on the HTTP path: no recall event durably appended before results, no `recall_event_id`, no gravity/params hash, no `verification_meta` on any response (the bridge's mandatory recall response is unimplementable against the deployed API — see `memory-boundary-contract.md` §2).
+- Feedback/use/outcome event model (D11) — no `feedback`/`outcome` kind, table, or route.
+- Machine credential enrollment/revocation; tenant/profile admin registration (D6/D16).
+- Any Azure/Neon deployment evidence (D4/D18/P8).
+
+## 5. Cognitive vs execution records — current truth
+
+- `InheritanceEvent` (`inherit_` prefix) is explicitly "never an execution receipt: no verification path consults it" (`docs/inheritance/cross-generation-inheritance.md`). Promotion to `active`/`primary` requires `approval_receipt_ref` (validator rule 3).
+- Cortex `_receipt_ref` **anchors an opaque Gateway receipt ID "without claiming remote verification"** (`api.py:176-181`) — the shard record's `receipt_ref.integrity_hash` is a local anchor, not proof of an external receipt.
+- Gateway `CortexMemoryWriteHandler` genuinely emits `rcpt_out` outcome receipts and requires Runtime authorization; its tool description claims "Emits directive, decision, and outcome receipts."
+- **Contract consequence (frozen in `event-and-fixture-contract.md` §5):** OPMEM must never treat a `delib_`/`inherit_`/narrative record, a local `integrity_hash` anchor, or a `belief_score` as an execution receipt. Receipt verification paths must not consult cognitive records (INV-5), and vice versa.
+
+## 6. Unresolved authority contradictions (failed gates — not silently resolved)
+
+| # | Contradiction | Consequence |
+|---|---|---|
+| C-1 | Filename `keon_cortex_canon_v1_locked.json` vs internal v2 identity/intended filename | Edition resolved to v2 for OPMEM (§1) **but the canonical file must be renamed/relocated by the docs owner**; until then any tool resolving the v1 path may load a different edition |
+| C-2 | Product canon v2 content absent (hash only) | No capability semantics may be asserted from it; P1–P5 specs that need product-canon text are blocked on supply |
+| C-3 | Verification canon expects `src/keon/cortex/proof/*` + `cortex proof` CLI outputs as evidence; outputs not produced at this pin | I1–I7 status at pin = unverified; P2 must regenerate before claiming them |
+| C-4 | Bridge port contract (`/v1/memory/*`) vs implemented Cortex/Gateway surface (`/v1/shards*`) | One canonical protocol must be elected before P5/P6 (proposal in `memory-boundary-contract.md` §2) |
+| C-5 | Bridge recall contract (recall event + gravity + verification) vs deployed search (term-overlap relevance, no recall event) | Recall semantics unimplementable until P2/P3 land; D11/D12 not claimable before then |
+| C-6 | Registry `proven` statuses with `unresolved` locations | Registry cannot back public claims until corrected by capability owners |
+
+None of C-1…C-6 blocks this documents-only parcel; each blocks a named follow-on promotion and is listed in `open-decisions.md`.
