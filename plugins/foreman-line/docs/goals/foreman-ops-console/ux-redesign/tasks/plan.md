@@ -46,6 +46,42 @@ Task acceptance criteria and file slices are in todo.md. Modules are sequential
 because app.js and shell/style surfaces are shared. Each verified slice gets a
 save-point commit; no unrelated backend or OS change is mixed into this work.
 
+## PR #198 focused follow-up — owner requested
+
+Scope remains FCA-U1/U2/U3; no backend changes or new capabilities.
+Implement sequentially: (1) bulk action/permission application and per-item
+suggestion provenance, (2) contextual help with nested native-dialog focus return,
+(3) configuration spacing using existing tokens. Amendments below supplement the
+active contracts; unfinished CI/human adoption work remains in todo.md.
+
+### Focused contract amendments
+- FCA-U2: Review offers separate action and permission “Apply to all selected”
+  controls. Iterate the state Map, not the rendered 200-item page; report updated
+  and skipped totals. Explicit Apply replaces the named manual choices, as the
+  control explains. Skip unavailable, incompatible and pending-review items;
+  preserve their flags and submission blocks. Bulk actions never include delete.
+- FCA-U2: “Use suggested settings” defaults on for untouched items. Track action
+  and permission manual choices separately. Use eligible registered Investigate
+  and registered autonomy defaults; no registry-first fallback. Suggestions never
+  replace manual choices, widen existing permissions, accept changed-registry
+  defaults without review, or allow merge. Turning it off preserves current drafts;
+  turning it on affects only untouched fields and reports updated/skipped counts.
+  Explicit action changes preserve manual permissions; suggested permissions may
+  narrow but not widen. Explicit permission Apply is an intentional replacement.
+- FCA-U1/U2/U3: A compact named help dialog is reachable from workspace and review.
+  Explain find/select/review/launch/inspect; queue findings vs goal projections;
+  Full/Partial as agent prompt guidance (not a backend decision sandbox), separate
+  Git permissions and human merge; one session/N panes/fresh worktrees and recorded
+  session coverage. Verify against src/actions.ts, prompts.ts and spawn.ts. Native
+  modal keyboard containment, Escape and opener focus return; no draft rerender.
+- FCA-U1/U2: Shared configuration, per-item permissions and bulk settings use
+  existing spacing tokens, stacked labels, grouped fieldsets and responsive grids.
+  Preserve palette, controls, guidance and safety gates at desktop and 320px.
+
+Verification: failing node:test/jsdom regressions first; focused green checks per
+slice; final npm test/typecheck/lint and isolated mocked Chromium/Firefox smoke,
+axe, keyboard and screenshots. No real operator writes or billing changes.
+
 ## Risks and mitigations
 
 - Old tests equate hard-coded layout with correctness: replace these assertions
