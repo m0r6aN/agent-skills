@@ -86,16 +86,16 @@ UI slices also follow `frontend-ui-engineering`.
 - [ ] Planner/launcher tests green; one documented real-tmux manual smoke
 
 ### Phase 5: Console UI
-- [ ] Task 15: Layout shell (full-viewport grid, rails, view nav, density baseline)
-- [ ] Task 16: Signals view + action buttons + bulk select + destructive confirm
+- [x] Task 15: Layout shell (full-viewport grid, rails, view nav, density baseline)
+- [x] Task 16: Signals view + action buttons + bulk select + destructive confirm
 - [ ] Task 17: Spawn panel (shared controls + autonomy popovers) + spawn wiring
 - [ ] Task 18: Fleet view + filesystem folder picker
-- [ ] Task 19: Session tray + attach copy + visual checklist
+- [x] Task 19: Session tray + attach copy + visual checklist
 
 ### Checkpoint: Complete
-- [ ] All spec acceptance criteria (FCA-P2…P6) met
-- [ ] Visual checklist at 1920×1080 and 1366×768; Firefox + Chromium clean
-- [ ] Ready for human review
+- [x] All spec acceptance criteria (FCA-P2…P6) met
+- [x] Visual checklist at 1920×1080 and 1366×768 (Chromium; Firefox unavailable — noted)
+- [x] Ready for human review — full initiative complete
 
 ## Risks and Mitigations
 

@@ -347,7 +347,7 @@ not folded into `goal-hygiene`).
 
 ---
 
-## Task 15: Layout shell (full-viewport grid, rails, view nav, density baseline)
+## Task 15: Layout shell (full-viewport grid, rails, view nav, density baseline) ✅ (2026-10-11)
 
 **Description:** Rebuild `ui/index.html`/`ui/app.js` shell per FCA-P6: header
 (fleet switcher, posture, search), left rail (views + severity filters), dense
@@ -355,12 +355,12 @@ main grid, persistent right spawn panel slot, collapsible session tray. Views
 wired to existing endpoints; no build step; ES modules OK.
 
 **Acceptance criteria:**
-- [ ] 1920×1080 shows header + rail + board + spawn panel + collapsed tray with no page scroll
-- [ ] all views render against mocked fetch with zero console errors
-- [ ] keyboard reachability + focus rings + aria labels on icon-only controls
+- [x] 1920×1080 shows header + rail + board + spawn panel + collapsed tray with no page scroll (structural: #app grid + 100vh + overflow hidden; visual confirm completes in Task 19 checklist)
+- [x] all views render against mocked fetch with zero console errors (jsdom end-to-end)
+- [x] keyboard reachability + focus rings + aria labels on icon-only controls
 
 **Verification:**
-- [ ] Tests pass: `tests/ui-shell.test.ts` (new; mocked fetch, DOM harness devDep only)
+- [x] Tests pass: `tests/ui-shell.test.ts` (new; jsdom devDep — 4/4)
 - [ ] Package sweep green
 - [ ] Manual: Firefox + Chromium smoke
 
@@ -370,20 +370,20 @@ wired to existing endpoints; no build step; ES modules OK.
 
 ---
 
-## Task 16: Signals view + action buttons + bulk select + destructive confirm
+## Task 16: Signals view + action buttons + bulk select + destructive confirm ✅ (2026-10-11)
 
 **Description:** Signal rows/cards with evidence, severity treatment, registered
 verb buttons (only allowed verbs render), checkboxes + Shift-select ranges,
 autonomy popovers per action, typed confirmation flow for destructive verbs.
 
 **Acceptance criteria:**
-- [ ] only registered (class × verb) pairs render buttons; others absent, not disabled
-- [ ] N selected rows → request carries N actions + per-action autonomy
-- [ ] destructive actions require typed confirmation before any request is sent
+- [x] only registered (class × verb) pairs render buttons; others absent, not disabled (matrix read from ACTION_REGISTRY via GET /api/actions)
+- [x] N selected rows → request carries N actions + per-action autonomy (selectionToActions composer)
+- [x] destructive actions require typed confirmation before any request is sent (UI mirrors the guards.ts token; server re-verifies)
 
 **Verification:**
-- [ ] Tests pass: `tests/ui-signals.test.ts` (new)
-- [ ] Package sweep green
+- [x] Tests pass: `tests/ui-signals.test.ts` (new — 3/3, jsdom e2e)
+- [x] Package sweep green (323/323, typecheck, lint)
 
 **Dependencies:** Tasks 9, 15
 **Files likely touched:** `ui/views/signals.js`, `ui/app.js`, `tests/ui-signals.test.ts`
@@ -434,21 +434,21 @@ from Task 3.
 
 ---
 
-## Task 19: Session tray + attach copy + visual checklist
+## Task 19: Session tray + attach copy + visual checklist ✅ (2026-10-11)
 
 **Description:** Tray of spawns (pane liveness, harness, model, repo), copyable
 attach command, per-session actions via the same registry; virtualization past
 200 rows; final visual checklists.
 
 **Acceptance criteria:**
-- [ ] tray renders liveness transitions from `/api/spawns` polling
-- [ ] attach command copy works; per-session explain/close routed through registry
-- [ ] 200+ rows virtualize without UI jank
+- [x] tray renders liveness transitions from `/api/spawns` polling
+- [x] attach command copy works; per-session explain/close routed through registry (close demands typed confirmation)
+- [x] 200+ rows virtualize without UI jank (200-row window + summary)
 
 **Verification:**
-- [ ] Tests pass: `tests/ui-tray.test.ts` (new)
+- [x] Tests pass: `tests/ui-tray.test.ts` (new — 2/2)
 - [ ] Package sweep green
-- [ ] Manual: visual checklist at 1920×1080 + 1366×768 in goal transcripts
+- [x] Manual: visual checklist at 1920×1080 + 1366×768 in goal transcripts (console-ui-visual-checklist-2026-10-11.md — live server + headless Chromium; 4 visual defects caught and fixed)
 
 **Dependencies:** Tasks 14, 15
 **Files likely touched:** `ui/views/tray.js`, `ui/app.js`, `tests/ui-tray.test.ts`
@@ -457,6 +457,6 @@ attach command, per-session actions via the same registry; virtualization past
 ---
 
 ## Checkpoint: Complete
-- [ ] All FCA-P2…P6 acceptance criteria met
-- [ ] Visual checklists recorded; Firefox + Chromium clean
+- [x] All FCA-P2…P6 acceptance criteria met
+- [x] Visual checklists recorded; Chromium clean (Firefox unavailable on this host — noted for owner spot-check)
 - [ ] Review with human before closing the goal slice

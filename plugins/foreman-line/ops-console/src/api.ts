@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { basename, join } from 'node:path'
-import { type AutonomyEnvelope, dispatchAction } from './actions.js'
+import { ACTION_REGISTRY, type AutonomyEnvelope, dispatchAction } from './actions.js'
 import { deriveAlerts } from './alerts.js'
 import { type BrowseRefusalError, browseDirectory } from './browse.js'
 import { type ConsoleConfig, goalTrees, resolveGoalKey, treeConfigFor } from './config.js'
@@ -23,7 +23,7 @@ import { loadRoutingPolicy } from './routing.js'
 import { listGoalSlugs, scanGoal } from './scan.js'
 import { collectSignals, SIGNAL_CLASSES, SIGNAL_SEVERITIES } from './signals.js'
 import { sessionProbeFor } from './signals-session.js'
-import { listSpawnReceipts } from './spawn.js'
+import { launchSpawnPlan, listSpawnReceipts, planSpawn, type SpawnRefusalError } from './spawn.js'
 import { goalStatus } from './status.js'
 import type { ChainSummary, GoalProjection } from './types.js'
 
@@ -344,6 +344,79 @@ export function handleApi(config: ConsoleConfig, request: ApiRequest, now: numbe
       return { status: 200, json: browseDirectory(path) }
     } catch (err) {
       return refusalResult(err)
+    }
+  }
+
+  // FCA-P4 action registry listing (FCA-P6: the UI renders verb buttons for
+  // REGISTERED (class x verb) pairs only — the matrix is read, never guessed).
+  if (pathname === '/api/actions') {
+    if (method !== 'GET') return methodNotAllowed('GET')
+    return {
+      status: 200,
+      json: {
+        actions: ACTION_REGISTRY.map((spec) => ({
+          verb: spec.verb,
+          signalClasses: spec.signalClasses,
+          invocation: spec.invocation,
+          destructive: spec.destructive,
+          autonomy: spec.autonomy,
+        })),
+      },
+    }
+  }
+
+  // FCA-P5 spawn dispatch: shared controls + selected actions -> pure plan
+  // (typed refusals in the plan stage) -> tmux launch -> receipts. The
+  // response carries digests and worktree paths, never prompt payloads.
+  if (pathname === '/api/spawn') {
+    if (method !== 'POST') return methodNotAllowed('POST')
+    const body = isRecord(request.body) ? request.body : {}
+    const controlsRaw = isRecord(body.controls) ? body.controls : {}
+    const actionsRaw = Array.isArray(body.actions) ? body.actions : []
+    try {
+      const plan = planSpawn({
+        controls: {
+          harness: typeof controlsRaw.harness === 'string' ? controlsRaw.harness : '',
+          model: typeof controlsRaw.model === 'string' ? controlsRaw.model : '',
+          thinking: typeof controlsRaw.thinking === 'string' ? controlsRaw.thinking : '',
+          budget: typeof controlsRaw.budget === 'string' ? controlsRaw.budget : '',
+        },
+        actions: actionsRaw.filter(isRecord).map((raw) => ({
+          verb: typeof raw.verb === 'string' ? raw.verb : '',
+          signalClass: typeof raw.signalClass === 'string' ? raw.signalClass : '',
+          subject: typeof raw.subject === 'string' ? raw.subject : '',
+          evidence: Array.isArray(raw.evidence)
+            ? raw.evidence.filter((entry): entry is string => typeof entry === 'string')
+            : [],
+          repoRoot: typeof raw.repoRoot === 'string' ? raw.repoRoot : config.repoRoot,
+          extraText: typeof raw.extraText === 'string' ? raw.extraText : null,
+        })),
+        now,
+      })
+      const launch = launchSpawnPlan(config, plan, now)
+      return {
+        status: 200,
+        json: {
+          ok: true,
+          plan: {
+            harness: plan.harness,
+            sessionName: plan.sessionName,
+            panes: plan.panes.map((pane) => ({
+              paneIndex: pane.paneIndex,
+              subject: pane.subject,
+              worktreePath: pane.worktreePath,
+              promptDigest: pane.promptDigest,
+            })),
+          },
+          launch,
+        },
+      }
+    } catch (err) {
+      const refusal = err as SpawnRefusalError
+      if (typeof refusal?.reason === 'string') {
+        return { status: 400, json: { ok: false, reason: refusal.reason, error: refusal.message } }
+      }
+      throw err
     }
   }
 
