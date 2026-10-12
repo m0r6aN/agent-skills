@@ -37,8 +37,8 @@ Measured and reported for the pilot, per machine and aggregate:
 | Total added inference | all OPMEM-induced tokens/latency on the primary work path | report-only in pilot; budget ceiling → OD-11 |
 | Context-cache disruption | cache invalidations attributable to memory injection per session | report-only first 7 days; ceiling → OD-11 |
 | Retrieval rate | deliveries containing ≥1 recalled record | report |
-| Application rate | `application` events / `access` events (attribution-split) | report |
-| Non-applicability rate | `consideration` events / `access` events | report |
+| Application rate | `application` events / `access` events (**delivered subset** — T-33; trimmed records are `access_omitted`, never counted) (attribution-split) | report |
+| Non-applicability rate | `consideration` events / `access` events (**delivered subset** — T-33) | report |
 | Unsupported useful-memory claims | self-reported usefulness without evidence_ref surfaced to owner | must be 0 accepted claims; report count |
 | Recall latency | p50/p95 recall round-trip (adapter→Gateway→Cortex) | ceilings → OD-11 |
 | Outbox health | pending depth, quarantine count, indeterminate resolutions, max age | ceilings → OD-11 |
