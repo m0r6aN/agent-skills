@@ -45,6 +45,19 @@ pi-model-configuration wave 2 (Amendments 06–09, owner-ratified):
 
 ## Unreleased
 
+- Control-center implementation (FCA-P2 through FCA-P6, 2026-10-11): fleet
+  registry + sandboxed filesystem browse; the unified signal model (six closed
+  classes: parcel-state, release-hygiene, worktree-hygiene, scm-ci,
+  goal-hygiene, session-state) with the D19-adjudicated probe seams; the
+  closed action registry with typed refusals, autonomy envelopes, and the
+  destructive typed-confirmation contract; kickstarter-style prompt
+  composition with the Stage-F fail-closed merge sentence; the pure spawn
+  planner (help-verified harness argv, fresh-worktree-per-action, prompt
+  digests), tmux launcher, and append-only spawn receipts; and the
+  control-center UI (full-viewport grid, registry-driven action buttons,
+  shared spawn panel, fleet folder picker, session tray) with jsdom
+  end-to-end suites and a live-server visual checklist. All 19 plan tasks
+  complete (tasks/plan.md).
 - Control-center initiative shaping (owner-ratified 2026-10-11): charter
   amendment (`spawn` invocation mode, fleet-wide control-center scope,
   close/delete blast radius, shared spawn-control contract) and the ratified
