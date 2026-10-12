@@ -31,7 +31,10 @@ than equal-priority destinations.
   build step, external fonts, CDN, or network service.
 - Existing APIs and projection rules remain authoritative. One additive read-only
   metadata change is allowed: each `/api/goals` status gets `repoRoot: tree.root`.
-  Existing response fields and callers remain compatible; no inferred root from
+  Existing response fields and callers remain compatible. Colliding extra-tree
+  aliases may receive the existing numeric suffix to keep keys unique across
+  registrations (see delegated collision amendment below); non-colliding keys
+  and the legacy primary keys remain unchanged. No inferred root from
   current working directory, subject parsing, alias, or basename.
 - Four primary destinations: Work queue, Goals & parcels, Sessions, Repositories.
   Secondary tools retain alerts/unblock guidance, frozen flow invocation, and
@@ -155,6 +158,7 @@ Mandated reviewer questions:
 
 - plugins/foreman-line/ops-console/ui/index.html
 - plugins/foreman-line/ops-console/ui/app.js
+- plugins/foreman-line/ops-console/ui/app.d.ts
 - plugins/foreman-line/ops-console/ui/views/shell.js
 - plugins/foreman-line/ops-console/ui/views/shell.d.ts
 - plugins/foreman-line/ops-console/ui/views/board.js
@@ -164,6 +168,7 @@ Mandated reviewer questions:
 - plugins/foreman-line/ops-console/ui/views/fleet.js
 - plugins/foreman-line/ops-console/ui/views/fleet.d.ts
 - plugins/foreman-line/ops-console/src/api.ts
+- plugins/foreman-line/ops-console/src/config.ts
 - plugins/foreman-line/ops-console/tests/api.test.ts
 - plugins/foreman-line/ops-console/tests/multi-root.test.ts
 - plugins/foreman-line/ops-console/tests/ui-shell.test.ts
@@ -176,3 +181,16 @@ Owner approved this spec as written and delegated decisions and non-destructive
 implementation actions. Add `plugins/foreman-line/ops-console/tests/ui-fixture.ts`
 to Allowed Files for shared mocked-browser setup/teardown; this avoids duplicate
 global test harness code and does not change product scope.
+
+### Collision amendment — delegated verification decision
+
+The regression test `same-basename registrations retain distinct absolute roots`
+reproduces an existing API defect: two registered roots named `agent-task` produce
+five statuses but only three unique keys; longest-prefix resolution returns the
+first root for both. A root filter alone cannot safely fix this at the UI layer.
+Authorize a minimal `src/config.ts` correction: reserve extra-tree aliases across
+all configured trees, applying the existing `.N` suffix only on collision.
+Non-colliding aliases and bare primary keys remain compatible; projection rules,
+write APIs, permissions and path guards are unchanged. Existing ambiguous aliases
+were already unable to identify the second checkout. Test discovery and exact
+per-key projection resolution for both roots, not merely visual disambiguation.

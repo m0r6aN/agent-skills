@@ -193,6 +193,31 @@ test('multi-root: extra roots project goal trees under alias-qualified keys', ()
   }
 })
 
+test('multi-root: same-basename registrations retain distinct absolute roots on every goal status', () => {
+  const a = extraRootFixture()
+  const b = extraRootFixture()
+  try {
+    withTempRepo(primaryScenario(), (ctx) => {
+      const config = defaultConfig(ctx.config.repoRoot, join(ctx.root, 'state'), [
+        join(a, 'agent-task'),
+        join(b, 'agent-task'),
+      ])
+      const response = handleApi(
+        config,
+        { method: 'GET', pathname: '/api/goals', query: new URLSearchParams(), body: {} },
+        NOW_MS,
+      )
+      const { statuses } = response.json as { statuses: { key: string; repoRoot: string }[] }
+      assert.equal(new Set(statuses.map((s) => s.repoRoot)).size, 3)
+      assert.equal(new Set(statuses.map((s) => s.key)).size, statuses.length)
+      for (const s of statuses) assert.equal(s.repoRoot, resolveGoalKey(config, s.key)?.tree.root)
+    })
+  } finally {
+    rmSync(a, { recursive: true, force: true })
+    rmSync(b, { recursive: true, force: true })
+  }
+})
+
 test('multi-root: /api/goals carries the additive statuses index and /api/parcels resolves qualified keys', () => {
   const extraBase = extraRootFixture()
   const extraRoot = join(extraBase, 'agent-task')

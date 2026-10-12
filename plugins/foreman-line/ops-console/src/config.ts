@@ -177,10 +177,15 @@ export function defaultConfig(
     })
     layoutHits.forEach((layout, index) => {
       assertAbsoluteRoot(extraRoot, 'defaultConfig extraRoots resolved entry')
-      // Alias is the root's directory name; a second tree inside the same
-      // repo gets a deterministic `alias.N` suffix (layout scan order) so
-      // keys stay unique. Resolution prefers the longest key prefix.
-      const alias = index === 0 ? baseAlias : `${baseAlias}.${index}`
+      // Reserve aliases across all roots, not just layouts within one root.
+      // Same-basename checkouts must never resolve to another checkout's tree.
+      // Keep non-colliding legacy aliases; suffix only when already reserved.
+      let suffix = index
+      let alias = suffix === 0 ? baseAlias : `${baseAlias}.${suffix}`
+      while (trees.some((tree) => tree.key === alias)) {
+        suffix += 1
+        alias = `${baseAlias}.${suffix}`
+      }
       trees.push({
         key: alias,
         treeRef: alias,
