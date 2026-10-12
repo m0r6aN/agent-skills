@@ -49,6 +49,7 @@ export function shellHtml({ posture = '', activeView = 'signals' } = {}) {
   <header class="app-header"><div class="brand"><span class="brand-mark" aria-hidden="true">F<span>↗</span></span><div><strong>Foreman Line</strong><span>Operations workspace</span></div></div>
     <label class="scope-label">Repository scope<select id="fleet-select" aria-label="Repository scope"><option value="">All repositories</option></select></label>
     <span class="local-badge" title="${esc(posture)}"><span class="live-dot"></span> Local only</span>
+    <button type="button" id="workflow-help" aria-haspopup="dialog" aria-controls="help-dialog">Help</button>
     <button type="button" id="refresh">Refresh</button></header>
   ${navHtml(activeView)}
   <main id="main" tabindex="-1">
@@ -71,6 +72,16 @@ export function shellHtml({ posture = '', activeView = 'signals' } = {}) {
     <div id="selection-bar" class="selection-bar" hidden><span id="selection-summary"></span><div class="row"><button type="button" id="clear-selection">Clear selection</button><button type="button" class="primary" id="review-launch">Review launch <span aria-hidden="true">→</span></button></div></div>
     <footer class="session-summary"><button id="tray-toggle" type="button" aria-expanded="false" aria-controls="tray-body">Recorded sessions <span id="tray-count"></span></button><button type="button" data-go-sessions>View sessions →</button><div id="tray-body" hidden></div></footer>
   </main>
-  <dialog id="launch-dialog" class="launch-dialog" aria-labelledby="launch-title"><div class="dialog-heading"><div><div class="eyebrow">Session launch</div><h2 id="launch-title">Review selected work</h2></div><button type="button" data-close-dialog aria-label="Close launch review">✕</button></div><div id="spawn-panel"></div></dialog>
-  <dialog id="action-dialog" aria-labelledby="action-title"><div class="dialog-heading"><h2 id="action-title">Review action</h2><button type="button" data-close-action aria-label="Close action review">✕</button></div><div id="action-popover"></div></dialog>`
+  <dialog id="launch-dialog" class="launch-dialog" aria-labelledby="launch-title"><div class="dialog-heading"><div><div class="eyebrow">Session launch</div><h2 id="launch-title">Review selected work</h2></div><div class="row"><button type="button" data-launch-help aria-haspopup="dialog" aria-controls="help-dialog">Help</button><button type="button" data-close-dialog aria-label="Close launch review">✕</button></div></div><div id="spawn-panel"></div></dialog>
+  <dialog id="action-dialog" aria-labelledby="action-title"><div class="dialog-heading"><h2 id="action-title">Review action</h2><button type="button" data-close-action aria-label="Close action review">✕</button></div><div id="action-popover"></div></dialog>
+  <dialog id="help-dialog" class="help-dialog" aria-labelledby="help-title"><div class="dialog-heading"><h2 id="help-title">How launching work works</h2><button type="button" data-close-help aria-label="Close workflow help">✕</button></div>
+    <p>Find work → select targets → review actions and permissions → launch → inspect Sessions. Opening review or changing settings does not launch anything.</p>
+    <dl class="help-topics">
+      <dt>Work queue vs Goals &amp; parcels</dt><dd>Work queue shows authoritative findings across registered repositories. Goals &amp; parcels shows a selected goal’s projected progress, gates and evidence. Only parcels with a matching registered finding can be selected for launch.</dd>
+      <dt>Full vs Partial decisions</dt><dd>Full requests agent judgment within the task’s boundaries; Partial requests more human involvement in decisions. These values are prompt guidance passed verbatim, not a backend-enforced decision sandbox or approval bypass. Use extra direction to specify which decisions need you. Independent verification and human gates still apply.</dd>
+      <dt>Separate Git permissions</dt><dd>Decisions does not grant Git authority. Commit, Push and Open PR are separate Git permissions sent in each action’s prompt. They do not imply one another. Merge is disabled here and stays human-owned; no Full setting or suggestion grants merge authority.</dd>
+      <dt>Suggested vs manual settings</dt><dd>Suggestions use registered conservative defaults for untouched fields and preserve manual choices. Explicit Apply replaces the corresponding settings across all compatible selected items, not just this page; skipped items stay flagged. Review every permission before launch.</dd>
+      <dt>One session, N panes</dt><dd>N selected actions launch one tmux session with N panes and one fresh worktree per action, using the shared configuration and extra direction. Sessions lists console-recorded launches, not every agent on this machine. A pane that is not running is not proof of completed work. Budget is configuration, not measured spending or a console-enforced spend limit.</dd>
+    </dl>
+  </dialog>`
 }

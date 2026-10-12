@@ -98,6 +98,53 @@ test('review bulk controls cover hidden pages and suggestions do not erase manua
   }
 })
 
+test('contextual help contains contract caveats, traps keyboard focus and returns without losing launch drafts', async () => {
+  const ui = await mountConsole()
+  try {
+    ;(ui.doc.querySelector('#workflow-help') as HTMLButtonElement).focus()
+    ui.click('#workflow-help')
+    const help = ui.doc.querySelector('#help-dialog') as HTMLDialogElement
+    assert.equal(help.hasAttribute('open'), true)
+    assert.match(help.textContent || '', /Full.*Partial/s)
+    assert.match(help.textContent || '', /prompt guidance.*not.*backend.*sandbox/s)
+    assert.match(help.textContent || '', /separate.*Git permissions/s)
+    assert.match(help.textContent || '', /one tmux session/s)
+    help.dispatchEvent(new ui.dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+    assert.equal(ui.doc.activeElement?.id, 'workflow-help')
+    ui.click('#signals-body [data-select]')
+    ui.click('#review-launch')
+    ui.input('[name="extra"]', 'Do not lose this draft.')
+    ui.input('[name="model"]', 'manual-model')
+    ;(ui.doc.querySelector('[data-launch-help]') as HTMLButtonElement).focus()
+    ui.click('[data-launch-help]')
+    assert.equal(ui.doc.querySelector('#launch-dialog')?.hasAttribute('open'), true)
+    const close = help.querySelector('[data-close-help]') as HTMLButtonElement
+    assert.equal(ui.doc.activeElement, close)
+    help.dispatchEvent(
+      new ui.dom.window.KeyboardEvent('keydown', {
+        key: 'Tab',
+        shiftKey: true,
+        bubbles: true,
+        cancelable: true,
+      }),
+    )
+    assert.equal(ui.doc.activeElement, close)
+    help.dispatchEvent(new ui.dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+    assert.equal(ui.doc.activeElement?.hasAttribute('data-launch-help'), true)
+    assert.equal(
+      (ui.doc.querySelector('[name="extra"]') as HTMLInputElement).value,
+      'Do not lose this draft.',
+    )
+    assert.equal((ui.doc.querySelector('[name="model"]') as HTMLInputElement).value, 'manual-model')
+    assert.equal(
+      ui.requests.some((r) => r.body),
+      false,
+    )
+  } finally {
+    ui.close()
+  }
+})
+
 test('bulk eligibility excludes destructive/present/unregistered actions; never chooses first entry', () => {
   const registry = [...ACTION_REGISTRY].reverse()
   assert.deepEqual(

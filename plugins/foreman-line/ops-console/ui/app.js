@@ -394,7 +394,10 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   on(el('review-launch'), 'click', () => { updateSpawnPanel(); openDialog(el('launch-dialog')) })
   on(doc.querySelector('[data-close-dialog]'), 'click', () => closeDialog(el('launch-dialog')))
   on(doc.querySelector('[data-close-action]'), 'click', () => closeDialog(el('action-dialog')))
-  for (const id of ['launch-dialog', 'action-dialog']) {
+  on(el('workflow-help'), 'click', () => openDialog(el('help-dialog')))
+  on(doc.querySelector('[data-launch-help]'), 'click', () => openDialog(el('help-dialog')))
+  on(doc.querySelector('[data-close-help]'), 'click', () => closeDialog(el('help-dialog')))
+  for (const id of ['launch-dialog', 'action-dialog', 'help-dialog']) {
     on(el(id), 'cancel', (event) => { event.preventDefault(); closeDialog(el(id)) })
     on(el(id), 'keydown', (event) => {
       if (event.key === 'Escape') { event.preventDefault(); closeDialog(el(id)) }
