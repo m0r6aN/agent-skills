@@ -49,25 +49,25 @@ export function spawnPanelHtml({ count = 0, controls = {}, selections = [], regi
         <p id="bulk-result" role="status" aria-live="polite">${esc(bulkResult)}</p>
       </fieldset>
       <div id="launch-items">${selections.slice(page * 200, page * 200 + 200).map((item) => launchItemHtml(item, registry)).join('')}</div>${paginationHtml(selections.length, page)}
-      <fieldset>
+      <fieldset class="launch-config">
         <legend>Shared launch configuration</legend><div class="control-grid">
-        <label>harness
+        <label>Harness
           <select name="harness" aria-label="harness">
             ${HARNESS_OPTIONS.map((id) => `<option value="${esc(id)}" ${id === harness ? 'selected' : ''}>${esc(id)}</option>`).join('')}
           </select>
         </label>
-        <label>model
+        <label>Model
           <input name="model" list="model-options" value="${esc(model)}" aria-label="model" required>
           <datalist id="model-options">
             ${MODEL_SUGGESTIONS.map((id) => `<option value="${esc(id)}"></option>`).join('')}
           </datalist>
         </label>
-        <label>thinking
+        <label>Thinking
           <select name="thinking" aria-label="thinking level">
             ${THINKING_OPTIONS.map((level) => `<option value="${esc(level)}" ${level === thinking ? 'selected' : ''}>${esc(level)}</option>`).join('')}
           </select>
         </label>
-        <label>budget (hard max-USD cap)
+        <label>Budget (per-action configured cap)
           <select name="budget" aria-label="budget cap">
             ${BUDGET_PRESETS.map((cap) => `<option value="${esc(cap)}" ${cap === budget ? 'selected' : ''}>${esc(cap)}</option>`).join('')}
           </select>

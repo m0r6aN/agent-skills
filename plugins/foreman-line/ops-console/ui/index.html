@@ -115,7 +115,28 @@
     .control-grid label, .stack-label { display: flex; flex-direction: column; align-items: stretch; gap: .5rem; font-size: .8rem; }
     textarea { resize: vertical; width: 100%; min-height: 6rem; }
     .launch-item { overflow-wrap: anywhere; border: 1px solid var(--line); border-radius: 6px; padding: 1rem; margin-bottom: .75rem; }
-    .launch-item .row { justify-content: space-between; }
+    .launch-item .row { justify-content: space-between; align-items: start; }
+    #spawn-form { display: grid; gap: var(--space-4); }
+    #spawn-form > p, #spawn-form fieldset, #spawn-form .launch-footer { margin: 0; }
+    #spawn-form fieldset { min-width: 0; padding: var(--space-4); }
+    #spawn-form .bulk-settings { display: grid; gap: var(--space-3); }
+    .bulk-settings p { margin: 0; }
+    .bulk-settings > .row { align-items: end; gap: var(--space-4); }
+    .bulk-settings .stack-label { flex: 1; min-width: 0; }
+    .bulk-settings > button { justify-self: start; }
+    #bulk-result { font-size: .8rem; color: var(--muted); }
+    .launch-item { display: grid; gap: var(--space-3); padding: var(--space-4); }
+    .launch-item .permissions, .bulk-settings .permissions { margin: 0; padding-top: var(--space-3); border-top: 1px solid var(--line); gap: var(--space-3) var(--space-4); align-items: center; }
+    .launch-item .permissions > label:first-child { flex-direction: column; align-items: stretch; gap: var(--space-2); min-width: 8rem; }
+    .launch-item .flags { margin: 0; }
+    .control-grid { gap: var(--space-4) var(--space-6); align-items: start; }
+    .control-grid label { min-width: 0; }
+    .control-grid input, .control-grid select { width: 100%; min-width: 0; }
+    #spawn-form .launch-config .meta { margin: var(--space-4) 0 0; }
+    .help-dialog { width: min(38rem, calc(100vw - 2rem)); }
+    .help-topics { margin: 0; }
+    .help-topics dt { font-weight: 600; margin-top: var(--space-4); }
+    .help-topics dd { color: var(--muted); margin: var(--space-2) 0 0; }
     .permissions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: .75rem; font-size: .75rem; }
     .launch-footer { margin-top: 1rem; border-top: 1px solid var(--line); padding-top: 1rem; display: flex; justify-content: space-between; gap: 1rem; align-items: center; }
     .tool-panel, .remedy { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 1.25rem; margin-bottom: 1rem; }
