@@ -1,6 +1,6 @@
-/**
- * Type surface for the UI orchestration module (no build step — the .js ships
- * as-is). Side-effectful on import: renders the shell into #app and wires
- * events; it exports nothing.
- */
-export {}
+/** Unbuilt browser controller. An explicit mount supports isolated DOM testing. */
+export declare function startConsole(document: Document, fetcher?: (path: string, options?: RequestInit) => Promise<{ ok?: boolean; status?: number; json(): Promise<unknown> }>): {
+  ready: Promise<void>
+  refresh(): Promise<void>
+  destroy(): void
+}

@@ -141,6 +141,7 @@ Mandated reviewer questions:
 ## Allowed Files
 
 - plugins/foreman-line/ops-console/ui/app.js
+- plugins/foreman-line/ops-console/ui/app.d.ts
 - plugins/foreman-line/ops-console/ui/index.html
 - plugins/foreman-line/ops-console/ui/views/shell.js
 - plugins/foreman-line/ops-console/ui/views/shell.d.ts

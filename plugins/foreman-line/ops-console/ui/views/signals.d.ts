@@ -6,8 +6,10 @@ export declare function allowedVerbs(
 ): string[]
 export declare function signalsHtml(
   signals: readonly Record<string, unknown>[],
-  registry: readonly Record<string, unknown>[],
+  registry: readonly import('./selection.js').RegistryEntry[],
+  options?: { selected?: Map<string, import('./selection.js').SelectedTarget>; total?: number },
 ): string
+export declare function autonomyHtml(autonomy: import('../../src/actions.js').AutonomyEnvelope, subject?: string, disabledMerge?: boolean): string
 export declare function actionPopoverHtml(
   signal: Record<string, unknown>,
   verb: string,

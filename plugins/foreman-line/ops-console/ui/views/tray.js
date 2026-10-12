@@ -1,41 +1,33 @@
-// FCA-P6 session tray (Task 19): spawn receipts with derived pane liveness,
-// copyable attach commands, and per-session actions routed through the SAME
-// action registry as signals (explain is non-destructive and dispatches
-// immediately; close is destructive and demands the typed confirmation).
-// Virtualization: the tray renders a capped window (200 rows) with a summary,
-// so 200+ spawns never jank the UI.
-import { esc } from './shell.js'
-
+// Receipt-backed session history. Liveness is not completion and caps are not spend.
+import { esc, emptyHtml, paginationHtml } from './shell.js'
 export const TRAY_ROW_CAP = 200
-
 export function attachCommand(sessionName) {
-  return `tmux attach -t ${sessionName}`
+  const name = /^[\w-]+$/.test(sessionName) ? sessionName : `'${String(sessionName).replace(/'/g, "'\\''")}'`
+  return `tmux attach -t ${name}`
 }
-
-export function trayHtml(spawns) {
-  const windowed = spawns.slice(0, TRAY_ROW_CAP)
-  const rows = windowed.map((spawn) => {
-    const id = `${spawn.sessionName}-p${spawn.paneIndex}`
-    return `<tr class="tray-row" data-session="${esc(spawn.sessionName)}" data-subject="${esc(id)}">
-      <td><code>${esc(id)}</code></td>
-      <td><span class="chip chip-${spawn.liveness === 'alive' ? 'amber' : 'red'}">${esc(spawn.liveness)}</span></td>
-      <td>${esc(spawn.harness)} · ${esc(spawn.model)} · ${esc(spawn.budget)}</td>
-      <td><code class="attach">${esc(attachCommand(spawn.sessionName))}</code>
-        <button type="button" data-copy="${esc(attachCommand(spawn.sessionName))}"
-          aria-label="copy attach command for ${esc(spawn.sessionName)}">copy</button></td>
-      <td>
-        <button type="button" data-session-action="explain" data-subject="${esc(id)}"
-          aria-label="explain ${esc(id)}">explain</button>
-        <button type="button" data-session-action="close-delete" data-subject="${esc(id)}"
-          aria-label="close ${esc(id)}">close</button>
-      </td>
-    </tr>`
+export function livenessLabel(value) {
+  return value === 'alive' ? 'Running' : value === 'exited' ? 'Not running (exited)' : value === 'dead' ? 'Not running (dead)' : 'Unknown'
+}
+const fact = (value) => value == null || value === '' ? 'Unavailable' : esc(value)
+export function trayHtml(spawns, { page = 0, registry = [], highlight = null, compact = false } = {}) {
+  if (!spawns.length) return emptyHtml('No console-recorded launches', 'Select work from Work queue to launch a session. Sessions started elsewhere are not listed here.')
+  page = Math.min(Math.max(0, page), Math.ceil(spawns.length / TRAY_ROW_CAP) - 1)
+  const sessionNames = new Set(spawns.map((s) => s.sessionName).filter(Boolean))
+  const running = spawns.filter((s) => s.liveness === 'alive').length
+  const unknown = spawns.filter((s) => !['alive', 'exited', 'dead'].includes(s.liveness)).length
+  const rows = spawns.slice(page * TRAY_ROW_CAP, (page + 1) * TRAY_ROW_CAP).map((spawn) => {
+    const identified = typeof spawn.sessionName === 'string' && spawn.sessionName.length > 0 && Number.isInteger(spawn.paneIndex) && spawn.paneIndex >= 0
+    const subject = identified ? `${spawn.sessionName}-p${spawn.paneIndex}` : null
+    const command = identified ? attachCommand(spawn.sessionName) : null
+    const actions = identified ? ['explain', 'close-delete'].filter((verb) => registry.some((entry) => entry.verb === verb && entry.signalClasses.includes('session-state'))).map((verb) => `<button type="button" ${verb === 'close-delete' ? 'class="danger"' : ''} data-session-action="${verb}" data-subject="${esc(subject)}" data-repo="${esc(spawn.repoRoot || '')}">${verb === 'close-delete' ? 'Close / delete…' : 'Explain'}</button>`).join('') : ''
+    return `<tr class="tray-row" data-session="${esc(spawn.sessionName || '')}" data-subject="${esc(subject || '')}" data-receipt="${esc(spawn.id || '')}" ${highlight === spawn.sessionName ? 'data-highlight' : ''}>
+      <td><span class="subject">${fact(spawn.sessionName)}</span><span class="meta">Pane ${fact(spawn.paneIndex)} · ${fact(spawn.createdAt)}</span>
+        <details><summary>Launch receipt</summary><dl class="receipt-facts"><dt>Receipt ID</dt><dd>${fact(spawn.id)}</dd><dt>Repository</dt><dd><code>${fact(spawn.repoRoot)}</code></dd><dt>Worktree</dt><dd><code>${fact(spawn.worktreePath)}</code></dd><dt>Prompt digest</dt><dd><code>${fact(spawn.promptDigest)}</code></dd></dl><pre>${esc(JSON.stringify(spawn, null, 2))}</pre></details></td>
+      <td><span class="chip chip-${spawn.liveness === 'alive' ? 'green' : ['dead', 'exited'].includes(spawn.liveness) ? 'red' : 'neutral'}">${livenessLabel(spawn.liveness)}</span></td>
+      <td><strong>${fact(spawn.harness)}</strong> · ${fact(spawn.model)}<span class="meta">Thinking: ${fact(spawn.thinking)}<br>Configured cap: ${fact(spawn.budget)}</span><span class="meta">${fact(spawn.repoRoot)}</span></td>
+      <td>${command ? `<code class="attach">${esc(command)}</code><br><button type="button" data-copy="${esc(command)}" aria-label="Copy attach command for ${esc(spawn.sessionName)}">Copy attach command</button><span class="meta" data-copy-status aria-live="polite"></span>` : '<span class="muted">Attach unavailable: session or pane identity missing.</span>'}</td>
+      <td class="actions">${actions || '<span class="muted">No registered action</span>'}</td></tr>`
   }).join('')
-  const summary = spawns.length > TRAY_ROW_CAP
-    ? `<div class="muted">showing ${TRAY_ROW_CAP} of ${spawns.length} sessions (windowed)</div>`
-    : ''
-  return `${summary}<table class="tray-table">
-    <tr><th>pane</th><th>liveness</th><th>spawn controls</th><th>attach</th><th>actions</th></tr>
-    ${rows || '<tr><td colspan="5" class="muted">no spawn receipts yet</td></tr>'}
-  </table>`
+  const summary = compact ? '<p class="muted">Recent pane receipts. Open Sessions for full history.</p>' : `<div class="session-metrics"><div><strong>${sessionNames.size}</strong><span>${sessionNames.size} recorded session${sessionNames.size === 1 ? '' : 's'}</span></div><div><strong>${spawns.length}</strong><span>${spawns.length} panes</span></div><div><strong>${running}</strong><span>Running panes</span></div><div><strong>${unknown}</strong><span>Unknown liveness</span></div></div><p class="muted">Console-recorded launches only. Not running does not mean completed; budget caps are configuration, not measured spending.</p>`
+  return `${summary}<div class="table-wrap"><table class="tray-table"><thead><tr><th>Session / pane</th><th>Liveness</th><th>Launch configuration / repository</th><th>Terminal attach</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>${compact ? '' : paginationHtml(spawns.length, page, TRAY_ROW_CAP)}`
 }

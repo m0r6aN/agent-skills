@@ -4,8 +4,19 @@
 // contract these controls are defined ONCE and applied to every selected
 // action; they are never repeated per action. Budget presets are the owner's
 // hard max-USD set ($1-$100) — the Unlimited option is withdrawn.
-import { esc } from './shell.js'
+import { esc, paginationHtml } from './shell.js'
 import { selectionToActions } from './signals.js'
+import { eligibleActions } from './selection.js'
+
+export function launchItemHtml(item, registry) {
+  const choices = eligibleActions(item.signal, registry)
+  return `<div class="launch-item" data-launch-item="${esc(item.signal.id)}"><div class="row"><div><strong>${esc(item.signal.subject)}</strong><span class="meta">${esc(item.signal.repo)} · ${esc(item.signal.class)}</span></div><button type="button" data-remove-selection aria-label="Remove ${esc(item.signal.subject)} from selection">Remove</button></div>
+    <label class="stack-label">Action<select data-verb aria-label="Action for ${esc(item.signal.subject)}"><option value="">Choose an action</option>${choices.map((e) => `<option value="${esc(e.verb)}" ${e.verb === item.verb ? 'selected' : ''}>${esc(e.verb)}</option>`).join('')}</select></label>
+    <div class="permissions"><label>Decisions<select data-permission="decisions" aria-label="Decisions for ${esc(item.signal.subject)}"><option value="partial" ${item.autonomy.decisions === 'partial' ? 'selected' : ''}>Partial</option><option value="full" ${item.autonomy.decisions === 'full' ? 'selected' : ''}>Full</option></select></label>${['commit', 'push', 'openPr', 'merge'].map((name) => `<label><input type="checkbox" data-permission="${name}" ${item.autonomy[name] ? 'checked' : ''} ${name === 'merge' ? 'disabled' : ''}>${name === 'openPr' ? 'Open PR' : name === 'merge' ? 'Merge (human-owned)' : name[0].toUpperCase() + name.slice(1)}</label>`).join('')}</div>
+    ${item.unavailable ? `<p class="flags" role="status">${esc(item.unavailable)}</p>` : ''}
+    ${item.needsReview ? '<p class="flags">Action defaults changed. Your permissions were preserved. Review them again.</p><button type="button" data-ack-review>I reviewed these permissions</button>' : ''}
+  </div>`
+}
 
 export const HARNESS_OPTIONS = ['pi', 'claude']
 export const THINKING_OPTIONS = ['off', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max']
@@ -18,22 +29,25 @@ export const MODEL_SUGGESTIONS = [
   'deepseek-v4-pro',
 ]
 
-export function spawnPanelHtml({ count = 0, controls = {} } = {}) {
+export function spawnPanelHtml({ count = 0, controls = {}, selections = [], registry = [], extra = '', error = '', page = 0 } = {}) {
+  const blocked = selections.some((item) => !item.verb || item.unavailable || item.needsReview)
   const harness = controls.harness || 'pi'
   const model = controls.model || MODEL_SUGGESTIONS[0]
   const thinking = controls.thinking || 'high'
   const budget = controls.budget || '$20'
   return `
     <form id="spawn-form" aria-label="spawn controls">
+      <p class="muted">One tmux session · ${count} pane${count === 1 ? '' : 's'} · one fresh worktree per selected action. Review each target and its permissions.</p>
+      <div id="launch-items">${selections.slice(page * 200, page * 200 + 200).map((item) => launchItemHtml(item, registry)).join('')}</div>${paginationHtml(selections.length, page)}
       <fieldset>
-        <legend>spawn controls (shared — applied to every selected action)</legend>
+        <legend>Shared launch configuration</legend><div class="control-grid">
         <label>harness
           <select name="harness" aria-label="harness">
             ${HARNESS_OPTIONS.map((id) => `<option value="${esc(id)}" ${id === harness ? 'selected' : ''}>${esc(id)}</option>`).join('')}
           </select>
         </label>
         <label>model
-          <input name="model" list="model-options" value="${esc(model)}" aria-label="model">
+          <input name="model" list="model-options" value="${esc(model)}" aria-label="model" required>
           <datalist id="model-options">
             ${MODEL_SUGGESTIONS.map((id) => `<option value="${esc(id)}"></option>`).join('')}
           </datalist>
@@ -47,16 +61,15 @@ export function spawnPanelHtml({ count = 0, controls = {} } = {}) {
           <select name="budget" aria-label="budget cap">
             ${BUDGET_PRESETS.map((cap) => `<option value="${esc(cap)}" ${cap === budget ? 'selected' : ''}>${esc(cap)}</option>`).join('')}
           </select>
-        </label>
+        </label></div>
+        <p class="meta">Budget is a configured cap passed to each action—not measured spending. The chosen harness must support the requested controls.</p>
       </fieldset>
-      <label>extra direction (optional — appended verbatim to every prompt)
-        <textarea name="extra" rows="3" aria-label="extra direction"></textarea>
+      <label class="stack-label">Extra direction (optional — appended verbatim to every prompt)
+        <textarea name="extra" rows="3" aria-label="extra direction">${esc(extra)}</textarea>
       </label>
-      <button type="submit" id="spawn-run" ${count === 0 ? 'disabled' : ''}>
-        spawn ${count} session${count === 1 ? '' : 's'}
-      </button>
-    </form>
-    <div id="spawn-result" aria-live="polite"></div>`
+      <div id="spawn-result" class="flags" aria-live="polite">${esc(error)}</div>
+      <div class="launch-footer"><span class="muted">${blocked ? 'Resolve unavailable items and review permissions before launch.' : 'Approvals and server guards still apply.'}</span><button type="submit" class="primary" id="spawn-run" ${count === 0 || blocked ? 'disabled' : ''}>Launch 1 session · ${count} pane${count === 1 ? '' : 's'}</button></div>
+    </form>`
 }
 
 /** Read the shared controls off the panel form (single source of truth). */

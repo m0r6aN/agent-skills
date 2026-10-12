@@ -1,6 +1,7 @@
 // Board rendering (moved from app.js; behavior preserved, pure now).
 import { needsFor } from '../needs.js'
 import { esc, fileLink } from './shell.js'
+import { eligibleActions } from './selection.js'
 
 const STATES = ['running', 'hung', 'awaiting-gate', 'failed', 'complete']
 
@@ -17,7 +18,7 @@ const EMPTY_ATTENTION = {
   total: 0,
 }
 
-export function boardHtml(parcels, status) {
+export function boardHtml(parcels, status, options = {}) {
   const attention = (status && status.attention) || EMPTY_ATTENTION
   // FCA-2: the board leads with what needs the human — a banner above the
   // columns and a "needs" treatment on the cards that carry the attention.
@@ -33,23 +34,21 @@ export function boardHtml(parcels, status) {
   const banner = attention.total > 0
     ? `<div class="banner">needs attention${parts.length ? ` — ${parts.join(' · ')}` : ''}</div>`
     : ''
-  return banner + STATES.map((col) => {
-    const cards = parcels.filter((p) => p.state === col).map((p) => {
+  const rows = STATES.flatMap((col) => {
+    return parcels.filter((p) => p.state === col).map((p) => {
+      const signal = (options.signals || []).find((s) => s.class === 'parcel-state' && s.subject === `${status?.key}/${p.parcel}` && s.repo === status?.repoRoot && eligibleActions(s, options.registry || []).length)
+      const select = signal ? `<input type="checkbox" data-select="${esc(signal.id)}" ${options.selected?.has(signal.id) ? 'checked' : ''} aria-label="Select parcel ${esc(p.parcel)} in ${esc(status.repoRoot)}">` : '<span class="meta">No supported action</span>'
       const urgent = ((status && status.urgentSubjects) || []).some((s) => s.endsWith(`/${p.parcel}`))
       const needs = needsFor(p.state, urgent)
       const chip = needs ? `<span class="chip ${needs.includes('red') ? 'chip-red' : 'chip-amber'}">${p.state === 'awaiting-gate' ? 'gate' : 'needs attention'}</span>` : ''
-      return `
-      <div class="card ${needs}" data-parcel="${esc(p.parcel)}" tabindex="0" role="button"
-        aria-label="parcel ${esc(p.parcel)}, ${esc(p.state)}">
-        <div class="key">${esc(p.parcel)} ${chip}</div>
-        <div class="meta">rule ${esc(p.rule)} · chain ${esc(p.chainEvidence)}</div>
-        <div class="meta">progress ${esc(p.heartbeat.lastProgressAt || 'never')} · liveness ${p.liveness.live ? 'live' : 'none'}</div>
-        ${p.failure ? `<div class="flags">${esc(p.failure.code)}</div>` : ''}
-        ${p.flags.length ? `<div class="flags">${esc(p.flags.join(', '))}</div>` : ''}
-      </div>`
-    }).join('')
-    return `<div class="col ${col}"><h2>${esc(col)} (${parcels.filter((p) => p.state === col).length})</h2>${cards || '<div class="muted">—</div>'}</div>`
+      return `<tr class="parcel-row ${needs}"><td>${select}</td>
+      <td><button class="detail-btn" type="button" data-parcel="${esc(p.parcel)}" aria-label="Inspect parcel ${esc(p.parcel)}">${esc(p.parcel)}</button><span class="meta">rule ${esc(p.rule)} · chain ${esc(p.chainEvidence)}</span></td>
+      <td><span class="chip chip-${p.state === 'complete' || p.state === 'running' ? 'green' : 'neutral'}">${esc(p.state)}</span> ${chip}</td>
+      <td><span class="meta">${esc(p.heartbeat?.lastProgressAt || 'No progress timestamp')}<br>${p.liveness?.live ? 'Live worktree evidence' : 'No live worktree evidence'}</span>${p.failure ? `<div class="flags">${esc(p.failure.code)}</div>` : ''}${p.flags?.length ? `<div class="flags">${esc(p.flags.join(', '))}</div>` : ''}</td>
+      <td><button type="button" data-parcel="${esc(p.parcel)}">Inspect evidence</button></td></tr>`
+    })
   }).join('')
+  return banner + `<div class="list-meta"><span>${options.total ?? parcels.length} parcels</span><div class="row"><button type="button" data-select-visible>Select visible page</button><button type="button" data-clear-visible>Clear visible page</button></div></div><div class="table-wrap"><table><thead><tr><th aria-label="Selection"></th><th>Parcel</th><th>Status</th><th>Progress evidence</th><th>Details</th></tr></thead><tbody>${rows}</tbody></table></div>`
 }
 
 export function detailHtml(p, chainDocs, repoRoot, loopDirectiveRef, remedies) {
@@ -68,6 +67,7 @@ export function detailHtml(p, chainDocs, repoRoot, loopDirectiveRef, remedies) {
       <span>goal record: ${fileLink(repoRoot, loopDirectiveRef)}</span>
     </div>
     <p>${gatePill(p.gates.G1)} · ${gatePill(p.gates.G2)} · ${gatePill(p.gates.G3)}</p>
+    <p class="muted">G1: ratify the spec · G2: authorize dispatch · G3: human merge approval. The console does not grant these gates.</p>
     ${remedies.length ? `<h2>How to unblock</h2>${remedies.map((r) => r).join('')}` : ''}
     <h2>Receipt chain walk</h2>
     <table><tr><th>seq</th><th>stage</th><th>subject</th><th>timestamp</th><th>hash</th><th>locator</th></tr>${chainRows || '<tr><td colspan="6" class="muted">no chain</td></tr>'}</table>

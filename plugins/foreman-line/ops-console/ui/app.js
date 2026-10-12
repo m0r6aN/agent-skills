@@ -1,499 +1,383 @@
-// Foreman Ops Console frontend — control-center shell (FCA-P6 Task 15).
-// No build step, no dependencies: ES modules served as-is. Data + events live
-// here; pure rendering lives in ui/views/*.
-import { needsFor } from './needs.js'
-import { esc, shellHtml } from './views/shell.js'
+// Browser controller: DOM is a projection of state, never the source of selection truth.
+import { esc, emptyHtml, paginationHtml, shellHtml, VIEWS, VIEW_COPY } from './views/shell.js'
 import { boardHtml, detailHtml } from './views/board.js'
 import { remedyHtml, remediesHtml } from './views/remedies.js'
-import {
-  actionPopoverHtml,
-  confirmationToken,
-  selectionToActions,
-  signalsHtml,
-} from './views/signals.js'
+import { actionPopoverHtml, confirmationToken, signalsHtml } from './views/signals.js'
 import { readControls, spawnPanelHtml, spawnRequest } from './views/spawn-panel.js'
 import { browseListHtml, fleetHtml } from './views/fleet.js'
 import { trayHtml } from './views/tray.js'
+import { actionSignature, eligibleActions, reconcileSelection, selectTarget } from './views/selection.js'
 
-const state = {
-  view: 'board',
-  goal: null,
-  goals: [],
-  statuses: [],
-  remedies: [],
-  projection: null,
-  repoRoot: '',
-  posture: '',
-  signals: [],
-  registry: [],
-  selected: new Map(),
-  controls: {},
-  fleet: [],
-  browseSelection: null,
-}
-
-async function api(path, options) {
-  const res = await fetch(path, options)
-  return res.json()
-}
-
-function setView(view) {
-  state.view = view
-  document.querySelectorAll('main > section[data-view]').forEach((section) => {
-    section.hidden = section.dataset.view !== view
-  })
-  document.querySelectorAll('.nav-btn').forEach((btn) => {
-    const active = btn.dataset.view === view
-    btn.classList.toggle('active', active)
-    btn.setAttribute('aria-current', active ? 'page' : 'false')
-  })
-  if (view === 'signals') renderSignals()
-  if (view === 'fleet') renderFleet()
-}
-
-function renderBoard() {
-  const board = document.getElementById('board')
-  if (board === null) return
-  const parcels = (state.projection && state.projection.parcels) || []
-  const status = (state.statuses || []).find((s) => s.key === state.goal) || null
-  board.innerHTML = boardHtml(parcels, status)
-  board.querySelectorAll('.card').forEach((card) => {
-    card.addEventListener('click', () => renderDetail(card.dataset.parcel))
-    card.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') renderDetail(card.dataset.parcel)
-    })
-  })
-}
-
-async function renderDetail(key) {
-  const p = ((state.projection && state.projection.parcels) || []).find((x) => x.parcel === key)
-  const section = document.getElementById('detail')
-  if (!p) {
-    section.innerHTML = '<div class="muted">parcel not found</div>'
-    return
+export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
+  const win = doc.defaultView
+  const state = { view: 'signals', scope: '', goal: null, repoRoot: '', statuses: [], signals: [], registry: [], fleet: [], spawns: [],
+    projection: null, remedies: [], queries: {}, pages: {}, selected: new Map(), controls: {}, extra: '', browseSelection: null, launchError: '', submitting: false, launchPage: 0, highlightSession: null, revealSession: false }
+  let generation = 0
+  let detailGeneration = 0
+  let destroyed = false
+  const el = (id) => doc.getElementById(id)
+  const on = (node, name, fn) => node?.addEventListener(name, fn)
+  async function api(path, options) {
+    const response = await fetcher(path, options)
+    const data = await response.json()
+    if (!data || typeof data !== 'object') throw new Error('Invalid response from the console')
+    if (response.ok === false || data.ok === false || data.error) throw new Error([data.reason, data.error].filter(Boolean).join(': ') || `Request failed (${response.status})`)
+    return data
   }
-  const chainDocs = await api(`/api/parcels/${encodeURIComponent(key)}/logs?goal=${encodeURIComponent(state.goal)}`)
-  const mine = (state.remedies || [])
-    .filter((r) => r.parcel === p.parcel)
-    .map((r) => remedyHtml(r))
-  section.innerHTML = detailHtml(
-    p,
-    chainDocs,
-    state.repoRoot,
-    (state.projection && state.projection.goal && state.projection.goal.loopDirectiveRef) || '',
-    mine,
-  )
-}
-
-async function renderAlerts() {
-  const data = await api(`/api/alerts?goal=${encodeURIComponent(state.goal)}`)
-  state.remedies = data.remedies || []
-  const body = document.getElementById('alerts-body')
-  body.innerHTML = remediesHtml(data.alerts, state.remedies, data.notifications)
-  body.querySelectorAll('[data-del]').forEach((btn) => {
-    btn.addEventListener('click', async () => {
-      await api(`/api/notifications/${encodeURIComponent(btn.dataset.del)}`, { method: 'DELETE' })
-      renderAlerts()
-    })
-  })
-}
-
-async function copyText(text) {
-  try {
-    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
-      await navigator.clipboard.writeText(text)
-      return true
-    }
-  } catch {
-    // fall through to the failure path — the command stays selectable text
+  function status(message, error = false) {
+    el('console-status').textContent = message
+    el('console-status').classList.toggle('error', error)
   }
-  return false
-}
-
-async function renderTray() {
-  const data = await api('/api/spawns')
-  const spawns = data.spawns || []
-  const count = document.getElementById('tray-count')
-  if (count !== null) count.textContent = `(${spawns.length})`
-  const body = document.getElementById('tray-body')
-  body.innerHTML = trayHtml(spawns)
-  body.querySelectorAll('[data-copy]').forEach((btn) => {
-    btn.addEventListener('click', async () => {
-      const ok = await copyText(btn.dataset.copy)
-      btn.textContent = ok ? 'copied' : 'copy failed'
+  function matches(text) { return String(text).toLowerCase().includes((state.queries[state.view] || '').toLowerCase()) }
+  function scoped(root) { return !state.scope || state.scope === root }
+  function pageRows(rows, view = state.view) {
+    const page = Math.min(state.pages[view] || 0, Math.max(0, Math.ceil(rows.length / 200) - 1))
+    state.pages[view] = page
+    return { rows: rows.slice(page * 200, page * 200 + 200), pager: paginationHtml(rows.length, page) }
+  }
+  function setView(view, hash = true) {
+    state.view = VIEWS.some(([id]) => id === view) ? view : 'signals'
+    doc.querySelectorAll('main > section[data-view]').forEach((section) => { section.hidden = section.dataset.view !== state.view })
+    doc.querySelectorAll('.nav-btn').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.view === state.view)
+      btn.setAttribute('aria-current', btn.dataset.view === state.view ? 'page' : 'false')
     })
-  })
-  // Per-session actions ride the SAME registry as signal verbs (FCA-P4).
-  body.querySelectorAll('[data-session-action]').forEach((btn) => {
-    btn.addEventListener('click', async () => {
-      const verb = btn.dataset.sessionAction
-      const subject = btn.dataset.subject
-      let confirmation = null
-      if (verb === 'close-delete') {
-        // Destructive: exact typed intent or nothing happens.
-        confirmation = prompt(`type ${confirmationToken(subject)} to confirm`)
-        if (confirmation !== confirmationToken(subject)) return
-      }
-      await api('/api/actions/dispatch', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          verb,
-          signalClass: 'session-state',
-          subject,
-          autonomy: { decisions: 'partial', commit: false, push: false, openPr: false, merge: false },
-          confirmation,
-        }),
-      })
-      renderTray()
-    })
-  })
-}
-
-async function renderSignals() {
-  const [signalsData, actionsData] = await Promise.all([api('/api/signals'), api('/api/actions')])
-  state.signals = signalsData.signals || []
-  state.registry = actionsData.actions || []
-  const body = document.getElementById('signals-body')
-  body.innerHTML = signalsHtml(state.signals, state.registry)
-  wireSignalRows(body)
-  applySeverityFilters()
-  updateSpawnPanel()
-}
-
-function applySeverityFilters() {
-  const on = new Set(
-    [...document.querySelectorAll('input[data-sev]:checked')].map((input) => input.dataset.sev),
-  )
-  document.querySelectorAll('.signal-row').forEach((row) => {
-    row.style.display = on.has(row.dataset.severity) ? '' : 'none'
-  })
-}
-
-function selectionPayloads() {
-  return [...state.selected.values()].map((signal) => {
-    const verbs = (signal.actions || []).filter((verb) =>
-      state.registry.some((entry) => entry.verb === verb && entry.signalClasses.includes(signal.class)))
-    const verb = verbs[0] || 'investigate'
-    const entry = state.registry.find(
-      (candidate) => candidate.verb === verb && candidate.signalClasses.includes(signal.class),
-    )
-    return { signal, verb, autonomy: (entry && entry.autonomy) || {}, extraText: null }
-  })
-}
-
-function updateSpawnPanel() {
-  const panel = document.getElementById('spawn-panel')
-  if (panel === null) return
-  panel.innerHTML = spawnPanelHtml({ count: state.selected.size, controls: state.controls })
-  const form = document.getElementById('spawn-form')
-  form.addEventListener('change', () => {
-    state.controls = readControls(form)
-  })
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault()
-    state.controls = readControls(form)
-    const extraEl = form.querySelector('[name="extra"]')
-    const extraText = extraEl === null ? '' : extraEl.value
-    const request = spawnRequest(selectionPayloads(), state.controls, extraText)
-    const result = await api('/api/spawn', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(request),
-    })
-    document.getElementById('spawn-result').textContent = JSON.stringify(result, null, 2)
-    if (result.ok === true) {
-      state.selected = new Map()
-      document.querySelectorAll('[data-select]').forEach((box) => {
-        box.checked = false
-      })
-      updateSpawnPanel()
-      renderTray()
+    const label = VIEWS.find(([id]) => id === state.view)[1]
+    el('view-title').textContent = label
+    el('view-crumb').textContent = label
+    el('view-description').textContent = VIEW_COPY[state.view]
+    el('global-search').value = state.queries[state.view] || ''
+    el('global-search').placeholder = `Search ${label.toLowerCase()}…`
+    el('severity-filters').hidden = state.view !== 'signals'
+    el('global-search').closest('label').hidden = ['audit', 'settings', 'remedies'].includes(state.view)
+    if (hash && win && win.location.hash !== `#${state.view}`) win.location.hash = state.view
+    renderCurrent()
+    if (['board', 'remedies', 'settings'].includes(state.view)) loadGoal()
+  }
+  function goalOptions() {
+    const filter = el('goal-status').value
+    const scopedGoals = state.statuses.filter((s) => scoped(s.repoRoot))
+    const active = scopedGoals.filter((s) => filter === 'all' || (filter === 'active' ? s.active : !s.active))
+      .sort((a, b) => (b.attention?.total || 0) - (a.attention?.total || 0))
+    if (!active.some((s) => s.key === state.goal)) { state.goal = active[0]?.key || null; state.projection = null; el('detail').hidden = true }
+    el('goal-select').innerHTML = active.length ? active.map((s) => `<option value="${esc(s.key)}">${esc(s.key)}${s.attention?.total ? ` · ${s.attention.total} need attention` : ''}</option>`).join('') : '<option value="">No goals in this scope and status</option>'
+    el('goal-select').value = state.goal || ''
+    el('attn-summary').textContent = `${scopedGoals.filter((s) => s.active).length} active · ${scopedGoals.filter((s) => !s.active).length} inactive`
+  }
+  function scopeOptions() {
+    const roots = new Set([...state.fleet.map((f) => f.root), ...state.signals.map((s) => s.repo), ...state.spawns.map((s) => s.repoRoot), ...state.statuses.map((s) => s.repoRoot)].filter(Boolean))
+    if (state.scope) roots.add(state.scope)
+    el('fleet-select').innerHTML = '<option value="">All repositories</option>' + [...roots].sort().map((root) => `<option value="${esc(root)}">${esc(root.split('/').pop())} · ${esc(root)}</option>`).join('')
+    el('fleet-select').value = state.scope
+  }
+  function queueRows() {
+    const severities = new Set([...doc.querySelectorAll('[data-sev]:checked')].map((n) => n.dataset.sev))
+    return state.signals.filter((s) => scoped(s.repo) && severities.has(s.severity) && matches(`${s.subject} ${s.repo} ${s.class}`))
+      .sort((a, b) => ['urgent', 'attention', 'info'].indexOf(a.severity) - ['urgent', 'attention', 'info'].indexOf(b.severity))
+  }
+  function renderCurrent() {
+    if (state.view === 'signals') {
+      const rows = queueRows(), page = pageRows(rows)
+      el('signals-body').innerHTML = rows.length ? signalsHtml(page.rows, state.registry, { selected: state.selected, total: rows.length }) + page.pager : emptyHtml(state.signals.length ? 'No matching work' : 'No findings', 'Change filters or repository scope. Refresh to check for new findings.')
+      wireSignalRows(el('signals-body'))
     }
-  })
-}
-
-function wireSignalRows(body) {
-  let lastChecked = null
-  const boxes = [...body.querySelectorAll('[data-select]')]
-  boxes.forEach((box, index) => {
-    box.addEventListener('click', (event) => {
-      if (event.shiftKey && lastChecked !== null) {
-        const lo = Math.min(lastChecked, index)
-        const hi = Math.max(lastChecked, index)
-        for (let i = lo; i <= hi; i += 1) boxes[i].checked = box.checked
+    if (state.view === 'board') {
+      const parcels = (state.projection?.parcels || []).filter((p) => matches(`${state.goal} ${p.parcel}`) && (!el('parcel-status').value || p.state === el('parcel-status').value))
+      const page = pageRows(parcels)
+      el('board').innerHTML = parcels.length ? boardHtml(page.rows, state.statuses.find((s) => s.key === state.goal), { signals: state.signals, registry: state.registry, selected: state.selected, total: parcels.length }) + page.pager : emptyHtml('No matching parcels', state.goal ? 'This goal has no parcels in the current search.' : 'Select a repository with an active goal. Other findings remain in Work queue.')
+      wireSignalRows(el('board'))
+      el('board').querySelectorAll('[data-parcel]').forEach((card) => {
+        on(card, 'click', () => renderDetail(card.dataset.parcel))
+        on(card, 'keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); renderDetail(card.dataset.parcel) } })
+      })
+    }
+    if (state.view === 'fleet') {
+      const rows = state.fleet.filter((f) => matches(`${f.root} ${f.identity?.remote || ''}`))
+      const page = pageRows(rows)
+      el('fleet-body').innerHTML = fleetHtml(page.rows) + page.pager
+      wireFleet()
+    }
+    if (state.view === 'sessions') {
+      const rows = state.spawns.filter((s) => scoped(s.repoRoot) && matches(`${s.sessionName} ${s.paneIndex} ${s.model} ${s.repoRoot}`))
+        .sort((a, b) => (Date.parse(b.createdAt) || 0) - (Date.parse(a.createdAt) || 0))
+      if (state.revealSession) {
+        const index = rows.findIndex((s) => s.sessionName === state.highlightSession)
+        if (index >= 0) { state.pages.sessions = Math.floor(index / 200); state.revealSession = false }
       }
-      lastChecked = index
-      state.selected = new Map(
-        boxes
-          .filter((candidate) => candidate.checked)
-          .map((candidate) => [candidate.dataset.select, state.signals.find((s) => s.id === candidate.dataset.select)]),
-      )
-      updateSpawnPanel()
+      const page = pageRows(rows)
+      el('sessions-body').innerHTML = rows.length ? trayHtml(rows, { page: state.pages.sessions, registry: state.registry, highlight: state.highlightSession }) : emptyHtml(state.spawns.length ? 'No matching sessions' : 'No console-recorded launches', 'Launch selected work from Work queue, or clear filters. Sessions started elsewhere are not listed here.')
+      wireSessions(el('sessions-body'))
+    }
+    updateSelectionBar()
+  }
+  async function loadGoal() {
+    const current = ++detailGeneration, goal = state.goal
+    if (goal && !state.projection && state.view === 'board') el('board').innerHTML = emptyHtml('Loading goal…', 'Reading the authoritative parcel projection.')
+    if (!goal) { el('alerts-body').innerHTML = emptyHtml('No active goal', 'Choose a repository with an active goal.'); el('routing-body').innerHTML = emptyHtml('No routing data', 'Select an active goal to inspect policy.'); return }
+    try {
+      const [projection, alerts, routing] = await Promise.all([api(`/api/parcels?goal=${encodeURIComponent(goal)}`), api(`/api/alerts?goal=${encodeURIComponent(goal)}`), api(`/api/routing?goal=${encodeURIComponent(goal)}`)])
+      if (destroyed || current !== detailGeneration || state.goal !== goal) return
+      if (!Array.isArray(projection.parcels) || !Array.isArray(alerts.alerts) || !Array.isArray(routing.parcels)) throw new Error('Invalid goal projection response')
+      state.projection = projection
+      state.remedies = alerts.remedies || []
+      el('alerts-body').innerHTML = remediesHtml(alerts.alerts || [], state.remedies, alerts.notifications || [])
+      el('alerts-body').querySelectorAll('[data-del]').forEach((button) => on(button, 'click', async () => {
+        // Notification dismissal does not operate on goals, receipts, worktrees or PRs.
+        try { await api(`/api/notifications/${encodeURIComponent(button.dataset.del)}`, { method: 'DELETE' }); loadGoal() } catch (err) { status(err.message, true) }
+      }))
+      const rows = (routing.parcels || []).map((p) => `<tr><td>${esc(p.parcel)}</td><td>${esc(p.routing?.routingClass)}</td><td>${esc(p.routing?.resolvedTier)}</td><td>${esc(p.routing?.resolvedModelId)}</td></tr>`).join('')
+      const classes = (routing.policy?.classes || []).map((c) => `<tr><td>${esc(c.name)}</td><td>${esc(c.allowlist?.join(', '))}</td><td>${esc(c.ceilingUsd)}</td></tr>`).join('')
+      const roles = (routing.policy?.roles || []).map((r) => `<tr><td>${esc(r.role)}</td><td>${esc(r.tier)}</td></tr>`).join('')
+      el('routing-body').innerHTML = `<h2>Routing classes</h2><div class="table-wrap"><table><tr><th>Class</th><th>Allowed tiers</th><th>Ceiling USD</th></tr>${classes}</table></div><h2>Role policy</h2><div class="table-wrap"><table><tr><th>Role</th><th>Tier</th></tr>${roles}</table></div><h2>Resolved parcels</h2><div class="table-wrap"><table><tr><th>Parcel</th><th>Class</th><th>Tier</th><th>Model</th></tr>${rows}</table></div>`
+      renderCurrent()
+    } catch (err) {
+      if (current === detailGeneration) {
+        status(`Goal data stale: ${err.message}. Use Refresh to retry.`, true)
+        if (!state.projection) el('board').innerHTML = emptyHtml('Could not load goal', `${err.message}. Use Refresh to retry.`)
+        if (!el('alerts-body').textContent) el('alerts-body').innerHTML = emptyHtml('Could not load alerts', 'Use Refresh to retry.')
+        if (!el('routing-body').textContent) el('routing-body').innerHTML = emptyHtml('Could not load policy', 'Use Refresh to retry.')
+      }
+    }
+  }
+  async function renderDetail(key) {
+    const goal = state.goal, current = ++detailGeneration
+    const p = state.projection?.parcels?.find((x) => x.parcel === key)
+    if (!p) return
+    el('detail').hidden = false
+    el('detail').innerHTML = '<p role="status">Loading evidence…</p>'
+    try {
+      const logs = await api(`/api/parcels/${encodeURIComponent(key)}/logs?goal=${encodeURIComponent(goal)}`)
+      if (current !== detailGeneration || goal !== state.goal || destroyed) return
+      const root = state.statuses.find((s) => s.key === goal)?.repoRoot || ''
+      el('detail').innerHTML = detailHtml(p, logs, root, state.projection.goal?.loopDirectiveRef || '', state.remedies.filter((r) => r.parcel === p.parcel).map(remedyHtml))
+    } catch (err) { if (current === detailGeneration) el('detail').textContent = `Could not load evidence: ${err.message}. Select the parcel again to retry.` }
+  }
+  async function refresh() {
+    const current = ++generation
+    status('Refreshing workspace…')
+    const endpoints = [['statuses', '/api/goals'], ['signals', '/api/signals'], ['registry', '/api/actions'], ['fleet', '/api/fleet'], ['spawns', '/api/spawns']]
+    const results = await Promise.allSettled(endpoints.map(async ([key, path]) => {
+      const data = await api(path), field = { registry: 'actions', fleet: 'roots' }[key] || key
+      if (!Array.isArray(data[field])) throw new Error(`Invalid ${key} response`)
+      return data[field]
+    }))
+    if (destroyed || current !== generation) return
+    const failures = []
+    results.forEach((result, i) => { if (result.status === 'fulfilled') state[endpoints[i][0]] = result.value; else failures.push(`${endpoints[i][0]}: ${result.reason.message}`) })
+    reconcileSelection(state.selected, state.signals, state.registry)
+    scopeOptions(); goalOptions(); renderCurrent()
+    el('tray-count').textContent = `(${new Set(state.spawns.map((s) => s.sessionName)).size} sessions · ${state.spawns.length} panes)`
+    el('tray-body').innerHTML = trayHtml([...state.spawns].sort((a, b) => (Date.parse(b.createdAt) || 0) - (Date.parse(a.createdAt) || 0)).slice(0, 3), { registry: state.registry, compact: true }); wireSessions(el('tray-body'))
+    el('clock').textContent = `Checked ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+    status(failures.length ? `Some data is stale: ${failures.join('; ')}. Use Refresh to retry.` : 'Workspace up to date', failures.length > 0)
+    if (['board', 'remedies', 'settings'].includes(state.view)) await loadGoal()
+  }
+  const dialogOrigins = new Map()
+  function openDialog(dialog) {
+    if (dialog.hasAttribute('open')) return
+    dialogOrigins.set(dialog.id, doc.activeElement)
+    if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open', '')
+    dialog.querySelector('button, input, select')?.focus()
+  }
+  function closeDialog(dialog) {
+    if (typeof dialog.close === 'function') dialog.close(); else dialog.removeAttribute('open')
+    const origin = dialogOrigins.get(dialog.id)
+    ;(origin?.isConnected && origin !== doc.body && origin !== doc.documentElement ? origin : el('review-launch')).focus()
+  }
+  function updateSelectionBar() {
+    updateLaunchValidity()
+    el('selection-bar').hidden = state.selected.size === 0
+    const blocked = [...state.selected.values()].filter((item) => item.unavailable || item.needsReview || !item.verb).length
+    el('selection-summary').textContent = `${state.selected.size} item${state.selected.size === 1 ? '' : 's'} selected${blocked ? ` · ${blocked} need review` : ''} across all views`
+  }
+  function launchBlocked() { return state.submitting || !state.selected.size || [...state.selected.values()].some((item) => !item.verb || item.unavailable || item.needsReview) }
+  function updateLaunchValidity() {
+    reconcileSelection(state.selected, state.signals, state.registry)
+    if (el('spawn-run')) el('spawn-run').disabled = launchBlocked()
+    if (el('launch-dialog').hasAttribute('open')) {
+      const problems = [...state.selected.values()].filter((item) => item.unavailable || item.needsReview)
+      if (problems.length) el('spawn-result').textContent = 'Selection changed during refresh. Reopen review to resolve unavailable items or changed permission defaults.'
+    }
+  }
+  function updateSpawnPanel() {
+    state.launchPage = Math.min(state.launchPage, Math.max(0, Math.ceil(state.selected.size / 200) - 1))
+    el('spawn-panel').innerHTML = spawnPanelHtml({ count: state.selected.size, controls: state.controls, selections: [...state.selected.values()], registry: state.registry, extra: state.extra, error: state.launchError, page: state.launchPage })
+    const form = el('spawn-form')
+    el('spawn-run').disabled = launchBlocked()
+    function saveDraft() { state.controls = readControls(form); state.extra = form.querySelector('[name="extra"]').value }
+    on(form, 'input', saveDraft)
+    on(form, 'change', (event) => {
+      saveDraft()
+      const node = event.target, wrapper = node.closest('[data-launch-item]')
+      const item = wrapper && state.selected.get(wrapper.dataset.launchItem)
+      if (!item) return
+      if (node.matches('[data-verb]')) {
+        const entry = eligibleActions(item.signal, state.registry).find((e) => e.verb === node.value)
+        item.verb = entry?.verb || null; item.autonomy = { ...(entry?.autonomy || { decisions: 'partial', commit: false, push: false, openPr: false, merge: false }) }
+        item.signature = actionSignature(entry); item.needsReview = false; item.unavailable = null
+        updateSpawnPanel(); return
+      }
+      if (node.dataset.permission && node.dataset.permission !== 'merge') item.autonomy[node.dataset.permission] = node.dataset.permission === 'decisions' ? node.value : node.checked
+      updateLaunchValidity()
     })
-  })
-  body.querySelectorAll('.action-btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const signal = state.signals.find(
-        (s) => s.subject === btn.dataset.subject && s.class === btn.dataset.class,
-      )
-      const entry = state.registry.find(
-        (candidate) => candidate.verb === btn.dataset.verb && candidate.signalClasses.includes(btn.dataset.class),
-      )
+    on(form, 'click', (event) => {
+      const node = event.target.closest('button'), wrapper = node?.closest('[data-launch-item]')
+      if (!node) return
+      saveDraft()
+      if (node.hasAttribute('data-page')) { state.launchPage = Math.max(0, state.launchPage + (node.dataset.page === 'next' ? 1 : -1)); updateSpawnPanel() }
+      if (node.hasAttribute('data-remove-selection')) { state.selected.delete(wrapper.dataset.launchItem); updateSelectionBar(); updateSpawnPanel(); renderCurrent() }
+      if (node.hasAttribute('data-ack-review')) {
+        const item = state.selected.get(wrapper.dataset.launchItem), entry = eligibleActions(item.signal, state.registry).find((e) => e.verb === item.verb)
+        item.signature = actionSignature(entry); item.needsReview = false; updateSpawnPanel()
+      }
+    })
+    on(form, 'submit', async (event) => {
+      event.preventDefault(); saveDraft(); updateLaunchValidity()
+      if (launchBlocked()) return
+      state.submitting = true; el('spawn-run').disabled = true; el('spawn-result').textContent = 'Launching… Do not resubmit.'
+      const ids = [...state.selected.keys()], selections = [...state.selected.values()]
+      try {
+        const result = await api('/api/spawn', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(spawnRequest(selections, state.controls, state.extra)) })
+        if (!result.plan?.sessionName || !Array.isArray(result.launch?.launched)) throw new Error('Launch response did not confirm a session')
+        const name = result.plan.sessionName
+        state.highlightSession = name
+        state.launchError = ''
+        el('launch-outcome').innerHTML = `<div class="banner"><strong>Launched ${esc(name)}</strong><p>${result.launch.launched.length} pane${result.launch.launched.length === 1 ? '' : 's'} recorded in one session. Pane liveness is not proof that work is complete.</p><button type="button" data-go-sessions data-reveal-session>View launched session →</button></div>`
+        ids.forEach((id) => state.selected.delete(id))
+        doc.querySelectorAll('[data-select]').forEach((box) => { box.checked = state.selected.has(box.dataset.select) })
+        updateSelectionBar(); closeDialog(el('launch-dialog')); await refresh()
+      } catch (err) {
+        state.launchError = `Launch not confirmed: ${err.message}. A session or worktree may have started. Inspect Sessions and refresh before deciding whether to retry; no automatic retry will occur.`
+        el('spawn-result').textContent = state.launchError
+        el('launch-outcome').innerHTML = `<div class="banner"><strong>Launch not confirmed</strong><p>${esc(state.launchError)}</p><button type="button" data-go-sessions>Inspect sessions →</button></div>`
+      } finally { state.submitting = false; if (el('spawn-run')) el('spawn-run').disabled = launchBlocked() }
+    })
+  }
+  function wireSignalRows(body) {
+    let last = null
+    const boxes = [...body.querySelectorAll('[data-select]')]
+    function selectBox(box, checked) {
+      box.checked = checked
+      const signal = state.signals.find((s) => s.id === box.dataset.select)
+      if (checked && signal && !state.selected.has(signal.id)) state.selected.set(signal.id, selectTarget(signal, state.registry))
+      else if (!checked) state.selected.delete(box.dataset.select)
+    }
+    boxes.forEach((box, index) => {
+      box.checked = state.selected.has(box.dataset.select)
+      on(box, 'click', (event) => {
+        const range = event.shiftKey && last !== null ? boxes.slice(Math.min(last, index), Math.max(last, index) + 1) : [box]
+        for (const b of range) selectBox(b, box.checked)
+        last = index; updateSelectionBar()
+      })
+    })
+    on(body.querySelector('[data-select-visible]'), 'click', () => { boxes.forEach((b) => selectBox(b, true)); updateSelectionBar() })
+    on(body.querySelector('[data-clear-visible]'), 'click', () => { boxes.forEach((b) => selectBox(b, false)); updateSelectionBar() })
+    body.querySelectorAll('.action-btn').forEach((button) => on(button, 'click', () => {
+      const signal = state.signals.find((s) => s.id === button.dataset.signalId)
+      const entry = state.registry.find((e) => e.verb === button.dataset.verb && e.signalClasses.includes(signal?.class))
       if (!signal || !entry) return
-      const popover = document.getElementById('action-popover')
-      popover.innerHTML = actionPopoverHtml(signal, entry.verb, entry)
-      wirePopover(popover.querySelector('form'), signal, entry)
-    })
-  })
-}
-
-function wirePopover(form, signal, entry) {
-  form.querySelector('[data-cancel]').addEventListener('click', () => {
-    form.remove()
-  })
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault()
-    const checked = (name) => {
-      const el = form.querySelector(`[name="${name}"]`)
-      return el !== null && el.checked === true
-    }
-    const decisions = form.querySelector('[name="decisions"]:checked').value
-    const confirmationEl = form.querySelector('[name="confirmation"]')
-    const confirmation = confirmationEl === null ? null : confirmationEl.value
-    // Destructive gate (FCA-P4 contract mirrored): no request is EVER sent
-    // without the exact typed intent for this subject.
-    if (form.dataset.destructive === 'true' && confirmation !== confirmationToken(signal.subject)) {
-      form.querySelector('[data-confirm-error]').hidden = false
-      return
-    }
-    const outcome = await api('/api/actions/dispatch', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        verb: entry.verb,
-        signalClass: signal.class,
-        subject: signal.subject,
-        autonomy: {
-          decisions,
-          commit: checked('commit'),
-          push: checked('push'),
-          openPr: checked('openPr'),
-          merge: checked('merge'),
-        },
-        confirmation,
-      }),
-    })
-    document.getElementById('action-result').textContent = JSON.stringify(outcome, null, 2)
-    form.remove()
-    renderAlerts()
-  })
-}
-
-function fleetError(message) {
-  const slot = document.getElementById('fleet-error')
-  if (slot === null) return
-  slot.hidden = message === null
-  slot.textContent = message === null ? '' : message
-}
-
-async function renderFleet() {
-  const data = await api('/api/fleet')
-  state.fleet = data.roots || []
-  const body = document.getElementById('fleet-body')
-  body.innerHTML = fleetHtml(state.fleet)
-  wireFleet(body)
-}
-
-function wireFleet(body) {
-  const pathInput = document.getElementById('browse-path')
-  const addButton = document.getElementById('fleet-add')
-  const selectionLabel = document.getElementById('browse-selection')
-  const runBrowse = async () => {
-    fleetError(null)
-    const result = await api(`/api/fs/browse?path=${encodeURIComponent(pathInput.value)}`)
-    const list = document.getElementById('browse-list')
-    if (result.reason !== undefined) {
-      list.innerHTML = ''
-      fleetError(`${result.reason}: ${result.error}`)
-      return
-    }
-    list.innerHTML = browseListHtml(result.path, result.entries || [])
-    list.querySelectorAll('[data-open]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        pathInput.value = btn.dataset.open
-        runBrowse()
-      })
-    })
-    list.querySelectorAll('[data-pick]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        state.browseSelection = btn.dataset.pick
-        selectionLabel.textContent = `selected: ${state.browseSelection}`
-        addButton.disabled = false
-      })
-    })
+      if (!entry.destructive && entry.invocation === 'spawn') {
+        const item = selectTarget(signal, state.registry)
+        item.verb = entry.verb; item.autonomy = { ...entry.autonomy }; item.signature = actionSignature(entry)
+        state.selected.set(signal.id, item); updateSelectionBar(); updateSpawnPanel(); openDialog(el('launch-dialog'))
+      } else showAction(signal, entry)
+    }))
   }
-  document.getElementById('browse-run').addEventListener('click', runBrowse)
-  addButton.addEventListener('click', async () => {
-    fleetError(null)
-    const result = await api('/api/fleet/add', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ root: state.browseSelection }),
+  function showAction(signal, entry) {
+    el('action-popover').innerHTML = actionPopoverHtml(signal, entry.verb, entry)
+    const form = el('action-popover').querySelector('form')
+    let submitting = false
+    on(form.querySelector('[data-cancel]'), 'click', () => closeDialog(el('action-dialog')))
+    on(form, 'submit', async (event) => {
+      event.preventDefault()
+      if (submitting) return
+      const token = form.querySelector('[name="confirmation"]')?.value || null
+      if (entry.destructive && token !== confirmationToken(signal.subject)) { form.querySelector('[data-confirm-error]').hidden = false; return }
+      const autonomy = { decisions: form.querySelector('[name="decisions"]:checked').value }
+      for (const name of ['commit', 'push', 'openPr', 'merge']) autonomy[name] = form.querySelector(`[name="${name}"]`).checked
+      submitting = true; form.querySelector('[type="submit"]').disabled = true
+      try {
+        const result = await api('/api/actions/dispatch', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ verb: entry.verb, signalClass: signal.class, subject: signal.subject, autonomy: { ...autonomy, merge: false }, confirmation: token, extraText: form.querySelector('[name="extra"]').value || null }) })
+        el('action-result').innerHTML = `<div class="banner"><strong>Action ${esc(result.action || 'submitted')} · ${esc(signal.subject)}</strong>${result.reason ? `<p>${esc(result.reason)}</p>` : ''}<details><summary>Action response / presented command</summary><pre>${esc(JSON.stringify(result, null, 2))}</pre></details></div>`
+        if (el('action-popover').contains(form)) closeDialog(el('action-dialog'))
+        await refresh()
+      } catch (err) { form.querySelector('[data-confirm-error]').textContent = err.message; form.querySelector('[data-confirm-error]').hidden = false }
+      finally { submitting = false; form.querySelector('[type="submit"]').disabled = false }
     })
-    if (result.ok !== true) {
-      fleetError(`${result.reason}: ${result.error}`)
-      return
-    }
-    state.browseSelection = null
-    renderFleet()
-  })
-  body.querySelectorAll('[data-remove]').forEach((btn) => {
-    btn.addEventListener('click', async () => {
-      fleetError(null)
-      const result = await api('/api/fleet/remove', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ root: btn.dataset.remove }),
-      })
-      if (result.ok !== true) {
-        // Typed refusal rendered inline — the primary root removal refusal is
-        // expected UI, never a crash.
-        fleetError(`${result.reason}: ${result.error}`)
-        return
+    openDialog(el('action-dialog'))
+  }
+  function wireSessions(body) {
+    body.querySelectorAll('[data-copy]').forEach((button) => on(button, 'click', async () => {
+      const feedback = button.parentElement.querySelector('[data-copy-status]')
+      try { const clipboard = win?.navigator?.clipboard || globalThis.navigator?.clipboard; if (!clipboard) throw new Error(); await clipboard.writeText(button.dataset.copy); feedback.textContent = 'Copied attach command' }
+      catch { feedback.textContent = 'Copy manually from the command above (clipboard unavailable).' }
+    }))
+    body.querySelectorAll('[data-session-action]').forEach((button) => on(button, 'click', () => {
+      const entry = state.registry.find((e) => e.verb === button.dataset.sessionAction && e.signalClasses.includes('session-state'))
+      if (entry) showAction({ class: 'session-state', subject: button.dataset.subject, repo: button.dataset.repo, actions: [entry.verb] }, entry)
+    }))
+  }
+  function wireFleet() {
+    const error = (text) => { el('fleet-error').hidden = !text; el('fleet-error').textContent = text || '' }
+    on(el('browse-run'), 'click', async () => {
+      try { const data = await api(`/api/fs/browse?path=${encodeURIComponent(el('browse-path').value)}`); error(null); el('browse-list').innerHTML = browseListHtml(data.path, data.entries || []); el('browse-list').querySelectorAll('[data-open]').forEach((b) => on(b, 'click', () => { el('browse-path').value = b.dataset.open; el('browse-run').click() })); el('browse-list').querySelectorAll('[data-pick]').forEach((b) => on(b, 'click', () => { state.browseSelection = b.dataset.pick; el('browse-selection').textContent = `Selected: ${b.dataset.pick}`; el('fleet-add').disabled = false })) } catch (err) { error(err.message) }
+    })
+    on(el('fleet-add'), 'click', async () => {
+      try { await api('/api/fleet/add', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ root: state.browseSelection }) }); state.browseSelection = null; await refresh() } catch (err) { error(err.message) }
+    })
+    el('fleet-body').querySelectorAll('[data-remove]').forEach((b) => on(b, 'click', async () => {
+      try { await api('/api/fleet/remove', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ root: b.dataset.remove }) }); await refresh() } catch (err) { error(err.message) }
+    }))
+  }
+  el('app').innerHTML = shellHtml()
+  doc.querySelectorAll('.nav-btn').forEach((b) => on(b, 'click', () => setView(b.dataset.view)))
+  on(el('fleet-select'), 'change', () => { state.scope = el('fleet-select').value; state.pages = {}; ++detailGeneration; goalOptions(); renderCurrent(); if (['board', 'remedies', 'settings'].includes(state.view)) loadGoal() })
+  on(el('goal-status'), 'change', () => { state.pages.board = 0; goalOptions(); renderCurrent(); loadGoal() })
+  on(el('parcel-status'), 'change', () => { state.pages.board = 0; renderCurrent() })
+  on(el('goal-select'), 'change', () => { state.goal = el('goal-select').value; state.projection = null; el('detail').hidden = true; renderCurrent(); loadGoal() })
+  on(el('global-search'), 'input', () => { state.queries[state.view] = el('global-search').value.trim(); state.pages[state.view] = 0; renderCurrent() })
+  doc.querySelectorAll('[data-sev]').forEach((b) => on(b, 'change', () => { state.pages.signals = 0; renderCurrent() }))
+  on(el('main'), 'click', (event) => { const b = event.target.closest('[data-page]'); if (b) { state.pages[state.view] = Math.max(0, (state.pages[state.view] || 0) + (b.dataset.page === 'next' ? 1 : -1)); renderCurrent() } if (event.target.closest('[data-go-sessions]')) {
+      if (event.target.closest('[data-reveal-session]')) { state.scope = ''; state.queries.sessions = ''; state.pages.sessions = 0; state.revealSession = true; scopeOptions(); goalOptions() }
+      setView('sessions')
+    } })
+  on(el('tray-toggle'), 'click', () => { el('tray-body').hidden = !el('tray-body').hidden; el('tray-toggle').setAttribute('aria-expanded', String(!el('tray-body').hidden)) })
+  on(el('clear-selection'), 'click', () => { state.selected.clear(); renderCurrent() })
+  on(el('review-launch'), 'click', () => { updateSpawnPanel(); openDialog(el('launch-dialog')) })
+  on(doc.querySelector('[data-close-dialog]'), 'click', () => closeDialog(el('launch-dialog')))
+  on(doc.querySelector('[data-close-action]'), 'click', () => closeDialog(el('action-dialog')))
+  for (const id of ['launch-dialog', 'action-dialog']) {
+    on(el(id), 'cancel', (event) => { event.preventDefault(); closeDialog(el(id)) })
+    on(el(id), 'keydown', (event) => {
+      if (event.key === 'Escape') { event.preventDefault(); closeDialog(el(id)) }
+      if (event.key === 'Tab') {
+        const controls = [...el(id).querySelectorAll('button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea, a[href]')]
+        const first = controls[0], last = controls[controls.length - 1]
+        if (event.shiftKey && doc.activeElement === first) { event.preventDefault(); last?.focus() }
+        else if (!event.shiftKey && doc.activeElement === last) { event.preventDefault(); first?.focus() }
       }
-      renderFleet()
     })
-  })
-}
-
-async function renderRouting() {
-  const data = await api(`/api/routing?goal=${encodeURIComponent(state.goal)}`)
-  const classRows = ((data.policy && data.policy.classes) || []).map((c) =>
-    `<tr><td>${esc(c.name)}</td><td>${esc(c.allowlist.join(', '))}</td><td>${esc(c.ceilingUsd)}</td></tr>`).join('')
-  const roleRows = ((data.policy && data.policy.roles) || []).map((r) =>
-    `<tr><td>${esc(r.role)}</td><td>${esc(r.tier)}</td></tr>`).join('')
-  const parcelRows = (data.parcels || []).map((p) =>
-    `<tr><td>${esc(p.parcel)}</td><td>${esc(p.routing.routingClass)}</td><td>${esc(p.routing.resolvedTier)}</td><td>${esc(p.routing.resolvedModelId)}</td></tr>`).join('')
-  document.getElementById('routing-body').innerHTML = `
-    <table><tr><th>class</th><th>allowlist (tiers)</th><th>ceiling USD</th></tr>${classRows}</table>
-    <table><tr><th>role</th><th>tier</th></tr>${roleRows}</table>
-    <table><tr><th>parcel</th><th>routing class</th><th>resolved tier</th><th>resolved model</th></tr>${parcelRows}</table>`
-}
-
-async function refresh() {
-  const clock = document.getElementById('clock')
-  if (clock !== null) clock.textContent = new Date().toISOString()
-  // Repo-scoped surfaces populate regardless of goal selection.
-  renderTray()
-  if (!state.goal) return
-  state.projection = await api(`/api/parcels?goal=${encodeURIComponent(state.goal)}`)
-  renderBoard()
-  renderAlerts()
-  renderRouting()
-  if (state.view === 'signals') await renderSignals()
-}
-
-function wireEvents() {
-  document.querySelectorAll('.nav-btn').forEach((btn) => {
-    btn.addEventListener('click', () => setView(btn.dataset.view))
-  })
-  const select = document.getElementById('goal-select')
-  select.addEventListener('change', () => {
-    state.goal = select.value
-    refresh()
-  })
-  document.getElementById('refresh').addEventListener('click', refresh)
-
-  const trayToggle = document.getElementById('tray-toggle')
-  trayToggle.addEventListener('click', () => {
-    const body = document.getElementById('tray-body')
-    const opening = body.hidden
-    body.hidden = !opening
-    trayToggle.setAttribute('aria-expanded', String(opening))
-  })
-
-  document.getElementById('flow-run').addEventListener('click', async () => {
-    const flow = document.getElementById('flow-select').value
-    const argv = ['flow-arg1', 'flow-arg2', 'flow-arg3', 'flow-arg4']
-      .map((id) => document.getElementById(id).value.trim())
-      .filter((v) => v.length > 0)
-    const result = await api('/api/invoke', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ flow, argv }),
-    })
-    document.getElementById('flow-result').textContent = JSON.stringify(result, null, 2)
-    renderAlerts()
-  })
-
-  const search = document.getElementById('global-search')
-  search.addEventListener('input', () => {
-    const needle = search.value.trim().toLowerCase()
-    document.querySelectorAll('#board .card').forEach((card) => {
-      card.style.display = needle === '' || card.textContent.toLowerCase().includes(needle) ? '' : 'none'
-    })
-  })
-  document.querySelectorAll('input[data-sev]').forEach((input) => {
-    input.addEventListener('change', applySeverityFilters)
-  })
-}
-
-async function init() {
-  const app = document.getElementById('app')
-  const health = await api('/api/health')
-  state.repoRoot = health.repoRoot || ''
-  state.posture = health.posture || ''
-  app.innerHTML = shellHtml({ posture: state.posture, activeView: state.view })
-
-  const goals = await api('/api/goals')
-  state.goals = goals.goals || []
-  // FCA-2: the picker lists ACTIVE goals only, grouped per goal tree,
-  // attention first.
-  state.statuses = goals.statuses
-    || state.goals.map((g) => ({ key: g.slug, tree: null, active: true, attention: { total: 0 } }))
-  const active = state.statuses.filter((s) => s.active)
-  active.sort((a, b) => (b.attention.total > 0) - (a.attention.total > 0))
-  const groups = new Map()
-  for (const status of active) {
-    const label = status.tree === null ? 'foreman-line' : status.tree
-    if (!groups.has(label)) groups.set(label, [])
-    groups.get(label).push(status)
   }
-  const select = document.getElementById('goal-select')
-  select.innerHTML = [...groups].map(([label, list]) =>
-    `<optgroup label="${esc(label)}">${list.map((s) => {
-      const marker = s.attention.total > 0 ? ` ● ${s.attention.total}` : ''
-      return `<option value="${esc(s.key)}">${esc(s.key)}${marker}</option>`
-    }).join('')}</optgroup>`).join('') || '<option value="">no active goals</option>'
-  state.goal = active.length ? active[0].key : null
-  select.value = state.goal ?? ''
-  const attnGoals = state.statuses.filter((s) => s.active && s.attention.total > 0).length
-  const summary = document.getElementById('attn-summary')
-  if (summary !== null) {
-    summary.textContent = attnGoals > 0 ? `⚠ ${attnGoals} goal${attnGoals === 1 ? '' : 's'} need attention` : ''
-    summary.className = attnGoals > 0 ? 'banner-inline' : 'muted'
+  on(el('flow-form'), 'submit', async (event) => {
+    event.preventDefault()
+    try { const data = await api('/api/invoke', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ flow: el('flow-select').value, argv: [1, 2, 3, 4].map((n) => el(`flow-arg${n}`).value.trim()).filter(Boolean) }) }); el('flow-result').textContent = JSON.stringify(data, null, 2) } catch (err) { el('flow-result').textContent = err.message }
+  })
+  const hashChange = () => { if (win.location.hash.slice(1) !== state.view) setView(win.location.hash.slice(1), false) }
+  on(win, 'hashchange', hashChange)
+  setView(win?.location.hash.slice(1), false)
+  async function initialize() {
+    try {
+      const health = await api('/api/health')
+      if (health.ok !== true || typeof health.repoRoot !== 'string' || !health.repoRoot.startsWith('/')) throw new Error('Invalid health response')
+      state.repoRoot = health.repoRoot
+      await refresh()
+    }
+    catch (err) { if (!destroyed) status(`Cannot load workspace: ${err.message}. Use Refresh to retry.`, true) }
   }
-
-  wireEvents()
-  updateSpawnPanel()
-  // Header fleet switcher: populated from the fleet registry (Task 18 data).
-  const fleetData = await api('/api/fleet')
-  const fleetSelect = document.getElementById('fleet-select')
-  if (fleetSelect !== null) {
-    const roots = fleetData.roots || []
-    fleetSelect.innerHTML = roots.length === 0
-      ? '<option value="">no repos</option>'
-      : roots.map((entry) => `<option value="${esc(entry.root)}">${esc(entry.root)}</option>`).join('')
-  }
-  await refresh()
-  // OQ2: poll on page load + 60s background refresh (unref keeps node test
-  // runs from hanging on the timer).
-  const timer = setInterval(refresh, 60000)
-  if (typeof timer === 'object' && timer !== null && typeof timer.unref === 'function') timer.unref()
+  on(el('refresh'), 'click', () => state.repoRoot ? refresh() : initialize())
+  const ready = initialize()
+  const timer = setInterval(() => { if (!destroyed) refresh() }, 60000)
+  timer?.unref?.()
+  return { ready, refresh, destroy: () => { destroyed = true; ++generation; ++detailGeneration; clearInterval(timer); win?.removeEventListener('hashchange', hashChange) } }
 }
-
-init().catch((err) => {
-  const detail = document.getElementById('detail')
-  if (detail !== null) detail.innerHTML = `<div class="flags">${esc(err.message)}</div>`
-})
+if (typeof document !== 'undefined') startConsole(document)
