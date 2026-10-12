@@ -1,0 +1,8 @@
+{
+  "parcelSpecRefs": [
+    "plugins/foreman-line/docs/specs/active/HRO-P1-explicit-provider-mappings.md",
+    "plugins/foreman-line/docs/specs/active/HRO-P1a-mapping-contract.md",
+    "plugins/foreman-line/docs/specs/active/HRO-P1b-mapping-consumer-integration.md"
+  ],
+  "epics": []
+}
