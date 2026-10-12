@@ -94,6 +94,29 @@ test('goal/refresh races cannot overwrite a newer repository or snapshot; inacti
   }
 })
 
+test('goal refresh and pending detail loads do not cancel each other or strand Loading evidence', async () => {
+  const ui = await mountConsole()
+  let release: (value: unknown) => void = () => {}
+  const logs = new Promise((resolve) => {
+    release = resolve
+  })
+  try {
+    ui.click('.nav-btn[data-view="board"]')
+    await ui.settle()
+    ui.routes['/api/parcels/P1/logs'] = () => logs
+    ui.click('#board [data-parcel]')
+    const refreshing = ui.app.refresh()
+    await ui.settle()
+    release({ chainDocuments: [], invocationAudit: [], stateLines: ['Fresh detail evidence'] })
+    await refreshing
+    await ui.settle()
+    assert.match(ui.doc.querySelector('#detail')?.textContent ?? '', /Fresh detail evidence/)
+    assert.ok(!ui.doc.querySelector('#detail')?.textContent?.includes('Loading evidence'))
+  } finally {
+    ui.close()
+  }
+})
+
 test('queue pagination reaches every item and filters before paging', async () => {
   const ui = await mountConsole({
     '/api/signals': {
@@ -125,6 +148,16 @@ test('failed refresh preserves records with stale/retry feedback; initialization
       ui.doc.querySelector('#console-status')?.textContent ?? '',
       /Invalid signals response/,
     )
+    ui.routes['/api/signals'] = { signals: [null] }
+    await ui.app.refresh()
+    assert.equal(
+      ui.doc.querySelectorAll('.signal-row').length,
+      1,
+      'malformed entries retain last-known records',
+    )
+    ui.routes['/api/signals'] = { signals: [{ ...signal(), actions: {} }] }
+    await ui.app.refresh()
+    assert.equal(ui.doc.querySelectorAll('.signal-row').length, 1)
     ui.routes['/api/signals'] = { signals: [] }
     await ui.app.refresh()
     assert.equal(ui.doc.querySelectorAll('.signal-row').length, 0)

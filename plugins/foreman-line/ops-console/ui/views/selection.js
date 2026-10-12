@@ -9,7 +9,7 @@ export function actionSignature(entry) {
 const NO_WRITE = { decisions: 'partial', commit: false, push: false, openPr: false, merge: false }
 export function selectTarget(signal, registry) {
   const entry = eligibleActions(signal, registry).find((e) => e.verb === 'investigate')
-  return { signal, verb: entry?.verb || null, autonomy: { ...(entry?.autonomy || NO_WRITE) },
+  return { signal, verb: entry?.verb || null, autonomy: { ...(entry?.autonomy || NO_WRITE), merge: false },
     signature: actionSignature(entry), unavailable: null, needsReview: false }
 }
 export function reconcileSelection(selected, signals, registry) {

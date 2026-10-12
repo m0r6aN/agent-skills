@@ -10,7 +10,7 @@ export function signalsHtml(signals, registry, options = {}) {
     const selectable = eligibleActions(signal, registry).length > 0
     const actions = allowedVerbs(signal, registry).map((verb) => {
       const entry = registry.find((e) => e.verb === verb && e.signalClasses.includes(signal.class))
-      return `<button type="button" class="action-btn${entry.destructive ? ' danger' : ''}" data-signal-id="${esc(signal.id)}" data-subject="${esc(signal.subject)}" data-class="${esc(signal.class)}" data-verb="${esc(verb)}" ${entry.destructive ? 'data-destructive="true"' : ''}>${verb === 'close-delete' ? 'Close / delete…' : esc(verb[0].toUpperCase() + verb.slice(1))}</button>`
+      return `<button type="button" class="action-btn${entry.destructive ? ' danger' : ''}" data-signal-id="${esc(signal.id)}" data-subject="${esc(signal.subject)}" data-class="${esc(signal.class)}" data-verb="${esc(verb)}" title="${entry.destructive ? 'Separate guarded close/delete action' : entry.invocation === 'spawn' ? `Choose ${esc(verb)} for this item and review all selected work` : 'Review this action'}" ${entry.destructive ? 'data-destructive="true"' : ''}>${verb === 'close-delete' ? 'Close / delete…' : esc(verb[0].toUpperCase() + verb.slice(1))}</button>`
     }).join('')
     return `<tr class="signal-row" data-id="${esc(signal.id)}" data-class="${esc(signal.class)}">
       <td>${selectable ? `<input type="checkbox" data-select="${esc(signal.id)}" ${selected.has(signal.id) ? 'checked' : ''} aria-label="Select ${esc(signal.subject)} in ${esc(signal.repo)}">` : '<span class="muted" title="No supported bulk-launch action">—</span>'}</td>
@@ -26,7 +26,7 @@ export function signalsHtml(signals, registry, options = {}) {
 export function selectionToActions(selections) {
   return selections.map((selection) => ({ verb: selection.verb, signalClass: selection.signal.class,
     subject: selection.signal.subject, evidence: [...selection.signal.evidence], repoRoot: selection.signal.repo,
-    autonomy: { ...selection.autonomy }, extraText: selection.extraText ?? null }))
+    autonomy: { ...selection.autonomy, merge: false }, extraText: selection.extraText ?? null }))
 }
 export function confirmationToken(subject) { return `confirm delete ${subject}` }
 export function autonomyHtml(autonomy, subject = '', disabledMerge = false) {

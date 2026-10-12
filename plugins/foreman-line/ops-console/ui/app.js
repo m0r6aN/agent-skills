@@ -11,8 +11,9 @@ import { actionSignature, eligibleActions, reconcileSelection, selectTarget } fr
 export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   const win = doc.defaultView
   const state = { view: 'signals', scope: '', goal: null, repoRoot: '', statuses: [], signals: [], registry: [], fleet: [], spawns: [],
-    projection: null, remedies: [], queries: {}, pages: {}, selected: new Map(), controls: {}, extra: '', browseSelection: null, launchError: '', submitting: false, launchPage: 0, highlightSession: null, revealSession: false }
+    projection: null, remedies: [], queries: {}, pages: {}, selected: new Map(), controls: {}, extra: '', browseSelection: null, launchError: '', submitting: false, launchPage: 0, highlightSession: null, revealSession: false, detailParcel: null, retryRequired: false, retryAcknowledged: false }
   let generation = 0
+  let goalGeneration = 0
   let detailGeneration = 0
   let destroyed = false
   const el = (id) => doc.getElementById(id)
@@ -59,7 +60,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
     const scopedGoals = state.statuses.filter((s) => scoped(s.repoRoot))
     const active = scopedGoals.filter((s) => filter === 'all' || (filter === 'active' ? s.active : !s.active))
       .sort((a, b) => (b.attention?.total || 0) - (a.attention?.total || 0))
-    if (!active.some((s) => s.key === state.goal)) { state.goal = active[0]?.key || null; state.projection = null; el('detail').hidden = true }
+    if (!active.some((s) => s.key === state.goal)) { state.goal = active[0]?.key || null; state.projection = null; state.detailParcel = null; ++detailGeneration; el('detail').hidden = true }
     el('goal-select').innerHTML = active.length ? active.map((s) => `<option value="${esc(s.key)}">${esc(s.key)}${s.attention?.total ? ` · ${s.attention.total} need attention` : ''}</option>`).join('') : '<option value="">No goals in this scope and status</option>'
     el('goal-select').value = state.goal || ''
     el('attn-summary').textContent = `${scopedGoals.filter((s) => s.active).length} active · ${scopedGoals.filter((s) => !s.active).length} inactive`
@@ -111,12 +112,12 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
     updateSelectionBar()
   }
   async function loadGoal() {
-    const current = ++detailGeneration, goal = state.goal
+    const current = ++goalGeneration, goal = state.goal
     if (goal && !state.projection && state.view === 'board') el('board').innerHTML = emptyHtml('Loading goal…', 'Reading the authoritative parcel projection.')
     if (!goal) { el('alerts-body').innerHTML = emptyHtml('No active goal', 'Choose a repository with an active goal.'); el('routing-body').innerHTML = emptyHtml('No routing data', 'Select an active goal to inspect policy.'); return }
     try {
       const [projection, alerts, routing] = await Promise.all([api(`/api/parcels?goal=${encodeURIComponent(goal)}`), api(`/api/alerts?goal=${encodeURIComponent(goal)}`), api(`/api/routing?goal=${encodeURIComponent(goal)}`)])
-      if (destroyed || current !== detailGeneration || state.goal !== goal) return
+      if (destroyed || current !== goalGeneration || state.goal !== goal) return
       if (!Array.isArray(projection.parcels) || !Array.isArray(alerts.alerts) || !Array.isArray(routing.parcels)) throw new Error('Invalid goal projection response')
       state.projection = projection
       state.remedies = alerts.remedies || []
@@ -130,8 +131,9 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       const roles = (routing.policy?.roles || []).map((r) => `<tr><td>${esc(r.role)}</td><td>${esc(r.tier)}</td></tr>`).join('')
       el('routing-body').innerHTML = `<h2>Routing classes</h2><div class="table-wrap"><table><tr><th>Class</th><th>Allowed tiers</th><th>Ceiling USD</th></tr>${classes}</table></div><h2>Role policy</h2><div class="table-wrap"><table><tr><th>Role</th><th>Tier</th></tr>${roles}</table></div><h2>Resolved parcels</h2><div class="table-wrap"><table><tr><th>Parcel</th><th>Class</th><th>Tier</th><th>Model</th></tr>${rows}</table></div>`
       renderCurrent()
+      if (state.detailParcel && state.view === 'board') await renderDetail(state.detailParcel)
     } catch (err) {
-      if (current === detailGeneration) {
+      if (current === goalGeneration) {
         status(`Goal data stale: ${err.message}. Use Refresh to retry.`, true)
         if (!state.projection) el('board').innerHTML = emptyHtml('Could not load goal', `${err.message}. Use Refresh to retry.`)
         if (!el('alerts-body').textContent) el('alerts-body').innerHTML = emptyHtml('Could not load alerts', 'Use Refresh to retry.')
@@ -142,7 +144,8 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   async function renderDetail(key) {
     const goal = state.goal, current = ++detailGeneration
     const p = state.projection?.parcels?.find((x) => x.parcel === key)
-    if (!p) return
+    if (!p) { state.detailParcel = null; el('detail').hidden = true; return }
+    state.detailParcel = key
     el('detail').hidden = false
     el('detail').innerHTML = '<p role="status">Loading evidence…</p>'
     try {
@@ -158,7 +161,16 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
     const endpoints = [['statuses', '/api/goals'], ['signals', '/api/signals'], ['registry', '/api/actions'], ['fleet', '/api/fleet'], ['spawns', '/api/spawns']]
     const results = await Promise.allSettled(endpoints.map(async ([key, path]) => {
       const data = await api(path), field = { registry: 'actions', fleet: 'roots' }[key] || key
-      if (!Array.isArray(data[field])) throw new Error(`Invalid ${key} response`)
+      const strings = (value) => Array.isArray(value) && value.every((part) => typeof part === 'string')
+      const root = (value) => typeof value === 'string' && value.startsWith('/')
+      const checks = {
+        statuses: (row) => typeof row.key === 'string' && root(row.repoRoot) && typeof row.active === 'boolean',
+        signals: (row) => typeof row.id === 'string' && typeof row.subject === 'string' && typeof row.class === 'string' && root(row.repo) && strings(row.actions) && strings(row.evidence) && ['urgent', 'attention', 'info'].includes(row.severity),
+        registry: (row) => typeof row.verb === 'string' && strings(row.signalClasses) && ['spawn', 'present', 'execute'].includes(row.invocation) && typeof row.destructive === 'boolean' && ['full', 'partial'].includes(row.autonomy?.decisions) && ['commit', 'push', 'openPr', 'merge'].every((permission) => typeof row.autonomy?.[permission] === 'boolean'),
+        fleet: (row) => root(row.root),
+        spawns: () => true, // Older receipt fields may be absent: render explicit unknowns.
+      }
+      if (!Array.isArray(data[field]) || !data[field].every((row) => row && typeof row === 'object' && !Array.isArray(row) && checks[key](row))) throw new Error(`Invalid ${key} response`)
       return data[field]
     }))
     if (destroyed || current !== generation) return
@@ -190,7 +202,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
     const blocked = [...state.selected.values()].filter((item) => item.unavailable || item.needsReview || !item.verb).length
     el('selection-summary').textContent = `${state.selected.size} item${state.selected.size === 1 ? '' : 's'} selected${blocked ? ` · ${blocked} need review` : ''} across all views`
   }
-  function launchBlocked() { return state.submitting || !state.selected.size || [...state.selected.values()].some((item) => !item.verb || item.unavailable || item.needsReview) }
+  function launchBlocked() { return state.submitting || (state.retryRequired && !state.retryAcknowledged) || !state.selected.size || [...state.selected.values()].some((item) => !item.verb || item.unavailable || item.needsReview) }
   function updateLaunchValidity() {
     reconcileSelection(state.selected, state.signals, state.registry)
     if (el('spawn-run')) el('spawn-run').disabled = launchBlocked()
@@ -201,7 +213,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   }
   function updateSpawnPanel() {
     state.launchPage = Math.min(state.launchPage, Math.max(0, Math.ceil(state.selected.size / 200) - 1))
-    el('spawn-panel').innerHTML = spawnPanelHtml({ count: state.selected.size, controls: state.controls, selections: [...state.selected.values()], registry: state.registry, extra: state.extra, error: state.launchError, page: state.launchPage })
+    el('spawn-panel').innerHTML = spawnPanelHtml({ count: state.selected.size, controls: state.controls, selections: [...state.selected.values()], registry: state.registry, extra: state.extra, error: state.launchError, page: state.launchPage, retryRequired: state.retryRequired, retryAcknowledged: state.retryAcknowledged })
     const form = el('spawn-form')
     el('spawn-run').disabled = launchBlocked()
     function saveDraft() { state.controls = readControls(form); state.extra = form.querySelector('[name="extra"]').value }
@@ -209,11 +221,12 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
     on(form, 'change', (event) => {
       saveDraft()
       const node = event.target, wrapper = node.closest('[data-launch-item]')
+      if (node.hasAttribute('data-ack-retry')) { state.retryAcknowledged = node.checked; updateLaunchValidity(); return }
       const item = wrapper && state.selected.get(wrapper.dataset.launchItem)
       if (!item) return
       if (node.matches('[data-verb]')) {
         const entry = eligibleActions(item.signal, state.registry).find((e) => e.verb === node.value)
-        item.verb = entry?.verb || null; item.autonomy = { ...(entry?.autonomy || { decisions: 'partial', commit: false, push: false, openPr: false, merge: false }) }
+        item.verb = entry?.verb || null; item.autonomy = { ...(entry?.autonomy || { decisions: 'partial', commit: false, push: false, openPr: false }), merge: false }
         item.signature = actionSignature(entry); item.needsReview = false; item.unavailable = null
         updateSpawnPanel(); return
       }
@@ -224,6 +237,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       const node = event.target.closest('button'), wrapper = node?.closest('[data-launch-item]')
       if (!node) return
       saveDraft()
+      if (node.hasAttribute('data-inspect-sessions')) { closeDialog(el('launch-dialog')); state.scope = ''; state.queries.sessions = ''; state.pages.sessions = 0; scopeOptions(); goalOptions(); setView('sessions'); return }
       if (node.hasAttribute('data-page')) { state.launchPage = Math.max(0, state.launchPage + (node.dataset.page === 'next' ? 1 : -1)); updateSpawnPanel() }
       if (node.hasAttribute('data-remove-selection')) { state.selected.delete(wrapper.dataset.launchItem); updateSelectionBar(); updateSpawnPanel(); renderCurrent() }
       if (node.hasAttribute('data-ack-review')) {
@@ -238,18 +252,21 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       const ids = [...state.selected.keys()], selections = [...state.selected.values()]
       try {
         const result = await api('/api/spawn', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(spawnRequest(selections, state.controls, state.extra)) })
-        if (!result.plan?.sessionName || !Array.isArray(result.launch?.launched)) throw new Error('Launch response did not confirm a session')
+        const launched = result.launch?.launched
+        if (!result.plan?.sessionName || !Array.isArray(launched) || launched.length !== ids.length || new Set(launched).size !== ids.length || !launched.every((index) => Number.isInteger(index) && index >= 0 && index < ids.length) || result.launch?.failed != null) throw new Error('Launch response did not confirm every requested pane')
         const name = result.plan.sessionName
         state.highlightSession = name
-        state.launchError = ''
+        state.launchError = ''; state.retryRequired = false; state.retryAcknowledged = false
         el('launch-outcome').innerHTML = `<div class="banner"><strong>Launched ${esc(name)}</strong><p>${result.launch.launched.length} pane${result.launch.launched.length === 1 ? '' : 's'} recorded in one session. Pane liveness is not proof that work is complete.</p><button type="button" data-go-sessions data-reveal-session>View launched session →</button></div>`
         ids.forEach((id) => state.selected.delete(id))
         doc.querySelectorAll('[data-select]').forEach((box) => { box.checked = state.selected.has(box.dataset.select) })
         updateSelectionBar(); closeDialog(el('launch-dialog')); await refresh()
       } catch (err) {
         state.launchError = `Launch not confirmed: ${err.message}. A session or worktree may have started. Inspect Sessions and refresh before deciding whether to retry; no automatic retry will occur.`
-        el('spawn-result').textContent = state.launchError
+        state.retryRequired = true; state.retryAcknowledged = false
+        updateSpawnPanel()
         el('launch-outcome').innerHTML = `<div class="banner"><strong>Launch not confirmed</strong><p>${esc(state.launchError)}</p><button type="button" data-go-sessions>Inspect sessions →</button></div>`
+        await refresh()
       } finally { state.submitting = false; if (el('spawn-run')) el('spawn-run').disabled = launchBlocked() }
     })
   }
@@ -277,8 +294,10 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       const entry = state.registry.find((e) => e.verb === button.dataset.verb && e.signalClasses.includes(signal?.class))
       if (!signal || !entry) return
       if (!entry.destructive && entry.invocation === 'spawn') {
-        const item = selectTarget(signal, state.registry)
-        item.verb = entry.verb; item.autonomy = { ...entry.autonomy }; item.signature = actionSignature(entry)
+        const item = state.selected.get(signal.id) || selectTarget(signal, state.registry)
+        if (item.verb !== entry.verb) {
+          item.verb = entry.verb; item.autonomy = { ...entry.autonomy, merge: false }; item.signature = actionSignature(entry); item.needsReview = false
+        }
         state.selected.set(signal.id, item); updateSelectionBar(); updateSpawnPanel(); openDialog(el('launch-dialog'))
       } else showAction(signal, entry)
     }))
@@ -331,10 +350,10 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   }
   el('app').innerHTML = shellHtml()
   doc.querySelectorAll('.nav-btn').forEach((b) => on(b, 'click', () => setView(b.dataset.view)))
-  on(el('fleet-select'), 'change', () => { state.scope = el('fleet-select').value; state.pages = {}; ++detailGeneration; goalOptions(); renderCurrent(); if (['board', 'remedies', 'settings'].includes(state.view)) loadGoal() })
+  on(el('fleet-select'), 'change', () => { state.scope = el('fleet-select').value; state.pages = {}; ++goalGeneration; ++detailGeneration; goalOptions(); renderCurrent(); if (['board', 'remedies', 'settings'].includes(state.view)) loadGoal() })
   on(el('goal-status'), 'change', () => { state.pages.board = 0; goalOptions(); renderCurrent(); loadGoal() })
   on(el('parcel-status'), 'change', () => { state.pages.board = 0; renderCurrent() })
-  on(el('goal-select'), 'change', () => { state.goal = el('goal-select').value; state.projection = null; el('detail').hidden = true; renderCurrent(); loadGoal() })
+  on(el('goal-select'), 'change', () => { state.goal = el('goal-select').value; state.projection = null; state.detailParcel = null; ++detailGeneration; el('detail').hidden = true; renderCurrent(); loadGoal() })
   on(el('global-search'), 'input', () => { state.queries[state.view] = el('global-search').value.trim(); state.pages[state.view] = 0; renderCurrent() })
   doc.querySelectorAll('[data-sev]').forEach((b) => on(b, 'change', () => { state.pages.signals = 0; renderCurrent() }))
   on(el('main'), 'click', (event) => { const b = event.target.closest('[data-page]'); if (b) { state.pages[state.view] = Math.max(0, (state.pages[state.view] || 0) + (b.dataset.page === 'next' ? 1 : -1)); renderCurrent() } if (event.target.closest('[data-go-sessions]')) {
@@ -378,6 +397,6 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   const ready = initialize()
   const timer = setInterval(() => { if (!destroyed) refresh() }, 60000)
   timer?.unref?.()
-  return { ready, refresh, destroy: () => { destroyed = true; ++generation; ++detailGeneration; clearInterval(timer); win?.removeEventListener('hashchange', hashChange) } }
+  return { ready, refresh, destroy: () => { destroyed = true; ++generation; ++goalGeneration; ++detailGeneration; clearInterval(timer); win?.removeEventListener('hashchange', hashChange) } }
 }
 if (typeof document !== 'undefined') startConsole(document)

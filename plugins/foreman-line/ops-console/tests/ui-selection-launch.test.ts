@@ -120,6 +120,60 @@ test('parcel selection joins exact goal-qualified subject and repository; no gue
   }
 })
 
+test('partial success response is uncertain, keeps every selection, and requires acknowledgement before retry', async () => {
+  const ui = await mountConsole({
+    '/api/signals': { signals },
+    '/api/spawn': { ok: true, plan: { sessionName: 'partial' }, launch: { launched: [0] } },
+  })
+  try {
+    ui.click('[data-select-visible]')
+    ui.click('#review-launch')
+    ui.click('#spawn-run')
+    await ui.settle()
+    assert.match(ui.doc.querySelector('#spawn-result')?.textContent ?? '', /may have started/)
+    assert.match(ui.doc.querySelector('#selection-summary')?.textContent ?? '', /2 items/)
+    assert.equal((ui.doc.querySelector('#spawn-run') as HTMLButtonElement).disabled, true)
+    ui.click('#spawn-run')
+    await ui.settle()
+    assert.equal(ui.requests.filter((r) => r.path === '/api/spawn').length, 1)
+    ui.click('[data-ack-retry]')
+    assert.equal((ui.doc.querySelector('#spawn-run') as HTMLButtonElement).disabled, false)
+  } finally {
+    ui.close()
+  }
+})
+
+test('same-verb row action preserves reviewed permissions; registry merge defaults never enter requests', async () => {
+  const registry = ACTION_REGISTRY.map((entry) => ({
+    ...entry,
+    autonomy: { ...entry.autonomy, merge: true },
+  }))
+  const ui = await mountConsole({ '/api/actions': { actions: registry } })
+  try {
+    ui.click('[data-select]')
+    ui.click('#review-launch')
+    ui.click('[data-permission="push"]')
+    ui.click('[data-close-dialog]')
+    ui.click('#signals-body [data-verb="investigate"]')
+    assert.equal(
+      (ui.doc.querySelector('[data-permission="push"]') as HTMLInputElement).checked,
+      true,
+    )
+    assert.equal(
+      (ui.doc.querySelector('[data-permission="merge"]') as HTMLInputElement).checked,
+      false,
+    )
+    ui.click('#spawn-run')
+    await ui.settle()
+    const actions = ui.requests.find((r) => r.path === '/api/spawn')?.body?.actions as {
+      autonomy: { merge: boolean }
+    }[]
+    assert.equal(actions[0]?.autonomy.merge, false)
+  } finally {
+    ui.close()
+  }
+})
+
 test('failed launch keeps draft, explains uncertainty, does not retry; escape returns focus', async () => {
   const ui = await mountConsole({ '/api/spawn': new Error('Connection lost') })
   try {

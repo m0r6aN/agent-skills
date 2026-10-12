@@ -29,8 +29,8 @@ export const MODEL_SUGGESTIONS = [
   'deepseek-v4-pro',
 ]
 
-export function spawnPanelHtml({ count = 0, controls = {}, selections = [], registry = [], extra = '', error = '', page = 0 } = {}) {
-  const blocked = selections.some((item) => !item.verb || item.unavailable || item.needsReview)
+export function spawnPanelHtml({ count = 0, controls = {}, selections = [], registry = [], extra = '', error = '', page = 0, retryRequired = false, retryAcknowledged = false } = {}) {
+  const blocked = (retryRequired && !retryAcknowledged) || selections.some((item) => !item.verb || item.unavailable || item.needsReview)
   const harness = controls.harness || 'pi'
   const model = controls.model || MODEL_SUGGESTIONS[0]
   const thinking = controls.thinking || 'high'
@@ -67,7 +67,8 @@ export function spawnPanelHtml({ count = 0, controls = {}, selections = [], regi
       <label class="stack-label">Extra direction (optional — appended verbatim to every prompt)
         <textarea name="extra" rows="3" aria-label="extra direction">${esc(extra)}</textarea>
       </label>
-      <div id="spawn-result" class="flags" aria-live="polite">${esc(error)}</div>
+      <div id="spawn-result" class="flags" aria-live="polite">${esc(error)}${retryRequired ? '<p><button type="button" data-inspect-sessions>Inspect all recorded sessions</button></p>' : ''}</div>
+      ${retryRequired ? `<label class="permissions"><input type="checkbox" data-ack-retry ${retryAcknowledged ? 'checked' : ''}>I inspected Sessions. Allow one explicit retry; this may duplicate work.</label>` : ''}
       <div class="launch-footer"><span class="muted">${blocked ? 'Resolve unavailable items and review permissions before launch.' : 'Approvals and server guards still apply.'}</span><button type="submit" class="primary" id="spawn-run" ${count === 0 || blocked ? 'disabled' : ''}>Launch 1 session · ${count} pane${count === 1 ? '' : 's'}</button></div>
     </form>`
 }

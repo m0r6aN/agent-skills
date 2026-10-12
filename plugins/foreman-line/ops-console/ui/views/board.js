@@ -37,18 +37,18 @@ export function boardHtml(parcels, status, options = {}) {
   const rows = STATES.flatMap((col) => {
     return parcels.filter((p) => p.state === col).map((p) => {
       const signal = (options.signals || []).find((s) => s.class === 'parcel-state' && s.subject === `${status?.key}/${p.parcel}` && s.repo === status?.repoRoot && eligibleActions(s, options.registry || []).length)
-      const select = signal ? `<input type="checkbox" data-select="${esc(signal.id)}" ${options.selected?.has(signal.id) ? 'checked' : ''} aria-label="Select parcel ${esc(p.parcel)} in ${esc(status.repoRoot)}">` : '<span class="meta">No supported action</span>'
+      const select = signal ? `<input type="checkbox" data-select="${esc(signal.id)}" ${options.selected?.has(signal.id) ? 'checked' : ''} aria-label="Select parcel ${esc(p.parcel)} in ${esc(status.repoRoot)}">` : '<span class="muted" title="No supported action">—</span>'
       const urgent = ((status && status.urgentSubjects) || []).some((s) => s.endsWith(`/${p.parcel}`))
       const needs = needsFor(p.state, urgent)
       const chip = needs ? `<span class="chip ${needs.includes('red') ? 'chip-red' : 'chip-amber'}">${p.state === 'awaiting-gate' ? 'gate' : 'needs attention'}</span>` : ''
       return `<tr class="parcel-row ${needs}"><td>${select}</td>
-      <td><button class="detail-btn" type="button" data-parcel="${esc(p.parcel)}" aria-label="Inspect parcel ${esc(p.parcel)}">${esc(p.parcel)}</button><span class="meta">rule ${esc(p.rule)} · chain ${esc(p.chainEvidence)}</span></td>
+      <td><button class="detail-btn" type="button" data-parcel="${esc(p.parcel)}" aria-label="Inspect parcel ${esc(p.parcel)}">${esc(p.parcel)}</button><span class="meta">rule ${esc(p.rule)} · chain ${esc(p.chainEvidence)}</span>${signal ? '' : '<span class="meta">No supported action</span>'}</td>
       <td><span class="chip chip-${p.state === 'complete' || p.state === 'running' ? 'green' : 'neutral'}">${esc(p.state)}</span> ${chip}</td>
       <td><span class="meta">${esc(p.heartbeat?.lastProgressAt || 'No progress timestamp')}<br>${p.liveness?.live ? 'Live worktree evidence' : 'No live worktree evidence'}</span>${p.failure ? `<div class="flags">${esc(p.failure.code)}</div>` : ''}${p.flags?.length ? `<div class="flags">${esc(p.flags.join(', '))}</div>` : ''}</td>
       <td><button type="button" data-parcel="${esc(p.parcel)}">Inspect evidence</button></td></tr>`
     })
   }).join('')
-  return banner + `<div class="list-meta"><span>${options.total ?? parcels.length} parcels</span><div class="row"><button type="button" data-select-visible>Select visible page</button><button type="button" data-clear-visible>Clear visible page</button></div></div><div class="table-wrap"><table><thead><tr><th aria-label="Selection"></th><th>Parcel</th><th>Status</th><th>Progress evidence</th><th>Details</th></tr></thead><tbody>${rows}</tbody></table></div>`
+  return banner + `<div class="list-meta"><span>${options.total ?? parcels.length} parcels</span><div class="row"><button type="button" data-select-visible>Select visible page</button><button type="button" data-clear-visible>Clear visible page</button></div></div><div class="table-wrap"><table class="parcel-table"><thead><tr><th aria-label="Selection"></th><th>Parcel</th><th>Status</th><th>Progress evidence</th><th>Details</th></tr></thead><tbody>${rows}</tbody></table></div>`
 }
 
 export function detailHtml(p, chainDocs, repoRoot, loopDirectiveRef, remedies) {

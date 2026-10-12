@@ -101,13 +101,20 @@
     dialog { color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 12px; width: min(48rem, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); overflow: auto; padding: 1.5rem; }
     dialog::backdrop { background: rgb(0 0 0 / .65); }
     .launch-dialog { margin: 1rem 1rem 1rem auto; width: min(42rem, calc(100vw - 2rem)); }
-    .dialog-heading { display: flex; justify-content: space-between; align-items: start; gap: 1rem; margin-bottom: 1rem; }
+    .dialog-heading { display: flex; justify-content: space-between; align-items: start; gap: 1rem; margin-bottom: 1rem; position: sticky; top: -1.5rem; background: var(--panel); z-index: 1; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+    .session-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+    .session-metrics > div { padding: 1.25rem; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+    .session-metrics strong { display: block; font-size: 1.75rem; font-weight: 600; letter-spacing: -.04em; }
+    .session-metrics span { display: block; color: var(--muted); font-size: .75rem; }
+    .tray-row[data-highlight] { background: #21382f; }
+    .receipt-facts dt { color: var(--muted); font-size: .75rem; }
+    .receipt-facts dd { margin: 0 0 .75rem; }
     fieldset { border: 1px solid var(--line); border-radius: 6px; padding: 1rem; margin: 1rem 0; }
     legend { font-size: .8rem; color: var(--muted); padding: 0 .25rem; }
     .control-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     .control-grid label, .stack-label { display: flex; flex-direction: column; align-items: stretch; gap: .5rem; font-size: .8rem; }
     textarea { resize: vertical; width: 100%; min-height: 6rem; }
-    .launch-item { border: 1px solid var(--line); border-radius: 6px; padding: 1rem; margin-bottom: .75rem; }
+    .launch-item { overflow-wrap: anywhere; border: 1px solid var(--line); border-radius: 6px; padding: 1rem; margin-bottom: .75rem; }
     .launch-item .row { justify-content: space-between; }
     .permissions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: .75rem; font-size: .75rem; }
     .launch-footer { margin-top: 1rem; border-top: 1px solid var(--line); padding-top: 1rem; display: flex; justify-content: space-between; gap: 1rem; align-items: center; }
@@ -118,6 +125,7 @@
     .fleet-tile { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 1.25rem; overflow-wrap: anywhere; }
     .fleet-tile button { margin-top: 1rem; }
     .skip-link { position: fixed; top: -5rem; left: 1rem; z-index: 10; background: var(--panel); padding: 1rem; }
+    .skip-link:not(:focus) { clip-path: inset(50%); }
     .skip-link:focus { top: 1rem; }
     @media (max-width: 1024px) { .app-header { flex-wrap: wrap; gap: .75rem; } .scope-label { margin-left: auto; } #clock { display: none; } .local-badge { display: none; } }
     @media (max-width: 768px) {
@@ -126,6 +134,20 @@
       main { padding: 1.25rem 1rem; } .page-heading { display: block; } .filters { gap: .75rem; } .selection-bar { flex-direction: column; align-items: stretch; } .selection-bar .row { justify-content: space-between; }
       dialog, .launch-dialog { width: calc(100vw - 1rem); max-height: calc(100dvh - 1rem); margin: .5rem; padding: 1rem; } .control-grid { grid-template-columns: 1fr; }
       .launch-footer { flex-wrap: wrap; } th, td { padding: .75rem; } button { min-height: 2.75rem; } .actions button { min-height: 2.75rem; }
+      .session-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; } .session-metrics > div { padding: 1rem; }
+      .signals-table, .parcel-table, .tray-table, .signals-table tbody, .parcel-table tbody, .tray-table tbody { display: block; }
+      .signals-table thead, .parcel-table thead, .tray-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+      .signal-row, .parcel-row { display: grid; grid-template-columns: 3rem minmax(0, 1fr); padding: .75rem 0; border-bottom: 1px solid var(--line); }
+      .signal-row > td, .parcel-row > td { border: 0; grid-column: 2; padding: .375rem .75rem; }
+      .signal-row > td:first-child, .parcel-row > td:first-child { grid-column: 1; grid-row: 1 / span 6; align-self: start; padding: .375rem .5rem .375rem .75rem; }
+      .signal-row input[data-select], .parcel-row input[data-select] { width: 1.5rem; height: 1.5rem; }
+      .dialog-heading { top: -1rem; padding: .75rem 0; }
+      .signal-row > td:nth-child(2), .parcel-row > td:nth-child(2) { padding-top: .375rem; }
+      .signal-row > td:nth-child(4)::before { content: 'Repository'; display: block; color: var(--muted); font-size: .7rem; margin-bottom: .25rem; }
+      .signal-row .actions, .parcel-row .actions { min-width: 0; }
+      .tray-row { display: block; padding: .75rem 0; border-bottom: 1px solid var(--line); }
+      .tray-row td { display: block; border: 0; padding: .375rem 1rem; }
+      .signal-row:last-child, .parcel-row:last-child, .tray-row:last-child { border-bottom: 0; }
     }
     @media (prefers-reduced-motion: no-preference) { button { transition: background .12s, border-color .12s; } }
   </style>

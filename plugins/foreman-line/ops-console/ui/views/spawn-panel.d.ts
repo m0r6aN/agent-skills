@@ -11,6 +11,8 @@ export declare function spawnPanelHtml(options?: {
   extra?: string
   error?: string
   page?: number
+  retryRequired?: boolean
+  retryAcknowledged?: boolean
 }): string
 export declare function launchItemHtml(item: import('./selection.js').SelectedTarget, registry: import('./selection.js').RegistryEntry[]): string
 export declare function readControls(form: {

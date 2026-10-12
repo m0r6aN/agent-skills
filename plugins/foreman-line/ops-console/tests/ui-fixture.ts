@@ -76,7 +76,14 @@ export async function mountConsole(overrides: Record<string, unknown> = {}) {
       ],
     },
     '/api/spawns': { spawns: [receipt()] },
-    '/api/spawn': { ok: true, plan: { sessionName: 'foc-new' }, launch: { launched: [0] } },
+    '/api/spawn': (_path: string, options?: RequestInit) => {
+      const body = JSON.parse(String(options?.body)) as { actions: unknown[] }
+      return {
+        ok: true,
+        plan: { sessionName: 'foc-new' },
+        launch: { launched: body.actions.map((_, i) => i), failed: null },
+      }
+    },
     '/api/actions/dispatch': { action: 'presented', reason: null },
     ...overrides,
   }
