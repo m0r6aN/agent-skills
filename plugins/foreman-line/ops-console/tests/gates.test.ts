@@ -174,7 +174,7 @@ test('goal-level ratification renders from the charter Status/ratification text'
       goal: {
         slug: 'goal-gates',
         queue: ['1. **P1** x.'],
-        charterStatus: 'Gate 1 review scheduled; not yet ruled.',
+        charterStatus: 'DRAFT',
       },
     }),
   )
@@ -182,7 +182,11 @@ test('goal-level ratification renders from the charter Status/ratification text'
 
   const unknown = projectGoalRecord(
     scenario('ratification-unknown', [], {
-      goal: { slug: 'goal-gates', queue: ['1. **P1** x.'], charterStatus: 'DRAFT' },
+      goal: {
+        slug: 'goal-gates',
+        queue: ['1. **P1** x.'],
+        charterStatus: 'Gate 1 review scheduled; not yet ruled.',
+      },
     }),
   )
   assert.equal(unknown.ratification.status, 'unknown')

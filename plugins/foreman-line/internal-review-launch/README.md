@@ -1,0 +1,84 @@
+# IR-B01 offline admission/schema prototype
+
+**Unregistered, unaccepted experimental work. NOT a launch gate, receipt issuer or independent review.**
+
+Parent contract: `../docs/contracts/internal-review-launch-v1.md`, whole IR-A01 ratified by Clinton Morgan at `f5ec6cac7736ffb3ef24a0091bf0b56ea9136034`. Current ratification/construction evidence is in `../docs/goals/internal-frontier-review-admission/ir-p1-offline-construction-evidence.md`; historical pending markers in the sealed parent are not edited. The approved directive patch remains unapplied.
+
+## What this does
+
+`assessOfflinePolicy(input: unknown, nowEpochMs: number)` checks a closed JSON envelope and declared cross-field policy using existing Ajv. The clock is explicit for deterministic tests. Required identity/packet/authority/native-installation/account-policy/model-capability/accounting/custody groups reject absent, null, unknown-version and extra fields. Types expose the same fixture shape. The committed draft-07 JSON is rendered from `src/schemas.ts` with the shared schema-scaffold serializer; the frozen correlation UUID primitive is reused read-only.
+
+A positive result is **`fixture-compatible`**, not `admitted`. Every result contains:
+
+- `provenance: 'untrusted-offline-declarations'`
+- `mayInvokeProvider: false`
+- `runtimeStatus: 'held'`
+- mandatory external runtime holds, even for a perfect synthetic fixture.
+
+Evidence statuses/refs, installation digests, native mappings, usage and account balances are CALLER DECLARATIONS. They are not authenticated/measured by this package. All tests use fictional refs and digests, never real credentials, invoices, provider capabilities or an actual installation. Repeated assessments do not claim/consume permits: the `consumed` negative tests only a declared replay condition, not atomic replay enforcement. Digest comparisons check declared consistency only; no files are read, hashed or authenticated by admission.
+
+Known policy violations are `refused`; missing/changed/expired declared evidence and uncertain capability/account/usage facts are `held`. Schema failures report only a fixed shape locator, never untrusted payloads. Successful policy compatibility does not close any mandatory runtime hold.
+
+## Narrow policy represented
+
+Only internal, owner's own credential-free initial OPMEM plan review; L2 verifier/adversarial-reviewer, architecture/risk, Anthropic `claude-fable-5-1` then sole `claude-opus-5-5` fallback, excluded OpenAI family, frontier/context >=200,000 and exactly `read_evidence`. Both exact native reasoning mappings must declare their supported highest setting. Unknown/default mappings hold; a declared highest `high` is not rejected solely because it is not `xhigh`. Claims of mapping verification remain unauthenticated.
+
+Accepted Pro/native-Pi OAuth/settings and purpose-bound non-ZDR retention policy are represented separately from provider-use permission and runtime proof. No ZDR requirement is smuggled back in. Customer/client/restricted/regulated/credential material, feedback uploads, training/paid-extra changes and separate brokers refuse. The legacy/global/public-v1 policy is neither imported nor modified.
+
+Cumulative per-attempt limits <=48,000 input / <=8,000 ALL output/reasoning, <=8 requests / <=30 minutes; <=60 minutes total; at most one primary and one original-packet fallback after unusable reconciled primary. Cached/repeated/tool input and reasoning belong in declared cumulative totals; this package does NOT measure them.
+
+Incremental review <=500 cents inside parent <=2,500 cents, reconciled parent/subcap identities/spent/reservations and proposed exposure, quota separate; already-paid subscription fee excluded. No extra-usage/API/upgrade transition, invented zero balance, API estimate presented as invoice or uncertain additional exposure. Exact lower declared bounds are enforced too. Balances and quota evidence are synthetic, not a billing mechanism. Finite custody shape/refs are declarations, not result custody or platform isolation.
+
+## Separately authorized IR-B01-CI packaging
+
+Clinton Morgan authorized the exact [packaging amendment](https://github.com/m0r6aN/agent-skills/issues/179#issuecomment-6114156443) and then the single strict script-name assertion update to include `lint`. This phase adds a package-local lockfile and repository-standard source/test-only Biome configuration, pinned Biome 2.5.14, and formatting only. It does not change admission/schema behavior, add tests, run native providers, register the package for production, weaken CI or authorize merge. The original prototype at `dd85fd3bcf302d1c45743957c1d357652f68a6ab` and its evidence remain immutable.
+
+The only installation grant is this phase's package-local pinned tooling and lockfile-resolved dependencies, reusing existing/cache inputs first and retrieving only required npm-registry inputs, with lifecycle scripts/audit/fund disabled. No auth/config inspection/change, general installation or provider/model/delegate/probe spend is covered. The earlier no-install restriction below describes the ORIGINAL IR-B01 phase, not this separately approved packaging amendment.
+
+From this package with Node >=24.19.0, the repository's actual install/check path is:
+
+```sh
+npm ci --ignore-scripts --no-audit --no-fund
+npm run test --ignore-scripts
+npm run typecheck --ignore-scripts
+npm run lint --ignore-scripts
+```
+
+`npm test` includes byte-exact schema parity. Lint checks the existing standard rules over `src/**/*.ts` and `tests/**/*.ts`; the generated schema JSON is not reformatted. Actual results, formatting/source equivalence, unchanged schema/config/evidence bytes, package-scoped dependency setup and external CI limitations are recorded in `../docs/goals/internal-frontier-review-admission/ir-b01-ci-packaging-evidence.md` and `ir-b01-ci-packaging-handoff.md`. Green package checks are not independent acceptance, authentic runtime evidence or a passing repository-wide exact-head chain.
+
+## Original IR-B01 local commands (no installation in that scope)
+
+Node >=24.19.0 supports the `.ts` source directly; TypeScript is for separate strict no-emit checking. Dependency declarations describe the existing local tools; **this scope grants no `npm install`, `npx` download or new lockfile**. Missing local tools are a stop. No package is registered/exported into production.
+
+Ordinary already-resolved local environment:
+
+```sh
+npm test
+npm run typecheck
+npm run schema:print
+```
+
+Construction used read-only tools already present outside this worktree. From this package in the current Windows/Git Bash environment:
+
+```sh
+export NODE_PATH=D:/Repos/agent-skills/plugins/foreman-line/contracts/node_modules
+D:/nvm/v24.19.0/node.exe --test tests/*.test.ts
+D:/nvm/v24.19.0/node.exe \
+  D:/Repos/agent-skills-pr170-assist/plugins/foreman-line/approval/node_modules/typescript/bin/tsc \
+  --noEmit --project tsconfig.json \
+  --typeRoots D:/Repos/agent-skills-pr170-assist/plugins/foreman-line/approval/node_modules/@types
+```
+
+`createRequire` uses normal Node dependency resolution (`NODE_PATH` above supplies the existing Ajv 8.20.0). This is validation-tool plumbing, not native Pi provider/auth selection. No dependency/junction files were added to this worktree or the supplying checkouts. Tests read only the approved local schemas/package/source for parity/import guards; admission has no filesystem, SDK, credential or network integration.
+
+The source can be rendered to the one approved schema path with the existing shared helper:
+
+```sh
+node --input-type=module -e "import { generate } from '../schema-scaffold/src/generate.ts'; import { internalReviewLaunchSchema } from './src/schemas.ts'; generate([{name:'internal-review-launch-v1',schema:internalReviewLaunchSchema}], './schemas');"
+```
+
+## Explicitly NOT implemented or proved
+
+Trusted authority/installation/provider-use permission, exact native model availability or reasoning capabilities, atomic single-use issuer/permit/request claims, revocation store, evidence filesystem/path/link/encoding confinement, actual resource/process/network isolation, native Pi invocation/token/time gates, durable hierarchical reservations/quota/billing/cancellation reconciliation, observed execution identity, worker findings transport/custody, rollback liabilities or production registration. Source import guards and synthetic negatives are NOT live security/isolation proof. Original IR-B01 construction performed no dependency installation. The separately authorized IR-B01-CI phase adds only package-local tooling/lockfile setup and formatting: no provider/worker/SDK/auth imports or calls, source repair, delegated review or new probe spend.
+
+A later native integration requires a separately authorized exact manifest, trusted external authority/control seams, genuine evidence and independent architecture/security/process gates. Local green tests or human prototype disposition cannot certify the launcher or the OPMEM plan. Billing recovery and subsequent repository CI observations are recorded separately on #179; this package changes no billing/workflow settings. Local validation cannot replace required exact-head repository CI or authorize merge.

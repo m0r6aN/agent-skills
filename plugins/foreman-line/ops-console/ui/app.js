@@ -1,20 +1,35 @@
-// Foreman Ops Console frontend (copied UX shape from the Automations hub:
-// board + approvals + notifications + logs + models view, adapted to parcel
-// lifecycle). No build step, no dependencies: this file is served as-is.
-'use strict'
+// Foreman Ops Console frontend — control-center shell (FCA-P6 Task 15).
+// No build step, no dependencies: ES modules served as-is. Data + events live
+// here; pure rendering lives in ui/views/*.
+import { needsFor } from './needs.js'
+import { esc, shellHtml } from './views/shell.js'
+import { boardHtml, detailHtml } from './views/board.js'
+import { remedyHtml, remediesHtml } from './views/remedies.js'
+import {
+  actionPopoverHtml,
+  confirmationToken,
+  selectionToActions,
+  signalsHtml,
+} from './views/signals.js'
+import { readControls, spawnPanelHtml, spawnRequest } from './views/spawn-panel.js'
+import { browseListHtml, fleetHtml } from './views/fleet.js'
+import { trayHtml } from './views/tray.js'
 
-const STATES = ['running', 'hung', 'awaiting-gate', 'failed', 'complete']
-const state = { goal: null, goals: [], projection: null, repoRoot: '' }
-
-function esc(value) {
-  return String(value == null ? '' : value).replace(/[&<>"']/g, (c) => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-  })[c])
-}
-
-function fileLink(ref) {
-  if (!ref) return '—'
-  return `<a href="file:///${esc(state.repoRoot)}/${esc(ref)}" title="open on disk">${esc(ref)}</a>`
+const state = {
+  view: 'board',
+  goal: null,
+  goals: [],
+  statuses: [],
+  remedies: [],
+  projection: null,
+  repoRoot: '',
+  posture: '',
+  signals: [],
+  registry: [],
+  selected: new Map(),
+  controls: {},
+  fleet: [],
+  browseSelection: null,
 }
 
 async function api(path, options) {
@@ -22,83 +37,341 @@ async function api(path, options) {
   return res.json()
 }
 
-function renderBoard() {
-  const board = document.getElementById('board')
-  const parcels = (state.projection && state.projection.parcels) || []
-  board.innerHTML = STATES.map((col) => {
-    const cards = parcels.filter((p) => p.state === col).map((p) => `
-      <div class="card" data-parcel="${esc(p.parcel)}">
-        <div class="key">${esc(p.parcel)}</div>
-        <div class="meta">rule ${esc(p.rule)} · chain ${esc(p.chainEvidence)}</div>
-        <div class="meta">progress ${esc(p.heartbeat.lastProgressAt || 'never')} · liveness ${p.liveness.live ? 'live' : 'none'}</div>
-        ${p.failure ? `<div class="flags">${esc(p.failure.code)}</div>` : ''}
-        ${p.flags.length ? `<div class="flags">${esc(p.flags.join(', '))}</div>` : ''}
-      </div>`).join('')
-    return `<div class="col ${col}"><h2>${col} (${parcels.filter((p) => p.state === col).length})</h2>${cards || '<div class="muted">—</div>'}</div>`
-  }).join('')
-  board.querySelectorAll('.card').forEach((card) => {
-    card.addEventListener('click', () => renderDetail(card.dataset.parcel))
+function setView(view) {
+  state.view = view
+  document.querySelectorAll('main > section[data-view]').forEach((section) => {
+    section.hidden = section.dataset.view !== view
   })
+  document.querySelectorAll('.nav-btn').forEach((btn) => {
+    const active = btn.dataset.view === view
+    btn.classList.toggle('active', active)
+    btn.setAttribute('aria-current', active ? 'page' : 'false')
+  })
+  if (view === 'signals') renderSignals()
+  if (view === 'fleet') renderFleet()
 }
 
-function gatePill(gate) {
-  return `<span class="pill ${esc(gate.status)}">${esc(gate.gate)} ${esc(gate.status)}</span> ${esc(gate.detail)}`
+function renderBoard() {
+  const board = document.getElementById('board')
+  if (board === null) return
+  const parcels = (state.projection && state.projection.parcels) || []
+  const status = (state.statuses || []).find((s) => s.key === state.goal) || null
+  board.innerHTML = boardHtml(parcels, status)
+  board.querySelectorAll('.card').forEach((card) => {
+    card.addEventListener('click', () => renderDetail(card.dataset.parcel))
+    card.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') renderDetail(card.dataset.parcel)
+    })
+  })
 }
 
 async function renderDetail(key) {
   const p = ((state.projection && state.projection.parcels) || []).find((x) => x.parcel === key)
   const section = document.getElementById('detail')
-  if (!p) { section.innerHTML = '<div class="muted">parcel not found</div>'; return }
-  const chainRows = (p.chain ? p.chain.members : []).map((m) => `
-    <tr><td>${esc(m.sequence)}</td><td>${esc(m.stage)}</td><td>${esc(m.subjectKind)}</td>
-    <td>${esc(m.timestamp)}</td><td><code>${esc(m.hash.slice(0, 16))}…</code></td><td>${fileLink(m.locator)}</td></tr>`).join('')
+  if (!p) {
+    section.innerHTML = '<div class="muted">parcel not found</div>'
+    return
+  }
   const chainDocs = await api(`/api/parcels/${encodeURIComponent(key)}/logs?goal=${encodeURIComponent(state.goal)}`)
-  const logDocs = (chainDocs.chainDocuments || []).map((d) =>
-    `<pre>${esc(d.locator)}\n${esc(JSON.stringify(d.json != null ? d.json : d, null, 2))}</pre>`).join('')
-  const audit = (chainDocs.invocationAudit || []).map((e) =>
-    `<tr><td>${esc(e.timestamp)}</td><td>${esc(e.flow)}</td><td>${esc(e.action)}</td><td><code>${esc(e.command)}</code></td><td>${esc(e.exitCode == null ? '' : e.exitCode)}</td></tr>`).join('')
-  section.innerHTML = `
-    <h2>${esc(p.parcel)} — ${esc(p.state)} <span class="muted">(rule ${esc(p.rule)})</span></h2>
-    <div class="row">
-      <span>spec: ${fileLink(p.specRef)} <span class="muted">[${esc(p.specLocation)}]</span></span>
-      <span>chain: ${p.chain ? fileLink(p.chain.locator) : 'absent'} ${p.chain && !p.chain.valid ? '<span class="flags">INVALID</span>' : ''}</span>
-      <span>goal record: ${fileLink((state.projection && state.projection.goal && state.projection.goal.loopDirectiveRef) || '')}</span>
-    </div>
-    <p>${gatePill(p.gates.G1)} · ${gatePill(p.gates.G2)} · ${gatePill(p.gates.G3)}</p>
-    <h2>Receipt chain walk</h2>
-    <table><tr><th>seq</th><th>stage</th><th>subject</th><th>timestamp</th><th>hash</th><th>locator</th></tr>${chainRows || '<tr><td colspan="6" class="muted">no chain</td></tr>'}</table>
-    ${p.chain && p.chain.sidecars.length ? `<p class="muted">sidecars: ${p.chain.sidecars.map(fileLink).join(' · ')}</p>` : ''}
-    <h2>Logs</h2>
-    <h3 class="muted">chain documents (members + sidecars)</h3>${logDocs || '<div class="muted">—</div>'}
-    <h3 class="muted">invocation audit</h3>
-    <table><tr><th>time</th><th>flow</th><th>action</th><th>command</th><th>exit</th></tr>${audit || '<tr><td colspan="5" class="muted">no invocations yet</td></tr>'}</table>
-    <h3 class="muted">goal loop-directive state lines</h3>
-    <pre>${esc((chainDocs.stateLines || []).join('\n'))}</pre>`
+  const mine = (state.remedies || [])
+    .filter((r) => r.parcel === p.parcel)
+    .map((r) => remedyHtml(r))
+  section.innerHTML = detailHtml(
+    p,
+    chainDocs,
+    state.repoRoot,
+    (state.projection && state.projection.goal && state.projection.goal.loopDirectiveRef) || '',
+    mine,
+  )
 }
 
 async function renderAlerts() {
   const data = await api(`/api/alerts?goal=${encodeURIComponent(state.goal)}`)
-  const alertRows = (data.alerts || []).map((a) =>
-    `<tr><td>${esc(a.kind)}</td><td>${esc(a.parcel)}</td><td>${esc(a.detail)}</td><td>${esc(a.observedAt)}</td></tr>`).join('')
-  const notifRows = (data.notifications || []).map((n) => `
-    <tr><td>${esc(n.createdAt)}</td><td>${esc(n.kind)}</td><td>${esc(n.goal)}/${esc(n.parcel)}</td>
-    <td>${esc(n.message)}</td>
-    <td><button data-del="${esc(n.id)}">delete</button></td></tr>`).join('')
-  document.getElementById('alerts-body').innerHTML = `
-    <table><tr><th>kind</th><th>parcel</th><th>detail</th><th>observed</th></tr>${alertRows || '<tr><td colspan="4" class="muted">no alerts</td></tr>'}</table>
-    <h3 class="muted">console-local notification store (state/notifications.json)</h3>
-    <table><tr><th>created</th><th>kind</th><th>scope</th><th>message</th><th></th></tr>${notifRows || '<tr><td colspan="5" class="muted">empty</td></tr>'}</table>`
-  document.querySelectorAll('[data-del]').forEach((b) => b.addEventListener('click', async () => {
-    await api(`/api/notifications/${encodeURIComponent(b.dataset.del)}`, { method: 'DELETE' })
+  state.remedies = data.remedies || []
+  const body = document.getElementById('alerts-body')
+  body.innerHTML = remediesHtml(data.alerts, state.remedies, data.notifications)
+  body.querySelectorAll('[data-del]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      await api(`/api/notifications/${encodeURIComponent(btn.dataset.del)}`, { method: 'DELETE' })
+      renderAlerts()
+    })
+  })
+}
+
+async function copyText(text) {
+  try {
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      await navigator.clipboard.writeText(text)
+      return true
+    }
+  } catch {
+    // fall through to the failure path — the command stays selectable text
+  }
+  return false
+}
+
+async function renderTray() {
+  const data = await api('/api/spawns')
+  const spawns = data.spawns || []
+  const count = document.getElementById('tray-count')
+  if (count !== null) count.textContent = `(${spawns.length})`
+  const body = document.getElementById('tray-body')
+  body.innerHTML = trayHtml(spawns)
+  body.querySelectorAll('[data-copy]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const ok = await copyText(btn.dataset.copy)
+      btn.textContent = ok ? 'copied' : 'copy failed'
+    })
+  })
+  // Per-session actions ride the SAME registry as signal verbs (FCA-P4).
+  body.querySelectorAll('[data-session-action]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const verb = btn.dataset.sessionAction
+      const subject = btn.dataset.subject
+      let confirmation = null
+      if (verb === 'close-delete') {
+        // Destructive: exact typed intent or nothing happens.
+        confirmation = prompt(`type ${confirmationToken(subject)} to confirm`)
+        if (confirmation !== confirmationToken(subject)) return
+      }
+      await api('/api/actions/dispatch', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          verb,
+          signalClass: 'session-state',
+          subject,
+          autonomy: { decisions: 'partial', commit: false, push: false, openPr: false, merge: false },
+          confirmation,
+        }),
+      })
+      renderTray()
+    })
+  })
+}
+
+async function renderSignals() {
+  const [signalsData, actionsData] = await Promise.all([api('/api/signals'), api('/api/actions')])
+  state.signals = signalsData.signals || []
+  state.registry = actionsData.actions || []
+  const body = document.getElementById('signals-body')
+  body.innerHTML = signalsHtml(state.signals, state.registry)
+  wireSignalRows(body)
+  applySeverityFilters()
+  updateSpawnPanel()
+}
+
+function applySeverityFilters() {
+  const on = new Set(
+    [...document.querySelectorAll('input[data-sev]:checked')].map((input) => input.dataset.sev),
+  )
+  document.querySelectorAll('.signal-row').forEach((row) => {
+    row.style.display = on.has(row.dataset.severity) ? '' : 'none'
+  })
+}
+
+function selectionPayloads() {
+  return [...state.selected.values()].map((signal) => {
+    const verbs = (signal.actions || []).filter((verb) =>
+      state.registry.some((entry) => entry.verb === verb && entry.signalClasses.includes(signal.class)))
+    const verb = verbs[0] || 'investigate'
+    const entry = state.registry.find(
+      (candidate) => candidate.verb === verb && candidate.signalClasses.includes(signal.class),
+    )
+    return { signal, verb, autonomy: (entry && entry.autonomy) || {}, extraText: null }
+  })
+}
+
+function updateSpawnPanel() {
+  const panel = document.getElementById('spawn-panel')
+  if (panel === null) return
+  panel.innerHTML = spawnPanelHtml({ count: state.selected.size, controls: state.controls })
+  const form = document.getElementById('spawn-form')
+  form.addEventListener('change', () => {
+    state.controls = readControls(form)
+  })
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault()
+    state.controls = readControls(form)
+    const extraEl = form.querySelector('[name="extra"]')
+    const extraText = extraEl === null ? '' : extraEl.value
+    const request = spawnRequest(selectionPayloads(), state.controls, extraText)
+    const result = await api('/api/spawn', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(request),
+    })
+    document.getElementById('spawn-result').textContent = JSON.stringify(result, null, 2)
+    if (result.ok === true) {
+      state.selected = new Map()
+      document.querySelectorAll('[data-select]').forEach((box) => {
+        box.checked = false
+      })
+      updateSpawnPanel()
+      renderTray()
+    }
+  })
+}
+
+function wireSignalRows(body) {
+  let lastChecked = null
+  const boxes = [...body.querySelectorAll('[data-select]')]
+  boxes.forEach((box, index) => {
+    box.addEventListener('click', (event) => {
+      if (event.shiftKey && lastChecked !== null) {
+        const lo = Math.min(lastChecked, index)
+        const hi = Math.max(lastChecked, index)
+        for (let i = lo; i <= hi; i += 1) boxes[i].checked = box.checked
+      }
+      lastChecked = index
+      state.selected = new Map(
+        boxes
+          .filter((candidate) => candidate.checked)
+          .map((candidate) => [candidate.dataset.select, state.signals.find((s) => s.id === candidate.dataset.select)]),
+      )
+      updateSpawnPanel()
+    })
+  })
+  body.querySelectorAll('.action-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const signal = state.signals.find(
+        (s) => s.subject === btn.dataset.subject && s.class === btn.dataset.class,
+      )
+      const entry = state.registry.find(
+        (candidate) => candidate.verb === btn.dataset.verb && candidate.signalClasses.includes(btn.dataset.class),
+      )
+      if (!signal || !entry) return
+      const popover = document.getElementById('action-popover')
+      popover.innerHTML = actionPopoverHtml(signal, entry.verb, entry)
+      wirePopover(popover.querySelector('form'), signal, entry)
+    })
+  })
+}
+
+function wirePopover(form, signal, entry) {
+  form.querySelector('[data-cancel]').addEventListener('click', () => {
+    form.remove()
+  })
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault()
+    const checked = (name) => {
+      const el = form.querySelector(`[name="${name}"]`)
+      return el !== null && el.checked === true
+    }
+    const decisions = form.querySelector('[name="decisions"]:checked').value
+    const confirmationEl = form.querySelector('[name="confirmation"]')
+    const confirmation = confirmationEl === null ? null : confirmationEl.value
+    // Destructive gate (FCA-P4 contract mirrored): no request is EVER sent
+    // without the exact typed intent for this subject.
+    if (form.dataset.destructive === 'true' && confirmation !== confirmationToken(signal.subject)) {
+      form.querySelector('[data-confirm-error]').hidden = false
+      return
+    }
+    const outcome = await api('/api/actions/dispatch', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        verb: entry.verb,
+        signalClass: signal.class,
+        subject: signal.subject,
+        autonomy: {
+          decisions,
+          commit: checked('commit'),
+          push: checked('push'),
+          openPr: checked('openPr'),
+          merge: checked('merge'),
+        },
+        confirmation,
+      }),
+    })
+    document.getElementById('action-result').textContent = JSON.stringify(outcome, null, 2)
+    form.remove()
     renderAlerts()
-  }))
+  })
+}
+
+function fleetError(message) {
+  const slot = document.getElementById('fleet-error')
+  if (slot === null) return
+  slot.hidden = message === null
+  slot.textContent = message === null ? '' : message
+}
+
+async function renderFleet() {
+  const data = await api('/api/fleet')
+  state.fleet = data.roots || []
+  const body = document.getElementById('fleet-body')
+  body.innerHTML = fleetHtml(state.fleet)
+  wireFleet(body)
+}
+
+function wireFleet(body) {
+  const pathInput = document.getElementById('browse-path')
+  const addButton = document.getElementById('fleet-add')
+  const selectionLabel = document.getElementById('browse-selection')
+  const runBrowse = async () => {
+    fleetError(null)
+    const result = await api(`/api/fs/browse?path=${encodeURIComponent(pathInput.value)}`)
+    const list = document.getElementById('browse-list')
+    if (result.reason !== undefined) {
+      list.innerHTML = ''
+      fleetError(`${result.reason}: ${result.error}`)
+      return
+    }
+    list.innerHTML = browseListHtml(result.path, result.entries || [])
+    list.querySelectorAll('[data-open]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        pathInput.value = btn.dataset.open
+        runBrowse()
+      })
+    })
+    list.querySelectorAll('[data-pick]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        state.browseSelection = btn.dataset.pick
+        selectionLabel.textContent = `selected: ${state.browseSelection}`
+        addButton.disabled = false
+      })
+    })
+  }
+  document.getElementById('browse-run').addEventListener('click', runBrowse)
+  addButton.addEventListener('click', async () => {
+    fleetError(null)
+    const result = await api('/api/fleet/add', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ root: state.browseSelection }),
+    })
+    if (result.ok !== true) {
+      fleetError(`${result.reason}: ${result.error}`)
+      return
+    }
+    state.browseSelection = null
+    renderFleet()
+  })
+  body.querySelectorAll('[data-remove]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      fleetError(null)
+      const result = await api('/api/fleet/remove', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ root: btn.dataset.remove }),
+      })
+      if (result.ok !== true) {
+        // Typed refusal rendered inline — the primary root removal refusal is
+        // expected UI, never a crash.
+        fleetError(`${result.reason}: ${result.error}`)
+        return
+      }
+      renderFleet()
+    })
+  })
 }
 
 async function renderRouting() {
   const data = await api(`/api/routing?goal=${encodeURIComponent(state.goal)}`)
-  const classRows = (data.policy && data.policy.classes || []).map((c) =>
+  const classRows = ((data.policy && data.policy.classes) || []).map((c) =>
     `<tr><td>${esc(c.name)}</td><td>${esc(c.allowlist.join(', '))}</td><td>${esc(c.ceilingUsd)}</td></tr>`).join('')
-  const roleRows = (data.policy && data.policy.roles || []).map((r) =>
+  const roleRows = ((data.policy && data.policy.roles) || []).map((r) =>
     `<tr><td>${esc(r.role)}</td><td>${esc(r.tier)}</td></tr>`).join('')
   const parcelRows = (data.parcels || []).map((p) =>
     `<tr><td>${esc(p.parcel)}</td><td>${esc(p.routing.routingClass)}</td><td>${esc(p.routing.resolvedTier)}</td><td>${esc(p.routing.resolvedModelId)}</td></tr>`).join('')
@@ -109,25 +382,37 @@ async function renderRouting() {
 }
 
 async function refresh() {
-  document.getElementById('clock').textContent = new Date().toISOString()
+  const clock = document.getElementById('clock')
+  if (clock !== null) clock.textContent = new Date().toISOString()
+  // Repo-scoped surfaces populate regardless of goal selection.
+  renderTray()
   if (!state.goal) return
   state.projection = await api(`/api/parcels?goal=${encodeURIComponent(state.goal)}`)
-  if (state.projection && state.projection.goal) state.repoRoot = state.repoRoot || ''
   renderBoard()
   renderAlerts()
   renderRouting()
+  if (state.view === 'signals') await renderSignals()
 }
 
-async function init() {
-  const health = await api('/api/health')
-  state.repoRoot = health.repoRoot || ''
-  const goals = await api('/api/goals')
-  state.goals = goals.goals || []
+function wireEvents() {
+  document.querySelectorAll('.nav-btn').forEach((btn) => {
+    btn.addEventListener('click', () => setView(btn.dataset.view))
+  })
   const select = document.getElementById('goal-select')
-  select.innerHTML = state.goals.map((g) => `<option value="${esc(g.slug)}">${esc(g.slug)}</option>`).join('')
-  state.goal = state.goals.length ? state.goals[0].slug : null
-  select.addEventListener('change', () => { state.goal = select.value; refresh() })
+  select.addEventListener('change', () => {
+    state.goal = select.value
+    refresh()
+  })
   document.getElementById('refresh').addEventListener('click', refresh)
+
+  const trayToggle = document.getElementById('tray-toggle')
+  trayToggle.addEventListener('click', () => {
+    const body = document.getElementById('tray-body')
+    const opening = body.hidden
+    body.hidden = !opening
+    trayToggle.setAttribute('aria-expanded', String(opening))
+  })
+
   document.getElementById('flow-run').addEventListener('click', async () => {
     const flow = document.getElementById('flow-select').value
     const argv = ['flow-arg1', 'flow-arg2', 'flow-arg3', 'flow-arg4']
@@ -141,11 +426,74 @@ async function init() {
     document.getElementById('flow-result').textContent = JSON.stringify(result, null, 2)
     renderAlerts()
   })
+
+  const search = document.getElementById('global-search')
+  search.addEventListener('input', () => {
+    const needle = search.value.trim().toLowerCase()
+    document.querySelectorAll('#board .card').forEach((card) => {
+      card.style.display = needle === '' || card.textContent.toLowerCase().includes(needle) ? '' : 'none'
+    })
+  })
+  document.querySelectorAll('input[data-sev]').forEach((input) => {
+    input.addEventListener('change', applySeverityFilters)
+  })
+}
+
+async function init() {
+  const app = document.getElementById('app')
+  const health = await api('/api/health')
+  state.repoRoot = health.repoRoot || ''
+  state.posture = health.posture || ''
+  app.innerHTML = shellHtml({ posture: state.posture, activeView: state.view })
+
+  const goals = await api('/api/goals')
+  state.goals = goals.goals || []
+  // FCA-2: the picker lists ACTIVE goals only, grouped per goal tree,
+  // attention first.
+  state.statuses = goals.statuses
+    || state.goals.map((g) => ({ key: g.slug, tree: null, active: true, attention: { total: 0 } }))
+  const active = state.statuses.filter((s) => s.active)
+  active.sort((a, b) => (b.attention.total > 0) - (a.attention.total > 0))
+  const groups = new Map()
+  for (const status of active) {
+    const label = status.tree === null ? 'foreman-line' : status.tree
+    if (!groups.has(label)) groups.set(label, [])
+    groups.get(label).push(status)
+  }
+  const select = document.getElementById('goal-select')
+  select.innerHTML = [...groups].map(([label, list]) =>
+    `<optgroup label="${esc(label)}">${list.map((s) => {
+      const marker = s.attention.total > 0 ? ` ● ${s.attention.total}` : ''
+      return `<option value="${esc(s.key)}">${esc(s.key)}${marker}</option>`
+    }).join('')}</optgroup>`).join('') || '<option value="">no active goals</option>'
+  state.goal = active.length ? active[0].key : null
+  select.value = state.goal ?? ''
+  const attnGoals = state.statuses.filter((s) => s.active && s.attention.total > 0).length
+  const summary = document.getElementById('attn-summary')
+  if (summary !== null) {
+    summary.textContent = attnGoals > 0 ? `⚠ ${attnGoals} goal${attnGoals === 1 ? '' : 's'} need attention` : ''
+    summary.className = attnGoals > 0 ? 'banner-inline' : 'muted'
+  }
+
+  wireEvents()
+  updateSpawnPanel()
+  // Header fleet switcher: populated from the fleet registry (Task 18 data).
+  const fleetData = await api('/api/fleet')
+  const fleetSelect = document.getElementById('fleet-select')
+  if (fleetSelect !== null) {
+    const roots = fleetData.roots || []
+    fleetSelect.innerHTML = roots.length === 0
+      ? '<option value="">no repos</option>'
+      : roots.map((entry) => `<option value="${esc(entry.root)}">${esc(entry.root)}</option>`).join('')
+  }
   await refresh()
-  // OQ2: poll on page load + 60s background refresh.
-  setInterval(refresh, 60000)
+  // OQ2: poll on page load + 60s background refresh (unref keeps node test
+  // runs from hanging on the timer).
+  const timer = setInterval(refresh, 60000)
+  if (typeof timer === 'object' && timer !== null && typeof timer.unref === 'function') timer.unref()
 }
 
 init().catch((err) => {
-  document.getElementById('detail').innerHTML = `<div class="flags">${esc(err.message)}</div>`
+  const detail = document.getElementById('detail')
+  if (detail !== null) detail.innerHTML = `<div class="flags">${esc(err.message)}</div>`
 })

@@ -6,16 +6,25 @@
 > `done/` is listed as `done/` (the stale `active/` duplicates were removed in the
 > 2026-10-08 hygiene pass). Regenerate or hand-update on every spec state change.
 
+Own TO-B0/TO-P0/TO-P1 lifecycle rows maintained 2026-10-10; other rows retain their recorded provenance.
+
 | Ticket | Title | Status | Location |
 |---|---|---|---|
 | BRINV-1 | [Branch inventory and merge/abandon recommendations](active/BRINV-1-branch-inventory.md) | `draft` | `active/` |
 | CFF-P0 | [Recon and baseline — ci-fail-fast](active/CFF-P0-recon-and-baseline.md) | `active` | `active/` |
-| CFF-P1 | [Change-proximity ordering and early-red signal](active/CFF-P1-change-proximity-ordering-and-early-red.md) | `draft` | `active/` |
+| CFF-P1 | [Change-proximity ordering and early-red signal](active/CFF-P1-change-proximity-ordering-and-early-red.md) | `active` | `active/` |
 | CFF-P3 | [Gate-job surface-pin precheck and read-graph drift seam](active/CFF-P3-gate-surface-pin-precheck.md) | `active` | `active/` |
 | CI-P1 | [Safe Documentation-Only Push Reuse](done/CI-P1-docs-only-push-reuse.md) | `done` | `done/` |
 | CI-P2 | [Deterministic full-sweep sharding](done/CI-P2-deterministic-sweep-sharding.md) | `done` | `done/` |
 | E6-R1 | [Current-repository identity normalization and observable A-to-F evidence rerun](done/E6-R1-current-repository-identity-and-evidence-rerun.md) | `done` | `done/` |
 | EVAL-1 | [Eval coverage green gate (Tier-2 trigger and routing)](active/EVAL-1-eval-coverage-green-gate.md) | `draft` | `active/` |
+| FCA-P0 | [Ops-console multi-root goal discovery and goal status index (additive)](active/FCA-P0-ops-console-multi-root-and-status-index.md) | `active` | `active/` |
+| FCA-P1 | [Remediation advisor for blockers and hung parcels (additive)](active/FCA-P1-remediation-advisor.md) | `active` | `active/` |
+| FCA-P2 | [Fleet registry and filesystem browse (multi-repo control scope)](active/FCA-P2-fleet.md) | `active` | `active/` |
+| FCA-P3 | [Unified attention model for repo-hygiene and process signals](active/FCA-P3-signals.md) | `active` | `active/` |
+| FCA-P4 | [Action registry — verbs, invocation classes, autonomy envelopes, audit](active/FCA-P4-actions.md) | `active` | `active/` |
+| FCA-P5 | [tmux session spawner with shared spawn controls](active/FCA-P5-spawn.md) | `active` | `active/` |
+| FCA-P6 | [Control-center UI — dense layout, action buttons, spawn panel, session tray](active/FCA-P6-console-ui.md) | `active` | `active/` |
 | FK-P0 | [Foreman Kernel - canon authority and enforcement registry](active/FK-P0-canon-authority-enforcement-registry.md) | `active` | `active/` |
 | FK-P10 | [Foreman Kernel - lease and transition engine](done/FK-P10-lease-transition-engine.md) | `done` | `done/` |
 | FK-P11 | [Foreman Kernel - legacy import and projection engine](done/FK-P11-legacy-import-projection.md) | `done` | `done/` |
@@ -130,6 +139,9 @@
 | SCAF | [--- schema v0.2 fields ---](done/SCAF-P1-shared-schema-scaffold-extraction.md) | `done` | `done/` |
 | SUPERCHARGE-P1 | [Phase 1 — authorize live-verified model families in routing surface](active/SUPERCHARGE-P1-phase1-models.md) | `active` | `active/` |
 | SUPERCHARGE-P2 | [Phase 2 — routing + frontmatter comprehensiveness analysis](active/SUPERCHARGE-P2-routing-analysis.md) | `active` | `active/` |
+| TO-B0 | [Baseline root guard repair](done/TO-B0-baseline-root-guard-repair.md) | `done` | `done/` |
+| TO-P0 | [Observation contract amendment](done/TO-P0-observation-contract-amendment.md) | `done` | `done/` |
+| TO-P1 | [Conservative current ratification reader](done/TO-P1-conservative-current-ratification-reader.md) | `done` | `done/` |
 | WGT-P0A | [Foreman record reconciliation](done/WGT-P0A-foreman-record-reconciliation.md) | `done` | `done/` |
 | WGT-P0BOOT | [Tracked Foreman Line bootstrap](done/WGT-P0BOOT-tracked-foreman-bootstrap.md) | `done` | `done/` |
 | WGT-R1 | [Foreman current-state and queue reconciliation](active/WGT-R1-foreman-current-state-reconciliation.md) | `active` | `active/` |
