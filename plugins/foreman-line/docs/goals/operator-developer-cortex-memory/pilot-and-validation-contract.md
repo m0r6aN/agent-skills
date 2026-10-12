@@ -5,17 +5,17 @@
 
 ## 1. Controlled scenario gates (execution: P9 against the real deployment)
 
-Each gate names: scenario, evidence required, and the fixture/contract source. "Applicable" is determined by shipped scope at P9; anything in scope that is skipped fails the gate.
+Each gate names: scenario, evidence required, and the fixture/contract source. "Applicable" is determined by shipped scope at P9; anything in scope that is skipped fails the gate. All write-path gates run against a **real Runtime** (OD-21): a stub or test double at S-gates/P9/P10 is a **failed gate** (the deterministic Runtime test double is P5a unit-test evidence only, never deployment evidence).
 
 | Gate | Scenario (from plan §8, renumbered) | Evidence required | Source |
 |---|---|---|---|
 | S-1 | Same tenant + stable repository identity across all three machines and supported path/worktree/WSL forms | Cross-machine capture+recall transcript with identical `tenant_id`/repository identity; path-variant table | boundary §4.2, N-3 |
-| S-2 | Trusted role enforcement before query/ranking and for exact-ID, lineage, shared artifacts, feedback, curation; forged/missing roles and foreign tenant/profile requests fail closed | N-1…N-8, N-10, N-14…N-16, N-19 executed (T-14 full identity/scope inventory); server-side enforcement order proof (scope applied before candidate generation) | boundary §4.1/§4.3 |
+| S-2 | Trusted role enforcement before query/ranking and for exact-ID, lineage, shared artifacts, feedback, curation; forged/missing roles and foreign tenant/profile requests fail closed | N-1…N-8, N-10, N-14…N-16, N-19…N-22 executed (full identity/scope inventory); server-side enforcement order proof (scope applied before candidate generation) | boundary §4.1/§4.3 |
 | S-3 | Operator-wide authorized relevance vs isolated live application and explicit family sharing; no automatic operator→live import | N-5 + profile matrix (operator / live app / family) with default-deny evidence | boundary §5 |
 | S-4 | Temporary agent replacement keeps selective role continuity without loading all ancestry; curated knowledge preserves evidence, generation identity, approval requirements | restart fixture: same role, new generation ⇒ curated briefing only; F-12 executed | event §5, boundary §4.3 |
 | S-5 | Original content verification, scope echo, durable recall-event behavior, evidence signing-key verification (T-3), deterministic historical replay against the real exposed contract | content-hash fail-closed proof (INV-1/2), recall event per delivery identity (event §3), G-8/G-9 replay, N-11, N-13 (signing-key) | event §3/§7 |
-| S-6 | Feedback matrix: access-without-use, considered-irrelevant, applied-without-outcome, supported utility, incorrect/superseded, governance/branch cases | F-1…F-12 executed | event §5 |
-| S-7 | Explicit time + pinned scoring; decay and association fixtures; feedback ≠ occurrence; duplicates/self-feedback cannot dominate | G-1…G-12, F-8…F-10, N-12 | event §7/§2 |
+| S-6 | Feedback matrix: access-without-use, considered-irrelevant, applied-without-outcome, supported utility, incorrect/superseded, governance/branch cases | F-1…F-14 executed | event §5 |
+| S-7 | Explicit time + pinned scoring; decay and association fixtures; feedback ≠ occurrence; duplicates/self-feedback cannot dominate | G-1…G-14, F-8…F-10, N-12 | event §7/§2 |
 | S-8 | Outage/lost-ack/crash matrix: Azure/Cortex/Neon outage, credential expiry/revocation, reconnect, crash at each outbox boundary, retry concurrency, role/profile switch with pending work, capacity/backpressure, indeterminate writes/recalls | O-1…O-9 executed + induced outage run | event §8, boundary §6 |
 | S-9 | Pi lifecycle: startup/task transition/compaction/resume/fork/reload/shutdown/cancellation; interactive + supported headless; no repeated capture of abandoned branches; recalled instructions cannot widen tool authority | harness event log vs delivery-identity rules; N-9 | event §3/§9 |
 | S-10 | Container/runtime: non-root read-only, loopback publication, persisted outbox volume, pinned images, SBOM/scan, secret exclusion, signed-key persistence, protocol/schema handshake + rollback | image digest pin, SBOM artifact, scan report, downgrade-refusal test — executed against the P2-owned `/health` `schema_version` signal (boundary §2.3 Readiness/Version, OD-17) | boundary §6 |
@@ -49,7 +49,7 @@ Measured and reported for the pilot, per machine and aggregate:
 
 ## 4. Deterministic verification (supplements pilot; P2/P3/P5/P6/P7 evidence)
 
-- Fixture suites G-1…G-12, F-1…F-12, O-1…O-9, N-1…N-19 green with zero skips (T-14 full inventory). O-9's future cache layer may run against a deterministic test double; no fixture may disappear through an undocumented applicability exemption.
+- Fixture suites G-1…G-14, F-1…F-14, O-1…O-9, N-1…N-22 green with zero skips (full inventory). O-9's future cache layer may run against a deterministic test double; no fixture may disappear through an undocumented applicability exemption.
 - Proof invariants I1–I7 regenerated at the pinned revisions (`cortex proof` family) — required because P0 found them unverified at pin (canon-authority-map §4.3).
 - Bridge shell gates (`docs/ADVERSARIAL_GATE.md` P0 bridge-shell set) re-run against the real backend; the Cortex integration gates (deterministic shard identity, outbox crash recovery, index-derivative behaviour, replay with pinned parameters, contradiction preservation, epoch proofs — **deferred, OD-19: out of the initial release, not silently waived** — governed signing, byte-identical proof artifacts) run with the real Cortex repository/API.
 - Container gates from S-10.
