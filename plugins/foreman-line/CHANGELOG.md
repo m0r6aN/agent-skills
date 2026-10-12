@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- Pi package (`pi-package/`): run the plugin's skills from a Pi prompt as
+  namespaced slash commands — `/foreman-line:goal [<concept>]`,
+  `/foreman-line:goal resume <goal-slug>`,
+  `/foreman-line:parcel-driven-development`, `/foreman-line:ai-council`,
+  `/foreman-line:foreman-shaping`. Expands like Pi's `/skill:<name>` with
+  `${CLAUDE_PLUGIN_ROOT}` resolved to the plugin root; goal commands
+  tab-complete goal slugs; `/foreman-line:probe` self-tests the install.
+
 ## 0.2.1 — 2026-10-11
 
 Version event for the CI-fail-fast materials landed by PR #170 (merged
