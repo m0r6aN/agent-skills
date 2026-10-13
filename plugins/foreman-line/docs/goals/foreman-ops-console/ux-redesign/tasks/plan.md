@@ -82,6 +82,30 @@ Verification: failing node:test/jsdom regressions first; focused green checks pe
 slice; final npm test/typecheck/lint and isolated mocked Chromium/Firefox smoke,
 axe, keyboard and screenshots. No real operator writes or billing changes.
 
+## Sessions readability regression — owner reported after PR #198 merged
+
+Reproduced read-only at localhost:8081/#sessions in Chromium/Firefox: at 1024px,
+sidebar + five auto-layout columns leave identity/configuration ~120px wide; IDs,
+ISO dates, model names and paths fragment into many lines. Existing tests proved
+page overflow but not readable cell width. The 768px mobile breakpoint misses
+this intermediate-width failure. Live statuses additionally show an unrelated
+invalid-response warning; do not fix backend/projection contracts in this patch.
+
+FCA-U1/U3 focused acceptance amendment: session layout adapts to its container
+width, not only viewport width. Keep the semantic desktop table with useful
+column widths, aligned controls and padding; narrower content uses labeled groups
+with readable identity/configuration and full-width attach/action access. Preserve
+full raw receipts, pagination, unknown/liveness semantics, copy fallback, typed
+confirmation and launch handoff. Format valid creation timestamps as explicit UTC
+with original datetime retained; missing/invalid values remain honest.
+
+Files: ui/index.html, ui/views/tray.js, tests/ui-{sessions,tray}.test.ts and existing
+goal-local browser harness/evidence. Regression first: realistic foc timestamp IDs,
+long model/path fixtures, 1024px cell width and labeled narrow groups. Then focused
+unit checks, npm test/typecheck/lint and both browser screenshots/keyboard/axe at
+320/768/1024/1366/1920. Separate fix/sessions-readability PR from current main;
+no live session writes/restarts or CI changes. CI retirement is paused separately.
+
 ## Risks and mitigations
 
 - Old tests equate hard-coded layout with correctness: replace these assertions

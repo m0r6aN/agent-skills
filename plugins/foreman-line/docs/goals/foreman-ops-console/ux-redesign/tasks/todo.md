@@ -110,6 +110,24 @@ Paths below are relative to plugins/foreman-line/ops-console.
 - [ ] Independent/human review of follow-up commits before merge. Automated
   read-only review attempt blocked by expired OAuth (no verdict); see verification.md.
 
+## Sessions readability follow-up (post-merge)
+
+- [ ] S1: Reproduce intermediate-width squeeze with failing browser/renderer tests.
+  Acceptance: realistic timestamp session names and long paths/models; minimum
+  readable width, meaningful narrow-layout labels and truthful UTC/unknown dates.
+  Verify: focused node:test and Chromium/Firefox RED. Dependencies: none.
+- [ ] S2: Container-aware session layout and readable timestamp presentation.
+  Acceptance: desktop columns readable, narrow labeled groups, details/copy/actions
+  reachable; no liveness/completion inference or safeguard changes.
+  Files: ui/index.html, ui/views/tray.js, tests/ui-{sessions,tray}.test.ts.
+  Verify: focused GREEN, npm test/typecheck/lint. Dependencies: S1.
+- [ ] S3: Verify both browsers, record evidence and prepare separate PR.
+  Acceptance: widths 320/768/1024/1366/1920 and 200%-equivalent reflow, keyboard
+  copy/confirmation cancellation and receipt details; no real launches/deletions.
+  Verify: mocked browser smoke/axe/screenshots and diff check. Dependencies: S2.
+- [ ] Human review/merge of Sessions follow-up; separate stale-goal-status warning
+  observed live remains untriaged (no backend changes in this layout patch).
+
 ## 9. Verification and handoff
 - [x] Chromium + Firefox: primary views at 320/768/1024/1366/1920; no page overflow
       or unexpected console exceptions. Real screenshots exposed/fixed mobile text
