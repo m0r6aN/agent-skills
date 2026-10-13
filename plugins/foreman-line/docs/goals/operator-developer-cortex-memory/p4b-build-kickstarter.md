@@ -63,3 +63,13 @@ No edits this turn. Reply with: (1) restatement; (2) design table ruling → fil
 | P4b-T6 | A F-3 — `supersedes_ref` accepts cognitive ids | fix | Apply `reject_cognitive_id` to `supersedes_ref` (INV-5). |
 | P4b-T7 | A F-4 — F-7 historical marker is caller discipline | fix | `supersede()` returns `(historical_old, current_new)`; `EvidenceLinks` rejects a `current` disposition that has been superseded by another disposition in the same links. |
 | P4b-T8 | A F-6 | fix (cheap) | `{shard_id}` path checks registry configuration before signing. |
+
+## R2 triage (coordinator) — Seat A APPROVE, Seat B REQUEST-CHANGES (2 majors)
+
+| # | Finding | Disposition | Ruling |
+|---|---|---|---|
+| P4b-T9 | B F-1 — same public key under several ids lets a caller relabel a revoked export to an active alias | fix | Registry load enforces **one canonical id per public key**: each entry's `key_id` must equal the canonical fingerprint used by `GET …/evidence` (`sha256(pub)[:16]` hex) and duplicate public keys are rejected (RuntimeError). Served alias-relabel regression. |
+| P4b-T10 | B F-2 — degenerate/low-order Ed25519 public keys accepted | fix | Registry load rejects the identity point and all small-order points (and any key that fails the library's point decoding) with RuntimeError; served fixed-signature-forgery regression. |
+| P4b-T11 | B F-3 — reason precedence for reserved inner fields | fix | Reserved-field tampering returns `signature_invalid` **regardless** of registry state (checked first after visibility/envelope); state-matrix test. |
+
+Verification of this narrow fix: **Seat B only** (owner of the findings; Seat A approved R2).
