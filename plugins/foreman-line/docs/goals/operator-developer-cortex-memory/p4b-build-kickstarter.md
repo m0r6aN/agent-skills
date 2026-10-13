@@ -50,3 +50,16 @@ No edits this turn. Reply with: (1) restatement; (2) design table ruling → fil
 - **S0-1:** reason vocabulary `ok | key_unknown | key_revoked | registry_unconfigured | signature_invalid` — approved. `{evidence_pack}` body = the full `data` object of `GET /v1/shards/{id}/evidence`; `{shard_id}` semantics = "Cortex's current signing key verifies under the trusted registry" — approved.
 - **S0-2:** registry states `active | revoked` only (`retired` in config ⇒ RuntimeError; `unknown` derived) — approved.
 - **S0-3:** route-table edit in `tests/test_shards_v1_1.py` is the sanctioned mechanical fixture edit.
+
+## R1 triage (coordinator, 2026-10-13) — both seats REQUEST-CHANGES
+
+| # | Finding | Disposition | Ruling |
+|---|---|---|---|
+| P4b-T1 | A F-1 (blocker) + B F-3 — reserved `signature`/`key_id` inside `pack` vanish from the verified payload | fix | Reject an `evidence_pack.pack` containing any reserved signing field (`signature`, `key_id`, `algorithm`) ⇒ `verified: false, reason: "signature_invalid"` (no flattening that overwrites inner fields). Served negative tests. |
+| P4b-T2 | B F-2 + A F-5 — unsigned outer export fields ignored and relabelable | fix | The outer `shard_id`, `tenant_id`, `key_id`, `algorithm` must equal the signed inner values (`pack.shard_id`, `pack.tenant_id`, …) and the caller's tenant; any mismatch ⇒ 422 before signature work. Tests for envelope-only tampering. |
+| P4b-T3 | B F-1 — signed tenant not authorization-bound (legacy id aliasing across tenants) | fix | Visibility is resolved on the **signed** `(pack.tenant_id, pack.shard_id)`: `pack.tenant_id` must equal the caller tenant and the record must be visible; otherwise 404 before any signature work. Legacy-id-alias regression test. |
+| P4b-T4 | B F-5 — presented key ids not T-35 validated | fix | Full-string T-35/T-36 validation of presented `key_id` (422, no trimming). |
+| P4b-T5 | A F-2 + B F-4 — non-chosen branches can acquire outcomes via forged branch flags / direct construction | fix | Branch ids resolve **only** against the canonical `CognitiveSelection` records (unique ids across chosen/non-chosen enforced at construction); `BranchOutcome` cannot be constructed for an id that is not chosen in its selection (`EvidenceLinks` validates every branch outcome against its selection in `__post_init__`). Tests for forged `survived`, direct construction, duplicates. |
+| P4b-T6 | A F-3 — `supersedes_ref` accepts cognitive ids | fix | Apply `reject_cognitive_id` to `supersedes_ref` (INV-5). |
+| P4b-T7 | A F-4 — F-7 historical marker is caller discipline | fix | `supersede()` returns `(historical_old, current_new)`; `EvidenceLinks` rejects a `current` disposition that has been superseded by another disposition in the same links. |
+| P4b-T8 | A F-6 | fix (cheap) | `{shard_id}` path checks registry configuration before signing. |
