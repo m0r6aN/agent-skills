@@ -60,3 +60,10 @@ Do NOT edit/commit this turn. Read contract + code (`ingress/models.py`, `core/m
 ### FIXTURE-EDITS / EXISTING-TEST-CONFLICT / NEEDS-AMENDMENT
 ### git diff --name-status 3294bd3..HEAD
 ```
+
+## Step 0 rulings (coordinator, 2026-10-12)
+
+- **S0-1 (crash window):** approved — scope is a fingerprint input and `_verify_replay` runs before any re-materialization, so a retrier with a different scope gets 409 and never writes; no reservation-schema change and no idempotency-store files.
+- **S0-2 (amendment):** Allowed Files += UPDATE `tests/test_scope_http.py`, **mechanical** only (extend the exact `/health` expectation with `schema_version`/`protocol`). Same rule for `tests/test_api.py:392`. List both under FIXTURE-EDITS.
+- **S0-3:** N-18's Cortex half is the `source_uri` check (no `artifact_uri` field exists on the Cortex candidate) — approved. Status codes as proposed (actor/receipt malformed 403, absent actor 400; idempotency key malformed 400; content bound 400; query/source_uri 422) — approved.
+- **S0-4:** design table approved as written, including the 7-key scoped identity payload and the scope-aware `_replay_value_hash`.
