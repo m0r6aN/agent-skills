@@ -56,3 +56,10 @@ No edits this turn. Reply with (1) restatement; (2) design table ruling → file
 ### FIXTURE-EDITS / EXISTING-TEST-CONFLICT / NEEDS-AMENDMENT
 ### git diff --name-status b6e25c6..HEAD
 ```
+
+## Step 0 rulings (coordinator, 2026-10-13)
+
+- **S0-1:** design table, DDL (`memory_events`, `memory_event_bindings`, `memory_access_delivered` + reuse of `spine_events`), single-transaction PG commit and P2b-discipline in-memory commit — approved. No extra files.
+- **S0-2:** every non-access kind **must** carry a verified `access_ref` or `memory_id` (so the spine `correlation_id` mapping is total); an `outcome` with only a free `target_ref` ⇒ 422.
+- **S0-3:** duplicate delivered access under a new operation id ⇒ ack `replayed: true`, a binding row for the new operation, an audit `memory_events` row flagged `replay_equivalent`, **no** second `memory_access_delivered` row and **no** second `Access` spine event — approved.
+- **S0-4:** the `tests/test_shards_v1_1.py` route-table edit is the sanctioned mechanical fixture edit.
