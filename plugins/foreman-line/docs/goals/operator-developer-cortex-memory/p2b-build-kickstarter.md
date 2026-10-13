@@ -91,3 +91,11 @@ No edits/commits this turn. Read the contract, `spine/*.py` (models, record_stor
 | — | A F-2 | informational | 503 for all `asyncpg.PostgresError` accepted (T-9 letter); refine later if needed. |
 
 Verification of this narrow fix: **Seat B only** (it owns the finding; Seat A approved R3) — recorded coordinator decision.
+
+## R4 triage (coordinator) — Seat B REQUEST-CHANGES (rollback ownership recorded after mutation)
+
+| # | Finding | Disposition | Ruling |
+|---|---|---|---|
+| P2b-T12 | R4-B F-1 — an insert that raises mid-way or after mutating indexes is not journaled, so rollback misses it; existing-id shortcut skips repair | fix | Journal ownership **before** any mutation (append the event id to the rollback list first). Rollback removes each owned id from **every** index if present (idempotent; tolerant of partially populated indexes) and restores the sequence only when no foreign event was appended meanwhile. The existing-id shortcut must verify the event is fully indexed (all indexes) before skipping; otherwise complete it. Served-route regressions: failure before / during (between index updates) / after insertion at each position, identical and changed-candidate retries ⇒ counts unchanged on failure and `#spine == #access` with no orphans after retry; keep the concurrent-writer preservation test. |
+
+Coordinator note: this is the last in-memory-atomicity round planned. The production path (PostgreSQL, single transaction) has been green since R1. If R5 finds only fault-injection residuals in the in-memory dev store, they are carried forward as informational.
