@@ -40,7 +40,7 @@ function fixtures() { return {
   '/api/goals': { goals: [], statuses: [ { key: 'ops-console', repoRoot: roots[0], active: true, tree: null, attention: { total: 2, hung: 1, awaitingGate: 1 }, urgentSubjects: ['ops-console/P1'] }, { key: 'other.research', repoRoot: roots[1], active: true, tree: 'other', attention: { total: 1 }, urgentSubjects: [] }] },
   '/api/signals': { signals: structuredClone(signals) }, '/api/actions': { actions: structuredClone(registry) },
   '/api/fleet': { roots: roots.map((root) => ({ root, liveness: 'ready', identity: { remote: 'https://example.invalid/foreman', defaultBranch: 'main', head: '6a68cfc5' } })) },
-  '/api/spawns': { spawns: [receipt('foc-review', 0), receipt('foc-review', 1), receipt('foc-investigation', 0, 'exited'), receipt('foc-legacy', 0, 'unknown')] },
+  '/api/spawns': { spawns: [receipt('foc-20261013t111955z', 0), receipt('foc-20261013t111955z', 1), { ...receipt('foc-20261012t225424z', 0, 'exited'), model: 'provider/model-with-a-long-realistic-name', repoRoot: '/workspace/checkouts/agent-skills-long-repository-name', worktreePath: '/workspace/checkouts/agent-skills-worktrees/foreman-ops-console-foc-p1-20261012t225424z' }, receipt('foc-legacy', 0, 'unknown')] },
   '/api/parcels': { goal: { slug: 'ops-console', loopDirectiveRef: 'docs/goals/ops-console/loop-directive.md' }, parcels },
   '/api/alerts': { alerts: [], remedies: [], notifications: [] }, '/api/routing': { policy: { classes: [], roles: [] }, parcels: [] },
   '/api/parcels/P1/logs': { chainDocuments: [], invocationAudit: [], stateLines: ['P1 awaits verification'] },
@@ -77,6 +77,34 @@ try {
         assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${name} ${width} ${view} page overflow`)
         if (width === 320 && view === 'signals') assert.ok(await page.locator('.signal-row td:nth-child(2)').first().evaluate((node) => node.clientWidth >= 140), 'mobile work item text must have readable width')
         await page.screenshot({ path: `${out}/${name}-${view}-${width}.png`, fullPage: true })
+        if (view === 'sessions') {
+          const row = page.locator('#sessions-body .tray-row').first()
+          assert.ok(await row.locator('td').first().evaluate((node) => node.clientWidth >= 180), `${name} ${width}px session identity must have readable width (not squeezed columns)`)
+          const config = row.locator('td').nth(2)
+          assert.ok(await config.evaluate((node) => node.clientWidth >= 180), `${name} ${width}px session configuration must have readable width`)
+          checks.push(`${width}px sessions: realistic identity/configuration remain at least 180px wide`)
+          if (width === 1366) {
+            await row.locator('summary').click()
+            assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'desktop expanded receipt must not overflow the page')
+            assert.ok(await row.locator('td').first().evaluate((node) => node.clientWidth >= 180), 'desktop expanded receipt preserves column width')
+            await row.locator('summary').click()
+          }
+          if (width === 1024) {
+            await row.locator('summary').focus()
+            await page.keyboard.press('Enter')
+            assert.equal(await row.locator('details').getAttribute('open'), '')
+            assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'expanded receipt must not overflow the page')
+            await page.screenshot({ path: `${out}/${name}-sessions-receipt-1024.png`, fullPage: true })
+            await page.keyboard.press('Enter')
+            await row.locator('[data-copy]').focus()
+            await page.keyboard.press('Tab')
+            assert.equal(await page.evaluate(() => document.activeElement.dataset.sessionAction), 'explain')
+            await page.keyboard.press('Tab')
+            assert.equal(await page.evaluate(() => document.activeElement.dataset.sessionAction), 'close-delete')
+            const result = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()
+            axe.push({ view: 'sessions-1024', violations: result.violations.map((v) => ({ id: v.id, impact: v.impact, nodes: v.nodes.map((n) => n.target) })) })
+          }
+        }
         checks.push(`${width}px ${view}: no page overflow`)
         if (width === 320) {
           const result = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()
@@ -208,7 +236,7 @@ try {
     checks.push('initialization error, delayed-health loading and recovery: meaningful shell, refresh available')
     assert.ok(errors.every((text) => text.includes('503')), 'no unexpected console or page exceptions')
     assert.ok(axe.every((entry) => !entry.violations.length), 'zero tested WCAG A/AA axe violations')
-    report.push({ browser: name, version: browser.version(), checks, axe, errors, posts, screenshotCount: 32 })
+    report.push({ browser: name, version: browser.version(), checks, axe, errors, posts, screenshotCount: 33 })
     await context.close(); await browser.close()
   }
 } finally {
