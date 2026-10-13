@@ -44,3 +44,9 @@ No edits this turn. Reply with: (1) restatement; (2) design table ruling → fil
 ### FIXTURE-EDITS / EXISTING-TEST-CONFLICT / NEEDS-AMENDMENT
 ### git diff --name-status 8cfc02f..HEAD
 ```
+
+## Step 0 rulings (coordinator, 2026-10-13)
+
+- **S0-1:** reason vocabulary `ok | key_unknown | key_revoked | registry_unconfigured | signature_invalid` — approved. `{evidence_pack}` body = the full `data` object of `GET /v1/shards/{id}/evidence`; `{shard_id}` semantics = "Cortex's current signing key verifies under the trusted registry" — approved.
+- **S0-2:** registry states `active | revoked` only (`retired` in config ⇒ RuntimeError; `unknown` derived) — approved.
+- **S0-3:** route-table edit in `tests/test_shards_v1_1.py` is the sanctioned mechanical fixture edit.
