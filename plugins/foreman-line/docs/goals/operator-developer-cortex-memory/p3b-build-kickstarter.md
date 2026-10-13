@@ -53,3 +53,10 @@ No edits this turn. Read the contract and code. Reply with: (1) restatement; (2)
 ### FIXTURE-EDITS / EXISTING-TEST-CONFLICT / NEEDS-AMENDMENT
 ### git diff --name-status 2930958..HEAD
 ```
+
+## Step 0 rulings (coordinator, 2026-10-13)
+
+- **S0-1 (A1 amendment granted):** UPDATE `src/keon/cortex/providers/postgres/document_store.py` — additive optional `connection=None` on `upsert` only (default path byte-identical), so the new-ingest shard upsert and its `Observation` spine append commit in one PostgreSQL transaction. Test the rollback (spine failure ⇒ no shard row) against real PG.
+- **S0-2 (A3):** G-4/G-5 are pinned against the inherited `forces.py` helpers the 1.1.0 scorer uses unchanged, **plus** a served-path invariant `association == 0.0` (ruling 5). Approved.
+- **S0-3:** design table approved, including the delivered-access reader protocol in `services/recall_accounting.py` (no `memory_events.py` edit), `get_by_correlation_scoped` additive reads, golden 1.0.0 outputs captured at base, and binding-retry re-scoring at the retry's `as_of` (selection membership unchanged).
+- **S0-4:** listed EXISTING-TEST-CONFLICTs 1–3 are sanctioned mechanical fixture edits (labels, order expectations, tolerance of `Observation` spine events); list every touched expectation.
