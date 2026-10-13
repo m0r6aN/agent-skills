@@ -55,3 +55,10 @@ No edits/commits this turn. Read the contract, `spine/*.py` (models, record_stor
 ### FIXTURE-EDITS / EXISTING-TEST-CONFLICT / NEEDS-AMENDMENT
 ### git diff --name-status ac05fdd..HEAD
 ```
+
+## Step 0 rulings (coordinator, 2026-10-13)
+
+- **S0-1 (amendment):** Allowed Files += NEW `src/keon/cortex/spine/shard_plane.py` (single recompute authority; `api.py` imports it — `_replay_value_hash` moves there, behaviour unchanged) and NEW `src/keon/cortex/spine/postgres_record_store.py` (durable spine `RecordStore`). Approved as justified.
+- **S0-2 (a):** `correlation_id = shard_id` for `Recall` spine events — approved (P3's history view reads by correlation). Record the mapping in a module docstring.
+- **S0-3 (b):** `/v1/recall` session id absent ⇒ 400, malformed ⇒ 403 — approved. **(c):** `rank` 0-based in both response and access rows — approved; `role_generation` JSON `null` when absent — approved.
+- **S0-4:** design table, DDL, single-transaction first-delivery commit, deterministic `recall_event_id`, leaving the existing `RecallService` class untouched with a sibling shard-plane class — approved. A new operation that resolves to an existing delivery key creates its own binding to the existing event, returns `replayed: true`, and appends no event/access/spine rows.
