@@ -234,3 +234,34 @@ Known follow-ups (not in this parcel): the frozen `hung` rule (FOC-P0 R4) treats
 unstarted queue entry as hung; separating "not started" from "stalled" needs an owner
 amendment to the frozen state vocabulary. `closure-proposal` remains unspecified.
 
+## Independent review disposition — 2026-10-13
+
+A fresh, read-only reviewer session (read/grep/find/ls only) returned REQUEST CHANGES
+with 16 findings, plus a wording and mandated-question pass. Disposition:
+
+| # | Finding | Disposition |
+|---|---|---|
+| F1 | git failure treated as "empty" (merged set, spec listing, log) -> false findings; no timeout | **Fixed** - `complete` flags per read; absence findings need every read complete; shared runner has 20 s timeout and 64 MB buffer |
+| F2 | PR (1000) and log (5000) limits cut off silently | **Fixed** - `truncated`/`logTruncated`; absence withheld; limits named in `assessment` and the banner |
+| F3 | ambiguous PR/branch/worktree ignored when claiming absence | **Fixed** - an ambiguous candidate blocks never-started/recorded-unshipped and is listed as a weak trace |
+| F4 | orphan check matched sessions by key, "no live pane" overclaim | **Fixed** - exact worktree-path match; wording now "no live console-launched session" with the caveat that outside sessions are invisible |
+| F5 | squash/rebase-merged branches called `unmerged-work` | **Fixed** - merged-PR-head cross-check (also silences the pruned-upstream divergence) |
+| F6 | specs dir hardcoded | **Fixed** - taken from the tree config; outside the repo = unknown |
+| F7 | any feat/fix PR naming a key = delivery; any base when default unknown | **Partly fixed** - default branch must be known; revert/follow-up/partial/wip titles excluded; wording now "names this parcel ... verify it delivered the whole parcel". A `feat:` PR that merely names a key remains strong evidence by design (the finding asks the human the question) |
+| F8 | scope/goal-status change strands the view on Loading | **Fixed** (+ test) |
+| F9 | stale data with no persistent marker; `generatedAt` unshown | **Fixed** - persistent banner with the last generation time |
+| F10 | upstream-gone and spec-location divergence false positives | **Fixed** - spec comparison only when checked out on the default branch; pruned upstream ignored when a merged PR has that head. The default branch ahead/behind remains a banner (the spec's first clause), not a per-parcel finding |
+| F11 | keys inside longer slugs | **Documented limitation** (no deterministic rule distinguishes `foreman-to-p1-...` from `add-to-p1-...`); other goals' keys are now indexed for ambiguity |
+| F12 | uncached cost; hung gh stalls; symlinked roots | **Mitigated** - gh timeout 10 s, failures cached 5 min, GIT_OPTIONAL_LOCKS/fsmonitor hardening, realpath for receipts. Event-loop blocking itself remains (follow-up) |
+| F13 | history comparator and silent 100-cap | **Fixed** - total order; `historyTotal` and a visible note |
+| F14 | open panels leak across goals | **Fixed** |
+| F15 | recorded-unshipped required `complete` | **Fixed** - uses "record claims closed" (complete, spec in done/, or closed marker) |
+| F16 | newline paths, realpath of primary worktree, quadratic range expansion | **Partly fixed** - realpath normalisation in the API, range expansion bounded; newline-in-path parsing left (git `-z` needs >= 2.36) |
+| Q2 | refs age = any fetch; absence asserted on never-fetched clone | **Mitigated** - stale/never-fetched banner; evidence names the age. `FETCH_HEAD` remains the proxy for fetch time |
+| Q3 | cross-goal ambiguity; `FOC-P1-B-x.md` counted as FOC-P1's spec | **Fixed** (+ test) |
+| wording | "No trace of a start" overclaims | **Fixed** - "No linked trace" |
+| header | comment said `state` is never read; CLOSED_MARKER could drift | **Fixed** - comment corrected; test pins the pattern to derive.ts |
+
+Follow-ups (owner decisions): moving blocking `execFileSync` work off the event loop;
+the frozen R4 rule treating unstarted parcels as hung; newline-safe worktree parsing.
+
