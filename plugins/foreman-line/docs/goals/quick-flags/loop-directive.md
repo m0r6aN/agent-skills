@@ -2,7 +2,7 @@
 
 ## COORDINATOR OWNERSHIP — read before dispatching anything
 > **Queue owner: the pi coordinator session `01a136d7-28c5-73e4-85c6-6f53aefdf98b`** (claimed 2026-10-13). One goal, one coordinator. Ownership transfers only at parcel boundaries, by editing this block. If this block names another live coordinator, STOP and report.
-> **State:** `qf_p1_shaping_blocked_on_route_receipt_ruling` (loop stopped 2026-10-13; this session still owns the goal and will resume on `/goal resume quick-flags`)
+> **State:** `qf_p1_shaping_step0` (resumed 2026-10-13 after route-receipt ruling)
 
 **Resume:** `/goal resume quick-flags`
 **Integration branch:** `feat/foreman-line-quick-flags` (local; cut from local `main`). Parcel branches/worktrees: `qf-p1`, `qf-p2`, `qf-p0`, `qf-p3`, each in its own worktree, named in its kickstarter.
@@ -53,3 +53,6 @@ Blocked only on a running background session: a long fallback (1200–1800s). Co
 Plan-level review is done and Gate 1 was re-ratified. The loop stopped before dispatching QF-P1 shaping. The shaping template (`templates/kickstarters/shaping-template.md`) requires an approved route receipt minted by the resolver for every dispatched session, and says a bare `pi` call "is not a Foreman execution path." No usable minting CLI was found for this session (`routing-policy/scripts-mint-proposal.ts` and the `dispatch` package were inspected only). The plan-review session itself ran as an ephemeral direct `pi` invocation, because the `claude` CLI OAuth session had expired.
 
 **Human decision needed:** (a) mint route receipts for the shaping/build/review lanes yourself, or point me at the resolver command; (b) rule that this docs-only goal may run its sessions as direct `pi` sessions with no receipt, recorded as an explicit deviation; or (c) re-authenticate the `claude` CLI (`claude /login`) and say whether that path is acceptable. Until then no dispatch occurs.
+
+## Ruling 2026-10-13 — route-receipt deviation (Clint, option b)
+This docs-only goal's sessions (shaping, build, review) run as **direct `pi` sessions without minted route receipts**. This is a recorded, explicit deviation from `templates/kickstarters/shaping-template.md`, scoped to this goal only and not precedent. Sessions use `pi -p --provider anthropic --no-session`; reviewers are read-only (`--tools read,grep,find,ls`) on `claude-opus-5-5`; shaping and Risk builders use `claude-opus-5-5`; the standard builder uses `claude-sonnet-5-5`. Kickstarters must say "no route receipt; direct invocation per loop-directive ruling 2026-10-13." This does not widen any gate.
