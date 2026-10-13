@@ -265,3 +265,27 @@ with 16 findings, plus a wording and mandated-question pass. Disposition:
 Follow-ups (owner decisions): moving blocking `execFileSync` work off the event loop;
 the frozen R4 rule treating unstarted parcels as hung; newline-safe worktree parsing.
 
+## Second independent review — 2026-10-13
+
+A second fresh read-only reviewer verified each prior finding against the **code** and hunted
+for regressions: of 20 prior items, 9 confirmed fixed, 6 partial, 4 deferred-ok. Disposition
+of what remained:
+
+| Item | Disposition |
+|---|---|
+| F1 `complete.worktrees` was recorded but never read, so a failed `git worktree list` still allowed `never-started` | **Fixed** - it is an assessment limit; every absence finding is withheld (+ test) |
+| New 1 (major) `logTruncated` at 5000 commits would disable every absence finding on any mature repository | **Fixed** - the limit is 50,000 (~7 MB, a fraction of a second); truncation still reports itself. The guard is deliberately all-or-nothing: absence cannot be claimed from a partial log |
+| New 1b the real-data numbers in this spec predate the rework | **Corrected**: re-measured after the rework (17 goals, 38 parcels, 5.3 s, nothing truncated or unavailable): 34 `hung` = 15 `never-started`, 10 `orphan-worktree`, **11 `stale-abandoned` (all weak-traces: *Unclear - verify*)**, 1 `local-remote-divergence`; 4 `complete`; 0 `shipped-unrecorded`. (Earlier "10 weak + 1 asserted" became 11 weak once ambiguous candidates counted as traces.) |
+| F6 / New 2 (major) spec files were classified by a hardcoded `/specs/done/` | **Fixed** - classified by the configured specs directory; tested with a top-level `specs/` and `docs/plans/` |
+| F5 / New 3 merged-PR head matched by branch NAME (a reused name with new commits read as shipped) | **Fixed** - matched by the exact tip the PR carried (`headRefOid`, requested from gh) and only for PRs into the default branch; a reused name has a different tip and is unmerged; empty tips never match |
+| New 4 `remoteAssessable` unused | **Fixed** - it gates `shipped-unrecorded` |
+| New 5 `ledger-git.ts` outside the declared change set | **Clarified**: the runner hardening (timeout, buffer, `GIT_OPTIONAL_LOCKS`, fsmonitor) is part of FCA-P7 (#218) and is inherited here by the merge; this parcel changes no P7 file. P7 pins its constants by test |
+| New 6 `confidence: asserted` on a partial/hedged `feat:` PR | **Acknowledged residual** (by design): a `feat/fix/perf/refactor` PR into the default branch that names the key is strong evidence; hedged titles are excluded; the machine flag stays `asserted` while the summary and options ask the human to verify the PR delivered the whole parcel |
+| New 7 `FETCH_HEAD` banner is not a freshness gate | **Acknowledged**: it warns (older than a day, or never fetched); findings are not gated on ref age, and evidence strings print the age |
+| New 8 duplicate "no default branch" warning | **Fixed** (the limits banner no longer repeats a reason with its own banner) |
+| New 9 latent stuck "Loading" on goal mismatch | **Fixed** - the mismatch path re-renders (defence in depth; no failing path is reachable in the current wiring, so the mutation is not caught by a test) |
+| F1/F12 hung `execFileSync` can still block the server | **Mitigated** (10 s git/gh timeouts, failures cached 5 min, probing budget in P7); event-loop offloading remains a follow-up |
+
+Pinned by test and mutation: 6 of 7 new guards fail when removed (the 7th is the defence-in-depth
+re-render above). Real-data run is read-only against your repository.
+
