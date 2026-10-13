@@ -1,5 +1,6 @@
 // Browser controller: DOM is a projection of state, never the source of selection truth.
 import { esc, emptyHtml, paginationHtml, shellHtml, VIEWS, VIEW_COPY } from './views/shell.js'
+import { countsHtml, filterParcels, reconcileRowsHtml, remoteBannerHtml } from './views/reconcile.js'
 import { boardHtml, detailHtml } from './views/board.js'
 import { remedyHtml, remediesHtml } from './views/remedies.js'
 import { actionPopoverHtml, confirmationToken, signalsHtml } from './views/signals.js'
@@ -14,9 +15,10 @@ const absoluteRoot = (value) => typeof value === 'string' && /^(?:\/|[A-Za-z]:[\
 export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   const win = doc.defaultView
   const state = { view: 'signals', scope: '', goal: null, repoRoot: '', statuses: [], signals: [], registry: [], fleet: [], spawns: [],
-    loaded: {}, loadErrors: {}, projection: null, remedies: [], queries: {}, pages: {}, selected: new Map(), suggested: true, bulk: {}, bulkResult: '', controls: {}, extra: '', browseSelection: null, launchError: '', submitting: false, launchPage: 0, highlightSession: null, revealSession: false, detailParcel: null, retryRequired: false, retryAcknowledged: false }
+    loaded: {}, loadErrors: {}, reconcile: null, reconcileError: '', reconcileFilter: '', reconcileOpen: new Set(), projection: null, remedies: [], queries: {}, pages: {}, selected: new Map(), suggested: true, bulk: {}, bulkResult: '', controls: {}, extra: '', browseSelection: null, launchError: '', submitting: false, launchPage: 0, highlightSession: null, revealSession: false, detailParcel: null, retryRequired: false, retryAcknowledged: false }
   let generation = 0
   let goalGeneration = 0
+  let reconcileGeneration = 0
   let detailGeneration = 0
   let destroyed = false
   const el = (id) => doc.getElementById(id)
@@ -57,6 +59,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
     if (hash && win && win.location.hash !== `#${state.view}`) win.location.hash = state.view
     renderCurrent()
     if (['board', 'remedies', 'settings'].includes(state.view)) loadGoal()
+    if (state.view === 'reconcile') loadReconcile()
   }
   function goalOptions() {
     const filter = el('goal-status').value
@@ -66,6 +69,8 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
     if (!active.some((s) => s.key === state.goal)) { state.goal = active[0]?.key || null; state.projection = null; state.detailParcel = null; ++detailGeneration; el('detail').hidden = true }
     el('goal-select').innerHTML = active.length ? active.map((s) => `<option value="${esc(s.key)}">${esc(s.key)}${s.attention?.total ? ` · ${s.attention.total} need attention` : ''}</option>`).join('') : '<option value="">No goals in this scope and status</option>'
     el('goal-select').value = state.goal || ''
+    el('reconcile-goal-select').innerHTML = el('goal-select').innerHTML
+    el('reconcile-goal-select').value = state.goal || ''
     el('attn-summary').textContent = `${scopedGoals.filter((s) => s.active).length} active · ${scopedGoals.filter((s) => !s.active).length} inactive`
   }
   function scopeOptions() {
@@ -101,6 +106,19 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       el('fleet-body').innerHTML = fleetHtml(page.rows) + page.pager
       wireFleet()
     }
+    if (state.view === 'reconcile') {
+      const data = state.reconcile && state.reconcile.goal === state.goal ? state.reconcile.data : null
+      if (!state.goal) el('reconcile-body').innerHTML = emptyHtml('No active goal', 'Choose a repository with an active goal.')
+      else if (!data) el('reconcile-body').innerHTML = state.reconcileError ? emptyHtml('Could not load reconciliation', `${state.reconcileError}. Use Refresh to retry.`) : emptyHtml('Loading reconciliation…', 'Comparing the record with local git and the remote. This can take a few seconds.')
+      else {
+        const rows = filterParcels(data.parcels, state.reconcileFilter, state.queries.reconcile), page = pageRows(rows)
+        el('reconcile-body').innerHTML = remoteBannerHtml(data) + countsHtml(data, state.reconcileFilter) + (rows.length ? `<div class="list-meta"><span>${rows.length} of ${data.parcels.length} parcels</span></div>` + reconcileRowsHtml(page.rows, { signals: state.signals, registry: state.registry, selected: state.selected, open: state.reconcileOpen, status: state.statuses.find((s) => s.key === state.goal) }) + page.pager : emptyHtml('No matching parcels', 'Change the filter or search.'))
+        wireSignalRows(el('reconcile-body'))
+        // Re-renders (refresh, filter) must not collapse what the operator is reading.
+        el('reconcile-body').querySelectorAll('.rec-row').forEach((row) => on(row.querySelector('.rec-details summary'), 'click', () => queueMicrotask(() => { const details = row.querySelector('.rec-details'); if (details.open) state.reconcileOpen.add(row.dataset.recParcel); else state.reconcileOpen.delete(row.dataset.recParcel) })))
+        el('reconcile-body').querySelectorAll('[data-rec-filter]').forEach((button) => on(button, 'click', () => { state.reconcileFilter = button.dataset.recFilter; state.pages.reconcile = 0; renderCurrent() }))
+      }
+    }
     if (state.view === 'sessions') {
       const rows = state.spawns.filter((s) => scoped(s.repoRoot) && matches(`${s.sessionName} ${s.paneIndex} ${s.model} ${s.repoRoot}`))
         .sort((a, b) => (Date.parse(b.createdAt) || 0) - (Date.parse(a.createdAt) || 0))
@@ -113,6 +131,22 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       wireSessions(el('sessions-body'))
     }
     updateSelectionBar()
+  }
+  async function loadReconcile() {
+    const goal = state.goal, current = ++reconcileGeneration
+    if (!goal) { renderCurrent(); return }
+    state.reconcileError = ''
+    try {
+      const data = await api(`/api/reconcile?goal=${encodeURIComponent(goal)}`)
+      if (destroyed || current !== reconcileGeneration || state.goal !== goal) return
+      if (!Array.isArray(data.parcels) || typeof data.counts !== 'object' || data.counts === null) throw new Error('Invalid reconciliation response')
+      state.reconcile = { goal, data }
+    } catch (err) {
+      if (destroyed || current !== reconcileGeneration) return
+      if (!(state.reconcile && state.reconcile.goal === goal)) state.reconcileError = err.message
+      else status(`Reconciliation is stale: ${err.message}. Use Refresh to retry.`, true)
+    }
+    renderCurrent()
   }
   async function loadGoal() {
     const current = ++goalGeneration, goal = state.goal
@@ -202,6 +236,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
     el('clock').textContent = `Checked ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
     status(failures.length ? `Some data is stale: ${failures.join('; ')}. Use Refresh to retry.` : 'Workspace up to date', failures.length > 0)
     if (['board', 'remedies', 'settings'].includes(state.view)) await loadGoal()
+    if (state.view === 'reconcile') await loadReconcile()
   }
   const dialogOrigins = new Map()
   function openDialog(dialog) {
@@ -405,6 +440,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   on(el('fleet-select'), 'change', () => { state.scope = el('fleet-select').value; state.pages = {}; ++goalGeneration; ++detailGeneration; goalOptions(); renderCurrent(); if (['board', 'remedies', 'settings'].includes(state.view)) loadGoal() })
   on(el('goal-status'), 'change', () => { state.pages.board = 0; goalOptions(); renderCurrent(); loadGoal() })
   on(el('parcel-status'), 'change', () => { state.pages.board = 0; renderCurrent() })
+  on(el('reconcile-goal-select'), 'change', () => { state.goal = el('reconcile-goal-select').value; state.projection = null; state.detailParcel = null; ++detailGeneration; state.reconcileFilter = ''; state.pages.reconcile = 0; goalOptions(); renderCurrent(); loadReconcile() })
   on(el('goal-select'), 'change', () => { state.goal = el('goal-select').value; state.projection = null; state.detailParcel = null; ++detailGeneration; el('detail').hidden = true; renderCurrent(); loadGoal() })
   on(el('global-search'), 'input', () => { state.queries[state.view] = el('global-search').value.trim(); state.pages[state.view] = 0; renderCurrent() })
   doc.querySelectorAll('[data-sev]').forEach((b) => on(b, 'change', () => { state.pages.signals = 0; renderCurrent() }))

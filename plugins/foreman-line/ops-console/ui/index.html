@@ -81,6 +81,23 @@
     .chip-green, .pill.evidenced { color: var(--ok); background: #21382f; border-color: #3d6656; }
     .chip-neutral, .pill.unknown { color: var(--muted); }
     .banner { border: 1px solid var(--line); padding: .75rem 1rem; border-radius: 6px; margin-bottom: 1rem; background: var(--panel); }
+    .banner.warn { border-color: #6b583b; color: var(--warn); }
+    /* Reconciliation (FCA-P8) */
+    .rec-filters { margin-bottom: 1rem; }
+    .chip-filter { background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: .35rem .8rem; color: var(--muted); cursor: pointer; font-size: .8rem; }
+    .chip-filter strong { color: inherit; margin-left: .25rem; }
+    .chip-filter.active { color: var(--text, #fff); border-color: var(--accent, #7fd1b9); }
+    .rec-table th, .rec-table td { vertical-align: top; text-align: left; }
+    .rec-table th:first-child, .rec-table td:first-child { width: 3.25rem; white-space: nowrap; }
+    .rec-list { margin: 0; padding-left: 1.1rem; font-size: .85rem; }
+    .rec-list li { margin: .15rem 0; overflow-wrap: anywhere; }
+    .rec-details { margin-top: .6rem; font-size: .85rem; }
+    .rec-details summary { cursor: pointer; color: var(--muted); }
+    .rec-finding { border-top: 1px solid var(--line); margin-top: .75rem; padding-top: .5rem; }
+    .rec-options { padding-left: 1.2rem; }
+    .rec-cmd { display: block; margin: .25rem 0; padding: .25rem .5rem; background: #0e1116; border-radius: 4px; overflow-wrap: anywhere; }
+    .rec-history { padding-left: 1.2rem; }
+    .rec-history li { margin: .2rem 0; overflow-wrap: anywhere; }
     .banner-inline { color: var(--warn); }
     .goal-toolbar { margin-bottom: 1rem; }
     .board { display: block; }
