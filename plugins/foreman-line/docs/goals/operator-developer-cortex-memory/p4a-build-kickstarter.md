@@ -53,3 +53,7 @@ No edits this turn. Reply with: (1) restatement; (2) design table ruling → fil
 - **S0-1 (amendments granted):** NEW `src/keon/cortex/services/curation.py`; additive `commit_curation_bundle` helper on `InMemoryDocumentStore` (lock order doc → spine → curation, journaled rollback); the two mechanical fixture edits listed (route table; grammar-enumeration accept cases).
 - **S0-2:** interpretations A–G approved as written. `preference` maps to `memory_type="lesson"` with `provenance.extra["curation_kind"]="preference"` — no `core/models.py` change.
 - **S0-3:** OD-23 (approved curation artifacts capped at `support_level: provisional` until a verified approval-receipt path exists) is registered by the coordinator in `owner-delegated-decisions-2026-10-12-01a131a9.md`; the code comments reference it.
+
+## Build disposition (coordinator)
+
+- **Out-of-manifest edit ratified (owner-delegated amendment S0-4):** UPDATE `src/keon/cortex/spine/shard_plane.py` — one additive allowlist entry (`SCOPE_CLASS_HANDOFF`) so handoff records' scoped ids recompute for replay/recall eligibility. The builder disclosed it (stop-condition-3 event recorded, not concealed); reviewers judge its safety.
