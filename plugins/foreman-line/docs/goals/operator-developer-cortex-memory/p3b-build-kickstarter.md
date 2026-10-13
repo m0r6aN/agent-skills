@@ -86,3 +86,12 @@ Verification of this narrow fix: **Seat B only** (owner of the finding; Seat A a
 | P3b-T6 | R3-B F-1 — unlocked "fully indexed" shortcut can acknowledge another repair's uncommitted Observation | fix | Remove the unlocked shortcut: every ingest replay/race branch calls the locked `commit_spine_repair` (completeness is evaluated only under both store locks). Regression: concurrent repair with an injected rollback — every 200 corresponds to a committed, fully indexed Observation. |
 
 **Convergence ruling:** this is the final in-memory-concurrency round for P3b. Any further finding that is reachable **only** through fault injection or cross-thread access to the in-memory development store (production runs PostgreSQL, whose single-transaction path has been green since R1) is recorded as informational and carried forward to a follow-up parcel that promotes a protocol-level locked-bundle API onto `InMemoryRecordStore`.
+
+## CI triage (coordinator, 2026-10-13) — Linux CI failures at `7a8d7a2` (PR Keon-Systems/keon-cortex#65)
+
+Observed on GitHub Actions (ubuntu, CPython 3.10/3.12): (1) `test_g9_old_version_replay_matches_golden` — the 1.0.0 golden captured on Windows differs from Linux in the last ULP (e.g. M2 occurrence `…5301` vs `…5302`, recall `…3946` vs `…39474`): libm `exp`/`log1p` are not bit-identical across platforms; (2) `test_epoch_seconds_matches_datetime_and_fails_closed` — the test oracle `datetime.fromisoformat("…-0400")` is unsupported on CPython 3.10.
+
+| # | Finding | Disposition | Ruling |
+|---|---|---|---|
+| P3b-T7 | Cross-platform float replay | fix (tests + contract note) | Replay determinism (G-8/G-9) is **per platform**. The G-9 golden is pinned for the **deployment platform** (Linux x86_64, CPython 3.12) — compute it in Docker (`python:3.12-slim`, repo mounted read-only at base `2930958` for 1.0.0) and store it as the exact golden; on Linux the comparison is exact (byte-identical serialized dict); on any other platform the test asserts identical key sets, `gravity_version`, function hash and epoch refs exactly and every float within `rel_tol=1e-12`. Same rule for any other cross-run golden in the fixture suite. Add a module docstring stating the limitation; the coordinator records it as an owner-visible D12 note. |
+| P3b-T8 | Py3.10 oracle | fix (test only) | Use a version-independent oracle (explicit offset parsing or `datetime.strptime(..., "%Y-%m-%dT%H:%M:%S%z")`) so the test is identical on 3.10–3.12; production `epoch_seconds` behaviour unchanged. |
