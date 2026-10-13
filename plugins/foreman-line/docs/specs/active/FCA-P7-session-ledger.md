@@ -296,3 +296,36 @@ Known follow-ups (owner decisions): Host/Origin validation and non-loopback bind
 `server.ts`; moving blocking `execFileSync` work off the event loop; an
 acknowledge/dismiss affordance for historical failures.
 
+## Second independent review — 2026-10-13
+
+After the rework a second fresh read-only reviewer checked every prior finding against the
+**code** and hunted for regressions. Verdict: REQUEST CHANGES, narrower. Of 13 prior
+findings it confirmed 6 fixed, 5 partial, 2 deferred-ok, 1 disputed. Disposition of what
+remained:
+
+| Item | Disposition |
+|---|---|
+| #2 a ledger-era pane the ledger cannot establish still showed "Running" from the receipt's session flag | **Fixed** - ledger-era + `unknown` reads *Unknown* in the UI; only legacy receipts defer to the receipt |
+| #5 UI chip for `vanished` never fades; signal skip relied on an evidence-string prefix | **Fixed** (coupling): `LedgerEntry.tmux` (`found/absent/unavailable`) is explicit. The chip is a fact about the pane and stays; only the attention signal fades |
+| #6 order-based pane attribution can name the wrong pane | **Fixed** - without a recorded pane id, order is used only when tmux holds exactly one pane per receipt of the session; otherwise `unknown` with an explicit reason |
+| #8 retention cap not enforced for panes writing every <10 min; idle live panes treated as dead; lexical ranking | **Fixed** - liveness (tmux) protects live panes regardless of age or idleness; if liveness cannot be established nothing is touched; ranking is by launch time from receipts; `quietMs` defaults to 0 |
+| #13 `reconcileSelection` after a failed endpoint "pre-existing" | **Verified pre-existing**: `main:ui/app.js:183` calls it unconditionally after `allSettled`, as now |
+| N1 sync 20 s git timeout blocks the server | **Mitigated** - timeout 10 s and a per-pass probing budget (8 s); once spent, remaining receipts report git/transcript/screen as *unknown* with explicit evidence. Event-loop offloading stays a follow-up |
+| N2/N3 quiet window overclaimed | **Fixed** (see #8) |
+| N4 lexical ranking | **Fixed** (see #8) |
+| N5 `orphan-clean` asserted "no live pane" when tmux was unavailable | **Fixed** |
+| N6 `exited-clean` when the transcript could not be joined | **Fixed** - exit 0 with an unjoinable (unknown/ambiguous) transcript is `unknown`: the ending cannot be checked |
+| N8 stale comments | **Fixed** |
+| N9 empty ledger dir left by a failed launch | **Fixed** - discarded only when it holds no output |
+| N10 test-only liveness probe discards pane facts | Noted: test seam only |
+
+Found by the real end-to-end run (real `pi`, real model, real tmux; one trivial request): the
+"last output" of a full-screen TUI session was a single multi-kilobyte escape-sequence blob.
+The tail now comes from the **rendered screen** (`tmux capture-pane -p -J`, while the pane
+exists) and falls back to the captured stream only when the pane is gone; every displayed line
+is capped at 400 characters. `-J` was needed because the first version cut a provider error at
+the terminal width (caught by the real-tmux test).
+
+Pinned by test: the end-to-end launch produces a linked transcript with cost and a clean
+git outcome; a bare model id is refused before any worktree exists.
+
