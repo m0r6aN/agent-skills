@@ -1,8 +1,10 @@
 name: foreman-line-ci
 
+# Feature branches use PR CI; main keeps post-merge checks without duplicate pushes.
 # No path filters: documentation-only PRs need these named checks too.
 on:
   push:
+    branches: [main]
   pull_request:
 
 permissions:

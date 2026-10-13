@@ -1263,6 +1263,30 @@ test('R4: reconcile refuses an empty discovered set (empty-artifacts path includ
   assert.deepEqual(codes(verdictEmpty), ['discovery-error'])
 })
 
+// Trigger contract: feature branches use PR CI, main retains post-merge CI.
+for (const [file, manual] of [['foreman-line-ci.yml', false], ['test-plugin-install.yml', true]]) {
+  test(`${file}: main-only pushes, unfiltered PRs, preserved manual dispatch`, () => {
+    const path = fileURLToPath(new URL(`../.github/workflows/${file}`, import.meta.url))
+    const text = readFileSync(path, 'utf8')
+    const trigger = /^on:\n((?:[ \t].*\n|\n)+)/m.exec(text)?.[1]
+    assert.ok(trigger, 'workflow must declare triggers')
+    assert.deepEqual(trigger.trimEnd().split('\n'), [
+      '  push:',
+      '    branches: [main]',
+      '  pull_request:',
+      ...(manual ? ['  workflow_dispatch:'] : []),
+    ], 'do not run duplicate feature pushes, filter PR paths/branches, or drop manual dispatch')
+    if (file === 'foreman-line-ci.yml') {
+      assert.match(text, /^  test:\n    name: test$/m)
+      assert.match(text, /^  integration-report:\n    name: integration-report$/m)
+    } else {
+      for (const job of ['validate-skills', 'validate-commands', 'validate', 'test-install']) {
+        assert.match(text, new RegExp(`^  ${job}:$`, 'm'), `preserve ${job} coverage`)
+      }
+    }
+  })
+}
+
 // ─── R6: one shard-count source, wired through the workflow ────────────────
 
 test('R6 wiring: the workflow derives the matrix and both arguments from the single gate source (no second constant)', () => {
