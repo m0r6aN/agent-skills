@@ -46,7 +46,8 @@ export function remoteBannerHtml(data, options = {}) {
   const oldRefs = repo.defaultRef && (Number.isNaN(fetched) || (!Number.isNaN(generated) && generated - fetched > DAY_MS))
     ? warn(`<strong>Remote refs may be stale:</strong> ${repo.refsAsOf ? `last fetch ${esc(when(repo.refsAsOf))}` : 'no fetch is recorded for this repository'}. Fetch before acting on findings that depend on what the remote contains.`)
     : ''
-  const limits = (data.assessment?.limits || []).filter((limit) => !String(limit).startsWith('GitHub unavailable'))
+  // Reasons that already have their own banner are not repeated.
+  const limits = (data.assessment?.limits || []).filter((limit) => !String(limit).startsWith('GitHub unavailable') && limit !== 'no default branch was found')
   const limited = limits.length ? warn(`<strong>Findings that say something does not exist are withheld</strong> because ${limits.map(esc).join('; ')}.`) : ''
   return `${stale}<div class="banner">${parts.join(' · ')}</div>${unavailable}${noRef}${oldRefs}${limited}`
 }

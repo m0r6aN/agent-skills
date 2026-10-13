@@ -411,3 +411,70 @@ test('review F2: reaching the PR limit is flagged; failures are cached longer th
   assert.ok(GH_TIMEOUT_MS <= 10_000, 'a hung gh stalls the server for at most 10 s')
   clearPrCache()
 })
+
+test('re-review F6: remote specs are classified by the CONFIGURED specs directory, whatever it is called', () => {
+  const root = mkdtempSync(join(tmpdir(), 'reconcile-specs-'))
+  try {
+    const bare = join(root, 'remote.git')
+    const repo = join(root, 'repo')
+    execFileSync('git', ['init', '-q', '--bare', '-b', 'main', bare])
+    execFileSync('git', ['init', '-q', '-b', 'main', repo])
+    git(repo, 'remote', 'add', 'origin', bare)
+    commitFile(repo, 'specs/active/TOP-P1-a.md', 'a', 'docs: top-level specs dir')
+    commitFile(repo, 'docs/plans/done/PLN-P1-b.md', 'b', 'docs: plans dir')
+    commitFile(repo, 'plugins/foreman-line/docs/specs/active/DEF-P1-c.md', 'c', 'docs: default dir')
+    git(repo, 'push', '-q', 'origin', 'main')
+    git(repo, 'remote', 'set-head', 'origin', 'main')
+    const files = (rel: string | null) =>
+      gatherRepoFacts(repo, REAL_RUN, rel).remoteSpecFiles.map((f) => `${f.location}:${f.name}`)
+    assert.deepEqual(
+      files('specs'),
+      ['active:TOP-P1-a.md'],
+      'a top-level "specs" dir (no leading slash) is found',
+    )
+    assert.deepEqual(files('docs/plans'), ['done:PLN-P1-b.md'], 'a differently named dir is found')
+    assert.deepEqual(files('plugins/foreman-line/docs/specs'), ['active:DEF-P1-c.md'])
+    assert.equal(gatherRepoFacts(repo, REAL_RUN, 'specs').complete.specs, true)
+    assert.deepEqual(
+      files('no/such/dir'),
+      [],
+      'an existing but empty listing is complete and empty',
+    )
+    assert.equal(gatherRepoFacts(repo, REAL_RUN, null).complete.specs, false)
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test('re-review: gh is asked for the head commit, and a missing one parses as empty (older gh)', () => {
+  const calls: string[][] = []
+  clearPrCache()
+  gatherPrFacts('/oid', NOW, {
+    ttlMs: 0,
+    run: (_cwd, args) => {
+      calls.push([...args])
+      return PR_JSON
+    },
+  })
+  assert.ok(
+    calls[0]?.some((a) => a.includes('headRefOid')),
+    'headRefOid is requested',
+  )
+  assert.equal(parsePrs(PR_JSON)?.[0]?.headRefOid, '', 'absent field: empty, never a guess')
+  const withOid = JSON.stringify([
+    {
+      number: 1,
+      title: 't',
+      headRefName: 'h',
+      headRefOid: 'abc123',
+      baseRefName: 'main',
+      state: 'MERGED',
+      createdAt: 'c',
+      mergedAt: 'm',
+      closedAt: 'x',
+      url: 'u',
+    },
+  ])
+  assert.equal(parsePrs(withOid)?.[0]?.headRefOid, 'abc123')
+  assert.ok(LOG_LIMIT >= 50_000, 'the log limit is large enough not to trip on a mature repository')
+})

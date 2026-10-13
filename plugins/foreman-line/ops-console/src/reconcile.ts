@@ -510,6 +510,7 @@ export function assess(repo: RepoFacts, prs: PrFacts): Assessment {
   if (!prs.available) limits.push(`GitHub unavailable (${prs.reason ?? 'unknown reason'})`)
   if (prs.truncated) limits.push('the PR list hit its limit, so older PRs are not visible')
   if (repo.defaultRef === null) limits.push('no default branch was found')
+  if (!repo.complete.worktrees) limits.push('the worktree listing failed')
   if (repo.defaultRef !== null) {
     if (!repo.complete.defaultLog) limits.push('reading the default branch log failed')
     if (!repo.complete.specs) limits.push('the specs listing on the default branch is unavailable')
@@ -536,11 +537,20 @@ export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
   const absenceAssessable = assessment.absence
   // Heads of merged PRs: a squash- or rebase-merged branch is never an ancestor of the
   // default branch, so ancestry alone would call every shipped branch "unmerged".
-  const mergedHeads = new Set(
-    prs.prs.filter((pr) => pr.state === 'MERGED').map((pr) => pr.headRefName),
+  // Identified by the EXACT tip the PR carried, not by name: a reused branch name with new
+  // commits has a different tip and is genuinely unmerged. Only PRs into the default branch.
+  const mergedTips = new Set(
+    prs.prs
+      .filter(
+        (pr) =>
+          pr.state === 'MERGED' &&
+          pr.headRefOid !== '' &&
+          (defaultBranch === null || pr.baseRefName === defaultBranch),
+      )
+      .map((pr) => pr.headRefOid),
   )
-  const branchMerged = (name: string, mergedIntoDefault: boolean): boolean =>
-    mergedIntoDefault || mergedHeads.has(name.replace(/^origin\//, ''))
+  const branchMerged = (sha: string, mergedIntoDefault: boolean): boolean =>
+    mergedIntoDefault || (sha !== '' && mergedTips.has(sha))
   // Live console sessions by EXACT worktree path (never by key): a worktree linked to a
   // parcel through its branch name is still the same path.
   const livePathsAll = new Set(
@@ -715,7 +725,7 @@ export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
     const asOf = prs.asOf ?? 'n/a'
 
     // 1. shipped-unrecorded — strong evidence only (merged feat/fix/perf/refactor PR into default).
-    if (!recordClosed && prs.available && deliveryPrs.length > 0) {
+    if (!recordClosed && remoteAssessable && deliveryPrs.length > 0) {
       const first = deliveryPrs[0] as PrFact
       make(
         'shipped-unrecorded',
@@ -758,7 +768,7 @@ export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
       if (
         branch !== undefined &&
         repo.complete.merged &&
-        !branchMerged(branch.name, branch.mergedIntoDefault) &&
+        !branchMerged(branch.sha, branch.mergedIntoDefault) &&
         ref.ref !== defaultBranch &&
         ref.ref !== repo.defaultRef
       ) {
@@ -833,7 +843,7 @@ export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
       if (branch === undefined || branch.upstream === null) continue
       if (branch.upstreamGone) {
         // A pruned upstream after a squash-merge is the normal end of a shipped branch.
-        if (!mergedHeads.has(branch.name))
+        if (!branchMerged(branch.sha, false))
           divergence.push(`branch ${ref.ref}: upstream ${branch.upstream} is gone`)
       } else if ((branch.aheadOfUpstream ?? 0) > 0 || (branch.behindUpstream ?? 0) > 0) {
         divergence.push(

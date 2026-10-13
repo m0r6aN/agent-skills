@@ -13,6 +13,8 @@ export interface PrFact {
   readonly number: number
   readonly title: string
   readonly headRefName: string
+  /** The head commit when the PR merged/closed: identifies the exact branch tip it carried. */
+  readonly headRefOid: string
   readonly baseRefName: string
   readonly state: 'OPEN' | 'MERGED' | 'CLOSED'
   readonly createdAt: string
@@ -47,7 +49,8 @@ export const defaultGhRunner: GhRunner = (cwd, args) =>
     stdio: ['ignore', 'pipe', 'pipe'],
   })
 
-const FIELDS = 'number,title,headRefName,baseRefName,state,createdAt,mergedAt,closedAt,url'
+const FIELDS =
+  'number,title,headRefName,headRefOid,baseRefName,state,createdAt,mergedAt,closedAt,url'
 
 function asString(value: unknown): string {
   return typeof value === 'string' ? value : ''
@@ -70,6 +73,7 @@ export function parsePrs(raw: string): PrFact[] | null {
       number: entry.number,
       title: asString(entry.title),
       headRefName: asString(entry.headRefName),
+      headRefOid: asString(entry.headRefOid),
       baseRefName: asString(entry.baseRefName),
       state,
       createdAt: asString(entry.createdAt),

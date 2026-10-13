@@ -67,7 +67,9 @@ export interface RepoFacts {
   readonly logTruncated: boolean
 }
 
-export const LOG_LIMIT = 5000
+// Large enough that a mature repository does not trip the truncation guard (which withholds
+// every absence finding): ~150 bytes per commit, so 50k commits is ~7 MB and a fraction of a second.
+export const LOG_LIMIT = 50_000
 const SPECS_REL = 'plugins/foreman-line/docs/specs'
 
 function lines(raw: string | null): string[] {
@@ -192,11 +194,13 @@ export function gatherRepoFacts(
   const specLines = lines(specsRaw)
   const remoteSpecFiles = specLines
     .map((path) => {
-      const location: 'active' | 'done' | null = path.includes('/specs/done/')
-        ? 'done'
-        : path.includes('/specs/active/')
-          ? 'active'
-          : null
+      // Classified by the configured specs directory, not a hardcoded name.
+      const location: 'active' | 'done' | null =
+        specsRel !== null && path.startsWith(`${specsRel}/done/`)
+          ? 'done'
+          : specsRel !== null && path.startsWith(`${specsRel}/active/`)
+            ? 'active'
+            : null
       return location === null ? null : { name: path.slice(path.lastIndexOf('/') + 1), location }
     })
     .filter((entry): entry is { name: string; location: 'active' | 'done' } => entry !== null)

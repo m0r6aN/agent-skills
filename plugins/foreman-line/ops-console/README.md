@@ -141,11 +141,12 @@ Tools → **Reconciliation** compares, per parcel, what the *record* says with w
 - **Assessment, not guesswork.** Findings that say something *exists* need only the
   sources they name. Findings that say something does *not* exist (`never-started`,
   `recorded-unshipped`, `stale-abandoned`) need **every** source complete: GitHub
-  reachable, the PR list and commit log under their limits (1000 PRs / 5000 commits), the
-  spec, branch and merge-state reads successful. A failed or truncated read is *unknown*,
+  reachable, the PR list and commit log under their limits (1000 PRs / 50,000 commits), the
+  spec, branch, worktree and merge-state reads successful. A failed or truncated read is *unknown*,
   never "empty"; the response's `assessment.limits` and the banner say what is missing.
-- **Squash/rebase merges** are recognised by a MERGED PR whose head is the branch
-  (ancestry alone would call every shipped branch unmerged). Title hedges
+- **Squash/rebase merges** are recognised by a MERGED PR (into the default branch) that
+  carried the branch's exact tip (`headRefOid`). Ancestry alone would call every shipped
+  branch unmerged, and matching by name would call a reused name shipped. Title hedges
   (`revert`, `follow-up`, `partial`, `wip`) are never delivery evidence.
 - **Keys inside longer slugs** (`TO-P1` in `add-to-p1-schema`) cannot be told apart by any
   deterministic token rule; the real branch `foreman-to-p1-ratification` is legitimately

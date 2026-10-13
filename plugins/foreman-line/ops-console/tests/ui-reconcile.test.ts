@@ -710,3 +710,85 @@ test('review F14: open explanations are not carried across a goal switch', async
     ui.close()
   }
 })
+
+test('re-review: the limits banner does not repeat the "no default branch" reason that has its own banner', () => {
+  const html = remoteBannerHtml(
+    data([], {
+      repo: { defaultRef: null },
+      assessment: {
+        positive: false,
+        absence: false,
+        limits: ['no default branch was found', 'the branch listing failed'],
+      },
+    }),
+  )
+  const doc = new JSDOM(`<body>${html}</body>`).window.document
+  const warnings = [...doc.querySelectorAll('.banner.warn')].map((el) => el.textContent ?? '')
+  assert.equal(
+    warnings.filter((w) => /No default branch found/.test(w)).length,
+    1,
+    'one dedicated warning',
+  )
+  const limited = warnings.find((w) => /withheld because/.test(w)) ?? ''
+  assert.match(limited, /withheld because the branch listing failed/)
+  assert.doesNotMatch(limited, /no default branch/i, 'not repeated in the limits banner')
+})
+
+test('re-review: if the goal changes while a load is in flight the view never sits on a stale Loading', async () => {
+  let release: () => void = () => {}
+  const gate = new Promise<void>((resolve) => {
+    release = resolve
+  })
+  const ui = await mountConsole({
+    '/api/goals': {
+      goals: [],
+      statuses: [
+        {
+          key: 'g',
+          repoRoot: '/repos/x',
+          tree: null,
+          active: true,
+          attention: { total: 1 },
+          urgentSubjects: [],
+        },
+        {
+          key: 'h',
+          repoRoot: '/repos/x',
+          tree: null,
+          active: true,
+          attention: { total: 0 },
+          urgentSubjects: [],
+        },
+      ],
+    },
+    '/api/reconcile': async (path: string) => {
+      if (path.includes('goal=g')) await gate
+      return data([parcelRec({ parcel: path.includes('goal=h') ? 'HP1' : 'P1' })], {
+        goal: path.includes('goal=h') ? 'h' : 'g',
+      })
+    },
+  })
+  try {
+    ui.click('[data-view="reconcile"].nav-btn')
+    ui.input('#reconcile-goal-select', 'h', 'change')
+    await ui.settle()
+    assert.deepEqual(
+      [...ui.doc.querySelectorAll('#reconcile-body .rec-row')].map((r) =>
+        r.getAttribute('data-rec-parcel'),
+      ),
+      ['HP1'],
+    )
+    release()
+    await ui.settle()
+    assert.deepEqual(
+      [...ui.doc.querySelectorAll('#reconcile-body .rec-row')].map((r) =>
+        r.getAttribute('data-rec-parcel'),
+      ),
+      ['HP1'],
+      'the late result for the old goal is dropped, not shown',
+    )
+  } finally {
+    release()
+    ui.close()
+  }
+})

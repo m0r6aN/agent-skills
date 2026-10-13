@@ -138,7 +138,10 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
     state.reconcileError = ''
     try {
       const data = await api(`/api/reconcile?goal=${encodeURIComponent(goal)}`)
-      if (destroyed || current !== reconcileGeneration || state.goal !== goal) return
+      if (destroyed || current !== reconcileGeneration) return
+      // The goal changed while this loaded: drop the result, but re-render so the view never
+      // sits on a stale 'Loading' (the load for the new goal is already in flight).
+      if (state.goal !== goal) { renderCurrent(); return }
       if (!Array.isArray(data.parcels) || typeof data.counts !== 'object' || data.counts === null) throw new Error('Invalid reconciliation response')
       state.reconcile = { goal, data, stale: null }
     } catch (err) {

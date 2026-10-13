@@ -88,6 +88,7 @@ const pr = (n: number, title: string, over: Partial<PrFact> = {}): PrFact => ({
   number: n,
   title,
   headRefName: `branch-${n}`,
+  headRefOid: `pr${n}tip`,
   baseRefName: 'main',
   state: 'MERGED',
   createdAt: '2026-10-01T00:00:00Z',
@@ -888,16 +889,25 @@ test('review F4: orphan-worktree checks the EXACT worktree path of live console 
   assert.match(text, /sessions started outside the console are not visible/)
 })
 
-test('review F5: a squash/rebase-merged branch (never an ancestor) is not unmerged when a MERGED PR has that head', () => {
+test('review F5: a squash/rebase-merged branch (never an ancestor) is not unmerged when a MERGED PR carried that EXACT tip', () => {
   const squashed = branch('feat/foc-p2-work', {
+    sha: 'tip-merged',
     upstream: 'origin/feat/foc-p2-work',
     upstreamGone: true,
   })
+  const merged = (over: Partial<PrFact> = {}) =>
+    prs([
+      pr(40, 'feat: FOC-P2 work', {
+        headRefName: 'feat/foc-p2-work',
+        headRefOid: 'tip-merged',
+        ...over,
+      }),
+    ])
   const withPr = run([parcel('FOC-P2')], {
     repo: repo({ branches: [squashed] }),
-    prs: prs([pr(40, 'feat: FOC-P2 work', { headRefName: 'feat/foc-p2-work' })]),
+    prs: merged(),
   }).get('FOC-P2')
-  assert.ok(!codes(withPr).includes('unmerged-work'), 'merged PR head: shipped')
+  assert.ok(!codes(withPr).includes('unmerged-work'), 'merged PR carried this tip: shipped')
   assert.ok(
     !codes(withPr).includes('local-remote-divergence'),
     'pruned upstream after a squash-merge is the normal end of a branch',
@@ -905,15 +915,60 @@ test('review F5: a squash/rebase-merged branch (never an ancestor) is not unmerg
   const withoutPr = run([parcel('FOC-P2')], { repo: repo({ branches: [squashed] }) }).get('FOC-P2')
   assert.ok(codes(withoutPr).includes('unmerged-work'), 'no merged PR: still unmerged')
   assert.ok(codes(withoutPr).includes('local-remote-divergence'))
-  const remote = branch('origin/feat/foc-p2-work', { remote: true })
+  const remote = branch('origin/feat/foc-p2-work', { remote: true, sha: 'tip-merged' })
   assert.ok(
     !codes(
+      run([parcel('FOC-P2')], { repo: repo({ branches: [remote] }), prs: merged() }).get('FOC-P2'),
+    ).includes('unmerged-work'),
+    'remote spelling is matched by tip too',
+  )
+  // Name REUSED after the merge with new commits: a different tip, so genuinely unmerged.
+  const reused = branch('feat/foc-p2-work', {
+    sha: 'tip-NEW-commits-after-merge',
+    upstream: 'origin/feat/foc-p2-work',
+    upstreamGone: true,
+  })
+  const stillUnmerged = run([parcel('FOC-P2')], {
+    repo: repo({ branches: [reused] }),
+    prs: merged(),
+  }).get('FOC-P2')
+  assert.ok(
+    codes(stillUnmerged).includes('unmerged-work'),
+    'a reused branch name with new work is not shipped',
+  )
+  assert.ok(codes(stillUnmerged).includes('local-remote-divergence'))
+  // A PR into a different base does not count as merged-into-default.
+  assert.ok(
+    codes(
       run([parcel('FOC-P2')], {
-        repo: repo({ branches: [remote] }),
-        prs: prs([pr(40, 'feat: FOC-P2 work', { headRefName: 'feat/foc-p2-work' })]),
+        repo: repo({ branches: [squashed] }),
+        prs: merged({ baseRefName: 'release' }),
       }).get('FOC-P2'),
     ).includes('unmerged-work'),
-    'remote spelling is matched too',
+  )
+  // Empty on BOTH sides (older gh, and a branch whose tip is unknown) must never "match".
+  const unknownTip = branch('feat/foc-p2-work', {
+    sha: '',
+    upstream: 'origin/feat/foc-p2-work',
+    upstreamGone: true,
+  })
+  assert.ok(
+    codes(
+      run([parcel('FOC-P2')], {
+        repo: repo({ branches: [unknownTip] }),
+        prs: merged({ headRefOid: '' }),
+      }).get('FOC-P2'),
+    ).includes('unmerged-work'),
+    'two empty strings are not an identity',
+  )
+  // Older gh without headRefOid: no tip to match, so it cannot vouch for the branch.
+  assert.ok(
+    codes(
+      run([parcel('FOC-P2')], {
+        repo: repo({ branches: [squashed] }),
+        prs: merged({ headRefOid: '' }),
+      }).get('FOC-P2'),
+    ).includes('unmerged-work'),
   )
 })
 
@@ -1041,4 +1096,39 @@ test('review: CLOSED_MARKER cannot drift from the derive.ts R2 pattern', () => {
   const fromReconcile = pick(reconcileSource, 'CLOSED_MARKER')
   assert.ok(fromDerive !== undefined && fromReconcile !== undefined)
   assert.equal(fromReconcile, fromDerive)
+})
+
+// ---- reviewer re-review rework (second independent pass on FCA-P8, 2026-10-13) ---------------
+
+test('re-review F1: a failed worktree listing is a limit, and withholds never-started', () => {
+  const failed = repo({ complete: { ...INCOMPLETE, worktrees: false } })
+  assert.ok(assess(failed, prs([])).limits.some((l) => l.includes('worktree listing failed')))
+  assert.equal(assess(failed, prs([])).absence, false)
+  assert.deepEqual(
+    codes(run([parcel('JEV-P3')], { repo: failed }).get('JEV-P3')),
+    [],
+    'a parcel whose worktree we could not list is not "never started"',
+  )
+  assert.deepEqual(
+    codes(run([parcel('JEV-P3')]).get('JEV-P3')),
+    ['never-started'],
+    'control: complete reads still assert it',
+  )
+})
+
+test('re-review: shipped-unrecorded needs the positive assessment (default branch known and PRs available)', () => {
+  const p = parcel('FOC-P0', { specLocation: 'active' })
+  const strong = prs([pr(163, 'feat: FOC-P0 contract')])
+  assert.ok(
+    codes(
+      run([p], { repo: repo({ remoteSpecFiles: [remoteSpec('FOC-P0')] }), prs: strong }).get(
+        'FOC-P0',
+      ),
+    ).includes('shipped-unrecorded'),
+  )
+  assert.ok(
+    !codes(run([p], { repo: repo({ defaultRef: null }), prs: strong }).get('FOC-P0')).includes(
+      'shipped-unrecorded',
+    ),
+  )
 })
