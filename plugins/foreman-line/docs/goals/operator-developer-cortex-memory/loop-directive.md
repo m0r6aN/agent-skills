@@ -2,7 +2,7 @@
 
 **Goal slug:** `operator-developer-cortex-memory`  
 **Recorded:** 2026-10-10; ownership/resume checkpoint updated 2026-10-12 (coordinator `01a131a9`)  
-**State:** `P0 ACCEPTED; P1a/P1b/P2a/P2b/P3a/P3b/P4a MERGED TO opmem/integration (gateway 1b81a1a; cortex 8cfc02f); P4b NEXT — COORDINATOR 01a131a9 UNDER OWNER BLANKET GRANT; main PROMOTION / CLOUD = OWNER STOP ITEMS`  
+**State:** `P0 ACCEPTED; P1a…P4b MERGED TO opmem/integration (gateway 1b81a1a; cortex 69cd4f8); P5a NEXT; COORDINATOR 01a131a9 STOPPED AT PARCEL BOUNDARY WITH handoff.md; main PROMOTION / CLOUD = OWNER STOP ITEMS`  
 **Scheduling:** synchronous coordinator loop in the owning session (no wakeup tool in this harness); human gates are NOT stop conditions except destructive/production-affecting actions — see `ownership-transfer-2026-10-12-01a131a9.md`
 
 ## COORDINATOR OWNERSHIP — read before any dispatch
@@ -18,7 +18,7 @@
 | Current session provenance | `PI_PROVIDER=anthropic`, `PI_MODEL=claude-opus-5-5`, `PI_SESSION_ID=01a131a9-5c16-724a-a016-3353a124592d`; observed metadata, not a Foreman route receipt |
 | Coordinator publication workspace | `D:/Repos/agent-skills-worktrees/opmem-p0-20261012-01a12f95`, branch `feat/opmem-p0-baseline-20261012-01a12f95` (P0 PR); dispatch scratch `D:/Repos/opmem-dispatch-01a131a9` (outside repos). |
 | Transfer rule | One goal, one coordinator. Transfer only at parcel boundaries by explicit owner direction and update to this ownership block |
-| Last state change | 2026-10-13 06:20 EDT — P4a merged (keon-cortex#66, `8cfc02f`). Cumulative spend USD 176.72; guard raised to USD 400 (see `p4a-closure-2026-10-13.md`). Next: P4b (governance evidence links + served signing-key verifier `POST /v1/evidence/verify`), then P5a (Gateway), P5b (bridge import + conformance), P6 (outbox), P7 (Pi extension). Working pattern and resume inputs: see the P3b checkpoint text in git history of this file and the per-parcel kickstarters (`p2a`…`p4a-build-kickstarter.md`). |
+| Last state change | 2026-10-13 08:00 EDT — P4b merged (keon-cortex#67, `69cd4f8`). Coordinator `01a131a9` stopped at the parcel boundary on owner request for a fresh-session handoff: read `handoff.md` first. Cumulative spend USD 191.10 (guard 400). No worker running. |
 
 An incoming session is not automatically the owner. If it is not the session above, stop and ask the owner for a boundary transfer. If another live owner is discovered, stop and reconcile; directory absence is a scoped local observation, not proof about every external session.
 
