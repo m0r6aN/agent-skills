@@ -28,6 +28,46 @@ test('session presentation distinguishes sessions/panes and unknown liveness; ev
   assert.match(doc.body.textContent ?? '', /Prompt digest/)
 })
 
+test('session cells have meaningful narrow-layout labels and timestamps retain exact machine data', () => {
+  const name = 'foc-20261013t111955z'
+  const createdAt = '2026-10-13T11:19:55.048Z'
+  const doc = new JSDOM(
+    trayHtml([receipt({ sessionName: name, createdAt })], { registry: ACTION_REGISTRY }),
+  ).window.document
+  const cells = [...doc.querySelectorAll('.tray-row td')]
+  assert.deepEqual(
+    cells.map((cell) => cell.getAttribute('data-label')),
+    [
+      'Session / pane',
+      'Liveness',
+      'Launch configuration / repository',
+      'Terminal attach',
+      'Actions',
+    ],
+  )
+  assert.ok(
+    [...doc.querySelectorAll('th')].every((header) => header.getAttribute('scope') === 'col'),
+  )
+  const time = doc.querySelector('time')
+  assert.equal(time?.getAttribute('datetime'), createdAt)
+  assert.equal(time?.textContent, '2026-10-13 11:19:55 UTC')
+  assert.equal(
+    doc.querySelector('[data-copy]')?.getAttribute('data-copy'),
+    `tmux attach -t ${name}`,
+  )
+  assert.equal(
+    doc.querySelector('[data-session-action="close-delete"]')?.getAttribute('data-subject'),
+    `${name}-p0`,
+  )
+  const unknown = new JSDOM(trayHtml([receipt({ createdAt: undefined })])).window.document
+  assert.equal(unknown.querySelector('time'), null)
+  assert.match(unknown.querySelector('.session-created')?.textContent || '', /Unavailable/)
+  const invalid = new JSDOM(trayHtml([receipt({ createdAt: 'not-a-date <unsafe>' })])).window
+    .document
+  assert.equal(invalid.querySelector('time'), null)
+  assert.equal(invalid.querySelector('.session-created')?.textContent, 'not-a-date <unsafe>')
+})
+
 test('sessions scope/search/refresh, attach fallback and registry-routed close/cancel outcomes', async () => {
   const ui = await mountConsole({
     '/api/spawns': {

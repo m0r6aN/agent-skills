@@ -1,5 +1,72 @@
 # UX redesign verification — 2026-10-12
 
+## Sessions readability fix — post-merge follow-up
+
+PR #198 is merged. Owner reported unreadable `/#sessions`; fix is isolated on
+`fix/sessions-readability`, based on main `53379ac9`. Plan amendment/task additions
+are in this directory. Savepoints: `e22d0b69` plan, `5aff77dd` tested implementation.
+
+### Reproduction / root cause
+
+Read-only observation at localhost:8081 in isolated Chromium/Firefox profiles
+confirmed the 1024px failure: sidebar plus five auto-layout columns compressed
+identity/configuration to ~120px. Full session IDs, ISO timestamps, paths and
+model names fragmented. Existing 768px viewport breakpoint did not cover the
+intermediate width, and prior overflow-only tests missed readability. Live browser
+requests were GET-only (non-GET/external requests blocked); no operator write.
+Live images/metrics stay local at `/tmp/foreman-ux-browser/sessions-live/`, not
+committed. Committed screenshots below contain only fictional mocked data.
+
+### Fix / verification
+
+- Container-aware layout: desktop table with stable column proportions and minimum
+  useful width; content areas <=64rem use labeled groups, <=34rem stack fully.
+  Session identity/attach/actions span the full card; status/configuration share
+  two readable columns where space allows. Existing colors/style remain.
+- Aligned action controls and consistent spacing. Valid creation timestamps show
+  explicit UTC; `<time datetime>` and raw receipts retain exact source values.
+  Missing/invalid values stay visible and honest; escaped output remains intact.
+- Renderer regression failed before adding labels/date markup. Browser regression
+  with timestamp IDs and long model/path fixtures failed at Chromium 1024px before
+  CSS fix. Final tests assert identity/configuration cells >=180px at all tested
+  widths and opening receipts cannot cause page overflow/desktop column collapse.
+- **354/354 package tests pass**, zero skipped. `npm run typecheck`, `npm run lint`
+  and `git diff --check` pass. Fresh worktree needed npm ci in ops-console and its
+  receipts/contracts/schema-scaffold siblings; no manifests/lockfiles changed.
+- Chromium **152.0.7977.82** and Firefox **157.0** passed at 320/768/1024/1366/1920,
+  plus the existing 200%-equivalent effective viewport. **Zero axe violations in
+  15 audited states/browser**, including Sessions at 1024. 66 screenshots captured
+  locally; raw [Sessions browser report](sessions-browser-report.json).
+- Keyboard Enter expands/collapses receipt; Tab reaches Copy→Explain→Close at
+  1024. Existing mocked launch handoff, dialog focus/Escape, copy fallback and exact
+  typed-confirmation guards remain tested. Only Chromium’s two deliberately
+  injected 503 errors; no unexpected console or uncaught page exception.
+- Scoped self-review: no API/controller/authorization changes; all action subjects,
+  attach commands, pagination and raw receipt data preserved. No new dependency.
+  Independent/human review remains required before merge; no approval claimed.
+
+![Readable desktop Sessions](screenshots/sessions-readable-desktop.png)
+
+[Intermediate width (1024)](screenshots/sessions-readable-1024.png) ·
+[Mobile Firefox (320)](screenshots/sessions-readable-mobile.png).
+
+### Separate operational observation / paused CI work
+
+Live console also reports `statuses: Invalid statuses response`. GET `/api/goals`
+has 17 statuses, all lacking the additive repoRoot field expected by the merged
+frontend. This is consistent with a long-running pre-redesign backend process;
+restart onto merged code is the operator follow-up, not a backend regression fixed
+here. No server was stopped/restarted and no session was launched/closed/deleted.
+No actual zoom gesture or screen-reader certification is claimed.
+
+Prior CI cleanup is safely paused on separate branch `chore/ci-trigger-cleanup`
+(worktree `/tmp/agent-skills-ci-trigger-cleanup`, checkpoint `8f68b9c7`): all four
+measurement runs archived and only scratch workflow 378344122 disabled. Feature
+push/PR trigger edits have not started. This Sessions PR contains no CI edits.
+Existing account-level runner blocker remains; local checks are not a claimed
+remote CI pass. Rollback: reviewed revert/redeploy, preserve sessions/receipts;
+no data migration or operator-session cleanup needed.
+
 ## PR #198 focused follow-up
 
 Implementation savepoints: `f50db5df` (bulk/suggestions), `1e800fa6` (help),

@@ -9,6 +9,11 @@ export function livenessLabel(value) {
   return value === 'alive' ? 'Running' : value === 'exited' ? 'Not running (exited)' : value === 'dead' ? 'Not running (dead)' : 'Unknown'
 }
 const fact = (value) => value == null || value === '' ? 'Unavailable' : esc(value)
+function createdTime(value) {
+  const date = typeof value === 'string' ? new Date(value) : null
+  if (!date || Number.isNaN(date.getTime())) return fact(value)
+  return `<time datetime="${esc(value)}">${date.toISOString().slice(0, 19).replace('T', ' ')} UTC</time>`
+}
 export function trayHtml(spawns, { page = 0, registry = [], highlight = null, compact = false } = {}) {
   if (!spawns.length) return emptyHtml('No console-recorded launches', 'Select work from Work queue to launch a session. Sessions started elsewhere are not listed here.')
   page = Math.min(Math.max(0, page), Math.ceil(spawns.length / TRAY_ROW_CAP) - 1)
@@ -21,13 +26,13 @@ export function trayHtml(spawns, { page = 0, registry = [], highlight = null, co
     const command = identified ? attachCommand(spawn.sessionName) : null
     const actions = identified ? ['explain', 'close-delete'].filter((verb) => registry.some((entry) => entry.verb === verb && entry.signalClasses.includes('session-state'))).map((verb) => `<button type="button" ${verb === 'close-delete' ? 'class="danger"' : ''} data-session-action="${verb}" data-subject="${esc(subject)}" data-repo="${esc(spawn.repoRoot || '')}">${verb === 'close-delete' ? 'Close / delete…' : 'Explain'}</button>`).join('') : ''
     return `<tr class="tray-row" data-session="${esc(spawn.sessionName || '')}" data-subject="${esc(subject || '')}" data-receipt="${esc(spawn.id || '')}" ${highlight === spawn.sessionName ? 'data-highlight' : ''}>
-      <td><span class="subject">${fact(spawn.sessionName)}</span><span class="meta">Pane ${fact(spawn.paneIndex)} · ${fact(spawn.createdAt)}</span>
+      <td data-label="Session / pane"><span class="subject">${fact(spawn.sessionName)}</span><span class="meta">Pane ${fact(spawn.paneIndex)}</span><span class="meta session-created">${createdTime(spawn.createdAt)}</span>
         <details><summary>Launch receipt</summary><dl class="receipt-facts"><dt>Receipt ID</dt><dd>${fact(spawn.id)}</dd><dt>Repository</dt><dd><code>${fact(spawn.repoRoot)}</code></dd><dt>Worktree</dt><dd><code>${fact(spawn.worktreePath)}</code></dd><dt>Prompt digest</dt><dd><code>${fact(spawn.promptDigest)}</code></dd></dl><pre>${esc(JSON.stringify(spawn, null, 2))}</pre></details></td>
-      <td><span class="chip chip-${spawn.liveness === 'alive' ? 'green' : ['dead', 'exited'].includes(spawn.liveness) ? 'red' : 'neutral'}">${livenessLabel(spawn.liveness)}</span></td>
-      <td><strong>${fact(spawn.harness)}</strong> · ${fact(spawn.model)}<span class="meta">Thinking: ${fact(spawn.thinking)}<br>Configured cap: ${fact(spawn.budget)}</span><span class="meta">${fact(spawn.repoRoot)}</span></td>
-      <td>${command ? `<code class="attach">${esc(command)}</code><br><button type="button" data-copy="${esc(command)}" aria-label="Copy attach command for ${esc(spawn.sessionName)}">Copy attach command</button><span class="meta" data-copy-status aria-live="polite"></span>` : '<span class="muted">Attach unavailable: session or pane identity missing.</span>'}</td>
-      <td class="actions">${actions || '<span class="muted">No registered action</span>'}</td></tr>`
+      <td data-label="Liveness"><span class="chip chip-${spawn.liveness === 'alive' ? 'green' : ['dead', 'exited'].includes(spawn.liveness) ? 'red' : 'neutral'}">${livenessLabel(spawn.liveness)}</span></td>
+      <td data-label="Launch configuration / repository"><strong>${fact(spawn.harness)}</strong> · ${fact(spawn.model)}<span class="meta">Thinking: ${fact(spawn.thinking)}<br>Configured cap: ${fact(spawn.budget)}</span><span class="meta">${fact(spawn.repoRoot)}</span></td>
+      <td data-label="Terminal attach">${command ? `<code class="attach">${esc(command)}</code><button type="button" data-copy="${esc(command)}" aria-label="Copy attach command for ${esc(spawn.sessionName)}">Copy attach command</button><span class="meta" data-copy-status aria-live="polite"></span>` : '<span class="muted">Attach unavailable: session or pane identity missing.</span>'}</td>
+      <td class="actions" data-label="Actions"><div class="session-actions-group">${actions || '<span class="muted">No registered action</span>'}</div></td></tr>`
   }).join('')
   const summary = compact ? '<p class="muted">Recent pane receipts. Open Sessions for full history.</p>' : `<div class="session-metrics"><div><strong>${sessionNames.size}</strong> <span>recorded session${sessionNames.size === 1 ? '' : 's'}</span></div><div><strong>${spawns.length}</strong> <span>panes</span></div><div><strong>${running}</strong> <span>Running panes</span></div><div><strong>${unknown}</strong> <span>Unknown liveness</span></div></div><p class="muted">Console-recorded launches only. Not running does not mean completed; budget caps are configuration, not measured spending.</p>`
-  return `${summary}<div class="table-wrap"><table class="tray-table"><thead><tr><th>Session / pane</th><th>Liveness</th><th>Launch configuration / repository</th><th>Terminal attach</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>${compact ? '' : paginationHtml(spawns.length, page, TRAY_ROW_CAP)}`
+  return `${summary}<div class="table-wrap session-table-wrap"><table class="tray-table"><thead><tr><th scope="col">Session / pane</th><th scope="col">Liveness</th><th scope="col">Launch configuration / repository</th><th scope="col">Terminal attach</th><th scope="col">Actions</th></tr></thead><tbody>${rows}</tbody></table></div>${compact ? '' : paginationHtml(spawns.length, page, TRAY_ROW_CAP)}`
 }

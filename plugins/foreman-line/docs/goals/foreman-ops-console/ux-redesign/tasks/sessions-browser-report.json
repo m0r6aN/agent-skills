@@ -1,0 +1,301 @@
+[
+  {
+    "browser": "chromium",
+    "version": "152.0.7977.82",
+    "checks": [
+      "320px signals: no page overflow",
+      "320px board: no page overflow",
+      "320px sessions: realistic identity/configuration remain at least 180px wide",
+      "320px sessions: no page overflow",
+      "320px fleet: no page overflow",
+      "768px signals: no page overflow",
+      "768px board: no page overflow",
+      "768px sessions: realistic identity/configuration remain at least 180px wide",
+      "768px sessions: no page overflow",
+      "768px fleet: no page overflow",
+      "1024px signals: no page overflow",
+      "1024px board: no page overflow",
+      "1024px sessions: realistic identity/configuration remain at least 180px wide",
+      "1024px sessions: no page overflow",
+      "1024px fleet: no page overflow",
+      "1366px signals: no page overflow",
+      "1366px board: no page overflow",
+      "1366px sessions: realistic identity/configuration remain at least 180px wide",
+      "1366px sessions: no page overflow",
+      "1366px fleet: no page overflow",
+      "1920px signals: no page overflow",
+      "1920px board: no page overflow",
+      "1920px sessions: realistic identity/configuration remain at least 180px wide",
+      "1920px sessions: no page overflow",
+      "1920px fleet: no page overflow",
+      "bulk action and explicit permissions: 2 updated/0 skipped; suggested toggle preserves manual settings; Apply focus retained; nested help Tab/Shift+Tab/Escape returns to opener without draft loss",
+      "200% equivalent 683x450 CSS viewport: no overflow, launch reachable by scrolling; not a browser UI zoom gesture",
+      "keyboard Tab/Shift+Tab trap, Escape focus return; Shift selection; refresh persistence; one mocked POST, two actions; session highlight; wrong destructive confirmation sends no request",
+      "initialization error, delayed-health loading and recovery: meaningful shell, refresh available"
+    ],
+    "axe": [
+      {
+        "view": "signals-320",
+        "violations": []
+      },
+      {
+        "view": "board-320",
+        "violations": []
+      },
+      {
+        "view": "sessions-320",
+        "violations": []
+      },
+      {
+        "view": "fleet-320",
+        "violations": []
+      },
+      {
+        "view": "sessions-1024",
+        "violations": []
+      },
+      {
+        "view": "signals",
+        "violations": []
+      },
+      {
+        "view": "board",
+        "violations": []
+      },
+      {
+        "view": "sessions",
+        "violations": []
+      },
+      {
+        "view": "fleet",
+        "violations": []
+      },
+      {
+        "view": "remedies",
+        "violations": []
+      },
+      {
+        "view": "audit",
+        "violations": []
+      },
+      {
+        "view": "settings",
+        "violations": []
+      },
+      {
+        "view": "workflow-help",
+        "violations": []
+      },
+      {
+        "view": "launch-review",
+        "violations": []
+      },
+      {
+        "view": "workflow-help-320",
+        "violations": []
+      }
+    ],
+    "errors": [
+      "Failed to load resource: the server responded with a status of 503 (Service Unavailable)",
+      "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    ],
+    "posts": [
+      {
+        "path": "/api/spawn",
+        "body": {
+          "controls": {
+            "harness": "pi",
+            "model": "claude-sonnet-5-5",
+            "thinking": "high",
+            "budget": "$20"
+          },
+          "actions": [
+            {
+              "verb": "explain",
+              "signalClass": "parcel-state",
+              "subject": "ops-console/P1",
+              "evidence": [
+                "docs/goals/ops-console/loop-directive.md"
+              ],
+              "repoRoot": "/workspace/foreman",
+              "autonomy": {
+                "decisions": "partial",
+                "commit": false,
+                "push": true,
+                "openPr": false,
+                "merge": false
+              },
+              "extraText": "Preserve existing work. This is a mocked verification launch."
+            },
+            {
+              "verb": "explain",
+              "signalClass": "scm-ci",
+              "subject": "pr/142/checks-failing",
+              "evidence": [
+                "gh: checks failed for PR #142"
+              ],
+              "repoRoot": "/workspace/foreman",
+              "autonomy": {
+                "decisions": "partial",
+                "commit": false,
+                "push": true,
+                "openPr": false,
+                "merge": false
+              },
+              "extraText": "Preserve existing work. This is a mocked verification launch."
+            }
+          ]
+        }
+      }
+    ],
+    "screenshotCount": 33
+  },
+  {
+    "browser": "firefox",
+    "version": "157.0",
+    "checks": [
+      "320px signals: no page overflow",
+      "320px board: no page overflow",
+      "320px sessions: realistic identity/configuration remain at least 180px wide",
+      "320px sessions: no page overflow",
+      "320px fleet: no page overflow",
+      "768px signals: no page overflow",
+      "768px board: no page overflow",
+      "768px sessions: realistic identity/configuration remain at least 180px wide",
+      "768px sessions: no page overflow",
+      "768px fleet: no page overflow",
+      "1024px signals: no page overflow",
+      "1024px board: no page overflow",
+      "1024px sessions: realistic identity/configuration remain at least 180px wide",
+      "1024px sessions: no page overflow",
+      "1024px fleet: no page overflow",
+      "1366px signals: no page overflow",
+      "1366px board: no page overflow",
+      "1366px sessions: realistic identity/configuration remain at least 180px wide",
+      "1366px sessions: no page overflow",
+      "1366px fleet: no page overflow",
+      "1920px signals: no page overflow",
+      "1920px board: no page overflow",
+      "1920px sessions: realistic identity/configuration remain at least 180px wide",
+      "1920px sessions: no page overflow",
+      "1920px fleet: no page overflow",
+      "bulk action and explicit permissions: 2 updated/0 skipped; suggested toggle preserves manual settings; Apply focus retained; nested help Tab/Shift+Tab/Escape returns to opener without draft loss",
+      "200% equivalent 683x450 CSS viewport: no overflow, launch reachable by scrolling; not a browser UI zoom gesture",
+      "keyboard Tab/Shift+Tab trap, Escape focus return; Shift selection; refresh persistence; one mocked POST, two actions; session highlight; wrong destructive confirmation sends no request",
+      "initialization error, delayed-health loading and recovery: meaningful shell, refresh available"
+    ],
+    "axe": [
+      {
+        "view": "signals-320",
+        "violations": []
+      },
+      {
+        "view": "board-320",
+        "violations": []
+      },
+      {
+        "view": "sessions-320",
+        "violations": []
+      },
+      {
+        "view": "fleet-320",
+        "violations": []
+      },
+      {
+        "view": "sessions-1024",
+        "violations": []
+      },
+      {
+        "view": "signals",
+        "violations": []
+      },
+      {
+        "view": "board",
+        "violations": []
+      },
+      {
+        "view": "sessions",
+        "violations": []
+      },
+      {
+        "view": "fleet",
+        "violations": []
+      },
+      {
+        "view": "remedies",
+        "violations": []
+      },
+      {
+        "view": "audit",
+        "violations": []
+      },
+      {
+        "view": "settings",
+        "violations": []
+      },
+      {
+        "view": "workflow-help",
+        "violations": []
+      },
+      {
+        "view": "launch-review",
+        "violations": []
+      },
+      {
+        "view": "workflow-help-320",
+        "violations": []
+      }
+    ],
+    "errors": [],
+    "posts": [
+      {
+        "path": "/api/spawn",
+        "body": {
+          "controls": {
+            "harness": "pi",
+            "model": "claude-sonnet-5-5",
+            "thinking": "high",
+            "budget": "$20"
+          },
+          "actions": [
+            {
+              "verb": "explain",
+              "signalClass": "parcel-state",
+              "subject": "ops-console/P1",
+              "evidence": [
+                "docs/goals/ops-console/loop-directive.md"
+              ],
+              "repoRoot": "/workspace/foreman",
+              "autonomy": {
+                "decisions": "partial",
+                "commit": false,
+                "push": true,
+                "openPr": false,
+                "merge": false
+              },
+              "extraText": "Preserve existing work. This is a mocked verification launch."
+            },
+            {
+              "verb": "explain",
+              "signalClass": "scm-ci",
+              "subject": "pr/142/checks-failing",
+              "evidence": [
+                "gh: checks failed for PR #142"
+              ],
+              "repoRoot": "/workspace/foreman",
+              "autonomy": {
+                "decisions": "partial",
+                "commit": false,
+                "push": true,
+                "openPr": false,
+                "merge": false
+              },
+              "extraText": "Preserve existing work. This is a mocked verification launch."
+            }
+          ]
+        }
+      }
+    ],
+    "screenshotCount": 33
+  }
+]
