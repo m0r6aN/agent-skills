@@ -270,3 +270,16 @@ Owner ratified this spec as drafted ("ratify all as written"), including every
 amendment it names under "Ask first" (A1 fifth destination "Decisions", A3 `GET /api/decisions`, A4 present-only `pr-merge` flow with the `repo-root-fleet` argument kind, A5 read-only `gh` allowlist incl. the check-run annotation GET). Open Questions are resolved by the
 proposals stated in them: OQ1 no strategy flag, OQ2 substring constant pinned by a fixture of the real annotation, OQ3 all open PRs in each declared fleet repo, OQ4 drafts listed and labelled. Blanket authority for decisions and
 non-destructive actions stands; Gate 3 (merge) is not delegated by this record.
+
+## Coordinator amendment — 2026-10-13 (Step 0 rulings for stages 2 and 3)
+
+Ratified by the coordinator under the owner's blanket authority (2026-10-13). Committed alone before code.
+
+1. **Non-primary fleet roots.** Existing G1/G2 flows keep their primary-root-only guard (unchanged). A `GateItem` whose root is not the primary root carries `command: null` and the note "command not presented: root is not the console's primary root". No guard is widened.
+2. **G1 has two acts.** `GateItem.command` is the approve command; add an optional `altCommand` (same `CommandPresentation` shape) carrying reject for G1. G2 carries `dispatch-execute` only. Both are presented via `/api/invoke`, never executed.
+3. **`<N>`.** Add an internal arg kind `pr-number` (`^[1-9][0-9]{0,6}$`) in `invoke.ts` alongside `repo-root-fleet`.
+4. **Rendering.** `pr-merge` has its own renderer (`cd "<root>" && gh pr merge <N>`); a declared root containing `"`, `$`, a backtick or a control character is refused (typed, audited `refused`), never escaped.
+5. **Declared fleet root** = primary root plus roots in `state/fleet.json`; `validateArg` reads fleet state from `config.stateDir`.
+6. **Show command.** Server computes inert `command` text in the response; the "Show command" button POSTs the flow/argv to `/api/invoke` (one `presented` audit entry) and only then reveals the command.
+7. **Tests.** Create `tests/browser-decisions.test.ts` now, covering the new button path, skipped when Chromium is absent. The 491 baseline in AC13 is stale; the live baseline is 522.
+8. **Housekeeping.** Do not commit the `node_modules` symlinks (explicit `git add` paths only). `INDEX.md` and `FCA-U1` edits are not needed for these stages.
