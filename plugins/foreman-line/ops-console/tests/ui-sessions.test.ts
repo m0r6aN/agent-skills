@@ -354,9 +354,16 @@ test('review #2: with remain-on-exit a dead pane in a live session is NOT shown 
   assert.equal(effectiveLiveness(livePane), 'alive')
   assert.equal(effectiveLiveness(legacy), 'alive', 'no ledger: the receipt liveness stands')
   assert.equal(
-    effectiveLiveness(receipt({ liveness: 'exited', ledger: ledger({ state: 'unknown' }) })),
-    'exited',
-    'unknown ledger defers to the receipt',
+    effectiveLiveness(receipt({ liveness: 'alive', ledger: ledger({ state: 'unknown' }) })),
+    'unknown',
+    'a ledger-era pane the ledger cannot establish is UNKNOWN: the session-level flag says nothing about this pane',
+  )
+  assert.equal(
+    effectiveLiveness(
+      receipt({ liveness: 'alive', ledger: ledger({ state: 'unknown', ledger: 'absent' }) }),
+    ),
+    'alive',
+    'a legacy receipt defers to its own liveness',
   )
   const doc = new JSDOM(trayHtml([failedPane, livePane], { registry: ACTION_REGISTRY })).window
     .document

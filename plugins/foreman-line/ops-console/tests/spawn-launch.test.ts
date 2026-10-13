@@ -1,13 +1,15 @@
 import assert from 'node:assert/strict'
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, statSync, utimesSync, writeFileSync } from 'node:fs'
 import { basename, join } from 'node:path'
 import test from 'node:test'
 import { dispatchAction } from '../src/actions.js'
 import { listAuditEntries } from '../src/invoke.js'
+import { ensureLedgerDir } from '../src/ledger-store.js'
 import {
   launchSpawnPlan,
   listSpawnReceipts,
   planSpawn,
+  recordSpawnReceipt,
   type SpawnRefusalError,
   shellQuote,
   type TmuxRunner,
@@ -96,6 +98,8 @@ function stubRunner(
     capture: (args: readonly string[]) => {
       calls.push([...args])
       if (onRun !== undefined) onRun(args)
+      // The liveness probe before retention is not a pane creation.
+      if (args[0] === 'list-panes') return ''
       return `%${nextPane++}\n`
     },
   }
@@ -118,7 +122,12 @@ test('the launcher passes every plan field to tmux verbatim (stub snapshot)', ()
       [...pane.argv, '--', pane.prompt].map(shellQuote).join(' ')
     const logFor = (index: number) =>
       `cat >> ${shellQuote(join(config.stateDir, 'sessions', `foc-test-p${index}`, 'pane.log'))}`
-    assert.deepEqual(runner.calls, [
+    assert.deepEqual(
+      runner.calls[0]?.slice(0, 3),
+      ['list-panes', '-a', '-F'],
+      'liveness is probed before retention',
+    )
+    assert.deepEqual(runner.calls.slice(1), [
       [
         'new-session',
         '-d',
@@ -207,7 +216,11 @@ test('partial failure audits the whole plan state and never retries silently', (
       caught = err as SpawnRefusalError
     }
     assert.equal(caught?.reason, 'launch-failure')
-    assert.equal(runner.calls.length, 2, 'exactly one attempt per pane - zero retries')
+    assert.equal(
+      runner.calls.filter((args) => args[0] !== 'list-panes').length,
+      2,
+      'exactly one attempt per pane - zero retries',
+    )
 
     const audit = listAuditEntries(config.stateDir)
     assert.equal(audit.length, 1)
@@ -249,6 +262,130 @@ test('review #12: the ledger directory is created BEFORE the worktree, so a fail
       worktrees.calls.length,
       0,
       'no worktree was cut for a launch that could not be recorded',
+    )
+  })
+})
+
+// ---- reviewer re-review rework (FCA-P7, 2026-10-13) -------------------------------------------
+
+function seedOldReceipt(
+  config: { stateDir: string },
+  id: string,
+  paneId: string,
+  sessionName: string,
+  bytes: number,
+): string {
+  recordSpawnReceipt(config.stateDir, {
+    id,
+    sessionName,
+    paneIndex: 0,
+    harness: 'pi',
+    model: 'a/b',
+    thinking: 'low',
+    budget: '$1',
+    autonomy: { decisions: 'partial', commit: false, push: false, openPr: false, merge: false },
+    repoRoot: '/repos/r',
+    worktreePath: '/repos/r-worktrees/old',
+    promptDigest: 'd',
+    argv: ['pi'],
+    createdAt: '2026-01-01T00:00:00.000Z',
+    tmuxPaneId: paneId,
+    ledgerDir: `sessions/${id}`,
+  })
+  const { logPath } = ensureLedgerDir(config.stateDir, id)
+  writeFileSync(logPath, 'x'.repeat(bytes))
+  const old = new Date('2026-01-01T00:00:00Z')
+  utimesSync(logPath, old, old)
+  return logPath
+}
+
+function launchWithTmux(
+  config: Parameters<typeof launchSpawnPlan>[0],
+  listPanes: () => string,
+): void {
+  const runner: TmuxRunner = {
+    available: () => true,
+    run: () => undefined,
+    capture: (args) => (args[0] === 'list-panes' ? listPanes() : '%5\n'),
+  }
+  launchSpawnPlan(config, plan(), NOW, { tmux: runner, worktrees: worktreeStub() })
+}
+
+test('re-review: retention at launch spares live panes however old, and touches nothing when liveness is unknown', () => {
+  const over = 6 * 1024 * 1024
+  const size = (path: string) => statSync(path).size
+  // alive: untouched
+  withTempRepo(launchScenario(), ({ config }) => {
+    const log = seedOldReceipt(config, 'foc-old-p0', '%9', 'foc-old', over)
+    launchWithTmux(config, () => 'foc-old\t%9\t0\n')
+    assert.equal(size(log), over, 'a live pane keeps its whole log')
+  })
+  // dead: truncated to the cap
+  withTempRepo(launchScenario(), ({ config }) => {
+    const log = seedOldReceipt(config, 'foc-old-p0', '%9', 'foc-old', over)
+    launchWithTmux(config, () => 'foc-old\t%9\t1\n')
+    assert.equal(size(log), 5 * 1024 * 1024, 'a dead pane is truncated to the byte cap')
+  })
+  // tmux cannot answer (not "no server"): protect everything
+  withTempRepo(launchScenario(), ({ config }) => {
+    const log = seedOldReceipt(config, 'foc-old-p0', '%9', 'foc-old', over)
+    launchWithTmux(config, () => {
+      throw Object.assign(new Error('boom'), {
+        stderr: 'error connecting to /tmp/tmux-0/default (Permission denied)',
+      })
+    })
+    assert.equal(size(log), over, 'liveness unknown: nothing is touched')
+  })
+  // no server at all: nothing is alive, so the over-cap log is truncated
+  withTempRepo(launchScenario(), ({ config }) => {
+    const log = seedOldReceipt(config, 'foc-old-p0', '%9', 'foc-old', over)
+    launchWithTmux(config, () => {
+      throw Object.assign(new Error('x'), { stderr: 'no server running on /tmp/tmux-1000/default' })
+    })
+    assert.equal(size(log), 5 * 1024 * 1024)
+  })
+})
+
+test('re-review: a launch that fails before its pane exists leaves no empty ledger dir; one that fails after keeps the started pane', () => {
+  withTempRepo(launchScenario(), ({ config }) => {
+    const failing = {
+      calls: [] as string[][],
+      create: () => {
+        throw new Error('git worktree add failed')
+      },
+      head: () => null,
+    }
+    let caught: SpawnRefusalError | null = null
+    try {
+      launchSpawnPlan(config, plan(), NOW, { tmux: stubRunner(), worktrees: failing })
+    } catch (err) {
+      caught = err as SpawnRefusalError
+    }
+    assert.equal(caught?.reason, 'launch-failure')
+    assert.equal(
+      existsSync(join(config.stateDir, 'sessions', 'foc-test-p0')),
+      false,
+      'nothing started: no leftover dir',
+    )
+  })
+  withTempRepo(launchScenario(), ({ config }) => {
+    const runner = stubRunner((args) => {
+      if (args[0] === 'split-window') throw new Error('tmux server gone')
+    })
+    try {
+      launchSpawnPlan(config, plan(), NOW, { tmux: runner, worktrees: worktreeStub() })
+    } catch {
+      // expected
+    }
+    assert.equal(
+      existsSync(join(config.stateDir, 'sessions', 'foc-test-p0')),
+      true,
+      'pane 0 started: its ledger dir stays',
+    )
+    assert.equal(
+      existsSync(join(config.stateDir, 'sessions', 'foc-test-p1')),
+      false,
+      'pane 1 never started: its dir is discarded',
     )
   })
 })

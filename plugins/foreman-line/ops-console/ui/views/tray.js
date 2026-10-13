@@ -55,6 +55,9 @@ export function effectiveLiveness(spawn) {
   const state = spawn?.ledger?.state
   if (state === 'running' || state === 'launching') return 'alive'
   if (['exited-clean', 'exited-error', 'no-transcript', 'vanished'].includes(state)) return 'exited'
+  // A ledger-era receipt whose state the ledger cannot establish is UNKNOWN: the receipt's
+  // session-level liveness says nothing about this pane. Legacy receipts defer to it.
+  if (state === 'unknown' && spawn?.ledger?.ledger === 'present') return 'unknown'
   return spawn?.liveness
 }
 const fact = (value) => value == null || value === '' ? 'Unavailable' : esc(value)

@@ -17,10 +17,13 @@ import { join } from 'node:path'
 import test from 'node:test'
 import { ledgerDirPath } from '../src/config.js'
 import {
+  capLine,
   classifyTmuxFailure,
   deriveLedgerEntry,
   LAUNCH_GRACE_MS,
   type LedgerProbes,
+  ledgerEntries,
+  MAX_LINE_CHARS,
   type OutputFact,
   parsePaneList,
   readPaneOutput,
@@ -35,7 +38,13 @@ import {
   readGitOutcome,
   safeRev,
 } from '../src/ledger-git.js'
-import { enforceRetention, ensureLedgerDir, LOG_NAME, TRUNCATED_NAME } from '../src/ledger-store.js'
+import {
+  discardEmptyLedgerDir,
+  enforceRetention,
+  ensureLedgerDir,
+  LOG_NAME,
+  TRUNCATED_NAME,
+} from '../src/ledger-store.js'
 import {
   piSessionDirName,
   readPiTranscript,
@@ -109,6 +118,7 @@ const CLEAN_GIT = {
   pushed: false,
 } as const
 const NO_OUTPUT: OutputFact = {
+  source: 'none',
   logPath: null,
   present: false,
   bytes: null,
@@ -915,5 +925,278 @@ test('review #8/#9: retention ignores symlinks and malformed names, ranks by id,
   } finally {
     rmSync(state, { recursive: true, force: true })
     rmSync(outside, { recursive: true, force: true })
+  }
+})
+
+// ---- reviewer re-review rework (second independent pass on FCA-P7, 2026-10-13) --------------
+
+test('re-review: without a pane id, attribution by order needs one tmux pane per receipt; otherwise unknown', () => {
+  const twoPanes: TmuxSessionFact = {
+    kind: 'found',
+    panes: [
+      { paneId: '%1', paneIndex: 1, dead: true, deadStatus: 3, deadSignal: null, deadTime: null },
+      {
+        paneId: '%2',
+        paneIndex: 2,
+        dead: false,
+        deadStatus: null,
+        deadSignal: null,
+        deadTime: null,
+      },
+    ],
+  }
+  const noId = (paneIndex: number) => receipt({ tmuxPaneId: undefined, paneIndex })
+  // Two receipts, two panes: order identifies each.
+  assert.equal(
+    deriveLedgerEntry(noId(0), probes({ tmux: twoPanes }), T0 + 60_000, 2).state,
+    'exited-error',
+  )
+  // Three receipts but tmux lost a pane (no remain-on-exit): order no longer identifies anyone.
+  const lost = deriveLedgerEntry(
+    noId(1),
+    probes({ tmux: twoPanes, transcript: WITH_TRANSCRIPT }),
+    T0 + 60_000,
+    3,
+  )
+  assert.equal(
+    lost.state,
+    'unknown',
+    'receipt 1 must not be reported as whichever pane now sits at that position',
+  )
+  assert.ok(lost.evidence.some((line) => line.includes('cannot attribute panes')))
+  // A recorded pane id is always authoritative, whatever the counts.
+  assert.equal(
+    deriveLedgerEntry(
+      receipt({ tmuxPaneId: '%2' }),
+      probes({ tmux: twoPanes, transcript: WITH_TRANSCRIPT }),
+      T0 + 60_000,
+      9,
+    ).state,
+    'running',
+  )
+  // ledgerEntries supplies the sibling counts itself.
+  const receipts = [
+    receipt({ id: 'a', tmuxPaneId: undefined, paneIndex: 0 }),
+    receipt({ id: 'b', tmuxPaneId: undefined, paneIndex: 1 }),
+    receipt({ id: 'c', tmuxPaneId: undefined, paneIndex: 2 }),
+  ]
+  const map = ledgerEntries(receipts, probes({ tmux: twoPanes }), T0 + 60_000)
+  assert.deepEqual(
+    [...map.values()].map((e) => e.state),
+    ['unknown', 'unknown', 'unknown'],
+  )
+})
+
+test('re-review: exit 0 whose transcript cannot be joined is unknown, never exited-clean', () => {
+  const dead0 = pane({ dead: true, deadStatus: 0 })
+  for (const link of ['unknown', 'ambiguous'] as const) {
+    const entry = deriveLedgerEntry(
+      receipt(),
+      probes({ tmux: dead0, transcript: { ...NO_TRANSCRIPT, link, messages: null } }),
+      T0 + 60_000,
+    )
+    // `none` is no-transcript; unknown/ambiguous cannot say whether the ending was an error.
+    assert.equal(entry.state, 'unknown', link)
+  }
+  const unknown = deriveLedgerEntry(
+    receipt(),
+    probes({ tmux: dead0, transcript: { ...NO_TRANSCRIPT, link: 'unknown' } }),
+    T0 + 60_000,
+  )
+  assert.ok(
+    unknown.evidence.some((line) => line.includes('whether it ended in an error is unknown')),
+  )
+  assert.equal(
+    deriveLedgerEntry(receipt(), probes({ tmux: dead0, transcript: WITH_TRANSCRIPT }), T0 + 60_000)
+      .state,
+    'exited-clean',
+    'a joined, clean transcript is still clean',
+  )
+})
+
+test('re-review: the entry records what tmux said, and "no live pane" is never asserted when tmux was unavailable', () => {
+  const unavailable = deriveLedgerEntry(
+    receipt(),
+    probes({ tmux: { kind: 'unavailable', reason: 'tmux failed: x' } }),
+    T0 + 60_000,
+  )
+  assert.equal(unavailable.tmux, 'unavailable')
+  assert.equal(unavailable.orphanClean, false, 'clean worktree + unknown liveness is not an orphan')
+  assert.ok(!unavailable.evidence.some((line) => line.includes('orphan-clean')))
+  assert.equal(
+    deriveLedgerEntry(receipt(), probes({ tmux: { kind: 'absent' } }), T0 + 60_000).tmux,
+    'absent',
+  )
+  assert.equal(deriveLedgerEntry(receipt(), probes({ tmux: pane() }), T0 + 60_000).tmux, 'found')
+  assert.equal(
+    deriveLedgerEntry(receipt(), probes({ tmux: { kind: 'absent' } }), T0 + 60_000).orphanClean,
+    true,
+    'absent session + clean worktree is an orphan',
+  )
+})
+
+test('re-review: the ledger time budget bounds probing and says so', () => {
+  let probed = 0
+  const counting: LedgerProbes = {
+    tmux: () => ({ kind: 'absent' }),
+    output: () => NO_OUTPUT,
+    transcript: () => {
+      probed++
+      return WITH_TRANSCRIPT
+    },
+    git: () => {
+      probed++
+      return CLEAN_GIT
+    },
+  }
+  const receipts = ['a', 'b', 'c', 'd'].map((id, paneIndex) =>
+    receipt({ id, paneIndex, tmuxPaneId: `%${paneIndex}` }),
+  )
+  let clock = 0
+  const tick = () => (clock += 1500)
+  const map = ledgerEntries(receipts, counting, T0 + 60_000, 5000, tick)
+  const entries = [...map.values()]
+  assert.ok(
+    probed < receipts.length * 2,
+    `probing stopped at the budget (${probed} of ${receipts.length * 2} probes ran)`,
+  )
+  const limited = entries.filter((e) =>
+    e.evidence.some((line) => line.includes('time budget was exhausted')),
+  )
+  assert.ok(
+    limited.length > 0 && limited.length < receipts.length,
+    'only the receipts after the budget are marked',
+  )
+  for (const entry of limited) {
+    // Probing stops mid-receipt at the budget: whatever was not probed is UNKNOWN, never clean.
+    assert.ok(
+      entry.git.worktree === 'unknown' || entry.transcript.link === 'unknown',
+      'at least one fact was skipped',
+    )
+    if (entry.git.worktree === 'unknown')
+      assert.equal(entry.orphanClean, false, 'unprobed git cannot make an orphan')
+  }
+  // Within budget, nothing is marked.
+  const fast = ledgerEntries(receipts, counting, T0 + 60_000, 8000, () => 0)
+  assert.ok(
+    ![...fast.values()].some((e) => e.evidence.some((line) => line.includes('time budget'))),
+  )
+})
+
+test('re-review: the rendered screen wins for the tail; lines are capped; an error on screen is the provider error', () => {
+  assert.equal(capLine('x'.repeat(MAX_LINE_CHARS + 50)).length, MAX_LINE_CHARS + 1)
+  assert.equal(capLine('short'), 'short')
+  const screenProbes: LedgerProbes = {
+    ...probes({ tmux: pane({ dead: true, deadStatus: 1 }) }),
+    screen: () => ['welcome', 'Error: provider said no', '$'],
+  }
+  const withScreen = deriveLedgerEntry(receipt(), screenProbes, T0 + 60_000)
+  assert.equal(withScreen.output.source, 'screen')
+  assert.deepEqual(withScreen.output.tail, ['welcome', 'Error: provider said no', '$'])
+  assert.equal(withScreen.output.providerError, 'Error: provider said no')
+  const none: LedgerProbes = { ...screenProbes, screen: () => null }
+  assert.equal(
+    deriveLedgerEntry(receipt(), none, T0 + 60_000).output.source,
+    'none',
+    'no screen: falls back to the log',
+  )
+  const empty: LedgerProbes = { ...screenProbes, screen: () => [] }
+  assert.equal(deriveLedgerEntry(receipt(), empty, T0 + 60_000).output.source, 'none')
+  const state = scratch()
+  try {
+    const { logPath } = ensureLedgerDir(state, 'foc-test-p0')
+    writeFileSync(logPath, `${'y'.repeat(5000)}\n`)
+    const out = readPaneOutput(state, receipt())
+    assert.equal(out.source, 'log')
+    assert.ok(
+      (out.tail[0] ?? '').length <= MAX_LINE_CHARS + 1,
+      'a TUI-redraw "line" cannot become a multi-kilobyte blob',
+    )
+  } finally {
+    rmSync(state, { recursive: true, force: true })
+  }
+})
+
+test('re-review: retention is decided by LIVENESS and launch order, not by mtime or id spelling', () => {
+  const state = scratch()
+  try {
+    const mk = (id: string, bytes: number) => {
+      const p = ensureLedgerDir(state, id)
+      writeFileSync(p.logPath, 'z'.repeat(bytes))
+      const old = new Date('2026-01-01T00:00:00Z')
+      utimesSync(p.logPath, old, old)
+      return p
+    }
+    const live = mk('foc-a-p0', 5000)
+    const idle = mk('foc-b-p0', 5000)
+    // protect set: a live pane's old, over-cap log is untouched; the dead one is truncated.
+    const r1 = enforceRetention(
+      state,
+      { maxBytesPerPane: 100, maxPanes: 50, quietMs: 0, protect: new Set(['foc-a-p0']) },
+      T0,
+    )
+    assert.deepEqual(r1.truncated, ['foc-b-p0'])
+    assert.equal(readFileSync(live.logPath, 'utf8').length, 5000, 'live pane untouched however old')
+    assert.equal(readFileSync(idle.logPath, 'utf8').length, 100)
+    // 'all': liveness unknown, nothing is touched.
+    writeFileSync(idle.logPath, 'q'.repeat(5000))
+    utimesSync(idle.logPath, new Date('2026-01-01T00:00:00Z'), new Date('2026-01-01T00:00:00Z'))
+    assert.deepEqual(
+      enforceRetention(
+        state,
+        { maxBytesPerPane: 100, maxPanes: 50, quietMs: 0, protect: 'all' },
+        T0,
+      ),
+      { truncated: [], dropped: [] },
+    )
+    // Count cap by launch order: p10 launched after p2 although it sorts before it; custom names too.
+    const p2 = mk('foc-s-p2', 10)
+    const p10 = mk('foc-s-p10', 10)
+    const custom = mk('zzz-oldest-p0', 10)
+    const dropped = enforceRetention(
+      state,
+      {
+        maxBytesPerPane: 1000,
+        maxPanes: 2,
+        quietMs: 0,
+        order: ['foc-s-p10', 'foc-s-p2', 'zzz-oldest-p0', 'foc-b-p0', 'foc-a-p0'],
+      },
+      T0,
+    ).dropped
+    assert.deepEqual(
+      [...dropped].sort(),
+      ['foc-a-p0', 'foc-b-p0', 'zzz-oldest-p0'],
+      'the two newest by launch order (p10, p2) survive',
+    )
+    assert.equal(existsSync(p10.logPath), true)
+    assert.equal(existsSync(p2.logPath), true)
+    assert.equal(existsSync(custom.logPath), false)
+  } finally {
+    rmSync(state, { recursive: true, force: true })
+  }
+})
+
+test('re-review: an empty ledger dir from a failed launch is removed; captured output is never deleted', () => {
+  const state = scratch()
+  try {
+    const empty = ensureLedgerDir(state, 'foc-fail-p0')
+    assert.equal(discardEmptyLedgerDir(state, 'foc-fail-p0'), true)
+    assert.equal(existsSync(empty.dir), false)
+    const used = ensureLedgerDir(state, 'foc-used-p0')
+    writeFileSync(used.logPath, 'real output')
+    assert.equal(discardEmptyLedgerDir(state, 'foc-used-p0'), false, 'output is never discarded')
+    assert.equal(readFileSync(used.logPath, 'utf8'), 'real output')
+    writeFileSync(join(used.dir, 'pane.log.truncated'), '{}')
+    const marked = ensureLedgerDir(state, 'foc-marked-p0')
+    writeFileSync(join(marked.dir, 'pane.log.truncated'), '{}')
+    assert.equal(
+      discardEmptyLedgerDir(state, 'foc-marked-p0'),
+      false,
+      'a dir with other content is left alone',
+    )
+    assert.equal(discardEmptyLedgerDir(state, '../escape'), false, 'invalid ids refuse')
+    assert.equal(discardEmptyLedgerDir(state, 'foc-never-existed-p0'), false)
+  } finally {
+    rmSync(state, { recursive: true, force: true })
   }
 })

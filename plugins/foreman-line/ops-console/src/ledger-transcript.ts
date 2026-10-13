@@ -49,7 +49,7 @@ export function piSessionDirName(cwd: string): string {
   return `--${cwd.replace(/^[/\\]/, '').replace(/[/\\:]/g, '-')}--`
 }
 
-const UNKNOWN: TranscriptFact = {
+export const UNKNOWN_TRANSCRIPT: TranscriptFact = {
   link: 'unknown',
   dir: null,
   files: [],
@@ -183,15 +183,17 @@ export function readPiTranscript(sessionsRoot: string, worktreePath: string): Tr
   }
   if (entries === null) {
     // No directory at all: pi never started here (an unreadable sessions root is unknown, not "none").
-    return sawOther ? UNKNOWN : { ...UNKNOWN, link: 'none', dir }
+    return sawOther ? UNKNOWN_TRANSCRIPT : { ...UNKNOWN_TRANSCRIPT, link: 'none', dir }
   }
   const files = entries.sort().map((entry) => join(dir, entry))
   // The header cwd must agree with the worktree; a mismatch is not our file.
   const mine = files.filter((file) => sameDirectory(headerCwd(file), worktreePath))
   const rejected = files.length - mine.length
-  if (mine.length === 0) return { ...UNKNOWN, link: 'none', dir, rejected }
-  if (mine.length > 1) return { ...UNKNOWN, link: 'ambiguous', dir, files: mine, rejected }
+  if (mine.length === 0) return { ...UNKNOWN_TRANSCRIPT, link: 'none', dir, rejected }
+  if (mine.length > 1)
+    return { ...UNKNOWN_TRANSCRIPT, link: 'ambiguous', dir, files: mine, rejected }
   const summary = summarize(mine[0] as string)
-  if (summary === null) return { ...UNKNOWN, link: 'unknown', dir, files: mine, rejected }
+  if (summary === null)
+    return { ...UNKNOWN_TRANSCRIPT, link: 'unknown', dir, files: mine, rejected }
   return { link: 'linked', dir, files: mine, rejected, ...summary }
 }
