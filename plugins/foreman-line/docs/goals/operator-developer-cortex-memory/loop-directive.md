@@ -2,7 +2,7 @@
 
 **Goal slug:** `operator-developer-cortex-memory`  
 **Recorded:** 2026-10-10; ownership/resume checkpoint updated 2026-10-12 (coordinator `01a131a9`)  
-**State:** `P0 ACCEPTED (R4 dual review) — COORDINATOR 01a131a9 UNDER OWNER BLANKET GRANT 2026-10-12; P1a ∥ P1b NEXT; CODE PARCELS MERGE TO NON-DEPLOYING opmem/integration; main PROMOTION / CLOUD = OWNER STOP ITEMS`  
+**State:** `P0 ACCEPTED; P1a + P1b MERGED TO opmem/integration (gateway 1b81a1a, cortex 3294bd3) AFTER R1–R3 DUAL REVIEW; P2 NEXT — COORDINATOR 01a131a9 UNDER OWNER BLANKET GRANT; main PROMOTION / CLOUD = OWNER STOP ITEMS`  
 **Scheduling:** synchronous coordinator loop in the owning session (no wakeup tool in this harness); human gates are NOT stop conditions except destructive/production-affecting actions — see `ownership-transfer-2026-10-12-01a131a9.md`
 
 ## COORDINATOR OWNERSHIP — read before any dispatch
@@ -18,7 +18,7 @@
 | Current session provenance | `PI_PROVIDER=anthropic`, `PI_MODEL=claude-opus-5-5`, `PI_SESSION_ID=01a131a9-5c16-724a-a016-3353a124592d`; observed metadata, not a Foreman route receipt |
 | Coordinator publication workspace | `D:/Repos/agent-skills-worktrees/opmem-p0-20261012-01a12f95`, branch `feat/opmem-p0-baseline-20261012-01a12f95` (P0 PR); dispatch scratch `D:/Repos/opmem-dispatch-01a131a9` (outside repos). |
 | Transfer rule | One goal, one coordinator. Transfer only at parcel boundaries by explicit owner direction and update to this ownership block |
-| Last state change | 2026-10-12 — P0 accepted after R1–R4 dual family-independent review (Anthropic + OpenAI seats; Moonshot builder); 34 triage rulings; spec moved to done/. Next: P1a ∥ P1b shaping and dispatch. |
+| Last state change | 2026-10-12 — P1a (#49) and P1b (#61) merged to non-deploying `opmem/integration`; closure `p1-closure-2026-10-12.md`; spend guard declared (USD 45/parcel, USD 300 cumulative). Next: P2. |
 
 An incoming session is not automatically the owner. If it is not the session above, stop and ask the owner for a boundary transfer. If another live owner is discovered, stop and reconcile; directory absence is a scoped local observation, not proof about every external session.
 
