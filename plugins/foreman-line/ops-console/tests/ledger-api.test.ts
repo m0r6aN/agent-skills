@@ -3,7 +3,7 @@ import test from 'node:test'
 import { handleApi } from '../src/api.js'
 import type { LedgerProbes, OutputFact, TmuxSessionFact } from '../src/ledger.js'
 import type { TranscriptFact } from '../src/ledger-transcript.js'
-import { sessionStateProvider } from '../src/signals-session.js'
+import { ATTENTION_WINDOW_MS, sessionStateProvider } from '../src/signals-session.js'
 import { listSpawnReceipts, recordSpawnReceipt, type SpawnReceipt } from '../src/spawn.js'
 import { type Scenario, withTempRepo } from './support/materialize.js'
 
@@ -58,6 +58,7 @@ const NO_TRANSCRIPT: TranscriptFact = {
   link: 'none',
   dir: null,
   files: [],
+  rejected: 0,
   messages: null,
   costUsd: null,
   lastStopReason: null,
@@ -187,5 +188,49 @@ test('AC5: a legacy receipt with no tmux session never raises attention', () => 
     assert.equal(signals.length, 1)
     assert.equal(signals[0]?.severity, 'info')
     assert.ok(signals[0]?.evidence.some((line) => line.includes('predates the session ledger')))
+  })
+})
+
+test('review #6: a legacy receipt never raises attention, even if tmux reports it dead with a failing status', () => {
+  withTempRepo(SCENARIO, ({ config }) => {
+    recordSpawnReceipt(config.stateDir, LEGACY)
+    const signals = sessionStateProvider.collect(config, NOW, undefined, probes(dead(1)))
+    assert.equal(signals.length, 1)
+    assert.equal(
+      signals[0]?.severity,
+      'info',
+      'AC5: missing ledger data is not evidence of failure',
+    )
+  })
+})
+
+test('review #5: failures fade to info after the attention window; fresh ones demand attention', () => {
+  withTempRepo(SCENARIO, ({ config }) => {
+    recordSpawnReceipt(config.stateDir, MODERN)
+    const collectAt = (at: number) =>
+      sessionStateProvider.collect(config, at, undefined, probes(dead(1)))
+    const fresh = collectAt(Date.parse(MODERN.createdAt) + ATTENTION_WINDOW_MS - 1)
+    assert.equal(fresh[0]?.severity, 'attention')
+    const old = collectAt(Date.parse(MODERN.createdAt) + ATTENTION_WINDOW_MS + 1)
+    assert.equal(old.length, 1, 'still listed for the record')
+    assert.equal(old[0]?.severity, 'info')
+    assert.ok(old[0]?.evidence.some((line) => line.includes('older than 72 h')))
+  })
+})
+
+test('review #5: tmux unavailable (e.g. wrong socket directory, permissions) flags nothing — never every receipt as vanished', () => {
+  withTempRepo(SCENARIO, ({ config }) => {
+    recordSpawnReceipt(config.stateDir, MODERN)
+    recordSpawnReceipt(config.stateDir, { ...MODERN, id: 'foc-new-p1', paneIndex: 1 })
+    const signals = sessionStateProvider.collect(
+      config,
+      NOW,
+      undefined,
+      probes({
+        kind: 'unavailable',
+        reason: 'tmux failed: error connecting to /tmp/tmux-0/default (Permission denied)',
+      }),
+    )
+    assert.deepEqual(signals, [])
   })
 })

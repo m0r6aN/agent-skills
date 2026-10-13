@@ -13,6 +13,9 @@ import { listSpawnReceipts } from './spawn.js'
  * flows reap — lumber-jack).
  */
 
+/** Failures older than this stay listed but stop demanding attention (no signal lives forever). */
+export const ATTENTION_WINDOW_MS = 72 * 3_600_000
+
 export interface SessionProbe {
   readonly sessionAlive: (sessionName: string) => boolean
 }
@@ -23,7 +26,8 @@ export function sessionProbeFor(repoRoot: string): SessionProbe {
     // console process's cwd (D19 class-4 non-instance).
     sessionAlive: (sessionName) => {
       try {
-        execFileSync('tmux', ['has-session', '-t', sessionName], {
+        // `=name` is an exact match; a bare name prefix-matches other sessions.
+        execFileSync('tmux', ['has-session', '-t', `=${sessionName}`], {
           cwd: repoRoot,
           stdio: ['ignore', 'pipe', 'ignore'],
         })
@@ -76,10 +80,15 @@ export const sessionStateProvider: SignalProvider & {
       if (entry.state === 'running' || entry.state === 'launching') continue
       // A pane that ended without a clean, evidenced run is a failure to look
       // at; a clean exit and a legacy/unknown record stay informational.
-      const failed =
+      const failedState =
         entry.state === 'exited-error' ||
         entry.state === 'no-transcript' ||
         entry.state === 'vanished'
+      // Legacy receipts (no ledger fields) can never raise attention: missing
+      // ledger data is not evidence of failure (AC5). Old failures fade to info.
+      const age = now - (Date.parse(receipt.createdAt) || now)
+      const stale = age > ATTENTION_WINDOW_MS
+      const failed = failedState && entry.ledger === 'present' && !stale
       // tmux itself unavailable: nothing was observed, so nothing is flagged.
       if (entry.evidence.some((line) => line.startsWith('tmux unavailable'))) continue
       signals.push(
@@ -93,6 +102,9 @@ export const sessionStateProvider: SignalProvider & {
             `harness: ${receipt.harness} ${receipt.model}`,
             `ledger: ${entry.state}`,
             ...entry.evidence,
+            ...(failedState && entry.ledger === 'present' && stale
+              ? ['older than 72 h: listed for the record, no longer demanding attention']
+              : []),
             'worktree left for hygiene reaping (lumber-jack)',
           ],
           detectedAt,

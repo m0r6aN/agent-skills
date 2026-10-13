@@ -262,3 +262,37 @@ event loop for ~5 s each on the live console; `/api/spawns` cost grows with
 receipts (one tmux probe per session, a few git probes per receipt) and should
 get a short-TTL cache if receipt counts reach the hundreds.
 
+## Independent review disposition — 2026-10-13
+
+Two fresh, read-only reviewer sessions were run (tools restricted to read/grep/find/ls;
+no edits, no commands). The P7 reviewer returned REQUEST CHANGES with 13 findings; the
+facts behind them were reproduced before triage (real tmux: `has-session` is 0 for a
+session holding only dead panes and prefix-matches; 66 of 4,243 real assistant messages
+carry `stopReason: "error"`). Disposition:
+
+| # | Finding | Disposition |
+|---|---|---|
+| 1 | exit 0 hides a failed last assistant message | **Fixed** — `exited-error` + evidence (aborted: evidence) |
+| 2 | dead pane shown/counted "Running" (session-level `has-session`) | **Fixed** — UI derives liveness from the ledger; `has-session` uses exact `=name`; API field unchanged |
+| 3 | git probes take `index.lock`; repo-local fsmonitor runs | **Fixed** — `GIT_OPTIONAL_LOCKS=0`, `core.fsmonitor=false`, 20 s timeout, 64 MB buffer |
+| 4 | `/api/spawns` cost / event loop | **Mitigated** — transcript summaries cached by (path,size,mtime); git outcomes 15 s TTL. Not eliminated (see follow-ups) |
+| 5 | attention forever; any tmux error read as `vanished` | **Fixed** — failures fade to info after 72 h; only real "no such session/server" messages are absent (`can't find session\|window\|pane`, `no server running`, `server exited unexpectedly`, `error connecting … No such file`), anything else is unavailable and flags nothing |
+| 6 | legacy receipt could raise attention | **Fixed** — attention requires `ledger === 'present'` |
+| 7 | transcript join degrades silently | **Fixed** — realpath-aware join, 16 KB header, evidence for unknown and for rejected candidates |
+| 8 | retention gaps/races | **Fixed** — `lstat`, id-validated names, ranked by id, logs written in the last 10 min are never truncated/removed (live writer) |
+| 9 | log confidentiality | **Fixed** — 0700/0600. DNS-rebinding/Host-header check and `FOC_CONTAINER` non-loopback bind are **pre-existing server properties** in `server.ts` (outside Allowed Files): deferred, owner decision |
+| 10 | first (not latest) error line; OSC | **Fixed** |
+| 11 | `baseCommit` option injection | **Fixed** — `safeRev` |
+| 12 | non-exact tmux targets; session-name shape | **Fixed** — `=name:` targets; `invalid-session-name` refusal before any worktree; ledger dir created before the worktree |
+| 13 | `reconcileSelection` on failed endpoint | **Pre-existing** behaviour, unchanged by this parcel; not addressed |
+
+Defect found by the rework itself: the first classifier missed `can't find window` and
+`server exited unexpectedly` (what real tmux prints), producing a flaky `unknown`; both
+are now covered by unit table and real-tmux tests (15/15 stable runs).
+
+Additional Allowed Files for the rework: none beyond those already recorded.
+
+Known follow-ups (owner decisions): Host/Origin validation and non-loopback bind in
+`server.ts`; moving blocking `execFileSync` work off the event loop; an
+acknowledge/dismiss affordance for historical failures.
+

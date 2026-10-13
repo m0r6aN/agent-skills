@@ -1,4 +1,12 @@
-import { closeSync, openSync, readdirSync, readFileSync, readSync, statSync } from 'node:fs'
+import {
+  closeSync,
+  openSync,
+  readdirSync,
+  readFileSync,
+  readSync,
+  realpathSync,
+  statSync,
+} from 'node:fs'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
 import { isRecord } from './guards.js'
@@ -19,6 +27,8 @@ export interface TranscriptFact {
   readonly link: TranscriptLink
   readonly dir: string | null
   readonly files: readonly string[]
+  /** Candidate files in the directory whose header cwd named a different directory. */
+  readonly rejected: number
   readonly messages: number | null
   readonly costUsd: number | null
   readonly lastStopReason: string | null
@@ -27,7 +37,8 @@ export interface TranscriptFact {
   readonly lastAt: string | null
 }
 
-const MAX_TRANSCRIPT_BYTES = 20 * 1024 * 1024
+export const MAX_TRANSCRIPT_BYTES = 20 * 1024 * 1024
+const HEADER_BYTES = 16 * 1024
 
 export function defaultPiSessionsDir(env: NodeJS.ProcessEnv = process.env): string {
   return env.FOC_PI_SESSIONS_DIR ?? join(homedir(), '.pi', 'agent', 'sessions')
@@ -42,6 +53,7 @@ const UNKNOWN: TranscriptFact = {
   link: 'unknown',
   dir: null,
   files: [],
+  rejected: 0,
   messages: null,
   costUsd: null,
   lastStopReason: null,
@@ -54,7 +66,7 @@ function headerCwd(path: string): string | null {
   // The header is the first line; read a bounded prefix, not the whole file.
   const fd = openSync(path, 'r')
   try {
-    const buffer = Buffer.alloc(4096)
+    const buffer = Buffer.alloc(HEADER_BYTES)
     const read = readSync(fd, buffer, 0, buffer.length, 0)
     const first = buffer.subarray(0, read).toString('utf8').split('\n', 1)[0] ?? ''
     const parsed: unknown = JSON.parse(first)
@@ -66,9 +78,30 @@ function headerCwd(path: string): string | null {
   }
 }
 
-function summarize(path: string): Omit<TranscriptFact, 'link' | 'dir' | 'files'> | null {
+type Summary = Omit<TranscriptFact, 'link' | 'dir' | 'files' | 'rejected'>
+// Summaries are keyed by (path, size, mtime): an unchanged transcript is never
+// re-read or re-parsed, so a 60 s UI refresh costs a stat per receipt, not a
+// multi-megabyte JSON parse. Bounded so it cannot grow without limit.
+const summaryCache = new Map<string, Summary | null>()
+const SUMMARY_CACHE_MAX = 500
+
+function summarize(path: string): Summary | null {
   try {
-    if (statSync(path).size > MAX_TRANSCRIPT_BYTES) return null
+    const stat = statSync(path)
+    if (stat.size > MAX_TRANSCRIPT_BYTES) return null
+    const cacheKey = `${path}\u0000${stat.size}\u0000${stat.mtimeMs}`
+    if (summaryCache.has(cacheKey)) return summaryCache.get(cacheKey) ?? null
+    const fresh = summarizeUncached(path)
+    if (summaryCache.size >= SUMMARY_CACHE_MAX) summaryCache.clear()
+    summaryCache.set(cacheKey, fresh)
+    return fresh
+  } catch {
+    return null
+  }
+}
+
+function summarizeUncached(path: string): Summary | null {
+  try {
     let messages = 0
     let cost = 0
     let sawCost = false
@@ -116,28 +149,49 @@ function summarize(path: string): Omit<TranscriptFact, 'link' | 'dir' | 'files'>
   }
 }
 
-export function readPiTranscript(sessionsRoot: string, worktreePath: string): TranscriptFact {
-  const dir = join(sessionsRoot, piSessionDirName(worktreePath))
-  let names: string[]
+function realOrSelf(path: string): string {
   try {
-    names = readdirSync(dir).filter((name) => name.endsWith('.jsonl'))
-  } catch (error) {
-    // No directory at all: pi never started in this worktree (or the sessions
-    // root itself is unreadable, which is unknown rather than "none").
-    return (error as NodeJS.ErrnoException).code === 'ENOENT'
-      ? { ...UNKNOWN, link: 'none', dir }
-      : UNKNOWN
+    return realpathSync(path)
+  } catch {
+    return path
   }
-  const files = names.sort().map((name) => join(dir, name))
-  // Header cwd must agree with the worktree; a mismatch is not our file.
-  const mine = files.filter((file) => headerCwd(file) === worktreePath)
-  if (mine.length === 0) {
-    return { ...UNKNOWN, link: 'none', dir, files: [] }
+}
+
+/** pi stamps the REAL cwd; a receipt may hold a symlinked path. Equal if either form matches. */
+function sameDirectory(headerCwd: string | null, worktreePath: string): boolean {
+  if (headerCwd === null) return false
+  return headerCwd === worktreePath || realOrSelf(headerCwd) === realOrSelf(worktreePath)
+}
+
+export function readPiTranscript(sessionsRoot: string, worktreePath: string): TranscriptFact {
+  // pi derives its directory name from the real cwd; try both spellings.
+  const names = [
+    ...new Set([piSessionDirName(worktreePath), piSessionDirName(realOrSelf(worktreePath))]),
+  ]
+  let dir = join(sessionsRoot, names[0] as string)
+  let entries: string[] | null = null
+  let sawOther = false
+  for (const name of names) {
+    const candidate = join(sessionsRoot, name)
+    try {
+      entries = readdirSync(candidate).filter((entry) => entry.endsWith('.jsonl'))
+      dir = candidate
+      break
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') sawOther = true
+    }
   }
-  if (mine.length > 1) {
-    return { ...UNKNOWN, link: 'ambiguous', dir, files: mine }
+  if (entries === null) {
+    // No directory at all: pi never started here (an unreadable sessions root is unknown, not "none").
+    return sawOther ? UNKNOWN : { ...UNKNOWN, link: 'none', dir }
   }
+  const files = entries.sort().map((entry) => join(dir, entry))
+  // The header cwd must agree with the worktree; a mismatch is not our file.
+  const mine = files.filter((file) => sameDirectory(headerCwd(file), worktreePath))
+  const rejected = files.length - mine.length
+  if (mine.length === 0) return { ...UNKNOWN, link: 'none', dir, rejected }
+  if (mine.length > 1) return { ...UNKNOWN, link: 'ambiguous', dir, files: mine, rejected }
   const summary = summarize(mine[0] as string)
-  if (summary === null) return { ...UNKNOWN, link: 'unknown', dir, files: mine }
-  return { link: 'linked', dir, files: mine, ...summary }
+  if (summary === null) return { ...UNKNOWN, link: 'unknown', dir, files: mine, rejected }
+  return { link: 'linked', dir, files: mine, rejected, ...summary }
 }

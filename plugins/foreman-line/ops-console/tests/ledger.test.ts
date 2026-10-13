@@ -1,12 +1,15 @@
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
 import {
+  chmodSync,
   existsSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
   rmSync,
   statSync,
+  symlinkSync,
+  utimesSync,
   writeFileSync,
 } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -14,6 +17,7 @@ import { join } from 'node:path'
 import test from 'node:test'
 import { ledgerDirPath } from '../src/config.js'
 import {
+  classifyTmuxFailure,
   deriveLedgerEntry,
   LAUNCH_GRACE_MS,
   type LedgerProbes,
@@ -23,7 +27,14 @@ import {
   stripAnsi,
   type TmuxSessionFact,
 } from '../src/ledger.js'
-import { readGitOutcome } from '../src/ledger-git.js'
+import {
+  defaultGitRunner,
+  GIT_TIMEOUT_MS,
+  type GitRunner,
+  makeGitCache,
+  readGitOutcome,
+  safeRev,
+} from '../src/ledger-git.js'
 import { enforceRetention, ensureLedgerDir, LOG_NAME, TRUNCATED_NAME } from '../src/ledger-store.js'
 import {
   piSessionDirName,
@@ -75,6 +86,7 @@ const NO_TRANSCRIPT: TranscriptFact = {
   link: 'none',
   dir: null,
   files: [],
+  rejected: 0,
   messages: null,
   costUsd: null,
   lastStopReason: null,
@@ -510,26 +522,26 @@ test('store: ledger dir is keyed by a validated receipt id and refuses escapes',
 test('AC7: retention truncates oversized logs to the newest bytes and records it; caps pane count', () => {
   const state = scratch()
   try {
-    const a = ensureLedgerDir(state, 'old-p0')
+    const a = ensureLedgerDir(state, 'foc-20260101t000000z-p0')
     writeFileSync(a.logPath, `${'x'.repeat(100)}NEWEST`)
-    const report = enforceRetention(state, { maxBytesPerPane: 20, maxPanes: 50 }, T0)
-    assert.deepEqual(report.truncated, ['old-p0'])
+    const report = enforceRetention(state, { maxBytesPerPane: 20, maxPanes: 50, quietMs: 0 }, T0)
+    assert.deepEqual(report.truncated, ['foc-20260101t000000z-p0'])
     const kept = readFileSync(a.logPath, 'utf8')
     assert.equal(kept.length, 20)
     assert.ok(kept.endsWith('NEWEST'), 'newest content survives')
     const marker = JSON.parse(readFileSync(join(a.dir, TRUNCATED_NAME), 'utf8'))
     assert.equal(marker.reason, 'byte-cap')
     assert.equal(marker.droppedBytes, 86)
-    const out = readPaneOutput(state, receipt({ id: 'old-p0' }))
+    const out = readPaneOutput(state, receipt({ id: 'foc-20260101t000000z-p0' }))
     assert.equal(out.truncated, true)
 
     // Count cap: with maxPanes 1, the older pane loses its log but keeps a marker.
-    const b = ensureLedgerDir(state, 'new-p0')
+    const b = ensureLedgerDir(state, 'foc-20261001t000000z-p0')
     writeFileSync(b.logPath, 'fresh')
     const now = Date.now() / 1000
     execFileSync('touch', ['-d', `@${now - 1000}`, a.dir])
-    const second = enforceRetention(state, { maxBytesPerPane: 1000, maxPanes: 1 }, T0)
-    assert.deepEqual(second.dropped, ['old-p0'])
+    const second = enforceRetention(state, { maxBytesPerPane: 1000, maxPanes: 1, quietMs: 0 }, T0)
+    assert.deepEqual(second.dropped, ['foc-20260101t000000z-p0'])
     assert.equal(existsSync(join(a.dir, LOG_NAME)), false)
     assert.equal(existsSync(join(b.dir, LOG_NAME)), true)
     assert.equal(
@@ -557,5 +569,351 @@ test('output reader: bounded tail, ANSI stripped, first error line verbatim, leg
     assert.equal(readPaneOutput(state, receipt({ ledgerDir: undefined })).present, false)
   } finally {
     rmSync(state, { recursive: true, force: true })
+  }
+})
+
+// ---- reviewer rework (independent review of FCA-P7, 2026-10-13) ----------------------------
+
+const LINKED_ERR: TranscriptFact = {
+  ...NO_TRANSCRIPT,
+  link: 'linked',
+  messages: 6,
+  costUsd: 0.1,
+  lastStopReason: 'error',
+  lastErrorMessage: '429 rate_limit_error: You have exceeded your rate limit',
+}
+
+test('review #1: exit 0 with a failed last assistant message is exited-error, never exited-clean', () => {
+  const dead0 = pane({ dead: true, deadStatus: 0 })
+  const failed = deriveLedgerEntry(
+    receipt(),
+    probes({ tmux: dead0, transcript: LINKED_ERR }),
+    T0 + 60_000,
+  )
+  assert.equal(failed.state, 'exited-error')
+  assert.ok(
+    failed.evidence.some((line) =>
+      line.includes('last assistant message ended with an error: 429 rate_limit_error'),
+    ),
+  )
+  const stopped = deriveLedgerEntry(
+    receipt(),
+    probes({
+      tmux: dead0,
+      transcript: { ...LINKED_ERR, lastStopReason: 'stop', lastErrorMessage: null },
+    }),
+    T0 + 60_000,
+  )
+  assert.equal(stopped.state, 'exited-clean')
+  assert.ok(!stopped.evidence.some((line) => line.includes('ended with an error')))
+  const aborted = deriveLedgerEntry(
+    receipt(),
+    probes({
+      tmux: dead0,
+      transcript: { ...LINKED_ERR, lastStopReason: 'aborted', lastErrorMessage: null },
+    }),
+    T0 + 60_000,
+  )
+  assert.equal(aborted.state, 'exited-clean')
+  assert.ok(aborted.evidence.some((line) => line.includes('was aborted')))
+  const live = deriveLedgerEntry(
+    receipt(),
+    probes({ tmux: pane(), transcript: LINKED_ERR }),
+    T0 + 60_000,
+  )
+  assert.equal(live.state, 'running', 'a live pane stays running; the error is evidence')
+  assert.ok(live.evidence.some((line) => line.includes('ended with an error')))
+})
+
+test('review #7: an unreadable/oversized or rejected transcript says so instead of failing silently', () => {
+  const unknown = deriveLedgerEntry(
+    receipt(),
+    probes({
+      tmux: pane({ dead: true, deadStatus: 0 }),
+      transcript: { ...NO_TRANSCRIPT, link: 'unknown' },
+    }),
+    T0 + 60_000,
+  )
+  assert.ok(
+    unknown.evidence.some((line) => line.includes('too large to summarize: the join is unknown')),
+  )
+  const rejected = deriveLedgerEntry(
+    receipt(),
+    probes({
+      tmux: pane({ dead: true, deadStatus: 1 }),
+      transcript: { ...NO_TRANSCRIPT, rejected: 2 },
+    }),
+    T0 + 60_000,
+  )
+  assert.ok(
+    rejected.evidence.some((line) =>
+      line.includes(
+        '2 transcript file(s) in the session directory name a different working directory',
+      ),
+    ),
+  )
+})
+
+test('review #5: only "no such session / no server" is absent; any other tmux failure is unavailable', () => {
+  assert.deepEqual(classifyTmuxFailure("can't find session: foc-x", undefined), { kind: 'absent' })
+  assert.deepEqual(classifyTmuxFailure('no server running on /tmp/tmux-1000/default', undefined), {
+    kind: 'absent',
+  })
+  assert.deepEqual(
+    classifyTmuxFailure(
+      'error connecting to /tmp/tmux-1000/default (No such file or directory)',
+      undefined,
+    ),
+    { kind: 'absent' },
+  )
+  assert.deepEqual(classifyTmuxFailure('', 'ENOENT'), {
+    kind: 'unavailable',
+    reason: 'tmux is not installed',
+  })
+  const denied = classifyTmuxFailure(
+    'error connecting to /tmp/tmux-0/default (Permission denied)',
+    undefined,
+  )
+  assert.equal(denied.kind, 'unavailable')
+  assert.match((denied as { reason: string }).reason, /Permission denied/)
+  assert.equal(
+    classifyTmuxFailure('', undefined).kind,
+    'unavailable',
+    'an unexplained failure is not evidence the session is gone',
+  )
+})
+
+test('review #10: the LATEST error-looking line wins, and OSC escape payloads are stripped', () => {
+  const state = scratch()
+  try {
+    const { logPath } = ensureLedgerDir(state, 'foc-test-p0')
+    writeFileSync(
+      logPath,
+      [
+        'Error: first problem',
+        'recovered, working',
+        '\u001b]0;window title\u0007Error: the real ending\r',
+        'trailing line',
+      ].join('\n'),
+    )
+    const out = readPaneOutput(state, receipt())
+    assert.equal(out.providerError, 'Error: the real ending')
+    assert.ok(!out.tail.join('\n').includes('window title'), 'OSC payload removed')
+    assert.equal(stripAnsi('a\u001b]8;;http://x\u001b\\link\u001b]8;;\u001b\\b'), 'alinkb')
+  } finally {
+    rmSync(state, { recursive: true, force: true })
+  }
+})
+
+test('review #7: join survives a symlinked worktree path (pi records the real cwd) and a large header', () => {
+  const root = scratch()
+  try {
+    const real = join(root, 'real-wt')
+    const link = join(root, 'link-wt')
+    mkdirSync(real)
+    symlinkSync(real, link)
+    const dir = join(root, 'sessions', piSessionDirName(real))
+    mkdirSync(dir, { recursive: true })
+    const header = JSON.stringify({ type: 'session', cwd: real, padding: 'x'.repeat(9000) })
+    writeFileSync(
+      join(dir, 's.jsonl'),
+      `${header}\n${JSON.stringify({ type: 'message', message: { role: 'user' } })}\n`,
+    )
+    const viaLink = readPiTranscript(join(root, 'sessions'), link)
+    assert.equal(viaLink.link, 'linked', 'receipt holds the symlink, pi stamped the real path')
+    assert.equal(viaLink.messages, 1)
+    assert.equal(readPiTranscript(join(root, 'sessions'), real).link, 'linked')
+    // A file naming a different directory is counted, not silently dropped.
+    writeFileSync(
+      join(dir, 'other.jsonl'),
+      `${JSON.stringify({ type: 'session', cwd: '/elsewhere' })}\n`,
+    )
+    assert.equal(readPiTranscript(join(root, 'sessions'), real).rejected, 1)
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test('review #4: an unchanged transcript is not re-parsed (keyed by path, size, mtime)', () => {
+  const root = scratch()
+  try {
+    const wt = '/work/trees/cache-1'
+    const dir = join(root, piSessionDirName(wt))
+    mkdirSync(dir)
+    const file = join(dir, 's.jsonl')
+    const line = (n: number) =>
+      `${JSON.stringify({ type: 'session', cwd: wt })}\n${Array.from({ length: n }, () => JSON.stringify({ type: 'message', message: { role: 'user' } })).join('\n')}\n`
+    writeFileSync(file, line(2))
+    const t = new Date('2026-10-13T12:00:00Z')
+    utimesSync(file, t, t)
+    assert.equal(readPiTranscript(root, wt).messages, 2)
+    // Same size and mtime, different content: the cache (correctly) answers from memory.
+    writeFileSync(file, line(2).replace('"user"', '"usex"'))
+    utimesSync(file, t, t)
+    assert.equal(readPiTranscript(root, wt).messages, 2, 'served from cache')
+    // A real change (new mtime) is re-read.
+    writeFileSync(file, line(3))
+    assert.equal(readPiTranscript(root, wt).messages, 3, 'size/mtime changed: re-read')
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test('review #11: baseCommit values that could be read as options are rejected, not passed to git', () => {
+  for (const bad of [
+    '-x',
+    '--output=/tmp/pwn',
+    'a..b',
+    '',
+    ' abc',
+    'abc def',
+    '--end-of-options',
+  ]) {
+    assert.equal(safeRev(bad), null, JSON.stringify(bad))
+  }
+  for (const good of [
+    '0123456789abcdef0123456789abcdef01234567',
+    'origin/main',
+    'refs/remotes/origin/feat-x',
+    'v1.2',
+  ]) {
+    assert.equal(safeRev(good), good)
+  }
+  assert.equal(safeRev(null), null)
+  const calls: string[][] = []
+  const run: GitRunner = (_cwd, args) => {
+    calls.push([...args])
+    return args[0] === 'status' ? '' : args[0] === 'rev-parse' ? 'abc' : null
+  }
+  const root = scratch()
+  try {
+    const fact = readGitOutcome(root, '--output=/tmp/pwn', run)
+    assert.equal(fact.commitsAhead, null)
+    assert.ok(!calls.some((args) => args.includes('--output=/tmp/pwn')), 'never reached git')
+    assert.ok(!calls.some((args) => args[0] === 'rev-list'), 'no rev-list without a safe base')
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test('review #3: git probes never take index locks or run repo-local fsmonitor hooks, and cannot hang', () => {
+  const root = scratch()
+  try {
+    const realGit = execFileSync('sh', ['-c', 'command -v git'], { encoding: 'utf8' }).trim()
+    const bin = join(root, 'bin')
+    const log = join(root, 'log')
+    mkdirSync(bin)
+    writeFileSync(log, '')
+    writeFileSync(
+      join(bin, 'git'),
+      `#!/bin/sh\necho "OPTIONAL_LOCKS=$GIT_OPTIONAL_LOCKS $*" >> '${log}'\nexec '${realGit}' "$@"\n`,
+    )
+    chmodSync(join(bin, 'git'), 0o755)
+    const repo = join(root, 'repo')
+    execFileSync('git', ['init', '-q', '-b', 'main', repo])
+    const saved = process.env.PATH
+    process.env.PATH = `${bin}:${saved}`
+    try {
+      defaultGitRunner(repo, ['status', '--porcelain'])
+    } finally {
+      process.env.PATH = saved
+    }
+    const line = readFileSync(log, 'utf8').trim().split('\n')[0] ?? ''
+    assert.match(line, /^OPTIONAL_LOCKS=0 /, 'GIT_OPTIONAL_LOCKS=0 is set')
+    assert.match(line, /-c core\.fsmonitor=false/, 'fsmonitor is disabled')
+    assert.ok(GIT_TIMEOUT_MS > 0 && GIT_TIMEOUT_MS <= 60_000, 'a timeout bounds a hung git')
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test('review #4: git outcomes are memoised for the TTL and re-read after it', () => {
+  let calls = 0
+  let clock = 1_000
+  const run: GitRunner = (_cwd, args) => {
+    calls++
+    return args[0] === 'rev-parse' ? 'abc' : args[0] === 'status' ? '' : null
+  }
+  const root = scratch()
+  try {
+    const cache = makeGitCache(15_000, () => clock, run)
+    cache.outcome(root, null)
+    const first = calls
+    cache.outcome(root, null)
+    assert.equal(calls, first, 'second call inside the TTL spawns nothing')
+    cache.outcome(root, 'abc1234')
+    assert.ok(calls > first, 'a different base is a different key')
+    const before = calls
+    clock += 15_001
+    cache.outcome(root, null)
+    assert.ok(calls > before, 're-read after the TTL')
+    const none = makeGitCache(0, () => clock, run)
+    const c0 = calls
+    none.outcome(root, null)
+    none.outcome(root, null)
+    assert.ok(calls - c0 >= 2 * first, 'ttl 0 disables caching')
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test('review #8/#9: retention ignores symlinks and malformed names, ranks by id, spares recently-written logs; files are owner-only', () => {
+  const state = scratch()
+  const outside = scratch()
+  try {
+    const sessions = join(state, 'sessions')
+    mkdirSync(sessions)
+    // A symlinked entry pointing outside the tree must never be touched.
+    writeFileSync(join(outside, 'pane.log'), 'x'.repeat(500))
+    symlinkSync(outside, join(sessions, 'foc-evil-p0'))
+    // A malformed name is ignored.
+    mkdirSync(join(sessions, 'Not_A_Receipt'))
+    writeFileSync(join(sessions, 'Not_A_Receipt', 'pane.log'), 'y'.repeat(500))
+    // Ranking by id: newest ids survive the count cap, oldest is dropped.
+    const old = ensureLedgerDir(state, 'foc-20260101t000000z-p0')
+    const mid = ensureLedgerDir(state, 'foc-20260601t000000z-p0')
+    const recent = ensureLedgerDir(state, 'foc-20261001t000000z-p0')
+    for (const p of [old, mid, recent]) writeFileSync(p.logPath, 'z'.repeat(50))
+    const report = enforceRetention(state, { maxBytesPerPane: 1000, maxPanes: 2, quietMs: 0 }, T0)
+    assert.deepEqual(report.dropped, ['foc-20260101t000000z-p0'])
+    assert.equal(existsSync(old.logPath), false)
+    assert.equal(existsSync(mid.logPath), true)
+    assert.equal(
+      readFileSync(join(outside, 'pane.log'), 'utf8').length,
+      500,
+      'symlink target untouched',
+    )
+    assert.equal(
+      readFileSync(join(sessions, 'Not_A_Receipt', 'pane.log'), 'utf8').length,
+      500,
+      'malformed name untouched',
+    )
+    // Recently-written logs (possibly a live pane) are spared even over the cap.
+    writeFileSync(recent.logPath, 'w'.repeat(5000))
+    const spared = enforceRetention(
+      state,
+      { maxBytesPerPane: 100, maxPanes: 10, quietMs: 600_000 },
+      Date.now(),
+    )
+    assert.deepEqual(
+      spared.truncated,
+      [],
+      'a log written moments ago is not truncated under a live writer',
+    )
+    assert.equal(readFileSync(recent.logPath, 'utf8').length, 5000)
+    const enforced = enforceRetention(
+      state,
+      { maxBytesPerPane: 100, maxPanes: 10, quietMs: 600_000 },
+      Date.now() + 601_000,
+    )
+    assert.deepEqual(enforced.truncated, ['foc-20261001t000000z-p0'], 'enforced once quiet')
+    // Owner-only permissions.
+    assert.equal(statSync(recent.dir).mode & 0o777, 0o700)
+    assert.equal(statSync(recent.logPath).mode & 0o777, 0o600)
+    const marker = join(recent.dir, TRUNCATED_NAME)
+    assert.equal(statSync(marker).mode & 0o777, 0o600)
+  } finally {
+    rmSync(state, { recursive: true, force: true })
+    rmSync(outside, { recursive: true, force: true })
   }
 })

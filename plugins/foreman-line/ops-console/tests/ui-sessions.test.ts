@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { JSDOM } from 'jsdom'
 import { ACTION_REGISTRY } from '../src/actions.js'
-import { ledgerHtml, trayHtml } from '../ui/views/tray.js'
+import { effectiveLiveness, ledgerHtml, trayHtml } from '../ui/views/tray.js'
 import { mountConsole, receipt } from './ui-fixture.js'
 
 test('session presentation distinguishes sessions/panes and unknown liveness; every receipt is reachable', () => {
@@ -333,4 +333,42 @@ test('ledger renders inside a Sessions row, and the compact tray stays compact',
   const compact = new JSDOM(trayHtml(rows, { registry: ACTION_REGISTRY, compact: true })).window
     .document
   assert.equal(compact.querySelectorAll('[data-ledger-state]').length, 0)
+})
+
+test('review #2: with remain-on-exit a dead pane in a live session is NOT shown or counted as Running', () => {
+  // The receipt's session-level liveness says alive (the tmux session still exists),
+  // but the ledger knows the only pane has failed.
+  const failedPane = receipt({
+    id: 'a',
+    liveness: 'alive',
+    ledger: ledger({ state: 'exited-error' }),
+  })
+  const livePane = receipt({
+    id: 'b',
+    paneIndex: 1,
+    liveness: 'alive',
+    ledger: ledger({ state: 'running' }),
+  })
+  const legacy = receipt({ id: 'c', paneIndex: 2, liveness: 'alive' })
+  assert.equal(effectiveLiveness(failedPane), 'exited')
+  assert.equal(effectiveLiveness(livePane), 'alive')
+  assert.equal(effectiveLiveness(legacy), 'alive', 'no ledger: the receipt liveness stands')
+  assert.equal(
+    effectiveLiveness(receipt({ liveness: 'exited', ledger: ledger({ state: 'unknown' }) })),
+    'exited',
+    'unknown ledger defers to the receipt',
+  )
+  const doc = new JSDOM(trayHtml([failedPane, livePane], { registry: ACTION_REGISTRY })).window
+    .document
+  const chips = [...doc.querySelectorAll('.tray-row')].map(
+    (row) => row.querySelector('td[data-label="Liveness"] > .chip')?.textContent,
+  )
+  assert.deepEqual(chips, ['Not running (exited)', 'Running'])
+  const metrics = [...doc.querySelectorAll('.session-metrics > div')].map((el) =>
+    el.textContent?.replace(/\s+/g, ' ').trim(),
+  )
+  assert.ok(
+    metrics.some((m) => m === '1 Running panes'),
+    `only the genuinely live pane counts as running: ${JSON.stringify(metrics)}`,
+  )
 })

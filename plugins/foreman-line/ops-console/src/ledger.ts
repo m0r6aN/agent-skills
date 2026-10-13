@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process'
 import { closeSync, openSync, readSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { type ConsoleConfig, ledgerDirPath } from './config.js'
-import { type GitFact, readGitOutcome } from './ledger-git.js'
+import { type GitFact, makeGitCache } from './ledger-git.js'
 import { LOG_NAME, TRUNCATED_NAME } from './ledger-store.js'
 import { defaultPiSessionsDir, readPiTranscript, type TranscriptFact } from './ledger-transcript.js'
 import type { SpawnReceipt } from './spawn.js'
@@ -91,7 +91,8 @@ export interface LedgerProbes {
 // ------------------------------------------------------------------ output
 
 // biome-ignore lint/suspicious/noControlCharactersInRegex: terminal escape stripping
-const ANSI = /\u001b\[[0-9;?]*[ -/]*[@-~]|\u001b[@-Z\\-_]|\r/g
+const ANSI =
+  /\u001b\][^\u0007\u001b]*(?:\u0007|\u001b\\)|\u001b\[[0-9;?]*[ -/]*[@-~]|\u001b[@-Z\\-_]|\r/g
 const ERROR_LINE =
   /^\s*(?:error|fatal)\b.*|upstream request failed.*|policy budget exceeded.*|\b(?:4\d\d|5\d\d)\b.*(?:error|failed|exceeded)/i
 const MAX_TAIL_BYTES = 64 * 1024
@@ -148,7 +149,8 @@ export function readPaneOutput(stateDir: string, receipt: SpawnReceipt): OutputF
       present: true,
       bytes: size,
       tail: lines.slice(-TAIL_LINES),
-      providerError: lines.find((line) => ERROR_LINE.test(line)) ?? null,
+      // The LATEST error-looking line is the one that explains how the pane ended.
+      providerError: [...lines].reverse().find((line) => ERROR_LINE.test(line)) ?? null,
       truncated,
     }
   } catch {
@@ -182,6 +184,29 @@ export function parsePaneList(output: string): TmuxPaneFact[] {
     })
 }
 
+/**
+ * A tmux failure is "absent" only when tmux says there is no such session or no
+ * server. Anything else (permissions, a wrong socket directory, a broken
+ * install) is NOT evidence that the session is gone - it is unavailable, so a
+ * console started with a different environment cannot mark every receipt
+ * `vanished`.
+ */
+export function classifyTmuxFailure(stderr: string, code: string | undefined): TmuxSessionFact {
+  if (code === 'ENOENT') return { kind: 'unavailable', reason: 'tmux is not installed' }
+  if (
+    /can't find (?:session|window|pane)|no server running|server exited unexpectedly|lost server|no current target|no sessions|error connecting to .*(No such file or directory|Connection refused)/i.test(
+      stderr,
+    )
+  ) {
+    return { kind: 'absent' }
+  }
+  const first = stderr
+    .split('\n')
+    .find((line) => line.trim() !== '')
+    ?.trim()
+  return { kind: 'unavailable', reason: `tmux failed: ${first ?? 'unknown error'}` }
+}
+
 /** tmux probe anchored to an explicit root; `socket` selects a private server (tests). */
 export function tmuxProbeFor(repoRoot: string, socket?: string): LedgerProbes['tmux'] {
   const prefix = socket === undefined ? [] : ['-L', socket]
@@ -190,27 +215,32 @@ export function tmuxProbeFor(repoRoot: string, socket?: string): LedgerProbes['t
       const out = execFileSync(
         'tmux',
         [...prefix, 'list-panes', '-s', '-t', `=${sessionName}`, '-F', PANE_FORMAT],
-        { cwd: repoRoot, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] },
+        { cwd: repoRoot, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] },
       )
       return { kind: 'found', panes: parsePaneList(out) }
     } catch (error) {
-      const code = (error as NodeJS.ErrnoException).code
-      // ENOENT: no tmux binary. Any other failure (exit 1) means no such
-      // session/server - a fact about the world, not an error in the probe.
-      return code === 'ENOENT'
-        ? { kind: 'unavailable', reason: 'tmux is not installed' }
-        : { kind: 'absent' }
+      const e = error as NodeJS.ErrnoException & { stderr?: Buffer | string }
+      return classifyTmuxFailure(e.stderr === undefined ? '' : String(e.stderr), e.code)
     }
   }
 }
 
-export function liveProbes(config: ConsoleConfig, socket?: string): LedgerProbes {
+/** Git outcomes are memoised briefly so a refresh does not re-spawn git per receipt. */
+export const GIT_CACHE_TTL_MS = 15_000
+const sharedGitCache = makeGitCache(GIT_CACHE_TTL_MS)
+
+export function liveProbes(
+  config: ConsoleConfig,
+  socket?: string,
+  gitTtlMs?: number,
+): LedgerProbes {
   const sessionsRoot = defaultPiSessionsDir()
+  const gitCache = gitTtlMs === undefined ? sharedGitCache : makeGitCache(gitTtlMs)
   return {
     tmux: tmuxProbeFor(config.repoRoot, socket),
     output: (receipt) => readPaneOutput(config.stateDir, receipt),
     transcript: (receipt) => readPiTranscript(sessionsRoot, receipt.worktreePath),
-    git: (receipt) => readGitOutcome(receipt.worktreePath, receipt.baseCommit ?? null),
+    git: (receipt) => gitCache.outcome(receipt.worktreePath, receipt.baseCommit ?? null),
   }
 }
 
@@ -247,6 +277,7 @@ export function deriveLedgerEntry(
   let paneAlive = false
 
   const noMessages = transcript.link === 'none' || transcript.messages === 0
+  const transcriptFailed = transcript.link === 'linked' && transcript.lastStopReason === 'error'
   const age = now - (Date.parse(receipt.createdAt) || now)
 
   if (tmux.kind === 'unavailable') {
@@ -272,7 +303,9 @@ export function deriveLedgerEntry(
         state = 'exited-error'
         evidence.push(`pane killed by signal ${pane.deadSignal}`)
       } else if (pane.deadStatus === 0) {
-        state = noMessages ? 'no-transcript' : 'exited-clean'
+        // Exit 0 is not success: pi records a provider failure (e.g. a 429) as
+        // an assistant message with stopReason "error" and still exits cleanly.
+        state = noMessages ? 'no-transcript' : transcriptFailed ? 'exited-error' : 'exited-clean'
         evidence.push(
           'pane exited with status 0 (process ended; this is not proof the work is complete)',
         )
@@ -296,6 +329,20 @@ export function deriveLedgerEntry(
       evidence.push(
         'no transcript: pi never exchanged a message (prompt not delivered or session failed at startup)',
       )
+  }
+  if (transcriptFailed) {
+    evidence.push(
+      `transcript: the last assistant message ended with an error${transcript.lastErrorMessage === null ? '' : `: ${transcript.lastErrorMessage}`}`,
+    )
+  } else if (transcript.link === 'linked' && transcript.lastStopReason === 'aborted') {
+    evidence.push('transcript: the last assistant message was aborted')
+  }
+  if (transcript.link === 'unknown') {
+    evidence.push('transcript could not be read or is too large to summarize: the join is unknown')
+  } else if (transcript.link === 'none' && transcript.rejected > 0) {
+    evidence.push(
+      `${transcript.rejected} transcript file(s) in the session directory name a different working directory and were not used`,
+    )
   }
   if (transcript.link === 'ambiguous') {
     evidence.push(`transcript join ambiguous: ${transcript.files.length} candidate files`)
