@@ -25,6 +25,8 @@ Own TO-B0/TO-P0/TO-P1 lifecycle rows maintained 2026-10-10; other rows retain th
 | FCA-P4 | [Action registry — verbs, invocation classes, autonomy envelopes, audit](active/FCA-P4-actions.md) | `active` | `active/` |
 | FCA-P5 | [tmux session spawner with shared spawn controls](active/FCA-P5-spawn.md) | `active` | `active/` |
 | FCA-P6 | [Control-center UI — dense layout, action buttons, spawn panel, session tray](active/FCA-P6-console-ui.md) | `active` | `active/` |
+| FCA-P7 | [Session ledger — durable, evidence-backed outcome record for launched panes](active/FCA-P7-session-ledger.md) | `draft` | `active/` |
+| FCA-P8 | [Reconciliation view — local vs remote parcel state, history, and hung explanations](active/FCA-P8-reconciliation-view.md) | `draft` | `active/` |
 | FCA-U1 | [Workspace navigation and responsive operator layout](active/FCA-U1-workspace-navigation.md) | `active` | `active/` |
 | FCA-U2 | [Persistent selection and explicit session launch review](active/FCA-U2-selection-launch.md) | `active` | `active/` |
 | FCA-U3 | [Session monitoring and launch outcome handoff](active/FCA-U3-session-monitoring.md) | `active` | `active/` |
