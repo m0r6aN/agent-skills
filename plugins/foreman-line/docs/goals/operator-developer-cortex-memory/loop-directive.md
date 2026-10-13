@@ -2,7 +2,7 @@
 
 **Goal slug:** `operator-developer-cortex-memory`  
 **Recorded:** 2026-10-10; ownership/resume checkpoint updated 2026-10-12 (coordinator `01a131a9`)  
-**State:** `P0 ACCEPTED; P1a/P1b/P2a/P2b MERGED TO opmem/integration (gateway 1b81a1a; cortex b6e25c6) AFTER DUAL REVIEW; P3 NEXT — COORDINATOR 01a131a9 UNDER OWNER BLANKET GRANT; main PROMOTION / CLOUD = OWNER STOP ITEMS`  
+**State:** `P0 ACCEPTED; P1a/P1b/P2a/P2b/P3a MERGED TO opmem/integration (gateway 1b81a1a; cortex 2930958); P3b NEXT — COORDINATOR 01a131a9 UNDER OWNER BLANKET GRANT; main PROMOTION / CLOUD = OWNER STOP ITEMS`  
 **Scheduling:** synchronous coordinator loop in the owning session (no wakeup tool in this harness); human gates are NOT stop conditions except destructive/production-affecting actions — see `ownership-transfer-2026-10-12-01a131a9.md`
 
 ## COORDINATOR OWNERSHIP — read before any dispatch
@@ -18,7 +18,7 @@
 | Current session provenance | `PI_PROVIDER=anthropic`, `PI_MODEL=claude-opus-5-5`, `PI_SESSION_ID=01a131a9-5c16-724a-a016-3353a124592d`; observed metadata, not a Foreman route receipt |
 | Coordinator publication workspace | `D:/Repos/agent-skills-worktrees/opmem-p0-20261012-01a12f95`, branch `feat/opmem-p0-baseline-20261012-01a12f95` (P0 PR); dispatch scratch `D:/Repos/opmem-dispatch-01a131a9` (outside repos). |
 | Transfer rule | One goal, one coordinator. Transfer only at parcel boundaries by explicit owner direction and update to this ownership block |
-| Last state change | 2026-10-13 01:20 EDT — P2a (#62) and P2b (#63) merged to keon-cortex `opmem/integration` (`b6e25c6`); closures `p2a-closure-2026-10-13.md`, `p2b-closure-2026-10-13.md`. Cumulative spend USD 101.30 of the 300 guard. Next: P3 (accounting + pinned gravity projection). Resume inputs for a successor: dispatch scratch `D:/Repos/opmem-dispatch-01a131a9` (prompts, jsonl transcripts, `extract.cjs`), worktrees under `D:/Repos/opmem-worktrees/`, local PostgreSQL 16 container `opmem-pg` on 127.0.0.1:55432 (password `opmem`, disposable). |
+| Last state change | 2026-10-13 02:20 EDT — P3a merged (keon-cortex#64, `2930958`). Splits ruled: T-37 (P2→P2a/P2b), T-38 (P3→P3a/P3b). Cumulative spend USD 112.03 (guard 300). opencode-go budget exhausted; builders run on `openrouter/moonshotai/kimi-k3`. Next: P3b (versioned classification + served scorer gravity/1.1.0 + projection + G-1…G-14 + tenant-scoped spine reads + recall ordering). Successor resume inputs: dispatch scratch `D:/Repos/opmem-dispatch-01a131a9`, worktrees `D:/Repos/opmem-worktrees/`, PG container `opmem-pg` 127.0.0.1:55432. |
 
 An incoming session is not automatically the owner. If it is not the session above, stop and ask the owner for a boundary transfer. If another live owner is discovered, stop and reconcile; directory absence is a scoped local observation, not proof about every external session.
 
