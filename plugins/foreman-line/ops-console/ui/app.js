@@ -2,6 +2,7 @@
 import { esc, emptyHtml, paginationHtml, shellHtml, VIEWS, VIEW_COPY } from './views/shell.js'
 import { countsHtml, filterParcels, reconcileRowsHtml, remoteBannerHtml } from './views/reconcile.js'
 import { boardHtml, detailHtml } from './views/board.js'
+import { decisionsHtml, DECISIONS_PAGE_SIZE, filterItems } from './views/decisions.js'
 import { remedyHtml, remediesHtml } from './views/remedies.js'
 import { actionPopoverHtml, confirmationToken, signalsHtml } from './views/signals.js'
 import { readControls, spawnPanelHtml, spawnRequest } from './views/spawn-panel.js'
@@ -15,10 +16,11 @@ const absoluteRoot = (value) => typeof value === 'string' && /^(?:\/|[A-Za-z]:[\
 export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   const win = doc.defaultView
   const state = { view: 'signals', scope: '', goal: null, repoRoot: '', statuses: [], signals: [], registry: [], fleet: [], spawns: [],
-    loaded: {}, loadErrors: {}, reconcile: null, reconcileError: '', reconcileFilter: '', reconcileOpen: new Set(), projection: null, remedies: [], queries: {}, pages: {}, selected: new Map(), suggested: true, bulk: {}, bulkResult: '', controls: {}, extra: '', browseSelection: null, launchError: '', submitting: false, launchPage: 0, highlightSession: null, revealSession: false, detailParcel: null, retryRequired: false, retryAcknowledged: false }
+    loaded: {}, loadErrors: {}, decisions: null, decisionsError: '', decisionsFilter: '', reconcile: null, reconcileError: '', reconcileFilter: '', reconcileOpen: new Set(), projection: null, remedies: [], queries: {}, pages: {}, selected: new Map(), suggested: true, bulk: {}, bulkResult: '', controls: {}, extra: '', browseSelection: null, launchError: '', submitting: false, launchPage: 0, highlightSession: null, revealSession: false, detailParcel: null, retryRequired: false, retryAcknowledged: false }
   let generation = 0
   let goalGeneration = 0
   let reconcileGeneration = 0
+  let decisionsGeneration = 0
   let detailGeneration = 0
   let destroyed = false
   const el = (id) => doc.getElementById(id)
@@ -60,6 +62,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
     renderCurrent()
     if (['board', 'remedies', 'settings'].includes(state.view)) loadGoal()
     if (state.view === 'reconcile') loadReconcile()
+    if (state.view === 'decisions') loadDecisions()
   }
   function goalOptions() {
     const filter = el('goal-status').value
@@ -119,6 +122,17 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
         el('reconcile-body').querySelectorAll('[data-rec-filter]').forEach((button) => on(button, 'click', () => { state.reconcileFilter = button.dataset.recFilter; state.pages.reconcile = 0; renderCurrent() }))
       }
     }
+    if (state.view === 'decisions') {
+      const data = state.decisions && state.decisions.scope === state.scope ? state.decisions.data : null
+      if (!data) el('decisions-body').innerHTML = state.decisionsError ? emptyHtml('Could not load decisions', `${state.decisionsError}. Use Refresh to retry.`) : emptyHtml('Loading decisions…', 'Reading pull requests and gate state. This can take a few seconds.')
+      else {
+        const stale = state.decisions.stale ? `<div class="banner warn" role="status"><strong>Showing the last successful read</strong> (${esc(data.generatedAt)}); refreshing failed: ${esc(state.decisions.stale)}.</div>` : ''
+        el('decisions-body').innerHTML = stale + decisionsHtml(data, { filter: state.decisionsFilter, query: state.queries.decisions, page: Math.min(state.pages.decisions || 0, Math.max(0, Math.ceil(filterItems(data.items, state.decisionsFilter, state.queries.decisions).length / DECISIONS_PAGE_SIZE) - 1)) })
+        wireDecisions(el('decisions-body'))
+      }
+    }
+    const badge = doc.querySelector('[data-nav-badge="decisions"]')
+    if (badge) badge.textContent = state.decisions?.data ? `(${(state.decisions.data.items || []).length})` : ''
     if (state.view === 'sessions') {
       const rows = state.spawns.filter((s) => scoped(s.repoRoot) && matches(`${s.sessionName} ${s.paneIndex} ${s.model} ${s.repoRoot}`))
         .sort((a, b) => (Date.parse(b.createdAt) || 0) - (Date.parse(a.createdAt) || 0))
@@ -131,6 +145,29 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       wireSessions(el('sessions-body'))
     }
     updateSelectionBar()
+  }
+  async function loadDecisions() {
+    const scope = state.scope, current = ++decisionsGeneration
+    state.decisionsError = ''
+    try {
+      const data = await api(`/api/decisions${scope ? `?repo=${encodeURIComponent(scope)}` : ''}`)
+      if (destroyed || current !== decisionsGeneration) return
+      if (!Array.isArray(data.items) || typeof data.counts !== 'object' || data.counts === null) throw new Error('Invalid decisions response')
+      state.decisions = { scope, data, stale: null }
+    } catch (err) {
+      if (destroyed || current !== decisionsGeneration) return
+      if (!(state.decisions && state.decisions.scope === scope)) state.decisionsError = err.message
+      else { state.decisions.stale = err.message; status(`Decisions are stale: ${err.message}. Use Refresh to retry.`, true) }
+    }
+    renderCurrent()
+  }
+  function wireDecisions(body) {
+    body.querySelectorAll('[data-dec-filter]').forEach((button) => on(button, 'click', () => { state.decisionsFilter = button.dataset.decFilter; state.pages.decisions = 0; renderCurrent() }))
+    body.querySelectorAll('[data-copy]').forEach((button) => on(button, 'click', async () => {
+      const feedback = button.parentElement.querySelector('[data-copy-status]')
+      try { const clipboard = win?.navigator?.clipboard || globalThis.navigator?.clipboard; if (!clipboard) throw new Error(); await clipboard.writeText(button.dataset.copy); feedback.textContent = 'Copied. Run it in a terminal.' }
+      catch { feedback.textContent = 'Copy manually from the command above (clipboard unavailable).' }
+    }))
   }
   async function loadReconcile() {
     const goal = state.goal, current = ++reconcileGeneration
@@ -240,6 +277,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
     status(failures.length ? `Some data is stale: ${failures.join('; ')}. Use Refresh to retry.` : 'Workspace up to date', failures.length > 0)
     if (['board', 'remedies', 'settings'].includes(state.view)) await loadGoal()
     if (state.view === 'reconcile') await loadReconcile()
+    if (state.view === 'decisions') await loadDecisions()
   }
   const dialogOrigins = new Map()
   function openDialog(dialog) {
@@ -440,7 +478,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   el('app').innerHTML = shellHtml()
   on(doc.querySelector('.skip-link'), 'click', (event) => { event.preventDefault(); el('main').focus(); el('main').scrollIntoView?.({ block: 'start' }) })
   doc.querySelectorAll('.nav-btn').forEach((b) => on(b, 'click', () => setView(b.dataset.view)))
-  on(el('fleet-select'), 'change', () => { state.scope = el('fleet-select').value; state.pages = {}; ++goalGeneration; ++detailGeneration; goalOptions(); renderCurrent(); if (['board', 'remedies', 'settings'].includes(state.view)) loadGoal(); if (state.view === 'reconcile') loadReconcile() })
+  on(el('fleet-select'), 'change', () => { state.scope = el('fleet-select').value; state.pages = {}; if (state.view === 'decisions') loadDecisions(); ++goalGeneration; ++detailGeneration; goalOptions(); renderCurrent(); if (['board', 'remedies', 'settings'].includes(state.view)) loadGoal(); if (state.view === 'reconcile') loadReconcile() })
   on(el('goal-status'), 'change', () => { state.pages.board = 0; goalOptions(); renderCurrent(); loadGoal(); if (state.view === 'reconcile') loadReconcile() })
   on(el('parcel-status'), 'change', () => { state.pages.board = 0; renderCurrent() })
   on(el('reconcile-goal-select'), 'change', () => { state.goal = el('reconcile-goal-select').value; state.projection = null; state.detailParcel = null; ++detailGeneration; state.reconcileFilter = ''; state.reconcileOpen.clear(); state.pages.reconcile = 0; goalOptions(); renderCurrent(); loadReconcile() })

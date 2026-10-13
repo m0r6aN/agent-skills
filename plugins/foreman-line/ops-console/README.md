@@ -75,6 +75,7 @@ docker run -d --name foreman-hub --restart unless-stopped `
 | `GET /api/parcels/:parcel/chain?goal=` | chain summary (members, sidecars, validity, seal) |
 | `GET /api/parcels/:parcel/logs?goal=` | exactly: chain documents (members + sidecars), invocation audit log, loop-directive state lines |
 | `GET /api/reconcile?goal=` | FCA-P8 (owner-ratified addition 2026-10-13): per parcel, local record vs local git vs remote; closed discrepancy vocabulary with evidence and ages, hung explanation, merged history. Read-only: one batch of git reads and one cached `gh pr list` per request; remote facts carry their age and degrade to *unavailable*, never inferred |
+| `GET /api/decisions[?repo=]` | FCA-P9 (owner-ratified addition 2026-10-13): every human gate act waiting - open PRs (Gate 3) and R3 awaiting-gate parcels (Gates 1/2) - with verbatim facts, ages and the billing cause from the check-run annotation. Read-only; read-only `gh` allowlist (`pr list`/`pr view`, one annotation GET); never says an item is ready |
 | `GET /api/gates?goal=` | G1/G2/G3 proxies + goal ratification, read-only |
 | `GET /api/alerts?goal=` | hung/failed/tripwire alerts; firing records console-local notifications |
 | `GET /api/routing?goal=` | read-only policy class×ceiling + per-parcel routing |
@@ -119,6 +120,25 @@ observed facts (never stored as status):
 - **pi models must be `provider/model`** — a bare id is ambiguous across
   authenticated providers and pi exits at startup; planning refuses it before
   any worktree or process exists.
+
+## Decisions (FCA-P9)
+
+**Decisions** lists what only you can do: merge an open PR (Gate 3), ratify a parcel
+(Gate 1), dispatch a registered parcel (Gate 2). It shows the facts the console can
+see (merge state, review decision, checks, stack order) with their age, and **never
+says an item is ready**. `mergeable: UNKNOWN` stays unknown.
+
+- **Presents, never performs.** Stage 1 shows facts only; later stages add the exact
+  command for you to run in a terminal. The console never merges, approves or
+  dispatches.
+- **"Actions not starting" is evidence, not inference.** The banner appears only when
+  a failing check-run's annotation carries GitHub's billing wording, quoted verbatim.
+  A failed check without that annotation reads "Failed, cause unknown".
+- **Read-only `gh`:** `gh pr list`, `gh pr view`, and a GET of one check-run's
+  annotations; any other argv is refused before a process is spawned
+  (`decisions-remote.ts`, pinned by `tests/decisions-remote.test.ts`).
+- If GitHub is unavailable the PR list is withheld with the reason; local gate items
+  still show. If a refresh fails the last good read stays, labelled with its own age.
 
 ## Reconciliation (FCA-P8)
 
