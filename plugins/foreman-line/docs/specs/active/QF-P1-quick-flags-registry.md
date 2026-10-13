@@ -85,12 +85,12 @@ Each criterion names the decisions and plan-review findings it closes. Traceabil
   - Every decision is logged in the AC-13 format.
   - While a `--strict` record is active, it is handled per OQ-1.
 - [ ] **AC-7 `--ratify` (D4′, R6).** The expansion is one-shot and human-issued only. A bare `--ratify` counts only if all of the following hold:
-  - (a) the Coordinator's previous turn showed the revision of `charter.md`: its commit SHA, or a content hash if the file is uncommitted
+  - (a) the Coordinator's previous turn showed the revision of every file that holds the text being ratified (`charter.md`, and for an amendment package the file holding the amendment text, e.g. `plan-review-findings.md`): each file's commit SHA, or its `git hash-object` output if uncommitted (amendment A2)
   - (b) the file is unchanged since that turn
   - (c) the same message contains neither `--asrec` nor `--blanket`
 
   In addition:
-  - `--ratify <rev>` must match the revision shown.
+  - `--ratify <rev>` must equal the full revision value shown, or a prefix of at least 7 hex characters of it (A2).
   - Failing (a), (b) or (c) means the ratification is refused and reported.
   - The same rule governs ratifying amendments after a scoped Gate 1 re-open.
   - The Coordinator never issues, infers or records `--ratify` on the developer's behalf.
@@ -160,10 +160,10 @@ Each criterion names the decisions and plan-review findings it closes. Traceabil
     - (T5) A later registry version never changes an existing record.
 - [ ] **AC-17 Prose grants (R13).**
   - V6 is present.
-  - The registry states that a prose grant is never treated as a quick-flag record, and that no quick flag widens or narrows a prose grant.
+  - The registry states that a prose grant is never treated as a quick-flag record, and that no quick flag widens a prose grant, and none reinterprets, edits or revokes one (amendment A1). Restrictive quick flags (`--strict`, `--nopush`, `--dry`, `--halt`, `--review2`) limit the Coordinator's conduct while they are active, whatever the source of the authority, and leave the prose grant's text and validity unchanged.
 - [ ] **AC-18 Charter summary superseded.** Where the registry covers `--resume`, `--nopush` and `--ratify`, it follows the amended rows (AC-7, AC-9, AC-10). It never cites `charter.md:40-65` as authority.
 - [ ] **AC-19 Scope discipline.**
-  - On branch `qf-p1`, `git diff --name-only <base>..HEAD` lists only `plugins/foreman-line/docs/QUICK-FLAGS.md`.
+  - On branch `qf-p1`, `git diff --name-only <base>..HEAD`, where `<base>` is the `qf-p1` HEAD recorded in the build dispatch (amendment A3), lists only `plugins/foreman-line/docs/QUICK-FLAGS.md`.
   - `git diff --check` is clean.
 
 ## Out of Scope
@@ -240,10 +240,22 @@ These were found while authoring, after the Step 0 answers. Each has a recommend
 - **OQ-5: Grant-record validity.** **Default:** a record counts only if all of the following hold:
   - it was written by the owning Coordinator in the turn that answers the human-typed message it quotes
   - it has every AC-12 field
-  - its verbatim message contains the quick-flag token
+  - its verbatim message contains the token as typed: the canonical name or a documented alias (A1)
   - its registry version exists
 
   Anything else grants nothing. Residual risk: anyone with write access to the loop directive can still forge a record. D9′ accepts that risk by design, and reviewers should record whether the registry's text narrows it.
+
+## Amendments (coordinator-ratified 2026-10-13, builder Step 0 rulings; committed alone before code)
+
+- **A1 (F2, F11).** AC-17 and OQ-5 reworded as above. `--nopush` etc. remain meaningful over prose grants as conduct limits only.
+- **A2 (F8, F9).** AC-7(a) binds to the revision of every file holding the text being ratified; revision format is a commit SHA or `git hash-object` output, matched exactly or by a prefix of at least 7 hex characters. This is spec-level; it does not change any locked decision, but it is recorded for the developer's awareness.
+- **A3 (F4).** AC-19 `<base>` is the `qf-p1` HEAD recorded in the build dispatch.
+- **A4 (F3).** V2 is introduced with "No quick flag waives, delegates on the human's behalf, or removes any of:". The next sentence states that `--ratify`, `--dispatch-ok` and `--merge-ok` are the human's own exercise of Gates 1, 2 and 3 (`--merge-ok` remaining green-chain contingent).
+- **A5 (F5).** Closed pair-resolution vocabulary: `independent`, `restrictive-wins`, `ratify-refused`, `dry-records-nothing`. `--dry` wins against `--asrec`, `--resume`, `--ratify` and `--halt` (restrictive-wins; `--ratify` under `--dry` ratifies nothing and reports whether checks (a)–(c) would pass; `--halt` under `--dry` writes no ownership block and reports). `--halt` wins against `--asrec` and `--resume`. All other non-observer pairs are `independent`. If a `--resume` ownership check STOPs, no other quick flag in that message is processed.
+- **A6 (F6).** A message containing an unrecognized token processes none of its quick flags; the Coordinator reports and asks.
+- **A7 (F7).** `--review2` takes no argument; it binds to the parcel active when the message arrives and the record names it; with no active parcel it is refused.
+- **A8 (F10, F12, F13, F14).** A revocation record points to its target by composite key (date, session, canonical quick flag, arguments); the target's `revoked:` line starts `revoked: no` and is later updated to cite the revocation. One `--asrec` covers only the questions open when it arrives plus the last-recommended step, and always stops at the next human gate. Each entry field is one line at column 0, `Label: value`, no bold; `Persistence:` and `Gate interplay:` hold bare values; `Canonical:` and `Aliases:` hold backticked tokens (`Aliases: none` where there is none); "expanded text" in a record means the entry's `Expansion:` line copied verbatim. `--dispatch-ok` and `--merge-ok` refuse the charter's "Exit step" row, which is not a parcel ID.
+- **A9 (F15, F16, F17).** Cite SPEC-CONVENTION §8 item 4 only for the remote/PR/`main` boundary, never claiming it is satisfied for local merges. V1 is `charter.md:21-23`; the summary section ends at `charter.md:64`. Code-span literals are literal tokens; avoid "flagged" wording. The registry includes one sentence stating OQ-5's residual forgery risk.
 
 ## Verification Plan
 
@@ -276,7 +288,7 @@ Mandatory reviewer focus questions:
 
 ## Allowed Files
 
-The builder may create exactly one path:
+The builder may create exactly one path (`--tools` for the build session include a shell and write; the builder writes only this path and never runs git commit/push):
 
 - `plugins/foreman-line/docs/QUICK-FLAGS.md`
 
