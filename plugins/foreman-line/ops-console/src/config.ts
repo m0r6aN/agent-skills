@@ -90,6 +90,29 @@ export const STATE_FILES = [
 export type StateFile = (typeof STATE_FILES)[number]
 
 /**
+ * Sanctioned console-local state SUBTREES (FCA-P7, owner-ratified 2026-10-13).
+ * `sessions/<receipt-id>/` holds one launched pane's captured output and
+ * retention marker. Subtree names are a closed set; entries inside are keyed
+ * by a validated receipt id and never by caller-supplied paths.
+ */
+export const STATE_DIRS = ['sessions'] as const
+
+export const RECEIPT_ID = /^[a-z0-9][a-z0-9-]{0,120}$/
+
+/** Absolute ledger directory for one receipt id; refuses ids that could escape. */
+export function ledgerDirPath(stateDir: string, receiptId: string): string {
+  if (!RECEIPT_ID.test(receiptId)) {
+    throw new Error(`ledger write refused: '${receiptId}' is not a valid receipt id`)
+  }
+  const root = resolve(stateDir, STATE_DIRS[0])
+  const dir = resolve(root, receiptId)
+  if (resolve(dir, '..') !== root) {
+    throw new Error(`ledger write refused: ${receiptId} must live directly inside ${root}`)
+  }
+  return dir
+}
+
+/**
  * Typed root-refusal error (P2b-i, per-package convention
  * `<Domain>RootUnresolvedError` — see shaping/approval/registration post-item-1;
  * no shared package, no `contracts/` edit). `root-absent` fires where an

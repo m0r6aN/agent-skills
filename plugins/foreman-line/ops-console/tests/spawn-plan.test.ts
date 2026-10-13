@@ -35,7 +35,7 @@ const ACTIONS = [
 function controls(overrides: Record<string, string> = {}) {
   return {
     harness: 'pi',
-    model: 'claude-sonnet-5-5',
+    model: 'anthropic/claude-sonnet-5-5',
     thinking: 'high',
     budget: '$20',
     ...overrides,
@@ -63,8 +63,24 @@ test('K selected actions -> exactly one session with K panes (pi argv snapshot)'
   assert.deepEqual(
     plan.panes.map((pane) => pane.argv),
     [
-      ['pi', '--model', 'claude-sonnet-5-5', '--thinking', 'high', '--name', 'foc-test-p0'],
-      ['pi', '--model', 'claude-sonnet-5-5', '--thinking', 'high', '--name', 'foc-test-p1'],
+      [
+        'pi',
+        '--model',
+        'anthropic/claude-sonnet-5-5',
+        '--thinking',
+        'high',
+        '--name',
+        'foc-test-p0',
+      ],
+      [
+        'pi',
+        '--model',
+        'anthropic/claude-sonnet-5-5',
+        '--thinking',
+        'high',
+        '--name',
+        'foc-test-p1',
+      ],
     ],
     'pi argv snapshot: real help-verified flags',
   )
@@ -132,6 +148,10 @@ test('refusal matrix fires in the plan stage: no process ever starts', () => {
   const cases: [Record<string, string>, string][] = [
     [{ harness: 'copilot' }, 'unknown-harness'],
     [{ model: '' }, 'model-missing'],
+    [{ model: 'claude-sonnet-5-5' }, 'model-unqualified'],
+    [{ model: '/claude-sonnet-5-5' }, 'model-unqualified'],
+    [{ model: 'anthropic/' }, 'model-unqualified'],
+    [{ model: 'anthropic/claude sonnet' }, 'model-unqualified'],
     [{ thinking: 'ultra' }, 'unsupported-thinking'],
     [{ budget: 'Unlimited' }, 'unsupported-budget'],
     [{ budget: '$7' }, 'unsupported-budget'],
@@ -147,5 +167,56 @@ test('refusal matrix fires in the plan stage: no process ever starts', () => {
   assert.equal(
     refusalOf(() => planSpawn({ controls: controls(), actions: [], now: NOW })).reason,
     'no-actions',
+  )
+})
+
+test('AC11: pi requires provider/model; claude keeps bare ids; refusal precedes any worktree', () => {
+  const refusal = refusalOf(() =>
+    planSpawn({ controls: controls({ model: 'claude-sonnet-5-5' }), actions: ACTIONS, now: NOW }),
+  )
+  assert.equal(refusal.reason, 'model-unqualified')
+  assert.match(refusal.message, /provider\/model/)
+  assert.match(refusal.message, /ambiguous/)
+  // Qualified ids and the optional :thinking suffix pi documents are accepted.
+  for (const model of [
+    'anthropic/claude-sonnet-5-5',
+    'opencode-go/gpt-6-luna',
+    'openai/gpt-6.1-sol:high',
+  ]) {
+    assert.doesNotThrow(
+      () => planSpawn({ controls: controls({ model }), actions: ACTIONS, now: NOW }),
+      model,
+    )
+  }
+  // The claude harness takes aliases/bare ids; the pi rule must not leak into it.
+  assert.doesNotThrow(() =>
+    planSpawn({
+      controls: controls({ harness: 'claude', thinking: 'xhigh', model: 'opus' }),
+      actions: ACTIONS,
+      now: NOW,
+    }),
+  )
+})
+
+test('review #12: a session name that is not a plain lowercase slug is refused before any worktree or process', () => {
+  for (const sessionName of [
+    'Foc-Upper',
+    'has space',
+    'a.b',
+    'a:b',
+    'x/../y',
+    '-leading',
+    '',
+    'a'.repeat(90),
+    'semi;colon',
+    '=eq',
+  ]) {
+    const refusal = refusalOf(() =>
+      planSpawn({ controls: controls(), actions: ACTIONS, now: NOW, sessionName }),
+    )
+    assert.equal(refusal.reason, 'invalid-session-name', JSON.stringify(sessionName))
+  }
+  assert.doesNotThrow(() =>
+    planSpawn({ controls: controls(), actions: ACTIONS, now: NOW, sessionName: 'foc-ok-1' }),
   )
 })

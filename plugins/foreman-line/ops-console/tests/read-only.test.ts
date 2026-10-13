@@ -4,7 +4,13 @@ import { join } from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { handleApi } from '../src/api.js'
-import { type ConsoleConfig, STATE_FILES, type StateFile, stateFilePath } from '../src/config.js'
+import {
+  type ConsoleConfig,
+  STATE_DIRS,
+  STATE_FILES,
+  type StateFile,
+  stateFilePath,
+} from '../src/config.js'
 import { invokeFlow } from '../src/invoke.js'
 import { projectGoal } from '../src/project.js'
 import { fileMtimes, type Scenario, treeSnapshot, withTempRepo } from './support/materialize.js'
@@ -147,14 +153,18 @@ test('D2 negative control: the full API surface leaves goal/receipt/spec trees b
     // exists for them — `fleet.json` arrives with the FCA-P2 fleet API).
     const stateFiles = readdirSync(config.stateDir).sort()
     assert.deepEqual(
-      stateFiles.filter((name) => !(STATE_FILES as readonly string[]).includes(name)),
+      stateFiles.filter(
+        (name) =>
+          !(STATE_FILES as readonly string[]).includes(name) &&
+          !(STATE_DIRS as readonly string[]).includes(name),
+      ),
       [],
-      'every file written under stateDir is a sanctioned STATE_FILES name',
+      'every entry written under stateDir is a sanctioned STATE_FILES name or STATE_DIRS subtree',
     )
   })
 })
 
-test('D2 structural guard: only notifications.ts, invoke.ts, fleet.ts, and spawn.ts may call fs write APIs', () => {
+test('D2 structural guard: only notifications.ts, invoke.ts, fleet.ts, spawn.ts, and ledger-store.ts may call fs write APIs', () => {
   const srcDir = fileURLToPath(new URL('../src/', import.meta.url))
   const offenders: string[] = []
   for (const name of readdirSync(srcDir)) {
@@ -167,13 +177,14 @@ test('D2 structural guard: only notifications.ts, invoke.ts, fleet.ts, and spawn
         name !== 'notifications.ts' &&
         name !== 'invoke.ts' &&
         name !== 'fleet.ts' &&
-        name !== 'spawn.ts'
+        name !== 'spawn.ts' &&
+        name !== 'ledger-store.ts'
       ) {
         offenders.push(name)
       }
     }
   }
-  assert.deepEqual(offenders, [], 'no module outside the four state writers touches fs write APIs')
+  assert.deepEqual(offenders, [], 'no module outside the five state writers touches fs write APIs')
 })
 
 test('D2 write guard: state writes are confined to the named state files', () => {

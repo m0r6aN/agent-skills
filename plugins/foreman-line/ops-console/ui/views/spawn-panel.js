@@ -22,18 +22,26 @@ export function launchItemHtml(item, registry) {
 export const HARNESS_OPTIONS = ['pi', 'claude']
 export const THINKING_OPTIONS = ['off', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max']
 export const BUDGET_PRESETS = ['$1', '$5', '$10', '$20', '$50', '$100']
+// pi needs an explicit provider: a bare id is ambiguous across authenticated
+// providers and pi exits at startup (observed 2026-10-13). Every pi suggestion
+// is provider/model and appears in `pi --list-models`. The claude harness takes
+// its own aliases, so the two lists are kept separate.
 export const MODEL_SUGGESTIONS = [
-  'claude-sonnet-5-5',
-  'claude-opus-5-5',
-  'gpt-6-luna',
-  'gpt-6.1-sol',
-  'deepseek-v4-pro',
+  'anthropic/claude-sonnet-5-5',
+  'anthropic/claude-opus-5-5',
+  'openai/gpt-6-luna',
+  'openai/gpt-6.1-sol',
 ]
+export const CLAUDE_MODEL_SUGGESTIONS = ['sonnet', 'opus']
+export function modelSuggestionsFor(harness) {
+  return harness === 'claude' ? CLAUDE_MODEL_SUGGESTIONS : MODEL_SUGGESTIONS
+}
 
 export function spawnPanelHtml({ count = 0, controls = {}, selections = [], registry = [], extra = '', error = '', page = 0, retryRequired = false, retryAcknowledged = false, suggested = true, bulk = {}, bulkResult = '' } = {}) {
   const blocked = (retryRequired && !retryAcknowledged) || selections.some((item) => !item.verb || item.unavailable || item.needsReview || item.bulkIssue)
   const harness = controls.harness || 'pi'
-  const model = controls.model || MODEL_SUGGESTIONS[0]
+  const suggestions = modelSuggestionsFor(harness)
+  const model = controls.model || suggestions[0]
   const thinking = controls.thinking || 'high'
   const budget = controls.budget || '$20'
   return `
@@ -59,7 +67,7 @@ export function spawnPanelHtml({ count = 0, controls = {}, selections = [], regi
         <label>Model
           <input name="model" list="model-options" value="${esc(model)}" aria-label="model" required>
           <datalist id="model-options">
-            ${MODEL_SUGGESTIONS.map((id) => `<option value="${esc(id)}"></option>`).join('')}
+            ${suggestions.map((id) => `<option value="${esc(id)}"></option>`).join('')}
           </datalist>
         </label>
         <label>Thinking

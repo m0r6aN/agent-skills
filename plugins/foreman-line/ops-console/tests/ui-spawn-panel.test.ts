@@ -4,6 +4,7 @@ import { JSDOM } from 'jsdom'
 import { planSpawn } from '../src/spawn.js'
 import {
   BUDGET_PRESETS,
+  MODEL_SUGGESTIONS,
   readControls,
   spawnPanelHtml,
   spawnRequest,
@@ -41,7 +42,12 @@ test('shared controls render exactly once; budget presets have no Unlimited; cop
 })
 
 test('composed request feeds the real planner: K explicit actions become one session with K panes', () => {
-  const controls = { harness: 'pi', model: 'claude-sonnet-5-5', thinking: 'high', budget: '$20' }
+  const controls = {
+    harness: 'pi',
+    model: 'anthropic/claude-sonnet-5-5',
+    thinking: 'high',
+    budget: '$20',
+  }
   const extra = 'Preserve existing work first.\nSecond line exactly as typed.'
   const request = spawnRequest(SELECTIONS, controls, extra)
   assert.deepEqual(request.controls, controls)
@@ -98,4 +104,15 @@ test('missing Investigate requires explicit choices; reviewed controls post once
   } finally {
     ui.close()
   }
+})
+
+test('AC11: pi model suggestions and default are provider-qualified; claude keeps its aliases', () => {
+  const piDefault = new JSDOM(spawnPanelHtml()).window.document.querySelector(
+    '[name="model"]',
+  ) as HTMLInputElement
+  assert.equal(piDefault.value, 'anthropic/claude-sonnet-5-5')
+  for (const id of MODEL_SUGGESTIONS)
+    assert.match(id, /^[^/\s]+\/\S+$/, `${id} must be provider/model`)
+  const claude = new JSDOM(spawnPanelHtml({ controls: { harness: 'claude' } })).window.document
+  assert.equal((claude.querySelector('[name="model"]') as HTMLInputElement).value, 'sonnet')
 })

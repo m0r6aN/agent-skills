@@ -32,7 +32,22 @@ export interface HarnessSpec {
   readonly thinkingLevels: readonly string[]
   argv(input: HarnessArgvInput): readonly string[]
   promptArgv(prompt: string): readonly string[]
+  /**
+   * Harness-specific model-id check, run at plan time so a launch that is
+   * certain to die at startup never creates a worktree or a process. Returns a
+   * human-readable refusal, or null when the id is acceptable.
+   */
+  modelProblem?(model: string): string | null
 }
+
+/**
+ * pi resolves a bare model id across every authenticated provider and exits 1
+ * when more than one matches (observed 2026-10-13: `Model "claude-sonnet-5-5"
+ * is ambiguous across providers ... Use --provider or provider/model`). The
+ * console therefore requires the explicit `provider/model` form (optionally
+ * with pi's documented `:thinking` suffix) rather than guessing a provider.
+ */
+const PI_QUALIFIED_MODEL = /^[^/\s:]+\/[^\s]+$/
 
 export const HARNESS_REGISTRY: Record<string, HarnessSpec> = {
   pi: {
@@ -48,6 +63,10 @@ export const HARNESS_REGISTRY: Record<string, HarnessSpec> = {
       input.sessionName,
     ],
     promptArgv: (prompt) => ['--', prompt],
+    modelProblem: (model) =>
+      PI_QUALIFIED_MODEL.test(model)
+        ? null
+        : `model '${model}' is not in provider/model form; pi exits at startup when a bare id is ambiguous across providers (e.g. anthropic/claude-sonnet-5-5)`,
   },
   claude: {
     id: 'claude',

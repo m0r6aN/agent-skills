@@ -7,6 +7,12 @@ import { type ConsoleConfig, type StateFile, stateFilePath } from './config.js'
 import { isRecord } from './guards.js'
 import { BUDGET_PRESETS, HARNESS_REGISTRY, THINKING_LEVELS } from './harness.js'
 import { listAuditEntries, recordAuditEntry } from './invoke.js'
+import {
+  DEFAULT_RETENTION,
+  discardEmptyLedgerDir,
+  enforceRetention,
+  ensureLedgerDir,
+} from './ledger-store.js'
 import { composePrompt } from './prompts.js'
 
 /**
@@ -24,6 +30,8 @@ export type SpawnRefusalReason =
   | 'no-actions'
   | 'unknown-harness'
   | 'model-missing'
+  | 'model-unqualified'
+  | 'invalid-session-name'
   | 'unsupported-thinking'
   | 'unsupported-budget'
   | 'unregistered-action'
@@ -136,6 +144,10 @@ export function planSpawn(request: SpawnPlanRequest): SpawnPlan {
   if (controls.model === '') {
     throw new SpawnRefusalError('model-missing', 'spawn refused: model is required')
   }
+  const modelProblem = harness.modelProblem?.(controls.model) ?? null
+  if (modelProblem !== null) {
+    throw new SpawnRefusalError('model-unqualified', `spawn refused: ${modelProblem}`)
+  }
   if (!(THINKING_LEVELS as readonly string[]).includes(controls.thinking)) {
     throw new SpawnRefusalError(
       'unsupported-thinking',
@@ -158,6 +170,14 @@ export function planSpawn(request: SpawnPlanRequest): SpawnPlan {
 
   const stamp = compactTimestamp(now)
   const sessionName = request.sessionName ?? `foc-${stamp}`
+  // The name becomes a tmux target, a receipt id and a directory name: keep it to
+  // the closed shape every consumer accepts, before any worktree or process exists.
+  if (!/^[a-z0-9][a-z0-9-]{0,80}$/.test(sessionName)) {
+    throw new SpawnRefusalError(
+      'invalid-session-name',
+      `spawn refused: session name '${sessionName}' must be lowercase letters, digits and hyphens`,
+    )
+  }
   const panes: SpawnPane[] = actions.map((action, paneIndex) => {
     const spec = lookupAction(action.signalClass, action.verb)
     if (spec === null) {
@@ -216,6 +236,16 @@ export interface SpawnReceipt {
   readonly promptDigest: string
   readonly argv: readonly string[]
   readonly createdAt: string
+  /**
+   * FCA-P7 additive addendum (owner-ratified 2026-10-13). Absent on receipts
+   * written before the ledger; readers must treat absence as unknown.
+   */
+  readonly baseCommit?: string | null
+  readonly branch?: string | null
+  /** Name of the console-local ledger subtree for this pane: `sessions/<id>`. */
+  readonly ledgerDir?: string
+  /** tmux pane id (`%N`) when the launcher could capture it. */
+  readonly tmuxPaneId?: string | null
 }
 
 const SPAWNS_NAME: StateFile = 'spawns.json'
@@ -253,11 +283,15 @@ export function shellQuote(value: string): string {
 export interface TmuxRunner {
   readonly available: () => boolean
   readonly run: (args: readonly string[]) => void
+  /** Like `run`, but returns tmux's stdout (used for `-P -F '#{pane_id}'`). */
+  readonly capture: (args: readonly string[]) => string
 }
 
 /** Fresh-worktree creation (owner ruling: "hygiene is a must"). */
 export interface WorktreeRunner {
   readonly create: (repoRoot: string, worktreePath: string) => void
+  /** HEAD of the freshly cut worktree, recorded as the receipt's baseCommit. */
+  readonly head?: (worktreePath: string) => string | null
 }
 
 export const defaultWorktreeRunner: WorktreeRunner = {
@@ -269,23 +303,91 @@ export const defaultWorktreeRunner: WorktreeRunner = {
       { cwd: repoRoot, stdio: ['ignore', 'pipe', 'ignore'] },
     )
   },
+  head: (worktreePath) => {
+    try {
+      return execFileSync('git', ['-C', worktreePath, 'rev-parse', 'HEAD'], {
+        cwd: worktreePath,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      }).trim()
+    } catch {
+      return null
+    }
+  },
 }
 
-/** tmux runner anchored to an explicit root (A2.9; never inherited cwd). */
-export function tmuxRunnerFor(repoRoot: string): TmuxRunner {
+/**
+ * tmux runner anchored to an explicit root (A2.9; never inherited cwd).
+ * `socket` selects a private tmux server (`tmux -L <name>`); tests use it so
+ * they never touch the operator's own server.
+ */
+export function tmuxRunnerFor(repoRoot: string, socket?: string): TmuxRunner {
+  const prefix = socket === undefined ? [] : ['-L', socket]
+  const exec = (args: readonly string[]): string =>
+    execFileSync('tmux', [...prefix, ...args], {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    })
   return {
     available: () => {
       try {
-        execFileSync('tmux', ['-V'], { cwd: repoRoot, stdio: ['ignore', 'pipe', 'ignore'] })
+        exec(['-V'])
         return true
       } catch {
         return false
       }
     },
     run: (args) => {
-      execFileSync('tmux', [...args], { cwd: repoRoot, stdio: ['ignore', 'pipe', 'ignore'] })
+      exec(args)
     },
+    capture: (args) => exec(args),
   }
+}
+
+/** First `%N` token of tmux `-P -F '#{pane_id}'` output; null when unparseable. */
+function paneIdOf(output: string): string | null {
+  const match = /%\d+/.exec(output)
+  return match === null ? null : match[0]
+}
+
+/**
+ * Receipt ids whose pane is alive according to tmux, or `'all'` when tmux cannot say.
+ * A receipt without a recorded pane id is protected if its session has any live pane.
+ */
+function livePaneProtection(
+  runner: TmuxRunner,
+  receipts: readonly SpawnReceipt[],
+): ReadonlySet<string> | 'all' {
+  let out: string
+  try {
+    out = runner.capture(['list-panes', '-a', '-F', '#{session_name}\t#{pane_id}\t#{pane_dead}'])
+  } catch (error) {
+    // No server at all means nothing is alive; any other failure means we cannot tell.
+    return /no server running|server exited unexpectedly|error connecting to .*(No such file or directory)/i.test(
+      String((error as { stderr?: unknown }).stderr ?? (error as Error).message),
+    )
+      ? new Set()
+      : 'all'
+  }
+  const livePanes = new Set<string>()
+  const liveSessions = new Set<string>()
+  for (const line of out.split('\n')) {
+    const [session, paneId, dead] = line.split('\t')
+    if (session !== undefined && paneId !== undefined && dead === '0') {
+      livePanes.add(paneId)
+      liveSessions.add(session)
+    }
+  }
+  return new Set(
+    receipts
+      .filter((receipt) =>
+        typeof receipt.tmuxPaneId === 'string'
+          ? livePanes.has(receipt.tmuxPaneId)
+          : liveSessions.has(receipt.sessionName),
+      )
+      .map((receipt) => receipt.id),
+  )
 }
 
 export interface LaunchResult {
@@ -327,18 +429,93 @@ export function launchSpawnPlan(
   const nextAuditId = () =>
     `spn-${String(listAuditEntries(config.stateDir).length + 1).padStart(6, '0')}`
 
+  // FCA-P7: bound the captured-output store before adding to it. Liveness decides what is
+  // protected: a pane that is still alive keeps its log whatever its age. If liveness cannot
+  // be established, nothing is touched.
+  const known = listSpawnReceipts(config.stateDir)
+  enforceRetention(
+    config.stateDir,
+    {
+      ...DEFAULT_RETENTION,
+      protect: livePaneProtection(runner, known),
+      order: [...known]
+        .sort((a, b) => (Date.parse(b.createdAt) || 0) - (Date.parse(a.createdAt) || 0))
+        .map((receipt) => receipt.id),
+    },
+    now,
+  )
+
   const launched: number[] = []
   for (const pane of plan.panes) {
+    // True once tmux has the pane; until then a failure leaves nothing worth keeping.
+    let started = false
     try {
+      const receiptId = `${plan.sessionName}-p${pane.paneIndex}`
+      // `=name:` is an EXACT session match; a bare name also prefix-matches other sessions.
+      const exactTarget = `=${plan.sessionName}:`
+      // Ledger dir first: an invalid id must fail before a worktree is cut.
+      const ledger = ensureLedgerDir(config.stateDir, receiptId)
+      started = false
       worktrees.create(pane.repoRoot, pane.worktreePath)
-      runner.run(
-        launched.length === 0
-          ? ['new-session', '-d', '-s', plan.sessionName, '-c', pane.cwd, commandFor(pane)]
-          : ['split-window', '-d', '-t', plan.sessionName, '-c', pane.cwd, commandFor(pane)],
-      )
+      const baseCommit = worktrees.head?.(pane.worktreePath) ?? null
+      const capture = `cat >> ${shellQuote(ledger.logPath)}`
+      let tmuxPaneId: string | null
+      if (launched.length === 0) {
+        // One chained tmux command: the session, `remain-on-exit` (a dead pane
+        // stays attachable and reports its exit status instead of vanishing
+        // with its server), and `pipe-pane` are all in place before tmux
+        // returns to its event loop, so even an instant startup failure is
+        // retained and captured (FCA-P7; reproduced 2026-10-13).
+        tmuxPaneId = paneIdOf(
+          runner.capture([
+            'new-session',
+            '-d',
+            '-P',
+            '-F',
+            '#{pane_id}',
+            '-s',
+            plan.sessionName,
+            '-c',
+            pane.cwd,
+            commandFor(pane),
+            ';',
+            'set-option',
+            '-w',
+            '-t',
+            exactTarget,
+            'remain-on-exit',
+            'on',
+            ';',
+            'pipe-pane',
+            '-o',
+            '-t',
+            exactTarget,
+            capture,
+          ]),
+        )
+      } else {
+        // Later panes attach capture by pane id once created; output before
+        // attachment remains in the retained scrollback (`capture-pane`).
+        tmuxPaneId = paneIdOf(
+          runner.capture([
+            'split-window',
+            '-d',
+            '-P',
+            '-F',
+            '#{pane_id}',
+            '-t',
+            exactTarget,
+            '-c',
+            pane.cwd,
+            commandFor(pane),
+          ]),
+        )
+        if (tmuxPaneId !== null) runner.run(['pipe-pane', '-o', '-t', tmuxPaneId, capture])
+      }
+      started = true
       launched.push(pane.paneIndex)
       recordSpawnReceipt(config.stateDir, {
-        id: `${plan.sessionName}-p${pane.paneIndex}`,
+        id: receiptId,
         sessionName: plan.sessionName,
         paneIndex: pane.paneIndex,
         harness: plan.controls.harness,
@@ -351,9 +528,15 @@ export function launchSpawnPlan(
         promptDigest: pane.promptDigest,
         argv: pane.argv,
         createdAt: new Date(now).toISOString(),
+        baseCommit,
+        branch: `spawn/${basename(pane.worktreePath)}`,
+        ledgerDir: `sessions/${receiptId}`,
+        tmuxPaneId,
       })
     } catch (err) {
       const error = (err as Error).message
+      // A launch that failed before its pane existed leaves no empty ledger directory behind.
+      if (!started) discardEmptyLedgerDir(config.stateDir, `${plan.sessionName}-p${pane.paneIndex}`)
       recordAuditEntry(config.stateDir, {
         id: nextAuditId(),
         timestamp: new Date(now).toISOString(),

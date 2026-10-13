@@ -1,7 +1,7 @@
 ---
 ticket: FCA-P7
 title: Session ledger — durable, evidence-backed outcome record for launched panes
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-10-13
 updated: 2026-10-13
@@ -179,3 +179,153 @@ Mandated reviewer questions:
 - plugins/foreman-line/ops-console/tests/ledger-tmux.test.ts
 - plugins/foreman-line/ops-console/tests/ui-sessions.test.ts
 - plugins/foreman-line/docs/specs/INDEX.md
+
+## Owner ratification and delegated amendment — 2026-10-13
+
+Owner approved this spec as drafted: capability map and build order approved;
+tmux kept and hardened (`remain-on-exit` + `pipe-pane`); the `state/sessions/`
+writable subtree, the receipt addendum fields, and any new route are ratified;
+blanket authority granted for decisions and non-destructive actions. Gate 3
+(merge) is not delegated by this record.
+
+**Root cause found during preparation (evidence, 2026-10-13).** A real tmux
+reproduction showed every console launch dies at startup: the launcher passes a
+bare model id and pi exits 1 with `Model "claude-sonnet-5-5" is ambiguous
+across providers ... Use --provider or provider/model`. The pane dies, the tmux
+server exits with its last pane, and the error is lost. This explains the empty
+transcripts, clean worktrees, and absent output. It is a launcher defect, in
+scope here:
+
+11. **Provider-qualified model (AC11).** For harness `pi`, planning refuses a
+    model not in `provider/model` form with a typed refusal before any worktree
+    or process is created; the model suggestions offered by the UI are
+    provider-qualified and verified against `pi --list-models`. Other harnesses
+    are unaffected.
+
+Additional Allowed Files (coordinator-delegated; no scope change):
+
+- plugins/foreman-line/ops-console/src/harness.ts
+- plugins/foreman-line/ops-console/ui/views/spawn-panel.js
+- plugins/foreman-line/ops-console/ui/views/spawn-panel.d.ts
+- plugins/foreman-line/ops-console/tests/spawn-plan.test.ts
+- plugins/foreman-line/ops-console/tests/spawn-launch.test.ts
+- plugins/foreman-line/ops-console/tests/spawns-api.test.ts
+- plugins/foreman-line/ops-console/tests/ui-spawn-panel.test.ts
+- plugins/foreman-line/docs/goals/foreman-ops-console/session-ledger-capability-map.md
+
+Design clarification: tmux tests use a private socket (`tmux -L <name>`), never
+the operator's server. The first pane is created with `remain-on-exit` and
+`pipe-pane` chained in one tmux command (race-free); later panes attach
+`pipe-pane` by pane id after `split-window -P`, and rely on retained
+scrollback (`capture-pane`) for any output before attachment.
+
+## Delegated amendment (retroactive) and implementation findings — 2026-10-13
+
+Recorded AFTER implementation, not before: these paths were found necessary
+while building and were not in the ratified Allowed Files. They widen no
+product scope (test support, the new store the structural write guard had to
+name, and docs) and are flagged here for owner review rather than silently
+absorbed.
+
+Additional Allowed Files:
+
+- plugins/foreman-line/ops-console/src/ledger-store.ts
+- plugins/foreman-line/ops-console/tests/ledger-api.test.ts
+- plugins/foreman-line/ops-console/tests/browser-sessions.test.ts
+- plugins/foreman-line/ops-console/tests/support/cdp.ts
+- plugins/foreman-line/ops-console/tests/ui-fixture.ts
+- plugins/foreman-line/ops-console/tests/read-only.test.ts
+- plugins/foreman-line/ops-console/README.md
+
+Clarifications:
+
+- **Severity.** The design said `warning`; the existing closed severity
+  vocabulary is `info | attention | urgent`, so `exited-error`, `no-transcript`
+  and `vanished` raise `attention`. No vocabulary was widened.
+- **Write allowlist.** `ledger-store.ts` is the fifth sanctioned fs writer
+  (read-only guard test updated); `state/sessions/` is a closed STATE_DIRS entry.
+- **tmux `pane-base-index`.** This machine numbers panes from 1. Legacy
+  receipts are matched to panes by creation order, never by tmux's index value;
+  new receipts record the tmux pane id.
+- **AC9 root cause (reproduced in real Chromium against the live console).**
+  The Sessions button navigated correctly. The defect was the view it opened:
+  the workspace waited for all five endpoints before showing any, the
+  single-threaded server serialized the slow `/api/goals` and `/api/signals`
+  scans (~5 s each on the live console) ahead of `/api/spawns`, and Sessions
+  asserted "No console-recorded launches" for ~10 s. Fixed by applying each
+  endpoint as it arrives, requesting the cheap ones first, and rendering
+  explicit Loading / Could-not-load states. The slow scans themselves are NOT
+  fixed here (see Known follow-ups).
+
+Known follow-ups (not in this parcel): `/api/goals` and `/api/signals` block the
+event loop for ~5 s each on the live console; `/api/spawns` cost grows with
+receipts (one tmux probe per session, a few git probes per receipt) and should
+get a short-TTL cache if receipt counts reach the hundreds.
+
+## Independent review disposition — 2026-10-13
+
+Two fresh, read-only reviewer sessions were run (tools restricted to read/grep/find/ls;
+no edits, no commands). The P7 reviewer returned REQUEST CHANGES with 13 findings; the
+facts behind them were reproduced before triage (real tmux: `has-session` is 0 for a
+session holding only dead panes and prefix-matches; 66 of 4,243 real assistant messages
+carry `stopReason: "error"`). Disposition:
+
+| # | Finding | Disposition |
+|---|---|---|
+| 1 | exit 0 hides a failed last assistant message | **Fixed** — `exited-error` + evidence (aborted: evidence) |
+| 2 | dead pane shown/counted "Running" (session-level `has-session`) | **Fixed** — UI derives liveness from the ledger; `has-session` uses exact `=name`; API field unchanged |
+| 3 | git probes take `index.lock`; repo-local fsmonitor runs | **Fixed** — `GIT_OPTIONAL_LOCKS=0`, `core.fsmonitor=false`, 20 s timeout, 64 MB buffer |
+| 4 | `/api/spawns` cost / event loop | **Mitigated** — transcript summaries cached by (path,size,mtime); git outcomes 15 s TTL. Not eliminated (see follow-ups) |
+| 5 | attention forever; any tmux error read as `vanished` | **Fixed** — failures fade to info after 72 h; only real "no such session/server" messages are absent (`can't find session\|window\|pane`, `no server running`, `server exited unexpectedly`, `error connecting … No such file`), anything else is unavailable and flags nothing |
+| 6 | legacy receipt could raise attention | **Fixed** — attention requires `ledger === 'present'` |
+| 7 | transcript join degrades silently | **Fixed** — realpath-aware join, 16 KB header, evidence for unknown and for rejected candidates |
+| 8 | retention gaps/races | **Fixed** — `lstat`, id-validated names, ranked by id, logs written in the last 10 min are never truncated/removed (live writer) |
+| 9 | log confidentiality | **Fixed** — 0700/0600. DNS-rebinding/Host-header check and `FOC_CONTAINER` non-loopback bind are **pre-existing server properties** in `server.ts` (outside Allowed Files): deferred, owner decision |
+| 10 | first (not latest) error line; OSC | **Fixed** |
+| 11 | `baseCommit` option injection | **Fixed** — `safeRev` |
+| 12 | non-exact tmux targets; session-name shape | **Fixed** — `=name:` targets; `invalid-session-name` refusal before any worktree; ledger dir created before the worktree |
+| 13 | `reconcileSelection` on failed endpoint | **Pre-existing** behaviour, unchanged by this parcel; not addressed |
+
+Defect found by the rework itself: the first classifier missed `can't find window` and
+`server exited unexpectedly` (what real tmux prints), producing a flaky `unknown`; both
+are now covered by unit table and real-tmux tests (15/15 stable runs).
+
+Additional Allowed Files for the rework: none beyond those already recorded.
+
+Known follow-ups (owner decisions): Host/Origin validation and non-loopback bind in
+`server.ts`; moving blocking `execFileSync` work off the event loop; an
+acknowledge/dismiss affordance for historical failures.
+
+## Second independent review — 2026-10-13
+
+After the rework a second fresh read-only reviewer checked every prior finding against the
+**code** and hunted for regressions. Verdict: REQUEST CHANGES, narrower. Of 13 prior
+findings it confirmed 6 fixed, 5 partial, 2 deferred-ok, 1 disputed. Disposition of what
+remained:
+
+| Item | Disposition |
+|---|---|
+| #2 a ledger-era pane the ledger cannot establish still showed "Running" from the receipt's session flag | **Fixed** - ledger-era + `unknown` reads *Unknown* in the UI; only legacy receipts defer to the receipt |
+| #5 UI chip for `vanished` never fades; signal skip relied on an evidence-string prefix | **Fixed** (coupling): `LedgerEntry.tmux` (`found/absent/unavailable`) is explicit. The chip is a fact about the pane and stays; only the attention signal fades |
+| #6 order-based pane attribution can name the wrong pane | **Fixed** - without a recorded pane id, order is used only when tmux holds exactly one pane per receipt of the session; otherwise `unknown` with an explicit reason |
+| #8 retention cap not enforced for panes writing every <10 min; idle live panes treated as dead; lexical ranking | **Fixed** - liveness (tmux) protects live panes regardless of age or idleness; if liveness cannot be established nothing is touched; ranking is by launch time from receipts; `quietMs` defaults to 0 |
+| #13 `reconcileSelection` after a failed endpoint "pre-existing" | **Verified pre-existing**: `main:ui/app.js:183` calls it unconditionally after `allSettled`, as now |
+| N1 sync 20 s git timeout blocks the server | **Mitigated** - timeout 10 s and a per-pass probing budget (8 s); once spent, remaining receipts report git/transcript/screen as *unknown* with explicit evidence. Event-loop offloading stays a follow-up |
+| N2/N3 quiet window overclaimed | **Fixed** (see #8) |
+| N4 lexical ranking | **Fixed** (see #8) |
+| N5 `orphan-clean` asserted "no live pane" when tmux was unavailable | **Fixed** |
+| N6 `exited-clean` when the transcript could not be joined | **Fixed** - exit 0 with an unjoinable (unknown/ambiguous) transcript is `unknown`: the ending cannot be checked |
+| N8 stale comments | **Fixed** |
+| N9 empty ledger dir left by a failed launch | **Fixed** - discarded only when it holds no output |
+| N10 test-only liveness probe discards pane facts | Noted: test seam only |
+
+Found by the real end-to-end run (real `pi`, real model, real tmux; one trivial request): the
+"last output" of a full-screen TUI session was a single multi-kilobyte escape-sequence blob.
+The tail now comes from the **rendered screen** (`tmux capture-pane -p -J`, while the pane
+exists) and falls back to the captured stream only when the pane is gone; every displayed line
+is capped at 400 characters. `-J` was needed because the first version cut a provider error at
+the terminal width (caught by the real-tmux test).
+
+Pinned by test: the end-to-end launch produces a linked transcript with cost and a clean
+git outcome; a bare model id is refused before any worktree exists.
+
