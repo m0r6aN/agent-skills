@@ -3,9 +3,14 @@
 **Goal slug:** `operator-developer-cortex-memory`  
 **Recorded:** 2026-10-10  
 **Owner:** Clinton Morgan  
-**Coordinator:** Pi session `01a131a9-5c16-724a-a016-3353a124592d`, appointed 2026-10-12 by explicit owner direction with blanket decision authority (`ownership-transfer-2026-10-12-01a131a9.md`); predecessors historical  
-**State:** OPMEM-P0 accepted 2026-10-12 (dual family-independent review R1–R4, `p0-closure-2026-10-12.md`); follow-on manifests P1a…P10 frozen in `follow-on-parcel-manifests.md`; code parcels land on non-deploying `opmem/integration`; production promotion and cloud work are owner stop items  
-**Mode:** multi-project initiative; authorized pre-P0 preparation/private evaluation publication, with build/operational execution still behind actual predecessor gates
+**Coordinator:** Pi session `01a1358d-711a-7345-8874-901c5e2b50e3`, appointed 2026-10-13 by explicit owner replacement at the stopped post-P4b boundary; existing ratifications/grants/budgets/limits preserved (`ownership-transfer-2026-10-13-01a1358d.md`); predecessors historical
+**State:** P0–P4b accepted; stopped before P5a dispatch for S-1 security dependency disposition outside manifest (`resume-stop-report-2026-10-13-01a1358d.md`); isolated baseline 421 passed / 0 failed / 0 skipped. External main promotions Gateway #50 / Cortex #68 observed after predecessor handoff; deployment unverified, remote integration branches deleted. Future code merges remain non-deploying only; production/cloud/credentials remain owner stop items.
+
+**Mode:** multi-project initiative; sequential parcel execution under preserved non-destructive grant and exact-head independent evidence gates
+
+## Current authority / freshness precedence
+
+Read `ownership-transfer-2026-10-13-01a1358d.md`, `loop-directive.md`, the post-P4b `handoff.md`, the 2026-10-12 blanket grant/delegated dispositions, accepted P0 manifests and P1–P4 closures first. Chronological pre-P0 holds and draft-only statements below are historical, not current operational state. Requirement D1–D18 and the goal exit criterion are unchanged. External main promotions do not authorize this session to deploy, prove live health, or complete P8/P9. Original plan and Stage A inputs are preserved.
 
 ## Objective and priority
 

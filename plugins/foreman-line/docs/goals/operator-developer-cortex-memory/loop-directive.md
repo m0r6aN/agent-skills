@@ -1,8 +1,8 @@
 # Coordinator Directive — Operator-developer Cortex memory
 
 **Goal slug:** `operator-developer-cortex-memory`  
-**Recorded:** 2026-10-10; ownership/resume checkpoint updated 2026-10-12 (coordinator `01a131a9`)  
-**State:** `P0 ACCEPTED; P1a…P4b MERGED TO opmem/integration (gateway 1b81a1a; cortex 69cd4f8); P5a NEXT; COORDINATOR 01a131a9 STOPPED AT PARCEL BOUNDARY WITH handoff.md; main PROMOTION / CLOUD = OWNER STOP ITEMS`  
+**Recorded:** 2026-10-10; ownership/freshness checkpoint updated 2026-10-13 (coordinator `01a1358d`)
+**State:** `P0–P4b ACCEPTED; COORDINATOR 01a1358d STOPPED BEFORE P5a DISPATCH AWAITING SECURITY DISPOSITION S-1 (PRE-EXISTING SQLITE CVE OUTSIDE MANIFEST); 421/0/0 BASELINE; EXTERNAL main PROMOTIONS #50/#68 OBSERVED, DEPLOYMENT UNVERIFIED; REMOTE INTEGRATION REFS DELETED; CLOUD/PRODUCTION = OWNER STOP ITEMS`
 **Scheduling:** synchronous coordinator loop in the owning session (no wakeup tool in this harness); human gates are NOT stop conditions except destructive/production-affecting actions — see `ownership-transfer-2026-10-12-01a131a9.md`
 
 ## COORDINATOR OWNERSHIP — read before any dispatch
@@ -10,31 +10,33 @@
 | Field | Value |
 |---|---|
 | Accountable human | Clinton Morgan |
-| Sole coordinator | Pi session `01a131a9-5c16-724a-a016-3353a124592d` |
-| Previous coordinators | Most recent: `01a12f95-7c4b-74e5-b9a2-941efcfca605` (session aborted 2026-10-12 19:10Z mid-P0 review); before it `01a12b4f-c8e9-70a4-811b-0cd7eb889457`, `01a12a83-24d6-7641-b3ac-52563eeb86fb`, `01a12a8f-e1f4-7645-a2d9-f10ba6cabfe0`, `01a127de-54e3-7556-9b8f-157e66a9d00a`. All historical. |
-| Appointment | 2026-10-12 verbatim in `ownership-transfer-2026-10-12-01a131a9.md`: resume as coordinator and owner, delegate to workers, see the goal to the end, blanket authority for decisions and non-destructive actions, no pause for human gates unless destructive. |
-| Boundary | Mid-P0 review boundary (prior coordinator not live; only node process on host was this session). |
+| Sole coordinator | Pi session `01a1358d-711a-7345-8874-901c5e2b50e3` |
+| Previous coordinators | Most recent: `01a131a9-5c16-724a-a016-3353a124592d`, stopped after P4b per `handoff.md` and released per owner; earlier appointments historical. |
+| Appointment | 2026-10-13 explicit owner replacement, verbatim in `ownership-transfer-2026-10-13-01a1358d.md`; preserve all existing ratifications, authorizations, budgets and limits. Prior blanket grant/dispositions remain recorded in the 2026-10-12 transfer and delegated-decision record. |
+| Boundary | Post-P4b parcel boundary; no worker reported in predecessor handoff, no worker launched by successor. No global external-session liveness claim. |
 | Appointment scope | All OPMEM gates owner-delegated (recorded as such, never as human receipts). Destructive / production-affecting actions (incl. merges to auto-deploying `main` of keon-cortex / keon-mcp-gateway, cloud/Neon/credential changes) remain stop-for-owner. USD 25 P0 cap retained; later parcels: recorded spend per parcel. |
-| Current session provenance | `PI_PROVIDER=anthropic`, `PI_MODEL=claude-opus-5-5`, `PI_SESSION_ID=01a131a9-5c16-724a-a016-3353a124592d`; observed metadata, not a Foreman route receipt |
-| Coordinator publication workspace | `D:/Repos/agent-skills-worktrees/opmem-p0-20261012-01a12f95`, branch `feat/opmem-p0-baseline-20261012-01a12f95` (P0 PR); dispatch scratch `D:/Repos/opmem-dispatch-01a131a9` (outside repos). |
+| Current session provenance | `PI_PROVIDER=openai`, `PI_MODEL=gpt-6.1-sol`, `PI_SESSION_ID=01a1358d-711a-7345-8874-901c5e2b50e3`; observed metadata, not a Foreman route receipt |
+| Coordinator publication workspace | `D:/Repos/agent-skills-worktrees/opmem-coord-20261013-01a1358d`, branch `coord/opmem-resume-20261013-01a1358d`, base `9578ed1645561e85d100e79dce29459d8bd43088`; predecessor worktrees and dispatch evidence retained untouched. |
 | Transfer rule | One goal, one coordinator. Transfer only at parcel boundaries by explicit owner direction and update to this ownership block |
-| Last state change | 2026-10-13 08:00 EDT — P4b merged (keon-cortex#67, `69cd4f8`). Coordinator `01a131a9` stopped at the parcel boundary on owner request for a fresh-session handoff: read `handoff.md` first. Cumulative spend USD 191.10 (guard 400). No worker running. |
+| Last state change | 2026-10-13 — transfer/freshness reconciled; isolated Gateway baseline 421 passed / 0 failed / 0 skipped. STOPPED before P5a dispatch for S-1 security dependency disposition outside manifest; `resume-stop-report-2026-10-13-01a1358d.md`. Ownership retained; no worker/wakeup. Recorded predecessor spend USD 191.10, USD 45 architecture-parcel / USD 400 cumulative guards preserved; prior unknown spend stays unknown. |
 
 An incoming session is not automatically the owner. If it is not the session above, stop and ask the owner for a boundary transfer. If another live owner is discovered, stop and reconcile; directory absence is a scoped local observation, not proof about every external session.
 
-This directive is generated early solely to persist the explicitly authorized pre-P0 ownership and stopped planning state. It is **not** the post-plan-review execution-loop authorization. After independent plan review/triage, update it with the proven state and any standing authorizations actually granted. This directive alone is not launch admission: owner P0/Git authority is recorded below, but no builder/reviewer may launch until the independent-review/process/route prerequisites and accepted envelope are actually satisfied.
+**Current-state precedence:** the successor transfer record, `handoff.md` (with its source-drift corrections), the 2026-10-12 blanket grant/delegated dispositions, accepted P0 contracts/manifests and parcel closures supersede the historical pre-P0 holds reproduced below. Do not restart IR-A01, repeat disposed approvals, or infer deployment from a merged PR. This record does not mint route/registration/approval receipts or waive independent review.
 
 ## Read on resume
 
-1. `native-pi-revision-checkpoint-2026-10-11.md` and `../internal-frontier-review-admission/native-pi-revision-handoff-2026-10-11.md` — six disposed choices, exact native revision and ONE pending whole-contract ratification condition. IR-B01 scope is already approved conditionally, not open again. Earlier checkpoints are history; #181 is observed merged, not current publication.
-2. This ownership block/current state and `charter.md` — ratified scope/queue, source references, approval ledger, exit criteria.
-3. `owner-rulings-g5-g12-2026-10-11.md` — latest verbatim authority; `source-publication-2026-10-11.md` — real GitHub/pin/preservation evidence; `bridge-owner-handoff-2026-10-11.md` — prepared, not dispatched. `owner-decisions-2026-10-11.md` supplies decisions 1–4 and the conditional USD 5 envelope. `unblock-proposal-2026-10-11.md` and preflight are historical proposals/evidence, not current ungranted-authority sources or route receipts.
-4. The explicit original P0 spec and Stage A handoff paths named in the charter.
-5. Current `docs/COORDINATOR-PATTERN.md`, `docs/SPEC-CONVENTION.md`, `skills/goal/SKILL.md`, `templates/pi-routing-directive.md`, and applicable repository instructions before any newly authorized action.
+1. `resume-stop-report-2026-10-13-01a1358d.md`, `ownership-transfer-2026-10-13-01a1358d.md`, this ownership block and `charter.md` — S-1 stop/disposition, successor authority, actual remote freshness and limitations.
+2. `handoff.md`, `ownership-transfer-2026-10-12-01a131a9.md`, `owner-delegated-decisions-2026-10-12-01a131a9.md` — preserved decisions, spend guards, production boundary, routes and deviations.
+3. `follow-on-parcel-manifests.md` §P5a onward, `p0-triage-2026-10-12.md`, `p1-triage-2026-10-12.md` and upstream parcel closures/carry-forwards — binding seams, exact allowed paths, T-35/T-36, OD-22/OD-23.
+4. Accepted P0 boundary/event/validation contracts. Original Stage A inputs remain historical and untouched; they are not current completion evidence.
+5. Current `docs/COORDINATOR-PATTERN.md`, `docs/SPEC-CONVENTION.md`, `skills/goal/SKILL.md`, `templates/pi-routing-directive.md`, standing constraints and applicable repository instructions before dispatch.
 
 Do not load unrelated historical specs/lessons wholesale or consume another goal's standing grants.
 
 ## Standing authorizations — exact scope, no implied grants
+
+**Effective successor grant:** explicit 2026-10-13 replacement preserves the 2026-10-12 blanket non-destructive authority, owner-delegated dispositions and later spend guards. Read those records before using the chronological ledger below. Historical pre-P0 holds are not current queue state. No new production/cloud/credential authority is granted by this transfer.
 
 Owner response, verbatim:
 
@@ -98,19 +100,29 @@ The presented approvals bound that response as follows:
 
 | Parcel | State | Risk / routing |
 |---|---|---|
-| OPMEM-P0 | Stage A draft; owner authority granted; independent review/lint, GitHub process amendment, human W1 approval/real registration and technical admission still pending | elevated / architecture/risk |
-| OPMEM-P1 | Narrative proposal, not dispatchable | elevated / architecture/risk |
-| OPMEM-P2 | Narrative proposal, not dispatchable | elevated / architecture/risk |
-| OPMEM-P3 | Narrative proposal, not dispatchable | elevated / architecture/risk |
-| OPMEM-P4 | Narrative proposal, not dispatchable | elevated / architecture/risk |
-| OPMEM-P5 | Narrative proposal, not dispatchable | elevated / architecture/risk |
-| OPMEM-P6 | Narrative proposal, not dispatchable | elevated / architecture/risk |
-| OPMEM-P7 | Narrative proposal, not dispatchable | standard / implementation/standard |
+| OPMEM-P0 | Accepted; #199 / closure / seven frozen documents | elevated / architecture/risk |
+| OPMEM-P1a/P1b | Accepted; #49/#61; later external production promotions observed, health unverified | elevated / architecture/risk |
+| OPMEM-P2a/P2b | Accepted; #62/#63 | elevated / architecture/risk |
+| OPMEM-P3a/P3b | Accepted; #64/#65 | elevated / architecture/risk |
+| OPMEM-P4a/P4b | Accepted; #66/#67 | elevated / architecture/risk |
+| OPMEM-P5a | NEXT but STOPPED for S-1 dependency-security disposition; baseline 421/0/0; no shaping/build dispatch | elevated / architecture/risk |
+| OPMEM-P5b | Queued; private fresh-clone import under OD-1 only when shaped | elevated / architecture/risk |
+| OPMEM-P6 | Queued; depends on P5b | elevated / architecture/risk |
+| OPMEM-P7 | Queued; package/root named at shaping, depends on P6 | standard / implementation/standard |
 | OPMEM-P8 | Narrative proposal; separate cloud/deployment authority required | elevated / architecture/risk |
 | OPMEM-P9 | Narrative proposal; separate test access authority required | elevated / architecture/risk |
 | OPMEM-P10 | Narrative proposal; fourteen-day real-work pilot | standard / implementation/standard |
 
-## Current planning algorithm
+## Current execution algorithm
+
+1. Check sole ownership and exact remote refs; do not trust retained stale tracking refs after branch deletion.
+2. Shape P5a from accepted manifests + carry-forwards in a fresh session; verify factual premises on disk; record any amendments alone before code.
+3. Record named isolated Gateway worktree/base and full-suite baseline; non-deploying merge target only. Recreate an absent integration branch only under the reversible Git grant, never by promoting to main/develop.
+4. Dispatch builder Step 0, rule on flags, then GO only within approved exact paths. Bound/account each request; guard USD 45 per architecture parcel and USD 400 cumulative, predecessor recorded USD 191.10 carried forward.
+5. Closure-check claims against disk, rerun deterministic tests, dual independent frontier reviews, reproduce disputes, scoped rework with its own Step 0 and test-count tripwire; no source fixes by reviewers.
+6. Merge only to the explicitly non-deploying target with exact-head green chain; record closure/tracking/lessons and continue P5b–P7. Stop for production/cloud/credential/destructive actions, security outside scope, unresolved authority or other standing stop conditions.
+
+## Historical pre-P0 planning algorithm — superseded
 
 1. Recheck coordinator ownership and scoped git/file state without disturbing changes.
 2. Persist existing ratification/appointment — no new locked decisions, unsupported claims, or approval receipts.
@@ -138,6 +150,10 @@ Every eventual kickstarter references `plugins/foreman-line/docs/kickstarters/ST
 - Queue complete or owner says stop.
 
 No polling or short wakeups. No workers are currently running. On a future interrupted worker cycle, first establish whether a worker is actually live; unclaimed surviving disk work is not a completion claim.
+
+## Current stop report — 2026-10-13, sole coordinator 01a1358d
+
+See `resume-stop-report-2026-10-13-01a1358d.md`. Written stopped state; no model request, code changes, production/cloud/credential operation, worker, polling or wakeup. Sole ownership retained. Next owner action is narrow S-1 remediation scope or explicit bounded risk disposition for the pre-existing SQLite dependency advisory outside P5a's file authority. This is not a repeated ownership/requirements/P0/Git approval request. Remote base restoration and P5a shaping resume only after the stop is resolved.
 
 ## Historical stop report / next safe action — before the latest owner decisions
 
