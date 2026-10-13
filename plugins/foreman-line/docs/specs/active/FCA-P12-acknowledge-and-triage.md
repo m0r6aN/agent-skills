@@ -1,7 +1,7 @@
 ---
 ticket: FCA-P12
 title: Acknowledge historical failures and triage notifications, bound to the evidence
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-10-13
 updated: 2026-10-13
@@ -218,3 +218,10 @@ Mandated reviewer questions:
 - plugins/foreman-line/ops-console/tests/ui-signals.test.ts
 - plugins/foreman-line/ops-console/README.md
 - plugins/foreman-line/docs/specs/INDEX.md
+
+## Owner ratification — 2026-10-13
+
+Owner ratified this spec as drafted ("ratify all as written"), including every
+amendment it names under "Ask first" (A6 the `state/acknowledgements.json` file and `GET/POST /api/acknowledgements`, `DELETE /api/acknowledgements/:id`, A7 the `syncAlerts` behaviour change). Open Questions are resolved by the
+proposals stated in them: OQ1 only `session-state` signals and notifications are acknowledgeable, OQ2 no expiry, OQ3 alert fingerprint is kind + rule + failure code. Blanket authority for decisions and
+non-destructive actions stands; Gate 3 (merge) is not delegated by this record.

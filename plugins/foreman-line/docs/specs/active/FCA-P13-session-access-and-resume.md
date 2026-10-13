@@ -1,7 +1,7 @@
 ---
 ticket: FCA-P13
 title: Session access — correct attach, read a failed session's output, resume only when there is something to resume
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-10-13
 updated: 2026-10-13
@@ -173,3 +173,10 @@ Mandated reviewer questions:
 - plugins/foreman-line/ops-console/tests/browser-sessions.test.ts
 - plugins/foreman-line/ops-console/README.md
 - plugins/foreman-line/docs/specs/INDEX.md
+
+## Owner ratification — 2026-10-13
+
+Owner ratified this spec as drafted ("ratify all as written"), including every
+amendment it names under "Ask first" (no amendment: this parcel adds no route, flow or state file). Open Questions are resolved by the
+proposals stated in them: OQ1 no spawned resume now, OQ2 select the receipt pane by id. Blanket authority for decisions and
+non-destructive actions stands; Gate 3 (merge) is not delegated by this record.

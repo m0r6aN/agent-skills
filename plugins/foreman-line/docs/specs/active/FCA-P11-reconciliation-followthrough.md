@@ -1,7 +1,7 @@
 ---
 ticket: FCA-P11
 title: Reconciliation follow-through — per-finding "do it" that prepares a scoped session
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-10-13
 updated: 2026-10-13
@@ -188,3 +188,10 @@ Mandated reviewer questions:
 - plugins/foreman-line/ops-console/tests/browser-reconcile.test.ts
 - plugins/foreman-line/ops-console/README.md
 - plugins/foreman-line/docs/specs/INDEX.md
+
+## Owner ratification — 2026-10-13
+
+Owner ratified this spec as drafted ("ratify all as written"), including every
+amendment it names under "Ask first" (A10 additive spawn-receipt `subject`/`verb` fields, ratified in principle and to be landed as its own small amendment after this parcel). Open Questions are resolved by the
+proposals stated in them: OQ1 resolved as A10 (not a dependency of this parcel), OQ2 scope-footer text pinned in a constant and by a test. Blanket authority for decisions and
+non-destructive actions stands; Gate 3 (merge) is not delegated by this record.

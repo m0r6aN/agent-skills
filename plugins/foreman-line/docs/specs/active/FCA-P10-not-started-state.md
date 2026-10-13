@@ -1,7 +1,7 @@
 ---
 ticket: FCA-P10
 title: Parcel state amendment — separate "not started" from "stalled" (FOC-P0 C4 rule R4a)
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-10-13
 updated: 2026-10-13
@@ -233,3 +233,10 @@ Mandated reviewer questions:
 - plugins/foreman-line/ops-console/README.md
 - plugins/foreman-line/docs/specs/active/FOC-P0-projection-contract-and-discovery-inventory.md
 - plugins/foreman-line/docs/specs/INDEX.md
+
+## Owner ratification — 2026-10-13
+
+Owner ratified this spec as drafted ("ratify all as written"), including every
+amendment it names under "Ask first" (A2 the sixth state `not-started` and rule R4a (owner decision 2026-10-13: "separate not started from stalled")). Open Questions are resolved by the
+proposals stated in them: OQ1 `not-started`, OQ2 a stale spec-only parcel stays `hung`, OQ3 rule id `R4a`. Blanket authority for decisions and
+non-destructive actions stands; Gate 3 (merge) is not delegated by this record.
