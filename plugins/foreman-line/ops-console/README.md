@@ -97,6 +97,28 @@ before any spawn, and refusals are audited like executions. Spawns use a
 frozen minimal environment (no caller-env passthrough) and the configured
 repo root as working directory.
 
+## Session ledger (FCA-P7)
+
+Every launched pane leaves an evidence-backed record, derived on each read from
+observed facts (never stored as status):
+
+- **tmux hardening** — panes are created with `remain-on-exit` and `pipe-pane`,
+  so a pane that dies at startup stays attachable with its exit status and its
+  output is appended to `state/sessions/<receipt-id>/pane.log` (retention: 5 MB
+  per pane, 200 panes; truncation is marked, never silent).
+- **Lifecycle** (closed): `launching`, `running`, `exited-clean`,
+  `exited-error`, `no-transcript`, `vanished`, `unknown`. `exited-clean` means
+  exit status 0, **not** that the work is complete.
+- **Joins** — pi transcript by worktree path (header `cwd` must agree); git
+  outcome (commits ahead of `baseCommit`, changed files, pushed against the
+  last-fetched `origin/<branch>`). Zero or several transcript candidates read
+  `none` / `ambiguous`, never a guess.
+- **API** — `GET /api/spawns` gains an additive `ledger` object per receipt.
+  Receipts written before the ledger read as unknown and never raise attention.
+- **pi models must be `provider/model`** — a bare id is ambiguous across
+  authenticated providers and pi exits at startup; planning refuses it before
+  any worktree or process exists.
+
 ## Architecture (FOC-P1–FOC-P4)
 
 - `src/chain.ts` — receipt-chain walk (receiptPath membership, filename

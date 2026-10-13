@@ -218,3 +218,47 @@ the operator's server. The first pane is created with `remain-on-exit` and
 `pipe-pane` chained in one tmux command (race-free); later panes attach
 `pipe-pane` by pane id after `split-window -P`, and rely on retained
 scrollback (`capture-pane`) for any output before attachment.
+
+## Delegated amendment (retroactive) and implementation findings — 2026-10-13
+
+Recorded AFTER implementation, not before: these paths were found necessary
+while building and were not in the ratified Allowed Files. They widen no
+product scope (test support, the new store the structural write guard had to
+name, and docs) and are flagged here for owner review rather than silently
+absorbed.
+
+Additional Allowed Files:
+
+- plugins/foreman-line/ops-console/src/ledger-store.ts
+- plugins/foreman-line/ops-console/tests/ledger-api.test.ts
+- plugins/foreman-line/ops-console/tests/browser-sessions.test.ts
+- plugins/foreman-line/ops-console/tests/support/cdp.ts
+- plugins/foreman-line/ops-console/tests/ui-fixture.ts
+- plugins/foreman-line/ops-console/tests/read-only.test.ts
+- plugins/foreman-line/ops-console/README.md
+
+Clarifications:
+
+- **Severity.** The design said `warning`; the existing closed severity
+  vocabulary is `info | attention | urgent`, so `exited-error`, `no-transcript`
+  and `vanished` raise `attention`. No vocabulary was widened.
+- **Write allowlist.** `ledger-store.ts` is the fifth sanctioned fs writer
+  (read-only guard test updated); `state/sessions/` is a closed STATE_DIRS entry.
+- **tmux `pane-base-index`.** This machine numbers panes from 1. Legacy
+  receipts are matched to panes by creation order, never by tmux's index value;
+  new receipts record the tmux pane id.
+- **AC9 root cause (reproduced in real Chromium against the live console).**
+  The Sessions button navigated correctly. The defect was the view it opened:
+  the workspace waited for all five endpoints before showing any, the
+  single-threaded server serialized the slow `/api/goals` and `/api/signals`
+  scans (~5 s each on the live console) ahead of `/api/spawns`, and Sessions
+  asserted "No console-recorded launches" for ~10 s. Fixed by applying each
+  endpoint as it arrives, requesting the cheap ones first, and rendering
+  explicit Loading / Could-not-load states. The slow scans themselves are NOT
+  fixed here (see Known follow-ups).
+
+Known follow-ups (not in this parcel): `/api/goals` and `/api/signals` block the
+event loop for ~5 s each on the live console; `/api/spawns` cost grows with
+receipts (one tmux probe per session, a few git probes per receipt) and should
+get a short-TTL cache if receipt counts reach the hundreds.
+
