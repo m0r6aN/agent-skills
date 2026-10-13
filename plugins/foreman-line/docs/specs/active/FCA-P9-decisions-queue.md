@@ -1,7 +1,7 @@
 ---
 ticket: FCA-P9
 title: Decisions queue — Gate 3 merge, Gate 1 ratification and Gate 2 dispatch, presented not performed
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-10-13
 updated: 2026-10-13
@@ -263,3 +263,10 @@ hostile-reading brief; disputed findings are verified before triage.
 - plugins/foreman-line/ops-console/README.md
 - plugins/foreman-line/docs/specs/active/FCA-U1-workspace-navigation.md
 - plugins/foreman-line/docs/specs/INDEX.md
+
+## Owner ratification — 2026-10-13
+
+Owner ratified this spec as drafted ("ratify all as written"), including every
+amendment it names under "Ask first" (A1 fifth destination "Decisions", A3 `GET /api/decisions`, A4 present-only `pr-merge` flow with the `repo-root-fleet` argument kind, A5 read-only `gh` allowlist incl. the check-run annotation GET). Open Questions are resolved by the
+proposals stated in them: OQ1 no strategy flag, OQ2 substring constant pinned by a fixture of the real annotation, OQ3 all open PRs in each declared fleet repo, OQ4 drafts listed and labelled. Blanket authority for decisions and
+non-destructive actions stands; Gate 3 (merge) is not delegated by this record.

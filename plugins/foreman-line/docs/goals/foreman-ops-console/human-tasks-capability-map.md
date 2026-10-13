@@ -1,10 +1,13 @@
-# Capability Map — Human-Task Surfaces (DRAFT, awaiting owner ratification)
+# Capability Map — Human-Task Surfaces (owner-ratified 2026-10-13)
 
 Companion to `session-ledger-capability-map.md`, `ux-redesign-capability-map.md`
-and `AMENDMENT-2026-10-11-control-center.md`. Status: **draft 2026-10-13**. Nothing
-below is dispatched until the owner ratifies the specs and the amendments listed
-in "Ratification checklist"; each ratification lands as its own commit before any
-code (spec-driven workflow).
+and `AMENDMENT-2026-10-11-control-center.md`. Status: **owner-ratified 2026-10-13**: the map, the build order, specs FCA-P9 to
+FCA-P13, and amendments **A1-A10 exactly as drafted** ("ratify all as written"). Each
+spec carries its own ratification record. Not ratified by this record, because they
+are not in this spec set: pulling the event-loop offload or Host/Origin validation
+forward (they stay deferred, see "Open decisions"), and the specs for
+`closure-proposal` and `hygiene-actions` (A8, A9 stay provisional until those specs
+exist). Gate 3 (merge) remains human-owned.
 
 ## Why this exists
 
