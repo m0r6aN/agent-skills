@@ -63,3 +63,16 @@ No edits this turn. Reply with (1) restatement; (2) design table ruling → file
 - **S0-2:** every non-access kind **must** carry a verified `access_ref` or `memory_id` (so the spine `correlation_id` mapping is total); an `outcome` with only a free `target_ref` ⇒ 422.
 - **S0-3:** duplicate delivered access under a new operation id ⇒ ack `replayed: true`, a binding row for the new operation, an audit `memory_events` row flagged `replay_equivalent`, **no** second `memory_access_delivered` row and **no** second `Access` spine event — approved.
 - **S0-4:** the `tests/test_shards_v1_1.py` route-table edit is the sanctioned mechanical fixture edit.
+
+## R1 triage (coordinator, 2026-10-13) — Seat A APPROVE-WITH-FIXES, Seat B REQUEST-CHANGES
+
+| # | Finding | Disposition | Ruling |
+|---|---|---|---|
+| P3a-T1 | A F-1 + B F-3 — duplicate `record_ids` (memory double rows vs PG permanent 500) | fix | Duplicate ids inside one `access`/`access_omitted` request ⇒ **422** at model validation. Both storage modes tested. |
+| P3a-T2 | A F-2 + B F-4 — repeat `access_omitted` loses its spine event | fix | Every accepted `access_omitted` appends its own spine event: its deterministic id includes the operation key. Only **delivered `access`** keeps the S0-3 dedup. Test: two omissions (different reason/time) ⇒ two `AccessOmitted` spine events with their own times. |
+| P3a-T3 | A F-3 — mixed batch acks `replayed: true` | fix | Ack `replayed: true` only when **every** target was replay-equivalent; the ack also lists `replay_equivalent_record_ids` (sorted). |
+| P3a-T4 | B F-1 — cached ack bypasses current reference authorization | fix | Before returning any cached ack (incl. concurrent-winner recovery) re-resolve all references under the **current** caller scope; any no-longer-authorized reference ⇒ **409 `references_no_longer_authorized`**, nothing returned (same rule as P2b-T2). |
+| P3a-T5 | B F-2 + A F-4 — application/consideration/non_applicability against a selected-but-not-delivered (or omitted) record | fix | `consideration`, `application`, `non_applicability` require `access_ref` naming a **delivered** access (row in `memory_access_delivered` for that recall event and record); otherwise **409 `access_not_delivered`** (client may retry after reporting delivery), nothing written. `outcome`/`feedback` with `access_ref` follow the same rule; with `memory_id` only they keep the visibility check. |
+| P3a-T6 | B F-5 — retries not byte-identical | fix | The binding stores the original response bytes; an identical retry returns them unchanged (`replayed` in the ack describes accounting replay-equivalence, not transport retry). Byte-identity test. |
+| P3a-T7 | B F-6 + A F-4 (task id fallback) | carry-forward → P3b | P3b projection dedups correlated feedback across operation ids, filters on the delivered subset, and handles an empty `task_id` explicitly. |
+| P3a-T8 | A F-5 | informational | Live revocation state is Gateway/P5a-owned. |
