@@ -75,6 +75,7 @@ const MISSING_GIT = {
 } as const
 const ERROR_LINE = 'Error: Model "m" is ambiguous across providers: a/m, b/m.'
 const OUTPUT: OutputFact = {
+  source: 'log',
   logPath: '/x',
   present: true,
   bytes: 9,

@@ -28,7 +28,7 @@ export type GitRunner = (cwd: string, args: readonly string[]) => string | null
  * large `maxBuffer` so big ref/log listings are not silently truncated into
  * "nothing exists". Any failure is `null` (unknown), never an empty result.
  */
-export const GIT_TIMEOUT_MS = 20_000
+export const GIT_TIMEOUT_MS = 10_000
 export const GIT_MAX_BUFFER = 64 * 1024 * 1024
 export const defaultGitRunner: GitRunner = (cwd, args) => {
   try {

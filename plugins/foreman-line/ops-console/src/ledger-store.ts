@@ -35,12 +35,20 @@ export interface RetentionPolicy {
    * been quiet for this long, at the next launch.
    */
   readonly quietMs: number
+  /**
+   * Receipt ids whose pane may still be writing. They are never truncated or removed,
+   * whatever their age: liveness, not a guessed quiet period, decides. `'all'` protects
+   * everything (used when liveness could not be established).
+   */
+  readonly protect?: ReadonlySet<string> | 'all'
+  /** Receipt ids newest-first (from launch times). Ids not listed rank oldest; absent = by id. */
+  readonly order?: readonly string[]
 }
 
 export const DEFAULT_RETENTION: RetentionPolicy = {
   maxBytesPerPane: 5 * 1024 * 1024,
   maxPanes: 200,
-  quietMs: 10 * 60 * 1000,
+  quietMs: 0,
 }
 
 export interface LedgerPaths {
@@ -97,14 +105,19 @@ export function enforceRetention(
   } catch {
     return { truncated: [], dropped: [] }
   }
-  // Only well-formed receipt ids that are REAL directories (lstat: a symlinked
-  // entry could point outside the tree) are ever touched. Ranked newest first by
-  // id - ids embed the launch timestamp - not by mtime, which retention itself
-  // refreshes.
+  // Only well-formed receipt ids that are REAL directories (lstat: a symlinked entry could
+  // point outside the tree) are ever touched. Ranked newest first by launch time when the
+  // caller supplies it (custom session names and p10-vs-p2 defeat lexical order), else by id.
+  const rankOf = new Map((policy.order ?? []).map((id, index) => [id, index]))
   const panes = names
     .filter((name) => RECEIPT_ID.test(name))
-    .sort()
-    .reverse()
+    .sort((a, b) => {
+      const [x, y] = [
+        rankOf.get(a) ?? Number.MAX_SAFE_INTEGER,
+        rankOf.get(b) ?? Number.MAX_SAFE_INTEGER,
+      ]
+      return x !== y ? x - y : a < b ? 1 : a > b ? -1 : 0
+    })
     .map((name) => {
       try {
         const dir = join(root, name)
@@ -118,6 +131,7 @@ export function enforceRetention(
   const truncated: string[] = []
   const dropped: string[] = []
   panes.forEach((pane, rank) => {
+    if (policy.protect === 'all' || policy.protect?.has(pane.name)) return
     const log = join(pane.dir, LOG_NAME)
     let size: number
     let mtimeMs: number
@@ -152,4 +166,23 @@ export function enforceRetention(
     }
   })
   return { truncated, dropped }
+}
+
+/**
+ * Remove a ledger directory that never received output (a launch that failed before its
+ * pane started). Refuses anything that is not an id-validated directory containing at most
+ * an empty log: it never deletes captured output.
+ */
+export function discardEmptyLedgerDir(stateDir: string, receiptId: string): boolean {
+  try {
+    const dir = ledgerDirPath(stateDir, receiptId)
+    if (!lstatSync(dir).isDirectory()) return false
+    const entries = readdirSync(dir)
+    if (entries.some((name) => name !== LOG_NAME)) return false
+    if (entries.includes(LOG_NAME) && lstatSync(join(dir, LOG_NAME)).size > 0) return false
+    rmSync(dir, { recursive: true, force: true })
+    return true
+  } catch {
+    return false
+  }
 }

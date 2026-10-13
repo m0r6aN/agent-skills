@@ -4,7 +4,12 @@ import { join } from 'node:path'
 import { type ConsoleConfig, ledgerDirPath } from './config.js'
 import { type GitFact, makeGitCache } from './ledger-git.js'
 import { LOG_NAME, TRUNCATED_NAME } from './ledger-store.js'
-import { defaultPiSessionsDir, readPiTranscript, type TranscriptFact } from './ledger-transcript.js'
+import {
+  defaultPiSessionsDir,
+  readPiTranscript,
+  type TranscriptFact,
+  UNKNOWN_TRANSCRIPT,
+} from './ledger-transcript.js'
 import type { SpawnReceipt } from './spawn.js'
 
 /**
@@ -57,6 +62,8 @@ export interface OutputFact {
   readonly present: boolean
   readonly bytes: number | null
   readonly tail: readonly string[]
+  /** `screen`: the pane as rendered right now (tmux capture-pane); `log`: the captured stream, tail only. */
+  readonly source: 'screen' | 'log' | 'none'
   /** First error-looking line, verbatim (ANSI stripped); evidence, never reclassified. */
   readonly providerError: string | null
   /** Retention removed older content (byte or pane-count cap). */
@@ -66,6 +73,8 @@ export interface OutputFact {
 export interface LedgerEntry {
   readonly receiptId: string
   readonly state: LifecycleState
+  /** What tmux said about this receipt's session: found, absent, or unavailable. */
+  readonly tmux: TmuxSessionFact['kind']
   /** Receipt carries ledger fields; false = legacy receipt (all new facts unknown). */
   readonly ledger: 'present' | 'absent'
   readonly evidence: readonly string[]
@@ -86,6 +95,8 @@ export interface LedgerProbes {
   output(receipt: SpawnReceipt): OutputFact
   transcript(receipt: SpawnReceipt): TranscriptFact
   git(receipt: SpawnReceipt): GitFact
+  /** The pane as rendered right now (what attaching would show); null if unavailable. */
+  screen?(receipt: SpawnReceipt, paneId: string): string[] | null
 }
 
 // ------------------------------------------------------------------ output
@@ -96,6 +107,12 @@ const ANSI =
 const ERROR_LINE =
   /^\s*(?:error|fatal)\b.*|upstream request failed.*|policy budget exceeded.*|\b(?:4\d\d|5\d\d)\b.*(?:error|failed|exceeded)/i
 const MAX_TAIL_BYTES = 64 * 1024
+
+export const MAX_LINE_CHARS = 400
+/** Bound every displayed line: a TUI redraw can produce one enormous 'line'. */
+export function capLine(line: string): string {
+  return line.length > MAX_LINE_CHARS ? `${line.slice(0, MAX_LINE_CHARS)}…` : line
+}
 
 export function stripAnsi(text: string): string {
   return text.replace(ANSI, '')
@@ -118,6 +135,7 @@ const NO_OUTPUT: OutputFact = {
   present: false,
   bytes: null,
   tail: [],
+  source: 'none',
   providerError: null,
   truncated: false,
 }
@@ -148,7 +166,8 @@ export function readPaneOutput(stateDir: string, receipt: SpawnReceipt): OutputF
       logPath,
       present: true,
       bytes: size,
-      tail: lines.slice(-TAIL_LINES),
+      tail: lines.slice(-TAIL_LINES).map(capLine),
+      source: 'log',
       // The LATEST error-looking line is the one that explains how the pane ended.
       providerError: [...lines].reverse().find((line) => ERROR_LINE.test(line)) ?? null,
       truncated,
@@ -241,36 +260,94 @@ export function liveProbes(
     output: (receipt) => readPaneOutput(config.stateDir, receipt),
     transcript: (receipt) => readPiTranscript(sessionsRoot, receipt.worktreePath),
     git: (receipt) => gitCache.outcome(receipt.worktreePath, receipt.baseCommit ?? null),
+    screen: (_receipt, paneId) => captureScreen(config.repoRoot, paneId, socket),
+  }
+}
+
+/**
+ * The rendered pane (`tmux capture-pane -p -J`): readable even for full-screen TUIs, whose raw
+ * stream is cursor-escape noise. `-J` joins lines the terminal width wrapped, so an error
+ * message stays one verbatim line. Works while the pane (alive or retained-dead) exists.
+ */
+export function captureScreen(repoRoot: string, paneId: string, socket?: string): string[] | null {
+  if (!/^%\d+$/.test(paneId)) return null
+  try {
+    const out = execFileSync(
+      'tmux',
+      [
+        ...(socket === undefined ? [] : ['-L', socket]),
+        'capture-pane',
+        '-p',
+        '-J',
+        '-t',
+        paneId,
+        '-S',
+        '-200',
+      ],
+      { cwd: repoRoot, encoding: 'utf8', timeout: 5000, stdio: ['ignore', 'pipe', 'ignore'] },
+    )
+    return out
+      .split('\n')
+      .map((line) => line.replace(/\s+$/, ''))
+      .filter((line) => line !== '')
+      .slice(-TAIL_LINES)
+      .map(capLine)
+  } catch {
+    return null
   }
 }
 
 // -------------------------------------------------------------- derivation
 
-function paneFor(receipt: SpawnReceipt, panes: readonly TmuxPaneFact[]): TmuxPaneFact | null {
+interface PaneMatch {
+  readonly pane: TmuxPaneFact | null
+  /** No pane id was recorded and the pane count does not match the receipts: attribution is a guess. */
+  readonly ambiguous: boolean
+}
+
+function paneFor(
+  receipt: SpawnReceipt,
+  panes: readonly TmuxPaneFact[],
+  siblings: number | undefined,
+): PaneMatch {
   if (typeof receipt.tmuxPaneId === 'string') {
-    return panes.find((pane) => pane.paneId === receipt.tmuxPaneId) ?? null
+    return {
+      pane: panes.find((pane) => pane.paneId === receipt.tmuxPaneId) ?? null,
+      ambiguous: false,
+    }
   }
-  // Legacy receipts have no pane id. tmux numbers panes from `pane-base-index`
-  // (1 on some machines), so a receipt's 0-based paneIndex is matched by
-  // creation ORDER, never by tmux's own index value.
+  // No pane id (legacy, or the launcher could not capture it). tmux numbers panes from
+  // `pane-base-index` (1 on some machines), so a 0-based paneIndex is matched by creation
+  // ORDER - but only when tmux still holds exactly as many panes as there are receipts for
+  // this session. Otherwise a pane has been lost and order no longer identifies anyone.
+  if (siblings !== undefined && panes.length !== siblings) return { pane: null, ambiguous: true }
   const ordered = [...panes].sort((a, b) => a.paneIndex - b.paneIndex)
-  return ordered[receipt.paneIndex] ?? null
+  return { pane: ordered[receipt.paneIndex] ?? null, ambiguous: false }
 }
 
 function isoFromEpochSeconds(seconds: number | null): string | null {
   return seconds === null ? null : new Date(seconds * 1000).toISOString()
 }
 
+/** Prefer the rendered screen for the tail (readable); keep the log's error line if the screen has none. */
+function withScreen(output: OutputFact, screen: string[] | null): OutputFact {
+  if (screen === null || screen.length === 0) return output
+  const error = [...screen].reverse().find((line) => ERROR_LINE.test(line)) ?? null
+  return { ...output, tail: screen, source: 'screen', providerError: error ?? output.providerError }
+}
+
 export function deriveLedgerEntry(
   receipt: SpawnReceipt,
   probes: LedgerProbes,
   now: number,
+  /** Receipts recorded for this tmux session (for pane attribution without a pane id). */
+  siblings?: number,
 ): LedgerEntry {
   const ledger: LedgerEntry['ledger'] = typeof receipt.ledgerDir === 'string' ? 'present' : 'absent'
   const tmux = probes.tmux(receipt.sessionName)
   const transcript = probes.transcript(receipt)
   const git = probes.git(receipt)
-  const output = probes.output(receipt)
+  let output = probes.output(receipt)
   const evidence: string[] = []
   let exit: LedgerEntry['exit'] = { status: null, signal: null, at: null }
   let state: LifecycleState = 'unknown'
@@ -283,9 +360,19 @@ export function deriveLedgerEntry(
   if (tmux.kind === 'unavailable') {
     evidence.push(`tmux unavailable: ${tmux.reason}`)
   } else {
-    const pane = tmux.kind === 'found' ? paneFor(receipt, tmux.panes) : null
-    if (pane !== null && !pane.dead) {
+    const match =
+      tmux.kind === 'found'
+        ? paneFor(receipt, tmux.panes, siblings)
+        : { pane: null, ambiguous: false }
+    const pane = match.pane
+    if (match.ambiguous) {
+      state = 'unknown'
+      evidence.push(
+        'cannot attribute panes: no pane id was recorded and tmux no longer holds one pane per receipt of this session',
+      )
+    } else if (pane !== null && !pane.dead) {
       paneAlive = true
+      output = withScreen(output, probes.screen?.(receipt, pane.paneId) ?? null)
       if (noMessages && age < LAUNCH_GRACE_MS) {
         state = 'launching'
         evidence.push('pane alive; no transcript yet (within launch grace)')
@@ -294,6 +381,7 @@ export function deriveLedgerEntry(
         if (noMessages) evidence.push('pane alive but pi has written no transcript')
       }
     } else if (pane !== null) {
+      output = withScreen(output, probes.screen?.(receipt, pane.paneId) ?? null)
       exit = {
         status: pane.deadStatus,
         signal: pane.deadSignal,
@@ -305,10 +393,23 @@ export function deriveLedgerEntry(
       } else if (pane.deadStatus === 0) {
         // Exit 0 is not success: pi records a provider failure (e.g. a 429) as
         // an assistant message with stopReason "error" and still exits cleanly.
-        state = noMessages ? 'no-transcript' : transcriptFailed ? 'exited-error' : 'exited-clean'
+        // If the transcript cannot be read or joined, the ending cannot be checked: unknown, not clean.
+        const endingCheckable = noMessages || transcript.link === 'linked'
+        state = noMessages
+          ? 'no-transcript'
+          : transcriptFailed
+            ? 'exited-error'
+            : endingCheckable
+              ? 'exited-clean'
+              : 'unknown'
         evidence.push(
           'pane exited with status 0 (process ended; this is not proof the work is complete)',
         )
+        if (!endingCheckable) {
+          evidence.push(
+            'exit status 0, but the transcript could not be joined, so whether it ended in an error is unknown',
+          )
+        }
       } else if (pane.deadStatus !== null) {
         state = 'exited-error'
         evidence.push(`pane exited with status ${pane.deadStatus}`)
@@ -352,14 +453,20 @@ export function deriveLedgerEntry(
   if (ledger === 'absent' && output.present === false)
     evidence.push('no captured output (legacy receipt)')
 
+  // "No live pane" is only a fact when tmux actually answered.
   const orphanClean =
-    !paneAlive && git.worktree === 'present' && git.commitsAhead === 0 && git.dirtyFiles === 0
+    tmux.kind !== 'unavailable' &&
+    !paneAlive &&
+    git.worktree === 'present' &&
+    git.commitsAhead === 0 &&
+    git.dirtyFiles === 0
   if (orphanClean)
     evidence.push('orphan-clean: worktree has no commits and no changes and no live pane')
 
   return {
     receiptId: receipt.id,
     state,
+    tmux: tmux.kind,
     ledger,
     evidence,
     exit,
@@ -370,18 +477,44 @@ export function deriveLedgerEntry(
   }
 }
 
+/** Upper bound on how long one ledger pass may spend probing (the server is single-threaded). */
+export const LEDGER_BUDGET_MS = 8000
+
+const UNKNOWN_GIT: GitFact = {
+  worktree: 'unknown',
+  branch: null,
+  commitsAhead: null,
+  dirtyFiles: null,
+  pushed: null,
+}
+
 /**
  * Derive ledger entries for many receipts in one pass. tmux is probed once per
- * session (a session holds many panes), so a refresh costs one `list-panes`
- * per session rather than one per receipt.
+ * session (a session holds many panes), so a refresh costs one `list-panes` per
+ * session, not one per receipt. Probing is time-boxed: once the budget is spent the
+ * remaining receipts keep their tmux-derived state but report git/transcript/screen as
+ * unknown with an explicit evidence line, so a slow disk cannot stall the console.
  */
 export function ledgerEntries(
   receipts: readonly SpawnReceipt[],
   probes: LedgerProbes,
   now: number,
+  budgetMs: number = LEDGER_BUDGET_MS,
+  clock: () => number = Date.now,
 ): Map<string, LedgerEntry> {
+  const started = clock()
   const tmuxMemo = new Map<string, TmuxSessionFact>()
-  const memoized: LedgerProbes = {
+  const siblingCount = new Map<string, number>()
+  for (const receipt of receipts) {
+    siblingCount.set(receipt.sessionName, (siblingCount.get(receipt.sessionName) ?? 0) + 1)
+  }
+  const skipped = new Set<string>()
+  const overBudget = (receipt: SpawnReceipt): boolean => {
+    if (clock() - started <= budgetMs) return false
+    skipped.add(receipt.id)
+    return true
+  }
+  const bounded: LedgerProbes = {
     ...probes,
     tmux: (sessionName) => {
       const hit = tmuxMemo.get(sessionName)
@@ -390,6 +523,31 @@ export function ledgerEntries(
       tmuxMemo.set(sessionName, fact)
       return fact
     },
+    transcript: (receipt) =>
+      overBudget(receipt) ? UNKNOWN_TRANSCRIPT : probes.transcript(receipt),
+    git: (receipt) => (overBudget(receipt) ? UNKNOWN_GIT : probes.git(receipt)),
+    ...(probes.screen === undefined
+      ? {}
+      : {
+          screen: (receipt: SpawnReceipt, paneId: string) =>
+            overBudget(receipt) ? null : (probes.screen?.(receipt, paneId) ?? null),
+        }),
   }
-  return new Map(receipts.map((receipt) => [receipt.id, deriveLedgerEntry(receipt, memoized, now)]))
+  const entries = new Map<string, LedgerEntry>()
+  for (const receipt of receipts) {
+    const entry = deriveLedgerEntry(receipt, bounded, now, siblingCount.get(receipt.sessionName))
+    entries.set(
+      receipt.id,
+      skipped.has(receipt.id)
+        ? {
+            ...entry,
+            evidence: [
+              ...entry.evidence,
+              'not fully probed: the ledger time budget was exhausted; refresh to retry',
+            ],
+          }
+        : entry,
+    )
+  }
+  return entries
 }

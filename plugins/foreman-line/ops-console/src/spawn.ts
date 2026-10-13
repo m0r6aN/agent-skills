@@ -7,7 +7,12 @@ import { type ConsoleConfig, type StateFile, stateFilePath } from './config.js'
 import { isRecord } from './guards.js'
 import { BUDGET_PRESETS, HARNESS_REGISTRY, THINKING_LEVELS } from './harness.js'
 import { listAuditEntries, recordAuditEntry } from './invoke.js'
-import { enforceRetention, ensureLedgerDir } from './ledger-store.js'
+import {
+  DEFAULT_RETENTION,
+  discardEmptyLedgerDir,
+  enforceRetention,
+  ensureLedgerDir,
+} from './ledger-store.js'
 import { composePrompt } from './prompts.js'
 
 /**
@@ -346,6 +351,45 @@ function paneIdOf(output: string): string | null {
   return match === null ? null : match[0]
 }
 
+/**
+ * Receipt ids whose pane is alive according to tmux, or `'all'` when tmux cannot say.
+ * A receipt without a recorded pane id is protected if its session has any live pane.
+ */
+function livePaneProtection(
+  runner: TmuxRunner,
+  receipts: readonly SpawnReceipt[],
+): ReadonlySet<string> | 'all' {
+  let out: string
+  try {
+    out = runner.capture(['list-panes', '-a', '-F', '#{session_name}\t#{pane_id}\t#{pane_dead}'])
+  } catch (error) {
+    // No server at all means nothing is alive; any other failure means we cannot tell.
+    return /no server running|server exited unexpectedly|error connecting to .*(No such file or directory)/i.test(
+      String((error as { stderr?: unknown }).stderr ?? (error as Error).message),
+    )
+      ? new Set()
+      : 'all'
+  }
+  const livePanes = new Set<string>()
+  const liveSessions = new Set<string>()
+  for (const line of out.split('\n')) {
+    const [session, paneId, dead] = line.split('\t')
+    if (session !== undefined && paneId !== undefined && dead === '0') {
+      livePanes.add(paneId)
+      liveSessions.add(session)
+    }
+  }
+  return new Set(
+    receipts
+      .filter((receipt) =>
+        typeof receipt.tmuxPaneId === 'string'
+          ? livePanes.has(receipt.tmuxPaneId)
+          : liveSessions.has(receipt.sessionName),
+      )
+      .map((receipt) => receipt.id),
+  )
+}
+
 export interface LaunchResult {
   readonly sessionName: string
   readonly launched: readonly number[]
@@ -385,17 +429,33 @@ export function launchSpawnPlan(
   const nextAuditId = () =>
     `spn-${String(listAuditEntries(config.stateDir).length + 1).padStart(6, '0')}`
 
-  // FCA-P7: bound the captured-output store before adding to it.
-  enforceRetention(config.stateDir, undefined, now)
+  // FCA-P7: bound the captured-output store before adding to it. Liveness decides what is
+  // protected: a pane that is still alive keeps its log whatever its age. If liveness cannot
+  // be established, nothing is touched.
+  const known = listSpawnReceipts(config.stateDir)
+  enforceRetention(
+    config.stateDir,
+    {
+      ...DEFAULT_RETENTION,
+      protect: livePaneProtection(runner, known),
+      order: [...known]
+        .sort((a, b) => (Date.parse(b.createdAt) || 0) - (Date.parse(a.createdAt) || 0))
+        .map((receipt) => receipt.id),
+    },
+    now,
+  )
 
   const launched: number[] = []
   for (const pane of plan.panes) {
+    // True once tmux has the pane; until then a failure leaves nothing worth keeping.
+    let started = false
     try {
       const receiptId = `${plan.sessionName}-p${pane.paneIndex}`
       // `=name:` is an EXACT session match; a bare name also prefix-matches other sessions.
       const exactTarget = `=${plan.sessionName}:`
       // Ledger dir first: an invalid id must fail before a worktree is cut.
       const ledger = ensureLedgerDir(config.stateDir, receiptId)
+      started = false
       worktrees.create(pane.repoRoot, pane.worktreePath)
       const baseCommit = worktrees.head?.(pane.worktreePath) ?? null
       const capture = `cat >> ${shellQuote(ledger.logPath)}`
@@ -452,6 +512,7 @@ export function launchSpawnPlan(
         )
         if (tmuxPaneId !== null) runner.run(['pipe-pane', '-o', '-t', tmuxPaneId, capture])
       }
+      started = true
       launched.push(pane.paneIndex)
       recordSpawnReceipt(config.stateDir, {
         id: receiptId,
@@ -474,6 +535,8 @@ export function launchSpawnPlan(
       })
     } catch (err) {
       const error = (err as Error).message
+      // A launch that failed before its pane existed leaves no empty ledger directory behind.
+      if (!started) discardEmptyLedgerDir(config.stateDir, `${plan.sessionName}-p${pane.paneIndex}`)
       recordAuditEntry(config.stateDir, {
         id: nextAuditId(),
         timestamp: new Date(now).toISOString(),

@@ -90,7 +90,7 @@ export const sessionStateProvider: SignalProvider & {
       const stale = age > ATTENTION_WINDOW_MS
       const failed = failedState && entry.ledger === 'present' && !stale
       // tmux itself unavailable: nothing was observed, so nothing is flagged.
-      if (entry.evidence.some((line) => line.startsWith('tmux unavailable'))) continue
+      if (entry.tmux === 'unavailable') continue
       signals.push(
         makeSignal({
           class: 'session-state',

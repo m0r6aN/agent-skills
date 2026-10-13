@@ -248,3 +248,37 @@ test('a session that no longer exists is vanished (ledger-era) - never silently 
     h.cleanup()
   }
 })
+
+test('re-review: the Sessions tail is the RENDERED screen (readable), and long lines are not cut at the terminal width', {
+  skip,
+}, async () => {
+  const longError = `Error: ${'a very long provider failure explanation '.repeat(6)}ends here`
+  const h = setup(`printf '\\033[2J\\033[Hhello-screen\\n'\necho '${longError}'\nsleep 30`)
+  try {
+    const [receipt] = launch(h, ['screen'], 'ledger-screen')
+    assert.ok(receipt)
+    const probes = liveProbes(h.config, SOCKET)
+    await waitFor(() =>
+      deriveLedgerEntry(receipt, probes, NOW + 60_000).output.tail.includes('hello-screen'),
+    )
+    const entry = deriveLedgerEntry(receipt, probes, NOW + 60_000)
+    assert.equal(entry.output.source, 'screen')
+    assert.ok(
+      entry.output.tail.includes('hello-screen'),
+      'rendered text, not escape-sequence noise',
+    )
+    assert.ok(!entry.output.tail.join('').includes('\u001b'), 'no escape sequences survive')
+    assert.equal(
+      entry.output.providerError,
+      longError,
+      'the whole message, verbatim, under the line cap',
+    )
+    assert.ok((entry.output.providerError ?? '').startsWith('Error: a very long provider failure'))
+    assert.ok(
+      (entry.output.providerError ?? '').length > 120,
+      'joined across terminal wrapping, not cut at 80 columns',
+    )
+  } finally {
+    h.cleanup()
+  }
+})
