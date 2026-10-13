@@ -1,9 +1,8 @@
-# Capability Map — Session Ledger and Reconciliation (DRAFT, awaiting owner review)
+# Capability Map — Session Ledger and Reconciliation (owner-approved 2026-10-13)
 
 Companion to `AMENDMENT-2026-10-11-control-center.md` and
-`ux-redesign-capability-map.md`. Status: **draft proposal**. Nothing here is
-ratified, dispatchable, or authorized until the owner reviews the map and each
-module spec (spec-driven-development gate).
+`ux-redesign-capability-map.md`. Status: **owner-approved 2026-10-13** (map, build order, tmux hardening, and the
+writable-path / receipt / route amendments). Gate 3 (merge) remains human-owned.
 
 ## Why this exists
 
@@ -48,7 +47,7 @@ Build order: `session-ledger` → `reconciliation` → `closure-proposal`.
 - The frozen route table and parcel-state vocabulary (FOC-P0) are not widened
   without an owner-ratified amendment named in the spec.
 
-## Decisions requested from the owner
+## Decisions (resolved 2026-10-13)
 
 1. Approve/adjust this map and the build order.
 2. tmux: keep it (installed, 3.7c) with `remain-on-exit` + `pipe-pane`

@@ -1,7 +1,7 @@
 ---
 ticket: FCA-P7
 title: Session ledger — durable, evidence-backed outcome record for launched panes
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-10-13
 updated: 2026-10-13
@@ -179,3 +179,42 @@ Mandated reviewer questions:
 - plugins/foreman-line/ops-console/tests/ledger-tmux.test.ts
 - plugins/foreman-line/ops-console/tests/ui-sessions.test.ts
 - plugins/foreman-line/docs/specs/INDEX.md
+
+## Owner ratification and delegated amendment — 2026-10-13
+
+Owner approved this spec as drafted: capability map and build order approved;
+tmux kept and hardened (`remain-on-exit` + `pipe-pane`); the `state/sessions/`
+writable subtree, the receipt addendum fields, and any new route are ratified;
+blanket authority granted for decisions and non-destructive actions. Gate 3
+(merge) is not delegated by this record.
+
+**Root cause found during preparation (evidence, 2026-10-13).** A real tmux
+reproduction showed every console launch dies at startup: the launcher passes a
+bare model id and pi exits 1 with `Model "claude-sonnet-5-5" is ambiguous
+across providers ... Use --provider or provider/model`. The pane dies, the tmux
+server exits with its last pane, and the error is lost. This explains the empty
+transcripts, clean worktrees, and absent output. It is a launcher defect, in
+scope here:
+
+11. **Provider-qualified model (AC11).** For harness `pi`, planning refuses a
+    model not in `provider/model` form with a typed refusal before any worktree
+    or process is created; the model suggestions offered by the UI are
+    provider-qualified and verified against `pi --list-models`. Other harnesses
+    are unaffected.
+
+Additional Allowed Files (coordinator-delegated; no scope change):
+
+- plugins/foreman-line/ops-console/src/harness.ts
+- plugins/foreman-line/ops-console/ui/views/spawn-panel.js
+- plugins/foreman-line/ops-console/ui/views/spawn-panel.d.ts
+- plugins/foreman-line/ops-console/tests/spawn-plan.test.ts
+- plugins/foreman-line/ops-console/tests/spawn-launch.test.ts
+- plugins/foreman-line/ops-console/tests/spawns-api.test.ts
+- plugins/foreman-line/ops-console/tests/ui-spawn-panel.test.ts
+- plugins/foreman-line/docs/goals/foreman-ops-console/session-ledger-capability-map.md
+
+Design clarification: tmux tests use a private socket (`tmux -L <name>`), never
+the operator's server. The first pane is created with `remain-on-exit` and
+`pipe-pane` chained in one tmux command (race-free); later panes attach
+`pipe-pane` by pane id after `split-window -P`, and rely on retained
+scrollback (`capture-pane`) for any output before attachment.

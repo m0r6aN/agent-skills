@@ -1,7 +1,7 @@
 ---
 ticket: FCA-P8
 title: Reconciliation view — local vs remote parcel state, history, and hung explanations
-status: draft
+status: active
 owner: clinton.morgan
 created: 2026-10-13
 updated: 2026-10-13
@@ -176,3 +176,11 @@ Mandated reviewer questions:
 - plugins/foreman-line/ops-console/tests/reconcile-read-only.test.ts
 - plugins/foreman-line/ops-console/tests/ui-reconcile.test.ts
 - plugins/foreman-line/docs/specs/INDEX.md
+
+## Owner ratification — 2026-10-13
+
+Owner approved this spec as drafted, including the amendments it names under
+"Ask first" (any new route; new confirmation-gated flow only if OQ3 is resolved
+that way). Blanket authority granted for decisions and non-destructive actions.
+Gate 3 (merge) is not delegated by this record. Open Questions OQ1-OQ3 are
+resolved by the proposals stated in them.
