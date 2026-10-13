@@ -78,3 +78,11 @@ Do NOT edit/commit this turn. Read contract + code (`ingress/models.py`, `core/m
 | P2a-T4 | B F-4 — unpaired surrogate content ⇒ 500 | fix | Covered by P2a-T2(a): controlled 4xx before store access; regression test. |
 | P2a-T5 | A F-3 — pre-P2a reservations 409 forever post-deploy | carry-forward | Deploy/migration note for the owner's `main` promotion (recorded in closure); no code. |
 | P2a-T6 | A F-5, A F-6 | informational | — |
+
+## R2 triage (coordinator) — both seats APPROVE-WITH-FIXES
+
+| # | Finding | Disposition | Ruling |
+|---|---|---|---|
+| P2a-T7 | A F-1 + B F-1 — lone surrogate with `Content-Type: application/json` ⇒ 500 in FastAPI's default validation handler; tests omit the header | fix | Register a `RequestValidationError` handler that returns 422 with a surrogate-safe body (never echo raw `input` values; error locations/types only). Fix both regression tests to send `Content-Type: application/json` and cover content, source, lineage refs, subject keys, source URI; assert 422 and zero store/reservation access. |
+| P2a-T8 | B F-2 — whitespace-only content ⇒ 500 | fix | Candidate validation rejects content with no non-whitespace character (accepted content is never rewritten). Served-path regression: 4xx, zero store/reservation access. |
+| P2a-T9 | A F-2 | informational / deploy note | R1-head rows with now-forbidden `lineage_refs` would be unreadable — no such deployment exists; recorded in closure. |
