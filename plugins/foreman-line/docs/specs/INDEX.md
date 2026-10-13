@@ -27,6 +27,11 @@ Own TO-B0/TO-P0/TO-P1 lifecycle rows maintained 2026-10-10; other rows retain th
 | FCA-P6 | [Control-center UI — dense layout, action buttons, spawn panel, session tray](active/FCA-P6-console-ui.md) | `active` | `active/` |
 | FCA-P7 | [Session ledger — durable, evidence-backed outcome record for launched panes](active/FCA-P7-session-ledger.md) | `active` | `active/` |
 | FCA-P8 | [Reconciliation view — local vs remote parcel state, history, and hung explanations](active/FCA-P8-reconciliation-view.md) | `active` | `active/` |
+| FCA-P9 | [Decisions queue — Gate 3 merge, Gate 1 ratification and Gate 2 dispatch, presented not performed](active/FCA-P9-decisions-queue.md) | `draft` | `active/` |
+| FCA-P10 | [Parcel state amendment — separate "not started" from "stalled" (FOC-P0 C4 rule R4a)](active/FCA-P10-not-started-state.md) | `draft` | `active/` |
+| FCA-P11 | [Reconciliation follow-through — per-finding "do it" that prepares a scoped session](active/FCA-P11-reconciliation-followthrough.md) | `draft` | `active/` |
+| FCA-P12 | [Acknowledge historical failures and triage notifications, bound to the evidence](active/FCA-P12-acknowledge-and-triage.md) | `draft` | `active/` |
+| FCA-P13 | [Session access — correct attach, read a failed session's output, resume only when there is something to resume](active/FCA-P13-session-access-and-resume.md) | `draft` | `active/` |
 | FCA-U1 | [Workspace navigation and responsive operator layout](active/FCA-U1-workspace-navigation.md) | `active` | `active/` |
 | FCA-U2 | [Persistent selection and explicit session launch review](active/FCA-U2-selection-launch.md) | `active` | `active/` |
 | FCA-U3 | [Session monitoring and launch outcome handoff](active/FCA-U3-session-monitoring.md) | `active` | `active/` |

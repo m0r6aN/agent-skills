@@ -101,8 +101,8 @@ export interface LedgerProbes {
 
 // ------------------------------------------------------------------ output
 
-// biome-ignore lint/suspicious/noControlCharactersInRegex: terminal escape stripping
 const ANSI =
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: terminal escape stripping
   /\u001b\][^\u0007\u001b]*(?:\u0007|\u001b\\)|\u001b\[[0-9;?]*[ -/]*[@-~]|\u001b[@-Z\\-_]|\r/g
 const ERROR_LINE =
   /^\s*(?:error|fatal)\b.*|upstream request failed.*|policy budget exceeded.*|\b(?:4\d\d|5\d\d)\b.*(?:error|failed|exceeded)/i
