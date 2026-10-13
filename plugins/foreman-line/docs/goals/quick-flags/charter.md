@@ -83,7 +83,7 @@ removes a gate.
 
 ## Standing authorizations requested
 
-- **Gate 2:** dispatch of QF-P1, QF-P2, and QF-P3 on their own worktrees and
+- **Gate 2:** dispatch of QF-P1, QF-P2, QF-P0, and QF-P3 on their own worktrees and
   branches under this goal.
 - **Gate 3:** merge of each parcel to the `feat/foreman-line-quick-flags`
   integration branch behind a green chain. Merge of that branch to `main` stays
