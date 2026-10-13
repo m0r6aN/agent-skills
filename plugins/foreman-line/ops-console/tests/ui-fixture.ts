@@ -45,7 +45,10 @@ export const receipt = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 })
 
-export async function mountConsole(overrides: Record<string, unknown> = {}) {
+export async function mountConsole(
+  overrides: Record<string, unknown> = {},
+  options: { waitReady?: boolean } = {},
+) {
   const dom = new JSDOM('<!doctype html><html><body><div id="app"></div></body></html>', {
     url: 'http://localhost/',
   })
@@ -99,7 +102,8 @@ export async function mountConsole(overrides: Record<string, unknown> = {}) {
   // Browser module is intentionally shipped as JS, with no compilation step.
   const { startConsole } = await import('../ui/app.js')
   const app = startConsole(dom.window.document, fetcher)
-  await app.ready
+  // `waitReady: false` lets a test observe the UI while slow endpoints are pending.
+  if (options.waitReady !== false) await app.ready
   const doc = dom.window.document
   const click = (selector: string) => {
     const el = doc.querySelector(selector) as HTMLElement | null
@@ -119,6 +123,7 @@ export async function mountConsole(overrides: Record<string, unknown> = {}) {
     routes,
     requests,
     app,
+    ready: app.ready,
     click,
     input,
     settle,

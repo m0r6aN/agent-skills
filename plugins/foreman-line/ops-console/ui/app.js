@@ -14,7 +14,7 @@ const absoluteRoot = (value) => typeof value === 'string' && /^(?:\/|[A-Za-z]:[\
 export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   const win = doc.defaultView
   const state = { view: 'signals', scope: '', goal: null, repoRoot: '', statuses: [], signals: [], registry: [], fleet: [], spawns: [],
-    projection: null, remedies: [], queries: {}, pages: {}, selected: new Map(), suggested: true, bulk: {}, bulkResult: '', controls: {}, extra: '', browseSelection: null, launchError: '', submitting: false, launchPage: 0, highlightSession: null, revealSession: false, detailParcel: null, retryRequired: false, retryAcknowledged: false }
+    loaded: {}, loadErrors: {}, projection: null, remedies: [], queries: {}, pages: {}, selected: new Map(), suggested: true, bulk: {}, bulkResult: '', controls: {}, extra: '', browseSelection: null, launchError: '', submitting: false, launchPage: 0, highlightSession: null, revealSession: false, detailParcel: null, retryRequired: false, retryAcknowledged: false }
   let generation = 0
   let goalGeneration = 0
   let detailGeneration = 0
@@ -109,7 +109,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
         if (index >= 0) { state.pages.sessions = Math.floor(index / 200); state.revealSession = false }
       }
       const page = pageRows(rows)
-      el('sessions-body').innerHTML = rows.length ? trayHtml(rows, { page: state.pages.sessions, registry: state.registry, highlight: state.highlightSession }) : emptyHtml(state.spawns.length ? 'No matching sessions' : 'No console-recorded launches', 'Launch selected work from Work queue, or clear filters. Sessions started elsewhere are not listed here.')
+      el('sessions-body').innerHTML = rows.length ? trayHtml(rows, { page: state.pages.sessions, registry: state.registry, highlight: state.highlightSession }) : !state.spawns.length && !state.loaded.spawns ? (state.loadErrors.spawns ? emptyHtml('Could not load sessions', `${state.loadErrors.spawns}. Use Refresh to retry.`) : emptyHtml('Loading sessions…', 'Waiting for the console to report recorded launches.')) : emptyHtml(state.spawns.length ? 'No matching sessions' : 'No console-recorded launches', 'Launch selected work from Work queue, or clear filters. Sessions started elsewhere are not listed here.')
       wireSessions(el('sessions-body'))
     }
     updateSelectionBar()
@@ -159,10 +159,17 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       el('detail').innerHTML = detailHtml(p, logs, root, state.projection.goal?.loopDirectiveRef || '', state.remedies.filter((r) => r.parcel === p.parcel).map(remedyHtml))
     } catch (err) { if (current === detailGeneration) el('detail').textContent = `Could not load evidence: ${err.message}. Select the parcel again to retry.` }
   }
+  function updateTray() {
+    el('tray-count').textContent = `(${new Set(state.spawns.map((s) => s.sessionName)).size} sessions · ${state.spawns.length} panes)`
+    el('tray-body').innerHTML = trayHtml([...state.spawns].sort((a, b) => (Date.parse(b.createdAt) || 0) - (Date.parse(a.createdAt) || 0)).slice(0, 3), { registry: state.registry, compact: true }); wireSessions(el('tray-body'))
+  }
   async function refresh() {
     const current = ++generation
     status('Refreshing workspace…')
-    const endpoints = [['statuses', '/api/goals'], ['signals', '/api/signals'], ['registry', '/api/actions'], ['fleet', '/api/fleet'], ['spawns', '/api/spawns']]
+    // Cheap endpoints first: the server is single-threaded, so a slow goals/signals scan
+    // queues everything behind it. Each result is applied as it arrives (below) so a fast
+    // answer is never held hostage by a slow one.
+    const endpoints = [['registry', '/api/actions'], ['fleet', '/api/fleet'], ['spawns', '/api/spawns'], ['statuses', '/api/goals'], ['signals', '/api/signals']]
     const results = await Promise.allSettled(endpoints.map(async ([key, path]) => {
       const data = await api(path), field = { registry: 'actions', fleet: 'roots' }[key] || key
       const strings = (value) => Array.isArray(value) && value.every((part) => typeof part === 'string')
@@ -176,14 +183,22 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       }
       if (!Array.isArray(data[field]) || !data[field].every((row) => row && typeof row === 'object' && !Array.isArray(row) && checks[key](row))) throw new Error(`Invalid ${key} response`)
       return data[field]
-    }))
+    }).map((promise, i) => promise.then((value) => {
+      if (destroyed || current !== generation) return value
+      state[endpoints[i][0]] = value; state.loaded[endpoints[i][0]] = true; delete state.loadErrors[endpoints[i][0]]
+      renderCurrent()
+      if (endpoints[i][0] === 'spawns' || endpoints[i][0] === 'registry') updateTray()
+      return value
+    }, (reason) => {
+      if (!destroyed && current === generation) { state.loadErrors[endpoints[i][0]] = reason.message; renderCurrent() }
+      throw reason
+    })))
     if (destroyed || current !== generation) return
     const failures = []
-    results.forEach((result, i) => { if (result.status === 'fulfilled') state[endpoints[i][0]] = result.value; else failures.push(`${endpoints[i][0]}: ${result.reason.message}`) })
+    results.forEach((result, i) => { if (result.status === 'rejected') failures.push(`${endpoints[i][0]}: ${result.reason.message}`) })
     reconcileSelection(state.selected, state.signals, state.registry)
     scopeOptions(); goalOptions(); renderCurrent()
-    el('tray-count').textContent = `(${new Set(state.spawns.map((s) => s.sessionName)).size} sessions · ${state.spawns.length} panes)`
-    el('tray-body').innerHTML = trayHtml([...state.spawns].sort((a, b) => (Date.parse(b.createdAt) || 0) - (Date.parse(a.createdAt) || 0)).slice(0, 3), { registry: state.registry, compact: true }); wireSessions(el('tray-body'))
+    updateTray()
     el('clock').textContent = `Checked ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
     status(failures.length ? `Some data is stale: ${failures.join('; ')}. Use Refresh to retry.` : 'Workspace up to date', failures.length > 0)
     if (['board', 'remedies', 'settings'].includes(state.view)) await loadGoal()
