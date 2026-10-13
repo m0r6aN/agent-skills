@@ -46,7 +46,7 @@ function worktreeStub(): {
 }
 
 function stubRunner(): TmuxRunner {
-  return { available: () => true, run: () => {} }
+  return { available: () => true, run: () => {}, capture: () => '%0\n' }
 }
 
 function sessionProbe(alive: (name: string) => boolean): SessionProbe {

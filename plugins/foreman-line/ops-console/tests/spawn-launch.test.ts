@@ -1,9 +1,12 @@
 import assert from 'node:assert/strict'
+import { existsSync } from 'node:fs'
+import { basename, join } from 'node:path'
 import test from 'node:test'
 import { dispatchAction } from '../src/actions.js'
 import { listAuditEntries } from '../src/invoke.js'
 import {
   launchSpawnPlan,
+  listSpawnReceipts,
   planSpawn,
   type SpawnRefusalError,
   shellQuote,
@@ -65,6 +68,7 @@ function plan() {
 function worktreeStub(): {
   calls: string[][]
   create: (repoRoot: string, worktreePath: string) => void
+  head: (worktreePath: string) => string | null
 } {
   const calls: string[][] = []
   return {
@@ -72,6 +76,7 @@ function worktreeStub(): {
     create: (repoRoot: string, worktreePath: string) => {
       calls.push([repoRoot, worktreePath])
     },
+    head: () => 'basecommit0000000000000000000000000000abcd',
   }
 }
 
@@ -80,12 +85,18 @@ function stubRunner(
   isAvailable: () => boolean = () => true,
 ): TmuxRunner & { calls: string[][] } {
   const calls: string[][] = []
+  let nextPane = 0
   return {
     calls,
     available: isAvailable,
     run: (args: readonly string[]) => {
       calls.push([...args])
       if (onRun !== undefined) onRun(args)
+    },
+    capture: (args: readonly string[]) => {
+      calls.push([...args])
+      if (onRun !== undefined) onRun(args)
+      return `%${nextPane++}\n`
     },
   }
 }
@@ -105,10 +116,68 @@ test('the launcher passes every plan field to tmux verbatim (stub snapshot)', ()
     assert.ok(pane0 !== undefined && pane1 !== undefined)
     const cmdFor = (pane: { argv: readonly string[]; prompt: string }) =>
       [...pane.argv, '--', pane.prompt].map(shellQuote).join(' ')
+    const logFor = (index: number) =>
+      `cat >> ${shellQuote(join(config.stateDir, 'sessions', `foc-test-p${index}`, 'pane.log'))}`
     assert.deepEqual(runner.calls, [
-      ['new-session', '-d', '-s', 'foc-test', '-c', pane0.cwd, cmdFor(pane0)],
-      ['split-window', '-d', '-t', 'foc-test', '-c', pane1.cwd, cmdFor(pane1)],
+      [
+        'new-session',
+        '-d',
+        '-P',
+        '-F',
+        '#{pane_id}',
+        '-s',
+        'foc-test',
+        '-c',
+        pane0.cwd,
+        cmdFor(pane0),
+        ';',
+        'set-option',
+        '-w',
+        '-t',
+        'foc-test',
+        'remain-on-exit',
+        'on',
+        ';',
+        'pipe-pane',
+        '-o',
+        '-t',
+        'foc-test',
+        logFor(0),
+      ],
+      [
+        'split-window',
+        '-d',
+        '-P',
+        '-F',
+        '#{pane_id}',
+        '-t',
+        'foc-test',
+        '-c',
+        pane1.cwd,
+        cmdFor(pane1),
+      ],
+      ['pipe-pane', '-o', '-t', '%1', logFor(1)],
     ])
+  })
+})
+
+test('FCA-P7: receipts carry the ledger addendum and a ledger dir exists per pane', () => {
+  const spawnPlan = plan()
+  withTempRepo(launchScenario(), ({ config }) => {
+    launchSpawnPlan(config, spawnPlan, NOW, { tmux: stubRunner(), worktrees: worktreeStub() })
+    const receipts = listSpawnReceipts(config.stateDir)
+    assert.equal(receipts.length, 2)
+    receipts.forEach((receipt, index) => {
+      assert.equal(receipt.baseCommit, 'basecommit0000000000000000000000000000abcd')
+      assert.equal(receipt.branch, `spawn/${basename(receipt.worktreePath)}`)
+      assert.equal(receipt.ledgerDir, `sessions/foc-test-p${index}`)
+      assert.equal(receipt.tmuxPaneId, `%${index}`)
+      assert.ok(existsSync(join(config.stateDir, 'sessions', `foc-test-p${index}`, 'pane.log')))
+    })
+    // The prompt payload is never stored anywhere in the ledger tree.
+    for (const receipt of receipts) {
+      assert.ok(!JSON.stringify(receipt).includes('ACTION: '), 'receipt has digest only')
+    }
   })
 })
 

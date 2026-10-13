@@ -1,5 +1,6 @@
 import { execFileSync } from 'node:child_process'
 import type { ConsoleConfig } from './config.js'
+import { type LedgerProbes, ledgerEntries, liveProbes } from './ledger.js'
 import { makeSignal, type Signal, type SignalProvider } from './signals.js'
 import { listSpawnReceipts } from './spawn.js'
 
@@ -34,29 +35,65 @@ export function sessionProbeFor(repoRoot: string): SessionProbe {
   }
 }
 
+/** A ledger probe set whose tmux fact comes from an injected liveness check. */
+function probesFromLiveness(base: LedgerProbes, probe: SessionProbe): LedgerProbes {
+  return {
+    ...base,
+    tmux: (sessionName) =>
+      probe.sessionAlive(sessionName) ? { kind: 'found', panes: [] } : { kind: 'absent' },
+  }
+}
+
 export const sessionStateProvider: SignalProvider & {
-  collect(config: ConsoleConfig, now: number, probe?: SessionProbe): Signal[]
+  collect(
+    config: ConsoleConfig,
+    now: number,
+    probe?: SessionProbe,
+    ledgerProbes?: LedgerProbes,
+  ): Signal[]
 } = {
   class: 'session-state',
   collect(
     config: ConsoleConfig,
     now: number,
-    probe: SessionProbe = sessionProbeFor(config.repoRoot),
+    probe?: SessionProbe,
+    ledgerProbes?: LedgerProbes,
   ): Signal[] {
     const detectedAt = new Date(now).toISOString()
+    const receipts = listSpawnReceipts(config.stateDir)
+    const base = ledgerProbes ?? liveProbes(config)
+    const entries = ledgerEntries(
+      receipts,
+      probe === undefined ? base : probesFromLiveness(base, probe),
+      now,
+    )
     const signals: Signal[] = []
-    for (const receipt of listSpawnReceipts(config.stateDir)) {
-      if (probe.sessionAlive(receipt.sessionName)) continue
+    for (const receipt of receipts) {
+      if (probe?.sessionAlive(receipt.sessionName) === true) continue
+      const entry = entries.get(receipt.id)
+      if (entry === undefined) continue
+      // Live panes (and the launch grace window) need no attention.
+      if (entry.state === 'running' || entry.state === 'launching') continue
+      // A pane that ended without a clean, evidenced run is a failure to look
+      // at; a clean exit and a legacy/unknown record stay informational.
+      const failed =
+        entry.state === 'exited-error' ||
+        entry.state === 'no-transcript' ||
+        entry.state === 'vanished'
+      // tmux itself unavailable: nothing was observed, so nothing is flagged.
+      if (entry.evidence.some((line) => line.startsWith('tmux unavailable'))) continue
       signals.push(
         makeSignal({
           class: 'session-state',
-          severity: 'info',
+          severity: failed ? 'attention' : 'info',
           repo: receipt.repoRoot,
           subject: `${receipt.sessionName}-p${receipt.paneIndex}`,
           evidence: [
             receipt.worktreePath,
             `harness: ${receipt.harness} ${receipt.model}`,
-            'session exited — worktree left for hygiene reaping (lumber-jack)',
+            `ledger: ${entry.state}`,
+            ...entry.evidence,
+            'worktree left for hygiene reaping (lumber-jack)',
           ],
           detectedAt,
           actions: ['investigate', 'explain', 'close-delete'],

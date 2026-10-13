@@ -16,6 +16,7 @@ import {
 } from './fleet.js'
 import { isRecord } from './guards.js'
 import { invokeFlow, listAuditEntries } from './invoke.js'
+import { ledgerEntries, liveProbes } from './ledger.js'
 import { deleteNotification, listNotifications, syncAlerts } from './notifications.js'
 import { projectGoal } from './project.js'
 import { remediesFor } from './remedy.js'
@@ -430,14 +431,18 @@ export function handleApi(config: ConsoleConfig, request: ApiRequest, now: numbe
   // the launcher only.
   if (pathname === '/api/spawns') {
     if (method !== 'GET') return methodNotAllowed('GET')
+    // FCA-P7: `ledger` is ADDITIVE; every pre-existing field is unchanged.
+    const receipts = listSpawnReceipts(config.stateDir)
+    const ledger = ledgerEntries(receipts, liveProbes(config), now)
     return {
       status: 200,
       json: {
-        spawns: listSpawnReceipts(config.stateDir).map((receipt) => ({
+        spawns: receipts.map((receipt) => ({
           ...receipt,
           liveness: sessionProbeFor(config.repoRoot).sessionAlive(receipt.sessionName)
             ? 'alive'
             : 'exited',
+          ledger: ledger.get(receipt.id) ?? null,
         })),
       },
     }
