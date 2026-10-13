@@ -74,3 +74,11 @@ No edits/commits this turn. Read the contract, `spine/*.py` (models, record_stor
 | P2b-T5 | B F-5 + A F-4 — tenant-wide scan cap before scope filtering lets foreign rows suppress candidates | fix | Page through `list_by_tenant(limit, offset)` applying the scope filter per page until the tenant set is exhausted or a hard scan cap `CORTEX_RECALL_SCAN_MAX` (default 20000 rows, env at app creation, fail closed on malformed) is reached; reaching the cap sets `verification_meta.truncated: true` (never silent). Test: 1000 foreign rows + 1 authorized match ⇒ match selected; cap reached ⇒ `truncated: true`. An indexed scoped query (store interface change) is carried forward. |
 | P2b-T6 | A F-3 | carry-forward → P3 | Tenant-scope spine history reads (`get`/`get_by_correlation`) before P3 serves projections. |
 | P2b-T7 | A F-5, A F-4 (indexed scoped query) | informational / carry-forward | Event `actor_id`/`query_hash` identify the first delivery only (documented); store-level scoped candidate query → P3+. |
+
+## R2 triage (coordinator) — Seat A APPROVE, Seat B REQUEST-CHANGES
+
+| # | Finding | Disposition | Ruling |
+|---|---|---|---|
+| P2b-T8 | B F-1 + A F-1 — in-memory commit leaves spine-event prefixes on failure; cancellation bypasses rollback | fix | The in-memory first-delivery commit is all-or-nothing **including spine events and including cancellation**: stage every row and spine event, validate, then publish them in one non-suspending critical section (or snapshot-and-restore on any `BaseException`, re-raising it). Invariant tested through `/v1/recall`: after any injected failure or `CancelledError` at any append position, counts of event/access/binding/spine rows are all unchanged; after an identical retry — and after a retry with changed candidates — `#spine == #access` for the delivered event and every spine event belongs to a committed event (no orphan, single anchor timestamp). Remove the test that accepts the surviving prefix. |
+| P2b-T9 | A F-2 (catch-all ⇒ 503 "retryable") | fix (cheap) | Only storage/transport exceptions map to 503 retryable; any other unexpected exception ⇒ 500 non-retryable. Test both. |
+| P2b-T10 | A F-3 | informational | Document that `InMemoryRecallStore` requires a non-suspending spine store (constructor assertion acceptable). |
