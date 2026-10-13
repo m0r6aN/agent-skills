@@ -23,6 +23,8 @@ export interface GoalAttention {
   readonly hung: number
   readonly failed: number
   readonly awaitingGate: number
+  /** FCA-P10: parcels that have never progressed (no spec, no chain, no sidecar). */
+  readonly notStarted: number
   readonly ratificationPending: number
   readonly ratificationUnknown: number
   /** FCA-2: signal severities for this goal's scoped signals (`<key>/…`). */
@@ -56,10 +58,12 @@ export function goalStatus(
   let hung = 0
   let failed = 0
   let awaitingGate = 0
+  let notStarted = 0
   for (const parcel of projection.parcels) {
     if (parcel.state === 'hung') hung += 1
     else if (parcel.state === 'failed') failed += 1
     else if (parcel.state === 'awaiting-gate') awaitingGate += 1
+    else if (parcel.state === 'not-started') notStarted += 1
   }
   // FCA-2: signal severities join the attention counts — scoped to this goal
   // by subject prefix (`<key>/…`), so other goals' signals never leak in.
@@ -99,6 +103,7 @@ export function goalStatus(
       hung,
       failed,
       awaitingGate,
+      notStarted,
       ratificationPending,
       ratificationUnknown,
       signals: signalTally,

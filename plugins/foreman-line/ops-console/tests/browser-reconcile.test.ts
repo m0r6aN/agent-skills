@@ -124,7 +124,8 @@ test('AC6: Reconciliation renders findings, filters, explains, survives refresh,
     )
     assert.match(explained, /PR #7 MERGED/)
     assert.match(explained, /Complete the record instead of redoing the work/)
-    assert.match(explained, /Why this is “hung”/)
+    // FCA-P10 AC7: a not-started parcel shows no hung explanation
+    assert.doesNotMatch(explained, /Why this is "hung"/, 'not-started parcel has no hung panel')
     await browser.evaluate(`document.getElementById('refresh').click()`)
     await browser.waitFor(
       `document.getElementById('console-status').textContent.includes('up to date')`,

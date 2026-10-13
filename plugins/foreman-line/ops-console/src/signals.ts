@@ -108,6 +108,7 @@ export const SEVERITY_FOR_STATE: Record<ParcelStateValue, SignalSeverity> = {
   'awaiting-gate': 'attention',
   failed: 'urgent',
   complete: 'info',
+  'not-started': 'info',
 }
 
 const ACTIONS_FOR_STATE: Record<ParcelStateValue, readonly SignalVerb[]> = {
@@ -116,6 +117,7 @@ const ACTIONS_FOR_STATE: Record<ParcelStateValue, readonly SignalVerb[]> = {
   'awaiting-gate': ['investigate', 'explain'],
   failed: ['investigate', 'remediate', 'explain', 'close-delete'],
   complete: ['explain', 'close-delete'],
+  'not-started': ['investigate', 'explain'],
 }
 
 export interface SignalProvider {

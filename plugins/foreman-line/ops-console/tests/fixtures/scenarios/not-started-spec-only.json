@@ -1,0 +1,20 @@
+{
+  "name": "not-started-spec-only",
+  "description": "R4 hung: queued parcel with spec in active/ but no chain — a spec file is progress, so this is stalled (hung), not not-started.",
+  "now": "2026-10-13T12:00:00.000Z",
+  "goal": {
+    "slug": "goal-ns-spec",
+    "queue": ["1. **P1** spec drafted."]
+  },
+  "specs": [{ "name": "P1-alpha.md", "location": "active", "updated": "2026-09-01" }],
+  "sidecars": [],
+  "expected": [
+    {
+      "parcel": "P1",
+      "state": "hung",
+      "rule": "R4",
+      "chainEvidence": "absent",
+      "specLocation": "active"
+    }
+  ]
+}

@@ -127,15 +127,16 @@ test('progress timestamp: date-only spec updated counts as T00:00:00Z', () => {
   assert.equal(parcel.heartbeat.lastProgressAt, '2026-09-25T00:00:00.000Z')
 })
 
-test('progress timestamp: nothing progressed yields null and hangs (age is infinite)', () => {
+test('progress timestamp: nothing progressed yields null and not-started (FCA-P10 R4a)', () => {
+  // FCA-P10: a parcel with no chain, no spec, no sidecar, no liveness reads not-started.
   const parcel = projectOne(
     scenario('progress-none', '1. **P1** never started.', [], {
       specs: [],
     }),
   )
   assert.equal(parcel.heartbeat.lastProgressAt, null)
-  assert.equal(parcel.state, 'hung')
-  assert.equal(parcel.rule, 'R4')
+  assert.equal(parcel.state, 'not-started')
+  assert.equal(parcel.rule, 'R4a')
   assert.equal(parcel.chainEvidence, 'absent')
 })
 

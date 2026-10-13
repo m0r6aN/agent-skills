@@ -74,6 +74,7 @@ export interface ExpectedProjection {
   readonly rule: string
   readonly failureCode?: FailureCode
   readonly chainEvidence?: 'present' | 'absent'
+  readonly specLocation?: 'active' | 'done' | 'none'
   readonly thresholdMs?: number
   readonly thresholdSource?: 'goal-override' | 'default'
   readonly flags?: readonly string[]

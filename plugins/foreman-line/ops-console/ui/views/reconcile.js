@@ -121,7 +121,7 @@ export function reconcileRowsHtml(parcels, options = {}) {
     const signal = status ? signals.find((s) => s.class === 'parcel-state' && s.subject === `${status.key}/${p.parcel}` && s.repo === status.repoRoot && eligibleActions(s, registry).length) : null
     const select = signal ? `<input type="checkbox" data-select="${esc(signal.id)}" ${selected.has(signal.id) ? 'checked' : ''} aria-label="Select parcel ${esc(p.parcel)} for an investigation session">` : '<span class="muted" title="No supported action for this parcel">—</span>'
     return `<tr class="rec-row" data-rec-parcel="${esc(p.parcel)}"><td data-label="Select">${select}</td>
-      <td data-label="Parcel"><strong>${esc(p.parcel)}</strong><span class="meta"><span class="chip chip-${p.state === 'complete' || p.state === 'running' ? 'green' : 'neutral'}">${esc(p.state || 'unknown')}</span> rule ${esc(p.rule || '—')}</span></td>
+      <td data-label="Parcel"><strong>${esc(p.parcel)}</strong><span class="meta"><span class="chip chip-${p.state === 'complete' || p.state === 'running' || p.state === 'not-started' ? 'green' : 'neutral'}">${p.state === 'not-started' ? 'Not started' : esc(p.state || 'unknown')}</span> rule ${esc(p.rule || '—')}</span></td>
       <td data-label="Local">${localHtml(p)}</td><td data-label="Remote">${remoteHtml(p)}</td>
       <td data-label="Discrepancy">${discrepancyChips(p)}${detailsHtml(p, open.has(p.parcel))}</td></tr>`
   }).join('')

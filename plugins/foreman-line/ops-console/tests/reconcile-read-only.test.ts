@@ -173,8 +173,8 @@ test('GET /api/reconcile: shape, counts by code, echoed (not derived) state, sou
     assert.equal(body.repo.defaultRef, 'origin/main')
     const [p1, p2] = body.parcels as [Parcel, Parcel]
     assert.equal(p1.parcel, 'SYN-P1')
-    assert.equal(p1.state, 'hung', 'frozen state echoed for display')
-    assert.equal(p1.rule, 'R4')
+    assert.equal(p1.state, 'not-started', 'FCA-P10: parcel with no spec/chain reads not-started')
+    assert.equal(p1.rule, 'R4a')
     assert.deepEqual(
       p1.discrepancies.map((d) => d.code),
       ['shipped-unrecorded'],

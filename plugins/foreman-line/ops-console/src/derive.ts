@@ -153,6 +153,17 @@ export function deriveParcel(input: DeriveInput): ParcelProjection {
     // R3 awaiting-gate — G3 pending (merge).
     state = 'awaiting-gate'
     rule = 'R3'
+  } else if (
+    walk === null &&
+    spec === null &&
+    !projectedJoin &&
+    !gateDecisionJoin &&
+    !liveness.live
+  ) {
+    // R4a not-started — never progressed: no chain, no spec, no sidecar, no liveness.
+    // FCA-P10 amendment to FOC-P0 C4: separates "not started" from "stalled".
+    state = 'not-started'
+    rule = 'R4a'
   } else {
     // R4 hung — no rule above matched and progress is stale with no liveness.
     const age = lastProgressAt === null ? Number.POSITIVE_INFINITY : now - lastProgressAt

@@ -1,0 +1,21 @@
+{
+  "name": "not-started-live",
+  "description": "R5 running: no chain, no spec, but live worktree — liveness means work is happening, so this is running, not not-started.",
+  "now": "2026-10-13T12:00:00.000Z",
+  "goal": {
+    "slug": "goal-ns-live",
+    "queue": ["1. **P1** in progress."]
+  },
+  "specs": [],
+  "sidecars": [],
+  "worktrees": [{ "name": "p1-worktree", "branch": "feat/P1", "fresh": true }],
+  "expected": [
+    {
+      "parcel": "P1",
+      "state": "running",
+      "rule": "R5",
+      "chainEvidence": "absent",
+      "specLocation": "none"
+    }
+  ]
+}
