@@ -25,6 +25,9 @@ Own TO-B0/TO-P0/TO-P1 lifecycle rows maintained 2026-10-10; other rows retain th
 | FCA-P4 | [Action registry — verbs, invocation classes, autonomy envelopes, audit](active/FCA-P4-actions.md) | `active` | `active/` |
 | FCA-P5 | [tmux session spawner with shared spawn controls](active/FCA-P5-spawn.md) | `active` | `active/` |
 | FCA-P6 | [Control-center UI — dense layout, action buttons, spawn panel, session tray](active/FCA-P6-console-ui.md) | `active` | `active/` |
+| FCA-U1 | [Workspace navigation and responsive operator layout](active/FCA-U1-workspace-navigation.md) | `active` | `active/` |
+| FCA-U2 | [Persistent selection and explicit session launch review](active/FCA-U2-selection-launch.md) | `active` | `active/` |
+| FCA-U3 | [Session monitoring and launch outcome handoff](active/FCA-U3-session-monitoring.md) | `active` | `active/` |
 | FK-P0 | [Foreman Kernel - canon authority and enforcement registry](active/FK-P0-canon-authority-enforcement-registry.md) | `active` | `active/` |
 | FK-P10 | [Foreman Kernel - lease and transition engine](done/FK-P10-lease-transition-engine.md) | `done` | `done/` |
 | FK-P11 | [Foreman Kernel - legacy import and projection engine](done/FK-P11-legacy-import-projection.md) | `done` | `done/` |

@@ -6,7 +6,18 @@ export declare const MODEL_SUGGESTIONS: readonly string[]
 export declare function spawnPanelHtml(options?: {
   count?: number
   controls?: Record<string, string>
+  selections?: import('./selection.js').SelectedTarget[]
+  registry?: import('./selection.js').RegistryEntry[]
+  extra?: string
+  error?: string
+  page?: number
+  retryRequired?: boolean
+  suggested?: boolean
+  bulk?: { verb?: string; decisions?: string; commit?: boolean; push?: boolean; openPr?: boolean }
+  bulkResult?: string
+  retryAcknowledged?: boolean
 }): string
+export declare function launchItemHtml(item: import('./selection.js').SelectedTarget, registry: import('./selection.js').RegistryEntry[]): string
 export declare function readControls(form: {
   querySelector: (sel: string) => { value: string } | null
 }): { harness: string; model: string; thinking: string; budget: string }
