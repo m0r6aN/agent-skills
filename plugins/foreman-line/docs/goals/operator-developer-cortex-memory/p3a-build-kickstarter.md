@@ -76,3 +76,8 @@ No edits this turn. Reply with (1) restatement; (2) design table ruling → file
 | P3a-T6 | B F-5 — retries not byte-identical | fix | The binding stores the original response bytes; an identical retry returns them unchanged (`replayed` in the ack describes accounting replay-equivalence, not transport retry). Byte-identity test. |
 | P3a-T7 | B F-6 + A F-4 (task id fallback) | carry-forward → P3b | P3b projection dedups correlated feedback across operation ids, filters on the delivered subset, and handles an empty `task_id` explicitly. |
 | P3a-T8 | A F-5 | informational | Live revocation state is Gateway/P5a-owned. |
+
+## R2 disposition (coordinator) — Seat A APPROVE, Seat B APPROVE-WITH-FIXES (1 minor)
+
+- **P3a-T6 amendment (owner-delegated):** replay by **deterministic reconstruction** from the stored canonical (sorted-key) response data is accepted as satisfying byte-identity — the same mechanism ruled acceptable for P2a's OD-6 duplicate-response fixture. Byte-identity across a restart is proven by the PG test. Raw-byte persistence would only guard against a future serializer change; recorded as a carry-forward note for any change to the response serializer (it must keep the replay byte-identity tests green). R2-B F-1 therefore closes as **accepted-as-documented**; R2-A F-1 informational.
+- P3a accepted for Gate 3.
