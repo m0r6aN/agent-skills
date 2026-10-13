@@ -55,7 +55,12 @@ function sessionProbe(alive: (name: string) => boolean): SessionProbe {
 
 function launchOne(config: ConsoleConfig, subject = 'pr/170/red') {
   const plan = planSpawn({
-    controls: { harness: 'pi', model: 'claude-sonnet-5-5', thinking: 'high', budget: '$20' },
+    controls: {
+      harness: 'pi',
+      model: 'anthropic/claude-sonnet-5-5',
+      thinking: 'high',
+      budget: '$20',
+    },
     actions: [
       {
         verb: 'remediate',

@@ -24,6 +24,7 @@ export type SpawnRefusalReason =
   | 'no-actions'
   | 'unknown-harness'
   | 'model-missing'
+  | 'model-unqualified'
   | 'unsupported-thinking'
   | 'unsupported-budget'
   | 'unregistered-action'
@@ -135,6 +136,10 @@ export function planSpawn(request: SpawnPlanRequest): SpawnPlan {
   }
   if (controls.model === '') {
     throw new SpawnRefusalError('model-missing', 'spawn refused: model is required')
+  }
+  const modelProblem = harness.modelProblem?.(controls.model) ?? null
+  if (modelProblem !== null) {
+    throw new SpawnRefusalError('model-unqualified', `spawn refused: ${modelProblem}`)
   }
   if (!(THINKING_LEVELS as readonly string[]).includes(controls.thinking)) {
     throw new SpawnRefusalError(

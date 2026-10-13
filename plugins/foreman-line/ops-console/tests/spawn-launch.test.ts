@@ -55,7 +55,7 @@ const ACTIONS = [
 
 function plan() {
   return planSpawn({
-    controls: { harness: 'pi', model: 'm', thinking: 'high', budget: '$20' },
+    controls: { harness: 'pi', model: 'test/m', thinking: 'high', budget: '$20' },
     actions: ACTIONS,
     now: NOW,
     sessionName: 'foc-test',

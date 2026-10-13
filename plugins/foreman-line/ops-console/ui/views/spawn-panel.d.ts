@@ -3,6 +3,8 @@ export declare const HARNESS_OPTIONS: readonly string[]
 export declare const THINKING_OPTIONS: readonly string[]
 export declare const BUDGET_PRESETS: readonly string[]
 export declare const MODEL_SUGGESTIONS: readonly string[]
+export declare const CLAUDE_MODEL_SUGGESTIONS: readonly string[]
+export declare function modelSuggestionsFor(harness: string): readonly string[]
 export declare function spawnPanelHtml(options?: {
   count?: number
   controls?: Record<string, string>
