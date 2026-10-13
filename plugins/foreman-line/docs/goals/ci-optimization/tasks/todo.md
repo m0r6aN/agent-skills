@@ -1,6 +1,6 @@
 # CI trigger cleanup tasks
 
-- [ ] T1: Archive scratch measurement evidence, then disable its workflow.
+- [x] T1: Archive scratch measurement evidence, then disable its workflow.
   Acceptance: all four runs inventoried; available logs/artifact ZIPs and scratch
   tip workflow/probe retained with checksums; no branch/run/artifact deletions.
   Verify: archive manifest, ZIP integrity, GitHub workflow disabled state.
