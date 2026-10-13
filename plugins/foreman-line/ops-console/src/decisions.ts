@@ -10,6 +10,7 @@ import {
   type OpenPr,
   type OpenPrFacts,
 } from './decisions-remote.js'
+import { presentCommand } from './invoke.js'
 import { defaultGitRunner, type GitRunner } from './ledger-git.js'
 import { projectGoal } from './project.js'
 import type { GhRunner } from './reconcile-remote.js'
@@ -60,6 +61,8 @@ export interface MergeItem {
   readonly createdAt: string
   readonly asOf: string | null
   readonly command: CommandPresentation | null
+  /** Why `command` is null (root not declared, unsafe root); null when presented. */
+  readonly commandNote: string | null
 }
 
 export interface GateItem {
@@ -78,7 +81,14 @@ export interface GateItem {
   /** Approval slug when the projected artifact names one; null when it cannot be derived. */
   readonly slug: string | null
   readonly asOf: string
+  /** G1: the approve command; G2: the dispatch command. Presented text only. */
   readonly command: CommandPresentation | null
+  /** G1 only: the reject command (second act at the same gate). */
+  readonly altCommand?: CommandPresentation | null
+  /** Why `command` is null; null when presented. */
+  readonly commandNote: string | null
+  /** Whether the existing read-only `approval-show` button is offered (primary root, slug known). */
+  readonly approvalShow: boolean
 }
 
 export interface GoalRatificationItem {
@@ -151,6 +161,11 @@ interface ComposeInput {
   readonly annotate: (checkRunId: number) => AnnotationFact | null
   readonly now: number
   readonly budget: AnnotationBudget
+  /** Builds the presented merge command for a PR number; absent = no command (stage-1 shape). */
+  readonly mergeCommand?: (number: number) => {
+    readonly command: CommandPresentation | null
+    readonly note: string | null
+  }
 }
 
 function causeOf(pr: OpenPr, input: ComposeInput): MergeCause {
@@ -234,6 +249,7 @@ export function composeMergeItems(input: ComposeInput): {
     const baseIsDefault = defaultBranch === null ? null : pr.baseRefName === defaultBranch
     const base = baseIsDefault === false ? byHead.get(pr.baseRefName) : undefined
     const cause = causeOf(pr, input)
+    const presented = input.mergeCommand?.(pr.number)
     if (cause.code === 'billing-blocked') {
       evidence.push(`#${pr.number}: ${cause.annotation ?? ''}`)
       actionsAsOf = cause.asOf ?? actionsAsOf
@@ -258,7 +274,8 @@ export function composeMergeItems(input: ComposeInput): {
       stack: { baseIsDefault, waitsOn: base === undefined ? null : base.number },
       createdAt: pr.createdAt,
       asOf: prs.asOf,
-      command: null,
+      command: presented?.command ?? null,
+      commandNote: presented?.note ?? null,
     }
   })
   const actions: RepoDecisions['actions'] =
@@ -276,6 +293,44 @@ function slugOf(evidence: string | null): string | null {
   if (!name.endsWith(PROJECTED_SUFFIX)) return null
   const slug = name.slice(0, name.length - PROJECTED_SUFFIX.length)
   return /^[a-z0-9-]+$/.test(slug) ? slug : null
+}
+
+const NOT_PRIMARY_NOTE = "command not presented: root is not the console's primary root"
+
+function presentation(
+  config: ConsoleConfig,
+  flow: string,
+  argv: readonly string[],
+): { command: CommandPresentation | null; note: string | null } {
+  const result = presentCommand(config, flow, argv)
+  return 'text' in result
+    ? { command: { flow, argv: [...argv], text: result.text }, note: null }
+    : { command: null, note: `command not presented: ${result.refused}` }
+}
+
+function gateCommands(
+  config: ConsoleConfig,
+  root: string,
+  gate: 'G1' | 'G2',
+  slug: string | null,
+): Pick<GateItem, 'command' | 'altCommand' | 'commandNote' | 'approvalShow'> {
+  const none = { command: null, altCommand: null, approvalShow: false }
+  if (root !== config.repoRoot) return { ...none, commandNote: NOT_PRIMARY_NOTE }
+  if (slug === null) {
+    return { ...none, commandNote: 'command not presented: no approval slug can be derived' }
+  }
+  const tail = (verb: string) => [verb, slug, '--repo-root', root]
+  const main =
+    gate === 'G1'
+      ? presentation(config, 'approval-approve', tail('approve'))
+      : presentation(config, 'dispatch-execute', tail('executeDispatch'))
+  const alt = gate === 'G1' ? presentation(config, 'approval-reject', tail('reject')) : null
+  return {
+    command: main.command,
+    altCommand: alt === null ? null : alt.command,
+    commandNote: main.note,
+    approvalShow: true,
+  }
 }
 
 function defaultBranchOf(root: string, git: GitRunner): string | null {
@@ -318,6 +373,8 @@ export function buildDecisions(
       annotate: (id) => gatherAnnotation(tree.root, id, now, ghOptions),
       now,
       budget,
+      mergeCommand: (number) =>
+        presentation(config, 'pr-merge', ['merge', String(number), '--repo-root', tree.root]),
     })
     items.push(...merged.items)
     repos.push({
@@ -387,7 +444,7 @@ export function buildDecisions(
           evidence: proxy.detail,
           slug: slugOf(parcel.gates.G1.evidence),
           asOf: generatedAt,
-          command: null,
+          ...gateCommands(config, tree.root, gate, slugOf(parcel.gates.G1.evidence)),
         })
       }
     }

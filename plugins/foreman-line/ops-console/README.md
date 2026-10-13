@@ -128,9 +128,15 @@ observed facts (never stored as status):
 see (merge state, review decision, checks, stack order) with their age, and **never
 says an item is ready**. `mergeable: UNKNOWN` stays unknown.
 
-- **Presents, never performs.** Stage 1 shows facts only; later stages add the exact
-  command for you to run in a terminal. The console never merges, approves or
-  dispatches.
+- **Presents, never performs.** Each row has a "Show command" button. Pressing it is one
+  `/api/invoke` presentation, audited `presented`; only then is the exact command revealed
+  for you to run in a terminal. Gate 1 shows approve and reject (`approval-approve`,
+  `approval-reject`), Gate 2 shows `dispatch-execute`, Gate 3 shows
+  `cd "<root>" && gh pr merge <N>` (flow `pr-merge`, present-only, no strategy flag, so `gh`
+  asks you). Gate commands are offered for the console's primary root only; other roots say
+  so. `pr-merge` refuses (audited `refused`) a bad PR number, a relative, undeclared or
+  quote/`$`/backtick/control-character root, extra argv, and any mode other than `present`.
+  The console never merges, approves or dispatches.
 - **"Actions not starting" is evidence, not inference.** The banner appears only when
   a failing check-run's annotation carries GitHub's billing wording, quoted verbatim.
   A failed check without that annotation reads "Failed, cause unknown".
