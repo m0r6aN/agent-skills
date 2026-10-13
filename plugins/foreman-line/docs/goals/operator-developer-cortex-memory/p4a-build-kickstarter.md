@@ -71,3 +71,13 @@ No edits this turn. Reply with: (1) restatement; (2) design table ruling → fil
 | P4a-T7 | A F-4 — supersede target hygiene | fix | `supersede` requires the target artifact to be currently non-superseded and of the **same curated class** (and, for handoff, the same target role); else 409. |
 | P4a-T8 | A F-6 — reject is capability-free for any in-profile role | fix | `reject` is allowed only to the proposer (withdraw) or a `cap:curation.approve` holder; others 403. |
 | P4a-T9 | A F-5, A F-7 | informational | Amendment safe; dead `superseded` proposal status noted. |
+
+## R2 triage (coordinator) — Seat A APPROVE-WITH-FIXES, Seat B REQUEST-CHANGES
+
+| # | Finding | Disposition | Ruling |
+|---|---|---|---|
+| P4a-T10 | B F-1 — concurrent supersedes of one predecessor both commit | fix | The predecessor's `active → superseded` transition is arbitrated **inside** the atomic commit (in-memory locked bundle re-checks status; PG conditional `UPDATE … WHERE status='active'` with row-count check); the losing bundle rolls back entirely ⇒ 409. Concurrent distinct-proposal supersede tests, both backends. |
+| P4a-T11 | B F-2 — identical concurrent in-memory retry gets 409 instead of replay | fix | Inside the commit, an existing binding for the same operation key is checked **before** the derived-id insert guard; an identical committed binding replays (with current re-authorization), a different fingerprint ⇒ 409; only a genuinely different proposal hits the derived-exists 409. Concurrent identical-retry tests (true concurrency, not sequential), both backends. |
+| P4a-T12 | A F-1 — T6 evidence gap | fix | Add the same-actor/different-role 403 test (approve and supersede) and correct the stale comment. |
+
+Convergence: after this round, residuals reachable only via in-memory dev-store races are carried forward (as for P2b/P3b); PG-path defects still force rework.
