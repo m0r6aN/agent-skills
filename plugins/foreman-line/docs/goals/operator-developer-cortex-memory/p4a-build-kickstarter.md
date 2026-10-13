@@ -57,3 +57,17 @@ No edits this turn. Reply with: (1) restatement; (2) design table ruling → fil
 ## Build disposition (coordinator)
 
 - **Out-of-manifest edit ratified (owner-delegated amendment S0-4):** UPDATE `src/keon/cortex/spine/shard_plane.py` — one additive allowlist entry (`SCOPE_CLASS_HANDOFF`) so handoff records' scoped ids recompute for replay/recall eligibility. The builder disclosed it (stop-condition-3 event recorded, not concealed); reviewers judge its safety.
+
+## R1 triage (coordinator, 2026-10-13) — Seat A APPROVE-WITH-FIXES, Seat B REQUEST-CHANGES (1 blocker)
+
+| # | Finding | Disposition | Ruling |
+|---|---|---|---|
+| P4a-T1 | B F-1 — author-role grant tokens bypass handoff recipient isolation (even cross-profile) | fix (blocker) | Handoff visibility = caller's **own** `profile_id` equals the record's profile **and** the caller's **own** `role_id` equals the record's author role or its named target. Grant tokens never confer handoff visibility. Served tests on all read surfaces with foreign `role:`/`profile:` grants, same and other profile. |
+| P4a-T2 | B F-2 + A F-3 — concurrent approvals overwrite a committed derived record | fix | Derived-record creation is **insert-only** and decided inside the atomic commit (locked bundle / PG `INSERT … ON CONFLICT DO NOTHING` + row check): an existing derived id ⇒ 409, no provenance change. Predecessor status updates (supersede) are a separate, explicit update. Concurrency tests both backends. |
+| P4a-T3 | B F-3 + A F-2 — handoff identity omits the recipient | fix | **Identity amendment:** for `scope_class=handoff` the scoped-id payload adds `handoff_to_role_id` (8-key payload); other classes unchanged; `recompute_shard_id` mirrors it. Amendment granted: UPDATE `src/keon/cortex/ingress/models.py` (additive optional parameter on `make_scoped_candidate_shard_id`; existing callers byte-identical) and the already-ratified `spine/shard_plane.py`. Test identical content to two recipients ⇒ two records. |
+| P4a-T4 | B F-4 — re-curation drops or strengthens epistemic status | fix | The derived record's `epistemic_status` is derived from the sources: it is the **weakest** source status (order `contested` < `unverified`/absent < `supported` < `verified`); a proposal may only keep or **weaken** it; any attempted strengthening ⇒ 422; absence on a source means `unverified`. Served re-curation tests. |
+| P4a-T5 | B F-5 — proposal text validation | fix | Proposal `content`/`reason`/free text: reject blank, NUL, unpaired surrogates and over-bound values at the wire model (same rules as P2a ingest) before any store access; tests on both backends. |
+| P4a-T6 | A F-1 — self-approval check uses the full triple | fix | Self-approval is refused when `caller.actor_id == proposal.actor_id` (any role). Test same actor / different role. |
+| P4a-T7 | A F-4 — supersede target hygiene | fix | `supersede` requires the target artifact to be currently non-superseded and of the **same curated class** (and, for handoff, the same target role); else 409. |
+| P4a-T8 | A F-6 — reject is capability-free for any in-profile role | fix | `reject` is allowed only to the proposer (withdraw) or a `cap:curation.approve` holder; others 403. |
+| P4a-T9 | A F-5, A F-7 | informational | Amendment safe; dead `superseded` proposal status noted. |
