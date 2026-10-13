@@ -74,6 +74,7 @@ docker run -d --name foreman-hub --restart unless-stopped `
 | `GET /api/parcels?goal=` | `ParcelProjection[]` (state, rule, gates, routing, liveness, heartbeat) + unmapped chains |
 | `GET /api/parcels/:parcel/chain?goal=` | chain summary (members, sidecars, validity, seal) |
 | `GET /api/parcels/:parcel/logs?goal=` | exactly: chain documents (members + sidecars), invocation audit log, loop-directive state lines |
+| `GET /api/reconcile?goal=` | FCA-P8 (owner-ratified addition 2026-10-13): per parcel, local record vs local git vs remote; closed discrepancy vocabulary with evidence and ages, hung explanation, merged history. Read-only: one batch of git reads and one cached `gh pr list` per request; remote facts carry their age and degrade to *unavailable*, never inferred |
 | `GET /api/gates?goal=` | G1/G2/G3 proxies + goal ratification, read-only |
 | `GET /api/alerts?goal=` | hung/failed/tripwire alerts; firing records console-local notifications |
 | `GET /api/routing?goal=` | read-only policy class×ceiling + per-parcel routing |
@@ -118,6 +119,32 @@ observed facts (never stored as status):
 - **pi models must be `provider/model`** — a bare id is ambiguous across
   authenticated providers and pi exits at startup; planning refuses it before
   any worktree or process exists.
+
+## Reconciliation (FCA-P8)
+
+Tools → **Reconciliation** compares, per parcel, what the *record* says with what
+*local git* and the *remote* show, and explains why a parcel is `hung`.
+
+- **Discrepancy vocabulary (closed):** `shipped-unrecorded`, `recorded-unshipped`,
+  `unmerged-work`, `orphan-worktree`, `never-started`, `local-remote-divergence`,
+  `stale-abandoned`. Each carries its evidence and preserve-first options
+  (recover/complete first; close/defer last and labelled last resort).
+- **Strong shipping evidence** is a merged PR into the default branch whose title is
+  `feat`/`fix`/`perf`/`refactor`. `docs`/`chore`/`ci`/untyped PRs, commit subjects,
+  specs on the default branch and goal state lines are **weak traces**: shown, never
+  asserted from. A finding that rests only on weak traces is worded and coloured as
+  *Unclear — verify* (`confidence: weak-traces`), because work often ships bundled or
+  under another identity.
+- **Linking** is by exact parcel key as a delimited token (`FOC-P1` never links
+  `foc-p10`); a candidate matching two keys is *ambiguous* — listed, never used.
+  `FOC-P1–FOC-P4` ranges in state lines are expanded; nothing else is guessed.
+- **Remote unavailable** (no `gh`, not logged in, offline): remote-dependent findings
+  are withheld and the banner says so; local facts remain.
+- **Read-only:** `git` is limited to `symbolic-ref`, `rev-parse`, `for-each-ref`, `log`,
+  `ls-tree`, `rev-list`, `status`, `worktree list`, `merge-base --is-ancestor`; `gh` to
+  `pr list`. Nothing fetches, pushes, merges, or closes. Remote-ref age is the last
+  fetch (`FETCH_HEAD`); the console never fetches for you.
+- `state`/`rule` are echoed for display and are never an input.
 
 ## Architecture (FOC-P1–FOC-P4)
 

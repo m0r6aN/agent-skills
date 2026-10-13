@@ -184,3 +184,53 @@ Owner approved this spec as drafted, including the amendments it names under
 that way). Blanket authority granted for decisions and non-destructive actions.
 Gate 3 (merge) is not delegated by this record. Open Questions OQ1-OQ3 are
 resolved by the proposals stated in them.
+
+## Delegated amendment (retroactive) and implementation findings — 2026-10-13
+
+Recorded AFTER implementation and flagged for owner review.
+
+Additional Allowed Files (tests and docs only; no product-scope change):
+
+- plugins/foreman-line/ops-console/tests/reconcile-sources.test.ts
+- plugins/foreman-line/ops-console/tests/browser-reconcile.test.ts
+- plugins/foreman-line/ops-console/README.md
+
+Open Questions resolved as proposed, plus one extension: OQ1 `origin/<default>` as
+last fetched; OQ2 link tokens are branch/PR/worktree names and commit subjects, and
+goal **state lines** are also read (local record claims), with `PREFIX-Pn–PREFIX-Pm`
+ranges expanded when both ends share a prefix; OQ3 no fetch is performed, the age of
+the last fetch is shown instead.
+
+Decisions made while building (each exists to prevent a false assertion found in
+review or on real data):
+
+- **Strong evidence is strict.** `shipped-unrecorded` requires a merged PR into the
+  default branch whose title type is `feat|fix|perf|refactor`. A merged docs PR
+  naming the key (PR #217 names FCA-P7/P8), a branch cut from the default branch
+  (trivially "merged"), commit subjects, specs on the default branch, and state lines
+  are **weak traces**: shown, never asserted from.
+- **`confidence`** (`asserted` | `weak-traces`) is added to each discrepancy. On real
+  data, 10 of 11 `stale-abandoned` findings rest on weak traces (e.g. RCM-P1 has a
+  merged untyped PR and a merged branch), so they are worded and coloured *Unclear —
+  weak traces only, verify* rather than as an abandonment verdict. The closed
+  discrepancy vocabulary is unchanged.
+- **Hung explanation** also states what holds back a `done/`-spec parcel with no
+  closed marker (rule R2 needs one when no receipt chain exists) — the actionable
+  cause for RCM-P0/P1 on real data.
+- **Placement.** Reconciliation is the first item under *Tools*, not a fifth primary
+  destination, to respect the owner-approved four-destination navigation
+  (`FCA-U1`); promoting it is a one-line change.
+- **Scale.** Linking uses a token index (linear in text length). The first
+  implementation scanned keys x candidates and took 5.4 s for 500 parcels; the index
+  takes ~55 ms and is proven equivalent to the per-key pattern by test.
+- Route added: `GET /api/reconcile?goal=` (owner-ratified).
+
+Real-data result (2026-10-13, 17 goals, 38 parcels, 7.3 s): 34 `hung` — 15
+`never-started` (queued, nothing begun: "hung" there only means "not started"), 10
+`orphan-worktree`, 10 `stale-abandoned` with weak traces, 1 `stale-abandoned` with no
+traces, 1 `local-remote-divergence`; 4 `complete`; **0 `shipped-unrecorded`**.
+
+Known follow-ups (not in this parcel): the frozen `hung` rule (FOC-P0 R4) treats an
+unstarted queue entry as hung; separating "not started" from "stalled" needs an owner
+amendment to the frozen state vocabulary. `closure-proposal` remains unspecified.
+
