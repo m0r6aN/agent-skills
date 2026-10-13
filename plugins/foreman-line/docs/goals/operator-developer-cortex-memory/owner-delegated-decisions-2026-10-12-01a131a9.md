@@ -50,3 +50,13 @@ Spend: every dispatch runs `pi --mode json`; cost is read from per-message `usag
 - **D-1** The charter's plan-level adversarial review never ran before P0 drafting. It is folded into review seat A's mandate (decomposition coherence, missing parcel, load-bearing decision, silent collisions) against charter + P0 manifests. A deviation, not a retroactive pass.
 - **D-2** W1-P3 live human TTY approval is replaced by this owner-delegated approval record under the 2026-10-12 blanket grant.
 - **D-3** R0 Seat 2 ran on the author's family; it is evidence for rework but not one of the two required reviews.
+
+## Later decisions (2026-10-13)
+
+| ID | Ruling |
+|---|---|
+| T-37 | P2 split into P2a (shards/1.1, identity, hardening, readiness) and P2b (served recall path). |
+| T-38 | P3 split into P3a (memory-event ingest) and P3b (classification, gravity/1.1.0, projection). |
+| OD-22 (from P0) | Until P5a freezes an invocation→target→execution→result chain, every outcome/attribution is `self_reported`. |
+| OD-23 | Approved curation artifacts (P4a) are created at `support_level: provisional` — never `active`/`primary` — until a verified approval-receipt path exists (P5a/P8). Approval receipt refs are recorded unverified. |
+| D12 note | Gravity replay determinism is per platform (libm ULP drift); Linux (deployment) goldens are byte-exact. |
