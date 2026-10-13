@@ -1,27 +1,29 @@
 {
   "name": "not-started-chain-unparseable",
-  "description": "R1 failed: chain present but with unparseable member — something exists (chain directory), so this is failed (chain-invalid), not not-started.",
+  "description": "R4 hung: chain present with all unparseable timestamps (no spec) — progress is null but chain EXISTS, so R4a's walk===null fails; falls through to R4 hung.",
   "now": "2026-10-13T12:00:00.000Z",
   "goal": {
     "slug": "goal-ns-bad",
-    "queue": ["1. **P1** chain corrupted."]
+    "queue": ["1. **P1** chain with bad timestamps."]
   },
-  "specs": [{ "name": "P1-alpha.md", "location": "active", "updated": "2026-09-01" }],
+  "specs": [],
   "chains": [
     {
       "workflowId": "00000000-0000-4000-8000-000000000099",
       "parcel": "P1",
       "stages": ["A", "B", "C"],
       "timestampOffsetHours": [-3, -2, -1],
-      "corrupt": 2
+      "invalidTimestamps": true,
+      "specRefs": ["plugins/foreman-line/docs/specs/active/P1-nosuchspec.md"]
     }
   ],
   "expected": [
     {
       "parcel": "P1",
-      "state": "failed",
-      "rule": "R1",
-      "chainEvidence": "present"
+      "state": "hung",
+      "rule": "R4",
+      "chainEvidence": "present",
+      "specLocation": "none"
     }
   ]
 }

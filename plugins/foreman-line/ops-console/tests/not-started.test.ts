@@ -173,6 +173,13 @@ test('AC3: not-started-live yields running/R5 (liveness means work is happening)
   runScenario(scenario)
 })
 
+test('AC3: not-started-chain-unparseable yields hung/R4 (chain exists, progress null)', () => {
+  const scenarios = loadScenarios()
+  const scenario = scenarios.find((s) => s.name === 'not-started-chain-unparseable')
+  assert.ok(scenario, 'not-started-chain-unparseable fixture exists')
+  runScenario(scenario)
+})
+
 test('AC3: not-started-projected-sidecar yields awaiting-gate/R3 (R3 wins over R4a)', () => {
   const scenarios = loadScenarios()
   const scenario = scenarios.find((s) => s.name === 'not-started-projected-sidecar')

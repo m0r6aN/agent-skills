@@ -866,8 +866,12 @@ export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
     if (divergence.length > 0)
       make('local-remote-divergence', 'Local and remote disagree about this parcel.', divergence)
 
-    // 7. stale-abandoned — hung, remote fully assessable, and nothing above applies.
-    if (parcel.state === 'hung' && absenceAssessable && found.length === 0) {
+    // 7. stale-abandoned — hung or not-started (FCA-P10), remote fully assessable, and nothing above applies.
+    if (
+      (parcel.state === 'hung' || parcel.state === 'not-started') &&
+      absenceAssessable &&
+      found.length === 0
+    ) {
       const traces = [
         ...(commits.length > 0
           ? [`${plural(commits.length, 'commit')} on ${repo.defaultRef} name the key (weak trace)`]
