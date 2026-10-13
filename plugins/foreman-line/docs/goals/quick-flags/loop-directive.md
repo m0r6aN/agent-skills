@@ -14,7 +14,7 @@ The Coordinator (D4): you consume verification, you never produce it. Charter: `
 ## Gate record
 
 - **Gate 1:** granted 2026-10-13 ("ratify as written"), re-ratified after plan review ("ratify the amendments as written"): D1–D10 as amended (D2′, D4′, D5′, D9′, D10′). Re-opening any decision re-opens Gate 1 for that decision only.
-  Ratified revisions: `charter.md` last committed at `2837d974`; amendment text in `plan-review-findings.md` last committed at `97b94e60` (recorded 2026-10-13 so `--dispatch-ok`/`--merge-ok` charter-revision pinning can resolve).
+  Ratified revisions: `charter.md` as ratified at `90f72d50` (Gate 1 re-ratification, 2026-10-13); amendment text in `plan-review-findings.md` at `97b94e60`. Disclosure for the developer's confirmation: commit `2837d974` later edited the charter's Gate 2 request to add QF-P0, conforming it to the already-ratified Parcels table; no ratification entry cites that edit.
 
 ## Standing authorizations (granted by Clint 2026-10-13; scoped to this goal only)
 
