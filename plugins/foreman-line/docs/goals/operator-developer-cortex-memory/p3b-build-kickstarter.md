@@ -78,3 +78,11 @@ No edits this turn. Read the contract and code. Reply with: (1) restatement; (2)
 | — | A F-1 / F-2 / F-3 | informational / carry-forward | Locked-bundle protocol on `InMemoryRecordStore` → follow-up; repaired Observation takes the repairing ingest's receive time (accepted); snapshot label KeyError is unreachable (accepted). |
 
 Verification of this narrow fix: **Seat B only** (owner of the finding; Seat A approved R2).
+
+## R3 triage (coordinator) — Seat B REQUEST-CHANGES (unlocked completeness shortcut)
+
+| # | Finding | Disposition | Ruling |
+|---|---|---|---|
+| P3b-T6 | R3-B F-1 — unlocked "fully indexed" shortcut can acknowledge another repair's uncommitted Observation | fix | Remove the unlocked shortcut: every ingest replay/race branch calls the locked `commit_spine_repair` (completeness is evaluated only under both store locks). Regression: concurrent repair with an injected rollback — every 200 corresponds to a committed, fully indexed Observation. |
+
+**Convergence ruling:** this is the final in-memory-concurrency round for P3b. Any further finding that is reachable **only** through fault injection or cross-thread access to the in-memory development store (production runs PostgreSQL, whose single-transaction path has been green since R1) is recorded as informational and carried forward to a follow-up parcel that promotes a protocol-level locked-bundle API onto `InMemoryRecordStore`.
