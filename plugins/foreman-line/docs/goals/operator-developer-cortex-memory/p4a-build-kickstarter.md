@@ -81,3 +81,7 @@ No edits this turn. Reply with: (1) restatement; (2) design table ruling → fil
 | P4a-T12 | A F-1 — T6 evidence gap | fix | Add the same-actor/different-role 403 test (approve and supersede) and correct the stale comment. |
 
 Convergence: after this round, residuals reachable only via in-memory dev-store races are carried forward (as for P2b/P3b); PG-path defects still force rework.
+
+## R3 disposition (coordinator) — Seat A APPROVE-WITH-FIXES, Seat B APPROVE-WITH-FIXES
+
+- Both seats verify P4a-T10 and P4a-T12 implemented. Residual (both seats, minor): an **identical concurrent `supersede` retry** can receive a fail-closed 409 instead of a replay (PG ordering; also one in-memory interleaving); exactly one complete bundle persists and the next identical retry replays 200 byte-identically. **Accepted-as-documented** (no partial state, no fork, no leak) with **carry-forward to P5a/P6**: the Gateway/adapter must treat a 409 on a curation operation as "re-query the binding by replaying the identical request once" before declaring it terminal. P4a accepted for Gate 3.
