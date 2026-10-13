@@ -58,6 +58,10 @@ test('assertReadOnlyGh allows only pr list, pr view and the annotation GET', () 
   )
   const refused: (readonly string[])[] = [
     ['pr', 'merge', '218'],
+    ['pr', 'merge', '--json', 'number'],
+    ['pr', 'close', '--state', 'open'],
+    ['pr', 'edit', '--limit', '5'],
+    ['pr', 'checkout', '218'],
     ['pr', 'close', '218'],
     ['pr', 'edit', '218', '--base', 'main'],
     ['pr', 'review', '218', '--approve'],

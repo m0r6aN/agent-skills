@@ -4,11 +4,11 @@ import test from 'node:test'
 import { JSDOM } from 'jsdom'
 import { fileLink, shellHtml, VIEWS } from '../ui/views/shell.js'
 
-test('operator shell has four explained primary destinations, named tools and no permanent spawn rail', () => {
+test('operator shell has five explained primary destinations (FCA-P9 adds Decisions), named tools and no permanent spawn rail', () => {
   const doc = new JSDOM(shellHtml()).window.document
   assert.deepEqual(
     [...doc.querySelectorAll('[data-primary]')].map((el) => el.textContent?.trim()),
-    ['Work queue', 'Goals & parcels', 'Sessions', 'Repositories'],
+    ['Work queue', 'Decisions', 'Goals & parcels', 'Sessions', 'Repositories'],
   )
   assert.ok(doc.querySelector('a[href="#main"]'), 'skip to content')
   assert.equal(doc.querySelector('aside.spawn'), null, 'no empty permanent rail')

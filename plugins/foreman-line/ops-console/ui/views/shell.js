@@ -1,12 +1,13 @@
 // Task-oriented shell. All capabilities remain reachable; technical tools are secondary.
 export const VIEWS = [
-  ['signals', 'Work queue'], ['board', 'Goals & parcels'],
+  ['signals', 'Work queue'], ['decisions', 'Decisions'], ['board', 'Goals & parcels'],
   ['sessions', 'Sessions'], ['fleet', 'Repositories'],
   ['reconcile', 'Reconciliation'], ['remedies', 'Alerts & guidance'], ['audit', 'Flow tools'], ['settings', 'Routing policy'],
 ]
 export const SEVERITIES = ['urgent', 'attention', 'info']
 export const VIEW_COPY = {
   signals: 'Find what needs attention. Select work, choose an action, and launch a session.',
+  decisions: 'Merges, ratifications and dispatches waiting for you, with the facts the console can see. The console presents; you decide and run any command yourself.',
   board: 'Follow a goal’s progress. Inspect evidence or select supported parcel actions.',
   reconcile: 'Compare what the record says with local git and the remote, per parcel. Explains why a parcel is hung and what to do. Read-only.',
   sessions: 'Console-recorded launches and their terminal panes—not every agent on this machine.',
@@ -42,7 +43,7 @@ export function navHtml(active) {
   return `<nav class="rail" aria-label="Workspace"><div class="nav-caption">Workspace</div>
     ${VIEWS.map(([id, label]) => `${id === 'reconcile' ? '<div class="nav-caption tools-caption">Tools</div>' : ''}
       <button type="button" class="nav-btn${id === active ? ' active' : ''}" data-view="${id}" ${['reconcile', 'remedies', 'audit', 'settings'].includes(id) ? '' : 'data-primary'}
-        aria-current="${id === active ? 'page' : 'false'}" title="${esc(VIEW_COPY[id])}">${esc(label)}</button>`).join('')}
+        aria-current="${id === active ? 'page' : 'false'}" title="${esc(VIEW_COPY[id])}">${esc(label)}${id === 'decisions' ? ' <span class="nav-badge" data-nav-badge="decisions"></span>' : ''}</button>`).join('')}
     <div class="rail-note"><span class="live-dot"></span> Local workspace<br><span>Approvals stay with you.</span></div></nav>`
 }
 export function shellHtml({ posture = '', activeView = 'signals' } = {}) {
@@ -63,6 +64,7 @@ export function shellHtml({ posture = '', activeView = 'signals' } = {}) {
       ${id === 'signals' ? '<div id="signals-body"></div>' : ''}
       ${id === 'board' ? '<div class="row goal-toolbar"><label>Goal <select id="goal-select" aria-label="Goal"></select></label><label>Show goals<select id="goal-status" aria-label="Goal status"><option value="active">Active</option><option value="all">All</option><option value="inactive">Inactive</option></select></label><label>Parcel status<select id="parcel-status" aria-label="Parcel status"><option value="">All statuses</option><option>running</option><option>hung</option><option>awaiting-gate</option><option>failed</option><option>complete</option></select></label><span id="attn-summary" class="muted"></span></div><div id="board" class="board"></div><section id="detail" hidden aria-live="polite"></section>' : ''}
       ${id === 'reconcile' ? '<div class="row goal-toolbar"><label>Goal <select id="reconcile-goal-select" aria-label="Goal"></select></label></div><div id="reconcile-body"></div>' : ''}
+      ${id === 'decisions' ? '<div id="decisions-body"></div>' : ''}
       ${id === 'sessions' ? '<div id="sessions-body"></div>' : ''}
       ${id === 'fleet' ? '<div id="fleet-body"></div>' : ''}
       ${id === 'remedies' ? '<div id="alerts-body"></div>' : ''}

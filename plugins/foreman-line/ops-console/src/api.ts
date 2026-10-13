@@ -4,6 +4,7 @@ import { ACTION_REGISTRY, type AutonomyEnvelope, dispatchAction } from './action
 import { deriveAlerts } from './alerts.js'
 import { type BrowseRefusalError, browseDirectory } from './browse.js'
 import { type ConsoleConfig, goalTrees, resolveGoalKey, treeConfigFor } from './config.js'
+import { buildDecisions, type DecisionsOptions } from './decisions.js'
 import {
   addFleetRoot,
   defaultFleetProbe,
@@ -98,7 +99,17 @@ function chainDocuments(config: ConsoleConfig, chain: ChainSummary | null): unkn
   return docs
 }
 
-export function handleApi(config: ConsoleConfig, request: ApiRequest, now: number): ApiResult {
+/** Test seams only: production callers pass nothing and get the real `gh`/`git`. */
+export interface ApiDeps {
+  readonly decisions?: DecisionsOptions
+}
+
+export function handleApi(
+  config: ConsoleConfig,
+  request: ApiRequest,
+  now: number,
+  deps: ApiDeps = {},
+): ApiResult {
   const { method, pathname, query } = request
 
   if (pathname === '/api/health') {
@@ -316,6 +327,19 @@ export function handleApi(config: ConsoleConfig, request: ApiRequest, now: numbe
         gates: projection.parcels.map((parcel) => ({ parcel: parcel.parcel, gates: parcel.gates })),
       },
     }))
+  }
+
+  // FCA-P9 decisions queue (owner-ratified route amendment 2026-10-13, A3):
+  // every human gate act waiting - open PRs (Gate 3) and R3 awaiting-gate
+  // parcels (Gates 1/2) - with evidence and ages. Read-only: facts and (in later
+  // stages) a presented command; nothing is merged, approved or dispatched here.
+  if (pathname === '/api/decisions') {
+    if (method !== 'GET') return methodNotAllowed('GET')
+    const repo = query.get('repo')
+    return {
+      status: 200,
+      json: buildDecisions(config, now, { ...deps.decisions, repo: repo === '' ? null : repo }),
+    }
   }
 
   if (pathname === '/api/alerts') {
