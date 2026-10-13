@@ -13,3 +13,7 @@ Mandate (rank every finding BLOCKER / HIGH / MEDIUM / LOW with file:line evidenc
 6. The additions BI-1..BI-9: attack each; do any relax something or create a new escalation path?
 7. Mechanical checkability for the later QF-P3 conformance check (field format, closed lists).
 Output: a findings table, then a verdict (ACCEPT / REQUEST CHANGES).
+
+---
+## Round 2 addendum (post-rework 1)
+This is a re-review of the reworked file at the current `qf-p1` HEAD (builder commit "QF-P1 rework 1"). Prior findings and the triage: `plugins/foreman-line/docs/goals/quick-flags/qf-p1-review-A-findings-2026-10-13.md`, `...-B-...`, and `qf-p1-review-triage-2026-10-13.md`. In addition to the mandate above: (a) for EVERY prior finding ID (A-1..A-30, H1-H4, M1-M7, L1-L8), verify closure against the new text with a quote, and decide whether the fix is complete across ALL instances of its pattern (the triage mandated "every instance" sweeps; hunt for the instances the builder missed); (b) hunt for regressions and for contradictions the ~92 new lines created (new records: void, derived grant, `id:` sequence, inert rule, provisional honouring, Winner column, rule IDs; check them against each other and against canon); (c) the usability cost of the inert rule is accepted by the coordinator: do not report it unless it creates a fail-OPEN path. Use a PRIVATE scratch directory created with `mktemp -d` (another reviewer runs concurrently). Same output format.
