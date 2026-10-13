@@ -50,6 +50,21 @@ export interface RepoFacts {
     readonly location: 'active' | 'done'
   }[]
   readonly defaultDivergence: { readonly ahead: number; readonly behind: number } | null
+  /**
+   * Which reads actually succeeded. A failed read is UNKNOWN, never "empty": an
+   * empty `merged` set would make every branch look unmerged, an empty spec
+   * listing would make every spec look absent, an empty log would erase commit
+   * evidence. Absence-based findings are withheld unless the relevant read is complete.
+   */
+  readonly complete: {
+    readonly branches: boolean
+    readonly merged: boolean
+    readonly specs: boolean
+    readonly defaultLog: boolean
+    readonly worktrees: boolean
+  }
+  /** The log limit was reached: older history is not in `defaultLog`/`allLog`. */
+  readonly logTruncated: boolean
 }
 
 export const LOG_LIMIT = 5000
@@ -114,7 +129,8 @@ function fetchedAt(run: GitRunner, repoRoot: string): string | null {
 export function gatherRepoFacts(
   repoRoot: string,
   run: GitRunner = defaultGitRunner,
-  specsRel: string = SPECS_REL,
+  /** Repo-relative POSIX specs dir, or null when it is outside the repository (specs then read unknown). */
+  specsRel: string | null = SPECS_REL,
 ): RepoFacts {
   let defaultRef = run(repoRoot, ['symbolic-ref', '--short', 'refs/remotes/origin/HEAD'])
   if (defaultRef === null || defaultRef === '') {
@@ -123,27 +139,24 @@ export function gatherRepoFacts(
         ? null
         : 'origin/main'
   }
-  const merged = new Set(
+  const mergedRaw =
     defaultRef === null
-      ? []
-      : lines(
-          run(repoRoot, [
-            'for-each-ref',
-            `--merged=${defaultRef}`,
-            'refs/heads',
-            'refs/remotes',
-            '--format=%(refname)',
-          ]),
-        ),
-  )
-  const branches: BranchFact[] = lines(
-    run(repoRoot, [
-      'for-each-ref',
-      'refs/heads',
-      'refs/remotes',
-      '--format=%(refname)\t%(refname:short)\t%(objectname)\t%(upstream:short)\t%(upstream:track,nobracket)',
-    ]),
-  )
+      ? ''
+      : run(repoRoot, [
+          'for-each-ref',
+          `--merged=${defaultRef}`,
+          'refs/heads',
+          'refs/remotes',
+          '--format=%(refname)',
+        ])
+  const merged = new Set(lines(mergedRaw))
+  const branchesRaw = run(repoRoot, [
+    'for-each-ref',
+    'refs/heads',
+    'refs/remotes',
+    '--format=%(refname)\t%(refname:short)\t%(objectname)\t%(upstream:short)\t%(upstream:track,nobracket)',
+  ])
+  const branches: BranchFact[] = lines(branchesRaw)
     .map((line) => line.split('\t'))
     .filter(
       ([ref, short]) =>
@@ -164,8 +177,8 @@ export function gatherRepoFacts(
       }
     })
 
-  const specLines = lines(
-    defaultRef === null
+  const specsRaw =
+    defaultRef === null || specsRel === null
       ? null
       : run(repoRoot, [
           'ls-tree',
@@ -175,8 +188,8 @@ export function gatherRepoFacts(
           '--',
           `${specsRel}/active`,
           `${specsRel}/done`,
-        ]),
-  )
+        ])
+  const specLines = lines(specsRaw)
   const remoteSpecFiles = specLines
     .map((path) => {
       const location: 'active' | 'done' | null = path.includes('/specs/done/')
@@ -202,19 +215,32 @@ export function gatherRepoFacts(
   }
 
   const logFormat = '--format=%H%x1f%cI%x1f%s'
+  const defaultLogRaw =
+    defaultRef === null
+      ? ''
+      : run(repoRoot, ['log', defaultRef, logFormat, '-n', String(LOG_LIMIT)])
+  const allLogRaw = run(repoRoot, ['log', '--all', logFormat, '-n', String(LOG_LIMIT)])
+  const worktreesRaw = run(repoRoot, ['worktree', 'list', '--porcelain'])
+  const defaultLog = parseLog(defaultLogRaw)
+  const allLog = parseLog(allLogRaw)
   return {
     repoRoot,
     defaultRef,
     refsAsOf: fetchedAt(run, repoRoot),
     currentBranch: run(repoRoot, ['symbolic-ref', '--short', '-q', 'HEAD']),
     branches,
-    worktrees: parseWorktrees(run(repoRoot, ['worktree', 'list', '--porcelain'])),
-    defaultLog:
-      defaultRef === null
-        ? []
-        : parseLog(run(repoRoot, ['log', defaultRef, logFormat, '-n', String(LOG_LIMIT)])),
-    allLog: parseLog(run(repoRoot, ['log', '--all', logFormat, '-n', String(LOG_LIMIT)])),
+    worktrees: parseWorktrees(worktreesRaw),
+    defaultLog,
+    allLog,
     remoteSpecFiles,
     defaultDivergence,
+    complete: {
+      branches: branchesRaw !== null,
+      merged: defaultRef === null || mergedRaw !== null,
+      specs: defaultRef !== null && specsRel !== null && specsRaw !== null,
+      defaultLog: defaultRef !== null && defaultLogRaw !== null,
+      worktrees: worktreesRaw !== null,
+    },
+    logTruncated: defaultLog.length >= LOG_LIMIT || allLog.length >= LOG_LIMIT,
   }
 }

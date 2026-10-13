@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import test from 'node:test'
 import type { GitFact } from '../src/ledger-git.js'
 import {
+  assess,
   DISCREPANCY_CODES,
   expandRanges,
   isDeliveryPr,
@@ -66,6 +68,8 @@ function repo(over: Partial<RepoFacts> = {}): RepoFacts {
     allLog: [],
     remoteSpecFiles: [],
     defaultDivergence: { ahead: 0, behind: 0 },
+    complete: { branches: true, merged: true, specs: true, defaultLog: true, worktrees: true },
+    logTruncated: false,
     ...over,
   }
 }
@@ -97,9 +101,16 @@ const prs = (list: PrFact[], over: Partial<PrFacts> = {}): PrFacts => ({
   reason: null,
   asOf: '2026-10-13T11:59:00.000Z',
   prs: list,
+  truncated: false,
   ...over,
 })
-const UNAVAILABLE: PrFacts = { available: false, reason: 'gh: not logged in', asOf: null, prs: [] }
+const UNAVAILABLE: PrFacts = {
+  available: false,
+  reason: 'gh: not logged in',
+  asOf: null,
+  prs: [],
+  truncated: false,
+}
 const remoteSpec = (key: string, location: 'active' | 'done' = 'active') => ({
   name: `${key}-x.md`,
   location,
@@ -715,4 +726,319 @@ test('stale-abandoned is "asserted" only with no traces at all; any weak trace m
     for (const d of r?.discrepancies ?? [])
       if (d.code === code) assert.equal(d.confidence, 'asserted', code)
   }
+})
+
+// ---- reviewer rework (independent review of FCA-P8, 2026-10-13) ----------------------------
+
+const INCOMPLETE = { branches: true, merged: true, specs: true, defaultLog: true, worktrees: true }
+
+test('review F1: a failed git read is UNKNOWN, never empty — merge state failure asserts no unmerged-work', () => {
+  const branches = [branch('feat/rcm-p1-wip')]
+  const ok = run([parcel('RCM-P1')], { repo: repo({ branches }) }).get('RCM-P1')
+  assert.ok(codes(ok).includes('unmerged-work'))
+  const failed = run([parcel('RCM-P1')], {
+    repo: repo({ branches, complete: { ...INCOMPLETE, merged: false } }),
+  }).get('RCM-P1')
+  assert.ok(
+    !codes(failed).includes('unmerged-work'),
+    'cannot call a branch unmerged when merge state could not be read',
+  )
+  assert.ok(
+    assess(repo({ complete: { ...INCOMPLETE, merged: false } }), prs([])).limits.some((l) =>
+      l.includes('merge state'),
+    ),
+  )
+})
+
+test('review F1: spec-listing / default-log / branch-listing failure withholds every absence finding', () => {
+  const closed = parcel('FK-P11', { state: 'complete', rule: 'R2', specLocation: 'done' })
+  const unstarted = parcel('JEV-P3')
+  for (const complete of [
+    { ...INCOMPLETE, specs: false },
+    { ...INCOMPLETE, defaultLog: false },
+    { ...INCOMPLETE, branches: false },
+  ]) {
+    const r = repo({ complete })
+    assert.ok(
+      !codes(run([closed], { repo: r }).get('FK-P11')).includes('recorded-unshipped'),
+      JSON.stringify(complete),
+    )
+    assert.deepEqual(
+      codes(run([unstarted], { repo: r }).get('JEV-P3')),
+      [],
+      JSON.stringify(complete),
+    )
+  }
+  const noSpecs = run([parcel('FOC-P3', { specLocation: 'active' })], {
+    repo: repo({ complete: { ...INCOMPLETE, specs: false } }),
+  }).get('FOC-P3')
+  assert.equal(noSpecs?.remote.specLocation, 'unknown', 'a failed listing is not "absent"')
+  assert.ok(!codes(noSpecs).includes('local-remote-divergence'), 'and creates no false divergence')
+})
+
+test('review F2: a truncated PR list or commit log withholds absence findings and says why', () => {
+  const unstarted = parcel('JEV-P3')
+  const closed = parcel('FK-P11', { state: 'complete', rule: 'R2', specLocation: 'done' })
+  const truncatedPrs = prs([], { truncated: true })
+  assert.deepEqual(codes(run([unstarted], { prs: truncatedPrs }).get('JEV-P3')), [])
+  assert.ok(
+    !codes(run([closed], { prs: truncatedPrs }).get('FK-P11')).includes('recorded-unshipped'),
+  )
+  assert.deepEqual(
+    codes(run([unstarted], { repo: repo({ logTruncated: true }) }).get('JEV-P3')),
+    [],
+  )
+  const a = assess(repo({ logTruncated: true }), truncatedPrs)
+  assert.equal(a.absence, false)
+  assert.equal(a.positive, true, 'something that exists can still be asserted')
+  assert.ok(a.limits.some((l) => l.includes('PR list hit its limit')))
+  assert.ok(a.limits.some((l) => l.includes('commit log hit its limit')))
+  // A positive finding is still allowed from a truncated list.
+  const shipped = run([parcel('FOC-P0', { specLocation: 'active' })], {
+    repo: repo({ remoteSpecFiles: [remoteSpec('FOC-P0')] }),
+    prs: prs([pr(163, 'feat: FOC-P0 contract')], { truncated: true }),
+  }).get('FOC-P0')
+  assert.ok(codes(shipped).includes('shipped-unrecorded'))
+  const note = run([parcel('RCM-P2')], { prs: truncatedPrs }).get('RCM-P2')?.hung?.note ?? ''
+  assert.match(note, /PR list hit its limit/)
+  assert.match(note, /cannot rule out that the work shipped/)
+})
+
+test('review F3: an ambiguous PR, branch or worktree blocks never-started and recorded-unshipped (it might be this parcel)', () => {
+  const both = pr(7, 'feat: FOC-P1 and FOC-P2 together', { state: 'OPEN', mergedAt: null })
+  const map = run([parcel('FOC-P1'), parcel('FOC-P2')], { prs: prs([both]) })
+  assert.ok(
+    !codes(map.get('FOC-P1')).includes('never-started'),
+    'ambiguous PR: not "never started"',
+  )
+  const stale = map.get('FOC-P1')?.discrepancies.find((d) => d.code === 'stale-abandoned')
+  assert.equal(
+    stale?.confidence,
+    'weak-traces',
+    'an ambiguous candidate is a trace, so the finding is a prompt to verify',
+  )
+  assert.ok(
+    stale?.evidence.some((line) => line.includes('ambiguous link not used') && line.includes('#7')),
+  )
+  const branchBoth = run([parcel('FOC-P1'), parcel('FOC-P2')], {
+    repo: repo({ branches: [branch('feat/foc-p1-foc-p2-combo')] }),
+  })
+  assert.ok(!codes(branchBoth.get('FOC-P1')).includes('never-started'))
+  const wtBoth = run([parcel('FOC-P1'), parcel('FOC-P2')], {
+    repo: repo({ worktrees: [{ path: '/wt/foc-p1-foc-p2', branch: null, head: 'h' }] }),
+  })
+  assert.ok(!codes(wtBoth.get('FOC-P1')).includes('never-started'))
+  const closed = run(
+    [parcel('FOC-P1', { state: 'complete', rule: 'R2', specLocation: 'done' }), parcel('FOC-P2')],
+    { prs: prs([pr(7, 'docs: FOC-P1 and FOC-P2')]), repo: repo({ remoteSpecFiles: [] }) },
+  )
+  assert.ok(!codes(closed.get('FOC-P1')).includes('recorded-unshipped'))
+})
+
+test('review F3/Q3: keys of OTHER goals take part in ambiguity; a remote spec belongs to the longest key', () => {
+  // `foc-p1-b` is FOC-P1-B's (another goal); it must not attach to FOC-P1 in this one.
+  const r = run([parcel('FOC-P1')], {
+    otherKeys: ['FOC-P1-B'],
+    repo: repo({ branches: [branch('feat/foc-p1-b-x')] }),
+  }).get('FOC-P1')
+  assert.equal(r?.local.branches.length, 0, 'not linked silently')
+  assert.equal(r?.ambiguous.length, 1)
+  const withoutOthers = run([parcel('FOC-P1')], {
+    repo: repo({ branches: [branch('feat/foc-p1-b-x')] }),
+  }).get('FOC-P1')
+  assert.equal(
+    withoutOthers?.local.branches.length,
+    1,
+    'without the other goal the link is made (the problem the input fixes)',
+  )
+  const spec = run([parcel('FOC-P1', { specLocation: 'active' })], {
+    otherKeys: ['FOC-P1-B'],
+    repo: repo({ remoteSpecFiles: [{ name: 'FOC-P1-B-x.md', location: 'active' }] }),
+  }).get('FOC-P1')
+  assert.equal(spec?.remote.specLocation, 'none', "FOC-P1-B-x.md is FOC-P1-B's spec, not FOC-P1's")
+})
+
+test('review F4: orphan-worktree checks the EXACT worktree path of live console sessions, however the worktree was linked', () => {
+  // Linked through its BRANCH name; the directory name does not contain the key.
+  const wt = { path: '/wt/wt1', branch: 'spawn/foc-p1-2026', head: 'h' }
+  const live = {
+    receiptId: 'r',
+    worktreePath: '/wt/wt1',
+    createdAt: '2026-10-13T11:59:00Z',
+    state: 'running' as const,
+    exitAt: null,
+    orphanClean: false,
+  }
+  assert.ok(
+    codes(run([parcel('FOC-P1')], { repo: repo({ worktrees: [wt] }) }).get('FOC-P1')).includes(
+      'orphan-worktree',
+    ),
+  )
+  assert.ok(
+    !codes(
+      run([parcel('FOC-P1')], { repo: repo({ worktrees: [wt] }), sessions: [live] }).get('FOC-P1'),
+    ).includes('orphan-worktree'),
+    'a live console session on that exact path means not orphaned',
+  )
+  const text =
+    run([parcel('FOC-P1')], { repo: repo({ worktrees: [wt] }) })
+      .get('FOC-P1')
+      ?.discrepancies.find((d) => d.code === 'orphan-worktree')
+      ?.evidence.join(' ') ?? ''
+  assert.match(text, /sessions started outside the console are not visible/)
+})
+
+test('review F5: a squash/rebase-merged branch (never an ancestor) is not unmerged when a MERGED PR has that head', () => {
+  const squashed = branch('feat/foc-p2-work', {
+    upstream: 'origin/feat/foc-p2-work',
+    upstreamGone: true,
+  })
+  const withPr = run([parcel('FOC-P2')], {
+    repo: repo({ branches: [squashed] }),
+    prs: prs([pr(40, 'feat: FOC-P2 work', { headRefName: 'feat/foc-p2-work' })]),
+  }).get('FOC-P2')
+  assert.ok(!codes(withPr).includes('unmerged-work'), 'merged PR head: shipped')
+  assert.ok(
+    !codes(withPr).includes('local-remote-divergence'),
+    'pruned upstream after a squash-merge is the normal end of a branch',
+  )
+  const withoutPr = run([parcel('FOC-P2')], { repo: repo({ branches: [squashed] }) }).get('FOC-P2')
+  assert.ok(codes(withoutPr).includes('unmerged-work'), 'no merged PR: still unmerged')
+  assert.ok(codes(withoutPr).includes('local-remote-divergence'))
+  const remote = branch('origin/feat/foc-p2-work', { remote: true })
+  assert.ok(
+    !codes(
+      run([parcel('FOC-P2')], {
+        repo: repo({ branches: [remote] }),
+        prs: prs([pr(40, 'feat: FOC-P2 work', { headRefName: 'feat/foc-p2-work' })]),
+      }).get('FOC-P2'),
+    ).includes('unmerged-work'),
+    'remote spelling is matched too',
+  )
+})
+
+test('review F7: delivery evidence needs a known default branch, a matching base, and a non-hedged title', () => {
+  assert.equal(
+    isDeliveryPr(pr(1, 'feat: x'), null),
+    false,
+    'unknown default branch: nothing is "merged into" it',
+  )
+  for (const title of [
+    'feat: FOC-P1 follow-up',
+    'fix: revert FOC-P1',
+    'feat(x): FOC-P1 partial',
+    'feat: WIP FOC-P1',
+    'feat: Follow-Up for FOC-P1',
+  ]) {
+    assert.equal(isDeliveryPr(pr(1, title), 'main'), false, title)
+  }
+  assert.equal(isDeliveryPr(pr(1, 'feat: FOC-P1 projection'), 'main'), true)
+  const r = run([parcel('FOC-P1', { specLocation: 'active' })], {
+    repo: repo({ defaultRef: null, remoteSpecFiles: [] }),
+    prs: prs([pr(1, 'feat: FOC-P1 projection')]),
+  }).get('FOC-P1')
+  assert.ok(!codes(r).includes('shipped-unrecorded'), 'no default branch: not asserted')
+  const ok = run([parcel('FOC-P1')], { prs: prs([pr(1, 'feat: FOC-P1 projection')]) }).get('FOC-P1')
+  assert.match(
+    ok?.discrepancies[0]?.summary ?? '',
+    /names this parcel.*Verify the PR delivered the whole parcel/,
+  )
+})
+
+test('review F10: spec-location divergence is only compared when the checked-out branch IS the default branch', () => {
+  const mismatch = { remoteSpecFiles: [{ name: 'FOC-P3-x.md', location: 'done' as const }] }
+  const onMain = run([parcel('FOC-P3', { specLocation: 'active' })], {
+    repo: repo({ ...mismatch, currentBranch: 'main' }),
+  }).get('FOC-P3')
+  assert.ok(codes(onMain).includes('local-remote-divergence'))
+  const onFeature = run([parcel('FOC-P3', { specLocation: 'active' })], {
+    repo: repo({ ...mismatch, currentBranch: 'feat/ops-console-ux-redesign' }),
+  }).get('FOC-P3')
+  assert.ok(
+    !codes(onFeature).includes('local-remote-divergence'),
+    'a feature checkout differs from main for every new spec; that is not divergence',
+  )
+  assert.equal(
+    onFeature?.local.checkedOutBranch,
+    'feat/ops-console-ux-redesign',
+    'the basis is still shown',
+  )
+})
+
+test('review F15: a parcel whose spec is in done/ (or whose item is marked) CLAIMS closure even while hung; recorded-unshipped applies', () => {
+  const claims = run([parcel('FK-P9', { state: 'hung', specLocation: 'done' })]).get('FK-P9')
+  assert.ok(codes(claims).includes('recorded-unshipped'), 'done/ spec, hung, remote shows no trace')
+  const marked = run([parcel('FK-P9', { state: 'hung' })], {
+    items: [{ key: 'FK-P9', text: '1. **FK-P9** ☑ SHIPPED + CLOSED' }],
+  }).get('FK-P9')
+  assert.ok(codes(marked).includes('recorded-unshipped'))
+  const plain = run([parcel('FK-P9', { state: 'hung' })]).get('FK-P9')
+  assert.ok(
+    !codes(plain).includes('recorded-unshipped'),
+    'an unstarted parcel makes no closure claim',
+  )
+})
+
+test('review F13: history ordering is total (null/unparseable timestamps last) and truncation is reported', () => {
+  const chain = {
+    workflowId: 'w',
+    locator: 'l',
+    members: [
+      { sequence: 1, stage: 'A', subjectKind: 'k', timestamp: '', hash: 'h', locator: 'x' },
+      {
+        sequence: 2,
+        stage: 'B',
+        subjectKind: 'k',
+        timestamp: 'not a date',
+        hash: 'h',
+        locator: 'y',
+      },
+      {
+        sequence: 3,
+        stage: 'C',
+        subjectKind: 'k',
+        timestamp: '2026-09-01T00:00:00Z',
+        hash: 'h',
+        locator: 'z',
+      },
+    ],
+    sidecars: [],
+    valid: true,
+    errors: [],
+    sealed: false,
+    tipStage: 'C',
+  }
+  const r = run([
+    parcel('FOC-P5', { chain: chain as ParcelProjection['chain'], chainEvidence: 'present' }),
+  ]).get('FOC-P5')
+  assert.equal(r?.history[0]?.label.includes('Stage C'), true, 'the only dated event is first')
+  assert.deepEqual(
+    r?.history.slice(1).map((e) => e.at),
+    ['', 'not a date'],
+    'undated events last, in a stable order',
+  )
+  const many = Array.from({ length: 150 }, (_, i) => ({
+    sha: `s${i}`.padEnd(40, '0'),
+    at: `2026-10-01T00:${String(i % 60).padStart(2, '0')}:00Z`,
+    subject: `feat: FOC-P6 change ${i}`,
+  }))
+  const big = run([parcel('FOC-P6')], { repo: repo({ allLog: many }) }).get('FOC-P6')
+  assert.equal(big?.history.length, 100)
+  assert.equal(big?.historyTotal, 150, 'the cap is visible, not silent')
+})
+
+test('review F16/Q: expandRanges leaves pathological lines literal', () => {
+  const huge = `${'A'.repeat(5000)}-P1–${'A'.repeat(5000)}-P4`
+  assert.equal(expandRanges(huge), huge)
+})
+
+test('review: CLOSED_MARKER cannot drift from the derive.ts R2 pattern', () => {
+  const derive = readFileSync(new URL('../src/derive.ts', import.meta.url), 'utf8')
+  const reconcileSource = readFileSync(new URL('../src/reconcile.ts', import.meta.url), 'utf8')
+  const pick = (text: string, name: string) =>
+    new RegExp(`${name}\\s*=\\s*(/[^/\\n]+/)`).exec(text)?.[1]
+  const fromDerive = pick(derive, 'CLOSED_MARKER_PATTERN')
+  const fromReconcile = pick(reconcileSource, 'CLOSED_MARKER')
+  assert.ok(fromDerive !== undefined && fromReconcile !== undefined)
+  assert.equal(fromReconcile, fromDerive)
 })

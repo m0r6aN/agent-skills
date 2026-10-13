@@ -138,8 +138,24 @@ Tools → **Reconciliation** compares, per parcel, what the *record* says with w
 - **Linking** is by exact parcel key as a delimited token (`FOC-P1` never links
   `foc-p10`); a candidate matching two keys is *ambiguous* — listed, never used.
   `FOC-P1–FOC-P4` ranges in state lines are expanded; nothing else is guessed.
+- **Assessment, not guesswork.** Findings that say something *exists* need only the
+  sources they name. Findings that say something does *not* exist (`never-started`,
+  `recorded-unshipped`, `stale-abandoned`) need **every** source complete: GitHub
+  reachable, the PR list and commit log under their limits (1000 PRs / 5000 commits), the
+  spec, branch and merge-state reads successful. A failed or truncated read is *unknown*,
+  never "empty"; the response's `assessment.limits` and the banner say what is missing.
+- **Squash/rebase merges** are recognised by a MERGED PR whose head is the branch
+  (ancestry alone would call every shipped branch unmerged). Title hedges
+  (`revert`, `follow-up`, `partial`, `wip`) are never delivery evidence.
+- **Keys inside longer slugs** (`TO-P1` in `add-to-p1-schema`) cannot be told apart by any
+  deterministic token rule; the real branch `foreman-to-p1-ratification` is legitimately
+  TO-P1's. Findings show their linked evidence so a wrong link is visible. Keys of the
+  repository's other goals are indexed so a candidate matching two goals is *ambiguous*.
 - **Remote unavailable** (no `gh`, not logged in, offline): remote-dependent findings
-  are withheld and the banner says so; local facts remain.
+  are withheld and the banner says so; local facts remain. A failing `gh` is retried at
+  most every 5 minutes (each attempt can block for its 10 s timeout).
+- **Remote-ref age** is the last `FETCH_HEAD` (any fetch). The banner warns when refs are
+  older than a day or no fetch is recorded. The console never fetches.
 - **Read-only:** `git` is limited to `symbolic-ref`, `rev-parse`, `for-each-ref`, `log`,
   `ls-tree`, `rev-list`, `status`, `worktree list`, `merge-base --is-ancestor`; `gh` to
   `pr list`. Nothing fetches, pushes, merges, or closes. Remote-ref age is the last

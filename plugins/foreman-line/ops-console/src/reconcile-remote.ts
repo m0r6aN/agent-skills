@@ -26,18 +26,23 @@ export interface PrFacts {
   readonly reason: string | null
   readonly asOf: string | null
   readonly prs: readonly PrFact[]
+  /** The PR limit was reached: older PRs are NOT in `prs`, so absence cannot be claimed. */
+  readonly truncated: boolean
 }
 
 export type GhRunner = (cwd: string, args: readonly string[]) => string
 
 export const PR_LIMIT = 1000
 export const DEFAULT_TTL_MS = 60_000
+/** A failing gh (offline, logged out) is retried less often: each attempt can block for the timeout. */
+export const FAILURE_TTL_MS = 5 * 60_000
+export const GH_TIMEOUT_MS = 10_000
 
 export const defaultGhRunner: GhRunner = (cwd, args) =>
   execFileSync('gh', [...args], {
     cwd,
     encoding: 'utf8',
-    timeout: 20_000,
+    timeout: GH_TIMEOUT_MS,
     maxBuffer: 32 * 1024 * 1024,
     stdio: ['ignore', 'pipe', 'pipe'],
   })
@@ -98,7 +103,13 @@ function reasonOf(error: unknown): string {
 export function gatherPrFacts(repoRoot: string, now: number, options: PrOptions = {}): PrFacts {
   const ttl = options.ttlMs ?? DEFAULT_TTL_MS
   const hit = cache.get(repoRoot)
-  if (ttl > 0 && hit !== undefined && now - hit.at < ttl) return hit.facts
+  if (
+    hit !== undefined &&
+    ttl > 0 &&
+    now - hit.at < (hit.facts.available ? ttl : Math.max(ttl, FAILURE_TTL_MS))
+  ) {
+    return hit.facts
+  }
   const run = options.run ?? defaultGhRunner
   let facts: PrFacts
   try {
@@ -116,10 +127,22 @@ export function gatherPrFacts(repoRoot: string, now: number, options: PrOptions 
     )
     facts =
       prs === null
-        ? { available: false, reason: 'gh returned unparseable output', asOf: null, prs: [] }
-        : { available: true, reason: null, asOf: new Date(now).toISOString(), prs }
+        ? {
+            available: false,
+            reason: 'gh returned unparseable output',
+            asOf: null,
+            prs: [],
+            truncated: false,
+          }
+        : {
+            available: true,
+            reason: null,
+            asOf: new Date(now).toISOString(),
+            prs,
+            truncated: prs.length >= PR_LIMIT,
+          }
   } catch (error) {
-    facts = { available: false, reason: reasonOf(error), asOf: null, prs: [] }
+    facts = { available: false, reason: reasonOf(error), asOf: null, prs: [], truncated: false }
   }
   // Failures are cached too (briefly) so a dead network is not re-probed per request.
   if (ttl > 0) cache.set(repoRoot, { at: now, facts })

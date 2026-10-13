@@ -4,8 +4,16 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import test from 'node:test'
-import { gatherRepoFacts, parseWorktrees } from '../src/reconcile-git.js'
-import { clearPrCache, gatherPrFacts, parsePrs } from '../src/reconcile-remote.js'
+import type { GitRunner } from '../src/ledger-git.js'
+import { gatherRepoFacts, LOG_LIMIT, parseWorktrees } from '../src/reconcile-git.js'
+import {
+  clearPrCache,
+  FAILURE_TTL_MS,
+  GH_TIMEOUT_MS,
+  gatherPrFacts,
+  PR_LIMIT,
+  parsePrs,
+} from '../src/reconcile-remote.js'
 
 /**
  * FCA-P8 fact gatherers: local git facts against REAL repositories (bare
@@ -270,4 +278,136 @@ test('gh adapter: cache window avoids re-querying; failures are cached briefly; 
   gatherPrFacts('/dead', NOW, { run: failing })
   gatherPrFacts('/dead', NOW + 1_000, { run: failing })
   assert.equal(failures, 1, 'a dead network is not re-probed on every request')
+})
+
+// ---- reviewer rework (independent review of FCA-P8, 2026-10-13) ----------------------------
+
+const REAL_RUN = (cwd: string, args: readonly string[]): string | null => {
+  try {
+    return execFileSync('git', ['-C', cwd, ...args], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).replace(/\s+$/, '')
+  } catch {
+    return null
+  }
+}
+
+test('review F1: each failed git read is flagged incomplete (unknown), not silently empty', () => {
+  const root = mkdtempSync(join(tmpdir(), 'reconcile-fail-'))
+  try {
+    const bare = join(root, 'remote.git')
+    const repo = join(root, 'repo')
+    execFileSync('git', ['init', '-q', '--bare', '-b', 'main', bare])
+    execFileSync('git', ['init', '-q', '-b', 'main', repo])
+    git(repo, 'remote', 'add', 'origin', bare)
+    commitFile(repo, 'plugins/foreman-line/docs/specs/active/FOC-P0-x.md', 'a', 'feat: FOC-P0')
+    git(repo, 'push', '-q', 'origin', 'main')
+    git(repo, 'remote', 'set-head', 'origin', 'main')
+    const healthy = gatherRepoFacts(repo, REAL_RUN)
+    assert.deepEqual(healthy.complete, {
+      branches: true,
+      merged: true,
+      specs: true,
+      defaultLog: true,
+      worktrees: true,
+    })
+    assert.equal(healthy.logTruncated, false)
+
+    const failing =
+      (match: (args: readonly string[]) => boolean): GitRunner =>
+      (cwd, args) =>
+        match(args) ? null : REAL_RUN(cwd, args)
+    const merged = gatherRepoFacts(
+      repo,
+      failing((a) => a[0] === 'for-each-ref' && a.some((x) => x.startsWith('--merged'))),
+    )
+    assert.equal(merged.complete.merged, false)
+    assert.ok(merged.branches.length > 0, 'the plain branch listing still worked')
+    const specs = gatherRepoFacts(
+      repo,
+      failing((a) => a[0] === 'ls-tree'),
+    )
+    assert.equal(specs.complete.specs, false)
+    assert.deepEqual(specs.remoteSpecFiles, [])
+    const log = gatherRepoFacts(
+      repo,
+      failing((a) => a[0] === 'log' && a[1] === 'origin/main'),
+    )
+    assert.equal(log.complete.defaultLog, false)
+    const refs = gatherRepoFacts(
+      repo,
+      failing((a) => a[0] === 'for-each-ref' && !a.some((x) => x.startsWith('--merged'))),
+    )
+    assert.equal(refs.complete.branches, false)
+    const wts = gatherRepoFacts(
+      repo,
+      failing((a) => a[0] === 'worktree'),
+    )
+    assert.equal(wts.complete.worktrees, false)
+    // A specs dir outside the repository is unknown, not "absent".
+    const outside = gatherRepoFacts(repo, REAL_RUN, null)
+    assert.equal(outside.complete.specs, false)
+    // A different tree layout is honoured (the specs dir is not hardcoded).
+    commitFile(repo, 'docs/specs/done/ALT-P1-y.md', 'b', 'docs: ALT-P1')
+    git(repo, 'push', '-q', 'origin', 'main')
+    const alt = gatherRepoFacts(repo, REAL_RUN, 'docs/specs')
+    assert.deepEqual(alt.remoteSpecFiles, [{ name: 'ALT-P1-y.md', location: 'done' }])
+    assert.equal(alt.complete.specs, true)
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
+test('review F2: reaching the log limit is reported as truncation', () => {
+  const lineFor = (i: number) =>
+    `${`sha${i}`.padEnd(40, '0')}\u001f2026-10-01T00:00:00Z\u001fcommit ${i}`
+  const run =
+    (count: number): GitRunner =>
+    (_cwd, args) => {
+      if (args[0] === 'symbolic-ref') return 'origin/main'
+      if (args[0] === 'log') return Array.from({ length: count }, (_, i) => lineFor(i)).join('\n')
+      return ''
+    }
+  assert.equal(gatherRepoFacts('/r', run(LOG_LIMIT - 1)).logTruncated, false)
+  assert.equal(gatherRepoFacts('/r', run(LOG_LIMIT)).logTruncated, true)
+})
+
+test('review F2: reaching the PR limit is flagged; failures are cached longer than successes', () => {
+  clearPrCache()
+  const full = JSON.stringify(
+    Array.from({ length: PR_LIMIT }, (_, i) => ({
+      number: i + 1,
+      title: 't',
+      headRefName: 'h',
+      baseRefName: 'main',
+      state: 'OPEN',
+      createdAt: '2026-10-01T00:00:00Z',
+      mergedAt: null,
+      closedAt: null,
+      url: 'u',
+    })),
+  )
+  const limited = gatherPrFacts('/limit', NOW, { ttlMs: 0, run: () => full })
+  assert.equal(limited.available, true)
+  assert.equal(limited.truncated, true, 'older PRs are not visible: absence cannot be claimed')
+  assert.equal(gatherPrFacts('/small', NOW, { ttlMs: 0, run: () => PR_JSON }).truncated, false)
+
+  clearPrCache()
+  let failures = 0
+  const failing = () => {
+    failures++
+    throw new Error('offline')
+  }
+  gatherPrFacts('/dead', NOW, { run: failing })
+  gatherPrFacts('/dead', NOW + 4 * 60_000, { run: failing })
+  assert.equal(
+    failures,
+    1,
+    'a dead network is not re-probed for 5 minutes (each probe can block for the timeout)',
+  )
+  gatherPrFacts('/dead', NOW + FAILURE_TTL_MS + 1_000, { run: failing })
+  assert.equal(failures, 2)
+  assert.ok(GH_TIMEOUT_MS <= 10_000, 'a hung gh stalls the server for at most 10 s')
+  clearPrCache()
 })

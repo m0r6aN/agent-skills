@@ -12,8 +12,9 @@ import type { ParcelProjection, QueueItem } from './types.js'
  * closed vocabulary WITH its evidence, and explain `hung` in plain terms.
  *
  * Invariants (FOC-P0 frozen contract untouched):
- * - Additive and read-only: `state`/`rule` are never read back, changed, or
- *   used as derivation input; nothing here writes.
+ * - Additive and read-only: nothing here writes. `state` is READ as a
+ *   reconciliation input (is the record closed? is it hung?) and `state`/`rule`
+ *   are never changed or re-derived; the frozen derivation is not touched.
  * - Deterministic linking only: a parcel links to a branch/worktree/PR/commit
  *   solely by its exact key as a delimited token. A candidate matching several
  *   keys of the same goal is AMBIGUOUS: shown, never used to assert.
@@ -112,6 +113,8 @@ export interface Reconciliation {
   readonly ambiguous: readonly LinkedRef[]
   readonly discrepancies: readonly Discrepancy[]
   readonly history: readonly HistoryEvent[]
+  /** Events found before the display cap; `history.length < historyTotal` means older events are not shown. */
+  readonly historyTotal: number
   readonly absentSources: readonly string[]
   readonly hung: HungExplanation | null
 }
@@ -121,6 +124,12 @@ export interface ReconcileInput {
   readonly items: readonly QueueItem[]
   /** Goal state lines (`**…state…**` of the loop directive): local record claims about parcels. */
   readonly stateLines?: readonly string[]
+  /**
+   * Parcel keys of the repository's OTHER goals. They take no part in the output but
+   * are indexed so a candidate that matches a key here AND one there is recognised as
+   * ambiguous instead of silently attaching to this goal's key.
+   */
+  readonly otherKeys?: readonly string[]
   readonly repo: RepoFacts
   readonly prs: PrFacts
   readonly sessions: readonly SessionEvidence[]
@@ -153,6 +162,8 @@ export function keyPattern(key: string): RegExp {
  * short; anything else stays literal. Deterministic, no guessing.
  */
 export function expandRanges(text: string): string {
+  // Bound the work: a pathological line is left literal rather than scanned.
+  if (text.length > 4000) return text
   const extra: string[] = []
   for (const match of text.matchAll(
     /([A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*?-P)(\d+)\s*[–—-]\s*\1(\d+)(?![A-Za-z0-9])/g,
@@ -213,13 +224,19 @@ export function titleType(title: string): string | null {
   return match === null ? null : (match[1] ?? '').toLowerCase()
 }
 
+/** Titles that announce a partial or corrective change are not evidence a parcel was delivered. */
+const HEDGED_TITLE = /\b(?:revert|follow-?up|partial|wip)\b/i
+
 export function isDeliveryPr(pr: PrFact, defaultBranch: string | null): boolean {
   const type = titleType(pr.title)
   return (
     pr.state === 'MERGED' &&
-    (defaultBranch === null || pr.baseRefName === defaultBranch) &&
+    // Without a known default branch there is no way to say what "merged" meant.
+    defaultBranch !== null &&
+    pr.baseRefName === defaultBranch &&
     type !== null &&
-    DELIVERY_TYPES.has(type)
+    DELIVERY_TYPES.has(type) &&
+    !HEDGED_TITLE.test(pr.title)
   )
 }
 
@@ -436,7 +453,7 @@ function optionsFor(
 function hungExplanation(
   parcel: ParcelProjection,
   codes: readonly DiscrepancyCode[],
-  remoteAssessable: boolean,
+  assessment: Assessment,
   recordMarksClosed: boolean,
   now: number,
 ): HungExplanation {
@@ -470,19 +487,76 @@ function hungExplanation(
   )
   return {
     lines,
-    note: remoteAssessable
+    note: assessment.absence
       ? null
-      : 'The remote is unavailable, so this cannot rule out that the work shipped (shipped-unrecorded) or is in an open PR.',
+      : `Some sources are unavailable or incomplete (${assessment.limits.join('; ')}), so this cannot rule out that the work shipped (shipped-unrecorded) or is in an open PR.`,
   }
+}
+
+/**
+ * What this run can and cannot honestly assert. `positive` findings (something
+ * exists) need only the sources they name. `absence` findings (nothing exists)
+ * need EVERY source complete: a failed git read, a truncated list, or an
+ * unavailable remote is unknown, never "empty".
+ */
+export interface Assessment {
+  readonly positive: boolean
+  readonly absence: boolean
+  readonly limits: readonly string[]
+}
+
+export function assess(repo: RepoFacts, prs: PrFacts): Assessment {
+  const limits: string[] = []
+  if (!prs.available) limits.push(`GitHub unavailable (${prs.reason ?? 'unknown reason'})`)
+  if (prs.truncated) limits.push('the PR list hit its limit, so older PRs are not visible')
+  if (repo.defaultRef === null) limits.push('no default branch was found')
+  if (repo.defaultRef !== null) {
+    if (!repo.complete.defaultLog) limits.push('reading the default branch log failed')
+    if (!repo.complete.specs) limits.push('the specs listing on the default branch is unavailable')
+    if (!repo.complete.merged) limits.push('branch merge state could not be read')
+  }
+  if (!repo.complete.branches) limits.push('the branch listing failed')
+  if (repo.logTruncated)
+    limits.push('the commit log hit its limit, so older commits are not visible')
+  const positive = prs.available && repo.defaultRef !== null
+  return { positive, absence: positive && limits.length === 0, limits }
 }
 
 export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
   const { parcels, items, repo, prs, sessions, now } = input
   const itemText = new Map(items.map((item) => [item.key, item.text]))
   const keys = parcels.map((parcel) => parcel.parcel)
-  const keyIndex = makeKeyIndex(keys)
+  const allKeys = [...new Set([...keys, ...(input.otherKeys ?? [])])]
+  const keyIndex = makeKeyIndex(allKeys)
   const defaultBranch = repo.defaultRef === null ? null : repo.defaultRef.replace(/^origin\//, '')
-  const remoteAssessable = prs.available && repo.defaultRef !== null
+  const assessment = assess(repo, prs)
+  // `remoteAssessable` gates findings that assert something exists; `absenceAssessable`
+  // gates findings that assert nothing exists.
+  const remoteAssessable = assessment.positive
+  const absenceAssessable = assessment.absence
+  // Heads of merged PRs: a squash- or rebase-merged branch is never an ancestor of the
+  // default branch, so ancestry alone would call every shipped branch "unmerged".
+  const mergedHeads = new Set(
+    prs.prs.filter((pr) => pr.state === 'MERGED').map((pr) => pr.headRefName),
+  )
+  const branchMerged = (name: string, mergedIntoDefault: boolean): boolean =>
+    mergedIntoDefault || mergedHeads.has(name.replace(/^origin\//, ''))
+  // Live console sessions by EXACT worktree path (never by key): a worktree linked to a
+  // parcel through its branch name is still the same path.
+  const livePathsAll = new Set(
+    sessions
+      .filter((session) => session.state === 'running' || session.state === 'launching')
+      .map((session) => session.worktreePath),
+  )
+  // A remote spec file belongs to the LONGEST key that prefixes it (FOC-P1-B-x.md is
+  // FOC-P1-B's, not FOC-P1's).
+  const remoteSpecByKey = new Map<string, 'active' | 'done'>()
+  const keysLongestFirst = [...allKeys].sort((a, b) => b.length - a.length)
+  for (const file of repo.remoteSpecFiles) {
+    const owner = keysLongestFirst.find((key) => file.name.startsWith(`${key}-`))
+    if (owner !== undefined && !remoteSpecByKey.has(owner))
+      remoteSpecByKey.set(owner, file.location)
+  }
 
   const matchedKeys = (text: string): string[] => keyIndex(text)
 
@@ -586,6 +660,8 @@ export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
     const text = itemText.get(key) ?? ''
     const recordMarksClosed = CLOSED_MARKER.test(text)
     const recordClosed = parcel.state === 'complete'
+    // The record CLAIMS closure if the console says complete, the spec is in done/, or the item carries a closed marker.
+    const recordClaimsClosed = recordClosed || parcel.specLocation === 'done' || recordMarksClosed
     const myPrs = prRefs
       .map((ref) => prByNumber.get(ref.ref))
       .filter((pr): pr is PrFact => pr !== undefined)
@@ -593,10 +669,11 @@ export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
     const mergedPrs = myPrs.filter((pr) => pr.state === 'MERGED')
     const openPrs = myPrs.filter((pr) => pr.state === 'OPEN')
     const remoteSpec = ((): 'active' | 'done' | 'none' | 'unknown' => {
-      if (repo.defaultRef === null) return 'unknown'
-      const match = repo.remoteSpecFiles.find((file) => file.name.startsWith(`${key}-`))
-      return match === undefined ? 'none' : match.location
+      if (repo.defaultRef === null || !repo.complete.specs) return 'unknown'
+      return remoteSpecByKey.get(key) ?? 'none'
     })()
+    // Ambiguous candidates might be this parcel's: they block any claim of absence.
+    const ambiguousHere = (ambiguous.get(key) ?? []).length > 0
 
     const mySessions = sessionsByKey.get(key) ?? []
     const sessionRefs: LinkedRef[] = mySessions.map((session) => ({
@@ -605,11 +682,7 @@ export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
       detail: `${session.state} (worktree ${basename(session.worktreePath)})`,
       at: session.createdAt,
     }))
-    const livePaths = new Set(
-      mySessions
-        .filter((session) => session.state === 'running' || session.state === 'launching')
-        .map((session) => session.worktreePath),
-    )
+    const livePaths = livePathsAll
 
     const found: Discrepancy[] = []
     const make = (
@@ -646,7 +719,7 @@ export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
       const first = deliveryPrs[0] as PrFact
       make(
         'shipped-unrecorded',
-        `Merged delivery work exists on ${defaultBranch ?? 'the default branch'} but the record does not show the parcel closed.`,
+        `A merged delivery-type PR names this parcel on ${defaultBranch ?? 'the default branch'}, but the record does not show it closed. Verify the PR delivered the whole parcel.`,
         [
           ...deliveryPrs.map((pr) => `PR #${pr.number} MERGED ${pr.mergedAt ?? '?'}: ${pr.title}`),
           `record: state ${parcel.state}, spec ${parcel.specLocation}, closed marker ${recordMarksClosed ? 'present' : 'absent'}`,
@@ -662,8 +735,9 @@ export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
       commits.length > 0 ||
       remoteBranches.length > 0 ||
       remoteSpec === 'active' ||
-      remoteSpec === 'done'
-    if (recordClosed && remoteAssessable && !anyTrace) {
+      remoteSpec === 'done' ||
+      ambiguousHere
+    if (recordClaimsClosed && absenceAssessable && !anyTrace) {
       make(
         'recorded-unshipped',
         'The record shows this parcel closed, but the remote shows no PR, commit, branch, or spec for it.',
@@ -683,7 +757,8 @@ export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
       const branch = branchByName.get(ref.ref)
       if (
         branch !== undefined &&
-        !branch.mergedIntoDefault &&
+        repo.complete.merged &&
+        !branchMerged(branch.name, branch.mergedIntoDefault) &&
         ref.ref !== defaultBranch &&
         ref.ref !== repo.defaultRef
       ) {
@@ -718,11 +793,11 @@ export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
       if (outcome.commitsAhead === 0 && outcome.dirtyFiles === 0) {
         make(
           'orphan-worktree',
-          'A worktree exists for this parcel with no live session, no commits and no changes.',
+          'A worktree exists for this parcel with no live console-launched session, no commits and no changes.',
           [
             `worktree ${wt.ref}`,
             `${wt.detail}`,
-            '0 commits ahead of the default branch, 0 changed files, no live pane',
+            '0 commits ahead of the default branch, 0 changed files, no live console-launched session (sessions started outside the console are not visible)',
           ],
           { path: wt.ref },
         )
@@ -732,11 +807,12 @@ export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
     // 5. never-started — remote fully assessable and every source empty.
     const mentions = stateMentions.get(key) ?? []
     const anyLocal =
-      localBranches.length + worktrees.length + mySessions.length + mentions.length > 0
+      localBranches.length + worktrees.length + mySessions.length + mentions.length > 0 ||
+      ambiguousHere
     const allLogHit = anyCommitKeys.has(key)
     if (
       !recordClosed &&
-      remoteAssessable &&
+      absenceAssessable &&
       parcel.specLocation === 'none' &&
       parcel.chainEvidence === 'absent' &&
       !anyLocal &&
@@ -755,18 +831,23 @@ export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
     for (const ref of localBranches) {
       const branch = branchByName.get(ref.ref)
       if (branch === undefined || branch.upstream === null) continue
-      if (branch.upstreamGone)
-        divergence.push(`branch ${ref.ref}: upstream ${branch.upstream} is gone`)
-      else if ((branch.aheadOfUpstream ?? 0) > 0 || (branch.behindUpstream ?? 0) > 0) {
+      if (branch.upstreamGone) {
+        // A pruned upstream after a squash-merge is the normal end of a shipped branch.
+        if (!mergedHeads.has(branch.name))
+          divergence.push(`branch ${ref.ref}: upstream ${branch.upstream} is gone`)
+      } else if ((branch.aheadOfUpstream ?? 0) > 0 || (branch.behindUpstream ?? 0) > 0) {
         divergence.push(
           `branch ${ref.ref} vs ${branch.upstream}: ${branch.aheadOfUpstream ?? 0} ahead, ${branch.behindUpstream ?? 0} behind`,
         )
       }
     }
+    // Only comparable when the checked-out branch IS the default branch: a feature-branch
+    // or worktree checkout legitimately differs from the default branch for every new spec.
     if (
       remoteSpec !== 'unknown' &&
       parcel.specLocation !== 'none' &&
-      remoteSpec !== parcel.specLocation
+      remoteSpec !== parcel.specLocation &&
+      repo.currentBranch === defaultBranch
     ) {
       divergence.push(
         `spec: local (${repo.currentBranch ?? 'detached HEAD'}) has it in ${parcel.specLocation}/, ${repo.defaultRef} has it ${remoteSpec === 'none' ? 'absent' : `in ${remoteSpec}/`} (remote as of ${repo.refsAsOf ?? 'never fetched'})`,
@@ -776,7 +857,7 @@ export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
       make('local-remote-divergence', 'Local and remote disagree about this parcel.', divergence)
 
     // 7. stale-abandoned — hung, remote fully assessable, and nothing above applies.
-    if (parcel.state === 'hung' && remoteAssessable && found.length === 0) {
+    if (parcel.state === 'hung' && absenceAssessable && found.length === 0) {
       const traces = [
         ...(commits.length > 0
           ? [`${plural(commits.length, 'commit')} on ${repo.defaultRef} name the key (weak trace)`]
@@ -792,6 +873,10 @@ export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
           : []),
         ...(stateMentions.get(key) ?? []).map(
           (line) => `goal state line mentions it (local record claim): ${line}`,
+        ),
+        ...(ambiguous.get(key) ?? []).map(
+          (ref) =>
+            `ambiguous link not used (it also matches another parcel key): ${ref.kind} ${ref.ref} — ${ref.detail}`,
         ),
       ]
       make(
@@ -869,9 +954,16 @@ export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
           ref: session.receiptId,
         })
     }
-    history.sort((a, b) =>
-      b.at === null ? -1 : a.at === null ? 1 : Date.parse(b.at) - Date.parse(a.at),
-    )
+    // Newest first; events with no usable timestamp sort last (a total order, so the
+    // sort is stable even with nulls or unparseable strings).
+    const stamp = (at: string | null): number => {
+      const value = at === null ? Number.NaN : Date.parse(at)
+      return Number.isNaN(value) ? Number.NEGATIVE_INFINITY : value
+    }
+    history.sort((a, b) => {
+      const [x, y] = [stamp(a.at), stamp(b.at)]
+      return x === y ? 0 : y > x ? 1 : -1
+    })
     const absent: string[] = []
     if (!history.some((event) => event.source === 'receipt')) absent.push('receipts')
     if (!history.some((event) => event.source === 'commit')) absent.push('commits')
@@ -920,10 +1012,11 @@ export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
       ambiguous: ambiguous.get(key) ?? [],
       discrepancies: found,
       history: history.slice(0, HISTORY_CAP),
+      historyTotal: history.length,
       absentSources: absent,
       hung:
         parcel.state === 'hung'
-          ? hungExplanation(parcel, codes, remoteAssessable, recordMarksClosed, now)
+          ? hungExplanation(parcel, codes, assessment, recordMarksClosed, now)
           : null,
     }
   })

@@ -481,3 +481,232 @@ test('an expanded explanation stays open across re-renders (filter, refresh) and
     ui.close()
   }
 })
+
+// ---- reviewer rework (independent review of FCA-P8, 2026-10-13) ----------------------------
+
+test('review: banner shows when it was generated, warns on stale refs, and names why absence findings are withheld', () => {
+  const base = data([], { generatedAt: '2026-10-13T12:00:00Z' })
+  assert.match(text(remoteBannerHtml(base)), /generated 2026-10-13 12:00 UTC/)
+  // Refs fetched 3 days before generation: stale.
+  const old = remoteBannerHtml(
+    data([], {
+      generatedAt: '2026-10-13T12:00:00Z',
+      repo: {
+        defaultRef: 'origin/main',
+        refsAsOf: '2026-10-10T12:00:00Z',
+        checkedOutBranch: 'main',
+        defaultDivergence: null,
+      },
+    }),
+  )
+  assert.match(text(old), /Remote refs may be stale: last fetch 2026-10-10 12:00 UTC/)
+  const never = remoteBannerHtml(
+    data([], {
+      generatedAt: '2026-10-13T12:00:00Z',
+      repo: {
+        defaultRef: 'origin/main',
+        refsAsOf: null,
+        checkedOutBranch: 'main',
+        defaultDivergence: null,
+      },
+    }),
+  )
+  assert.match(text(never), /no fetch is recorded/)
+  assert.doesNotMatch(
+    text(remoteBannerHtml(base)),
+    /Remote refs may be stale/,
+    'fresh refs: no warning',
+  )
+  const limited = remoteBannerHtml(
+    data([], {
+      assessment: {
+        positive: true,
+        absence: false,
+        limits: [
+          'the PR list hit its limit, so older PRs are not visible',
+          'GitHub unavailable (x)',
+        ],
+      },
+    }),
+  )
+  assert.match(
+    text(limited),
+    /Findings that say something does not exist are withheld because the PR list hit its limit/,
+  )
+  assert.doesNotMatch(
+    text(limited),
+    /withheld because.*GitHub unavailable \(x\)/,
+    'the GitHub reason has its own banner',
+  )
+  const stale = remoteBannerHtml(base, { stale: 'network down' })
+  assert.match(
+    text(stale),
+    /Showing the last successful reconciliation \(2026-10-13 12:00 UTC\); refreshing failed: network down/,
+  )
+})
+
+test('review: history truncation is stated; the never-started label no longer overclaims', () => {
+  const capped = text(
+    reconcileRowsHtml([
+      parcelRec({
+        history: [
+          {
+            at: '2026-10-10T00:00:00Z',
+            source: 'pr',
+            kind: 'merged',
+            label: 'PR merged',
+            ref: null,
+          },
+        ],
+        historyTotal: 150,
+      }),
+    ]),
+  )
+  assert.match(capped, /Showing the newest 1 of 150 events/)
+  const none = text(
+    reconcileRowsHtml([
+      parcelRec({ discrepancies: [finding({ code: 'never-started', confidence: 'asserted' })] }),
+    ]),
+  )
+  assert.match(none, /No linked trace/)
+  assert.doesNotMatch(none, /No trace of a start/)
+})
+
+test('review F8: changing scope or goal-status while on Reconciliation reloads it for the new goal (no endless Loading)', async () => {
+  const ui = await mountConsole({
+    '/api/goals': {
+      goals: [],
+      statuses: [
+        {
+          key: 'g',
+          repoRoot: '/repos/x',
+          tree: null,
+          active: true,
+          attention: { total: 1 },
+          urgentSubjects: [],
+        },
+        {
+          key: 'h',
+          repoRoot: '/repos/y',
+          tree: null,
+          active: true,
+          attention: { total: 0 },
+          urgentSubjects: [],
+        },
+      ],
+    },
+    '/api/fleet': {
+      roots: [
+        { root: '/repos/x', identity: {}, liveness: 'ready' },
+        { root: '/repos/y', identity: {}, liveness: 'ready' },
+      ],
+    },
+    '/api/reconcile': (path: string) =>
+      data([parcelRec({ parcel: path.includes('goal=h') ? 'HP1' : 'P1' })], {
+        goal: path.includes('goal=h') ? 'h' : 'g',
+      }),
+  })
+  try {
+    ui.click('[data-view="reconcile"].nav-btn')
+    await ui.settle()
+    assert.deepEqual(
+      [...ui.doc.querySelectorAll('#reconcile-body .rec-row')].map((r) =>
+        r.getAttribute('data-rec-parcel'),
+      ),
+      ['P1'],
+    )
+    // Scope to the other repository: the goal changes underneath the view.
+    ui.input('#fleet-select', '/repos/y', 'change')
+    await ui.settle()
+    const body = ui.doc.getElementById('reconcile-body')?.textContent ?? ''
+    assert.doesNotMatch(body, /Loading reconciliation/, 'must not be stranded on Loading')
+    assert.deepEqual(
+      [...ui.doc.querySelectorAll('#reconcile-body .rec-row')].map((r) =>
+        r.getAttribute('data-rec-parcel'),
+      ),
+      ['HP1'],
+    )
+    assert.ok(ui.requests.some((r) => r.path === '/api/reconcile?goal=h'))
+  } finally {
+    ui.close()
+  }
+})
+
+test('review F9: a failed refresh keeps the last data AND leaves a persistent stale banner with its generation time', async () => {
+  const ui = await mountConsole({
+    '/api/reconcile': data([parcelRec()], { generatedAt: '2026-10-13T12:00:00Z' }),
+  })
+  try {
+    ui.click('[data-view="reconcile"].nav-btn')
+    await ui.settle()
+    assert.doesNotMatch(
+      ui.doc.getElementById('reconcile-body')?.textContent ?? '',
+      /last successful/,
+    )
+    ui.routes['/api/reconcile'] = new Error('network down')
+    ui.click('#refresh')
+    await ui.settle()
+    const body = ui.doc.getElementById('reconcile-body')?.textContent ?? ''
+    assert.equal(ui.doc.querySelectorAll('#reconcile-body .rec-row').length, 1)
+    assert.match(
+      body,
+      /Showing the last successful reconciliation \(2026-10-13 12:00 UTC\); refreshing failed: network down/,
+    )
+    // Recovery clears it.
+    ui.routes['/api/reconcile'] = data([parcelRec()], { generatedAt: '2026-10-13T12:05:00Z' })
+    ui.click('#refresh')
+    await ui.settle()
+    assert.doesNotMatch(
+      ui.doc.getElementById('reconcile-body')?.textContent ?? '',
+      /last successful/,
+    )
+  } finally {
+    ui.close()
+  }
+})
+
+test('review F14: open explanations are not carried across a goal switch', async () => {
+  const ui = await mountConsole({
+    '/api/goals': {
+      goals: [],
+      statuses: [
+        {
+          key: 'g',
+          repoRoot: '/repos/x',
+          tree: null,
+          active: true,
+          attention: { total: 1 },
+          urgentSubjects: [],
+        },
+        {
+          key: 'h',
+          repoRoot: '/repos/x',
+          tree: null,
+          active: true,
+          attention: { total: 0 },
+          urgentSubjects: [],
+        },
+      ],
+    },
+    '/api/reconcile': () => data([parcelRec()]),
+  })
+  try {
+    ui.click('[data-view="reconcile"].nav-btn')
+    await ui.settle()
+    ui.click('[data-rec-parcel="P1"] details summary')
+    await ui.settle()
+    assert.equal(
+      (ui.doc.querySelector('[data-rec-parcel="P1"] details') as HTMLDetailsElement).open,
+      true,
+    )
+    ui.input('#reconcile-goal-select', 'h', 'change')
+    await ui.settle()
+    assert.equal(
+      (ui.doc.querySelector('[data-rec-parcel="P1"] details') as HTMLDetailsElement).open,
+      false,
+      'a different goal starts collapsed',
+    )
+  } finally {
+    ui.close()
+  }
+})

@@ -66,7 +66,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
     const scopedGoals = state.statuses.filter((s) => scoped(s.repoRoot))
     const active = scopedGoals.filter((s) => filter === 'all' || (filter === 'active' ? s.active : !s.active))
       .sort((a, b) => (b.attention?.total || 0) - (a.attention?.total || 0))
-    if (!active.some((s) => s.key === state.goal)) { state.goal = active[0]?.key || null; state.projection = null; state.detailParcel = null; ++detailGeneration; el('detail').hidden = true }
+    if (!active.some((s) => s.key === state.goal)) { state.goal = active[0]?.key || null; state.projection = null; state.detailParcel = null; ++detailGeneration; el('detail').hidden = true; state.reconcileOpen.clear(); state.reconcileFilter = '' }
     el('goal-select').innerHTML = active.length ? active.map((s) => `<option value="${esc(s.key)}">${esc(s.key)}${s.attention?.total ? ` · ${s.attention.total} need attention` : ''}</option>`).join('') : '<option value="">No goals in this scope and status</option>'
     el('goal-select').value = state.goal || ''
     el('reconcile-goal-select').innerHTML = el('goal-select').innerHTML
@@ -112,7 +112,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       else if (!data) el('reconcile-body').innerHTML = state.reconcileError ? emptyHtml('Could not load reconciliation', `${state.reconcileError}. Use Refresh to retry.`) : emptyHtml('Loading reconciliation…', 'Comparing the record with local git and the remote. This can take a few seconds.')
       else {
         const rows = filterParcels(data.parcels, state.reconcileFilter, state.queries.reconcile), page = pageRows(rows)
-        el('reconcile-body').innerHTML = remoteBannerHtml(data) + countsHtml(data, state.reconcileFilter) + (rows.length ? `<div class="list-meta"><span>${rows.length} of ${data.parcels.length} parcels</span></div>` + reconcileRowsHtml(page.rows, { signals: state.signals, registry: state.registry, selected: state.selected, open: state.reconcileOpen, status: state.statuses.find((s) => s.key === state.goal) }) + page.pager : emptyHtml('No matching parcels', 'Change the filter or search.'))
+        el('reconcile-body').innerHTML = remoteBannerHtml(data, { stale: state.reconcile.stale }) + countsHtml(data, state.reconcileFilter) + (rows.length ? `<div class="list-meta"><span>${rows.length} of ${data.parcels.length} parcels</span></div>` + reconcileRowsHtml(page.rows, { signals: state.signals, registry: state.registry, selected: state.selected, open: state.reconcileOpen, status: state.statuses.find((s) => s.key === state.goal) }) + page.pager : emptyHtml('No matching parcels', 'Change the filter or search.'))
         wireSignalRows(el('reconcile-body'))
         // Re-renders (refresh, filter) must not collapse what the operator is reading.
         el('reconcile-body').querySelectorAll('.rec-row').forEach((row) => on(row.querySelector('.rec-details summary'), 'click', () => queueMicrotask(() => { const details = row.querySelector('.rec-details'); if (details.open) state.reconcileOpen.add(row.dataset.recParcel); else state.reconcileOpen.delete(row.dataset.recParcel) })))
@@ -140,11 +140,11 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       const data = await api(`/api/reconcile?goal=${encodeURIComponent(goal)}`)
       if (destroyed || current !== reconcileGeneration || state.goal !== goal) return
       if (!Array.isArray(data.parcels) || typeof data.counts !== 'object' || data.counts === null) throw new Error('Invalid reconciliation response')
-      state.reconcile = { goal, data }
+      state.reconcile = { goal, data, stale: null }
     } catch (err) {
       if (destroyed || current !== reconcileGeneration) return
       if (!(state.reconcile && state.reconcile.goal === goal)) state.reconcileError = err.message
-      else status(`Reconciliation is stale: ${err.message}. Use Refresh to retry.`, true)
+      else { state.reconcile.stale = err.message; status(`Reconciliation is stale: ${err.message}. Use Refresh to retry.`, true) }
     }
     renderCurrent()
   }
@@ -437,11 +437,11 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   el('app').innerHTML = shellHtml()
   on(doc.querySelector('.skip-link'), 'click', (event) => { event.preventDefault(); el('main').focus(); el('main').scrollIntoView?.({ block: 'start' }) })
   doc.querySelectorAll('.nav-btn').forEach((b) => on(b, 'click', () => setView(b.dataset.view)))
-  on(el('fleet-select'), 'change', () => { state.scope = el('fleet-select').value; state.pages = {}; ++goalGeneration; ++detailGeneration; goalOptions(); renderCurrent(); if (['board', 'remedies', 'settings'].includes(state.view)) loadGoal() })
-  on(el('goal-status'), 'change', () => { state.pages.board = 0; goalOptions(); renderCurrent(); loadGoal() })
+  on(el('fleet-select'), 'change', () => { state.scope = el('fleet-select').value; state.pages = {}; ++goalGeneration; ++detailGeneration; goalOptions(); renderCurrent(); if (['board', 'remedies', 'settings'].includes(state.view)) loadGoal(); if (state.view === 'reconcile') loadReconcile() })
+  on(el('goal-status'), 'change', () => { state.pages.board = 0; goalOptions(); renderCurrent(); loadGoal(); if (state.view === 'reconcile') loadReconcile() })
   on(el('parcel-status'), 'change', () => { state.pages.board = 0; renderCurrent() })
-  on(el('reconcile-goal-select'), 'change', () => { state.goal = el('reconcile-goal-select').value; state.projection = null; state.detailParcel = null; ++detailGeneration; state.reconcileFilter = ''; state.pages.reconcile = 0; goalOptions(); renderCurrent(); loadReconcile() })
-  on(el('goal-select'), 'change', () => { state.goal = el('goal-select').value; state.projection = null; state.detailParcel = null; ++detailGeneration; el('detail').hidden = true; renderCurrent(); loadGoal() })
+  on(el('reconcile-goal-select'), 'change', () => { state.goal = el('reconcile-goal-select').value; state.projection = null; state.detailParcel = null; ++detailGeneration; state.reconcileFilter = ''; state.reconcileOpen.clear(); state.pages.reconcile = 0; goalOptions(); renderCurrent(); loadReconcile() })
+  on(el('goal-select'), 'change', () => { state.goal = el('goal-select').value; state.reconcileOpen.clear(); state.reconcileFilter = ''; state.projection = null; state.detailParcel = null; ++detailGeneration; el('detail').hidden = true; renderCurrent(); loadGoal() })
   on(el('global-search'), 'input', () => { state.queries[state.view] = el('global-search').value.trim(); state.pages[state.view] = 0; renderCurrent() })
   doc.querySelectorAll('[data-sev]').forEach((b) => on(b, 'change', () => { state.pages.signals = 0; renderCurrent() }))
   on(el('main'), 'click', (event) => { const b = event.target.closest('[data-page]'); if (b) { state.pages[state.view] = Math.max(0, (state.pages[state.view] || 0) + (b.dataset.page === 'next' ? 1 : -1)); renderCurrent() } if (event.target.closest('[data-go-board]')) setView('board')

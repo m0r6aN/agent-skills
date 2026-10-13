@@ -9,7 +9,7 @@ export const DISCREPANCY_LABELS = {
   'recorded-unshipped': 'Record says closed, no remote trace',
   'unmerged-work': 'Unmerged work exists',
   'orphan-worktree': 'Orphan worktree',
-  'never-started': 'No trace of a start',
+  'never-started': 'No linked trace',
   'local-remote-divergence': 'Local and remote differ',
   'stale-abandoned': 'No delivery or in-flight work linked',
 }
@@ -25,7 +25,8 @@ const when = (value) => {
 const asOf = (value) => (value ? `as of ${when(value)}` : 'age unknown')
 const list = (items) => (items.length ? `<ul class="rec-list">${items.map((item) => `<li>${item}</li>`).join('')}</ul>` : '')
 
-export function remoteBannerHtml(data) {
+const DAY_MS = 86_400_000
+export function remoteBannerHtml(data, options = {}) {
   const prs = data.prs || {}
   const repo = data.repo || {}
   const divergence = repo.defaultDivergence
@@ -33,12 +34,21 @@ export function remoteBannerHtml(data) {
     `Compared against <code>${esc(repo.defaultRef || 'no default branch found')}</code> (refs ${esc(asOf(repo.refsAsOf))}; checked-out branch <code>${esc(repo.checkedOutBranch || 'detached HEAD')}</code>)`,
     prs.available ? `GitHub PRs ${esc(asOf(prs.asOf))}` : '',
     divergence && (divergence.ahead || divergence.behind) ? `local default branch is ${esc(divergence.ahead)} ahead / ${esc(divergence.behind)} behind its remote` : '',
+    data.generatedAt ? `generated ${esc(when(data.generatedAt))}` : '',
   ].filter(Boolean)
-  const unavailable = prs.available
-    ? ''
-    : `<div class="banner warn" role="status"><strong>GitHub unavailable:</strong> ${esc(prs.reason || 'unknown reason')}. Findings that depend on the remote are withheld rather than guessed; local facts are still shown.</div>`
-  const noRef = repo.defaultRef ? '' : '<div class="banner warn" role="status"><strong>No default branch found:</strong> remote comparison is not possible for this repository.</div>'
-  return `<div class="banner">${parts.join(' · ')}</div>${unavailable}${noRef}`
+  const warn = (html) => `<div class="banner warn" role="status">${html}</div>`
+  const stale = options.stale ? warn(`<strong>Showing the last successful reconciliation</strong> (${esc(when(data.generatedAt))}); refreshing failed: ${esc(options.stale)}.`) : ''
+  const unavailable = prs.available ? '' : warn(`<strong>GitHub unavailable:</strong> ${esc(prs.reason || 'unknown reason')}. Findings that depend on the remote are withheld rather than guessed; local facts are still shown.`)
+  const noRef = repo.defaultRef ? '' : warn('<strong>No default branch found:</strong> remote comparison is not possible for this repository.')
+  // Remote refs are only as fresh as the last fetch; the console never fetches for you.
+  const generated = Date.parse(data.generatedAt || '')
+  const fetched = Date.parse(repo.refsAsOf || '')
+  const oldRefs = repo.defaultRef && (Number.isNaN(fetched) || (!Number.isNaN(generated) && generated - fetched > DAY_MS))
+    ? warn(`<strong>Remote refs may be stale:</strong> ${repo.refsAsOf ? `last fetch ${esc(when(repo.refsAsOf))}` : 'no fetch is recorded for this repository'}. Fetch before acting on findings that depend on what the remote contains.`)
+    : ''
+  const limits = (data.assessment?.limits || []).filter((limit) => !String(limit).startsWith('GitHub unavailable'))
+  const limited = limits.length ? warn(`<strong>Findings that say something does not exist are withheld</strong> because ${limits.map(esc).join('; ')}.`) : ''
+  return `${stale}<div class="banner">${parts.join(' · ')}</div>${unavailable}${noRef}${oldRefs}${limited}`
 }
 
 export function countsHtml(data, active) {
@@ -94,8 +104,10 @@ function detailsHtml(p, open) {
     <p class="meta">Evidence</p>${list(d.evidence.map(esc))}
     <p><strong>${esc(d.question)}</strong></p>
     <ol class="rec-options">${d.options.map((o) => `<li><strong>${esc(o.answer)}</strong><br>${esc(o.recommendation)}${o.commands.length ? `<div>${o.commands.map((c) => `<code class="rec-cmd">${esc(c)}</code>`).join('')}</div>` : ''}</li>`).join('')}</ol></section>`).join('')
+  const shown = (p.history || []).length
+  const truncated = Number.isInteger(p.historyTotal) && p.historyTotal > shown ? `<p class="meta">Showing the newest ${esc(shown)} of ${esc(p.historyTotal)} events.</p>` : ''
   const history = (p.history || []).length
-    ? `<h4>History</h4><ol class="rec-history">${p.history.map((e) => `<li><time datetime="${esc(e.at || '')}">${esc(when(e.at))}</time> <span class="chip chip-neutral">${esc(e.source)}</span> ${esc(e.label)}${e.ref ? ` <code>${esc(e.ref)}</code>` : ''}</li>`).join('')}</ol>`
+    ? `<h4>History</h4>${truncated}<ol class="rec-history">${p.history.map((e) => `<li><time datetime="${esc(e.at || '')}">${esc(when(e.at))}</time> <span class="chip chip-neutral">${esc(e.source)}</span> ${esc(e.label)}${e.ref ? ` <code>${esc(e.ref)}</code>` : ''}</li>`).join('')}</ol>`
     : '<h4>History</h4><p class="muted">No history events found.</p>'
   const absent = (p.absentSources || []).length ? `<p class="meta">Sources with no events: ${esc(p.absentSources.join(', '))}</p>` : ''
   const ambiguous = (p.ambiguous || []).length ? `<h4>Ambiguous links (not used)</h4><p class="meta">These match more than one parcel key, so they are shown but never used to assert anything.</p>${list(p.ambiguous.map((a) => `${esc(a.kind)} <code>${esc(a.ref)}</code> — ${esc(a.detail)}`))}` : ''

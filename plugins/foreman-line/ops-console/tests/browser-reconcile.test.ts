@@ -107,7 +107,7 @@ test('AC6: Reconciliation renders findings, filters, explains, survives refresh,
       await browser.evaluate(
         `document.querySelector('[data-rec-parcel="SYN-P2"] .chip[title]').innerText`,
       ),
-      'No trace of a start',
+      'No linked trace',
     )
 
     await browser.evaluate(`document.querySelector('[data-rec-filter="never-started"]').click()`)

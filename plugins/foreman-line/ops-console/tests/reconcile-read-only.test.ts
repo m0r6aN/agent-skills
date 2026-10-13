@@ -311,3 +311,47 @@ test('AC9: no reconcile module imports a write-capable fs API or a mutating chil
     'no mutating gh verb appears in the adapter',
   )
 })
+
+test('review: the response carries an assessment; a full PR list withholds absence findings through the API', () => {
+  const h = rig('ok')
+  try {
+    const happy = reconcile(h.config).json as Body & {
+      assessment: { positive: boolean; absence: boolean; limits: string[] }
+      prs: { truncated: boolean }
+    }
+    assert.deepEqual(happy.assessment, { positive: true, absence: true, limits: [] })
+    assert.equal(happy.prs.truncated, false)
+    assert.deepEqual(
+      happy.parcels.find((p) => p.parcel === 'SYN-P2')?.discrepancies.map((d) => d.code),
+      ['never-started'],
+    )
+
+    // A PR list that hits the limit: older PRs may be missing, so absence cannot be claimed.
+    clearPrCache()
+    const full = Array.from({ length: 1000 }, (_, i) => ({
+      number: i + 1000,
+      title: `chore: unrelated ${i}`,
+      headRefName: `b${i}`,
+      baseRefName: 'main',
+      state: 'MERGED',
+      createdAt: '2026-10-01T00:00:00Z',
+      mergedAt: '2026-10-02T00:00:00Z',
+      closedAt: '2026-10-02T00:00:00Z',
+      url: 'u',
+    }))
+    writeFileSync(join(h.config.repoRoot, '..', 'prs.json'), JSON.stringify(full))
+    const truncated = reconcile(h.config).json as typeof happy
+    assert.equal(truncated.prs.truncated, true)
+    assert.equal(truncated.assessment.absence, false)
+    assert.equal(truncated.assessment.positive, true)
+    assert.ok(truncated.assessment.limits.some((l) => l.includes('PR list hit its limit')))
+    assert.deepEqual(
+      truncated.parcels.find((p) => p.parcel === 'SYN-P2')?.discrepancies.map((d) => d.code),
+      [],
+      'never-started withheld',
+    )
+    assert.equal(truncated.counts.byCode['never-started'], 0)
+  } finally {
+    h.cleanup()
+  }
+})
