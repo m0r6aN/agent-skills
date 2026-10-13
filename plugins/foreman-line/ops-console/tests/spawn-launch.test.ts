@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { existsSync } from 'node:fs'
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import { basename, join } from 'node:path'
 import test from 'node:test'
 import { dispatchAction } from '../src/actions.js'
@@ -134,14 +134,14 @@ test('the launcher passes every plan field to tmux verbatim (stub snapshot)', ()
         'set-option',
         '-w',
         '-t',
-        'foc-test',
+        '=foc-test:',
         'remain-on-exit',
         'on',
         ';',
         'pipe-pane',
         '-o',
         '-t',
-        'foc-test',
+        '=foc-test:',
         logFor(0),
       ],
       [
@@ -151,7 +151,7 @@ test('the launcher passes every plan field to tmux verbatim (stub snapshot)', ()
         '-F',
         '#{pane_id}',
         '-t',
-        'foc-test',
+        '=foc-test:',
         '-c',
         pane1.cwd,
         cmdFor(pane1),
@@ -228,5 +228,27 @@ test('dispatch through the default runner still presents (launcher is opt-in)', 
     )
     assert.equal(outcome.action, 'presented')
     assert.equal(typeof outcome.autonomy, 'object')
+  })
+})
+
+test('review #12: the ledger directory is created BEFORE the worktree, so a failure leaves no stray worktree', () => {
+  const spawnPlan = plan()
+  const worktrees = worktreeStub()
+  withTempRepo(launchScenario(), ({ config }) => {
+    // Block the ledger subtree: `state/sessions` is a file, so mkdir inside it fails.
+    mkdirSync(config.stateDir, { recursive: true })
+    writeFileSync(join(config.stateDir, 'sessions'), 'not a directory')
+    let caught: SpawnRefusalError | null = null
+    try {
+      launchSpawnPlan(config, spawnPlan, NOW, { tmux: stubRunner(), worktrees })
+    } catch (err) {
+      caught = err as SpawnRefusalError
+    }
+    assert.equal(caught?.reason, 'launch-failure')
+    assert.equal(
+      worktrees.calls.length,
+      0,
+      'no worktree was cut for a launch that could not be recorded',
+    )
   })
 })

@@ -26,6 +26,7 @@ export type SpawnRefusalReason =
   | 'unknown-harness'
   | 'model-missing'
   | 'model-unqualified'
+  | 'invalid-session-name'
   | 'unsupported-thinking'
   | 'unsupported-budget'
   | 'unregistered-action'
@@ -164,6 +165,14 @@ export function planSpawn(request: SpawnPlanRequest): SpawnPlan {
 
   const stamp = compactTimestamp(now)
   const sessionName = request.sessionName ?? `foc-${stamp}`
+  // The name becomes a tmux target, a receipt id and a directory name: keep it to
+  // the closed shape every consumer accepts, before any worktree or process exists.
+  if (!/^[a-z0-9][a-z0-9-]{0,80}$/.test(sessionName)) {
+    throw new SpawnRefusalError(
+      'invalid-session-name',
+      `spawn refused: session name '${sessionName}' must be lowercase letters, digits and hyphens`,
+    )
+  }
   const panes: SpawnPane[] = actions.map((action, paneIndex) => {
     const spec = lookupAction(action.signalClass, action.verb)
     if (spec === null) {
@@ -383,9 +392,12 @@ export function launchSpawnPlan(
   for (const pane of plan.panes) {
     try {
       const receiptId = `${plan.sessionName}-p${pane.paneIndex}`
+      // `=name:` is an EXACT session match; a bare name also prefix-matches other sessions.
+      const exactTarget = `=${plan.sessionName}:`
+      // Ledger dir first: an invalid id must fail before a worktree is cut.
+      const ledger = ensureLedgerDir(config.stateDir, receiptId)
       worktrees.create(pane.repoRoot, pane.worktreePath)
       const baseCommit = worktrees.head?.(pane.worktreePath) ?? null
-      const ledger = ensureLedgerDir(config.stateDir, receiptId)
       const capture = `cat >> ${shellQuote(ledger.logPath)}`
       let tmuxPaneId: string | null
       if (launched.length === 0) {
@@ -410,14 +422,14 @@ export function launchSpawnPlan(
             'set-option',
             '-w',
             '-t',
-            plan.sessionName,
+            exactTarget,
             'remain-on-exit',
             'on',
             ';',
             'pipe-pane',
             '-o',
             '-t',
-            plan.sessionName,
+            exactTarget,
             capture,
           ]),
         )
@@ -432,7 +444,7 @@ export function launchSpawnPlan(
             '-F',
             '#{pane_id}',
             '-t',
-            plan.sessionName,
+            exactTarget,
             '-c',
             pane.cwd,
             commandFor(pane),

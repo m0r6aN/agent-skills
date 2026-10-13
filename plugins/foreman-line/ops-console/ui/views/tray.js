@@ -48,6 +48,15 @@ export function ledgerHtml(ledger) {
     <details><summary>Evidence and last output</summary>${evidence.length ? `<ul>${evidence.map((line) => `<li>${esc(line)}</li>`).join('')}</ul>` : '<p class="muted">No evidence recorded.</p>'}${tail.length ? `<pre class="ledger-tail">${esc(tail.join('\n'))}</pre>` : '<p class="muted">No captured output.</p>'}${out.truncated ? '<p class="muted">Older output was removed by retention.</p>' : ''}</details>
   </div>`
 }
+// With remain-on-exit a session whose panes are all dead still "exists", so the receipt's
+// session-level liveness can say 'alive' for a failed pane. The ledger is pane-accurate and
+// wins when present; otherwise the receipt's own liveness stands.
+export function effectiveLiveness(spawn) {
+  const state = spawn?.ledger?.state
+  if (state === 'running' || state === 'launching') return 'alive'
+  if (['exited-clean', 'exited-error', 'no-transcript', 'vanished'].includes(state)) return 'exited'
+  return spawn?.liveness
+}
 const fact = (value) => value == null || value === '' ? 'Unavailable' : esc(value)
 function createdTime(value) {
   const date = typeof value === 'string' ? new Date(value) : null
@@ -58,8 +67,8 @@ export function trayHtml(spawns, { page = 0, registry = [], highlight = null, co
   if (!spawns.length) return emptyHtml('No console-recorded launches', 'Select work from Work queue to launch a session. Sessions started elsewhere are not listed here.')
   page = Math.min(Math.max(0, page), Math.ceil(spawns.length / TRAY_ROW_CAP) - 1)
   const sessionNames = new Set(spawns.map((s) => s.sessionName).filter(Boolean))
-  const running = spawns.filter((s) => s.liveness === 'alive').length
-  const unknown = spawns.filter((s) => !['alive', 'exited', 'dead'].includes(s.liveness)).length
+  const running = spawns.filter((s) => effectiveLiveness(s) === 'alive').length
+  const unknown = spawns.filter((s) => !['alive', 'exited', 'dead'].includes(effectiveLiveness(s))).length
   const rows = spawns.slice(page * TRAY_ROW_CAP, (page + 1) * TRAY_ROW_CAP).map((spawn) => {
     const identified = typeof spawn.sessionName === 'string' && spawn.sessionName.length > 0 && Number.isInteger(spawn.paneIndex) && spawn.paneIndex >= 0
     const subject = identified ? `${spawn.sessionName}-p${spawn.paneIndex}` : null
@@ -68,7 +77,7 @@ export function trayHtml(spawns, { page = 0, registry = [], highlight = null, co
     return `<tr class="tray-row" data-session="${esc(spawn.sessionName || '')}" data-subject="${esc(subject || '')}" data-receipt="${esc(spawn.id || '')}" ${highlight === spawn.sessionName ? 'data-highlight' : ''}>
       <td data-label="Session / pane"><span class="subject">${fact(spawn.sessionName)}</span><span class="meta">Pane ${fact(spawn.paneIndex)}</span><span class="meta session-created">${createdTime(spawn.createdAt)}</span>
         <details><summary>Launch receipt</summary><dl class="receipt-facts"><dt>Receipt ID</dt><dd>${fact(spawn.id)}</dd><dt>Repository</dt><dd><code>${fact(spawn.repoRoot)}</code></dd><dt>Worktree</dt><dd><code>${fact(spawn.worktreePath)}</code></dd><dt>Prompt digest</dt><dd><code>${fact(spawn.promptDigest)}</code></dd></dl><pre>${esc(JSON.stringify(spawn, null, 2))}</pre></details></td>
-      <td data-label="Liveness"><span class="chip chip-${spawn.liveness === 'alive' ? 'green' : ['dead', 'exited'].includes(spawn.liveness) ? 'red' : 'neutral'}">${livenessLabel(spawn.liveness)}</span>${compact ? '' : ledgerHtml(spawn.ledger)}</td>
+      <td data-label="Liveness"><span class="chip chip-${effectiveLiveness(spawn) === 'alive' ? 'green' : ['dead', 'exited'].includes(effectiveLiveness(spawn)) ? 'red' : 'neutral'}">${livenessLabel(effectiveLiveness(spawn))}</span>${compact ? '' : ledgerHtml(spawn.ledger)}</td>
       <td data-label="Launch configuration / repository"><strong>${fact(spawn.harness)}</strong> · ${fact(spawn.model)}<span class="meta">Thinking: ${fact(spawn.thinking)}<br>Configured cap: ${fact(spawn.budget)}</span><span class="meta">${fact(spawn.repoRoot)}</span></td>
       <td data-label="Terminal attach">${command ? `<code class="attach">${esc(command)}</code><button type="button" data-copy="${esc(command)}" aria-label="Copy attach command for ${esc(spawn.sessionName)}">Copy attach command</button><span class="meta" data-copy-status aria-live="polite"></span>` : '<span class="muted">Attach unavailable: session or pane identity missing.</span>'}</td>
       <td class="actions" data-label="Actions"><div class="session-actions-group">${actions || '<span class="muted">No registered action</span>'}</div></td></tr>`

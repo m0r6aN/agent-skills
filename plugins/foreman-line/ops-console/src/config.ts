@@ -97,7 +97,7 @@ export type StateFile = (typeof STATE_FILES)[number]
  */
 export const STATE_DIRS = ['sessions'] as const
 
-const RECEIPT_ID = /^[a-z0-9][a-z0-9-]{0,120}$/
+export const RECEIPT_ID = /^[a-z0-9][a-z0-9-]{0,120}$/
 
 /** Absolute ledger directory for one receipt id; refuses ids that could escape. */
 export function ledgerDirPath(stateDir: string, receiptId: string): string {

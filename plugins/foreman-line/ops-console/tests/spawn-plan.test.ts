@@ -197,3 +197,26 @@ test('AC11: pi requires provider/model; claude keeps bare ids; refusal precedes 
     }),
   )
 })
+
+test('review #12: a session name that is not a plain lowercase slug is refused before any worktree or process', () => {
+  for (const sessionName of [
+    'Foc-Upper',
+    'has space',
+    'a.b',
+    'a:b',
+    'x/../y',
+    '-leading',
+    '',
+    'a'.repeat(90),
+    'semi;colon',
+    '=eq',
+  ]) {
+    const refusal = refusalOf(() =>
+      planSpawn({ controls: controls(), actions: ACTIONS, now: NOW, sessionName }),
+    )
+    assert.equal(refusal.reason, 'invalid-session-name', JSON.stringify(sessionName))
+  }
+  assert.doesNotThrow(() =>
+    planSpawn({ controls: controls(), actions: ACTIONS, now: NOW, sessionName: 'foc-ok-1' }),
+  )
+})

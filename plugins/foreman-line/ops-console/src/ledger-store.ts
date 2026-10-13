@@ -1,16 +1,17 @@
 import {
   appendFileSync,
+  chmodSync,
   closeSync,
+  lstatSync,
   mkdirSync,
   openSync,
   readdirSync,
   readSync,
   rmSync,
-  statSync,
   writeFileSync,
 } from 'node:fs'
 import { join, resolve } from 'node:path'
-import { ledgerDirPath, STATE_DIRS } from './config.js'
+import { ledgerDirPath, RECEIPT_ID, STATE_DIRS } from './config.js'
 
 /**
  * FCA-P7 ledger store — the ONLY module that writes under `state/sessions/`.
@@ -27,11 +28,19 @@ export interface RetentionPolicy {
   readonly maxBytesPerPane: number
   /** Max pane directories kept (OQ2 default: 200); oldest logs are dropped first. */
   readonly maxPanes: number
+  /**
+   * A log written within this window may belong to a LIVE pane (tmux's `cat >>`
+   * still appends to it). It is never truncated or removed: doing so would lose
+   * bytes or silently orphan the writer. The cap is enforced once the pane has
+   * been quiet for this long, at the next launch.
+   */
+  readonly quietMs: number
 }
 
 export const DEFAULT_RETENTION: RetentionPolicy = {
   maxBytesPerPane: 5 * 1024 * 1024,
   maxPanes: 200,
+  quietMs: 10 * 60 * 1000,
 }
 
 export interface LedgerPaths {
@@ -42,11 +51,14 @@ export interface LedgerPaths {
 /** Create `state/sessions/<id>/` and return its fixed log path. */
 export function ensureLedgerDir(stateDir: string, receiptId: string): LedgerPaths {
   const dir = ledgerDirPath(stateDir, receiptId)
-  mkdirSync(dir, { recursive: true })
+  // Pane output can echo prompts and provider errors: owner-only, not world-readable.
+  mkdirSync(dir, { recursive: true, mode: 0o700 })
+  chmodSync(dir, 0o700)
   const logPath = join(dir, LOG_NAME)
   // Create the log up front so pipe-pane's append always has a target and an
   // empty-but-present log is distinguishable from "capture never attached".
-  appendFileSync(logPath, '')
+  appendFileSync(logPath, '', { mode: 0o600 })
+  chmodSync(logPath, 0o600)
   return { dir, logPath }
 }
 
@@ -85,34 +97,45 @@ export function enforceRetention(
   } catch {
     return { truncated: [], dropped: [] }
   }
+  // Only well-formed receipt ids that are REAL directories (lstat: a symlinked
+  // entry could point outside the tree) are ever touched. Ranked newest first by
+  // id - ids embed the launch timestamp - not by mtime, which retention itself
+  // refreshes.
   const panes = names
+    .filter((name) => RECEIPT_ID.test(name))
+    .sort()
+    .reverse()
     .map((name) => {
       try {
         const dir = join(root, name)
-        const stat = statSync(dir)
-        return stat.isDirectory() ? { name, dir, mtime: stat.mtimeMs } : null
+        return lstatSync(dir).isDirectory() ? { name, dir } : null
       } catch {
         return null
       }
     })
-    .filter((entry): entry is { name: string; dir: string; mtime: number } => entry !== null)
-    .sort((a, b) => b.mtime - a.mtime)
+    .filter((entry): entry is { name: string; dir: string } => entry !== null)
 
   const truncated: string[] = []
   const dropped: string[] = []
   panes.forEach((pane, rank) => {
     const log = join(pane.dir, LOG_NAME)
     let size: number
+    let mtimeMs: number
     try {
-      size = statSync(log).size
+      const stat = lstatSync(log)
+      if (!stat.isFile()) return
+      size = stat.size
+      mtimeMs = stat.mtimeMs
     } catch {
       return
     }
+    if (policy.quietMs > 0 && now - mtimeMs < policy.quietMs) return
     if (rank >= policy.maxPanes) {
       rmSync(log, { force: true })
       writeFileSync(
         join(pane.dir, TRUNCATED_NAME),
         `${JSON.stringify({ at: new Date(now).toISOString(), reason: 'pane-count-cap', droppedBytes: size })}\n`,
+        { mode: 0o600 },
       )
       dropped.push(pane.name)
       return
@@ -123,6 +146,7 @@ export function enforceRetention(
       writeFileSync(
         join(pane.dir, TRUNCATED_NAME),
         `${JSON.stringify({ at: new Date(now).toISOString(), reason: 'byte-cap', droppedBytes: size - keep.length })}\n`,
+        { mode: 0o600 },
       )
       truncated.push(pane.name)
     }
