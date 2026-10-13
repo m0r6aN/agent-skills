@@ -14,7 +14,9 @@
   Files: two workflow YAMLs and scripts/foreman-line-ci.test.mjs.
 - [x] Checkpoint: local validators/precheck/diff pass; review preserves coverage,
   job identities, failure guards, and no billing/protection/U1 mutations.
-- [ ] T3: Record evidence/limitations, commit/push separate branch and open PR.
+- [x] T3: Record evidence/limitations, commit/push separate branch and open PR.
+  Handoff: [PR #216](https://github.com/m0r6aN/agent-skills/pull/216), branch pushed;
+  417 tests/actionlint/validators pass. No automatic merge.
   Acceptance: focused diff, reproducible commands, rollback and remote CI limits
   documented. No automatic merge. Dependencies: T1/T2/checkpoint.
 - [ ] Human review/merge and live CI verification after runner availability restored.
