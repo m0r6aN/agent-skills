@@ -82,3 +82,12 @@ No edits/commits this turn. Read the contract, `spine/*.py` (models, record_stor
 | P2b-T8 | B F-1 + A F-1 — in-memory commit leaves spine-event prefixes on failure; cancellation bypasses rollback | fix | The in-memory first-delivery commit is all-or-nothing **including spine events and including cancellation**: stage every row and spine event, validate, then publish them in one non-suspending critical section (or snapshot-and-restore on any `BaseException`, re-raising it). Invariant tested through `/v1/recall`: after any injected failure or `CancelledError` at any append position, counts of event/access/binding/spine rows are all unchanged; after an identical retry — and after a retry with changed candidates — `#spine == #access` for the delivered event and every spine event belongs to a committed event (no orphan, single anchor timestamp). Remove the test that accepts the surviving prefix. |
 | P2b-T9 | A F-2 (catch-all ⇒ 503 "retryable") | fix (cheap) | Only storage/transport exceptions map to 503 retryable; any other unexpected exception ⇒ 500 non-retryable. Test both. |
 | P2b-T10 | A F-3 | informational | Document that `InMemoryRecallStore` requires a non-suspending spine store (constructor assertion acceptable). |
+
+## R3 triage (coordinator) — Seat A APPROVE, Seat B REQUEST-CHANGES (1 major, cross-thread)
+
+| # | Finding | Disposition | Ruling |
+|---|---|---|---|
+| P2b-T11 | B F-1 + A F-1 — wholesale spine restore outside `spine._lock` can erase another thread's committed append; cross-thread readers can see a prefix | fix | Publish and roll back under the **spine store's own lock** held for the whole publish (inserting through internal non-locking helpers to avoid self-deadlock), and roll back **only the events this commit inserted** (by id, restoring sequence only if nothing else was appended — otherwise leave sequence monotonic) — never a wholesale restore. Deterministic test: a concurrent thread appends an unrelated spine event while a recall commit is paused; after the recall's injected failure the unrelated event is still present and readers never observed the recall's prefix. |
+| — | A F-2 | informational | 503 for all `asyncpg.PostgresError` accepted (T-9 letter); refine later if needed. |
+
+Verification of this narrow fix: **Seat B only** (it owns the finding; Seat A approved R3) — recorded coordinator decision.
