@@ -1,5 +1,5 @@
-import { readFileSync } from 'node:fs'
-import { basename, join } from 'node:path'
+import { readFileSync, realpathSync } from 'node:fs'
+import { basename, isAbsolute, join, relative, sep } from 'node:path'
 import { ACTION_REGISTRY, type AutonomyEnvelope, dispatchAction } from './actions.js'
 import { deriveAlerts } from './alerts.js'
 import { type BrowseRefusalError, browseDirectory } from './browse.js'
@@ -17,8 +17,12 @@ import {
 import { isRecord } from './guards.js'
 import { invokeFlow, listAuditEntries } from './invoke.js'
 import { ledgerEntries, liveProbes } from './ledger.js'
+import { readGitOutcome } from './ledger-git.js'
 import { deleteNotification, listNotifications, syncAlerts } from './notifications.js'
 import { projectGoal } from './project.js'
+import { assess, DISCREPANCY_CODES, reconcileGoal, type SessionEvidence } from './reconcile.js'
+import { gatherRepoFacts } from './reconcile-git.js'
+import { gatherPrFacts } from './reconcile-remote.js'
 import { remediesFor } from './remedy.js'
 import { loadRoutingPolicy } from './routing.js'
 import { listGoalSlugs, scanGoal } from './scan.js'
@@ -155,6 +159,109 @@ export function handleApi(config: ConsoleConfig, request: ApiRequest, now: numbe
   if (pathname === '/api/parcels') {
     if (method !== 'GET') return methodNotAllowed('GET')
     return withGoal(config, query, now, (projection) => ({ status: 200, json: projection }))
+  }
+
+  // FCA-P8 reconciliation (owner-ratified route amendment 2026-10-13): per goal,
+  // local record vs local git vs remote, with a closed discrepancy vocabulary.
+  // Read-only; one batch of git calls and one cached `gh pr list` per repo per
+  // request - never per parcel. `state`/`rule` are echoed for display only.
+  if (pathname === '/api/reconcile') {
+    if (method !== 'GET') return methodNotAllowed('GET')
+    return withGoal(config, query, now, (projection, treeConfig) => {
+      // Real paths throughout: git reports real worktree paths, receipts may hold symlinks.
+      const real = (path: string): string => {
+        try {
+          return realpathSync(path)
+        } catch {
+          return path
+        }
+      }
+      const repoRoot = real(treeConfig.repoRoot)
+      // The specs directory of THIS tree, repo-relative; outside the repository = unknown.
+      const rel = relative(repoRoot, real(treeConfig.specsDir)).split(sep).join('/')
+      const specsRel = rel === '' || rel.startsWith('..') || isAbsolute(rel) ? null : rel
+      const repo = gatherRepoFacts(repoRoot, undefined, specsRel)
+      const prs = gatherPrFacts(repoRoot, now)
+      // Other goals' parcel keys: only used to recognise ambiguous links.
+      const otherKeys: string[] = []
+      for (const slug of listGoalSlugs(treeConfig)) {
+        if (slug === projection.goal.slug) continue
+        try {
+          for (const item of scanGoal(treeConfig, slug)?.items ?? []) otherKeys.push(item.key)
+        } catch {
+          // an unreadable sibling goal only narrows ambiguity detection
+        }
+      }
+      const receipts = listSpawnReceipts(config.stateDir).filter(
+        (receipt) => real(receipt.repoRoot) === repoRoot,
+      )
+      const sessions: SessionEvidence[] = []
+      for (const [id, entry] of ledgerEntries(receipts, liveProbes(config), now)) {
+        const receipt = receipts.find((candidate) => candidate.id === id)
+        if (receipt === undefined) continue
+        sessions.push({
+          receiptId: id,
+          worktreePath: real(receipt.worktreePath),
+          createdAt: receipt.createdAt,
+          state: entry.state,
+          exitAt: entry.exit.at,
+          orphanClean: entry.orphanClean,
+        })
+      }
+      const outcomes = new Map<string, ReturnType<typeof readGitOutcome>>()
+      const worktreeOutcome = (path: string) => {
+        const hit = outcomes.get(path)
+        if (hit !== undefined) return hit
+        const fact = readGitOutcome(path, repo.defaultRef)
+        outcomes.set(path, fact)
+        return fact
+      }
+      const reconciled = reconcileGoal({
+        parcels: projection.parcels,
+        items: projection.goal.items,
+        stateLines: projection.goal.stateLines,
+        otherKeys,
+        repo,
+        prs,
+        sessions,
+        worktreeOutcome,
+        now,
+      })
+      const byCode = Object.fromEntries(DISCREPANCY_CODES.map((code) => [code, 0]))
+      for (const entry of reconciled) {
+        for (const discrepancy of entry.discrepancies) {
+          byCode[discrepancy.code] = (byCode[discrepancy.code] ?? 0) + 1
+        }
+      }
+      const stateOf = new Map(projection.parcels.map((parcel) => [parcel.parcel, parcel]))
+      return {
+        status: 200,
+        json: {
+          goal: projection.goal.slug,
+          generatedAt: new Date(now).toISOString(),
+          repo: {
+            repoRoot,
+            defaultRef: repo.defaultRef,
+            refsAsOf: repo.refsAsOf,
+            checkedOutBranch: repo.currentBranch,
+            defaultDivergence: repo.defaultDivergence,
+          },
+          prs: {
+            available: prs.available,
+            reason: prs.reason,
+            asOf: prs.asOf,
+            truncated: prs.truncated,
+          },
+          assessment: assess(repo, prs),
+          counts: { parcels: reconciled.length, byCode },
+          parcels: reconciled.map((entry) => ({
+            state: stateOf.get(entry.parcel)?.state ?? null,
+            rule: stateOf.get(entry.parcel)?.rule ?? null,
+            ...entry,
+          })),
+        },
+      }
+    })
   }
 
   const chainRoute = /^\/api\/parcels\/([A-Z0-9-]+)\/chain$/.exec(pathname)

@@ -184,3 +184,108 @@ Owner approved this spec as drafted, including the amendments it names under
 that way). Blanket authority granted for decisions and non-destructive actions.
 Gate 3 (merge) is not delegated by this record. Open Questions OQ1-OQ3 are
 resolved by the proposals stated in them.
+
+## Delegated amendment (retroactive) and implementation findings — 2026-10-13
+
+Recorded AFTER implementation and flagged for owner review.
+
+Additional Allowed Files (tests and docs only; no product-scope change):
+
+- plugins/foreman-line/ops-console/tests/reconcile-sources.test.ts
+- plugins/foreman-line/ops-console/tests/browser-reconcile.test.ts
+- plugins/foreman-line/ops-console/README.md
+
+Open Questions resolved as proposed, plus one extension: OQ1 `origin/<default>` as
+last fetched; OQ2 link tokens are branch/PR/worktree names and commit subjects, and
+goal **state lines** are also read (local record claims), with `PREFIX-Pn–PREFIX-Pm`
+ranges expanded when both ends share a prefix; OQ3 no fetch is performed, the age of
+the last fetch is shown instead.
+
+Decisions made while building (each exists to prevent a false assertion found in
+review or on real data):
+
+- **Strong evidence is strict.** `shipped-unrecorded` requires a merged PR into the
+  default branch whose title type is `feat|fix|perf|refactor`. A merged docs PR
+  naming the key (PR #217 names FCA-P7/P8), a branch cut from the default branch
+  (trivially "merged"), commit subjects, specs on the default branch, and state lines
+  are **weak traces**: shown, never asserted from.
+- **`confidence`** (`asserted` | `weak-traces`) is added to each discrepancy. On real
+  data, 10 of 11 `stale-abandoned` findings rest on weak traces (e.g. RCM-P1 has a
+  merged untyped PR and a merged branch), so they are worded and coloured *Unclear —
+  weak traces only, verify* rather than as an abandonment verdict. The closed
+  discrepancy vocabulary is unchanged.
+- **Hung explanation** also states what holds back a `done/`-spec parcel with no
+  closed marker (rule R2 needs one when no receipt chain exists) — the actionable
+  cause for RCM-P0/P1 on real data.
+- **Placement.** Reconciliation is the first item under *Tools*, not a fifth primary
+  destination, to respect the owner-approved four-destination navigation
+  (`FCA-U1`); promoting it is a one-line change.
+- **Scale.** Linking uses a token index (linear in text length). The first
+  implementation scanned keys x candidates and took 5.4 s for 500 parcels; the index
+  takes ~55 ms and is proven equivalent to the per-key pattern by test.
+- Route added: `GET /api/reconcile?goal=` (owner-ratified).
+
+Real-data result (2026-10-13, 17 goals, 38 parcels, 7.3 s): 34 `hung` — 15
+`never-started` (queued, nothing begun: "hung" there only means "not started"), 10
+`orphan-worktree`, 10 `stale-abandoned` with weak traces, 1 `stale-abandoned` with no
+traces, 1 `local-remote-divergence`; 4 `complete`; **0 `shipped-unrecorded`**.
+
+Known follow-ups (not in this parcel): the frozen `hung` rule (FOC-P0 R4) treats an
+unstarted queue entry as hung; separating "not started" from "stalled" needs an owner
+amendment to the frozen state vocabulary. `closure-proposal` remains unspecified.
+
+## Independent review disposition — 2026-10-13
+
+A fresh, read-only reviewer session (read/grep/find/ls only) returned REQUEST CHANGES
+with 16 findings, plus a wording and mandated-question pass. Disposition:
+
+| # | Finding | Disposition |
+|---|---|---|
+| F1 | git failure treated as "empty" (merged set, spec listing, log) -> false findings; no timeout | **Fixed** - `complete` flags per read; absence findings need every read complete; shared runner has 20 s timeout and 64 MB buffer |
+| F2 | PR (1000) and log (5000) limits cut off silently | **Fixed** - `truncated`/`logTruncated`; absence withheld; limits named in `assessment` and the banner |
+| F3 | ambiguous PR/branch/worktree ignored when claiming absence | **Fixed** - an ambiguous candidate blocks never-started/recorded-unshipped and is listed as a weak trace |
+| F4 | orphan check matched sessions by key, "no live pane" overclaim | **Fixed** - exact worktree-path match; wording now "no live console-launched session" with the caveat that outside sessions are invisible |
+| F5 | squash/rebase-merged branches called `unmerged-work` | **Fixed** - merged-PR-head cross-check (also silences the pruned-upstream divergence) |
+| F6 | specs dir hardcoded | **Fixed** - taken from the tree config; outside the repo = unknown |
+| F7 | any feat/fix PR naming a key = delivery; any base when default unknown | **Partly fixed** - default branch must be known; revert/follow-up/partial/wip titles excluded; wording now "names this parcel ... verify it delivered the whole parcel". A `feat:` PR that merely names a key remains strong evidence by design (the finding asks the human the question) |
+| F8 | scope/goal-status change strands the view on Loading | **Fixed** (+ test) |
+| F9 | stale data with no persistent marker; `generatedAt` unshown | **Fixed** - persistent banner with the last generation time |
+| F10 | upstream-gone and spec-location divergence false positives | **Fixed** - spec comparison only when checked out on the default branch; pruned upstream ignored when a merged PR has that head. The default branch ahead/behind remains a banner (the spec's first clause), not a per-parcel finding |
+| F11 | keys inside longer slugs | **Documented limitation** (no deterministic rule distinguishes `foreman-to-p1-...` from `add-to-p1-...`); other goals' keys are now indexed for ambiguity |
+| F12 | uncached cost; hung gh stalls; symlinked roots | **Mitigated** - gh timeout 10 s, failures cached 5 min, GIT_OPTIONAL_LOCKS/fsmonitor hardening, realpath for receipts. Event-loop blocking itself remains (follow-up) |
+| F13 | history comparator and silent 100-cap | **Fixed** - total order; `historyTotal` and a visible note |
+| F14 | open panels leak across goals | **Fixed** |
+| F15 | recorded-unshipped required `complete` | **Fixed** - uses "record claims closed" (complete, spec in done/, or closed marker) |
+| F16 | newline paths, realpath of primary worktree, quadratic range expansion | **Partly fixed** - realpath normalisation in the API, range expansion bounded; newline-in-path parsing left (git `-z` needs >= 2.36) |
+| Q2 | refs age = any fetch; absence asserted on never-fetched clone | **Mitigated** - stale/never-fetched banner; evidence names the age. `FETCH_HEAD` remains the proxy for fetch time |
+| Q3 | cross-goal ambiguity; `FOC-P1-B-x.md` counted as FOC-P1's spec | **Fixed** (+ test) |
+| wording | "No trace of a start" overclaims | **Fixed** - "No linked trace" |
+| header | comment said `state` is never read; CLOSED_MARKER could drift | **Fixed** - comment corrected; test pins the pattern to derive.ts |
+
+Follow-ups (owner decisions): moving blocking `execFileSync` work off the event loop;
+the frozen R4 rule treating unstarted parcels as hung; newline-safe worktree parsing.
+
+## Second independent review — 2026-10-13
+
+A second fresh read-only reviewer verified each prior finding against the **code** and hunted
+for regressions: of 20 prior items, 9 confirmed fixed, 6 partial, 4 deferred-ok. Disposition
+of what remained:
+
+| Item | Disposition |
+|---|---|
+| F1 `complete.worktrees` was recorded but never read, so a failed `git worktree list` still allowed `never-started` | **Fixed** - it is an assessment limit; every absence finding is withheld (+ test) |
+| New 1 (major) `logTruncated` at 5000 commits would disable every absence finding on any mature repository | **Fixed** - the limit is 50,000 (~7 MB, a fraction of a second); truncation still reports itself. The guard is deliberately all-or-nothing: absence cannot be claimed from a partial log |
+| New 1b the real-data numbers in this spec predate the rework | **Corrected**: re-measured after the rework (17 goals, 38 parcels, 5.3 s, nothing truncated or unavailable): 34 `hung` = 15 `never-started`, 10 `orphan-worktree`, **11 `stale-abandoned` (all weak-traces: *Unclear - verify*)**, 1 `local-remote-divergence`; 4 `complete`; 0 `shipped-unrecorded`. (Earlier "10 weak + 1 asserted" became 11 weak once ambiguous candidates counted as traces.) |
+| F6 / New 2 (major) spec files were classified by a hardcoded `/specs/done/` | **Fixed** - classified by the configured specs directory; tested with a top-level `specs/` and `docs/plans/` |
+| F5 / New 3 merged-PR head matched by branch NAME (a reused name with new commits read as shipped) | **Fixed** - matched by the exact tip the PR carried (`headRefOid`, requested from gh) and only for PRs into the default branch; a reused name has a different tip and is unmerged; empty tips never match |
+| New 4 `remoteAssessable` unused | **Fixed** - it gates `shipped-unrecorded` |
+| New 5 `ledger-git.ts` outside the declared change set | **Clarified**: the runner hardening (timeout, buffer, `GIT_OPTIONAL_LOCKS`, fsmonitor) is part of FCA-P7 (#218) and is inherited here by the merge; this parcel changes no P7 file. P7 pins its constants by test |
+| New 6 `confidence: asserted` on a partial/hedged `feat:` PR | **Acknowledged residual** (by design): a `feat/fix/perf/refactor` PR into the default branch that names the key is strong evidence; hedged titles are excluded; the machine flag stays `asserted` while the summary and options ask the human to verify the PR delivered the whole parcel |
+| New 7 `FETCH_HEAD` banner is not a freshness gate | **Acknowledged**: it warns (older than a day, or never fetched); findings are not gated on ref age, and evidence strings print the age |
+| New 8 duplicate "no default branch" warning | **Fixed** (the limits banner no longer repeats a reason with its own banner) |
+| New 9 latent stuck "Loading" on goal mismatch | **Fixed** - the mismatch path re-renders (defence in depth; no failing path is reachable in the current wiring, so the mutation is not caught by a test) |
+| F1/F12 hung `execFileSync` can still block the server | **Mitigated** (10 s git/gh timeouts, failures cached 5 min, probing budget in P7); event-loop offloading remains a follow-up |
+
+Pinned by test and mutation: 6 of 7 new guards fail when removed (the 7th is the defence-in-depth
+re-render above). Real-data run is read-only against your repository.
+
