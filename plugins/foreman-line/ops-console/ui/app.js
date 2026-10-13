@@ -16,7 +16,7 @@ const absoluteRoot = (value) => typeof value === 'string' && /^(?:\/|[A-Za-z]:[\
 export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   const win = doc.defaultView
   const state = { view: 'signals', scope: '', goal: null, repoRoot: '', statuses: [], signals: [], registry: [], fleet: [], spawns: [],
-    loaded: {}, loadErrors: {}, decisions: null, decisionsError: '', decisionsFilter: '', reconcile: null, reconcileError: '', reconcileFilter: '', reconcileOpen: new Set(), projection: null, remedies: [], queries: {}, pages: {}, selected: new Map(), suggested: true, bulk: {}, bulkResult: '', controls: {}, extra: '', browseSelection: null, launchError: '', submitting: false, launchPage: 0, highlightSession: null, revealSession: false, detailParcel: null, retryRequired: false, retryAcknowledged: false }
+    loaded: {}, loadErrors: {}, decisions: null, decisionsError: '', decisionsFilter: '', decisionsShown: new Map(), decisionsApprovals: new Map(), reconcile: null, reconcileError: '', reconcileFilter: '', reconcileOpen: new Set(), projection: null, remedies: [], queries: {}, pages: {}, selected: new Map(), suggested: true, bulk: {}, bulkResult: '', controls: {}, extra: '', browseSelection: null, launchError: '', submitting: false, launchPage: 0, highlightSession: null, revealSession: false, detailParcel: null, retryRequired: false, retryAcknowledged: false }
   let generation = 0
   let goalGeneration = 0
   let reconcileGeneration = 0
@@ -127,7 +127,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       if (!data) el('decisions-body').innerHTML = state.decisionsError ? emptyHtml('Could not load decisions', `${state.decisionsError}. Use Refresh to retry.`) : emptyHtml('Loading decisions…', 'Reading pull requests and gate state. This can take a few seconds.')
       else {
         const stale = state.decisions.stale ? `<div class="banner warn" role="status"><strong>Showing the last successful read</strong> (${esc(data.generatedAt)}); refreshing failed: ${esc(state.decisions.stale)}.</div>` : ''
-        el('decisions-body').innerHTML = stale + decisionsHtml(data, { filter: state.decisionsFilter, query: state.queries.decisions, page: Math.min(state.pages.decisions || 0, Math.max(0, Math.ceil(filterItems(data.items, state.decisionsFilter, state.queries.decisions).length / DECISIONS_PAGE_SIZE) - 1)) })
+        el('decisions-body').innerHTML = stale + decisionsHtml(data, { filter: state.decisionsFilter, query: state.queries.decisions, shown: state.decisionsShown, approvals: state.decisionsApprovals, page: Math.min(state.pages.decisions || 0, Math.max(0, Math.ceil(filterItems(data.items, state.decisionsFilter, state.queries.decisions).length / DECISIONS_PAGE_SIZE) - 1)) })
         wireDecisions(el('decisions-body'))
       }
     }
@@ -163,6 +163,24 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   }
   function wireDecisions(body) {
     body.querySelectorAll('[data-dec-filter]').forEach((button) => on(button, 'click', () => { state.decisionsFilter = button.dataset.decFilter; state.pages.decisions = 0; renderCurrent() }))
+    body.querySelectorAll('[data-show-command]').forEach((button) => on(button, 'click', async () => {
+      const feedback = button.parentElement.querySelector('[data-show-status]')
+      try {
+        const outcome = await api('/api/invoke', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ flow: button.dataset.flow, argv: JSON.parse(button.dataset.argv), mode: 'present' }) })
+        if (outcome.action !== 'presented' || typeof outcome.command !== 'string' || !outcome.command) throw new Error(outcome.reason || 'The console did not present this command')
+        state.decisionsShown.set(button.dataset.showCommand, outcome.command)
+        renderCurrent()
+        ;[...doc.querySelectorAll('[data-show-command]')].find((node) => node.dataset.showCommand === button.dataset.showCommand)?.focus()
+      } catch (err) { feedback.textContent = `Not shown: ${err.message}` }
+    }))
+    body.querySelectorAll('[data-approval-show]').forEach((button) => on(button, 'click', async () => {
+      const feedback = button.parentElement.querySelector('[data-show-status]')
+      try {
+        const outcome = await api('/api/invoke', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ flow: 'approval-show', argv: JSON.parse(button.dataset.argv) }) })
+        state.decisionsApprovals.set(button.dataset.approvalShow, `${outcome.stdout || ''}${outcome.stderr || ''}`.trim() || `approval show exited ${outcome.exitCode}`)
+        renderCurrent()
+      } catch (err) { feedback.textContent = `Not shown: ${err.message}` }
+    }))
     body.querySelectorAll('[data-copy]').forEach((button) => on(button, 'click', async () => {
       const feedback = button.parentElement.querySelector('[data-copy-status]')
       try { const clipboard = win?.navigator?.clipboard || globalThis.navigator?.clipboard; if (!clipboard) throw new Error(); await clipboard.writeText(button.dataset.copy); feedback.textContent = 'Copied. Run it in a terminal.' }

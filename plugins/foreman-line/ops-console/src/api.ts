@@ -399,7 +399,7 @@ export function handleApi(
     const argv = Array.isArray(body.argv)
       ? body.argv.filter((entry): entry is string => typeof entry === 'string')
       : []
-    return { status: 200, json: invokeFlow(config, { flow, argv }, now) }
+    return { status: 200, json: invokeFlow(config, { flow, argv, mode: body.mode }, now) }
   }
 
   // FCA-P3 unified attention model (control-center amendment): derived signal

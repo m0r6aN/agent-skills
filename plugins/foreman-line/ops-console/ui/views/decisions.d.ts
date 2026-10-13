@@ -9,8 +9,18 @@ export declare function filterItems<T extends Record<string, unknown>>(
 ): T[]
 export declare function bannersHtml(data: Record<string, unknown>): string
 export declare function countsHtml(data: Record<string, unknown>, active: string): string
-export declare function decisionsRowsHtml(items: readonly Record<string, unknown>[], page?: number): string
+export declare function decisionsRowsHtml(
+  items: readonly Record<string, unknown>[],
+  page?: number,
+  ctx?: { shown?: ReadonlyMap<string, string> | null; approvals?: ReadonlyMap<string, string> | null },
+): string
 export declare function decisionsHtml(
   data: Record<string, unknown>,
-  options?: { filter?: string; query?: string; page?: number },
+  options?: {
+    filter?: string
+    query?: string
+    page?: number
+    shown?: ReadonlyMap<string, string> | null
+    approvals?: ReadonlyMap<string, string> | null
+  },
 ): string

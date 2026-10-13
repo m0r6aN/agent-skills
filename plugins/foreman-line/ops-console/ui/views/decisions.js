@@ -65,21 +65,21 @@ function causeText(item) {
   return ''
 }
 
-function mergeRow(item) {
+function mergeRow(item, ctx) {
   const stacked = item.stack?.baseIsDefault === false
   const stack = item.stack?.baseIsDefault === null ? '<span class="meta">Default branch unknown: stack not assessed.</span>'
     : stacked ? `<span class="meta">Stacked on <code>${esc(item.baseRef)}</code>${item.stack.waitsOn ? `: waits on #${esc(item.stack.waitsOn)}; after it merges this PR must be retargeted to the default branch.` : ': that branch has no open pull request.'}</span>` : ''
   return `<tr class="dec-row" data-decision="${esc(item.id)}" data-kind="merge">
     <td data-label="Item"><strong>${link(item.url, `#${item.number}`)}</strong> ${esc(item.title)}${item.isDraft ? ' <span class="chip chip-neutral">Draft</span>' : ''}<span class="meta"><code>${esc(item.headRef)}</code> → <code>${esc(item.baseRef)}</code></span>${stack}<span class="meta">${esc(item.repoRoot)}</span></td>
     <td data-label="Facts"><dl class="receipt-facts"><dt>Mergeable</dt><dd>${esc(item.mergeable)}</dd><dt>Merge state</dt><dd>${esc(item.mergeStateStatus)}</dd><dt>Review decision</dt><dd>${esc(item.reviewDecision || 'none required / none given')}</dd><dt>Reviews</dt><dd>${esc(item.reviews?.approved)} approved · ${esc(item.reviews?.changesRequested)} changes requested · ${esc(item.reviews?.commented)} commented</dd><dt>Checks</dt><dd>${checksText(item.checks)}</dd></dl>${causeText(item)}</td>
-    <td data-label="Gate 3 (merge)"><span class="chip chip-neutral">Your decision</span><span class="meta">${esc(asOf(item.asOf))}</span>${commandHtml(item)}</td></tr>`
+    <td data-label="Gate 3 (merge)"><span class="chip chip-neutral">Your decision</span><span class="meta">${esc(asOf(item.asOf))}</span>${commandHtml(item, ctx.shown, ctx.approvals)}</td></tr>`
 }
 
-function gateRow(item) {
+function gateRow(item, ctx) {
   return `<tr class="dec-row" data-decision="${esc(item.id)}" data-kind="gate">
     <td data-label="Item"><strong>${esc(item.parcel)}</strong> <span class="chip chip-neutral">${esc(item.gate === 'G1' ? 'Gate 1: ratify' : 'Gate 2: dispatch')}</span><span class="meta">Goal ${esc(item.goal)} · rule ${esc(item.rule)}${item.tipStage ? ` · chain tip ${esc(item.tipStage)}` : ''}</span><span class="meta">${esc(item.repoRoot)}</span></td>
     <td data-label="Facts">${esc(item.evidence)}<span class="meta">Spec: ${item.specRef ? `<code>${esc(item.specRef)}</code>` : 'none'}${item.chainLocator ? ` · chain <code>${esc(item.chainLocator)}</code>` : ''}</span></td>
-    <td data-label="Gate"><span class="chip chip-neutral">Your decision</span><span class="meta">${esc(asOf(item.asOf))}</span>${commandHtml(item)}</td></tr>`
+    <td data-label="Gate"><span class="chip chip-neutral">Your decision</span><span class="meta">${esc(asOf(item.asOf))}</span>${commandHtml(item, ctx.shown, ctx.approvals)}</td></tr>`
 }
 
 function goalRow(item) {
@@ -89,18 +89,38 @@ function goalRow(item) {
     <td data-label="Gate"><span class="chip chip-neutral">State only</span><span class="meta">${esc(asOf(item.asOf))}</span></td></tr>`
 }
 
-// Commands are presented text only (copy, never run). Stage 1 carries none.
-function commandHtml(item) {
-  return item.command ? `<div class="dec-command"><code class="attach">${esc(item.command.text)}</code><button type="button" data-copy="${esc(item.command.text)}" aria-label="Copy command for ${esc(item.id)}">Copy command</button><span class="meta" data-copy-status aria-live="polite"></span><span class="meta">Run this in a terminal. The console will not run it.</span></div>` : ''
+// Commands are presented text only (copy, never run). A command stays hidden until the human
+// presses "Show command": that press is one /api/invoke presentation, audited `presented`, and the
+// revealed text is the server's own rendering from that outcome (`shown` maps `<id>|<slot>` to it).
+const COPY_NOTE = 'Run this in a terminal. The console will not run it.'
+function oneCommandHtml(item, slot, command, label, shown) {
+  const key = `${item.id}|${slot}`
+  const text = shown && typeof shown.get === 'function' ? shown.get(key) : null
+  const reveal = typeof text === 'string'
+    ? `<div class="dec-command"><code class="attach">${esc(text)}</code><button type="button" data-copy="${esc(text)}" aria-label="Copy ${esc(label.toLowerCase())} for ${esc(item.id)}">Copy command</button><span class="meta" data-copy-status aria-live="polite"></span><span class="meta">${COPY_NOTE}</span></div>`
+    : ''
+  return `<div class="dec-command-slot"><button type="button" data-show-command="${esc(key)}" data-flow="${esc(command.flow)}" data-argv="${esc(JSON.stringify(command.argv))}" aria-expanded="${typeof text === 'string'}">${esc(label)}</button><span class="meta" data-show-status role="status"></span>${reveal}</div>`
+}
+function commandHtml(item, shown, approvals) {
+  const parts = []
+  if (item.command) parts.push(oneCommandHtml(item, 'main', item.command, item.kind === 'gate' ? (item.gate === 'G1' ? 'Show approve command' : 'Show dispatch command') : 'Show command', shown))
+  if (item.altCommand) parts.push(oneCommandHtml(item, 'alt', item.altCommand, 'Show reject command', shown))
+  if (!item.command && item.commandNote) parts.push(`<span class="meta">${esc(item.commandNote)}</span>`)
+  if (item.approvalShow && item.slug) {
+    const argv = ['show', item.slug, '--repo-root', item.repoRoot]
+    const out = approvals && typeof approvals.get === 'function' ? approvals.get(item.id) : null
+    parts.push(`<div class="dec-command-slot"><button type="button" data-approval-show="${esc(item.id)}" data-argv="${esc(JSON.stringify(argv))}">Show approval details</button><span class="meta" data-show-status role="status"></span>${typeof out === 'string' ? `<pre class="attach">${esc(out)}</pre>` : ''}</div>`)
+  }
+  return parts.join('')
 }
 
-export function decisionsRowsHtml(items, page = 0) {
-  const rows = items.slice(page * DECISIONS_PAGE_SIZE, (page + 1) * DECISIONS_PAGE_SIZE).map((item) => (item.kind === 'merge' ? mergeRow(item) : item.kind === 'gate' ? gateRow(item) : goalRow(item))).join('')
+export function decisionsRowsHtml(items, page = 0, ctx = {}) {
+  const rows = items.slice(page * DECISIONS_PAGE_SIZE, (page + 1) * DECISIONS_PAGE_SIZE).map((item) => (item.kind === 'merge' ? mergeRow(item, ctx) : item.kind === 'gate' ? gateRow(item, ctx) : goalRow(item))).join('')
   return `<div class="table-wrap"><table class="dec-table"><thead><tr><th scope="col">Item</th><th scope="col">Facts the console can see</th><th scope="col">Decision</th></tr></thead><tbody>${rows}</tbody></table></div>${paginationHtml(items.length, page, DECISIONS_PAGE_SIZE)}`
 }
 
-export function decisionsHtml(data, { filter = '', query = '', page = 0 } = {}) {
+export function decisionsHtml(data, { filter = '', query = '', page = 0, shown = null, approvals = null } = {}) {
   const items = filterItems(data.items || [], filter, query)
-  const body = items.length ? `<div class="list-meta"><span>${items.length} of ${(data.items || []).length} decisions</span></div>${decisionsRowsHtml(items, page)}` : emptyHtml((data.items || []).length ? 'No matching decisions' : 'Nothing is waiting for you', (data.items || []).length ? 'Change the filter or search.' : 'No open pull requests or pending gates were found in the repositories this console can read.')
+  const body = items.length ? `<div class="list-meta"><span>${items.length} of ${(data.items || []).length} decisions</span></div>${decisionsRowsHtml(items, page, { shown, approvals })}` : emptyHtml((data.items || []).length ? 'No matching decisions' : 'Nothing is waiting for you', (data.items || []).length ? 'Change the filter or search.' : 'No open pull requests or pending gates were found in the repositories this console can read.')
   return `${bannersHtml(data)}${countsHtml(data, filter)}${body}`
 }
