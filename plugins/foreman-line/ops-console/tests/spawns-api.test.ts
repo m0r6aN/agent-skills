@@ -5,7 +5,7 @@ import { handleApi } from '../src/api.js'
 import type { ConsoleConfig } from '../src/config.js'
 import { type SessionProbe, sessionProbeFor, sessionStateProvider } from '../src/signals-session.js'
 import { launchSpawnPlan, listSpawnReceipts, planSpawn, type TmuxRunner } from '../src/spawn.js'
-import { type Scenario, withTempRepo } from './support/materialize.js'
+import { type Scenario, withTempRepo, withTempRepoAsync } from './support/materialize.js'
 
 /**
  * FCA-P5 spawn receipts (Task 14): append-only receipt records (session/pane
@@ -77,10 +77,10 @@ function launchOne(config: ConsoleConfig, subject = 'pr/170/red') {
   return plan
 }
 
-test('receipts round-trip through GET /api/spawns with liveness states', () => {
-  withTempRepo(receiptsScenario(), ({ config }) => {
+test('receipts round-trip through GET /api/spawns with liveness states', async () => {
+  await withTempRepoAsync(receiptsScenario(), async ({ config }) => {
     const plan = launchOne(config)
-    const result = handleApi(
+    const result = await handleApi(
       config,
       { method: 'GET', pathname: '/api/spawns', query: new URLSearchParams(), body: {} },
       NOW,
@@ -147,9 +147,9 @@ test('dead/exited panes surface as session-state signals; alive panes stay quiet
   })
 })
 
-test('GET /api/spawns method guard matches the route table', () => {
-  withTempRepo(receiptsScenario(), ({ config }) => {
-    const denied = handleApi(
+test('GET /api/spawns method guard matches the route table', async () => {
+  await withTempRepoAsync(receiptsScenario(), async ({ config }) => {
+    const denied = await handleApi(
       config,
       { method: 'POST', pathname: '/api/spawns', query: new URLSearchParams(), body: {} },
       NOW,

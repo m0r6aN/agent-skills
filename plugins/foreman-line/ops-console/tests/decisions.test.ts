@@ -15,7 +15,7 @@ import {
   type OpenPrFacts,
   summariseChecks,
 } from '../src/decisions-remote.js'
-import { type Scenario, withTempRepo } from './support/materialize.js'
+import { type Scenario, withTempRepo, withTempRepoAsync } from './support/materialize.js'
 
 /**
  * FCA-P9 decisions queue: composition of PR facts into merge items (order,
@@ -353,28 +353,28 @@ test('gate items: R3 G1 and G2 parcels listed with evidence; tip-E (G3) parcels 
   })
 })
 
-test('GET /api/decisions is read-only, refuses other methods, and leaves /api/gates byte-identical', () => {
+test('GET /api/decisions is read-only, refuses other methods, and leaves /api/gates byte-identical', async () => {
   clearDecisionCaches()
-  withTempRepo(gateScenario(), ({ config }) => {
+  await withTempRepoAsync(gateScenario(), async ({ config }) => {
     const request = (method: string, path: string): ApiRequest => {
       const url = new URL(path, 'http://localhost')
       return { method, pathname: url.pathname, query: url.searchParams, body: {} }
     }
     const gatesBefore = JSON.stringify(
-      handleApi(config, request('GET', '/api/gates?goal=goal-dec'), NOW),
+      await handleApi(config, request('GET', '/api/gates?goal=goal-dec'), NOW),
     )
-    const res = handleApi(config, request('GET', '/api/decisions'), NOW, {
+    const res = await handleApi(config, request('GET', '/api/decisions'), NOW, {
       decisions: { gh: noGh, git: () => 'origin/main' },
     })
     assert.equal(res.status, 200)
     const json = res.json as DecisionsResponse
     assert.ok(Array.isArray(json.items))
-    assert.equal(handleApi(config, request('POST', '/api/decisions'), NOW).status, 405)
+    assert.equal((await handleApi(config, request('POST', '/api/decisions'), NOW)).status, 405)
     const gatesAfter = JSON.stringify(
-      handleApi(config, request('GET', '/api/gates?goal=goal-dec'), NOW),
+      await handleApi(config, request('GET', '/api/gates?goal=goal-dec'), NOW),
     )
     assert.equal(gatesAfter, gatesBefore)
-    const filtered = handleApi(config, request('GET', '/api/decisions?repo=/nowhere'), NOW, {
+    const filtered = await handleApi(config, request('GET', '/api/decisions?repo=/nowhere'), NOW, {
       decisions: { gh: noGh, git: () => 'origin/main' },
     })
     assert.equal(filtered.status, 200)

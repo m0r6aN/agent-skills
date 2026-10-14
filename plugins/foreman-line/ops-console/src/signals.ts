@@ -189,3 +189,26 @@ export function collectSignals(
 ): Signal[] {
   return (providers ?? defaultProviders()).flatMap((provider) => provider.collect(config, now))
 }
+
+/**
+ * FCA-P14: Async signal collection using non-blocking spawn.
+ * Providers run concurrently; the event loop is not blocked.
+ */
+export async function collectSignalsAsync(config: ConsoleConfig, now: number): Promise<Signal[]> {
+  // parcelStateProvider and goalHygieneProvider are sync (no exec calls)
+  // releaseHygieneProvider is sync (reads files only)
+  const syncSignals = [
+    ...parcelStateProvider.collect(config, now),
+    ...releaseHygieneProvider.collect(config, now),
+    ...goalHygieneProvider.collect(config, now),
+  ]
+
+  // Async providers run concurrently
+  const asyncResults = await Promise.all([
+    worktreeHygieneProvider.collectAsync(config, now),
+    scmCiProvider.collectAsync(config, now),
+    sessionStateProvider.collectAsync(config, now),
+  ])
+
+  return [...syncSignals, ...asyncResults.flat()]
+}

@@ -4,6 +4,7 @@ import { join } from 'node:path'
 import type { ConsoleConfig } from './config.js'
 import { isRecord } from './guards.js'
 import { makeSignal, type Signal, type SignalProvider } from './signals.js'
+import { runAsync } from './spawn-async.js'
 
 /**
  * FCA-P3 scm-ci provider: PR/CI semantics disk truth cannot see —
@@ -20,6 +21,14 @@ export interface ScmClient {
   readonly hasRemote: (root: string) => boolean
   readonly openPrs: (root: string) => string
   readonly mergedPrs: (root: string) => string
+}
+
+/** FCA-P14: Async version of ScmClient for non-blocking signal collection. */
+export interface AsyncScmClient {
+  readonly available: () => Promise<boolean>
+  readonly hasRemote: (root: string) => Promise<boolean>
+  readonly openPrs: (root: string) => Promise<string>
+  readonly mergedPrs: (root: string) => Promise<string>
 }
 
 function run(bin: string, args: readonly string[], cwd: string | undefined): string {
@@ -63,6 +72,55 @@ export const defaultScmClient: ScmClient = {
     ),
   mergedPrs: (root) =>
     run(
+      'gh',
+      [
+        'pr',
+        'list',
+        '--state',
+        'merged',
+        '--limit',
+        '10',
+        '--json',
+        'number,title,mergedAt,additions,deletions',
+      ],
+      root,
+    ),
+}
+
+/** FCA-P14: Default async client using non-blocking spawn. */
+export const defaultAsyncScmClient: AsyncScmClient = {
+  available: async () => {
+    try {
+      await runAsync('gh', ['--version'], undefined)
+      return true
+    } catch {
+      return false
+    }
+  },
+  hasRemote: async (root) => {
+    try {
+      return (await runAsync('git', ['-C', root, 'remote'], undefined)) !== ''
+    } catch {
+      return false
+    }
+  },
+  openPrs: (root) =>
+    runAsync(
+      'gh',
+      [
+        'pr',
+        'list',
+        '--state',
+        'open',
+        '--limit',
+        '30',
+        '--json',
+        'number,title,isDraft,mergeable,mergeStateStatus,statusCheckRollup',
+      ],
+      root,
+    ),
+  mergedPrs: (root) =>
+    runAsync(
       'gh',
       [
         'pr',
@@ -182,8 +240,93 @@ function lastRelease(root: string): { version: string; date: string } | null {
 
 const SUBSTANTIVE_LINES = 200
 
+/** FCA-P14: Build signals from parsed PR data (shared between sync/async). */
+function buildScmSignals(
+  root: string,
+  openPrs: OpenPr[],
+  mergedPrs: MergedPr[],
+  detectedAt: string,
+): Signal[] {
+  const signals: Signal[] = []
+  for (const pr of openPrs) {
+    const allGreen =
+      pr.checks.length > 0 &&
+      pr.checks.every((check) => check.status === 'COMPLETED' && check.conclusion === 'SUCCESS')
+    const failing = pr.checks.filter((check) => check.conclusion === 'FAILURE').length
+    const doNotMerge = /do not merge/i.test(pr.title)
+
+    if (allGreen && (pr.isDraft || doNotMerge)) {
+      signals.push(
+        makeSignal({
+          class: 'scm-ci',
+          severity: 'attention',
+          repo: root,
+          subject: `pr/${pr.number}/do-not-merge`,
+          evidence: [
+            `gh: PR #${pr.number} checks green; do not merge marker (${pr.isDraft ? 'draft' : 'title'}): ${pr.title}`,
+          ],
+          detectedAt,
+          actions: ['investigate', 'remediate', 'explain', 'close-delete'],
+        }),
+      )
+    }
+    if (pr.mergeable === 'CONFLICTING' || failing > 0) {
+      signals.push(
+        makeSignal({
+          class: 'scm-ci',
+          severity: 'attention',
+          repo: root,
+          subject: `pr/${pr.number}/red`,
+          evidence: [`gh: PR #${pr.number} mergeable ${pr.mergeable}; failing checks: ${failing}`],
+          detectedAt,
+          actions: ['investigate', 'remediate', 'explain', 'close-delete'],
+        }),
+      )
+    }
+    if (pr.mergeStateStatus === 'BEHIND') {
+      signals.push(
+        makeSignal({
+          class: 'scm-ci',
+          severity: 'info',
+          repo: root,
+          subject: `pr/${pr.number}/behind`,
+          evidence: [
+            `gh: PR #${pr.number} BEHIND under the strict up-to-date ruleset (merge needs update)`,
+          ],
+          detectedAt,
+          actions: ['investigate', 'explain'],
+        }),
+      )
+    }
+  }
+
+  const release = lastRelease(root)
+  if (release !== null) {
+    for (const pr of mergedPrs) {
+      const size = pr.additions + pr.deletions
+      if (size < SUBSTANTIVE_LINES || pr.mergedAt <= `${release.date}T00:00:00Z`) continue
+      signals.push(
+        makeSignal({
+          class: 'scm-ci',
+          severity: 'attention',
+          repo: root,
+          subject: `pr/${pr.number}/release-gap`,
+          evidence: [
+            `gh: PR #${pr.number} merged ${pr.mergedAt.slice(0, 10)} (+${pr.additions}/-${pr.deletions}) with no release event since`,
+            `last release: ${release.version} (${release.date})`,
+          ],
+          detectedAt,
+          actions: ['remediate', 'explain'],
+        }),
+      )
+    }
+  }
+  return signals
+}
+
 export const scmCiProvider: SignalProvider & {
   collect(config: ConsoleConfig, now: number, client?: ScmClient): Signal[]
+  collectAsync(config: ConsoleConfig, now: number, client?: AsyncScmClient): Promise<Signal[]>
 } = {
   class: 'scm-ci',
   collect(config: ConsoleConfig, now: number, client: ScmClient = defaultScmClient): Signal[] {
@@ -224,82 +367,53 @@ export const scmCiProvider: SignalProvider & {
       ]
     }
 
-    const signals: Signal[] = []
-    for (const pr of openPrs) {
-      const allGreen =
-        pr.checks.length > 0 &&
-        pr.checks.every((check) => check.status === 'COMPLETED' && check.conclusion === 'SUCCESS')
-      const failing = pr.checks.filter((check) => check.conclusion === 'FAILURE').length
-      const doNotMerge = /do not merge/i.test(pr.title)
+    return buildScmSignals(root, openPrs, mergedPrs, detectedAt)
+  },
 
-      if (allGreen && (pr.isDraft || doNotMerge)) {
-        signals.push(
-          makeSignal({
-            class: 'scm-ci',
-            severity: 'attention',
-            repo: root,
-            subject: `pr/${pr.number}/do-not-merge`,
-            evidence: [
-              `gh: PR #${pr.number} checks green; do not merge marker (${pr.isDraft ? 'draft' : 'title'}): ${pr.title}`,
-            ],
-            detectedAt,
-            actions: ['investigate', 'remediate', 'explain', 'close-delete'],
-          }),
-        )
-      }
-      if (pr.mergeable === 'CONFLICTING' || failing > 0) {
-        signals.push(
-          makeSignal({
-            class: 'scm-ci',
-            severity: 'attention',
-            repo: root,
-            subject: `pr/${pr.number}/red`,
-            evidence: [
-              `gh: PR #${pr.number} mergeable ${pr.mergeable}; failing checks: ${failing}`,
-            ],
-            detectedAt,
-            actions: ['investigate', 'remediate', 'explain', 'close-delete'],
-          }),
-        )
-      }
-      if (pr.mergeStateStatus === 'BEHIND') {
-        signals.push(
-          makeSignal({
-            class: 'scm-ci',
-            severity: 'info',
-            repo: root,
-            subject: `pr/${pr.number}/behind`,
-            evidence: [
-              `gh: PR #${pr.number} BEHIND under the strict up-to-date ruleset (merge needs update)`,
-            ],
-            detectedAt,
-            actions: ['investigate', 'explain'],
-          }),
-        )
-      }
+  /** FCA-P14: Non-blocking version using async spawn. */
+  async collectAsync(
+    config: ConsoleConfig,
+    now: number,
+    client: AsyncScmClient = defaultAsyncScmClient,
+  ): Promise<Signal[]> {
+    const root = config.repoRoot
+    const detectedAt = new Date(now).toISOString()
+
+    if (!(await client.available())) {
+      return [
+        makeSignal({
+          class: 'scm-ci',
+          severity: 'info',
+          repo: root,
+          subject: 'gh',
+          evidence: ['gh: unavailable — scm-ci signals not collected'],
+          detectedAt,
+          actions: ['investigate', 'explain'],
+        }),
+      ]
+    }
+    if (!(await client.hasRemote(root))) return []
+
+    let openPrs: OpenPr[]
+    let mergedPrs: MergedPr[]
+    try {
+      const [openRaw, mergedRaw] = await Promise.all([client.openPrs(root), client.mergedPrs(root)])
+      openPrs = parseOpenPrs(openRaw)
+      mergedPrs = parseMergedPrs(mergedRaw)
+    } catch {
+      return [
+        makeSignal({
+          class: 'scm-ci',
+          severity: 'info',
+          repo: root,
+          subject: 'gh',
+          evidence: ['gh: query failed (network/host outage) — scm-ci signals not collected'],
+          detectedAt,
+          actions: ['investigate', 'explain'],
+        }),
+      ]
     }
 
-    const release = lastRelease(root)
-    if (release !== null) {
-      for (const pr of mergedPrs) {
-        const size = pr.additions + pr.deletions
-        if (size < SUBSTANTIVE_LINES || pr.mergedAt <= `${release.date}T00:00:00Z`) continue
-        signals.push(
-          makeSignal({
-            class: 'scm-ci',
-            severity: 'attention',
-            repo: root,
-            subject: `pr/${pr.number}/release-gap`,
-            evidence: [
-              `gh: PR #${pr.number} merged ${pr.mergedAt.slice(0, 10)} (+${pr.additions}/-${pr.deletions}) with no release event since`,
-              `last release: ${release.version} (${release.date})`,
-            ],
-            detectedAt,
-            actions: ['remediate', 'explain'],
-          }),
-        )
-      }
-    }
-    return signals
+    return buildScmSignals(root, openPrs, mergedPrs, detectedAt)
   },
 }

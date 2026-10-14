@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process'
 import type { ConsoleConfig } from './config.js'
 import { makeSignal, type Signal, type SignalProvider } from './signals.js'
+import { runAsync } from './spawn-async.js'
 
 /**
  * FCA-P3 worktree-hygiene provider: uncommitted/untracked churn, long-lived
@@ -21,6 +22,14 @@ export interface WorktreeProbe {
   readonly branchTracks: (root: string) => string
   /** `git for-each-ref --merged=HEAD refs/heads --format=%(refname:short)%09%(HEAD)` */
   readonly mergedBranches: (root: string) => string
+}
+
+/** FCA-P14: Async version of WorktreeProbe for non-blocking signal collection. */
+export interface AsyncWorktreeProbe {
+  readonly statusPorcelain: (root: string) => Promise<string>
+  readonly headUnpushed: (root: string) => Promise<string>
+  readonly branchTracks: (root: string) => Promise<string>
+  readonly mergedBranches: (root: string) => Promise<string>
 }
 
 function git(args: readonly string[]): (root: string) => string {
@@ -53,6 +62,35 @@ export const defaultWorktreeProbe: WorktreeProbe = {
     'refs/heads',
     '--format=%(refname:short)%09%(HEAD)',
   ]),
+}
+
+/** FCA-P14: Async helper for git commands. */
+async function gitAsync(args: readonly string[], root: string): Promise<string> {
+  try {
+    return await runAsync('git', ['-C', root, ...args], root)
+  } catch {
+    return ''
+  }
+}
+
+/** FCA-P14: Default async probe using non-blocking spawn. */
+export const defaultAsyncWorktreeProbe: AsyncWorktreeProbe = {
+  statusPorcelain: (root) => gitAsync(['status', '--porcelain'], root),
+  headUnpushed: (root) => gitAsync(['log', '--format=%h %s', 'HEAD', '--not', '--remotes'], root),
+  branchTracks: (root) =>
+    gitAsync(
+      [
+        'for-each-ref',
+        'refs/heads',
+        '--format=%(refname:short)%09%(upstream:short)%09%(upstream:track)',
+      ],
+      root,
+    ),
+  mergedBranches: (root) =>
+    gitAsync(
+      ['for-each-ref', '--merged=HEAD', 'refs/heads', '--format=%(refname:short)%09%(HEAD)'],
+      root,
+    ),
 }
 
 const STATE_FILE_PATTERN = /(^|\/)state\//
@@ -100,8 +138,95 @@ function signal(
   })
 }
 
+/** FCA-P14: Build worktree hygiene signals from probe results (shared sync/async). */
+function buildWorktreeSignals(
+  config: ConsoleConfig,
+  detectedAt: string,
+  porcelainOutput: string,
+  unpushedOutput: string,
+  branchTracksOutput: string,
+  mergedBranchesOutput: string,
+): Signal[] {
+  const signals: Signal[] = []
+
+  const { dirty, untracked } = statusPaths(porcelainOutput)
+  const churn = [
+    ...dirty.map((path) => `dirty: ${path}`),
+    ...untracked.map((path) => `untracked: ${path}`),
+  ]
+  if (churn.length > 0) {
+    signals.push(
+      signal(
+        config,
+        'git-status',
+        'attention',
+        churn,
+        ['remediate', 'investigate', 'explain'],
+        detectedAt,
+      ),
+    )
+  }
+  const stateFiles = [...dirty, ...untracked].filter((path) => STATE_FILE_PATTERN.test(path))
+  if (stateFiles.length > 0) {
+    signals.push(
+      signal(
+        config,
+        'state-files',
+        'attention',
+        stateFiles.map((path) => `dirty state file: ${path}`),
+        ['remediate', 'investigate', 'explain'],
+        detectedAt,
+      ),
+    )
+  }
+
+  const unpushedLines = unpushedOutput.split('\n').filter((line) => line !== '')
+  if (unpushedLines.length > 0) {
+    signals.push(
+      signal(
+        config,
+        'HEAD',
+        'attention',
+        unpushedLines.map((line) => `lumber-jack: unpushed ${line}`),
+        ['remediate', 'investigate', 'explain'],
+        detectedAt,
+      ),
+    )
+  }
+
+  const stale: string[] = []
+  const tracks = new Map<string, { upstream: string; track: string }>()
+  for (const line of branchTracksOutput.split('\n')) {
+    if (line === '') continue
+    const [branch = '', upstream = '', track = ''] = line.split('\t')
+    tracks.set(branch, { upstream, track })
+    if (track.includes('gone')) stale.push(`lumber-jack: branch ${branch} (upstream gone)`)
+  }
+  for (const line of mergedBranchesOutput.split('\n')) {
+    if (line === '') continue
+    const [branch = '', marker = ''] = line.split('\t')
+    if (marker.trim() === '*') continue
+    if ((tracks.get(branch)?.upstream ?? '') !== '') continue
+    stale.push(`lumber-jack: branch ${branch} (merged into HEAD, no upstream)`)
+  }
+  if (stale.length > 0) {
+    signals.push(
+      signal(
+        config,
+        'branches',
+        'info',
+        stale,
+        ['remediate', 'close-delete', 'explain'],
+        detectedAt,
+      ),
+    )
+  }
+  return signals
+}
+
 export const worktreeHygieneProvider: SignalProvider & {
   collect(config: ConsoleConfig, now: number, probe?: WorktreeProbe): Signal[]
+  collectAsync(config: ConsoleConfig, now: number, probe?: AsyncWorktreeProbe): Promise<Signal[]>
 } = {
   class: 'worktree-hygiene',
   collect(
@@ -109,88 +234,32 @@ export const worktreeHygieneProvider: SignalProvider & {
     now: number,
     probe: WorktreeProbe = defaultWorktreeProbe,
   ): Signal[] {
-    const signals: Signal[] = []
     const detectedAt = new Date(now).toISOString()
     const root = config.repoRoot
+    return buildWorktreeSignals(
+      config,
+      detectedAt,
+      probe.statusPorcelain(root),
+      probe.headUnpushed(root),
+      probe.branchTracks(root),
+      probe.mergedBranches(root),
+    )
+  },
 
-    const { dirty, untracked } = statusPaths(probe.statusPorcelain(root))
-    const churn = [
-      ...dirty.map((path) => `dirty: ${path}`),
-      ...untracked.map((path) => `untracked: ${path}`),
-    ]
-    if (churn.length > 0) {
-      signals.push(
-        signal(
-          config,
-          'git-status',
-          'attention',
-          churn,
-          ['remediate', 'investigate', 'explain'],
-          detectedAt,
-        ),
-      )
-    }
-    const stateFiles = [...dirty, ...untracked].filter((path) => STATE_FILE_PATTERN.test(path))
-    if (stateFiles.length > 0) {
-      signals.push(
-        signal(
-          config,
-          'state-files',
-          'attention',
-          stateFiles.map((path) => `dirty state file: ${path}`),
-          ['remediate', 'investigate', 'explain'],
-          detectedAt,
-        ),
-      )
-    }
-
-    const unpushedLines = probe
-      .headUnpushed(root)
-      .split('\n')
-      .filter((line) => line !== '')
-    if (unpushedLines.length > 0) {
-      signals.push(
-        signal(
-          config,
-          'HEAD',
-          'attention',
-          unpushedLines.map((line) => `lumber-jack: unpushed ${line}`),
-          ['remediate', 'investigate', 'explain'],
-          detectedAt,
-        ),
-      )
-    }
-
-    const stale: string[] = []
-    const tracks = new Map<string, { upstream: string; track: string }>()
-    for (const line of probe.branchTracks(root).split('\n')) {
-      if (line === '') continue
-      const [branch = '', upstream = '', track = ''] = line.split('\t')
-      tracks.set(branch, { upstream, track })
-      if (track.includes('gone')) stale.push(`lumber-jack: branch ${branch} (upstream gone)`)
-    }
-    for (const line of probe.mergedBranches(root).split('\n')) {
-      if (line === '') continue
-      const [branch = '', marker = ''] = line.split('\t')
-      // Current branch is never stale; a branch with an upstream is preserved
-      // whatever its track says (lumber-jack: pushed branches live until their
-      // PR is resolved — an empty track means "in sync", not "no upstream").
-      if (marker.trim() === '*') continue
-      if ((tracks.get(branch)?.upstream ?? '') !== '') continue
-      stale.push(`lumber-jack: branch ${branch} (merged into HEAD, no upstream)`)
-    }
-    if (stale.length > 0) {
-      signals.push(
-        signal(
-          config,
-          'branches',
-          'info',
-          stale,
-          ['remediate', 'close-delete', 'explain'],
-          detectedAt,
-        ),
-      )
-    }
-    return signals
+  /** FCA-P14: Non-blocking version using async spawn. */
+  async collectAsync(
+    config: ConsoleConfig,
+    now: number,
+    probe: AsyncWorktreeProbe = defaultAsyncWorktreeProbe,
+  ): Promise<Signal[]> {
+    const detectedAt = new Date(now).toISOString()
+    const root = config.repoRoot
+    const [porcelain, unpushed, tracks, merged] = await Promise.all([
+      probe.statusPorcelain(root),
+      probe.headUnpushed(root),
+      probe.branchTracks(root),
+      probe.mergedBranches(root),
+    ])
+    return buildWorktreeSignals(config, detectedAt, porcelain, unpushed, tracks, merged)
   },
 }

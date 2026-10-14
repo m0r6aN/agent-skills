@@ -7,7 +7,7 @@ import { handleApi } from '../src/api.js'
 import { ConsoleRootUnresolvedError, defaultConfig, resolveGoalKey } from '../src/config.js'
 import { goalStatus } from '../src/status.js'
 import type { GoalProjection, ParcelProjection } from '../src/types.js'
-import { type Scenario, withTempRepo } from './support/materialize.js'
+import { type Scenario, withTempRepo, withTempRepoAsync } from './support/materialize.js'
 
 /**
  * FCA-1 multi-root goal discovery + FCA-2 goal status index. Additive only:
@@ -194,16 +194,16 @@ test('multi-root: extra roots project goal trees under alias-qualified keys', ()
   }
 })
 
-test('multi-root: same-basename registrations retain distinct absolute roots on every goal status', () => {
+test('multi-root: same-basename registrations retain distinct absolute roots on every goal status', async () => {
   const a = extraRootFixture()
   const b = extraRootFixture()
   try {
-    withTempRepo(primaryScenario(), (ctx) => {
+    await withTempRepoAsync(primaryScenario(), async (ctx) => {
       const config = defaultConfig(ctx.config.repoRoot, join(ctx.root, 'state'), [
         join(a, 'agent-task'),
         join(b, 'agent-task'),
       ])
-      const response = handleApi(
+      const response = await handleApi(
         config,
         { method: 'GET', pathname: '/api/goals', query: new URLSearchParams(), body: {} },
         NOW_MS,
@@ -219,13 +219,13 @@ test('multi-root: same-basename registrations retain distinct absolute roots on 
   }
 })
 
-test('multi-root: /api/goals carries the additive statuses index and /api/parcels resolves qualified keys', () => {
+test('multi-root: /api/goals carries the additive statuses index and /api/parcels resolves qualified keys', async () => {
   const extraBase = extraRootFixture()
   const extraRoot = join(extraBase, 'agent-task')
   try {
-    withTempRepo(primaryScenario(), (ctx) => {
+    await withTempRepoAsync(primaryScenario(), async (ctx) => {
       const config = defaultConfig(ctx.config.repoRoot, join(ctx.root, 'state'), [extraRoot])
-      const list = handleApi(
+      const list = await handleApi(
         config,
         { method: 'GET', pathname: '/api/goals', query: new URLSearchParams(), body: {} },
         NOW_MS,
@@ -273,7 +273,7 @@ test('multi-root: /api/goals carries the additive statuses index and /api/parcel
 
       // Qualified-key projection: the parcel carries the qualified goal key so
       // alert identities stay unique across trees.
-      const projected = handleApi(
+      const projected = await handleApi(
         config,
         {
           method: 'GET',
@@ -289,7 +289,7 @@ test('multi-root: /api/goals carries the additive statuses index and /api/parcel
       assert.equal(body.parcels.length, 1)
 
       // Unknown keys still 404 through the frozen route surface.
-      const missing = handleApi(
+      const missing = await handleApi(
         config,
         {
           method: 'GET',

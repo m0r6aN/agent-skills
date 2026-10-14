@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process'
 import { closeSync, openSync, readSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { type ConsoleConfig, ledgerDirPath } from './config.js'
-import { type GitFact, makeGitCache } from './ledger-git.js'
+import { type AsyncGitCache, type GitFact, makeAsyncGitCache, makeGitCache } from './ledger-git.js'
 import { LOG_NAME, TRUNCATED_NAME } from './ledger-store.js'
 import {
   defaultPiSessionsDir,
@@ -11,6 +11,7 @@ import {
   UNKNOWN_TRANSCRIPT,
 } from './ledger-transcript.js'
 import type { SpawnReceipt } from './spawn.js'
+import { execFileAsync, tmuxRunnerAsync } from './spawn-async.js'
 
 /**
  * FCA-P7 session ledger: a per-pane outcome record DERIVED on every read from
@@ -244,6 +245,30 @@ export function tmuxProbeFor(repoRoot: string, socket?: string): LedgerProbes['t
   }
 }
 
+/** FCA-P14: Async tmux probe using non-blocking spawn. */
+export function asyncTmuxProbeFor(
+  repoRoot: string,
+  socket?: string,
+): (sessionName: string) => Promise<TmuxSessionFact> {
+  const prefix = socket === undefined ? [] : ['-L', socket]
+  return async (sessionName) => {
+    try {
+      const result = await execFileAsync(
+        'tmux',
+        [...prefix, 'list-panes', '-s', '-t', `=${sessionName}`, '-F', PANE_FORMAT],
+        { cwd: repoRoot },
+      )
+      if (result.exitCode !== 0) {
+        return classifyTmuxFailure(result.stderr, undefined)
+      }
+      return { kind: 'found', panes: parsePaneList(result.stdout) }
+    } catch (error) {
+      const e = error as { code?: string; stderr?: string }
+      return classifyTmuxFailure(e.stderr ?? '', e.code)
+    }
+  }
+}
+
 /** Git outcomes are memoised briefly so a refresh does not re-spawn git per receipt. */
 export const GIT_CACHE_TTL_MS = 15_000
 const sharedGitCache = makeGitCache(GIT_CACHE_TTL_MS)
@@ -261,6 +286,34 @@ export function liveProbes(
     transcript: (receipt) => readPiTranscript(sessionsRoot, receipt.worktreePath),
     git: (receipt) => gitCache.outcome(receipt.worktreePath, receipt.baseCommit ?? null),
     screen: (_receipt, paneId) => captureScreen(config.repoRoot, paneId, socket),
+  }
+}
+
+/** FCA-P14: Async ledger probes for non-blocking operations. */
+export interface AsyncLedgerProbes {
+  readonly tmux: (sessionName: string) => Promise<TmuxSessionFact>
+  readonly output: (receipt: SpawnReceipt) => OutputFact
+  readonly transcript: (receipt: SpawnReceipt) => TranscriptFact
+  readonly git: (receipt: SpawnReceipt) => Promise<GitFact>
+  readonly screen: (receipt: SpawnReceipt, paneId: string) => Promise<string[] | null>
+}
+
+const sharedAsyncGitCache = makeAsyncGitCache(GIT_CACHE_TTL_MS)
+
+/** FCA-P14: Async version of liveProbes. */
+export function asyncLiveProbes(
+  config: ConsoleConfig,
+  socket?: string,
+  gitTtlMs?: number,
+): AsyncLedgerProbes {
+  const sessionsRoot = defaultPiSessionsDir()
+  const gitCache = gitTtlMs === undefined ? sharedAsyncGitCache : makeAsyncGitCache(gitTtlMs)
+  return {
+    tmux: asyncTmuxProbeFor(config.repoRoot, socket),
+    output: (receipt) => readPaneOutput(config.stateDir, receipt),
+    transcript: (receipt) => readPiTranscript(sessionsRoot, receipt.worktreePath),
+    git: (receipt) => gitCache.outcome(receipt.worktreePath, receipt.baseCommit ?? null),
+    screen: (_receipt, paneId) => captureScreenAsync(config.repoRoot, paneId, socket),
   }
 }
 
@@ -285,6 +338,39 @@ export function captureScreen(repoRoot: string, paneId: string, socket?: string)
         '-200',
       ],
       { cwd: repoRoot, encoding: 'utf8', timeout: 5000, stdio: ['ignore', 'pipe', 'ignore'] },
+    )
+    return out
+      .split('\n')
+      .map((line) => line.replace(/\s+$/, ''))
+      .filter((line) => line !== '')
+      .slice(-TAIL_LINES)
+      .map(capLine)
+  } catch {
+    return null
+  }
+}
+
+/** FCA-P14: Async version of captureScreen. */
+export async function captureScreenAsync(
+  repoRoot: string,
+  paneId: string,
+  socket?: string,
+): Promise<string[] | null> {
+  if (!/^%\d+$/.test(paneId)) return null
+  try {
+    const out = await tmuxRunnerAsync(
+      repoRoot,
+      [
+        ...(socket === undefined ? [] : ['-L', socket]),
+        'capture-pane',
+        '-p',
+        '-J',
+        '-t',
+        paneId,
+        '-S',
+        '-200',
+      ],
+      5000,
     )
     return out
       .split('\n')

@@ -142,7 +142,7 @@ function rig(ghMode: 'ok' | 'fail') {
   }
 }
 
-const decisions = (config: ReturnType<typeof rig>['config']) =>
+const decisions = async (config: ReturnType<typeof rig>['config']) =>
   handleApi(
     config,
     { method: 'GET', pathname: '/api/decisions', query: new URLSearchParams(), body: {} },
@@ -158,12 +158,12 @@ const READ_ONLY_GIT = new Set([
   'worktree',
 ])
 
-test('end to end through the real runner: PR list, billing annotation, gate item; nothing is written', () => {
+test('end to end through the real runner: PR list, billing annotation, gate item; nothing is written', async () => {
   const h = rig('ok')
   try {
     const before = h.snapshot()
     const mark = h.log().length
-    const result = decisions(h.config)
+    const result = await decisions(h.config)
     assert.equal(result.status, 200)
     const body = result.json as DecisionsResponse
     assert.equal(body.counts.merge, 1)
@@ -216,10 +216,10 @@ test('end to end through the real runner: PR list, billing annotation, gate item
   }
 })
 
-test('gh failing degrades visibly, keeps gate items, never errors', () => {
+test('gh failing degrades visibly, keeps gate items, never errors', async () => {
   const h = rig('fail')
   try {
-    const result = decisions(h.config)
+    const result = await decisions(h.config)
     assert.equal(result.status, 200)
     const body = result.json as DecisionsResponse
     assert.equal(body.counts.merge, 0)

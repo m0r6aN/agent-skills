@@ -1,5 +1,6 @@
 import { execFileSync } from 'node:child_process'
 import { isRecord } from './guards.js'
+import { ghRunnerAsync } from './spawn-async.js'
 
 /**
  * FCA-P8 remote fact gatherer: ONE read-only `gh pr list` per repo per cache
@@ -34,6 +35,9 @@ export interface PrFacts {
 
 export type GhRunner = (cwd: string, args: readonly string[]) => string
 
+/** FCA-P14: Async version of GhRunner for non-blocking PR fetches. */
+export type AsyncGhRunner = (cwd: string, args: readonly string[]) => Promise<string>
+
 export const PR_LIMIT = 1000
 export const DEFAULT_TTL_MS = 60_000
 /** A failing gh (offline, logged out) is retried less often: each attempt can block for the timeout. */
@@ -48,6 +52,10 @@ export const defaultGhRunner: GhRunner = (cwd, args) =>
     maxBuffer: 32 * 1024 * 1024,
     stdio: ['ignore', 'pipe', 'pipe'],
   })
+
+/** FCA-P14: Default async gh runner using non-blocking spawn. */
+export const defaultAsyncGhRunner: AsyncGhRunner = (cwd, args) =>
+  ghRunnerAsync(cwd, args, GH_TIMEOUT_MS, 32 * 1024 * 1024)
 
 const FIELDS =
   'number,title,headRefName,headRefOid,baseRefName,state,createdAt,mergedAt,closedAt,url'
@@ -94,6 +102,12 @@ export function clearPrCache(): void {
 export interface PrOptions {
   readonly run?: GhRunner
   /** Cache window; 0 disables caching (tests). */
+  readonly ttlMs?: number
+}
+
+/** FCA-P14: Async options for non-blocking PR fetches. */
+export interface AsyncPrOptions {
+  readonly run?: AsyncGhRunner
   readonly ttlMs?: number
 }
 
@@ -149,6 +163,59 @@ export function gatherPrFacts(repoRoot: string, now: number, options: PrOptions 
     facts = { available: false, reason: reasonOf(error), asOf: null, prs: [], truncated: false }
   }
   // Failures are cached too (briefly) so a dead network is not re-probed per request.
+  if (ttl > 0) cache.set(repoRoot, { at: now, facts })
+  return facts
+}
+
+/** FCA-P14: Async version of gatherPrFacts using non-blocking spawn. */
+export async function gatherPrFactsAsync(
+  repoRoot: string,
+  now: number,
+  options: AsyncPrOptions = {},
+): Promise<PrFacts> {
+  const ttl = options.ttlMs ?? DEFAULT_TTL_MS
+  const hit = cache.get(repoRoot)
+  if (
+    hit !== undefined &&
+    ttl > 0 &&
+    now - hit.at < (hit.facts.available ? ttl : Math.max(ttl, FAILURE_TTL_MS))
+  ) {
+    return hit.facts
+  }
+  const run = options.run ?? defaultAsyncGhRunner
+  let facts: PrFacts
+  try {
+    const prs = parsePrs(
+      await run(repoRoot, [
+        'pr',
+        'list',
+        '--state',
+        'all',
+        '--limit',
+        String(PR_LIMIT),
+        '--json',
+        FIELDS,
+      ]),
+    )
+    facts =
+      prs === null
+        ? {
+            available: false,
+            reason: 'gh returned unparseable output',
+            asOf: null,
+            prs: [],
+            truncated: false,
+          }
+        : {
+            available: true,
+            reason: null,
+            asOf: new Date(now).toISOString(),
+            prs,
+            truncated: prs.length >= PR_LIMIT,
+          }
+  } catch (error) {
+    facts = { available: false, reason: reasonOf(error), asOf: null, prs: [], truncated: false }
+  }
   if (ttl > 0) cache.set(repoRoot, { at: now, facts })
   return facts
 }

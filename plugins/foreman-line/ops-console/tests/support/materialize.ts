@@ -390,3 +390,16 @@ export function withTempRepo<T>(scenario: Scenario, run: (ctx: MaterializedRepo)
     rmSync(root, { recursive: true, force: true })
   }
 }
+
+/** FCA-P14: Async version of withTempRepo for tests with async handlers. */
+export async function withTempRepoAsync<T>(
+  scenario: Scenario,
+  run: (ctx: MaterializedRepo) => Promise<T>,
+): Promise<T> {
+  const root = mkdtempSync(join(tmpdir(), 'foc-scenario-'))
+  try {
+    return await run(materialize(root, scenario))
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+}

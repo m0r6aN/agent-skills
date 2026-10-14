@@ -23,11 +23,16 @@ import { deleteNotification, listNotifications, syncAlerts } from './notificatio
 import { projectGoal } from './project.js'
 import { assess, DISCREPANCY_CODES, reconcileGoal, type SessionEvidence } from './reconcile.js'
 import { gatherRepoFacts } from './reconcile-git.js'
-import { gatherPrFacts } from './reconcile-remote.js'
+import { gatherPrFacts, gatherPrFactsAsync } from './reconcile-remote.js'
 import { remediesFor } from './remedy.js'
 import { loadRoutingPolicy } from './routing.js'
 import { listGoalSlugs, scanGoal } from './scan.js'
-import { collectSignals, SIGNAL_CLASSES, SIGNAL_SEVERITIES } from './signals.js'
+import {
+  collectSignals,
+  collectSignalsAsync,
+  SIGNAL_CLASSES,
+  SIGNAL_SEVERITIES,
+} from './signals.js'
 import { sessionProbeFor } from './signals-session.js'
 import { launchSpawnPlan, listSpawnReceipts, planSpawn, type SpawnRefusalError } from './spawn.js'
 import { goalStatus } from './status.js'
@@ -84,6 +89,29 @@ function withGoal(
   return render(projection, treeConfig)
 }
 
+/** FCA-P14: Async version of withGoal for routes using non-blocking calls. */
+async function asyncWithGoal(
+  config: ConsoleConfig,
+  query: URLSearchParams,
+  now: number,
+  render: (projection: GoalProjection, treeConfig: ConsoleConfig) => Promise<ApiResult>,
+): Promise<ApiResult> {
+  const goal = query.get('goal')
+  if (goal === null || goal.length === 0) {
+    return { status: 400, json: { error: 'missing required query parameter goal=<slug>' } }
+  }
+  const resolved = resolveGoalKey(config, goal)
+  if (resolved === null) {
+    return { status: 404, json: { error: `unknown goal ${JSON.stringify(goal)}` } }
+  }
+  const treeConfig = treeConfigFor(config, resolved.tree)
+  const projection = projectGoal(treeConfig, resolved.slug, now, goal, resolved.tree.treeRef)
+  if (projection === null) {
+    return { status: 404, json: { error: `unknown goal ${JSON.stringify(goal)}` } }
+  }
+  return render(projection, treeConfig)
+}
+
 function chainDocuments(config: ConsoleConfig, chain: ChainSummary | null): unknown[] {
   if (chain === null) return []
   const dir = join(config.receiptsDir, chain.workflowId)
@@ -104,12 +132,12 @@ export interface ApiDeps {
   readonly decisions?: DecisionsOptions
 }
 
-export function handleApi(
+export async function handleApi(
   config: ConsoleConfig,
   request: ApiRequest,
   now: number,
   deps: ApiDeps = {},
-): ApiResult {
+): Promise<ApiResult> {
   const { method, pathname, query } = request
 
   if (pathname === '/api/health') {
@@ -133,8 +161,8 @@ export function handleApi(
     // tree-qualified keys, activity, and attention counts per goal.
     const goals: unknown[] = []
     const statuses: unknown[] = []
-    // FCA-2: one signal scan feeds every goal's severity breakdown.
-    const allSignals = collectSignals(config, now)
+    // FCA-P14: async signal collection (non-blocking).
+    const allSignals = await collectSignalsAsync(config, now)
     for (const tree of goalTrees(config)) {
       const treeConfig = treeConfigFor(config, tree)
       for (const slug of listGoalSlugs(treeConfig)) {
@@ -176,9 +204,10 @@ export function handleApi(
   // local record vs local git vs remote, with a closed discrepancy vocabulary.
   // Read-only; one batch of git calls and one cached `gh pr list` per repo per
   // request - never per parcel. `state`/`rule` are echoed for display only.
+  // FCA-P14: async gh calls (non-blocking).
   if (pathname === '/api/reconcile') {
     if (method !== 'GET') return methodNotAllowed('GET')
-    return withGoal(config, query, now, (projection, treeConfig) => {
+    return asyncWithGoal(config, query, now, async (projection, treeConfig) => {
       // Real paths throughout: git reports real worktree paths, receipts may hold symlinks.
       const real = (path: string): string => {
         try {
@@ -192,7 +221,7 @@ export function handleApi(
       const rel = relative(repoRoot, real(treeConfig.specsDir)).split(sep).join('/')
       const specsRel = rel === '' || rel.startsWith('..') || isAbsolute(rel) ? null : rel
       const repo = gatherRepoFacts(repoRoot, undefined, specsRel)
-      const prs = gatherPrFacts(repoRoot, now)
+      const prs = await gatherPrFactsAsync(repoRoot, now)
       // Other goals' parcel keys: only used to recognise ambiguous links.
       const otherKeys: string[] = []
       for (const slug of listGoalSlugs(treeConfig)) {
@@ -431,7 +460,9 @@ export function handleApi(
         },
       }
     }
-    const signals = collectSignals(config, now).filter(
+    // FCA-P14: async signal collection (non-blocking).
+    const allSignals = await collectSignalsAsync(config, now)
+    const signals = allSignals.filter(
       (signal) =>
         (classFilter === null || signal.class === classFilter) &&
         (severityFilter === null || signal.severity === severityFilter) &&

@@ -4,7 +4,7 @@ import { destructiveConfirmationToken, dispatchAction } from '../src/actions.js'
 import { handleApi } from '../src/api.js'
 import type { ConsoleConfig } from '../src/config.js'
 import { listAuditEntries } from '../src/invoke.js'
-import { type Scenario, withTempRepo } from './support/materialize.js'
+import { type Scenario, withTempRepo, withTempRepoAsync } from './support/materialize.js'
 
 /**
  * FCA-P4 destructive guard (Task 11): `close-delete` requires an explicit
@@ -31,7 +31,7 @@ function guardScenario(): Scenario {
   }
 }
 
-function call(config: ConsoleConfig, body: unknown) {
+async function call(config: ConsoleConfig, body: unknown) {
   return handleApi(
     config,
     { method: 'POST', pathname: '/api/actions/dispatch', query: new URLSearchParams(), body },
@@ -90,9 +90,9 @@ test('non-destructive verbs are unaffected by the confirmation contract', () => 
   })
 })
 
-test('the API surface enforces the same contract', () => {
-  withTempRepo(guardScenario(), ({ config }) => {
-    const denied = call(config, {
+test('the API surface enforces the same contract', async () => {
+  await withTempRepoAsync(guardScenario(), async ({ config }) => {
+    const denied = await call(config, {
       verb: 'close-delete',
       signalClass: 'worktree-hygiene',
       subject: 'branches',
@@ -100,7 +100,7 @@ test('the API surface enforces the same contract', () => {
     assert.equal(denied.status, 200)
     assert.equal((denied.json as { action: string }).action, 'refused')
 
-    const allowed = call(config, {
+    const allowed = await call(config, {
       verb: 'close-delete',
       signalClass: 'worktree-hygiene',
       subject: 'branches',
