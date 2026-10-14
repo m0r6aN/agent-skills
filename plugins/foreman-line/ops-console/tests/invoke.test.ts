@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import test from 'node:test'
 import { saveFleetState } from '../src/fleet.js'
@@ -353,7 +354,8 @@ test('FCA-P9: pr-merge refuses (audited `refused`) bad numbers, relative/undecla
 
 test('FCA-P9: pr-merge accepts a root declared in fleet state and only those', () => {
   withTempRepo(scenario([]), ({ config }) => {
-    const other = '/tmp/fleet-other-root'
+    // FCA-P16: Use platform-appropriate temp path
+    const other = join(tmpdir(), 'fleet-other-root')
     saveFleetState(config.stateDir, {
       schema: 'foc-fleet/v1',
       roots: [config.repoRoot, other],
@@ -361,11 +363,8 @@ test('FCA-P9: pr-merge accepts a root declared in fleet state and only those', (
     const ok = invokeFlow(config, { flow: 'pr-merge', argv: mergeArgv(other) }, NOW_MS)
     assert.equal(ok.action, 'presented')
     assert.equal(ok.command, `cd "${other}" && gh pr merge 218`)
-    const no = invokeFlow(
-      config,
-      { flow: 'pr-merge', argv: mergeArgv('/tmp/not-declared') },
-      NOW_MS,
-    )
+    const notDeclared = join(tmpdir(), 'not-declared')
+    const no = invokeFlow(config, { flow: 'pr-merge', argv: mergeArgv(notDeclared) }, NOW_MS)
     assert.equal(no.action, 'refused')
   })
 })
@@ -374,7 +373,9 @@ test('FCA-P9: presentCommand validates with the same guards and audits nothing',
   withTempRepo(scenario([]), ({ config }) => {
     const ok = presentCommand(config, 'pr-merge', mergeArgv(config.repoRoot))
     assert.ok('text' in ok)
-    assert.ok('refused' in presentCommand(config, 'pr-merge', mergeArgv('/tmp/x"y')))
+    // FCA-P16: Use platform-appropriate path with unsafe chars
+    const unsafePath = process.platform === 'win32' ? 'C:\\tmp\\x"y' : '/tmp/x"y'
+    assert.ok('refused' in presentCommand(config, 'pr-merge', mergeArgv(unsafePath)))
     assert.ok(
       'refused' in
         presentCommand(config, 'approval-show', ['show', 'a', '--repo-root', config.repoRoot]),
@@ -394,8 +395,16 @@ test('FCA-P9: the pr-merge path spawns nothing (negative control: invoke source 
 
 test('FCA-P9: a DECLARED fleet root containing a quote, $, backtick, or control char is refused (backslash: POSIX only)', () => {
   withTempRepo(scenario([]), ({ config }) => {
+    // FCA-P16: Use platform-appropriate base path prefix for absolute paths
+    const baseDir = process.platform === 'win32' ? 'C:\\tmp' : '/tmp'
     // Always refused on both platforms
-    for (const bad of ['/tmp/a"b', '/tmp/a$b', '/tmp/a`b', '/tmp/a\nb']) {
+    const badPaths = [
+      `${baseDir}${process.platform === 'win32' ? '\\' : '/'}a"b`,
+      `${baseDir}${process.platform === 'win32' ? '\\' : '/'}a$b`,
+      `${baseDir}${process.platform === 'win32' ? '\\' : '/'}a\`b`,
+      `${baseDir}${process.platform === 'win32' ? '\\' : '/'}a\nb`,
+    ]
+    for (const bad of badPaths) {
       saveFleetState(config.stateDir, { schema: 'foc-fleet/v1', roots: [config.repoRoot, bad] })
       const outcome = invokeFlow(config, { flow: 'pr-merge', argv: mergeArgv(bad) }, NOW_MS)
       assert.equal(outcome.action, 'refused', JSON.stringify(bad))

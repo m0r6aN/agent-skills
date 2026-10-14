@@ -14,7 +14,10 @@ import { ConsoleBindError, portRemedyCommand, resolveBind, toBindError } from '.
 
 const OPS_CONSOLE_DIR = fileURLToPath(new URL('..', import.meta.url))
 const REPO_ROOT = fileURLToPath(new URL('../../../..', import.meta.url))
-const TSX_BIN = fileURLToPath(new URL('../node_modules/.bin/tsx', import.meta.url))
+// FCA-P16: On Windows, npm bin scripts are .cmd files
+const TSX_BIN = fileURLToPath(
+  new URL(`../node_modules/.bin/tsx${process.platform === 'win32' ? '.cmd' : ''}`, import.meta.url),
+)
 
 test('toBindError maps EADDRINUSE to a typed port-in-use refusal naming the remedy (POSIX)', () => {
   const bind = resolveBind({ PORT: '8081' })
