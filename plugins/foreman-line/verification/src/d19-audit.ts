@@ -462,10 +462,13 @@ const E4_PINNED: ReadonlyMap<string, readonly string[]> = new Map([
     [`join(${E4_PLUGIN_ROOT_DIRNAME},'tests','fixtures','specs','divergence-fixture-spec.md',)`],
   ],
   ['bypass-outage-harness/src/index.ts', [E4_PACKAGE_ROOT_HOP, E4_SELF_URL]],
-  ['bypass-outage-harness/src/surface-refs.ts', [
-    E4_PLUGIN_ROOT_DIRNAME,
-    "join(dirname(fileURLToPath(import.meta.url)),'..','pins','surface-pins.json')",
-  ]],
+  [
+    'bypass-outage-harness/src/surface-refs.ts',
+    [
+      E4_PLUGIN_ROOT_DIRNAME,
+      "join(dirname(fileURLToPath(import.meta.url)),'..','pins','surface-pins.json')",
+    ],
+  ],
   ['bypass-outage-harness/src/vectors.ts', [`join(${E4_PACKAGE_ROOT_DIRNAME},'tests','fixtures')`]],
   ['kernel-contracts/src/generate.ts', [E4_SELF_DIR]],
   ['kernel-lease/src/measure.ts', [E4_SELF_DIR, E4_SELF_RESOLVE]],
@@ -785,7 +788,10 @@ const RULED_PROSE_MENTION_DATA: Record<
     { name: 'ENV_PREREQ_MESSAGE', mentions: [`${REPO_LITERAL}/dispatch/`] },
   ],
   'ops-console/src/reconcile.ts': [
-    { name: 'LOOP_DIRECTIVE_HINT', mentions: [`${REPO_LITERAL}/docs/goals/GOAL-SLUG/loop-directive.md`] },
+    {
+      name: 'LOOP_DIRECTIVE_HINT',
+      mentions: [`${REPO_LITERAL}/docs/goals/GOAL-SLUG/loop-directive.md`],
+    },
   ],
 }
 const RULED_PROSE_MENTION_LITERAL_COUNT = 1
