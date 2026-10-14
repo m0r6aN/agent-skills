@@ -1,7 +1,7 @@
 ---
 ticket: QF-P1
 title: Quick-flags registry (QUICK-FLAGS.md, versioned)
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-10-13
 updated: 2026-10-13

@@ -2,7 +2,7 @@
 
 ## COORDINATOR OWNERSHIP — read before dispatching anything
 > **Queue owner: the pi coordinator session `01a136d7-28c5-73e4-85c6-6f53aefdf98b`** (claimed 2026-10-13). One goal, one coordinator. Ownership transfers only at parcel boundaries, by editing this block. If this block names another live coordinator, STOP and report.
-> **State:** `qf_p1_reshape_step0` (resumed 2026-10-13 after Gate 1 re-open of D5/D9/D2; QF-P1 reshaped and rebuilt under D2″/D5″/D9″)
+> **State:** `qf_p1_merged_to_integration_qf_p2_shaping_next` (2026-10-14; QF-P1 Stage F complete; QF-P2 shaping is the next iteration)
 
 **Resume:** `/goal resume quick-flags`
 **Integration branch:** `feat/foreman-line-quick-flags` (local; cut from local `main`). Parcel branches/worktrees: `qf-p1`, `qf-p2`, `qf-p0`, `qf-p3`, each in its own worktree, named in its kickstarter.
@@ -62,3 +62,11 @@ This docs-only goal's sessions (shaping, build, review) run as **direct `pi` ses
 ## Stop report 2026-10-13 (round 3) — second tripwire on QF-P1
 QF-P1 built, reworked twice, and reviewed in three rounds (six frontier reviews). Each round: REQUEST CHANGES, no BLOCKER, no waiver path for any §3 item. Tripwire (false closure) fired twice on QF-P1, which is a universal stop condition. **Nothing is merged; Gate 3 was never reached.** State: parcel branch `qf-p1` in worktree `/home/cmorgan76/Repos/agent-skills-qf-p1`, HEAD `09c5031a`+, builder output in `plugins/foreman-line/docs/QUICK-FLAGS.md`. Local only; nothing pushed.
 **Human decision needed:** choose option 1, 2 or 3 in `qf-p1-review-triage-round3-2026-10-13.md`; plus rule on K2's scope (E-6/F-5). Option 2 re-opens Gate 1 for D5′ and D9′. Also confirm the disclosed `2837d974` charter edit in the Gate record.
+
+## Stage F record 2026-10-14 — QF-P1 closed
+QF-P1 (reshaped under Gate 1 re-open D2″/D5″/D9″) built, reworked three times on the reshaped spec, and reviewed in four rounds of two independent frontier reviews each; round 4 returned **ACCEPT (M and N)** with only LOW findings. Deterministic pass on the coordinator machine: spec Verification Plan green (VP block 3 byte-identical to the spec's expected output). Spec moved to `docs/specs/done/`. Gate 3 local merge into `feat/foreman-line-quick-flags` only; nothing pushed.
+**Tripwire accounting:** reshaped parcel ended at 1 of 2 (the G-6 ratify-scope change not swept into the GATES row check).
+**Open LOW findings, accepted as documented (round 4):** M-1/N-1 (a successor session may not locate the prior owner's working copy), M-2/N-2 (a `--review2` lift naming a parcel can remove a line for a different parcel), M-3 (NFKC and fullwidth/Cyrillic homoglyph variants), M-4/N-4 (`Active restrictions` entry boundary vs `--ratify` condition (b)), N-3 (some malformed lines cannot be lifted; fail closed), N-5 (GATES rule-ID wording weaker than the entries).
+**Inputs forwarded to QF-P2:** (1) the goal skill and loop-directive template must name `restrictions.md` and the `Active restrictions` entry/decision-log locations; (2) the ownership block should name the owner's working copy (M-1/N-1); (3) skill/slash-command expansion of a human's typed command and the typed-words boundary (J-11); (4) add "stored state may only restrict" to the Stage Zero interrogation (lesson, 2026-10-13); (5) refresh the synced `goal` skill copy; (6) the decision log before the loop directive exists.
+**Inputs forwarded to QF-P3:** checker gaps G-11/H-9 (extra label line after the 7th; first rule ID of the 17 pinned independent rows; `|` in cells; closed-row count; AC-2 "only" vs interplay text in two Conflicts lines).
+**Developer must know:** this goal's own gate record does not yet satisfy the registry's ratified-row evidence (a prose re-ratification names no revision), so once QF-P1 is in use `--dispatch-ok`/`--merge-ok` would be refused for QF-P1/QF-P2 rows until a ratification that names a revision is recorded; the standing prose Gate 2/3 authorizations in this directive are unaffected. Commit `2837d974` (QF-P0 added to the Gate 2 request) was confirmed by the developer on 2026-10-13.

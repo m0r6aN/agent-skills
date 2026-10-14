@@ -7,7 +7,7 @@
 > 2026-10-08 hygiene pass). Regenerate or hand-update on every spec state change.
 
 Own TO-B0/TO-P0/TO-P1 lifecycle rows maintained 2026-10-10; other rows retain their recorded provenance.
-QF-P1 row added 2026-10-13 by the quick-flags shaping session, returned to `active` 2026-10-13 by the QF-P1 reshape under D2″/D5″/D9″ (hand-updated).
+QF-P1 row added 2026-10-13 by the quick-flags shaping session, reshaped under D2″/D5″/D9″ and moved to `done/` at Stage F 2026-10-13 (hand-updated).
 
 | Ticket | Title | Status | Location |
 |---|---|---|---|
@@ -142,7 +142,7 @@ QF-P1 row added 2026-10-13 by the quick-flags shaping session, returned to `acti
 | PMC-P2E | [Governed caller retirement and new user-entry split record](active/PMC-P2E-config-caller-migration.md) | `draft` | `active/` |
 | PMC-P2F | [Reuse the fixed provider-binding schema validator inside its owner](done/PMC-P2F-schema-validator-reuse.md) | `done` | `done/` |
 | PRAC-P0 | [Pi extension/hook API surface compatibility memo](done/PRAC-P0-pi-extension-hook-surface-compat.md) | `done` | `done/` |
-| QF-P1 | [Quick-flags registry (QUICK-FLAGS.md, versioned)](active/QF-P1-quick-flags-registry.md) | `active` | `active/` |
+| QF-P1 | [Quick-flags registry (QUICK-FLAGS.md, versioned)](done/QF-P1-quick-flags-registry.md) | `done` | `done/` |
 | RCM-HRO | [Private authenticated public catalog publication](active/RCM-HRO-authenticated-catalog-publication.md) | `active` | `active/` |
 | RCM-P0 | [Current-instance routing reconnaissance](done/RCM-P0-current-instance-recon.md) | `done` | `done/` |
 | RCM-P1A | [Supported bounded catalog eligibility wrapper](done/RCM-P1A-sanitized-snapshot-adapter.md) | `done` | `done/` |
@@ -159,4 +159,4 @@ QF-P1 row added 2026-10-13 by the quick-flags shaping session, returned to `acti
 | WGT-P0BOOT | [Tracked Foreman Line bootstrap](done/WGT-P0BOOT-tracked-foreman-bootstrap.md) | `done` | `done/` |
 | WGT-R1 | [Foreman current-state and queue reconciliation](active/WGT-R1-foreman-current-state-reconciliation.md) | `active` | `active/` |
 
-Total: 126 specs (57 active/, 69 done/).
+Total: 126 specs (56 active/, 70 done/).
