@@ -1,7 +1,7 @@
 ---
 ticket: QF-P0
 title: Authority-registry corpus amendment for post-QF-P2 quick-flags canon
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-10-14
 updated: 2026-10-14
