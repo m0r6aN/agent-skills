@@ -85,8 +85,13 @@ test('gatherRepoFacts reads default ref, branches, merge state, upstream trackin
     )
 
     // FCA-P16: Normalize paths for cross-platform comparison (git may report paths differently on Windows)
+    // Windows paths are case-insensitive, so compare with toLowerCase
+    const normalizePath = (p: string): string =>
+      process.platform === 'win32' ? resolve(p).toLowerCase() : resolve(p)
     assert.ok(
-      facts.worktrees.some((w) => resolve(w.path) === resolve(wt) && w.branch === 'spawn/foc-p3'),
+      facts.worktrees.some(
+        (w) => normalizePath(w.path) === normalizePath(wt) && w.branch === 'spawn/foc-p3',
+      ),
     )
     assert.ok(
       facts.defaultLog.some((c) => c.subject === 'feat: FOC-P0 contract' && c.sha.length === 40),
