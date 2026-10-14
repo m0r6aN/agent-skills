@@ -106,14 +106,22 @@ test('gatherRepoFacts reads default ref, branches, merge state, upstream trackin
       'symbolic origin/HEAD is not a branch',
     )
 
-    // FCA-P16: Normalize paths for cross-platform comparison (git may report paths differently on Windows)
-    // Windows paths are case-insensitive, so compare with toLowerCase
-    const normalizePath = (p: string): string =>
-      process.platform === 'win32' ? resolve(p).toLowerCase() : resolve(p)
+    // FCA-P16: Normalize paths for cross-platform comparison.
+    // Windows paths: case-insensitive, may use forward slashes from git.
+    // Use resolve() to normalize separators and toLowerCase() for case.
+    const normalizePath = (p: string): string => {
+      // Replace forward slashes with native separators before resolving (git may output with /)
+      const native = process.platform === 'win32' ? p.replace(/\//g, '\\') : p
+      return process.platform === 'win32' ? resolve(native).toLowerCase() : resolve(native)
+    }
+    const normalizedWt = normalizePath(wt)
+    const match = facts.worktrees.find(
+      (w) => normalizePath(w.path) === normalizedWt && w.branch === 'spawn/foc-p3',
+    )
     assert.ok(
-      facts.worktrees.some(
-        (w) => normalizePath(w.path) === normalizePath(wt) && w.branch === 'spawn/foc-p3',
-      ),
+      match !== undefined,
+      `worktree ${normalizedWt} with branch spawn/foc-p3 not found; ` +
+        `actual worktrees: ${JSON.stringify(facts.worktrees.map((w) => ({ path: normalizePath(w.path), branch: w.branch })))}`,
     )
     assert.ok(
       facts.defaultLog.some((c) => c.subject === 'feat: FOC-P0 contract' && c.sha.length === 40),
