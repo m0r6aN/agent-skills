@@ -1,15 +1,5 @@
 # Goal Charter — Operator-developer Cortex memory
 
-<<<<<<< HEAD
-> **STALE LOCAL SNAPSHOT — superseded 2026-10-13.** Explicit owner appointment transfers sole coordination to Pi `01a1358d-711a-7345-8874-901c5e2b50e3`, preserving all existing ratifications/grants/budgets/limits. Read `CURRENT-STATE-2026-10-13-01a1358d.md` and the current tracked charter/directive there. D1–D18 and exit criterion are unchanged; the historical pre-P0 state below is not current queue state.
-
-**Goal slug:** `operator-developer-cortex-memory`  
-**Recorded:** 2026-10-10  
-**Owner:** Clinton Morgan  
-**Coordinator:** Pi session `01a12b4f-c8e9-70a4-811b-0cd7eb889457`, explicitly appointed at the stopped pre-P0 boundary; recorded predecessor stopped/released per owner report; see `owner-resume-2026-10-11-01a12b4f.md` and `loop-directive.md`  
-**State:** prior OPMEM requirements/grants/caps/Stage A preserved; six native-Pi questions disposed (Pro/off/off, own-internal subscription policy, incremental charges, no broker, highest verified native reasoning); exact revised IR-A01 returned for whole-contract ratification FIRST; IR-B01 offline scope approved conditionally, dormant; no code/runtime/launch; #181 observed merged; P0 draft  
-**Mode:** multi-project initiative; authorized pre-P0 preparation/private evaluation publication, with build/operational execution still behind actual predecessor gates
-=======
 **Goal slug:** `operator-developer-cortex-memory`  
 **Recorded:** 2026-10-10  
 **Owner:** Clinton Morgan  
@@ -21,7 +11,6 @@
 ## Current authority / freshness precedence
 
 Read `ownership-transfer-2026-10-13-01a1358d.md`, `loop-directive.md`, the post-P4b `handoff.md`, the 2026-10-12 blanket grant/delegated dispositions, accepted P0 manifests and P1–P4 closures first. Chronological pre-P0 holds and draft-only statements below are historical, not current operational state. Requirement D1–D18 and the goal exit criterion are unchanged. External main promotions do not authorize this session to deploy, prove live health, or complete P8/P9. Original plan and Stage A inputs are preserved.
->>>>>>> 82dbdac9d3f1ab87b7a32a0794e7f4dc5a4353e2
 
 ## Objective and priority
 
