@@ -213,7 +213,7 @@ export async function handleApi(
       // Real paths throughout: git reports real worktree paths, receipts may hold symlinks.
       const real = (path: string): string => {
         try {
-          return realpathSync(path)
+          return process.platform === 'win32' ? realpathSync.native(path) : realpathSync(path)
         } catch {
           return path
         }
