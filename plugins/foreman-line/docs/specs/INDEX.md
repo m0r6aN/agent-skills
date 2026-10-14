@@ -12,12 +12,29 @@ Own TO-B0/TO-P0/TO-P1 lifecycle rows maintained 2026-10-10; other rows retain th
 |---|---|---|---|
 | BRINV-1 | [Branch inventory and merge/abandon recommendations](active/BRINV-1-branch-inventory.md) | `draft` | `active/` |
 | CFF-P0 | [Recon and baseline — ci-fail-fast](active/CFF-P0-recon-and-baseline.md) | `active` | `active/` |
-| CFF-P1 | [Change-proximity ordering and early-red signal](active/CFF-P1-change-proximity-ordering-and-early-red.md) | `draft` | `active/` |
+| CFF-P1 | [Change-proximity ordering and early-red signal](active/CFF-P1-change-proximity-ordering-and-early-red.md) | `active` | `active/` |
 | CFF-P3 | [Gate-job surface-pin precheck and read-graph drift seam](active/CFF-P3-gate-surface-pin-precheck.md) | `active` | `active/` |
 | CI-P1 | [Safe Documentation-Only Push Reuse](done/CI-P1-docs-only-push-reuse.md) | `done` | `done/` |
 | CI-P2 | [Deterministic full-sweep sharding](done/CI-P2-deterministic-sweep-sharding.md) | `done` | `done/` |
 | E6-R1 | [Current-repository identity normalization and observable A-to-F evidence rerun](done/E6-R1-current-repository-identity-and-evidence-rerun.md) | `done` | `done/` |
 | EVAL-1 | [Eval coverage green gate (Tier-2 trigger and routing)](active/EVAL-1-eval-coverage-green-gate.md) | `draft` | `active/` |
+| FCA-P0 | [Ops-console multi-root goal discovery and goal status index (additive)](active/FCA-P0-ops-console-multi-root-and-status-index.md) | `active` | `active/` |
+| FCA-P1 | [Remediation advisor for blockers and hung parcels (additive)](active/FCA-P1-remediation-advisor.md) | `active` | `active/` |
+| FCA-P2 | [Fleet registry and filesystem browse (multi-repo control scope)](active/FCA-P2-fleet.md) | `active` | `active/` |
+| FCA-P3 | [Unified attention model for repo-hygiene and process signals](active/FCA-P3-signals.md) | `active` | `active/` |
+| FCA-P4 | [Action registry — verbs, invocation classes, autonomy envelopes, audit](active/FCA-P4-actions.md) | `active` | `active/` |
+| FCA-P5 | [tmux session spawner with shared spawn controls](active/FCA-P5-spawn.md) | `active` | `active/` |
+| FCA-P6 | [Control-center UI — dense layout, action buttons, spawn panel, session tray](active/FCA-P6-console-ui.md) | `active` | `active/` |
+| FCA-P7 | [Session ledger — durable, evidence-backed outcome record for launched panes](active/FCA-P7-session-ledger.md) | `active` | `active/` |
+| FCA-P8 | [Reconciliation view — local vs remote parcel state, history, and hung explanations](active/FCA-P8-reconciliation-view.md) | `active` | `active/` |
+| FCA-P9 | [Decisions queue — Gate 3 merge, Gate 1 ratification and Gate 2 dispatch, presented not performed](active/FCA-P9-decisions-queue.md) | `active` | `active/` |
+| FCA-P10 | [Parcel state amendment — separate "not started" from "stalled" (FOC-P0 C4 rule R4a)](active/FCA-P10-not-started-state.md) | `active` | `active/` |
+| FCA-P11 | [Reconciliation follow-through — per-finding "do it" that prepares a scoped session](active/FCA-P11-reconciliation-followthrough.md) | `active` | `active/` |
+| FCA-P12 | [Acknowledge historical failures and triage notifications, bound to the evidence](active/FCA-P12-acknowledge-and-triage.md) | `active` | `active/` |
+| FCA-P13 | [Session access — correct attach, read a failed session's output, resume only when there is something to resume](active/FCA-P13-session-access-and-resume.md) | `active` | `active/` |
+| FCA-U1 | [Workspace navigation and responsive operator layout](active/FCA-U1-workspace-navigation.md) | `active` | `active/` |
+| FCA-U2 | [Persistent selection and explicit session launch review](active/FCA-U2-selection-launch.md) | `active` | `active/` |
+| FCA-U3 | [Session monitoring and launch outcome handoff](active/FCA-U3-session-monitoring.md) | `active` | `active/` |
 | FK-P0 | [Foreman Kernel - canon authority and enforcement registry](active/FK-P0-canon-authority-enforcement-registry.md) | `active` | `active/` |
 | FK-P10 | [Foreman Kernel - lease and transition engine](done/FK-P10-lease-transition-engine.md) | `done` | `done/` |
 | FK-P11 | [Foreman Kernel - legacy import and projection engine](done/FK-P11-legacy-import-projection.md) | `done` | `done/` |
@@ -108,6 +125,7 @@ Own TO-B0/TO-P0/TO-P1 lifecycle rows maintained 2026-10-10; other rows retain th
 | MRC-12 | [HRO-P4c structured recovery diagnostics — D10's renderer over the existing reason/outcome vocabulary (sanitized, deduplicated stderr diagnostics; machine JSON on stdout; optional disabled-by-default platform-aware notifications with failure isolation)](active/MRC-12-hro-p4c-recovery-diagnostics.md) | `active` | `active/` |
 | MRC-13 | ["PMC-P4 conformance/smoke/rollout gate and serialized legacy-representation removal at the named cutover — static conformance + legacy cutover provable with zero provider calls; synthetic lane smoke, Pi-session installation check, and the versioned model-quality record behind G-LIVE"](active/MRC-13-pmc-p4-conformance-and-legacy-cutover.md) | `active` | `active/` |
 | MRC-20 | [RB-6 catalogue bytes capture (carried nit) — preserved public catalogue GET with digest provenance](active/MRC-20-rb6-catalogue-bytes-capture.md) | `active` | `active/` |
+| OPMEM-P0 | [Operator-developer Cortex memory authority and contract baseline](done/OPMEM-P0-authority-and-contract-baseline.md) | `done` | `done/` |
 | OR-P01 | [Independently verify keon-systems build integrity at 2b6c755](active/OR-P01-keon-systems-build-integrity.md) | `active` | `active/` |
 | OR-P02 | [Restore keon.collective build and test integrity at the ratified current base](active/OR-P02-collective-build-integrity.md) | `active` | `active/` |
 | PMC-P0 | [Pi capability and catalogue baseline](done/PMC-P0-pi-capability-and-catalogue-baseline.md) | `done` | `done/` |

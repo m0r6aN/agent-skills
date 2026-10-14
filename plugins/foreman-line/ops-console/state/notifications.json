@@ -288,6 +288,33 @@
       "parcel": "TO-P7",
       "message": "hung: no receipt progress beyond 21600000ms and no live worktree (no worktree basename matched the parcel key or goal slug)",
       "createdAt": "2026-10-10T22:04:45.952Z"
+    },
+    {
+      "id": "ntf-trustworthy-observation:TO-P0:hung",
+      "alertId": "trustworthy-observation:TO-P0:hung",
+      "kind": "hung",
+      "goal": "trustworthy-observation",
+      "parcel": "TO-P0",
+      "message": "hung: no receipt progress beyond 21600000ms and no live worktree (worktree content stale beyond threshold (matched foreman-to-p0))",
+      "createdAt": "2026-10-12T09:54:48.106Z"
+    },
+    {
+      "id": "ntf-trustworthy-observation:TO-P1:hung",
+      "alertId": "trustworthy-observation:TO-P1:hung",
+      "kind": "hung",
+      "goal": "trustworthy-observation",
+      "parcel": "TO-P1",
+      "message": "hung: no receipt progress beyond 21600000ms and no live worktree (worktree content stale beyond threshold (matched foreman-to-p1))",
+      "createdAt": "2026-10-12T09:54:48.106Z"
+    },
+    {
+      "id": "ntf-trustworthy-observation:TO-P2:hung",
+      "alertId": "trustworthy-observation:TO-P2:hung",
+      "kind": "hung",
+      "goal": "trustworthy-observation",
+      "parcel": "TO-P2",
+      "message": "hung: no receipt progress beyond 21600000ms and no live worktree (worktree content stale beyond threshold (matched foreman-to-p2))",
+      "createdAt": "2026-10-12T09:54:48.106Z"
     }
   ]
 }

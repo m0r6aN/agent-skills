@@ -2,8 +2,8 @@
 
 Local-only, **read-only** observer + human-gate presentation over the Foreman
 Line's existing truth sources (receipt chains, parcel specs, goal records). It
-answers "what is running, hung, awaiting a gate, failed, or complete?" at a
-glance. It consumes verification produced by others; it never produces it
+answers "what is running, hung, awaiting a gate, failed, complete, or not
+started?" at a glance. It consumes verification produced by others; it never produces it
 (charter D2/D4; FOC-P0 contract).
 
 - **Port 8081 on loopback (`127.0.0.1`) only — no authentication.** The
@@ -74,6 +74,8 @@ docker run -d --name foreman-hub --restart unless-stopped `
 | `GET /api/parcels?goal=` | `ParcelProjection[]` (state, rule, gates, routing, liveness, heartbeat) + unmapped chains |
 | `GET /api/parcels/:parcel/chain?goal=` | chain summary (members, sidecars, validity, seal) |
 | `GET /api/parcels/:parcel/logs?goal=` | exactly: chain documents (members + sidecars), invocation audit log, loop-directive state lines |
+| `GET /api/reconcile?goal=` | FCA-P8 (owner-ratified addition 2026-10-13): per parcel, local record vs local git vs remote; closed discrepancy vocabulary with evidence and ages, hung explanation, merged history. Read-only: one batch of git reads and one cached `gh pr list` per request; remote facts carry their age and degrade to *unavailable*, never inferred |
+| `GET /api/decisions[?repo=]` | FCA-P9 (owner-ratified addition 2026-10-13): every human gate act waiting - open PRs (Gate 3) and R3 awaiting-gate parcels (Gates 1/2) - with verbatim facts, ages and the billing cause from the check-run annotation. Read-only; read-only `gh` allowlist (`pr list`/`pr view`, one annotation GET); never says an item is ready |
 | `GET /api/gates?goal=` | G1/G2/G3 proxies + goal ratification, read-only |
 | `GET /api/alerts?goal=` | hung/failed/tripwire alerts; firing records console-local notifications |
 | `GET /api/routing?goal=` | read-only policy class×ceiling + per-parcel routing |
@@ -96,6 +98,96 @@ frozen pattern (UUID, 6-digit sequence, `^[a-z0-9-]+$` slug, absolute
 before any spawn, and refusals are audited like executions. Spawns use a
 frozen minimal environment (no caller-env passthrough) and the configured
 repo root as working directory.
+
+## Session ledger (FCA-P7)
+
+Every launched pane leaves an evidence-backed record, derived on each read from
+observed facts (never stored as status):
+
+- **tmux hardening** — panes are created with `remain-on-exit` and `pipe-pane`,
+  so a pane that dies at startup stays attachable with its exit status and its
+  output is appended to `state/sessions/<receipt-id>/pane.log` (retention: 5 MB
+  per pane, 200 panes; truncation is marked, never silent).
+- **Lifecycle** (closed): `launching`, `running`, `exited-clean`,
+  `exited-error`, `no-transcript`, `vanished`, `unknown`. `exited-clean` means
+  exit status 0, **not** that the work is complete.
+- **Joins** — pi transcript by worktree path (header `cwd` must agree); git
+  outcome (commits ahead of `baseCommit`, changed files, pushed against the
+  last-fetched `origin/<branch>`). Zero or several transcript candidates read
+  `none` / `ambiguous`, never a guess.
+- **API** — `GET /api/spawns` gains an additive `ledger` object per receipt.
+  Receipts written before the ledger read as unknown and never raise attention.
+- **pi models must be `provider/model`** — a bare id is ambiguous across
+  authenticated providers and pi exits at startup; planning refuses it before
+  any worktree or process exists.
+
+## Decisions (FCA-P9)
+
+**Decisions** lists what only you can do: merge an open PR (Gate 3), ratify a parcel
+(Gate 1), dispatch a registered parcel (Gate 2). It shows the facts the console can
+see (merge state, review decision, checks, stack order) with their age, and **never
+says an item is ready**. `mergeable: UNKNOWN` stays unknown.
+
+- **Presents, never performs.** Each row has a "Show command" button. Pressing it is one
+  `/api/invoke` presentation, audited `presented`; only then is the exact command revealed
+  for you to run in a terminal. Gate 1 shows approve and reject (`approval-approve`,
+  `approval-reject`), Gate 2 shows `dispatch-execute`, Gate 3 shows
+  `cd "<root>" && gh pr merge <N>` (flow `pr-merge`, present-only, no strategy flag, so `gh`
+  asks you). Gate commands are offered for the console's primary root only; other roots say
+  so. `pr-merge` refuses (audited `refused`) a bad PR number, a relative, undeclared or
+  quote/`$`/backtick/control-character root, extra argv, and any mode other than `present`.
+  The console never merges, approves or dispatches.
+- **"Actions not starting" is evidence, not inference.** The banner appears only when
+  a failing check-run's annotation carries GitHub's billing wording, quoted verbatim.
+  A failed check without that annotation reads "Failed, cause unknown".
+- **Read-only `gh`:** `gh pr list`, `gh pr view`, and a GET of one check-run's
+  annotations; any other argv is refused before a process is spawned
+  (`decisions-remote.ts`, pinned by `tests/decisions-remote.test.ts`).
+- If GitHub is unavailable the PR list is withheld with the reason; local gate items
+  still show. If a refresh fails the last good read stays, labelled with its own age.
+
+## Reconciliation (FCA-P8)
+
+Tools → **Reconciliation** compares, per parcel, what the *record* says with what
+*local git* and the *remote* show, and explains why a parcel is `hung`.
+
+- **Discrepancy vocabulary (closed):** `shipped-unrecorded`, `recorded-unshipped`,
+  `unmerged-work`, `orphan-worktree`, `never-started`, `local-remote-divergence`,
+  `stale-abandoned`. Each carries its evidence and preserve-first options
+  (recover/complete first; close/defer last and labelled last resort).
+- **Strong shipping evidence** is a merged PR into the default branch whose title is
+  `feat`/`fix`/`perf`/`refactor`. `docs`/`chore`/`ci`/untyped PRs, commit subjects,
+  specs on the default branch and goal state lines are **weak traces**: shown, never
+  asserted from. A finding that rests only on weak traces is worded and coloured as
+  *Unclear — verify* (`confidence: weak-traces`), because work often ships bundled or
+  under another identity.
+- **Linking** is by exact parcel key as a delimited token (`FOC-P1` never links
+  `foc-p10`); a candidate matching two keys is *ambiguous* — listed, never used.
+  `FOC-P1–FOC-P4` ranges in state lines are expanded; nothing else is guessed.
+- **Assessment, not guesswork.** Findings that say something *exists* need only the
+  sources they name. Findings that say something does *not* exist (`never-started`,
+  `recorded-unshipped`, `stale-abandoned`) need **every** source complete: GitHub
+  reachable, the PR list and commit log under their limits (1000 PRs / 50,000 commits), the
+  spec, branch, worktree and merge-state reads successful. A failed or truncated read is *unknown*,
+  never "empty"; the response's `assessment.limits` and the banner say what is missing.
+- **Squash/rebase merges** are recognised by a MERGED PR (into the default branch) that
+  carried the branch's exact tip (`headRefOid`). Ancestry alone would call every shipped
+  branch unmerged, and matching by name would call a reused name shipped. Title hedges
+  (`revert`, `follow-up`, `partial`, `wip`) are never delivery evidence.
+- **Keys inside longer slugs** (`TO-P1` in `add-to-p1-schema`) cannot be told apart by any
+  deterministic token rule; the real branch `foreman-to-p1-ratification` is legitimately
+  TO-P1's. Findings show their linked evidence so a wrong link is visible. Keys of the
+  repository's other goals are indexed so a candidate matching two goals is *ambiguous*.
+- **Remote unavailable** (no `gh`, not logged in, offline): remote-dependent findings
+  are withheld and the banner says so; local facts remain. A failing `gh` is retried at
+  most every 5 minutes (each attempt can block for its 10 s timeout).
+- **Remote-ref age** is the last `FETCH_HEAD` (any fetch). The banner warns when refs are
+  older than a day or no fetch is recorded. The console never fetches.
+- **Read-only:** `git` is limited to `symbolic-ref`, `rev-parse`, `for-each-ref`, `log`,
+  `ls-tree`, `rev-list`, `status`, `worktree list`, `merge-base --is-ancestor`; `gh` to
+  `pr list`. Nothing fetches, pushes, merges, or closes. Remote-ref age is the last
+  fetch (`FETCH_HEAD`); the console never fetches for you.
+- `state`/`rule` are echoed for display and are never an input.
 
 ## Architecture (FOC-P1–FOC-P4)
 

@@ -1,0 +1,22 @@
+{
+  "name": "not-started-heartbeat-override",
+  "description": "R4a not-started: heartbeat override present on an unstarted goal — threshold is irrelevant for not-started (no progress timestamp), still displays.",
+  "now": "2026-10-13T12:00:00.000Z",
+  "hungThresholdLine": "hung-threshold: 2h",
+  "goal": {
+    "slug": "goal-ns-hb",
+    "queue": ["1. **P1** queued."]
+  },
+  "specs": [],
+  "sidecars": [],
+  "expected": [
+    {
+      "parcel": "P1",
+      "state": "not-started",
+      "rule": "R4a",
+      "chainEvidence": "absent",
+      "specLocation": "none",
+      "thresholdSource": "goal-override"
+    }
+  ]
+}

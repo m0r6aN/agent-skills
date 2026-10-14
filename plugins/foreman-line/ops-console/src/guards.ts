@@ -43,3 +43,42 @@ export function parseSidecarDoc(raw: unknown): SidecarDoc {
     specRefs,
   }
 }
+
+/**
+ * FCA-P4 destructive-confirmation contract: destructive actions require an
+ * explicit typed intent bound to the specific subject — never silent, never
+ * replayable across subjects. Shared by the dispatch path and the API surface
+ * (the UI mirrors the same contract).
+ */
+export type ConfirmationRefusalReason = 'confirmation-required' | 'confirmation-mismatch'
+
+export class ConfirmationRefusalError extends Error {
+  readonly code = 2 as const
+  readonly reason: ConfirmationRefusalReason
+
+  constructor(reason: ConfirmationRefusalReason, message: string) {
+    super(message)
+    this.name = 'ConfirmationRefusalError'
+    this.reason = reason
+  }
+}
+
+/** The exact phrase a human must type for a destructive action on `subject`. */
+export function destructiveConfirmationToken(subject: string): string {
+  return `confirm delete ${subject}`
+}
+
+export function verifyDestructiveConfirmation(subject: string, provided: string | null): void {
+  if (provided === null || provided === '') {
+    throw new ConfirmationRefusalError(
+      'confirmation-required',
+      `destructive action on ${subject} requires typed confirmation`,
+    )
+  }
+  if (provided !== destructiveConfirmationToken(subject)) {
+    throw new ConfirmationRefusalError(
+      'confirmation-mismatch',
+      `confirmation does not match the typed intent for ${subject}`,
+    )
+  }
+}

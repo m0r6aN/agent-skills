@@ -1,0 +1,4701 @@
+{
+  "schemaVersion": 1,
+  "baseline": "97effb4eb4719b18a6ba78ad9962c78929d46f97",
+  "inventoryScope": "tracked working bytes at the named HEAD; untracked coordination records excluded",
+  "trackedPaths": 3258,
+  "rules": [
+    {
+      "id": "legacy-project-token",
+      "family": "removal"
+    },
+    {
+      "id": "legacy-company-name",
+      "family": "removal"
+    },
+    {
+      "id": "legacy-company-domain",
+      "family": "removal"
+    },
+    {
+      "id": "legacy-tracker",
+      "family": "migration"
+    }
+  ],
+  "counts": {
+    "removalContentFiles": 268,
+    "removalFilenameFiles": 1,
+    "migrationContentFiles": 246,
+    "matchedFiles": 401
+  },
+  "categoryCounts": {
+    "instructions-or-documents": 157,
+    "runtime-config-or-generated": 79,
+    "tests-or-fixtures": 112,
+    "historical-or-proof-material": 53
+  },
+  "unscanned": [
+    {
+      "path": ".audit/d13-alpha-eligibility-council-20260920/claude-run.txt",
+      "reason": "binary-nul-byte",
+      "sizeBytes": 2468,
+      "filenameRules": []
+    },
+    {
+      "path": ".audit/d13-alpha-eligibility-council-20260920/codex-run.txt",
+      "reason": "binary-nul-byte",
+      "sizeBytes": 61792,
+      "filenameRules": []
+    },
+    {
+      "path": ".audit/d13-alpha-eligibility-council-20260920/gemini-run.txt",
+      "reason": "binary-nul-byte",
+      "sizeBytes": 5592,
+      "filenameRules": []
+    },
+    {
+      "path": ".audit/d13-alpha-eligibility-council-20260920/grok-run.txt",
+      "reason": "binary-nul-byte",
+      "sizeBytes": 89428,
+      "filenameRules": []
+    },
+    {
+      "path": ".audit/pi-routing/codex-err.txt",
+      "reason": "binary-nul-byte",
+      "sizeBytes": 62238,
+      "filenameRules": []
+    },
+    {
+      "path": ".audit/pi-routing/grok-err.txt",
+      "reason": "binary-nul-byte",
+      "sizeBytes": 44541,
+      "filenameRules": []
+    },
+    {
+      "path": ".audit/pi-routing/grok-out.txt",
+      "reason": "binary-nul-byte",
+      "sizeBytes": 924,
+      "filenameRules": []
+    },
+    {
+      "path": "plugins/audit-suite.zip",
+      "reason": "binary-nul-byte",
+      "sizeBytes": 91024,
+      "filenameRules": []
+    },
+    {
+      "path": "plugins/foreman-line/tests/jev/monthly_savings_report.pdf",
+      "reason": "not-valid-utf8",
+      "sizeBytes": 2373,
+      "filenameRules": []
+    },
+    {
+      "path": "skills/accomplish.skill",
+      "reason": "binary-nul-byte",
+      "sizeBytes": 7991,
+      "filenameRules": []
+    },
+    {
+      "path": "skills/parcel-compiler.zip",
+      "reason": "binary-nul-byte",
+      "sizeBytes": 35121,
+      "filenameRules": []
+    },
+    {
+      "path": "skills/parcel-driven-development.zip",
+      "reason": "over-eight-megabytes",
+      "sizeBytes": 39559770,
+      "filenameRules": []
+    },
+    {
+      "path": "skills/synced/b1615d10-039d-4783-acf0-ab3f00e92f65_48b499d1-feb5-4dd7-a1c2-31c0becec6cb/morning/assets/fonts/fraunces-latin-600-normal.woff2",
+      "reason": "binary-nul-byte",
+      "sizeBytes": 18096,
+      "filenameRules": []
+    },
+    {
+      "path": "skills/synced/b1615d10-039d-4783-acf0-ab3f00e92f65_48b499d1-feb5-4dd7-a1c2-31c0becec6cb/web-artifacts-builder/scripts/shadcn-components.tar.gz",
+      "reason": "binary-nul-byte",
+      "sizeBytes": 19967,
+      "filenameRules": []
+    }
+  ],
+  "findings": [
+    {
+      "path": ".audit/foreman-line-comparison-brief.md",
+      "sizeBytes": 3670,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": ".audit/foreman-line-comparison-codex.txt",
+      "sizeBytes": 2133,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": ".audit/foreman-line-comparison-directive.md",
+      "sizeBytes": 2464,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": ".audit/gmf-p2a-shape-20260916/codex-round2-err.txt",
+      "sizeBytes": 289977,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": ".audit/gmf-p2a-shape-20260916/codex-round4-err.txt",
+      "sizeBytes": 157380,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": ".claude-plugin/marketplace.json",
+      "sizeBytes": 1318,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "docs/INITIATIVES/foreman-line-completion-20260905/CURRENT-SUMMARY.md",
+      "sizeBytes": 20466,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "docs/INITIATIVES/foreman-line-completion-20260905/DISCOVERY.md",
+      "sizeBytes": 8013,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "docs/INITIATIVES/foreman-line-completion-20260905/EVIDENCE.md",
+      "sizeBytes": 19863,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "docs/INITIATIVES/foreman-line-completion-20260905/FINAL-HANDOFF.md",
+      "sizeBytes": 16813,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "docs/INITIATIVES/foreman-line-completion-20260905/HANDOFF.md",
+      "sizeBytes": 16997,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "docs/INITIATIVES/foreman-line-completion-20260905/PLAN.md",
+      "sizeBytes": 33133,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "docs/INITIATIVES/foreman-line-completion-20260905/STATUS.md",
+      "sizeBytes": 78506,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "docs/INITIATIVES/foreman-line-completion-20260905/events-current-coverage-20260905.json",
+      "sizeBytes": 42967,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "docs/INITIATIVES/foreman-line-completion-20260905/events-final-local-wave-20260905.json",
+      "sizeBytes": 11672,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "docs/INITIATIVES/foreman-line-completion-20260905/queue.json",
+      "sizeBytes": 62599,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "docs/receipts/a5b1975a-7497-4200-bac2-5d8a6fd6c749/000002-C-dispatch-order.json",
+      "sizeBytes": 27057,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "docs/receipts/a5b1975a-7497-4200-bac2-5d8a6fd6c749/000003-D-verification-verdict.json",
+      "sizeBytes": 3572,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/audit-suite/.claude-plugin/plugin.json",
+      "sizeBytes": 897,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/audit-suite/CHANGELOG.md",
+      "sizeBytes": 6644,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/audit-suite/README.md",
+      "sizeBytes": 14222,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/audit-suite/skills/audit-conductor/SKILL.md",
+      "sizeBytes": 17394,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/audit-suite/skills/audit-conductor/references/module-registry.yaml",
+      "sizeBytes": 2912,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/audit-suite/skills/compliance-audit/SKILL.md",
+      "sizeBytes": 10149,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/audit-suite/skills/compliance-audit/modules/dora.md",
+      "sizeBytes": 3531,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/audit-suite/skills/jira-integration/SKILL.md",
+      "sizeBytes": 5732,
+      "category": "instructions-or-documents",
+      "filenameRules": [
+        "legacy-tracker"
+      ],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/audit-suite/skills/jira-integration/references/jira-mapping.md",
+      "sizeBytes": 4053,
+      "category": "instructions-or-documents",
+      "filenameRules": [
+        "legacy-tracker"
+      ],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/audit-suite/skills/remediation-plan/SKILL.md",
+      "sizeBytes": 5827,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/audit-suite/skills/remediation-plan/references/optimization-model.md",
+      "sizeBytes": 3681,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/audit-suite/skills/security-audit/SKILL.md",
+      "sizeBytes": 12006,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/README.md",
+      "sizeBytes": 3484,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/approval/tests/helpers.ts",
+      "sizeBytes": 4228,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/approval/tests/no-status-flip.test.ts",
+      "sizeBytes": 1346,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/README.md",
+      "sizeBytes": 41775,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml",
+      "sizeBytes": 2613540,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/src/generate.ts",
+      "sizeBytes": 465024,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/src/registry.ts",
+      "sizeBytes": 240084,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/tests/fixtures/pass-minimal.yaml",
+      "sizeBytes": 2613540,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/authority-registry/tests/semantic-invariants.test.ts",
+      "sizeBytes": 305617,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/contracts/README.md",
+      "sizeBytes": 7118,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/contracts/src/correlation.ts",
+      "sizeBytes": 2297,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/contracts/src/stages/b-registration.ts",
+      "sizeBytes": 1809,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/contracts/src/testing.ts",
+      "sizeBytes": 5973,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/dispatch/README.md",
+      "sizeBytes": 3206,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/dispatch/package.json",
+      "sizeBytes": 1036,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/dispatch/src/index.ts",
+      "sizeBytes": 2844,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/dispatch/src/query/index.ts",
+      "sizeBytes": 18245,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/dispatch/src/routing-eval/index.ts",
+      "sizeBytes": 41583,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/dispatch/tests/approval-cli.test.ts",
+      "sizeBytes": 35593,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/dispatch/tests/mutation-scope.test.ts",
+      "sizeBytes": 17242,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/dispatch/tests/query.test.ts",
+      "sizeBytes": 20946,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/dispatch/tests/rcm-p4a-controls.test.ts",
+      "sizeBytes": 50054,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/dispatch/tests/root-guards.test.ts",
+      "sizeBytes": 18181,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/dispatch/tests/w4-p0-correlation-lineage.test.ts",
+      "sizeBytes": 19713,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md",
+      "sizeBytes": 22497,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/SPEC-CONVENTION.md",
+      "sizeBytes": 21933,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/ci-optimization/charter.md",
+      "sizeBytes": 3782,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/ci-optimization/ci-optimization-lint-2026-09-30.md",
+      "sizeBytes": 7325,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/ADR-001-runtime-infrastructure-posture.md",
+      "sizeBytes": 16922,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/FOREMAN-KERNEL-DEVELOPMENT-CHARTER.md",
+      "sizeBytes": 59750,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/R31-source-expectations-20260907.md",
+      "sizeBytes": 20681,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/R31-step0-mapping-20260907.md",
+      "sizeBytes": 50677,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/charter.md",
+      "sizeBytes": 72905,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r30/initial-tracked-hashes.json",
+      "sizeBytes": 183890,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31-main-integration/attempt02/review-input.json",
+      "sizeBytes": 182371,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31-main-integration/attempt03/0015-accepted-registry.stdout",
+      "sizeBytes": 2376697,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31-main-integration/attempt03/all-tree-deltas.json",
+      "sizeBytes": 36376,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31-main-integration/attempt03/materialized-sha256.json",
+      "sizeBytes": 192997,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31-main-integration/attempt03/review-input.json",
+      "sizeBytes": 183143,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31-main-integration/preparation/anticipated-exclusions.json",
+      "sizeBytes": 182178,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31-main-integration/review-input-prepared.json",
+      "sizeBytes": 184323,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31-main-integration/review-input.json",
+      "sizeBytes": 185981,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/02-source-discovery.json",
+      "sizeBytes": 464077,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/02-source-discovery.log",
+      "sizeBytes": 180211,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-initial-draft-unvalidated.json",
+      "sizeBytes": 20489,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/03-step0-proposed-contract.json",
+      "sizeBytes": 20489,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/04-step0-proposed-contract.json",
+      "sizeBytes": 20511,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/r31/06-complete-item-correspondence.json",
+      "sizeBytes": 367551,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/baseline-tracked-sha256.csv",
+      "sizeBytes": 129104,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/evidence/20260907/round6/final-tracked-sha256.csv",
+      "sizeBytes": 129104,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/fk-p0-canon-authority-enforcement-registry.md",
+      "sizeBytes": 23764,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/goal-versions/FK-P0-canon-authority-enforcement-registry.md",
+      "sizeBytes": 102098,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/parcel-versions/charter.md",
+      "sizeBytes": 39537,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/handoff-20260907/parcel-versions/loop-directive.md",
+      "sizeBytes": 30488,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md",
+      "sizeBytes": 41841,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/main-source-compatibility-20260907.json",
+      "sizeBytes": 4425,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/main-source-impact-20260907.md",
+      "sizeBytes": 21139,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-kernel/proposed-amendment-A3-standing-authorization-widening.md",
+      "sizeBytes": 9699,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-line-boundary-routing/items-1-2-status-2026-09-26.md",
+      "sizeBytes": 18641,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-line-boundary-routing/items-5-6-status-2026-09-27.md",
+      "sizeBytes": 24278,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-line-boundary-routing/items-7-gates-2026-09-27.md",
+      "sizeBytes": 24699,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-ops-console/charter.md",
+      "sizeBytes": 14089,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/foreman-ops-console/loop-directive.md",
+      "sizeBytes": 9537,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/goal-status-report-2026-09-26.md",
+      "sizeBytes": 16951,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/goal-status-report-2026-09-27.md",
+      "sizeBytes": 29473,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/heterogeneous-agent-worker-fabric/topology-and-authority-inventory.md",
+      "sizeBytes": 74687,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/heterogeneous-agent-worker-fabric/wf-p0-shaping-lint.md",
+      "sizeBytes": 9761,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/heterogeneous-agent-worker-fabric/wf-p0-shaping-report.md",
+      "sizeBytes": 36324,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/hierarchical-coordination-sidecars/hcs-p0-verification.md",
+      "sizeBytes": 74883,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/hybrid-routing-optimization/hro-p0-integration-contract.md",
+      "sizeBytes": 43031,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/hybrid-routing-optimization/hro-p3-owner-prerequisites.md",
+      "sizeBytes": 15463,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/hybrid-routing-optimization/hro-p3a-review-triage.md",
+      "sizeBytes": 9646,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/hybrid-routing-optimization/hro-p3a-verification.md",
+      "sizeBytes": 13483,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/pi-model-configuration/pmc-p1-design-compatibility.md",
+      "sizeBytes": 23106,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/plugin-packaging-and-scaffolder/charter.md",
+      "sizeBytes": 32113,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/plugin-packaging-and-scaffolder/loop-directive.md",
+      "sizeBytes": 4862,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/plugin-packaging-and-scaffolder/p1-p7-reconciliation-2026-09-26.md",
+      "sizeBytes": 11177,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/plugin-packaging-and-scaffolder/p7-clean-room-trial-2026-09-26.md",
+      "sizeBytes": 9137,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/plugin-packaging-and-scaffolder/plan-review-findings.md",
+      "sizeBytes": 10350,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/plugin-packaging-and-scaffolder/scaf-vehicles-lineage.md",
+      "sizeBytes": 1880,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/routing-currency-and-merit-jev-alpha/jev-p0-verification.md",
+      "sizeBytes": 14911,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/charter.md",
+      "sizeBytes": 13735,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/closure-record-2026-09-26.md",
+      "sizeBytes": 9553,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/d4-r1-ruleset-retarget-amendment.md",
+      "sizeBytes": 4858,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/d4-r2b-sole-owner-compromise-amendment.md",
+      "sizeBytes": 6592,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/e6-r1-current-repository-evidence-rerun-amendment.md",
+      "sizeBytes": 5867,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/e6-r1-goal-complete-evidence.md",
+      "sizeBytes": 4392,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/e6-r1-implementation-review-a-findings.md",
+      "sizeBytes": 2377,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/e6-r1-plan-review-findings.md",
+      "sizeBytes": 5586,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/e6-r1-stage-b-stop-report.md",
+      "sizeBytes": 1982,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/e6-r1b-implementation-rereview-a-findings.md",
+      "sizeBytes": 2321,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/e6-r1b-implementation-rereview-b-findings.md",
+      "sizeBytes": 2357,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/e6-r1b-marketplace-and-evidence-guard-amendment.md",
+      "sizeBytes": 3728,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/loop-directive.md",
+      "sizeBytes": 10191,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/goals/w4-closeout/plan-review-findings.md",
+      "sizeBytes": 3584,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/FL-ASSEMBLY-handoff.md",
+      "sizeBytes": 33516,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/FL-R1-handoff.md",
+      "sizeBytes": 16748,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/FL-R2-handoff.md",
+      "sizeBytes": 22574,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/adversarial-review-W0-P3.md",
+      "sizeBytes": 3121,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/adversarial-review-W0-P4.md",
+      "sizeBytes": 5294,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/adverserial_review.md",
+      "sizeBytes": 1567,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-CLOSE-P3.md",
+      "sizeBytes": 2640,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-E6-R1.md",
+      "sizeBytes": 7965,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-SCAF-P3.md",
+      "sizeBytes": 7815,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W1-P1.md",
+      "sizeBytes": 2078,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W1-P2.md",
+      "sizeBytes": 2076,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W1-P3.md",
+      "sizeBytes": 2168,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W1-P4.md",
+      "sizeBytes": 3417,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W3-P1.md",
+      "sizeBytes": 8272,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W3-P4.md",
+      "sizeBytes": 11686,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W4-P2.md",
+      "sizeBytes": 7948,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-build-W4-P4.md",
+      "sizeBytes": 18668,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-coordinator-carryover.md",
+      "sizeBytes": 8657,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-coordinator-loop.md",
+      "sizeBytes": 10000,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-DOCS-P1.md",
+      "sizeBytes": 2514,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-SCAF-P1.md",
+      "sizeBytes": 2800,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-SEC-1.md",
+      "sizeBytes": 2741,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-W0-P2.md",
+      "sizeBytes": 6539,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-W0-P3.md",
+      "sizeBytes": 1950,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-W0-P4.md",
+      "sizeBytes": 2446,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-parcel-W0-P5.md",
+      "sizeBytes": 6107,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-rework-E6-R1B.md",
+      "sizeBytes": 2873,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-CFF-P0.md",
+      "sizeBytes": 7290,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-CFF-P3.md",
+      "sizeBytes": 6842,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-P1.md",
+      "sizeBytes": 5834,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-SCAF-P1.md",
+      "sizeBytes": 6586,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-W0-P2.md",
+      "sizeBytes": 7232,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-W0-P3.md",
+      "sizeBytes": 3262,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-W0-P4.md",
+      "sizeBytes": 6307,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-W0-P5.md",
+      "sizeBytes": 9059,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-W1-P1.md",
+      "sizeBytes": 5098,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-W1-P2.md",
+      "sizeBytes": 4158,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-W1-P3.md",
+      "sizeBytes": 4809,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-W1-P4.md",
+      "sizeBytes": 5888,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-W4-P0.md",
+      "sizeBytes": 5766,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-shaping-W4-P1.md",
+      "sizeBytes": 5773,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-line-supercharge-phase2-findings.md",
+      "sizeBytes": 17489,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/foreman-shaping-template.md",
+      "sizeBytes": 4860,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/heterogeneous-agent-worker-fabric-shaping-WF-P0.md",
+      "sizeBytes": 11157,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/permission-profile-registry-shaping-P1.md",
+      "sizeBytes": 6693,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/permission-profile-registry-shaping-P2.md",
+      "sizeBytes": 6936,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/permission-profile-registry-shaping-P3.md",
+      "sizeBytes": 7926,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/permission-profile-registry-shaping-P4.md",
+      "sizeBytes": 8115,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/kickstarters/plan-review-packaging-scaffolder.md",
+      "sizeBytes": 5976,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/INDEX.md",
+      "sizeBytes": 20188,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/active/BRINV-1-branch-inventory.md",
+      "sizeBytes": 11234,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/active/FK-P0-canon-authority-enforcement-registry.md",
+      "sizeBytes": 147641,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/active/FOC-P0-projection-contract-and-discovery-inventory.md",
+      "sizeBytes": 24681,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/active/HRO-P3A-authenticated-stage-d-finalization.md",
+      "sizeBytes": 59320,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/active/HRO-P3B-measured-integration-profile.md",
+      "sizeBytes": 11198,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/active/JEV-P0-alpha-decisions-contract-and-evidence-boundary.md",
+      "sizeBytes": 13356,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/active/KONE-TBD-cerebras-shadow-operational-dispatch.md",
+      "sizeBytes": 12754,
+      "category": "instructions-or-documents",
+      "filenameRules": [
+        "legacy-project-token"
+      ],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/active/P1-plugin-packaging.md",
+      "sizeBytes": 15125,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/active/WF-P0-topology-and-authority-inventory.md",
+      "sizeBytes": 29869,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/active/WGT-R1-foreman-current-state-reconciliation.md",
+      "sizeBytes": 6174,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/active/receipt-chain-walker.registration.json",
+      "sizeBytes": 764,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/active/receipt-chain-walker.repository-migration.json",
+      "sizeBytes": 667,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/active/scaffold-migration.registration.json",
+      "sizeBytes": 786,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/active/scaffold-migration.repository-migration.json",
+      "sizeBytes": 689,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/CI-P1-docs-only-push-reuse.md",
+      "sizeBytes": 46127,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/CLOSE-P1-minted-chain-exit-vehicle.md",
+      "sizeBytes": 20730,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/CLOSE-P2-spec-linter-corpus-reconciliation.md",
+      "sizeBytes": 20419,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/CLOSE-P3-biome-ci-always-report.md",
+      "sizeBytes": 11907,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/E6-R1-current-repository-identity-and-evidence-rerun.md",
+      "sizeBytes": 27244,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/FK-P10-lease-transition-engine.md",
+      "sizeBytes": 75885,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/FK-P11-legacy-import-projection.md",
+      "sizeBytes": 89130,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/FK-P2-spec-body-compiler.md",
+      "sizeBytes": 42641,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/FK-P9-storage-migration-abi.md",
+      "sizeBytes": 56871,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/P1-permission-profile-registry-schema.md",
+      "sizeBytes": 36832,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/P2-dispatch-order-permission-profile-field.md",
+      "sizeBytes": 31035,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/P3-dispatch-time-emitter.md",
+      "sizeBytes": 38431,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/P4-spec-linter-permission-profile-enum.md",
+      "sizeBytes": 23691,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/PMC-P2E1-legacy-inference-disposition.md",
+      "sizeBytes": 12150,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/SCAF-P1-shared-schema-scaffold-extraction.md",
+      "sizeBytes": 23647,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/SCAF-P2-shared-test-scaffold-extraction.md",
+      "sizeBytes": 17307,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/SCAF-P3-receipt-chain-walker.md",
+      "sizeBytes": 13625,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/SCAF-P4-exit-vehicle.md",
+      "sizeBytes": 10426,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W0-P1-pipeline-stage-contracts.md",
+      "sizeBytes": 6635,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W0-P2-parcel-schema-v02.md",
+      "sizeBytes": 18862,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W0-P3-routing-policy-schema-validator.md",
+      "sizeBytes": 15106,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W0-P4-receipt-chain-schema-validator.md",
+      "sizeBytes": 25972,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W0-P5-skill-injection-matrix-schema-validator.md",
+      "sizeBytes": 30012,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W1-P1-shaping-agent.md",
+      "sizeBytes": 26099,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W1-P2-epic-story-projection.md",
+      "sizeBytes": 28341,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W1-P3-human-approval-flow.md",
+      "sizeBytes": 35347,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W1-P4-jira-registration.md",
+      "sizeBytes": 46531,
+      "category": "historical-or-proof-material",
+      "filenameRules": [
+        "legacy-tracker"
+      ],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W2-P1-jira-query-ranking.md",
+      "sizeBytes": 13991,
+      "category": "historical-or-proof-material",
+      "filenameRules": [
+        "legacy-tracker"
+      ],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W2-P2-dispatch-approval-cli.md",
+      "sizeBytes": 10301,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W2-P3-routing-eval-engine.md",
+      "sizeBytes": 11363,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W2-P4-kompress-integration.md",
+      "sizeBytes": 14592,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W2-P5-skill-injection-engine.md",
+      "sizeBytes": 14466,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W3-P1-verification-harness.md",
+      "sizeBytes": 25479,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W3-P2-adversarial-reviewer.md",
+      "sizeBytes": 42249,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W3-P3-pipeline-rework.md",
+      "sizeBytes": 38012,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W3-P4-human-gate-jira.md",
+      "sizeBytes": 42960,
+      "category": "historical-or-proof-material",
+      "filenameRules": [
+        "legacy-tracker"
+      ],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W4-P0-correlation-lineage-fix.md",
+      "sizeBytes": 13438,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W4-P1-integration-stage-e.md",
+      "sizeBytes": 21125,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W4-P2-docspine-ci-hook.md",
+      "sizeBytes": 11497,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W4-P3-risk-driven-audit-triggers.md",
+      "sizeBytes": 23159,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/W4-P4-github-gate-stage-f-closure.md",
+      "sizeBytes": 45804,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/WGT-P0A-foreman-record-reconciliation.md",
+      "sizeBytes": 12450,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/specs/done/WGT-P0BOOT-tracked-foreman-bootstrap.md",
+      "sizeBytes": 54282,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/transcripts/WGT-P0BOOT-source-manifest.sha256",
+      "sizeBytes": 84325,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/transcripts/build-W0-P1-deterministic-pass.md",
+      "sizeBytes": 6850,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/transcripts/build-W0-P1-pass-1.md",
+      "sizeBytes": 7086,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/transcripts/build-W0-P1-pass-2.md",
+      "sizeBytes": 5353,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/transcripts/build-W0-P1-pass-3.md",
+      "sizeBytes": 7659,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/transcripts/build-W1-P4-deterministic-pass.md",
+      "sizeBytes": 3330,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/transcripts/wgt-p0a-foreman-record-reconciliation-handoff.md",
+      "sizeBytes": 6968,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/docs/transcripts/wgt-r1-foreman-current-state-reconciliation-handoff.md",
+      "sizeBytes": 3304,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/foreman-config/src/testing.ts",
+      "sizeBytes": 2004,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/foreman-config/tests/fixtures/accept-empty-capabilities.yaml",
+      "sizeBytes": 660,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/foreman-config/tests/fixtures/accept-empty-capability-array.yaml",
+      "sizeBytes": 851,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/foreman-config/tests/fixtures/accept-empty-surfaces-present.yaml",
+      "sizeBytes": 635,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/foreman-config/tests/fixtures/accept-nextjs.yaml",
+      "sizeBytes": 554,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/foreman-config/tests/fixtures/accept-vite-full.yaml",
+      "sizeBytes": 901,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/foreman-config/tests/fixtures/reject-missing-surfaces-present.yaml",
+      "sizeBytes": 624,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/foreman-config/tests/fixtures/reject-omitted-stack.yaml",
+      "sizeBytes": 335,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/foreman-config/tests/fixtures/reject-unknown-key-in-group.yaml",
+      "sizeBytes": 420,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/foreman-config/tests/fixtures/reject-unknown-profile.yaml",
+      "sizeBytes": 613,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/foreman-config/tests/fixtures/reject-unknown-toplevel-key.yaml",
+      "sizeBytes": 418,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/foreman-config/tests/resolve.test.ts",
+      "sizeBytes": 4826,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/foreman-config/tests/vocabulary-membership.test.ts",
+      "sizeBytes": 2838,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/integration/src/closure-receipt.ts",
+      "sizeBytes": 10442,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/integration/src/closure.ts",
+      "sizeBytes": 41723,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/integration/src/docspine-report.ts",
+      "sizeBytes": 2939,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/integration/src/exit-vehicle.ts",
+      "sizeBytes": 14949,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/integration/src/index.ts",
+      "sizeBytes": 3091,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/integration/tests/closure-fixtures.ts",
+      "sizeBytes": 6437,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/integration/tests/closure-receipt.test.ts",
+      "sizeBytes": 10261,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/integration/tests/closure.test.ts",
+      "sizeBytes": 23790,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/integration/tests/conformance.test.ts",
+      "sizeBytes": 11608,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/integration/tests/exit-vehicle.test.ts",
+      "sizeBytes": 18381,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/integration/tests/fixtures/effective-rules-live-capture.json",
+      "sizeBytes": 3558,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/integration/tests/root-guards.test.ts",
+      "sizeBytes": 12991,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/project-scaffold/tests/cleanroom.test.ts",
+      "sizeBytes": 3653,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/projection/README.md",
+      "sizeBytes": 6806,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/projection/tests/helpers.ts",
+      "sizeBytes": 3658,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/projection/tests/keys.test.ts",
+      "sizeBytes": 2975,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/README.md",
+      "sizeBytes": 13889,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/config/project-allowlist.json",
+      "sizeBytes": 35,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/package.json",
+      "sizeBytes": 832,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/src/adapter-docker-mcp.ts",
+      "sizeBytes": 12542,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/src/backfill.ts",
+      "sizeBytes": 2211,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/src/gated-transport.ts",
+      "sizeBytes": 1979,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/src/index.ts",
+      "sizeBytes": 1812,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/src/jql.ts",
+      "sizeBytes": 3435,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/src/prior-registration.ts",
+      "sizeBytes": 2962,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/src/register.ts",
+      "sizeBytes": 20794,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/src/types.ts",
+      "sizeBytes": 5812,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/adapter-args.test.ts",
+      "sizeBytes": 13046,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/adapter-gate.test.ts",
+      "sizeBytes": 2615,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/credential-hygiene.test.ts",
+      "sizeBytes": 2378,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/gate-reachability.test.ts",
+      "sizeBytes": 2810,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/gate.test.ts",
+      "sizeBytes": 3581,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/hash-refusal.test.ts",
+      "sizeBytes": 3026,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/helpers.ts",
+      "sizeBytes": 8794,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/idempotency.test.ts",
+      "sizeBytes": 2637,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/link-recovery.test.ts",
+      "sizeBytes": 2589,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/multi-match.test.ts",
+      "sizeBytes": 1680,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/payloads.test.ts",
+      "sizeBytes": 1854,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/plan-correction.test.ts",
+      "sizeBytes": 1386,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/preview.test.ts",
+      "sizeBytes": 2316,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/prior-registration.test.ts",
+      "sizeBytes": 3024,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/project-key-plumbing.test.ts",
+      "sizeBytes": 6608,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/receipt.test.ts",
+      "sizeBytes": 3665,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/reconcile-sha.test.ts",
+      "sizeBytes": 2220,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/registration-result.test.ts",
+      "sizeBytes": 2525,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/root-conflation.test.ts",
+      "sizeBytes": 7077,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/two-commit.test.ts",
+      "sizeBytes": 1914,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/registration/tests/writeback.test.ts",
+      "sizeBytes": 5294,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/role-authority/CHANGELOG.md",
+      "sizeBytes": 1064,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/role-authority/src/samples.ts",
+      "sizeBytes": 2920,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/role-authority/src/versioning.ts",
+      "sizeBytes": 1287,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/role-authority/tests/parity.test.ts",
+      "sizeBytes": 7928,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/shaping/tests/helpers.ts",
+      "sizeBytes": 2794,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/README.md",
+      "sizeBytes": 9415,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/schemas/integration-skills.schema.json",
+      "sizeBytes": 251,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/schemas/skill-injection-matrix.schema.json",
+      "sizeBytes": 2051,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/skill-injection.yaml",
+      "sizeBytes": 727,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/src/schemas.ts",
+      "sizeBytes": 3776,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/src/testing.ts",
+      "sizeBytes": 1142,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/src/types.ts",
+      "sizeBytes": 2279,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/tests/cli.test.ts",
+      "sizeBytes": 5361,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/tests/fixtures/accept-empty-role-map.yaml",
+      "sizeBytes": 312,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-bad-glob.yaml",
+      "sizeBytes": 329,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-duplicate-nested-key.yaml",
+      "sizeBytes": 383,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-duplicate-top-level.yaml",
+      "sizeBytes": 382,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-empty-glob-array.yaml",
+      "sizeBytes": 379,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-empty-jira.yaml",
+      "sizeBytes": 331,
+      "category": "tests-or-fixtures",
+      "filenameRules": [
+        "legacy-tracker"
+      ],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-empty-rework-first.yaml",
+      "sizeBytes": 347,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-missing-toplevel.yaml",
+      "sizeBytes": 302,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-multiple-violations.yaml",
+      "sizeBytes": 376,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-unknown-nested.yaml",
+      "sizeBytes": 332,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-unknown-toplevel.yaml",
+      "sizeBytes": 366,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/tests/fixtures/reject-whitespace-skill-name.yaml",
+      "sizeBytes": 356,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/tests/schema-validation.test.ts",
+      "sizeBytes": 1500,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skill-injection/tests/semantic-invariants.test.ts",
+      "sizeBytes": 5668,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/skills/foreman-shaping/SKILL.md",
+      "sizeBytes": 2969,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-body-compiler/src/parse-spec.ts",
+      "sizeBytes": 32270,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-body-compiler/tests/grammar-pin.test.ts",
+      "sizeBytes": 3621,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/src/grandfather.ts",
+      "sizeBytes": 7796,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/src/testing.ts",
+      "sizeBytes": 815,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/cli.test.ts",
+      "sizeBytes": 26560,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/foreman-config-telemetry.yaml",
+      "sizeBytes": 870,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/permission-profile-null.md",
+      "sizeBytes": 605,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-expertise-unknown.md",
+      "sizeBytes": 568,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-inputs-audio.md",
+      "sizeBytes": 552,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-inputs-empty.md",
+      "sizeBytes": 530,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-involves-empty-string.md",
+      "sizeBytes": 467,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-involves-non-array.md",
+      "sizeBytes": 568,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-involves-whitespace.md",
+      "sizeBytes": 468,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-min-context-zero.md",
+      "sizeBytes": 502,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-permission-profile-unknown.md",
+      "sizeBytes": 543,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-permission-profile-whitespace.md",
+      "sizeBytes": 440,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-risk.md",
+      "sizeBytes": 436,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-routing-class.md",
+      "sizeBytes": 452,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-status.md",
+      "sizeBytes": 481,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-superseded-null.md",
+      "sizeBytes": 539,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-surfaces-empty.md",
+      "sizeBytes": 403,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-thinking-level-turbo.md",
+      "sizeBytes": 564,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-verification-class-missing.md",
+      "sizeBytes": 387,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/reject-verification-class-unknown.md",
+      "sizeBytes": 440,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/valid-involves-empty.md",
+      "sizeBytes": 469,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/valid-involves-extension.md",
+      "sizeBytes": 661,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/valid-involves-known.md",
+      "sizeBytes": 502,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/valid-involves-unknown.md",
+      "sizeBytes": 500,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/valid-rcm-fields.md",
+      "sizeBytes": 545,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/valid-spec-no-perm.md",
+      "sizeBytes": 416,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/valid-spec-unknown-surface.md",
+      "sizeBytes": 483,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/valid-spec.md",
+      "sizeBytes": 419,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/valid-superseded.md",
+      "sizeBytes": 520,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/tests/fixtures/valid-verification-class-equivalence.md",
+      "sizeBytes": 434,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/templates/role-envelope-scaffolding.md",
+      "sizeBytes": 7340,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/tests/jev-smoke-test.mjs",
+      "sizeBytes": 5119,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/verification/src/human-gate/adapter.ts",
+      "sizeBytes": 9797,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/verification/src/human-gate/index.ts",
+      "sizeBytes": 50737,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/verification/src/index.ts",
+      "sizeBytes": 2185,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/verification/tests/adversarial-scaffold.test.ts",
+      "sizeBytes": 5636,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/verification/tests/chainwalk.test.ts",
+      "sizeBytes": 18673,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/verification/tests/helpers.ts",
+      "sizeBytes": 4571,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/verification/tests/human-gate-execute.test.ts",
+      "sizeBytes": 26126,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/verification/tests/human-gate-helpers.ts",
+      "sizeBytes": 5493,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/verification/tests/human-gate.test.ts",
+      "sizeBytes": 21351,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/verification/tests/pipeline.test.ts",
+      "sizeBytes": 51598,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/verification/tests/scaffold.test.ts",
+      "sizeBytes": 14482,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/verification/tests/stage-d-finalization.test.ts",
+      "sizeBytes": 34151,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/worker-envelopes/CHANGELOG.md",
+      "sizeBytes": 1974,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/worker-envelopes/package.json",
+      "sizeBytes": 760,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/worker-envelopes/schemas/result.schema.json",
+      "sizeBytes": 3729,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/worker-envelopes/schemas/task.schema.json",
+      "sizeBytes": 3729,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/worker-envelopes/src/result-envelope.ts",
+      "sizeBytes": 4910,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/worker-envelopes/src/task-envelope.ts",
+      "sizeBytes": 4316,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/foreman-line/worker-envelopes/tests/fixtures.ts",
+      "sizeBytes": 2355,
+      "category": "tests-or-fixtures",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "plugins/plugin-catalog-cache.json",
+      "sizeBytes": 406641,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "skills/modernize/README.md",
+      "sizeBytes": 26996,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "skills/modernize/schemas/approval.schema.json",
+      "sizeBytes": 3107,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "skills/modernize/schemas/claim.schema.json",
+      "sizeBytes": 4524,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "skills/modernize/schemas/contract.schema.json",
+      "sizeBytes": 6488,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "skills/modernize/schemas/manifest.schema.json",
+      "sizeBytes": 3788,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "skills/modernize/schemas/wire_contract.schema.json",
+      "sizeBytes": 5567,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "skills/parcel-compiler/docs/kickstarters/adversarial-review-PCC-P0.md",
+      "sizeBytes": 2550,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "skills/parcel-compiler/docs/specs/done/PCC-P0-pcc-cli-scaffold.md",
+      "sizeBytes": 8200,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-project-token",
+        "legacy-company-name",
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "skills/parcel-compiler/docs/transcripts/build-PCC-P0-deterministic-pass.md",
+      "sizeBytes": 8800,
+      "category": "historical-or-proof-material",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": true,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "skills/parcel-compiler/tool/package-lock.json",
+      "sizeBytes": 33695,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "skills/parcel-compiler/tool/package.json",
+      "sizeBytes": 461,
+      "category": "runtime-config-or-generated",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-company-name"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "skills/planning-and-task-breakdown/SKILL.md",
+      "sizeBytes": 10564,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "skills/synced/b1615d10-039d-4783-acf0-ab3f00e92f65_48b499d1-feb5-4dd7-a1c2-31c0becec6cb/foreman-shaping/SKILL.md",
+      "sizeBytes": 3474,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "skills/synced/b1615d10-039d-4783-acf0-ab3f00e92f65_48b499d1-feb5-4dd7-a1c2-31c0becec6cb/mcp-builder/reference/mcp_best_practices.md",
+      "sizeBytes": 7330,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "skills/synced/b1615d10-039d-4783-acf0-ab3f00e92f65_48b499d1-feb5-4dd7-a1c2-31c0becec6cb/mcp-builder/reference/node_mcp_server.md",
+      "sizeBytes": 28550,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    },
+    {
+      "path": "skills/synced/b1615d10-039d-4783-acf0-ab3f00e92f65_48b499d1-feb5-4dd7-a1c2-31c0becec6cb/mcp-builder/reference/python_mcp_server.md",
+      "sizeBytes": 25099,
+      "category": "instructions-or-documents",
+      "filenameRules": [],
+      "contentRules": [
+        "legacy-tracker"
+      ],
+      "hashMetadataPresent": false,
+      "disposition": "unreviewed-candidate-not-mutation-authority"
+    }
+  ],
+  "caveats": [
+    "This is source discovery, not independent security review or a dispatchable file manifest.",
+    "Binary/large/non-UTF8 entries are explicit coverage gaps; zero text matches would not certify them.",
+    "Inventory paths and later planning records may themselves require disposition in the final removal sweep.",
+    "Historical/hash-bearing materials require producer/lineage decisions before editing; no history rewrite."
+  ]
+}

@@ -88,8 +88,10 @@ test('goalStatus: hung, failed, and awaiting-gate parcels keep the goal active a
     hung: 1,
     failed: 1,
     awaitingGate: 1,
+    notStarted: 0,
     ratificationPending: 0,
     ratificationUnknown: 0,
+    signals: { info: 0, attention: 0, urgent: 0 },
     total: 3,
   })
 })
@@ -192,6 +194,31 @@ test('multi-root: extra roots project goal trees under alias-qualified keys', ()
   }
 })
 
+test('multi-root: same-basename registrations retain distinct absolute roots on every goal status', () => {
+  const a = extraRootFixture()
+  const b = extraRootFixture()
+  try {
+    withTempRepo(primaryScenario(), (ctx) => {
+      const config = defaultConfig(ctx.config.repoRoot, join(ctx.root, 'state'), [
+        join(a, 'agent-task'),
+        join(b, 'agent-task'),
+      ])
+      const response = handleApi(
+        config,
+        { method: 'GET', pathname: '/api/goals', query: new URLSearchParams(), body: {} },
+        NOW_MS,
+      )
+      const { statuses } = response.json as { statuses: { key: string; repoRoot: string }[] }
+      assert.equal(new Set(statuses.map((s) => s.repoRoot)).size, 3)
+      assert.equal(new Set(statuses.map((s) => s.key)).size, statuses.length)
+      for (const s of statuses) assert.equal(s.repoRoot, resolveGoalKey(config, s.key)?.tree.root)
+    })
+  } finally {
+    rmSync(a, { recursive: true, force: true })
+    rmSync(b, { recursive: true, force: true })
+  }
+})
+
 test('multi-root: /api/goals carries the additive statuses index and /api/parcels resolves qualified keys', () => {
   const extraBase = extraRootFixture()
   const extraRoot = join(extraBase, 'agent-task')
@@ -206,8 +233,14 @@ test('multi-root: /api/goals carries the additive statuses index and /api/parcel
       assert.equal(list.status, 200)
       const payload = list.json as {
         goals: { slug: string }[]
-        statuses: { key: string; active: boolean }[]
+        statuses: { key: string; active: boolean; repoRoot: string }[]
       }
+      assert.equal(
+        payload.statuses.find((s) => s.key === 'goal-primary')?.repoRoot,
+        ctx.config.repoRoot,
+      )
+      assert.equal(payload.statuses.find((s) => s.key === 'agent-task.at-1')?.repoRoot, extraRoot)
+      assert.equal(payload.statuses.find((s) => s.key === 'agent-task.1.at-2')?.repoRoot, extraRoot)
       const keys = payload.statuses.map((status) => status.key)
       assert.ok(keys.includes('goal-primary'), 'primary goal keeps its bare key')
       assert.ok(keys.includes('agent-task.at-1'), 'docs/goals tree qualified with the root alias')
@@ -299,8 +332,10 @@ for (const state of ['empty', 'all complete', 'closed narrative']) {
       hung: 0,
       failed: 0,
       awaitingGate: 0,
+      notStarted: 0,
       ratificationPending: 0,
       ratificationUnknown: 1,
+      signals: { info: 0, attention: 0, urgent: 0 },
       total: 1,
     })
   })
@@ -319,8 +354,10 @@ test('goalStatus: unknown count adds to existing parcel attention', () => {
     hung: 1,
     failed: 1,
     awaitingGate: 1,
+    notStarted: 0,
     ratificationPending: 0,
     ratificationUnknown: 1,
+    signals: { info: 0, attention: 0, urgent: 0 },
     total: 4,
   })
 })

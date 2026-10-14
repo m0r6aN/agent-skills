@@ -125,6 +125,7 @@ const ENUMERATED_CODE_BASENAMES = Object.freeze(['tsconfig.json', 'biome.json'])
  * R5 re-verification: the three `jev-p0-*.md` docs were NOT excluded —
  * `jev-decisions`' `PATHS` is an in-memory allowlist and no check reads those
  * files (measured, not asserted); they stay ordinary.
+ * CFF-H1 (cff-p0-review-triage-2026-10-08.md E1): +5 measured w4-closeout / pi-model-configuration goal-doc readers.
  */
 export const READER_SET = Object.freeze([
   'plugins/foreman-line/approval/README.md',
@@ -133,9 +134,14 @@ export const READER_SET = Object.freeze([
   'plugins/foreman-line/dispatch/README.md',
   'plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md',
   'plugins/foreman-line/docs/goals/foreman-kernel/',
+  'plugins/foreman-line/docs/goals/pi-model-configuration/a54-ratification-2026-09-26.md',
+  'plugins/foreman-line/docs/goals/pi-model-configuration/charter.md',
+  'plugins/foreman-line/docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit/rcm-p0-catalog-snapshot.v1.json',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/openrouter-rcm-v1-conservative-projection-20260926.json',
   'plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/pmc-binding-coverage-openrouter-20260926-v4.json',
+  'plugins/foreman-line/docs/goals/w4-closeout/charter.md',
+  'plugins/foreman-line/docs/goals/w4-closeout/loop-directive.md',
   'plugins/foreman-line/docs/kickstarters/foreman-shaping-template.md',
   'plugins/foreman-line/docs/transcripts/defects_lessons.md',
   'plugins/foreman-line/foreman-config/README.md',
@@ -434,6 +440,87 @@ export function parseNameStatusZ(raw) {
     records.push({ status, paths })
   }
   return records
+}
+
+// ─── D11 shared diff seam (CFF-P1 AC6) ───────────────────────────────────────
+
+const ZERO_SHA = '0'.repeat(40)
+
+function defaultRepoGit(args, opts) {
+  return spawnSync('git', args, {
+    cwd: fileURLToPath(new URL('../', import.meta.url)),
+    encoding: 'buffer',
+    maxBuffer: 1 << 28,
+    input: opts?.input,
+  })
+}
+
+/**
+ * D11 (ci-fail-fast charter): the ONE changed-paths source for a CI run. No
+ * other file computes a diff; consumers (the sweep runner's change-proximity
+ * ordering) call this export and never `git diff` themselves.
+ *
+ * Base selection reads the event payload at `GITHUB_EVENT_PATH`: on
+ * `pull_request` the PR's `pull_request.base.sha`; on `push` `event.before`.
+ * Head is the run's `GITHUB_SHA`. The diff is `git diff --name-status -z
+ * <base> <head>`, parsed by `parseNameStatusZ`; every path (both sides of a
+ * rename/copy) is classified by `classifyPath` over `READER_SET`, and paths
+ * proven `ordinary_documentation` are dropped — no second classification
+ * engine, no divergent notion of "this path matters".
+ *
+ * Fail-closed: an absent `GITHUB_EVENT_PATH`, an unreadable or unparseable
+ * payload, any other event class, a missing / non-hex40 / all-zeros base or
+ * head SHA, a failed git invocation, or malformed diff output each return
+ * `paths: null` with a named `reason` — never a throw, and never an empty
+ * "no changes" set. Consumers must treat `paths: null` as proximity
+ * unavailable (full ascending-name order). Never reads gate-job output (rule 0
+ * empties it on push).
+ */
+export function changedPathsFromEvent({ env = process.env, readFile = readFileSync, git = defaultRepoGit } = {}) {
+  const failClosed = (reason) => ({ paths: null, reason })
+  try {
+    const eventPath = envString(env ?? {}, 'GITHUB_EVENT_PATH')
+    if (eventPath.length === 0) return failClosed('event-path-absent')
+    let raw
+    try {
+      raw = readFile(eventPath, 'utf8')
+    } catch {
+      return failClosed('event-unreadable')
+    }
+    let event
+    try {
+      event = JSON.parse(raw)
+    } catch {
+      return failClosed('event-unparseable')
+    }
+    if (typeof event !== 'object' || event === null || Array.isArray(event)) return failClosed('event-unparseable')
+    const eventName = envString(env, 'GITHUB_EVENT_NAME')
+    let baseSha
+    if (eventName === 'pull_request') {
+      const pr = event.pull_request
+      const base = typeof pr === 'object' && pr !== null ? pr.base : undefined
+      baseSha = typeof base === 'object' && base !== null ? base.sha : undefined
+    } else if (eventName === 'push') {
+      baseSha = event.before
+    } else {
+      return failClosed('event-class-unsupported')
+    }
+    if (typeof baseSha !== 'string' || !HEX40_RE.test(baseSha) || baseSha === ZERO_SHA) return failClosed('base-unresolved')
+    const headSha = envString(env, 'GITHUB_SHA')
+    if (!HEX40_RE.test(headSha) || headSha === ZERO_SHA) return failClosed('head-unresolved')
+    const diff = gitBytes(git, ['diff', '--name-status', '-z', baseSha, headSha])
+    if (diff.status !== 0) return failClosed('diff-failed')
+    const paths = new Set()
+    for (const change of parseNameStatusZ(diff.stdout)) {
+      for (const bytes of change.paths) {
+        const path = bytes.toString('latin1')
+        if (classifyPath(path) !== CLASS.ORDINARY) paths.add(path)
+      }
+    }
+    return { paths: [...paths].sort(), reason: null, eventName, baseSha, headSha }
+  } catch {
+    return failClosed('diff-error')
+  }
 }
 
 // ─── API seam boundary (fetch-shaped: url, init -> { status, text }) ──────────

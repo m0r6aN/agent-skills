@@ -62,7 +62,14 @@ export {
   scanSidecars,
   scanSpecs,
 } from './scan.js'
-export { type BindTarget, createConsoleServer, resolveBind, resolveRepoRoot } from './server.js'
+export {
+  type BindTarget,
+  ConsoleBindError,
+  createConsoleServer,
+  resolveBind,
+  resolveRepoRoot,
+  toBindError,
+} from './server.js'
 export { type GoalAttention, type GoalStatus, goalStatus } from './status.js'
 export type {
   ChainMemberSummary,

@@ -14,6 +14,7 @@ import {
   CLASS,
   EMPTY_CLASS_HASH,
   READER_SET,
+  changedPathsFromEvent,
   classifyPath,
   computeTreeClassHashes,
   decideCore,
@@ -420,9 +421,14 @@ test('A3 reader set pins exactly the measured read-sweep inventory (identity + l
     'plugins/foreman-line/dispatch/README.md',
     'plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md',
     'plugins/foreman-line/docs/goals/foreman-kernel/',
+    'plugins/foreman-line/docs/goals/pi-model-configuration/a54-ratification-2026-09-26.md',
+    'plugins/foreman-line/docs/goals/pi-model-configuration/charter.md',
+    'plugins/foreman-line/docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md',
     'plugins/foreman-line/docs/goals/routing-currency-and-merit/rcm-p0-catalog-snapshot.v1.json',
     'plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/openrouter-rcm-v1-conservative-projection-20260926.json',
     'plugins/foreman-line/docs/goals/routing-currency-and-merit/source-evidence/pmc-binding-coverage-openrouter-20260926-v4.json',
+    'plugins/foreman-line/docs/goals/w4-closeout/charter.md',
+    'plugins/foreman-line/docs/goals/w4-closeout/loop-directive.md',
     'plugins/foreman-line/docs/kickstarters/foreman-shaping-template.md',
     'plugins/foreman-line/docs/transcripts/defects_lessons.md',
     'plugins/foreman-line/foreman-config/README.md',
@@ -1134,6 +1140,42 @@ test('R5 re-verification: jev-p0 goal docs have no check readers and stay ordina
   }
 })
 
+// ─── CFF-H1 (cff-p0-review-triage-2026-10-08.md E1): goal-doc readers of
+// ops-console (live-goal) and routing-policy (host-settings-proposal,
+// legacy-cutover) — measured exact paths, never ordinary_documentation
+
+const cffH1Readers = [
+  'plugins/foreman-line/docs/goals/w4-closeout/charter.md',
+  'plugins/foreman-line/docs/goals/w4-closeout/loop-directive.md',
+  'plugins/foreman-line/docs/goals/pi-model-configuration/charter.md',
+  'plugins/foreman-line/docs/goals/pi-model-configuration/pmc-p1-fallback-contract-2026-09-26.md',
+  'plugins/foreman-line/docs/goals/pi-model-configuration/a54-ratification-2026-09-26.md',
+]
+test('CFF-H1 readers (ops-console / routing-policy goal docs): every measured path is code + test-relevant-change', () => {
+  for (const path of cffH1Readers) {
+    assert.ok(READER_SET.includes(path), `${path} is an exact READER_SET entry`)
+    assert.equal(classifyPath(path), CLASS.CODE, path)
+    assert.notEqual(classifyPath(path), CLASS.ORDINARY, path)
+    assert.equal(deltaFallbackReason(path), 'test-relevant-change', path)
+  }
+  // exact-file entries, not prefixes: siblings in the same goal trees stay ordinary
+  assert.equal(classifyPath('plugins/foreman-line/docs/goals/w4-closeout/plan-review-findings.md'), CLASS.ORDINARY)
+  assert.equal(classifyPath('plugins/foreman-line/docs/goals/pi-model-configuration/loop-directive.md'), CLASS.ORDINARY)
+})
+
+test('CFF-H1 mutate-the-fixture: removing any one entry from a test-local readers list flips that path to ordinary_documentation', () => {
+  for (const removed of cffH1Readers) {
+    const mutated = READER_SET.filter((entry) => entry !== removed)
+    assert.equal(mutated.length, READER_SET.length - 1, `${removed} was a single exact entry`)
+    assert.equal(classifyPath(removed, mutated), CLASS.ORDINARY, `${removed} flips when unlisted`)
+    assert.equal(deltaFallbackReason(removed, mutated), null, `${removed} no longer forces fallback`)
+    // the other four remain bound by their own entries
+    for (const kept of cffH1Readers) {
+      if (kept !== removed) assert.equal(classifyPath(kept, mutated), CLASS.CODE, kept)
+    }
+  }
+})
+
 test('C9 subtree entry: the whole foreman-kernel corpus is excluded, sibling goal trees are not', () => {
   // a foreman-kernel file outside the enumerated inventory is still excluded
   // (the corpus sweep copies/mutates the whole subtree — measured, not asserted)
@@ -1168,4 +1210,144 @@ test('D-Q2: the exact-lowercase spec segment keeps its classes (rule 3 + near-mi
   assert.equal(deltaFallbackReason('docs/specs/x.md'), 'test-relevant-change')
   assert.equal(classifyPath('docs/specs-extra/x.md'), CLASS.CODE)
   assert.equal(deltaFallbackReason('docs/specs-extra/x.md'), 'test-relevant-change')
+})
+
+// ─── CFF-P1 AC6/AC8: the D11 shared diff seam (changedPathsFromEvent) ───────
+
+const D11_BASE = '1'.repeat(40)
+const D11_BEFORE = '2'.repeat(40)
+const D11_HEAD = '3'.repeat(40)
+const D11_EVENT_PATH = '/fake/event.json'
+
+function nameStatusZ(records) {
+  return Buffer.from(records.map((r) => `${r.join('\0')}\0`).join(''), 'latin1')
+}
+
+function d11Seams(overrides = {}) {
+  const { eventName = 'pull_request', event, headSha = D11_HEAD, diff, status = 0, gitThrows = false } = overrides
+  const eventPath = 'eventPath' in overrides ? overrides.eventPath : D11_EVENT_PATH
+  const gitCalls = []
+  const env = { GITHUB_EVENT_NAME: eventName, GITHUB_SHA: headSha }
+  if (eventPath !== undefined) env.GITHUB_EVENT_PATH = eventPath
+  const readFile = (path) => {
+    if (path !== D11_EVENT_PATH) throw Object.assign(new Error('ENOENT'), { code: 'ENOENT' })
+    return typeof event === 'string' ? event : JSON.stringify(event)
+  }
+  const git = (args) => {
+    gitCalls.push(args)
+    if (gitThrows) throw new Error('git missing')
+    return { status, stdout: diff ?? nameStatusZ([]) }
+  }
+  return { env, readFile, git, gitCalls }
+}
+
+const PR_EVENT = { pull_request: { number: 7, base: { ref: 'main', sha: D11_BASE }, head: { sha: D11_HEAD } }, before: D11_BEFORE }
+const PUSH_EVENT = { before: D11_BEFORE, after: D11_HEAD, pull_request: { base: { sha: D11_BASE } } }
+
+test('AC6 D11 seam: pull_request resolves the PR base SHA and diffs base..GITHUB_SHA through one git diff call', () => {
+  const s = d11Seams({
+    event: PR_EVENT,
+    diff: nameStatusZ([['M', 'plugins/foreman-line/approval/src/x.ts'], ['A', 'scripts/foreman-line-ci.mjs']]),
+  })
+  const out = changedPathsFromEvent(s)
+  assert.deepEqual(s.gitCalls, [['diff', '--name-status', '-z', D11_BASE, D11_HEAD]])
+  assert.equal(out.reason, null)
+  assert.equal(out.baseSha, D11_BASE, 'the PR base, never event.before, on pull_request')
+  assert.deepEqual(out.paths, ['plugins/foreman-line/approval/src/x.ts', 'scripts/foreman-line-ci.mjs'])
+})
+
+test('AC6 D11 seam: push resolves event.before (never the PR base) as the diff base', () => {
+  const s = d11Seams({ eventName: 'push', event: PUSH_EVENT, diff: nameStatusZ([['M', 'plugins/foreman-line/dispatch/src/a.ts']]) })
+  const out = changedPathsFromEvent(s)
+  assert.deepEqual(s.gitCalls, [['diff', '--name-status', '-z', D11_BEFORE, D11_HEAD]])
+  assert.equal(out.baseSha, D11_BEFORE)
+  assert.deepEqual(out.paths, ['plugins/foreman-line/dispatch/src/a.ts'])
+})
+
+test('AC6 D11 seam: a resolved base with an empty diff is an empty set (distinct from the fail-closed null)', () => {
+  const out = changedPathsFromEvent(d11Seams({ event: PR_EVENT, diff: nameStatusZ([]) }))
+  assert.deepEqual(out.paths, [])
+  assert.equal(out.reason, null)
+})
+
+for (const [label, overrides, reason, gitInvoked] of [
+  ['absent GITHUB_EVENT_PATH', { eventPath: undefined, event: PR_EVENT }, 'event-path-absent', false],
+  ['empty GITHUB_EVENT_PATH', { eventPath: '', event: PR_EVENT }, 'event-path-absent', false],
+  ['unreadable event file', { eventPath: '/nope.json', event: PR_EVENT }, 'event-unreadable', false],
+  ['unparseable JSON payload', { event: '{not json' }, 'event-unparseable', false],
+  ['JSON null payload', { event: 'null' }, 'event-unparseable', false],
+  ['JSON array payload', { event: '[]' }, 'event-unparseable', false],
+  ['unsupported event class', { eventName: 'workflow_dispatch', event: PUSH_EVENT }, 'event-class-unsupported', false],
+  ['absent event name', { eventName: '', event: PUSH_EVENT }, 'event-class-unsupported', false],
+  ['pull_request with no pull_request object', { event: { before: D11_BEFORE } }, 'base-unresolved', false],
+  ['pull_request with a null base', { event: { pull_request: { base: null } } }, 'base-unresolved', false],
+  ['pull_request with a present-but-null base sha', { event: { pull_request: { base: { sha: null } } } }, 'base-unresolved', false],
+  ['pull_request with a non-hex40 base sha', { event: { pull_request: { base: { sha: 'abc123' } } } }, 'base-unresolved', false],
+  ['pull_request with an uppercase-hex base sha', { event: { pull_request: { base: { sha: 'A'.repeat(40) } } } }, 'base-unresolved', false],
+  ['pull_request with an all-zeros base sha', { event: { pull_request: { base: { sha: '0'.repeat(40) } } } }, 'base-unresolved', false],
+  ['push with an all-zeros before (new branch)', { eventName: 'push', event: { before: '0'.repeat(40) } }, 'base-unresolved', false],
+  ['push with a missing before', { eventName: 'push', event: { after: D11_HEAD } }, 'base-unresolved', false],
+  ['push with a non-hex40 before', { eventName: 'push', event: { before: 'zz'.repeat(20) } }, 'base-unresolved', false],
+  ['missing GITHUB_SHA head', { event: PR_EVENT, headSha: '' }, 'head-unresolved', false],
+  ['all-zeros GITHUB_SHA head', { event: PR_EVENT, headSha: '0'.repeat(40) }, 'head-unresolved', false],
+  ['git diff exits non-zero (base not fetched)', { event: PR_EVENT, status: 128 }, 'diff-failed', true],
+  ['git seam throws', { event: PR_EVENT, gitThrows: true }, 'diff-error', true],
+  ['malformed diff output', { event: PR_EVENT, diff: Buffer.from('M\0no-terminator', 'latin1') }, 'diff-error', true],
+]) {
+  test(`AC6 D11 seam fails closed (paths: null, never a throw, never "no changes"): ${label}`, () => {
+    const s = d11Seams(overrides)
+    let out
+    assert.doesNotThrow(() => { out = changedPathsFromEvent(s) })
+    assert.equal(out.paths, null)
+    assert.equal(out.reason, reason)
+    assert.equal(s.gitCalls.length > 0, gitInvoked, 'no diff is attempted on an unresolved event/base/head')
+  })
+}
+
+test('AC6 D11 seam: classification is the existing classifyPath/READER_SET — ordinary docs drop, measured readers and both rename sides count', () => {
+  const readerDoc = 'plugins/foreman-line/approval/README.md' // READER_SET member -> code
+  assert.ok(READER_SET.includes(readerDoc))
+  const ordinaryDoc = 'plugins/foreman-line/docs/goals/ci-fail-fast/charter.md'
+  assert.equal(classifyPath(ordinaryDoc), CLASS.ORDINARY)
+  const s = d11Seams({
+    event: PR_EVENT,
+    diff: nameStatusZ([
+      ['M', readerDoc],
+      ['M', ordinaryDoc],
+      ['R100', 'plugins/foreman-line/receipts/src/old.ts', 'plugins/foreman-line/receipts/src/new.ts'],
+      ['M', 'docs/guide.md'],
+      ['M', '.github/workflows/foreman-line-ci.yml'],
+    ]),
+  })
+  const out = changedPathsFromEvent(s)
+  const expected = [
+    '.github/workflows/foreman-line-ci.yml',
+    'plugins/foreman-line/approval/README.md',
+    'plugins/foreman-line/receipts/src/new.ts',
+    'plugins/foreman-line/receipts/src/old.ts',
+  ]
+  assert.deepEqual(out.paths, expected)
+  // the seam's per-path verdict equals classifyPath's, path by path (no parallel engine)
+  for (const path of [readerDoc, ordinaryDoc, 'docs/guide.md', 'plugins/foreman-line/receipts/src/new.ts']) {
+    assert.equal(out.paths.includes(path), classifyPath(path) !== CLASS.ORDINARY, path)
+  }
+})
+
+test('AC6 D11 seam: the export body reuses parseNameStatusZ/classifyPath/gitBytes and owns the only new diff (grep-provable)', () => {
+  const source = readFileSync(fileURLToPath(new URL('./ci-reuse.mjs', import.meta.url)), 'utf8')
+  const start = source.indexOf('export function changedPathsFromEvent(')
+  const end = source.indexOf('\n}\n', start)
+  assert.ok(start > 0 && end > start)
+  const body = source.slice(start, end)
+  assert.ok(body.includes('parseNameStatusZ(diff.stdout)'))
+  assert.ok(body.includes('classifyPath(path)'))
+  assert.ok(body.includes("gitBytes(git, ['diff', '--name-status', '-z', baseSha, headSha])"))
+  // exactly two `diff` git invocations in the file: the pre-existing verification
+  // diff (evaluateChain rule 4) and this seam's
+  const diffCalls = source.split("['diff', '--name-status', '-z'").length - 1
+  assert.equal(diffCalls, 2)
+  // no reader-set / classification re-definition inside the seam
+  assert.ok(!body.includes('READER_SET'))
+  assert.ok(!body.includes('.endsWith('))
+  assert.ok(!body.includes('.startsWith('))
 })

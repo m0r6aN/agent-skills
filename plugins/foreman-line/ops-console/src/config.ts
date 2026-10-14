@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
  * Disk-truth roots for the projection. Everything is derived from these
  * directories on every call — the library stores no status and writes nothing
  * (charter D2/D3; contract non-goals). The only writable paths in the whole
- * package are the two console-local state files named in `STATE_FILES`.
+ * package are the console-local state files named in `STATE_FILES`.
  */
 export interface ConsoleConfig {
   readonly repoRoot: string
@@ -80,9 +80,37 @@ function hasGoalRecords(goalsDir: string): boolean {
   return false
 }
 
-export const STATE_FILES = ['notifications.json', 'invocation-audit.json'] as const
+export const STATE_FILES = [
+  'notifications.json',
+  'invocation-audit.json',
+  'fleet.json',
+  'spawns.json',
+] as const
 
 export type StateFile = (typeof STATE_FILES)[number]
+
+/**
+ * Sanctioned console-local state SUBTREES (FCA-P7, owner-ratified 2026-10-13).
+ * `sessions/<receipt-id>/` holds one launched pane's captured output and
+ * retention marker. Subtree names are a closed set; entries inside are keyed
+ * by a validated receipt id and never by caller-supplied paths.
+ */
+export const STATE_DIRS = ['sessions'] as const
+
+export const RECEIPT_ID = /^[a-z0-9][a-z0-9-]{0,120}$/
+
+/** Absolute ledger directory for one receipt id; refuses ids that could escape. */
+export function ledgerDirPath(stateDir: string, receiptId: string): string {
+  if (!RECEIPT_ID.test(receiptId)) {
+    throw new Error(`ledger write refused: '${receiptId}' is not a valid receipt id`)
+  }
+  const root = resolve(stateDir, STATE_DIRS[0])
+  const dir = resolve(root, receiptId)
+  if (resolve(dir, '..') !== root) {
+    throw new Error(`ledger write refused: ${receiptId} must live directly inside ${root}`)
+  }
+  return dir
+}
 
 /**
  * Typed root-refusal error (P2b-i, per-package convention
@@ -172,10 +200,15 @@ export function defaultConfig(
     })
     layoutHits.forEach((layout, index) => {
       assertAbsoluteRoot(extraRoot, 'defaultConfig extraRoots resolved entry')
-      // Alias is the root's directory name; a second tree inside the same
-      // repo gets a deterministic `alias.N` suffix (layout scan order) so
-      // keys stay unique. Resolution prefers the longest key prefix.
-      const alias = index === 0 ? baseAlias : `${baseAlias}.${index}`
+      // Reserve aliases across all roots, not just layouts within one root.
+      // Same-basename checkouts must never resolve to another checkout's tree.
+      // Keep non-colliding legacy aliases; suffix only when already reserved.
+      let suffix = index
+      let alias = suffix === 0 ? baseAlias : `${baseAlias}.${suffix}`
+      while (trees.some((tree) => tree.key === alias)) {
+        suffix += 1
+        alias = `${baseAlias}.${suffix}`
+      }
       trees.push({
         key: alias,
         treeRef: alias,
@@ -266,11 +299,14 @@ export function treeConfigFor(config: ConsoleConfig, tree: GoalTree): ConsoleCon
 }
 
 /**
- * Write guard (D2/M1): the ONLY writable paths in the package are
- * `state/notifications.json` and `state/invocation-audit.json`. The closed
+ * Write guard (D2/M1): the ONLY writable paths in the package are the
+ * console-local state files named in `STATE_FILES`
+ * (`state/notifications.json`, `state/invocation-audit.json`,
+ * `state/fleet.json`). The closed
  * filename set is enforced at runtime (not just by the type), and the resolved
  * path must live directly inside `stateDir` — any other target throws before a
- * write is attempted. `notifications.ts` and `invoke.ts` are the sole callers.
+ * write is attempted. `notifications.ts`, `invoke.ts`, and `fleet.ts` are the
+ * sole callers.
  */
 export function stateFilePath(stateDir: string, name: StateFile): string {
   if (!(STATE_FILES as readonly string[]).includes(name)) {

@@ -4,7 +4,13 @@ import { join } from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { handleApi } from '../src/api.js'
-import { type ConsoleConfig, type StateFile, stateFilePath } from '../src/config.js'
+import {
+  type ConsoleConfig,
+  STATE_DIRS,
+  STATE_FILES,
+  type StateFile,
+  stateFilePath,
+} from '../src/config.js'
 import { invokeFlow } from '../src/invoke.js'
 import { projectGoal } from '../src/project.js'
 import { fileMtimes, type Scenario, treeSnapshot, withTempRepo } from './support/materialize.js'
@@ -96,6 +102,10 @@ function exerciseEveryRoute(config: ConsoleConfig): void {
       path: '/api/invoke',
       body: { flow: 'approval-mint-receipt', argv: ['show', 'x', '--repo-root', config.repoRoot] },
     },
+    { method: 'GET', path: '/api/fleet' },
+    { method: 'POST', path: '/api/fleet/add', body: { root: 'rel/ative' } },
+    { method: 'POST', path: '/api/fleet/remove', body: { root: '/no/such/project' } },
+    { method: 'GET', path: '/api/fs/browse?path=%2Fnonexistent' },
   ]
   for (const route of routes) {
     const url = new URL(route.path, 'http://localhost')
@@ -138,13 +148,23 @@ test('D2 negative control: the full API surface leaves goal/receipt/spec trees b
     assert.deepEqual(treeSnapshot(root, TRUTH_DIRS), before, 'truth-source contents unchanged')
     assert.deepEqual(fileMtimes(root, TRUTH_DIRS), beforeTimes, 'truth-source mtimes unchanged')
 
-    // The ONLY writes the console may make are its two console-local state files.
+    // The ONLY writes the console may make are console-local state files from
+    // the closed `STATE_FILES` vocabulary (names appear only once a writer
+    // exists for them — `fleet.json` arrives with the FCA-P2 fleet API).
     const stateFiles = readdirSync(config.stateDir).sort()
-    assert.deepEqual(stateFiles, ['invocation-audit.json', 'notifications.json'])
+    assert.deepEqual(
+      stateFiles.filter(
+        (name) =>
+          !(STATE_FILES as readonly string[]).includes(name) &&
+          !(STATE_DIRS as readonly string[]).includes(name),
+      ),
+      [],
+      'every entry written under stateDir is a sanctioned STATE_FILES name or STATE_DIRS subtree',
+    )
   })
 })
 
-test('D2 structural guard: only notifications.ts and invoke.ts may call fs write APIs', () => {
+test('D2 structural guard: only notifications.ts, invoke.ts, fleet.ts, spawn.ts, and ledger-store.ts may call fs write APIs', () => {
   const srcDir = fileURLToPath(new URL('../src/', import.meta.url))
   const offenders: string[] = []
   for (const name of readdirSync(srcDir)) {
@@ -153,13 +173,21 @@ test('D2 structural guard: only notifications.ts and invoke.ts may call fs write
     if (
       /writeFileSync|appendFileSync|mkdirSync|rmSync|unlinkSync|writeFile\(|appendFile\(/.test(text)
     ) {
-      if (name !== 'notifications.ts' && name !== 'invoke.ts') offenders.push(name)
+      if (
+        name !== 'notifications.ts' &&
+        name !== 'invoke.ts' &&
+        name !== 'fleet.ts' &&
+        name !== 'spawn.ts' &&
+        name !== 'ledger-store.ts'
+      ) {
+        offenders.push(name)
+      }
     }
   }
-  assert.deepEqual(offenders, [], 'no module outside the two state writers touches fs write APIs')
+  assert.deepEqual(offenders, [], 'no module outside the five state writers touches fs write APIs')
 })
 
-test('D2 write guard: state writes are confined to the two named state files', () => {
+test('D2 write guard: state writes are confined to the named state files', () => {
   withTempRepo(richScenario(), ({ config }) => {
     assert.equal(
       stateFilePath(config.stateDir, 'notifications.json'),
@@ -168,6 +196,11 @@ test('D2 write guard: state writes are confined to the two named state files', (
     assert.equal(
       stateFilePath(config.stateDir, 'invocation-audit.json'),
       join(config.stateDir, 'invocation-audit.json'),
+    )
+    assert.equal(stateFilePath(config.stateDir, 'fleet.json'), join(config.stateDir, 'fleet.json'))
+    assert.equal(
+      stateFilePath(config.stateDir, 'spawns.json'),
+      join(config.stateDir, 'spawns.json'),
     )
     assert.throws(
       () => stateFilePath(config.stateDir, '../../escape.json' as StateFile),

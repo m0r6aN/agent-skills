@@ -2,7 +2,8 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import test from 'node:test'
-import { invokeFlow, listAuditEntries } from '../src/invoke.js'
+import { saveFleetState } from '../src/fleet.js'
+import { FLOW_REGISTRY, invokeFlow, listAuditEntries, presentCommand } from '../src/invoke.js'
 import { fileMtimes, type Scenario, treeSnapshot, withTempRepo } from './support/materialize.js'
 
 /**
@@ -289,4 +290,109 @@ test('A1: the audit log is append-only, sequential, and records executed + prese
       assert.equal(store.entries.length, 3)
     },
   )
+})
+
+// ------------------------------------------------------------------ FCA-P9 pr-merge
+
+const mergeArgv = (root: string, n = '218') => ['merge', n, '--repo-root', root]
+
+test('FCA-P9: pr-merge is present-only: renders the exact command, audits one `presented`, spawns nothing', () => {
+  withTempRepo(scenario([]), ({ config }) => {
+    assert.equal(FLOW_REGISTRY['pr-merge']?.mode, 'present')
+    assert.equal(FLOW_REGISTRY['pr-merge']?.spawnCli, null)
+    const outcome = invokeFlow(
+      config,
+      { flow: 'pr-merge', argv: mergeArgv(config.repoRoot), mode: 'present' },
+      NOW_MS,
+    )
+    assert.equal(outcome.action, 'presented')
+    assert.equal(outcome.command, `cd "${config.repoRoot}" && gh pr merge 218`)
+    assert.equal(outcome.exitCode, null)
+    const audit = listAuditEntries(config.stateDir)
+    assert.equal(audit.length, 1)
+    assert.equal(audit[0]?.action, 'presented')
+    assert.equal(audit[0]?.mode, 'present')
+  })
+})
+
+test('FCA-P9: pr-merge refuses (audited `refused`) bad numbers, relative/undeclared/unsafe roots, extra argv and any non-present mode', () => {
+  withTempRepo(scenario([]), ({ config }) => {
+    const root = config.repoRoot
+    const cases: [string, { argv: readonly string[]; mode?: unknown }][] = [
+      ['zero', { argv: mergeArgv(root, '0') }],
+      ['leading zero', { argv: mergeArgv(root, '07') }],
+      ['non-numeric', { argv: mergeArgv(root, 'abc') }],
+      ['shell text', { argv: mergeArgv(root, '1; rm -rf /') }],
+      ['oversize', { argv: mergeArgv(root, '12345678') }],
+      ['relative root', { argv: mergeArgv('relative/root') }],
+      ['undeclared root', { argv: mergeArgv(join(root, 'other')) }],
+      ['root with unsafe chars', { argv: mergeArgv('/tmp/a"b') }],
+      ['extra argv', { argv: [...mergeArgv(root), '--squash'] }],
+      ['mode execute', { argv: mergeArgv(root), mode: 'execute' }],
+      ['mode spawn', { argv: mergeArgv(root), mode: 'spawn' }],
+      ['mode non-string', { argv: mergeArgv(root), mode: true }],
+    ]
+    for (const [label, c] of cases) {
+      const before = listAuditEntries(config.stateDir).length
+      const outcome = invokeFlow(config, { flow: 'pr-merge', ...c }, NOW_MS)
+      assert.equal(outcome.action, 'refused', label)
+      assert.equal(outcome.command, '', `${label}: a refusal carries no copyable command`)
+      const audit = listAuditEntries(config.stateDir)
+      assert.equal(audit.length, before + 1, label)
+      assert.equal(audit.at(-1)?.action, 'refused', label)
+    }
+  })
+})
+
+test('FCA-P9: pr-merge accepts a root declared in fleet state and only those', () => {
+  withTempRepo(scenario([]), ({ config }) => {
+    const other = '/tmp/fleet-other-root'
+    saveFleetState(config.stateDir, {
+      schema: 'foc-fleet/v1',
+      roots: [config.repoRoot, other],
+    })
+    const ok = invokeFlow(config, { flow: 'pr-merge', argv: mergeArgv(other) }, NOW_MS)
+    assert.equal(ok.action, 'presented')
+    assert.equal(ok.command, `cd "${other}" && gh pr merge 218`)
+    const no = invokeFlow(
+      config,
+      { flow: 'pr-merge', argv: mergeArgv('/tmp/not-declared') },
+      NOW_MS,
+    )
+    assert.equal(no.action, 'refused')
+  })
+})
+
+test('FCA-P9: presentCommand validates with the same guards and audits nothing', () => {
+  withTempRepo(scenario([]), ({ config }) => {
+    const ok = presentCommand(config, 'pr-merge', mergeArgv(config.repoRoot))
+    assert.ok('text' in ok)
+    assert.ok('refused' in presentCommand(config, 'pr-merge', mergeArgv('/tmp/x"y')))
+    assert.ok(
+      'refused' in
+        presentCommand(config, 'approval-show', ['show', 'a', '--repo-root', config.repoRoot]),
+    )
+    assert.equal(listAuditEntries(config.stateDir).length, 0)
+  })
+})
+
+test('FCA-P9: the pr-merge path spawns nothing (negative control: invoke source has no gh/git-merge spawn)', async () => {
+  const { readFileSync } = await import('node:fs')
+  const text = readFileSync(new URL('../src/invoke.ts', import.meta.url), 'utf8')
+  const spawns = text.match(/spawnSync\(/g) ?? []
+  assert.equal(spawns.length, 1, 'exactly one spawn site, behind spawnCli')
+  assert.match(text, /flow\.mode === 'present'[\s\S]*?return outcome[\s\S]*?spawnSync\(/)
+  assert.doesNotMatch(text, /spawnSync\(\s*['"](gh|git)['"]/)
+})
+
+test('FCA-P9: a DECLARED fleet root containing a quote, $, backtick, backslash or control char is refused, never escaped', () => {
+  withTempRepo(scenario([]), ({ config }) => {
+    for (const bad of ['/tmp/a"b', '/tmp/a$b', '/tmp/a`b', '/tmp/a\\b', '/tmp/a\nb']) {
+      saveFleetState(config.stateDir, { schema: 'foc-fleet/v1', roots: [config.repoRoot, bad] })
+      const outcome = invokeFlow(config, { flow: 'pr-merge', argv: mergeArgv(bad) }, NOW_MS)
+      assert.equal(outcome.action, 'refused', JSON.stringify(bad))
+      assert.match(outcome.reason ?? '', /never escaped/, JSON.stringify(bad))
+      assert.equal(outcome.command, '')
+    }
+  })
 })

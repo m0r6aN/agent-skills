@@ -1,3 +1,4 @@
+import type { SignalSeverity } from './signals.js'
 import type { GoalProjection } from './types.js'
 
 /**
@@ -11,12 +12,23 @@ import type { GoalProjection } from './types.js'
  * A goal whose queue is fully shipped (every parcel `complete`) drops out —
  * that is the "queue empty / GOAL COMPLETE" end state of a goal's loop.
  */
+/** FCA-2 additive: signal-severity breakdown scoped to one goal. */
+export interface SignalTally {
+  readonly info: number
+  readonly attention: number
+  readonly urgent: number
+}
+
 export interface GoalAttention {
   readonly hung: number
   readonly failed: number
   readonly awaitingGate: number
+  /** FCA-P10: parcels that have never progressed (no spec, no chain, no sidecar). */
+  readonly notStarted: number
   readonly ratificationPending: number
   readonly ratificationUnknown: number
+  /** FCA-2: signal severities for this goal's scoped signals (`<key>/…`). */
+  readonly signals: SignalTally
   readonly total: number
 }
 
@@ -25,6 +37,8 @@ export interface GoalStatus {
   readonly tree: string | null
   readonly active: boolean
   readonly attention: GoalAttention
+  /** FCA-2 additive: subjects of urgent signals scoped to this goal. */
+  readonly urgentSubjects: readonly string[]
 }
 
 /**
@@ -39,15 +53,29 @@ export function goalStatus(
   key: string,
   tree: string | null,
   projection: GoalProjection,
+  signals: readonly { subject: string; severity: SignalSeverity }[] = [],
 ): GoalStatus {
   let hung = 0
   let failed = 0
   let awaitingGate = 0
+  let notStarted = 0
   for (const parcel of projection.parcels) {
     if (parcel.state === 'hung') hung += 1
     else if (parcel.state === 'failed') failed += 1
     else if (parcel.state === 'awaiting-gate') awaitingGate += 1
+    else if (parcel.state === 'not-started') notStarted += 1
   }
+  // FCA-2: signal severities join the attention counts — scoped to this goal
+  // by subject prefix (`<key>/…`), so other goals' signals never leak in.
+  const scoped = signals.filter((signal) => signal.subject.startsWith(`${key}/`))
+  const signalTally: SignalTally = {
+    info: scoped.filter((signal) => signal.severity === 'info').length,
+    attention: scoped.filter((signal) => signal.severity === 'attention').length,
+    urgent: scoped.filter((signal) => signal.severity === 'urgent').length,
+  }
+  const urgentSubjects = scoped
+    .filter((signal) => signal.severity === 'urgent')
+    .map((signal) => signal.subject)
   const ratificationPending = projection.goal.ratification.status === 'pending' ? 1 : 0
   // ATT: unknown forces the goal active even with an empty/all-complete queue
   // or a closed narrative.
@@ -75,9 +103,12 @@ export function goalStatus(
       hung,
       failed,
       awaitingGate,
+      notStarted,
       ratificationPending,
       ratificationUnknown,
+      signals: signalTally,
       total: hung + failed + awaitingGate + ratificationPending + ratificationUnknown,
     },
+    urgentSubjects,
   }
 }

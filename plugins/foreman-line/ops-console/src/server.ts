@@ -52,6 +52,40 @@ export function resolveBind(env: BindEnv): BindTarget {
   return { host, port }
 }
 
+/**
+ * Typed bind-refusal error (mirrors the `ConsoleRootUnresolvedError`
+ * convention): a listen failure is an operator condition, not a crash.
+ * `port-in-use` fires when another process (typically a stale console that
+ * survived an earlier session) already holds the bind; without this seam the
+ * failure surfaces as an unhandled `'error'` event stack trace instead of a
+ * typed refusal naming the port and the remedy.
+ */
+export class ConsoleBindError extends Error {
+  /** PCC-P0 usage exit code. */
+  readonly code = 2 as const
+  readonly reason: 'port-in-use' | 'bind-failed'
+
+  constructor(reason: ConsoleBindError['reason'], message: string) {
+    super(message)
+    this.name = 'ConsoleBindError'
+    this.reason = reason
+  }
+}
+
+/** Map a raw listen failure to the typed bind refusal for the attempted bind. */
+export function toBindError(err: unknown, bind: BindTarget): ConsoleBindError {
+  const errnoCode =
+    err instanceof Error && 'code' in err ? (err as NodeJS.ErrnoException).code : undefined
+  if (errnoCode === 'EADDRINUSE') {
+    return new ConsoleBindError(
+      'port-in-use',
+      `${bind.host}:${bind.port} is already in use — another process (often a stale ops console that survived an earlier session) is already listening there; stop it (ss -ltnp | grep ':${bind.port}') or start with PORT=<free port>`,
+    )
+  }
+  const detail = err instanceof Error ? err.message : String(err)
+  return new ConsoleBindError('bind-failed', `bind ${bind.host}:${bind.port} failed: ${detail}`)
+}
+
 function readBody(request: IncomingMessage): Promise<unknown> {
   const { promise, resolve } = Promise.withResolvers<unknown>()
   const chunks: Buffer[] = []
@@ -102,6 +136,16 @@ export function buildHandler(config: ConsoleConfig, now: () => number): RequestL
     }
     if (pathname === '/app.js') {
       sendUi(response, 'app.js', 'text/javascript; charset=utf-8')
+      return
+    }
+    if (pathname === '/needs.js') {
+      sendUi(response, 'needs.js', 'text/javascript; charset=utf-8')
+      return
+    }
+    // FCA-P6 view modules (ES modules under ui/views/; strict name shape).
+    const viewModule = /^\/views\/[a-z-]+\.js$/.exec(pathname)
+    if (viewModule !== null) {
+      sendUi(response, pathname.slice(1), 'text/javascript; charset=utf-8')
       return
     }
     const body = method === 'POST' ? await readBody(request) : undefined
@@ -162,6 +206,13 @@ if (isMain) {
     process.exit(err.code)
   }
   const server = createConsoleServer(config)
+  // Bind failures are typed refusals, not crashes: without this listener a
+  // port conflict surfaces as an unhandled `'error'` event stack trace.
+  server.on('error', (err: unknown) => {
+    const refusal = toBindError(err, bind)
+    process.stderr.write(`error: [${refusal.reason}] ${refusal.message}\n`)
+    process.exit(refusal.code)
+  })
   server.listen(bind.port, bind.host, () => {
     process.stdout.write(`foreman ops console listening on http://${bind.host}:${bind.port}/\n`)
     process.stdout.write(`repo root: ${config.repoRoot}\n`)

@@ -1,6 +1,6 @@
 # Task List — Trustworthy Observation
 
-Charter ratified; plan review closed; baseline repaired; TO-P0 merged; TO-P1 independently verified/reviewed, merge pending.
+Charter ratified; plan review closed; baseline repaired; TO-P0 merged; TO-P1 merged; TO-P2 scope preparation in progress.
 Acceptance details trace to charter.md; shaped specs supply exact Allowed Files.
 
 - [x] Read relevant canon and preserve original dirty checkout.
@@ -15,7 +15,7 @@ Acceptance details trace to charter.md; shaped specs supply exact Allowed Files.
 - [x] TO-P0: shape and review exact companion amendment; authorized merge.
   - Accept: explicit clause mapping and supported/negative/unsupported scenarios.
   - Verify: independent dual contract review and no code changes.
-- [ ] TO-P1: shape conservative ratification reader; build/review/authorized merge.
+- [x] TO-P1: shape conservative ratification reader; build/review/authorized merge.
   - Accept: negative/historical/conflicting cases cannot grant; real positives work.
   - Verify: focused corpus, package checks, independent dual review.
 - [ ] TO-P2: shape malformed-evidence containment; build/review/authorized merge.

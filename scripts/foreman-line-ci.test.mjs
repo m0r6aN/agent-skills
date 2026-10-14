@@ -16,6 +16,7 @@
 import assert from 'node:assert/strict'
 import { lstatSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
+import { createHash } from 'node:crypto'
 import { basename, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { test } from 'node:test'
@@ -26,16 +27,28 @@ import {
   ForemanCiError,
   MAX_SHARDS,
   OUTCOMES_SCHEMA,
+  READ_GRAPH_SCHEMA,
   WAIVED_EXCLUSIONS,
   assignShards,
+  buildAnnotation,
+  buildSummary,
+  computeShardOrder,
+  costCoverageLine,
+  costTableMissing,
   discoverPackages,
   effectiveDecision,
+  evaluateWaiver,
   failingTestNames,
+  loadReadGraph,
+  orderShardPackages,
+  proximatePackages,
   reconcile,
   run,
   runCli,
   runShard,
+  sanitizeField,
   sumFailTotals,
+  validateReadGraph,
   verdict,
   waiverFor,
 } from './foreman-line-ci.mjs'
@@ -314,12 +327,15 @@ for (const check of CHECKS) {
       shardCount: 2,
       discover: () => [...NAMES],
     })
-    assert.equal(calls, 10)
+    // CFF-P1 AC5 (D8 early exit): the shard stops at this first non-waived
+    // failure; every later pair stays `skipped` (was: ran to completion, 10 calls).
+    assert.equal(calls, 4 + CHECKS.indexOf(check) + 1)
     assert.equal(result.exitCode, 1)
     const alpha = result.outcomes.find((o) => o.name === 'alpha')
     assert.equal(alpha.checks[check], 'fail')
+    for (const later of CHECKS.slice(CHECKS.indexOf(check) + 1)) assert.equal(alpha.checks[later], 'skipped')
     const delta = result.outcomes.find((o) => o.name === 'delta')
-    assert.deepEqual(delta.checks, passChecks())
+    assert.deepEqual(delta.checks, { ci: 'pass', test: 'skipped', typecheck: 'skipped', lint: 'skipped' })
   })
 }
 
@@ -347,17 +363,23 @@ for (const [label, failure] of [
         discover: () => [...NAMES],
       })
       assert.equal(result.exitCode, 1)
-      assert.equal(calls, phase === 'install' ? 4 : 10)
+      // CFF-P1 AC5 (D8 early exit): a check-phase failure stops the shard at
+      // call 5 (was 10); the retained outcomes keep their recorded values.
+      assert.equal(calls, phase === 'install' ? 4 : 5)
       const alpha = result.outcomes.find((o) => o.name === 'alpha')
       assert.equal(alpha.checks[phase === 'install' ? 'ci' : 'test'], 'fail')
       const retained = result.outcomes.find((o) => o.name === 'delta')
-      assert.equal(retained.checks.lint, phase === 'install' ? 'skipped' : 'pass')
+      assert.equal(retained.checks.ci, 'pass')
+      assert.equal(retained.checks.lint, 'skipped')
       assert.equal(JSON.stringify(result).includes('::error::'), false, 'untrusted text never reaches the outcomes')
     })
   }
 }
 
-test('multiple failures are all retained rather than overwritten by later success', () => {
+test('the first failure is retained, never overwritten: the early exit leaves every later pair skipped (CFF-P1 AC5)', () => {
+  // CFF-P1 AC5 retarget: the fixture still scripts failures at calls 5, 8, 10
+  // and successes between them; under D8 early exit the shard stops at the
+  // first (call 5), so the later scripted outcomes can never overwrite it.
   let calls = 0
   const result = runShard({
     root,
@@ -371,12 +393,14 @@ test('multiple failures are all retained rather than overwritten by later succes
     discover: () => [...NAMES],
   })
   assert.equal(result.exitCode, 1)
+  assert.equal(calls, 5)
+  assert.deepEqual(result.earlyExit, { package: 'alpha', check: 'test' })
   const alpha = result.outcomes.find((o) => o.name === 'alpha')
   assert.equal(alpha.checks.test, 'fail')
   const delta = result.outcomes.find((o) => o.name === 'delta')
-  assert.equal(delta.checks.test, 'fail')
-  assert.equal(delta.checks.lint, 'fail')
-  assert.equal(delta.checks.typecheck, 'pass')
+  assert.equal(delta.checks.test, 'skipped')
+  assert.equal(delta.checks.lint, 'skipped')
+  assert.equal(delta.checks.typecheck, 'skipped')
 })
 
 test('a shard check failure propagates to the aggregate verdict', () => {
@@ -1239,6 +1263,30 @@ test('R4: reconcile refuses an empty discovered set (empty-artifacts path includ
   assert.deepEqual(codes(verdictEmpty), ['discovery-error'])
 })
 
+// Trigger contract: feature branches use PR CI, main retains post-merge CI.
+for (const [file, manual] of [['foreman-line-ci.yml', false], ['test-plugin-install.yml', true]]) {
+  test(`${file}: main-only pushes, unfiltered PRs, preserved manual dispatch`, () => {
+    const path = fileURLToPath(new URL(`../.github/workflows/${file}`, import.meta.url))
+    const text = readFileSync(path, 'utf8')
+    const trigger = /^on:\n((?:[ \t].*\n|\n)+)/m.exec(text)?.[1]
+    assert.ok(trigger, 'workflow must declare triggers')
+    assert.deepEqual(trigger.trimEnd().split('\n'), [
+      '  push:',
+      '    branches: [main]',
+      '  pull_request:',
+      ...(manual ? ['  workflow_dispatch:'] : []),
+    ], 'do not run duplicate feature pushes, filter PR paths/branches, or drop manual dispatch')
+    if (file === 'foreman-line-ci.yml') {
+      assert.match(text, /^  test:\n    name: test$/m)
+      assert.match(text, /^  integration-report:\n    name: integration-report$/m)
+    } else {
+      for (const job of ['validate-skills', 'validate-commands', 'validate', 'test-install']) {
+        assert.match(text, new RegExp(`^  ${job}:$`, 'm'), `preserve ${job} coverage`)
+      }
+    }
+  })
+}
+
 // ─── R6: one shard-count source, wired through the workflow ────────────────
 
 test('R6 wiring: the workflow derives the matrix and both arguments from the single gate source (no second constant)', () => {
@@ -1765,10 +1813,13 @@ test('R17: the pinned cost table is measured data (golden)', () => {
     'integration': 7.8,
     'jev-decisions': 1.6,
     'kernel-contracts': 3.8,
+    'kernel-import': 18.0, // CFF-P1 AC3 re-pin (run 37768165017, windows-latest / Node 24.19.0)
     'kernel-lease': 67.0,
     'kernel-state': 8.1,
     'mutation-scope-guard': 33.9,
+    'ops-console': 6.5, // CFF-P1 AC3 re-pin
     'permission-profiles': 13.7,
+    'project-scaffold': 20.5, // CFF-P1 AC3 re-pin
     'projection': 4.8,
     'receipts': 12.4,
     'registration': 18.0,
@@ -1917,4 +1968,744 @@ test('a failing check re-emits its complete captured stdout and stderr in a fail
   assert.match(emitted, / {4}at tests\/example\.test\.ts:7:3/)
   assert.match(emitted, /stderr tail/)
   assert.deepEqual(result.failures, [{ package: 'approval', check: 'test', detail: 'exit code 1' }])
+})
+
+// ─── CFF-P1 AC1/AC2/AC8: change-proximity ordering + fail-closed pin contract ─
+
+const PX = ['alpha', 'beta', 'delta', 'gamma'] // code-point sorted; shardCount 1 -> mine === PX
+const pxDir = (name) => `plugins/foreman-line/${name}`
+
+// CFF-P0's artifact shape: `packages` = each package's full measured read set
+// (own directory included); `projections.affection_pin` = the external-only
+// subset. The fixture mirrors that: affection_pin carries only the
+// non-own-directory paths of each entry.
+function pinDoc(affection, extra = {}) {
+  const external = Object.fromEntries(Object.entries(affection).map(([n, ps]) => [n, ps.filter((p) => !p.startsWith(pxDir(n)))]))
+  return { schema: READ_GRAPH_SCHEMA, packages: affection, projections: { affection_pin: external }, named_variance_edges: [], ...extra }
+}
+
+// A pin where each package reads only its own directory: changing a file under
+// a package's directory makes exactly that package proximate.
+const SELF_PIN = pinDoc(Object.fromEntries(PX.map((n) => [n, [pxDir(n)]])))
+const changedFor = (subset) => subset.map((n) => `${pxDir(n)}/src/changed.ts`)
+
+function pxRun({ changedPaths = null, readGraph = null, spawn = () => ({ status: 0 }), waivers = [], echo = null, annotate = null, names = PX } = {}) {
+  const calls = []
+  const result = runShard({
+    root,
+    npmCli,
+    spawn: (...args) => {
+      calls.push(args)
+      return spawn(...args)
+    },
+    shardIndex: 0,
+    shardCount: 1,
+    discover: () => [...names],
+    waivers,
+    echo,
+    annotate,
+    changedPaths,
+    readGraph,
+  })
+  const checkCalls = calls.filter(([, args]) => args[1] === 'run')
+  const pairs = checkCalls.map(([, args, options]) => `${basename(options.cwd)}/${args[2]}`)
+  const order = []
+  for (const [, , options] of checkCalls) {
+    const name = basename(options.cwd)
+    if (order[order.length - 1] !== name) order.push(name)
+  }
+  return { result, calls, pairs, order }
+}
+
+const TODAY = pxRun() // no proximity inputs: today's order, the fallback reference
+
+test('AC1: proximate packages run before non-proximate; each group ascending; checks stay contiguous per package', () => {
+  const pin = pinDoc({ gamma: [pxDir('gamma')], beta: ['plugins/foreman-line/shared/x.ts'], alpha: [pxDir('alpha')], delta: [pxDir('delta')] })
+  const { order, pairs, result } = pxRun({ changedPaths: [`${pxDir('gamma')}/src/a.ts`, 'plugins/foreman-line/shared/x.ts'], readGraph: pin })
+  assert.deepEqual(order, ['beta', 'gamma', 'alpha', 'delta'])
+  assert.deepEqual(result.ordering.mode, 'proximity')
+  assert.deepEqual(result.ordering.proximate, ['beta', 'gamma'])
+  // no interleaving: every package's three checks are contiguous, in CHECKS order
+  assert.deepEqual(pairs, order.flatMap((n) => CHECKS.map((c) => `${n}/${c}`)))
+})
+
+test('AC1/AC8: for EVERY proximate subset the order is asc(subset) ++ asc(rest) and no package is dropped (partition)', () => {
+  for (let mask = 0; mask < 1 << PX.length; mask += 1) {
+    const subset = PX.filter((_, i) => (mask >> i) % 2 === 1)
+    const { order, pairs, result } = pxRun({ changedPaths: changedFor(subset), readGraph: SELF_PIN })
+    const rest = PX.filter((n) => !subset.includes(n))
+    assert.deepEqual(order, [...subset, ...rest], `mask ${mask}`)
+    // partition re-asserted post-reorder: every assigned package runs every check exactly once
+    assert.deepEqual([...pairs].sort(), PX.flatMap((n) => CHECKS.map((c) => `${n}/${c}`)).sort(), `mask ${mask}`)
+    assert.deepEqual(result.artifact.packages.map((p) => p.name), PX, 'the artifact stays in discovery order')
+    assert.equal(result.exitCode, 0)
+  }
+})
+
+test('AC1: the tie-break is ascending code-point order within each group (not discovery index, not pin order)', () => {
+  // pin lists packages in reverse; changed paths listed in reverse; the result is still ascending per group
+  const reversed = pinDoc(Object.fromEntries([...PX].reverse().map((n) => [n, [pxDir(n)]])))
+  const { order } = pxRun({ changedPaths: changedFor(['gamma', 'alpha']).reverse(), readGraph: reversed })
+  assert.deepEqual(order, ['alpha', 'gamma', 'beta', 'delta'])
+  assert.deepEqual(orderShardPackages(['a', 'b', 'c'], new Set(['c', 'a'])), ['a', 'c', 'b'])
+})
+
+// Every fail-closed row: the full spawn sequence is byte-identical to today's
+// order; the paired CONTROL (the same fixture with only the named defect
+// repaired) DOES reorder — so the equality is not vacuous (SC #11).
+const PROXIMATE_GAMMA = changedFor(['gamma'])
+for (const [label, broken, repaired, reason, changed = PROXIMATE_GAMMA] of [
+  ['missing pin file (readGraph null)', null, SELF_PIN, 'pin-unavailable'],
+  ['changed paths unavailable (D11 fail-closed null)', SELF_PIN, SELF_PIN, 'changed-paths-unavailable', null],
+  ['malformed schema id (@2)', { ...SELF_PIN, schema: 'foreman-line-ci/read-graph@2' }, SELF_PIN, 'pin-schema-mismatch'],
+  ['schema field absent ($schema only)', (() => { const d = { ...SELF_PIN, $schema: READ_GRAPH_SCHEMA }; delete d.schema; return d })(), SELF_PIN, 'pin-schema-mismatch'],
+  ['non-object pin (array)', [SELF_PIN], SELF_PIN, 'pin-malformed'],
+  ['per-package read-graph entries absent (no packages field)', { schema: READ_GRAPH_SCHEMA, projections: SELF_PIN.projections }, SELF_PIN, 'pin-malformed'],
+  ['non-object projections', { ...SELF_PIN, projections: [] }, SELF_PIN, 'pin-malformed'],
+  ['exclusion-shaped top-level field (excludes)', { ...SELF_PIN, excludes: { gamma: [] } }, SELF_PIN, 'pin-exclusion-shaped'],
+  ['exclusion-shaped projection (not_affected)', { ...SELF_PIN, projections: { ...SELF_PIN.projections, not_affected: {} } }, SELF_PIN, 'pin-exclusion-shaped'],
+  ['exclusion-shaped per-package entry (object, not a positive path list)', { ...SELF_PIN, packages: { ...SELF_PIN.packages, beta: { paths: [pxDir('beta')], excludes: ['x'] } } }, SELF_PIN, 'pin-entry-not-positive'],
+  ['non-string path inside an entry', { ...SELF_PIN, packages: { ...SELF_PIN.packages, beta: [42] } }, SELF_PIN, 'pin-entry-not-positive'],
+  ['exclusion-shaped affection_pin entry', { ...SELF_PIN, projections: { affection_pin: { beta: { excludes: [pxDir('beta')] } } } }, SELF_PIN, 'pin-entry-not-positive'],
+  // A2 item 2: edges are shape-strict — the extra `skip` key is malformed by shape (exact-key scan no longer substring-matches `skip`)
+  ['variance edge with an extra key (skip flag) is shape-strict malformed', { ...SELF_PIN, named_variance_edges: [{ package: 'beta', path: pxDir('beta'), skip: true }] }, SELF_PIN, 'pin-variance-edge-shape'],
+  ['malformed variance edge (no path)', { ...SELF_PIN, named_variance_edges: [{ package: 'beta' }] }, SELF_PIN, 'pin-variance-edge-shape'],
+  ['thrown error mid-computation (throwing accessor)', { schema: READ_GRAPH_SCHEMA, get packages() { throw new Error('boom') } }, SELF_PIN, 'proximity-error'],
+  ['thrown error mid-computation (non-string changed path)', SELF_PIN, SELF_PIN, 'proximity-error', [...PROXIMATE_GAMMA, 7]],
+]) {
+  test(`AC2/AC8 fail-closed -> byte-identical today's order: ${label}`, () => {
+    const broken_ = pxRun({ changedPaths: changed, readGraph: broken })
+    assert.deepEqual(broken_.calls, TODAY.calls, 'every spawn (installs + checks) is byte-identical to today')
+    assert.equal(broken_.result.ordering.mode, 'fallback')
+    assert.equal(broken_.result.ordering.reason, reason, 'the row exercises its own named branch')
+    assert.deepEqual(broken_.result.artifact, TODAY.result.artifact)
+    const control = pxRun({ changedPaths: PROXIMATE_GAMMA, readGraph: repaired })
+    assert.notDeepEqual(control.calls, TODAY.calls, 'control: the repaired fixture does reorder')
+    assert.deepEqual(control.order, ['gamma', 'alpha', 'beta', 'delta'])
+  })
+}
+
+test('AC1: the read-graph entry is the package\'s full measured read set — an OWN-source change makes it proximate, and external affection_pin edges add', () => {
+  // the CFF-P0 shape: packages[x] holds own-directory + external reads; affection_pin[x] holds the external subset only
+  const doc = {
+    schema: READ_GRAPH_SCHEMA,
+    // A2 item 1: every swept package is covered (an uncovered one would disable proximity for the run)
+    packages: { alpha: [pxDir('alpha')], beta: [pxDir('beta')], delta: [pxDir('delta'), `${pxDir('delta')}/src/index.ts`], gamma: [pxDir('gamma')] },
+    projections: { affection_pin: { gamma: ['plugins/foreman-line/shared/lib.ts'] } },
+  }
+  assert.deepEqual(pxRun({ changedPaths: [`${pxDir('delta')}/src/deep/file.ts`], readGraph: doc }).order, ['delta', 'alpha', 'beta', 'gamma'])
+  assert.deepEqual(pxRun({ changedPaths: ['plugins/foreman-line/shared/lib.ts'], readGraph: doc }).order, ['gamma', 'alpha', 'beta', 'delta'])
+  // projections are optional (packages alone is a complete entry); an absent affection_pin never removes a package
+  const noProjection = { schema: READ_GRAPH_SCHEMA, packages: doc.packages }
+  assert.deepEqual(pxRun({ changedPaths: [`${pxDir('delta')}/src/x.ts`], readGraph: noProjection }).order, ['delta', 'alpha', 'beta', 'gamma'])
+})
+
+test('AC2 R15: a variance-marked edge always ADDS a package to the proximate group; its absence never removes one', () => {
+  // A2 item 1: every swept package is covered; alpha's own read set never contains the env-only path
+  const base = pinDoc(Object.fromEntries(PX.map((n) => [n, [pxDir(n)]])))
+  // alpha's pinned reads do not match the changed path; only a variance edge -> proximate
+  const withEdge = { ...base, named_variance_edges: [{ package: 'alpha', path: 'plugins/foreman-line/shared/env-only.json' }] }
+  const changed = [`${pxDir('beta')}/x.ts`, 'plugins/foreman-line/shared/env-only.json']
+  assert.deepEqual(pxRun({ changedPaths: changed, readGraph: withEdge }).order, ['alpha', 'beta', 'delta', 'gamma'])
+  // remove the variance edge: alpha drops back to non-proximate, beta (ordinary edge) is unaffected
+  assert.deepEqual(pxRun({ changedPaths: changed, readGraph: base }).order, ['beta', 'alpha', 'delta', 'gamma'])
+  // a variance edge on a package that also has ordinary edges never subtracts them
+  const unrelated = { ...base, named_variance_edges: [{ package: 'beta', path: 'elsewhere/never-changed' }] }
+  assert.deepEqual(pxRun({ changedPaths: changed, readGraph: unrelated }).result.ordering.proximate, ['beta'])
+  // the pure seam: a variance edge contributes to affection by union
+  const v = validateReadGraph(withEdge)
+  assert.ok(v.ok)
+  assert.deepEqual(v.affection.get('alpha'), [pxDir('alpha'), 'plugins/foreman-line/shared/env-only.json'])
+})
+
+test('AC1: proximity is binary path containment, over-approximating on case and separators only', () => {
+  const affection = new Map([['p', ['Plugins\\Foreman-Line\\P']], ['q', ['plugins/foreman-line/q/file.ts']], ['r', ['plugins/foreman-line/rx']]])
+  assert.deepEqual([...proximatePackages(affection, ['plugins/foreman-line/p/src/a.ts'])], ['p'])
+  assert.deepEqual([...proximatePackages(affection, ['plugins/foreman-line/q/file.ts'])], ['q'])
+  // a sibling with a shared name prefix is NOT a directory prefix
+  assert.deepEqual([...proximatePackages(affection, ['plugins/foreman-line/rxy/a.ts'])], [])
+  assert.deepEqual([...proximatePackages(affection, [])], [])
+})
+
+test('AC2: the pin is read read-only, if and only if present; missing/unparseable resolve to null with a named reason', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'cff-p1-pin-'))
+  try {
+    assert.deepEqual(loadReadGraph({ root: dir }), { doc: null, reason: 'pin-missing' })
+    const pinDir = join(dir, 'plugins', 'foreman-line', 'docs', 'goals', 'ci-fail-fast', 'read-graph')
+    mkdirSync(pinDir, { recursive: true })
+    writeFileSync(join(pinDir, 'read-graph.json'), '{ not json')
+    assert.deepEqual(loadReadGraph({ root: dir }), { doc: null, reason: 'pin-unparseable' })
+    writeFileSync(join(pinDir, 'read-graph.json'), JSON.stringify(SELF_PIN))
+    const loaded = loadReadGraph({ root: dir })
+    assert.equal(loaded.reason, null)
+    assert.deepEqual(loaded.doc, SELF_PIN)
+    // read-only: the loader leaves the file byte-identical
+    assert.equal(readFileSync(join(pinDir, 'read-graph.json'), 'utf8'), JSON.stringify(SELF_PIN))
+  } finally {
+    rmSync(dir, { recursive: true, force: true })
+  }
+})
+
+test('AC1/AC2 CLI wiring: the shard CLI consumes the D11 seam + the pin and never throws on their failure', async () => {
+  for (const [label, seams, expectProximity] of [
+    ['proximity', { changedPathsFromEvent: () => ({ paths: ['plugins/foreman-line/verification/src/x.ts'], reason: null }), loadReadGraph: () => ({ doc: pinDoc(Object.fromEntries(discoverPackages({ root: fileURLToPath(new URL('../', import.meta.url)) }).map((n) => [n, [`plugins/foreman-line/${n}`]]))), reason: null }) }, true],
+    ['diff seam throws', { changedPathsFromEvent: () => { throw new Error('boom') }, loadReadGraph: () => ({ doc: SELF_PIN, reason: null }) }, false],
+    ['loader throws', { changedPathsFromEvent: () => ({ paths: [], reason: null }), loadReadGraph: () => { throw new Error('boom') } }, false],
+    ['pin missing', { changedPathsFromEvent: () => ({ paths: [], reason: null }), loadReadGraph: () => ({ doc: null, reason: 'pin-missing' }) }, false],
+  ]) {
+    const out = []
+    const calls = []
+    const code = await runCli(['shard', '0', '1', npmCli, 'out-dir'], {}, {
+      ...seams,
+      spawn: (...args) => { calls.push(args); return { status: 0 } },
+      mkdir: () => {},
+      writeFile: () => {},
+      appendFile: () => {},
+      stdout: (t) => out.push(t),
+    })
+    assert.equal(code, 0, label)
+    const line = out.find((t) => t.startsWith('shard ordering: '))
+    assert.ok(line, label)
+    assert.equal(line.startsWith('shard ordering: proximity'), expectProximity, label)
+    const firstCheck = calls.find(([, args]) => args[1] === 'run')
+    if (expectProximity) assert.equal(basename(firstCheck[2].cwd), 'verification', 'the proximate package runs first')
+  }
+})
+
+test('AC1 grep: the D7 pin is consumed in exactly one validator and never filters `mine` (no exclusion path)', () => {
+  const source = readFileSync(fileURLToPath(new URL('./foreman-line-ci.mjs', import.meta.url)), 'utf8')
+  const validator = source.slice(source.indexOf('export function validateReadGraph('), source.indexOf('function normalizeProximityPath'))
+  const outside = source.replace(validator, '')
+  assert.ok(!/\bdoc\./.test(outside) && !/\breadGraph\./.test(source) && !/\breadGraph\[/.test(source), 'the pin document\'s fields are read only inside validateReadGraph')
+  assert.ok(validator.includes('doc.packages') && validator.includes('projections.affection_pin') && validator.includes('doc.named_variance_edges'))
+  const runShardBody = source.slice(source.indexOf('export function runShard('), source.indexOf('// ─── AC3: reconciliation'))
+  assert.ok(runShardBody.includes('for (const name of ordering.order)'), 'phase 2 iterates the ordering')
+  assert.ok(runShardBody.includes('packages.filter((p) => mine.includes(p.name))'), 'the artifact still carries every assigned package')
+  assert.ok(!/mine\s*=\s*mine\./.test(source) && !/mine\.splice\(/.test(source), 'no code path reassigns or splices mine')
+  // the runner computes no diff of its own (D11): no git invocation anywhere in it
+  assert.ok(!source.includes("'diff'") && !source.includes('"git"') && !source.includes("'git'"))
+})
+
+// ─── CFF-P1 AC5/AC8: D8 early-red signal (shard-early-exit + annotations) ───
+
+const pairFail = (pkgName, check, stdout = 'RAW-OUTPUT-SENTINEL ::error::forged-from-output\n\u2716 boom (1.0ms)\n\u2139 fail 1') =>
+  (cmd, args, options) => (args[1] === 'run' && basename(options.cwd) === pkgName && args[2] === check ? { status: 1, stdout } : { status: 0 })
+
+test('AC5(a): the phase-2 loop stops at the first non-waived failure; unreached pairs keep skipped; exit stays non-zero', () => {
+  const allPairs = PX.flatMap((n) => CHECKS.map((c) => `${n}/${c}`))
+  for (const [i, pair] of allPairs.entries()) {
+    const [name, check] = pair.split('/')
+    const { result, pairs } = pxRun({ spawn: pairFail(name, check) })
+    assert.deepEqual(pairs, allPairs.slice(0, i + 1), `stops exactly at ${pair}`)
+    assert.deepEqual(result.earlyExit, { package: name, check })
+    assert.equal(result.exitCode, 1, 'early exit never yields a green exit')
+    for (const later of allPairs.slice(i + 1)) {
+      const [n, c] = later.split('/')
+      assert.equal(result.outcomes.find((o) => o.name === n).checks[c], 'skipped', `${later} unreached -> skipped (never pass)`)
+    }
+    // the artifact is still built from records, every assigned package present
+    assert.deepEqual(result.artifact.packages.map((p) => p.name), PX)
+  }
+})
+
+test('AC5(a): the early exit follows the proximity order (the first red in ORDER stops the shard)', () => {
+  const { pairs, result } = pxRun({ changedPaths: changedFor(['gamma']), readGraph: SELF_PIN, spawn: pairFail('gamma', 'typecheck') })
+  assert.deepEqual(pairs, ['gamma/test', 'gamma/typecheck'])
+  assert.deepEqual(result.earlyExit, { package: 'gamma', check: 'typecheck' })
+  assert.equal(result.outcomes.find((o) => o.name === 'alpha').checks.test, 'skipped')
+})
+
+test('AC5(a): a WAIVED failure never stops the loop (only non-waived failures early-exit)', () => {
+  const waivedPin = { ...PINNED, identity: 'beta', location: 'plugins/foreman-line/beta/' }
+  const spawn = (cmd, args, options) =>
+    args[1] === 'run' && basename(options.cwd) === 'beta' && args[2] === 'test'
+      ? { status: 1, stdout: pinnedOutput(PINNED.checks.test) }
+      : { status: 0 }
+  const { pairs, result } = pxRun({ spawn, waivers: [waivedPin] })
+  assert.equal(pairs.length, PX.length * CHECKS.length, 'every pair still runs')
+  assert.equal(result.earlyExit, null)
+  assert.equal(result.outcomes.find((o) => o.name === 'beta').checks.test, 'waived')
+  assert.equal(result.exitCode, 0)
+})
+
+test('AC5/AC8: reconcile fails the partial artifact via its EXISTING codes (shard-fail + unexpected-skip); the verdict is unchanged', () => {
+  const { result } = pxRun({ spawn: pairFail('beta', 'typecheck') })
+  const r = reconcile({ root, shardCount: 1, artifacts: [result.artifact], discover: () => [...PX] })
+  assert.equal(r.ok, false)
+  const codes = new Set(r.failures.map((f) => f.code))
+  assert.deepEqual([...codes].sort(), ['shard-fail', 'unexpected-skip'])
+  const skips = r.failures.filter((f) => f.code === 'unexpected-skip').map((f) => f.detail).sort()
+  assert.deepEqual(skips, ['beta/lint', 'delta/lint', 'delta/test', 'delta/typecheck', 'gamma/lint', 'gamma/test', 'gamma/typecheck'])
+  assert.deepEqual(verdict({ gateResult: 'success', decision: 'fallback', reconcileResult: r }), { ok: false, code: 'aggregate-failed' })
+  // mutate the fixture: the SAME artifact with the skipped tail forged to pass
+  // and the red removed reconciles green — the skips + fail are what fail it
+  const forged = structuredClone(result.artifact)
+  for (const p of forged.packages) for (const c of CHECKS) p.checks[c] = 'pass'
+  assert.equal(reconcile({ root, shardCount: 1, artifacts: [forged], discover: () => [...PX] }).ok, true)
+  // and with the red kept but the tail forged to pass, only shard-fail remains (no leniency for the skipped tail either way)
+  const tailOnly = structuredClone(result.artifact)
+  for (const p of tailOnly.packages) for (const c of CHECKS) if (p.checks[c] === 'skipped') p.checks[c] = 'pass'
+  assert.deepEqual([...new Set(reconcile({ root, shardCount: 1, artifacts: [tailOnly], discover: () => [...PX] }).failures.map((f) => f.code))], ['shard-fail'])
+})
+
+test('AC5(b): one ::error per fail, one ::warning per waived, none on pass; fixed-shape fields only', () => {
+  const lines = []
+  const waivedPin = { ...PINNED, identity: 'alpha', location: 'plugins/foreman-line/alpha/' }
+  const spawn = (cmd, args, options) => {
+    const n = basename(options.cwd)
+    if (args[1] === 'run' && n === 'alpha' && args[2] === 'test') return { status: 1, stdout: `RAW-OUTPUT-SENTINEL\n${pinnedOutput(PINNED.checks.test)}` }
+    if (args[1] === 'run' && n === 'delta' && args[2] === 'lint') return { status: 1, stdout: 'RAW-OUTPUT-SENTINEL ::error file=x::forged\n' }
+    return { status: 0 }
+  }
+  const { result } = pxRun({ spawn, waivers: [waivedPin], annotate: (line) => lines.push(line) })
+  assert.equal(result.outcomes.find((o) => o.name === 'alpha').checks.test, 'waived')
+  assert.equal(result.outcomes.find((o) => o.name === 'delta').checks.lint, 'fail')
+  assert.deepEqual(lines, [
+    buildAnnotation('warning', 'alpha', 'test'),
+    buildAnnotation('error', 'delta', 'lint', 'no-pin'),
+  ])
+  assert.ok(lines[0].startsWith('::warning file=alpha,title=test::'))
+  assert.ok(lines[1].startsWith('::error file=delta,title=lint::'))
+  assert.ok(lines[1].includes('waiver layer: no-pin'))
+  for (const line of lines) assert.ok(!line.includes('RAW-OUTPUT-SENTINEL') && !line.includes('forged'), 'raw captured output never enters an annotation')
+  // an all-pass run emits no annotation at all
+  const quiet = []
+  pxRun({ annotate: (line) => quiet.push(line) })
+  assert.deepEqual(quiet, [])
+})
+
+test('AC5(b)/SC31: hostile package/check/layer text cannot forge a command, smuggle a property, or carry bidi/control chars', () => {
+  const hostile = [
+    'evil::error file=x::forged',
+    'evil\n::error::forged-on-a-new-line',
+    'evil\r\n::warning::x',
+    'evil,title=smuggled',
+    'evil%0A::error::percent-encoded-newline',
+    'evil\u202Ereversed\u2066',
+    'evil\u0007\u001b[31mred',
+  ]
+  for (const bad of hostile) {
+    for (const [level, name, check, layer] of [
+      ['error', bad, 'test', 'no-pin'],
+      ['error', 'pkg', bad, 'no-pin'],
+      ['error', 'pkg', 'test', bad],
+      ['warning', bad, bad, null],
+    ]) {
+      const line = buildAnnotation(level, name, check, layer)
+      assert.ok(!/[\u0000-\u001f\u007f]/.test(line), 'single line, no control chars')
+      assert.ok(!/[\u202a-\u202e\u2066-\u2069]/.test(line), 'no bidi overrides')
+      assert.equal(line.split('::').length - 1, 2, 'exactly the two literal command delimiters')
+      assert.ok(line.startsWith(`::${level} file=`))
+      const props = line.slice(`::${level} `.length, line.indexOf('::', 2)).split(',')
+      assert.equal(props.length, 2, 'exactly file= and title= (no smuggled property)')
+      assert.ok(props[0].startsWith('file=') && props[1].startsWith('title='))
+      assert.ok(!line.includes('%0A::') || line.includes('%250A'), 'a pre-encoded newline is re-escaped, never decoded')
+    }
+  }
+  // hostile DISCOVERED names flow through runShard's annotation path the same way
+  const lines = []
+  pxRun({ names: ['a::error::x', 'b\nnext'], spawn: pairFail('a::error::x', 'test'), annotate: (l) => lines.push(l) })
+  assert.equal(lines.length, 1)
+  assert.equal(lines[0].split('::').length - 1, 2)
+})
+
+test('AC5(a)/(b) CLI: the partial artifact is written BEFORE the non-zero return; annotations reach stdout', async () => {
+  const events = []
+  const code = await runCli(['shard', '0', '1', npmCli, 'out-dir'], {}, {
+    changedPathsFromEvent: () => ({ paths: null, reason: 'event-path-absent' }),
+    loadReadGraph: () => ({ doc: null, reason: 'pin-missing' }),
+    spawn: (cmd, args, options) => (args[1] === 'run' && args[2] === 'test' && basename(options.cwd) === 'approval' ? { status: 1, stdout: 'x' } : { status: 0 }),
+    mkdir: () => {},
+    writeFile: (path, text) => events.push(['write', path, JSON.parse(text)]),
+    appendFile: () => {},
+    stdout: (t) => events.push(['stdout', t]),
+  })
+  assert.equal(code, 1)
+  const write = events.find(([k]) => k === 'write')
+  assert.ok(write, 'the artifact was written')
+  assert.equal(write[2].packages.find((p) => p.name === 'approval').checks.test, 'fail')
+  assert.ok(write[2].packages.some((p) => p.checks.test === 'skipped'), 'the unreached tail is recorded skipped')
+  const out = events.filter(([k]) => k === 'stdout').map(([, t]) => t).join('')
+  assert.ok(out.includes('::error file=approval,title=test::'))
+  assert.ok(out.includes('shard early exit at approval/test'))
+  assert.ok(out.includes('shard ordering: ascending-name fallback (changed-paths-unavailable; diff: event-path-absent; pin: pin-missing)'))
+})
+
+test('AC5 prohibitions: the workflow keeps no cancellation, no new needs/scheduling, no checks/statuses write (structural, not a byte pin)', () => {
+  const wf = readFileSync(fileURLToPath(new URL('../.github/workflows/foreman-line-ci.yml', import.meta.url)), 'utf8')
+  assert.ok(!wf.includes('cancel-in-progress'), 'no sibling cancellation')
+  assert.ok(!/checks:\s*write/.test(wf) && !/statuses:\s*write/.test(wf), 'no Checks API / status emitter permission')
+  assert.ok(/fail-fast:\s*false/.test(wf), 'a red shard never cancels its siblings')
+  assert.ok(wf.includes('needs: [gate, sweep]') && wf.includes("if: ${{ !cancelled() }}"), 'the required test context still waits for every shard')
+  const src = readFileSync(fileURLToPath(new URL('./foreman-line-ci.mjs', import.meta.url)), 'utf8')
+  assert.ok(!src.includes('/check-runs') && !src.includes('/statuses/'), 'no Checks API call in the runner')
+})
+
+// ─── CFF-P1 AC3/AC8: D10(c) cost-table coverage loudness ───────────────────
+
+test('AC3 loudness: the artifact names every discovered package absent from the cost table, and [] when all are priced', () => {
+  const partial = { alpha: 1, beta: 2, delta: 3 } // gamma unpriced
+  const pre = pxRun().result // default COST_TABLE prices none of the fixture names
+  assert.deepEqual(pre.artifact.cost_table_missing, PX)
+  const missingOne = runShard({ root, npmCli, spawn: () => ({ status: 0 }), shardIndex: 0, shardCount: 2, discover: () => [...PX], costTable: partial })
+  assert.deepEqual(missingOne.artifact.cost_table_missing, ['gamma'])
+  const full = runShard({ root, npmCli, spawn: () => ({ status: 0 }), shardIndex: 0, shardCount: 2, discover: () => [...PX], costTable: { ...partial, gamma: 4 } })
+  assert.deepEqual(full.artifact.cost_table_missing, [])
+  // additive: every pre-existing field is unchanged and reconcile still accepts the artifact
+  assert.deepEqual(Object.keys(full.artifact), ['schema', 'shard_index', 'shard_count', 'head_sha', 'packages', 'cost_table_missing'])
+  assert.deepEqual(costTableMissing(['b', 'a', 'c'], { c: 1 }), ['a', 'b'])
+  assert.deepEqual(costTableMissing(['a'], null), ['a'])
+})
+
+test('AC3 loudness: the step summary carries the coverage line in both states (never silent)', () => {
+  const pre = buildSummary([{ packages: [], cost_table_missing: ['kernel-import', 'ops-console', 'project-scaffold'] }, { packages: [], cost_table_missing: ['ops-console'] }])
+  assert.ok(pre.includes('Cost-table coverage: 3 discovered package(s) missing from COST_TABLE (cost_table_missing: ["kernel-import","ops-console","project-scaffold"]) - round-robin shard assignment fallback in effect.'))
+  const post = buildSummary([{ packages: [], cost_table_missing: [] }])
+  assert.ok(post.includes('cost_table_missing: []'))
+  assert.ok(post.includes('cost-aware shard assignment in effect'))
+  // artifacts without the field (pre-CFF-P1 shape) are named as unreported, not read as covered
+  assert.equal(costCoverageLine([{ packages: [] }]), 'Cost-table coverage: not reported by these shard artifacts.')
+  // hostile names in the field are sanitized before reaching the summary
+  assert.ok(!costCoverageLine([{ cost_table_missing: ['x\n::error::y'] }]).includes('\n'))
+})
+
+test('AC3: costKnown is all-or-nothing — one unpriced name flips assignment to round-robin; pricing it flips back to cost-aware', () => {
+  const names = ['a', 'b', 'c', 'd', 'e']
+  const priced = { a: 100, b: 1, c: 1, d: 1, e: 1 }
+  const roundRobin = [['a', 'c', 'e'], ['b', 'd']]
+  assert.deepEqual(assignShards(names, 2, { a: 100, b: 1, c: 1, d: 1 }), roundRobin, 'e unpriced -> round-robin')
+  assert.deepEqual(assignShards(names, 2, priced), [['a'], ['b', 'c', 'd', 'e']], 'all priced -> cost-aware')
+})
+
+test('AC3 re-pin: the table prices the three post-CI-P2 packages, 30 entries, and the 27 prior entries are untouched', () => {
+  assert.equal(Object.keys(COST_TABLE).length, 30)
+  for (const name of ['kernel-import', 'ops-console', 'project-scaffold']) assert.ok(Number.isFinite(COST_TABLE[name]) && COST_TABLE[name] > 0, name)
+  // with all 30 priced, assignment over the table's names is cost-aware, not round-robin
+  const names = Object.keys(COST_TABLE).sort()
+  const roundRobin = Array.from({ length: 4 }, (_, s) => names.filter((_, i) => i % 4 === s))
+  assert.notDeepEqual(assignShards(names, 4), roundRobin, 'costKnown flipped: the live mechanism is cost-aware')
+  // and dropping any one of the three re-pinned entries flips it back (all-or-nothing gate)
+  for (const name of ['kernel-import', 'ops-console', 'project-scaffold']) {
+    const without = { ...COST_TABLE }
+    delete without[name]
+    assert.deepEqual(assignShards(names, 4, without), roundRobin, `without ${name}`)
+  }
+})
+
+// ─── CFF-P1 AC7: D3 conformance (cff-p0-waiver-input-contract.md §3) ───────
+//
+// One fixture, run under three PROXIMITY-INDUCED orders that all end with
+// delta (so the rejected pair, delta/lint, is the last pair in every order and
+// every pair runs). Every passing pair's output carries its own identity and a
+// would-be intruder failure line, so ANY cross-pair leak into a waived or
+// rejected pair's captured output changes its waiver verdict and its hash.
+
+const D3_ORDERS = [
+  { proximate: ['gamma'], order: ['gamma', 'alpha', 'beta', 'delta'] },
+  { proximate: ['beta', 'gamma'], order: ['beta', 'gamma', 'alpha', 'delta'] },
+  { proximate: ['alpha', 'gamma'], order: ['alpha', 'gamma', 'beta', 'delta'] },
+]
+const D3_DELTA_PIN = {
+  identity: 'delta',
+  location: 'plugins/foreman-line/delta/',
+  checks: { lint: { markers: ['DELTA-LINT-MARKER'], counts: {}, failTotal: [1, 2], failingSet: ['delta lint failure'], flaky: [] } },
+}
+const D3_WAIVERS = [PINNED, D3_DELTA_PIN]
+function d3Streams(name, check) {
+  if (name === 'alpha' && check === 'test') return { stdout: pinnedOutput(PINNED.checks.test), stderr: '\nERR<alpha/test>\n', status: 1 }
+  // rejected: the marker is present but an intruder failure appears (set-subset)
+  if (name === 'delta' && check === 'lint') return { stdout: 'DELTA-LINT-MARKER\n\u2716 delta lint failure (1.0ms)\n\u2716 delta intruder (1.0ms)\n\u2139 fail 2', stderr: '\nERR<delta/lint>\n', status: 1 }
+  return { stdout: `OUT<${name}/${check}>\n\u2716 leaked from ${name}/${check} (1.0ms)\n`, stderr: `ERR<${name}/${check}>\n`, status: 0 }
+}
+const d3Output = (name, check) => { const s = d3Streams(name, check); return `${s.stdout}${s.stderr}` }
+
+function d3Run({ proximate, spawn = null }) {
+  const echoed = []
+  let inFlight = 0
+  let maxInFlight = 0
+  const run_ = pxRun({
+    changedPaths: changedFor(proximate),
+    readGraph: SELF_PIN,
+    waivers: D3_WAIVERS,
+    echo: (name, check, text) => echoed.push({ name, check, text }),
+    spawn: spawn ?? ((cmd, args, options) => {
+      inFlight += 1
+      maxInFlight = Math.max(maxInFlight, inFlight)
+      try {
+        if (args[1] !== 'run') return { status: 0 }
+        const { stdout, stderr, status } = d3Streams(basename(options.cwd), args[2])
+        return { status, stdout, stderr }
+      } finally {
+        inFlight -= 1
+      }
+    }),
+  })
+  return { ...run_, echoed, maxInFlight }
+}
+const sha = (text) => createHash('sha256').update(text).digest('hex')
+const D3_RUNS = D3_ORDERS.map((o) => ({ ...o, run: d3Run(o) }))
+
+test('AC7 fixture sanity: the three orders are distinct proximity-induced orders and every pair runs in each', () => {
+  for (const { order, run: r } of D3_RUNS) {
+    assert.deepEqual(r.order, order)
+    assert.equal(r.result.ordering.mode, 'proximity')
+    assert.equal(r.pairs.length, PX.length * CHECKS.length)
+    assert.equal(r.result.outcomes.find((o) => o.name === 'alpha').checks.test, 'waived')
+    assert.equal(r.result.outcomes.find((o) => o.name === 'delta').checks.lint, 'fail')
+  }
+  assert.equal(new Set(D3_RUNS.map((r) => r.run.order.join())).size, 3)
+})
+
+test('AC7 D3.1 per-package capture unchanged: identical per-pair captured output and waiver results in every order', () => {
+  const [first, ...rest] = D3_RUNS.map((r) => r.run)
+  for (const other of rest) {
+    assert.deepEqual(other.result.artifact, first.result.artifact, 'artifacts (waivers + rejections + statuses) are order-invariant')
+    const key = (e) => `${e.name}/${e.check}`
+    assert.deepEqual(
+      Object.fromEntries(other.echoed.map((e) => [key(e), e.text])),
+      Object.fromEntries(first.echoed.map((e) => [key(e), e.text])),
+    )
+  }
+  for (const { run: r } of D3_RUNS) {
+    // each failing pair's captured output is exactly its OWN streams — no other pair's identity leaks in
+    for (const e of r.echoed) {
+      const [name, check] = [e.name, e.check.split(' ')[0]]
+      assert.equal(e.text, d3Output(name, check))
+      for (const n of PX) for (const c of CHECKS) if (`${n}/${c}` !== `${name}/${check}`) assert.ok(!e.text.includes(`<${n}/${c}>`))
+    }
+  }
+})
+
+test('AC7 D3.2 same stream concatenation: output is stdout then stderr of exactly one pair', () => {
+  for (const { run: r } of D3_RUNS) {
+    const alpha = r.result.outcomes.find((o) => o.name === 'alpha')
+    const { stdout, stderr } = d3Streams('alpha', 'test')
+    assert.equal(alpha.waivers[0].output_sha256, sha(`${stdout}${stderr}`))
+    assert.notEqual(alpha.waivers[0].output_sha256, sha(`${stderr}${stdout}`), 'order of streams is part of the contract')
+    const rejected = r.echoed.find((e) => e.name === 'delta' && e.check.startsWith('lint'))
+    assert.equal(rejected.text, d3Output('delta', 'lint'))
+  }
+})
+
+test('AC7 D3.3 same granularity: one invoke and at most one waiver evaluation per (package, check) pair', () => {
+  for (const { run: r } of D3_RUNS) {
+    const counts = new Map()
+    for (const p of r.pairs) counts.set(p, (counts.get(p) ?? 0) + 1)
+    assert.ok([...counts.values()].every((n) => n === 1), 'each pair is invoked exactly once')
+    for (const [, args] of r.calls.filter(([, a]) => a[1] === 'run')) {
+      assert.deepEqual(args.slice(1), ['run', args[2], '--ignore-scripts'])
+      assert.ok(CHECKS.includes(args[2]), 'one check per invocation, never a batch')
+    }
+    // the only evaluated pairs are the two failing ones, once each
+    assert.deepEqual(r.echoed.map((e) => `${e.name}/${e.check.split(' ')[0]}`).sort(), ['alpha/test', 'delta/lint'])
+    const alpha = r.result.outcomes.find((o) => o.name === 'alpha')
+    assert.deepEqual(alpha.waivers.map((w) => w.check), ['test'])
+  }
+})
+
+test('AC7 D3.4 same waiver parsing: waived and rejected verdicts equal the unmodified nine-layer evaluateWaiver in every order', () => {
+  const directWaived = evaluateWaiver('alpha', 'plugins/foreman-line/alpha/', 'test', d3Output('alpha', 'test'), 'exit', D3_WAIVERS)
+  const directRejected = evaluateWaiver('delta', 'plugins/foreman-line/delta/', 'lint', d3Output('delta', 'lint'), 'exit', D3_WAIVERS)
+  assert.equal(directWaived.layer, null)
+  assert.equal(directRejected.layer, 'set-subset')
+  assert.deepEqual(directRejected.evidence.observed, { intruders: ['delta intruder'] })
+  assert.equal(sumFailTotals(d3Output('alpha', 'test')), 3)
+  assert.deepEqual(failingTestNames(d3Output('alpha', 'test')), ['failing one', 'failing two', 'flaky member'])
+  for (const { run: r } of D3_RUNS) {
+    const alpha = r.result.outcomes.find((o) => o.name === 'alpha')
+    const { output_sha256: _hash, ...record } = alpha.waivers[0]
+    assert.deepEqual(record, directWaived.record)
+    const delta = r.result.outcomes.find((o) => o.name === 'delta')
+    assert.deepEqual(delta.waiver_rejected.lint, {
+      layer: directRejected.layer,
+      observed: directRejected.evidence.observed,
+      expected: directRejected.evidence.expected,
+      names: directRejected.evidence.names,
+    })
+  }
+})
+
+test('AC7 D3.5 output_sha256 is a per-run audit hash, never pinned and never read by ordering code', () => {
+  for (const { run: r } of D3_RUNS) {
+    assert.match(r.result.outcomes.find((o) => o.name === 'alpha').waivers[0].output_sha256, /^[0-9a-f]{64}$/)
+  }
+  // a different run's bytes (stderr noise) change the hash but not the waiver: the hash pins nothing
+  const noisy = d3Run({ proximate: ['gamma'], spawn: (cmd, args, options) => {
+    if (args[1] !== 'run') return { status: 0 }
+    const st = d3Streams(basename(options.cwd), args[2])
+    return { ...st, stderr: `${st.stderr}per-run noise\n` }
+  } })
+  const noisyAlpha = noisy.result.outcomes.find((o) => o.name === 'alpha')
+  assert.equal(noisyAlpha.checks.test, 'waived')
+  assert.notEqual(noisyAlpha.waivers[0].output_sha256, D3_RUNS[0].run.result.outcomes.find((o) => o.name === 'alpha').waivers[0].output_sha256)
+  assert.ok(!JSON.stringify(D3_WAIVERS).includes('sha256'), 'no waiver pin carries a hash')
+  // grep: the ordering code never reads output_sha256 or captured output, and the order is fixed before any check runs
+  const source = readFileSync(fileURLToPath(new URL('./foreman-line-ci.mjs', import.meta.url)), 'utf8')
+  const orderingCode = source.slice(source.indexOf('// ─── CFF-P1 AC1/AC2'), source.indexOf('// ─── CFF-P1 AC5'))
+  assert.ok(orderingCode.length > 0)
+  assert.ok(!orderingCode.includes('output_sha256') && !orderingCode.includes('.output'))
+  const runShardBody = source.slice(source.indexOf('export function runShard('), source.indexOf('// ─── AC3: reconciliation'))
+  assert.ok(runShardBody.indexOf('computeShardOrder(') < runShardBody.indexOf("invoke(name, ['run', check"), 'order fixed before the first check')
+})
+
+test('AC7 D3.6 no interleaving: invocations are strictly sequential; a would-be concurrent (async) spawn is never awaited and fails closed', () => {
+  for (const { run: r } of D3_RUNS) {
+    assert.equal(r.maxInFlight, 1, 'never two invocations in flight')
+    // each package's checks are contiguous (no package-level interleaving)
+    assert.deepEqual(r.pairs, r.order.flatMap((n) => CHECKS.map((c) => `${n}/${c}`)))
+  }
+  // hostile: a spawn that tries to go async (returns a Promise) to overlap with the next package
+  let late = null
+  const hostile = d3Run({ proximate: ['gamma'], spawn: (cmd, args) => {
+    if (args[1] !== 'run') return { status: 0 }
+    late = new Promise((resolve) => setImmediate(() => resolve({ status: 0, stdout: 'LATE-OUTPUT' })))
+    return late
+  } })
+  assert.equal(hostile.pairs.length, 1, 'the first non-sync result is treated as an error and the shard stops (no overlap)')
+  assert.equal(hostile.result.outcomes.find((o) => o.name === 'gamma').checks.test, 'fail')
+  assert.equal(hostile.result.outcomes.find((o) => o.name === 'gamma').waiver_rejected.test.layer, 'kind-gate')
+  return late.then(() => {
+    assert.ok(!JSON.stringify(hostile.result).includes('LATE-OUTPUT'), 'late output never reaches any record')
+  })
+})
+
+// ─── CFF-P1 rework r2: Amendment CFF-P1-A2 items 1-3 + Review B finding B-5 ─
+
+const withoutPackage = (doc, name) => {
+  const packages = { ...doc.packages }
+  delete packages[name]
+  const affection_pin = { ...doc.projections.affection_pin }
+  delete affection_pin[name]
+  return { ...doc, packages, projections: { ...doc.projections, affection_pin } }
+}
+
+test('CFF-P1-A2.1: an uncovered swept package disables proximity for the whole run (pin-uncovered-package:<name>, distinct from pin-missing)', () => {
+  // covered-pin control: SELF_PIN covers every swept package and DOES reorder
+  const covered = pxRun({ changedPaths: PROXIMATE_GAMMA, readGraph: SELF_PIN })
+  assert.equal(covered.result.ordering.mode, 'proximity')
+  assert.deepEqual(covered.order, ['gamma', 'alpha', 'beta', 'delta'])
+  for (const name of PX) {
+    const uncovered = pxRun({ changedPaths: PROXIMATE_GAMMA, readGraph: withoutPackage(SELF_PIN, name) })
+    assert.deepEqual(uncovered.calls, TODAY.calls, `${name} uncovered: every spawn is byte-identical to today's order`)
+    assert.deepEqual(uncovered.result.artifact, TODAY.result.artifact)
+    assert.equal(uncovered.result.ordering.mode, 'fallback')
+    assert.equal(uncovered.result.ordering.reason, `pin-uncovered-package:${name}`)
+    assert.notEqual(uncovered.result.ordering.reason, 'pin-missing')
+    assert.notEqual(uncovered.result.ordering.reason, 'pin-unavailable')
+    // mutate the fixture back: restoring ONLY the packages entry restores proximity (the test binds the entry)
+    const restored = withoutPackage(SELF_PIN, name)
+    restored.packages = { ...restored.packages, [name]: [pxDir(name)] }
+    assert.deepEqual(pxRun({ changedPaths: PROXIMATE_GAMMA, readGraph: restored }).order, ['gamma', 'alpha', 'beta', 'delta'])
+  }
+  // an affection_pin-only or variance-edge-only name is still uncovered: only an own `packages` entry covers
+  const pinOnly = withoutPackage(SELF_PIN, 'beta')
+  pinOnly.projections.affection_pin.beta = ['plugins/foreman-line/shared/x.ts']
+  pinOnly.named_variance_edges = [{ package: 'beta', path: 'plugins/foreman-line/shared/y.ts' }]
+  assert.equal(computeShardOrder({ mine: PX, changedPaths: PROXIMATE_GAMMA, readGraph: pinOnly }).reason, 'pin-uncovered-package:beta')
+  // the first uncovered name in ascending order is named; packages outside the shard's execution set never trigger
+  const twoMissing = withoutPackage(withoutPackage(SELF_PIN, 'delta'), 'beta')
+  assert.equal(computeShardOrder({ mine: PX, changedPaths: PROXIMATE_GAMMA, readGraph: twoMissing }).reason, 'pin-uncovered-package:beta')
+  const inShard = computeShardOrder({ mine: ['alpha', 'gamma'], changedPaths: PROXIMATE_GAMMA, readGraph: twoMissing })
+  assert.equal(inShard.mode, 'proximity')
+  assert.deepEqual(inShard.order, ['gamma', 'alpha'])
+})
+
+test('CFF-P1-A2.2: the exclusion scan is recursive and exact-key over the whole pin; Review B accepted-today cases now fail closed; variance edges are shape-strict', () => {
+  for (const [label, doc, reason] of [
+    ['nested projections.reader_set_delta.excludes', { ...SELF_PIN, projections: { ...SELF_PIN.projections, reader_set_delta: { excludes: ['x'] } } }, 'pin-exclusion-shaped'],
+    ['nested environments[0].excludes (inside an array)', { ...SELF_PIN, environments: [{ name: 'windows', excludes: ['gamma'] }] }, 'pin-exclusion-shaped'],
+    ['top-level exempt', { ...SELF_PIN, exempt: ['gamma'] }, 'pin-exclusion-shaped'],
+    ['top-level Ignore (case-insensitive)', { ...SELF_PIN, Ignore: true }, 'pin-exclusion-shaped'],
+    ['deep notAffected', { ...SELF_PIN, criticality_grading: { levels: [{ id: 1, notAffected: ['gamma'] }] } }, 'pin-exclusion-shaped'],
+    ['deep not-affected', { ...SELF_PIN, meta: { a: { b: { 'not-affected': [] } } } }, 'pin-exclusion-shaped'],
+    ['affection_pin key not_affected', { ...SELF_PIN, projections: { affection_pin: { ...SELF_PIN.projections.affection_pin, not_affected: [] } } }, 'pin-exclusion-shaped'],
+    ['packages key named excluded', { ...SELF_PIN, packages: { ...SELF_PIN.packages, excluded: [] } }, 'pin-exclusion-shaped'],
+    ['variance edge {package,path,affects:false}', { ...SELF_PIN, named_variance_edges: [{ package: 'beta', path: pxDir('beta'), affects: false }] }, 'pin-variance-edge-shape'],
+    ['variance edge {package,path,env} (extra key)', { ...SELF_PIN, named_variance_edges: [{ package: 'beta', path: pxDir('beta'), env: 'windows' }] }, 'pin-variance-edge-shape'],
+    ['variance edge with non-string path', { ...SELF_PIN, named_variance_edges: [{ package: 'beta', path: ['x'] }] }, 'pin-variance-edge-shape'],
+  ]) {
+    const broken = pxRun({ changedPaths: PROXIMATE_GAMMA, readGraph: doc })
+    assert.deepEqual(broken.calls, TODAY.calls, `${label}: byte-identical to today's order`)
+    assert.equal(broken.result.ordering.mode, 'fallback', label)
+    assert.equal(broken.result.ordering.reason, reason, label)
+  }
+  // control: a strict {package, path} edge is accepted and ADDS
+  const strict = { ...SELF_PIN, named_variance_edges: [{ package: 'beta', path: 'plugins/foreman-line/shared/env.json' }] }
+  assert.deepEqual(pxRun({ changedPaths: ['plugins/foreman-line/shared/env.json'], readGraph: strict }).order, ['beta', 'alpha', 'delta', 'gamma'])
+  // a hostile deeply nested pin never overflows the stack: the scan is iterative (still a clean exclusion hit)
+  let deep = { excludes: [] }
+  for (let i = 0; i < 20000; i += 1) deep = { next: deep }
+  assert.equal(validateReadGraph({ ...SELF_PIN, deep }).reason, 'pin-exclusion-shaped')
+})
+
+test('CFF-P1-A2.2 false-positive guard: legitimate keys (platform_skips and similar) never trip the exact-key scan', () => {
+  const benign = {
+    ...SELF_PIN,
+    platform_skips: { windows: ['x'] },
+    negative_controls: [{ skip: true, omit: false }],
+    projections: { ...SELF_PIN.projections, excluded_packages_note: 'n/a', reader_set_delta: { ignore_case: true, newly_discovered_ordinary_reads: [] } },
+    criticality_grading: { exemptions_note: 'none', values: ['excludes', 'ignore'] }, // exclusion words as VALUES, never keys
+  }
+  const v = validateReadGraph(benign)
+  assert.equal(v.ok, true)
+  const run_ = pxRun({ changedPaths: PROXIMATE_GAMMA, readGraph: benign })
+  assert.equal(run_.result.ordering.mode, 'proximity')
+  assert.deepEqual(run_.order, ['gamma', 'alpha', 'beta', 'delta'])
+})
+
+test('CFF-P1-A2.3: a throwing echo/annotate sink is caught and recorded; the loop continues; the artifact is built and the exit stays non-zero', () => {
+  const waivedPin = { ...PINNED, identity: 'alpha', location: 'plugins/foreman-line/alpha/' }
+  const spawn = (cmd, args, options) => {
+    const n = basename(options.cwd)
+    if (args[1] === 'run' && n === 'alpha' && args[2] === 'test') return { status: 1, stdout: pinnedOutput(PINNED.checks.test) }
+    if (args[1] === 'run' && n === 'delta' && args[2] === 'lint') return { status: 1, stdout: 'boom\n' }
+    return { status: 0 }
+  }
+  const quiet = pxRun({ spawn, waivers: [waivedPin], echo: () => {}, annotate: () => {} })
+  const broken = pxRun({ spawn, waivers: [waivedPin], echo: () => { throw new Error('EPIPE') }, annotate: () => { throw new Error('EPIPE') } })
+  assert.deepEqual(broken.pairs, quiet.pairs, 'the throwing waived-path emit never stops the loop')
+  assert.equal(broken.pairs.at(-1), 'delta/lint')
+  assert.deepEqual(broken.result.earlyExit, { package: 'delta', check: 'lint' })
+  assert.equal(broken.result.exitCode, 1)
+  assert.deepEqual(broken.result.artifact, quiet.result.artifact, 'the partial artifact is never lost to an emission failure')
+  assert.deepEqual(broken.result.emitFailures.map((f) => `${f.channel}:${f.package}`), ['echo:alpha', 'annotate:alpha', 'echo:delta', 'annotate:delta'])
+  assert.deepEqual(quiet.result.emitFailures, [])
+  assert.ok(!JSON.stringify(broken.result.emitFailures).includes('EPIPE'), 'no error text is recorded')
+})
+
+test('CFF-P1-A2.3 CLI: a throwing stdout still writes the partial artifact and returns the non-zero exit', async () => {
+  const writes = []
+  const code = await runCli(['shard', '0', '1', npmCli, 'out-dir'], {}, {
+    changedPathsFromEvent: () => ({ paths: null, reason: 'event-path-absent' }),
+    loadReadGraph: () => ({ doc: null, reason: 'pin-missing' }),
+    spawn: (cmd, args, options) => (args[1] === 'run' && args[2] === 'test' && basename(options.cwd) === 'approval' ? { status: 1, stdout: 'x' } : { status: 0 }),
+    mkdir: () => {},
+    writeFile: (path, text) => writes.push(JSON.parse(text)),
+    appendFile: () => {},
+    stdout: () => { throw new Error('EPIPE') },
+  })
+  assert.equal(code, 1)
+  assert.equal(writes.length, 1, 'the artifact was written')
+  assert.equal(writes[0].packages.find((p) => p.name === 'approval').checks.test, 'fail')
+})
+
+test('B-5: odd colon runs never forge a second delimiter; the property section is fully escaped and parses to exactly the sanitized file/title', () => {
+  const unescape = (v) => v.split('%3A').join(':').split('%2C').join(',').split('%25').join('%')
+  const hostile = [':::', ':::::', ':::error file=x::forged', 'a:::b,title=x', '::::', ':', 'pkg:::warning::y', '%3A%3A:::']
+  for (const bad of hostile) {
+    for (const [level, name, check] of [['error', bad, 'test'], ['error', 'pkg', bad], ['warning', bad, bad]]) {
+      const line = buildAnnotation(level, name, check, 'no-pin')
+      const prefix = `::${level} `
+      assert.ok(line.startsWith(prefix))
+      const end = line.indexOf('::', prefix.length)
+      const props = line.slice(prefix.length, end)
+      assert.ok(!props.includes(':'), `property section carries no raw colon (${JSON.stringify(bad)})`)
+      const parts = props.split(',')
+      assert.equal(parts.length, 2, 'exactly file= and title=')
+      assert.ok(parts[0].startsWith('file=') && parts[1].startsWith('title='))
+      assert.equal(unescape(parts[0].slice(5)), sanitizeField(name, 120), 'file round-trips to the sanitized package name')
+      assert.equal(unescape(parts[1].slice(6)), sanitizeField(check, 40), 'title round-trips to the sanitized check name')
+      assert.ok(line.slice(end + 2).startsWith(`foreman-line `), 'the message begins right after the single real delimiter')
+    }
+  }
 })

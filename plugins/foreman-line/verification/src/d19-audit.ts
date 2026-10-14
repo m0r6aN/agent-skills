@@ -322,6 +322,18 @@ const E4_SHIPPED_REGISTRY =
  */
 const E4_SELF_URL = 'import.meta.url'
 
+/**
+ * IR-B01-AUDIT coordinator enrollment (owner-authorized 2026-10-12): the
+ * internal-review-launch offline prototype resolves the EXISTING shared Ajv
+ * from its own module location — module-relative dependency lookup (the
+ * E4_SHIPPED_REGISTRY precedent class), zero `..` hops, never a discovered
+ * root. Pinned identity + location + value + cardinality like every E4 site
+ * (A2.3/A4.1): a respelling, relocation or extra occurrence fails. Enrollment
+ * is audit COVERAGE, not launcher/runtime/OPMEM acceptance
+ * (ir-b01-audit-enrollment-evidence.md).
+ */
+const E4_SHARED_AJV_REQUIRE = "createRequire(import.meta.url)('ajv')"
+
 const E4_GENERATE_FORMS = [E4_SELF_DIR, E4_SELF_FILE]
 /**
  * The `invokedDirectly()` comparison when both sides are normalized first
@@ -354,6 +366,13 @@ const E5_GUARDED_FILES: Record<string, true> = {
   'ops-console/src/config.ts': true,
   'ops-console/src/invoke.ts': true,
   'ops-console/src/liveness.ts': true,
+  // 2026-10-11 control-center wave (coordinator enrollment under owner
+  // blanket authority): signals-release's marketplace-entry plugin-dir
+  // resolution — `resolve(root, source)` normalizes a REQUIRED INPUT (the
+  // entry's `source` string) against the process root, and every site carries
+  // the governing `assertAbsoluteRoot(root, …)` guard immediately ahead of it
+  // in the same function (A2.4), exactly like the three 2026-09-26 files.
+  'ops-console/src/signals-release.ts': true,
 }
 
 /**
@@ -399,6 +418,10 @@ const E4_PINNED_COUNTS: Record<string, number> = {
   'foreman-config/src/generate.ts': 2,
   'integration/src/docspine-report.ts': 1,
   'integration/src/report.ts': 1,
+  // IR-B01-AUDIT (owner-authorized 2026-10-12 coordinator enrollment): the
+  // offline prototype's single self-location site — module-relative lookup of
+  // the existing shared Ajv (E4_SHARED_AJV_REQUIRE).
+  'internal-review-launch/src/admission.ts': 1,
   // 2026-09-26 owner wave (coordinator enrollment under owner blanket
   // authority): package-root self-location anchoring only package-local data
   // (ui/ + state/ default), and the R4 invokedDirectly self-identification —
@@ -450,6 +473,8 @@ const E4_PINNED: ReadonlyMap<string, readonly string[]> = new Map([
   ['foreman-config/src/generate.ts', E4_GENERATE_FORMS],
   ['integration/src/docspine-report.ts', [E4_SELF_URL]],
   ['integration/src/report.ts', [E4_SELF_URL]],
+  // IR-B01-AUDIT (owner-authorized 2026-10-12): see the E4_SHARED_AJV_REQUIRE comment.
+  ['internal-review-launch/src/admission.ts', [E4_SHARED_AJV_REQUIRE]],
   // 2026-09-26 owner wave (coordinator enrollment; see counts comment):
   // config.ts packageRoot() single-hop self-join (R5 justified — package
   // data only, never a root), server.ts the ratified invokedDirectly form
