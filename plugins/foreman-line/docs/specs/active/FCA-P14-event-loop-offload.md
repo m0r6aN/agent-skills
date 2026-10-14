@@ -1,10 +1,10 @@
 ---
 ticket: FCA-P14
 title: Event-loop offload — non-blocking git/gh/process calls for ops-console API routes
-status: draft
+status: active
 owner: clinton.morgan
-created: 2026-10-11
-updated: 2026-10-11
+created: 2026-10-14
+updated: 2026-10-14
 risk: elevated
 surfaces: [plugins/foreman-line/ops-console/src/]
 routing_class: architecture/risk
@@ -15,7 +15,7 @@ permission_profile: null
 
 ## Intent
 
-Make the 21 blocking `execFileSync`/`spawnSync` call sites in `ops-console/src/`
+Make the 12 blocking `execFileSync`/`spawnSync` call sites in `ops-console/src/`
 non-blocking so `/api/goals`, `/api/signals`, and other slow routes no longer freeze
 the Node event loop for ~5 s each. A cheap route (e.g. `/api/health`) must remain
 responsive (<50 ms p99) while a slow signals or goals request is in flight.
@@ -60,7 +60,7 @@ compounding the freeze window.
 | 12 | `spawn.ts:327` | `tmux` | `tmuxRunnerFor()` | `/api/spawn` | Yes | session/window/pane commands |
 
 (Lines 3–5 in `signals-*.ts` wrap the same `execFileSync`; total unique import
-sites = 8 files, 21 literal `execFileSync`/`spawnSync` tokens.)
+sites = 9 files, 12 call sites; the earlier "21" counted import lines and tokens, corrected at coordinator lint 2026-10-14. The inventory must be re-derived by `grep` at Step 0.)
 
 ## Approach
 
@@ -193,3 +193,13 @@ remains; no edits permitted except import reordering if unavoidable).
    builder must re-measure and update AC5.
 2. The 34-parcel 17-goal fleet is still the measurement reference (per capability
    map "Real-data baseline").
+
+## Coordinator amendment and ratification — 2026-10-14
+
+Coordinator lint corrections (committed before dispatch), ratified under the owner's blanket authority (2026-10-13):
+
+1. The blocking exec call-site count is **12 in 9 files**, not 21 (21 counted import lines). Re-derive by grep at Step 0.
+2. **Profile before offloading.** `/api/goals` has no exec call site in its own module chain (check `liveness.ts`, `scan.ts`, `project.ts`, `signals-goal.ts`); its measured ~5 s may come from synchronous filesystem scans or from the reconcile/signals providers it fans into. Step 0 must profile every affected route (route timing plus `node --cpu-prof` or equivalent) and report where the loop actually blocks. If the exec offload alone does not make a cheap route stay under the AC lag budget during a slow `/api/goals`, that is a flag for a coordinator ruling, not a licence to widen scope.
+3. `decisions-remote.ts` (FCA-P9) shares the gh runner; confirm it is covered by the offload and the read-only allowlist guard still sits in front of the async path (a guard test must fail if the async path bypasses it).
+4. Test baseline is the live `npm test` count at dispatch (561 at main `82dbdac9`), tripwire: no regression.
+5. OQ1 and OQ2 resolved as proposed (request-scoped in-flight dedup, TTL 0; `/api/invoke` execute path stays synchronous).
