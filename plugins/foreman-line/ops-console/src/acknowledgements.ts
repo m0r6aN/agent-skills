@@ -5,6 +5,7 @@ import { stateFilePath } from './config.js'
 
 export interface Acknowledgement {
   readonly id: string
+  readonly goal?: string
   readonly fingerprint: string
   readonly at: string
   readonly note?: string
@@ -23,6 +24,10 @@ interface Store {
 const EMPTY: Store = { schema: 'foc-acknowledgements/v1', acks: [], events: [] }
 const NAME = 'acknowledgements.json'
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
 function load(stateDir: string): Store {
   try {
     const raw: unknown = JSON.parse(readFileSync(stateFilePath(stateDir, NAME), 'utf8'))
@@ -32,7 +37,21 @@ function load(stateDir: string): Store {
       !('acks' in raw) ||
       !Array.isArray(raw.acks) ||
       !('events' in raw) ||
-      !Array.isArray(raw.events)
+      !Array.isArray(raw.events) ||
+      !raw.acks.every(
+        (entry) =>
+          isRecord(entry) &&
+          typeof entry.id === 'string' &&
+          typeof entry.fingerprint === 'string' &&
+          typeof entry.at === 'string',
+      ) ||
+      !raw.events.every(
+        (entry) =>
+          isRecord(entry) &&
+          (entry.action === 'acknowledge' || entry.action === 'unacknowledge') &&
+          typeof entry.id === 'string' &&
+          typeof entry.at === 'string',
+      )
     )
       return EMPTY
     return {
@@ -56,18 +75,28 @@ export function signalFingerprint(signal: {
   repo: string
   subject: string
   evidence: readonly string[]
+  severity: string
 }): string {
   return createHash('sha256')
-    .update(JSON.stringify([signal.class, signal.repo, signal.subject, ...signal.evidence]))
+    .update(
+      JSON.stringify([
+        signal.class,
+        signal.severity,
+        signal.repo,
+        signal.subject,
+        ...signal.evidence,
+      ]),
+    )
     .digest('hex')
 }
 export function alertFingerprint(alert: {
   kind: string
   rule: string
   failureCode?: string
+  goal: string
 }): string {
   return createHash('sha256')
-    .update(JSON.stringify([alert.kind, alert.rule, alert.failureCode]))
+    .update(JSON.stringify([alert.goal, alert.kind, alert.rule, alert.failureCode]))
     .digest('hex')
 }
 export function listAcknowledgements(stateDir: string): Acknowledgement[] {
@@ -76,7 +105,10 @@ export function listAcknowledgements(stateDir: string): Acknowledgement[] {
 export function acknowledge(stateDir: string, ack: Acknowledgement, now: number): void {
   const store = load(stateDir)
   const at = new Date(now).toISOString()
-  const acks = [...store.acks.filter((entry) => entry.id !== ack.id), { ...ack, at }]
+  const acks = [
+    ...store.acks.filter((entry) => entry.id !== ack.id || entry.goal !== ack.goal),
+    { ...ack, at },
+  ]
   const event: AcknowledgementEvent = {
     action: 'acknowledge',
     id: ack.id,
@@ -98,10 +130,11 @@ export function unacknowledge(stateDir: string, id: string, now: number): boolea
 }
 export function isAlertAcknowledged(
   stateDir: string,
-  alert: { id: string; kind: string; rule: string },
+  alert: { id: string; kind: string; rule: string; goal: string },
 ): boolean {
   const fingerprint = alertFingerprint(alert)
   return load(stateDir).acks.some(
-    (entry) => entry.id === alert.id && entry.fingerprint === fingerprint,
+    (entry) =>
+      entry.id === alert.id && entry.goal === alert.goal && entry.fingerprint === fingerprint,
   )
 }

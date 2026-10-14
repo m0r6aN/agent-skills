@@ -466,6 +466,7 @@ export async function handleApi(
     const id = typeof body.id === 'string' ? body.id : ''
     const fingerprint = typeof body.fingerprint === 'string' ? body.fingerprint : ''
     const note = body.note
+    const goal = typeof body.goal === 'string' ? body.goal : undefined
     const sessionId = /^session-state:[A-Za-z0-9._:-]+$/.test(id)
     const alertId = /^[A-Za-z0-9._:-]+:(?:hung|failed|tripwire)$/.test(id)
     if (!sessionId && !alertId)
@@ -481,15 +482,15 @@ export async function handleApi(
     if (sessionId) {
       const signal = (await collectSignalsAsync(config, now)).find((entry) => entry.id === id)
       if (signal) currentFingerprint = signalFingerprint(signal)
-    } else {
+    } else if (goal !== undefined) {
       for (const tree of goalTrees(config)) {
         const treeConfig = treeConfigFor(config, tree)
-        for (const slug of listGoalSlugs(treeConfig)) {
-          const projection = projectGoal(treeConfig, slug, now)
-          if (!projection) continue
-          const alert = deriveAlerts(projection.parcels, now).find((entry) => entry.id === id)
-          if (alert) currentFingerprint = alertFingerprint(alert)
-        }
+        const projection = projectGoal(treeConfig, goal, now)
+        if (!projection) continue
+        const alert = deriveAlerts(projection.parcels, now).find(
+          (entry) => entry.id === id && entry.goal === goal,
+        )
+        if (alert) currentFingerprint = alertFingerprint(alert)
       }
     }
     if (currentFingerprint === undefined)
@@ -504,7 +505,13 @@ export async function handleApi(
       }
     acknowledge(
       config.stateDir,
-      { id, fingerprint, at: '', ...(typeof note === 'string' ? { note } : {}) },
+      {
+        id,
+        fingerprint,
+        at: '',
+        ...(goal === undefined ? {} : { goal }),
+        ...(typeof note === 'string' ? { note } : {}),
+      },
       now,
     )
     return { status: 200, json: { acknowledged: true } }

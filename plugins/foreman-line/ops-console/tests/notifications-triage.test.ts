@@ -3,7 +3,12 @@ import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import test from 'node:test'
-import { acknowledge, alertFingerprint } from '../src/acknowledgements.js'
+import {
+  acknowledge,
+  alertFingerprint,
+  isAlertAcknowledged,
+  listAcknowledgements,
+} from '../src/acknowledgements.js'
 import type { Alert } from '../src/alerts.js'
 import { deleteNotification, syncAlerts } from '../src/notifications.js'
 
@@ -17,6 +22,29 @@ const alert: Alert = {
   observedAt: '2026-01-01T00:00:00.000Z',
 }
 
+test('same alert id in two goals keeps acknowledgements independent', () => {
+  const stateDir = mkdtempSync(join(tmpdir(), 'foc-triage-'))
+  try {
+    const first = { ...alert, id: 'shared-alert', goal: 'goal-a' }
+    const second = { ...alert, id: 'shared-alert', goal: 'goal-b' }
+    acknowledge(
+      stateDir,
+      { id: first.id, goal: first.goal, fingerprint: alertFingerprint(first), at: '' },
+      Date.now(),
+    )
+    acknowledge(
+      stateDir,
+      { id: second.id, goal: second.goal, fingerprint: alertFingerprint(second), at: '' },
+      Date.now(),
+    )
+    assert.equal(listAcknowledgements(stateDir).length, 2)
+    assert.equal(isAlertAcknowledged(stateDir, first), true)
+    assert.equal(isAlertAcknowledged(stateDir, second), true)
+  } finally {
+    rmSync(stateDir, { recursive: true, force: true })
+  }
+})
+
 test('a deleted notification stays dismissed while its alert evidence is unchanged', () => {
   const stateDir = mkdtempSync(join(tmpdir(), 'foc-triage-'))
   try {
@@ -24,7 +52,13 @@ test('a deleted notification stays dismissed while its alert evidence is unchang
     assert.equal(first.length, 1)
     acknowledge(
       stateDir,
-      { id: alert.id, fingerprint: alertFingerprint(alert), at: '', note: 'dismiss' },
+      {
+        id: alert.id,
+        goal: alert.goal,
+        fingerprint: alertFingerprint(alert),
+        at: '',
+        note: 'dismiss',
+      },
       Date.parse(alert.observedAt),
     )
     assert.equal(deleteNotification(stateDir, first[0]?.id ?? ''), true)
