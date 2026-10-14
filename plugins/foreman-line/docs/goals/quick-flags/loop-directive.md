@@ -1,7 +1,7 @@
 # /loop Directive — quick-flags goal
 
 ## COORDINATOR OWNERSHIP — read before dispatching anything
-> **Queue owner: the pi coordinator session `01a136d7-28c5-73e4-85c6-6f53aefdf98b`** (claimed 2026-10-13). One goal, one coordinator. Ownership transfers only at parcel boundaries, by editing this block. If this block names another live coordinator, STOP and report.
+> **Queue owner: the pi coordinator session `01a139ff-f7bc-725c-808d-120548a55ef1`** (claimed 2026-10-14, at the QF-P1/QF-P2 parcel boundary; transferred from `01a136d7-28c5-73e4-85c6-6f53aefdf98b` on the developer's instruction, option 1 of the stop report). One goal, one coordinator. Ownership transfers only at parcel boundaries, by editing this block. If this block names another live coordinator, STOP and report.
 > **State:** `qf_p1_merged_to_integration_qf_p2_shaping_next` (2026-10-14; QF-P1 Stage F complete; QF-P2 shaping is the next iteration)
 
 **Resume:** `/goal resume quick-flags`
