@@ -98,6 +98,7 @@ function loadSkills(): Skill[] {
 		const filePath = join(SKILLS_DIR, entry.name, "SKILL.md");
 		if (!existsSync(filePath)) continue;
 		const raw = readFileSync(filePath, "utf-8");
+		// biome-ignore lint/suspicious/noTemplateCurlyInString: intentional literal placeholder replaced with the plugin root
 		const body = stripFrontmatter(raw).replaceAll(
 			"${CLAUDE_PLUGIN_ROOT}",
 			PLUGIN_ROOT,
