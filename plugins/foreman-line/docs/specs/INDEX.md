@@ -9,6 +9,7 @@
 Own TO-B0/TO-P0/TO-P1 lifecycle rows maintained 2026-10-10; other rows retain their recorded provenance.
 QF-P1 row added 2026-10-13 by the quick-flags shaping session, reshaped under D2″/D5″/D9″ and moved to `done/` at Stage F 2026-10-13 (hand-updated).
 QF-P2 row added 2026-10-14 by the quick-flags QF-P2 shaping session at `draft`; promoted `active` at coordinator lint and moved to `done/` at Stage F 2026-10-14 (hand-updated).
+QF-P0 row added 2026-10-14 by the quick-flags QF-P0 shaping session at `draft`; executable advisory checks pending coordinator lint (hand-updated).
 
 | Ticket | Title | Status | Location |
 |---|---|---|---|
@@ -143,6 +144,7 @@ QF-P2 row added 2026-10-14 by the quick-flags QF-P2 shaping session at `draft`; 
 | PMC-P2E | [Governed caller retirement and new user-entry split record](active/PMC-P2E-config-caller-migration.md) | `draft` | `active/` |
 | PMC-P2F | [Reuse the fixed provider-binding schema validator inside its owner](done/PMC-P2F-schema-validator-reuse.md) | `done` | `done/` |
 | PRAC-P0 | [Pi extension/hook API surface compatibility memo](done/PRAC-P0-pi-extension-hook-surface-compat.md) | `done` | `done/` |
+| QF-P0 | [Authority-registry corpus amendment for post-QF-P2 quick-flags canon](active/QF-P0-authority-registry-corpus-amendment.md) | `draft` | `active/` |
 | QF-P1 | [Quick-flags registry (QUICK-FLAGS.md, versioned)](done/QF-P1-quick-flags-registry.md) | `done` | `done/` |
 | QF-P2 | [Quick-flags integration (goal skill, loop-directive template, synced copy, COORDINATOR-PATTERN cross-reference)](done/QF-P2-quick-flags-integration.md) | `done` | `done/` |
 | RCM-HRO | [Private authenticated public catalog publication](active/RCM-HRO-authenticated-catalog-publication.md) | `active` | `active/` |
@@ -161,4 +163,4 @@ QF-P2 row added 2026-10-14 by the quick-flags QF-P2 shaping session at `draft`; 
 | WGT-P0BOOT | [Tracked Foreman Line bootstrap](done/WGT-P0BOOT-tracked-foreman-bootstrap.md) | `done` | `done/` |
 | WGT-R1 | [Foreman current-state and queue reconciliation](active/WGT-R1-foreman-current-state-reconciliation.md) | `active` | `active/` |
 
-Total: 127 specs (56 active/, 71 done/).
+Total: 128 specs (57 active/, 71 done/).
