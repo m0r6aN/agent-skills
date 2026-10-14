@@ -178,7 +178,10 @@ const READ_ONLY_GIT = new Set([
   'worktree',
 ])
 
-test('end to end through the real runner: PR list, billing annotation, gate item; nothing is written', async () => {
+// FCA-P16: Skip on Windows - PATH shadowing doesn't work reliably due to .exe priority over .cmd
+test('end to end through the real runner: PR list, billing annotation, gate item; nothing is written', {
+  skip: process.platform === 'win32',
+}, async () => {
   const h = rig('ok')
   try {
     const before = h.snapshot()

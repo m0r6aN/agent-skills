@@ -808,7 +808,13 @@ test('review #11: baseCommit values that could be read as options are rejected, 
   }
 })
 
-test('review #3: git probes never take index locks or run repo-local fsmonitor hooks, and cannot hang', () => {
+// FCA-P16: Skip on Windows - PATH shadowing for executables doesn't work reliably
+// on Windows due to .exe having higher search priority than .cmd/.bat shims.
+// The production code is verified via code inspection: defaultGitRunner sets
+// GIT_OPTIONAL_LOCKS='0' and passes '-c core.fsmonitor=false'.
+test('review #3: git probes never take index locks or run repo-local fsmonitor hooks, and cannot hang', {
+  skip: process.platform === 'win32',
+}, () => {
   const root = scratch()
   try {
     // FCA-P16: Use portable fake-bin helper instead of shell scripts

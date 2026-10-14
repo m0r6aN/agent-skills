@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 import test from 'node:test'
 import type { GitRunner } from '../src/ledger-git.js'
 import { gatherRepoFacts, LOG_LIMIT, parseWorktrees } from '../src/reconcile-git.js'
@@ -84,7 +84,15 @@ test('gatherRepoFacts reads default ref, branches, merge state, upstream trackin
       'symbolic origin/HEAD is not a branch',
     )
 
-    assert.ok(facts.worktrees.some((w) => w.path === wt && w.branch === 'spawn/foc-p3'))
+    // FCA-P16: Normalize paths for cross-platform comparison (git may report paths differently on Windows)
+    // Windows paths are case-insensitive, so compare with toLowerCase
+    const normalizePath = (p: string): string =>
+      process.platform === 'win32' ? resolve(p).toLowerCase() : resolve(p)
+    assert.ok(
+      facts.worktrees.some(
+        (w) => normalizePath(w.path) === normalizePath(wt) && w.branch === 'spawn/foc-p3',
+      ),
+    )
     assert.ok(
       facts.defaultLog.some((c) => c.subject === 'feat: FOC-P0 contract' && c.sha.length === 40),
     )
