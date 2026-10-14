@@ -85,9 +85,38 @@ const AUDIT_NAME: StateFile = 'invocation-audit.json'
 const OUTPUT_CAP = 16_384
 
 const PR_NUMBER_PATTERN = /^[1-9][0-9]{0,6}$/
-/** A root is never escaped into `cd "<root>"`: these characters are refused (FCA-P9). */
+
+/**
+ * Platform-aware root path safety guard (FCA-P9, FCA-P16).
+ *
+ * A root is interpolated into `cd "<root>" && gh pr merge <N>`. On POSIX,
+ * backslash is a shell escape; on Windows, it's the path separator. The guard:
+ * - POSIX: refuses `"`, `$`, `` ` ``, `\`, and control characters (`\u0000–\u001f`, `\u007f`).
+ * - Windows: allows `\` (path separator), refuses `"`, `$`, `` ` ``, `%`, `^`, and control characters.
+ *
+ * @param value The root path to validate.
+ * @param platform The platform to validate for (injectable for testing; defaults to `process.platform`).
+ * @returns `true` if the root contains unsafe characters for the given platform.
+ */
 // biome-ignore lint/suspicious/noControlCharactersInRegex: control characters are the point
-const UNSAFE_ROOT_PATTERN = /["$`\\\u0000-\u001f\u007f]/
+const UNSAFE_ROOT_POSIX = /["$`\\\u0000-\u001f\u007f]/
+// biome-ignore lint/suspicious/noControlCharactersInRegex: control characters are the point
+const UNSAFE_ROOT_WIN32 = /["$`%^\u0000-\u001f\u007f]/
+
+export function isUnsafeRoot(value: string, platform: NodeJS.Platform = process.platform): boolean {
+  const pattern = platform === 'win32' ? UNSAFE_ROOT_WIN32 : UNSAFE_ROOT_POSIX
+  return pattern.test(value)
+}
+
+/**
+ * Returns a human-readable explanation for why a root is unsafe.
+ * @param platform The platform context.
+ */
+export function unsafeRootMessage(platform: NodeJS.Platform = process.platform): string {
+  return platform === 'win32'
+    ? 'root contains a quote, $, backtick, %, ^ or control character and cannot be safely interpolated'
+    : 'root contains a quote, $, backtick, backslash or control character and is never escaped'
+}
 
 type ArgKind =
   | 'verb'
@@ -187,8 +216,8 @@ function validateArg(
         : `PR number must match ^[1-9][0-9]{0,6}$, got ${JSON.stringify(value)}`
     case 'repo-root-fleet': {
       if (!isAbsolute(value)) return `--repo-root must be absolute, got ${JSON.stringify(value)}`
-      if (UNSAFE_ROOT_PATTERN.test(value)) {
-        return 'root contains a quote, $, backtick, backslash or control character and is never escaped'
+      if (isUnsafeRoot(value)) {
+        return unsafeRootMessage()
       }
       let roots: readonly string[]
       try {

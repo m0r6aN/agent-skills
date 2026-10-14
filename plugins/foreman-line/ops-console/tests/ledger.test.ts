@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
 import {
-  chmodSync,
   existsSync,
   mkdirSync,
   mkdtempSync,
@@ -51,6 +50,7 @@ import {
   type TranscriptFact,
 } from '../src/ledger-transcript.js'
 import type { SpawnReceipt } from '../src/spawn.js'
+import { createEnvLoggingGit, findRealGit, prependToPath } from './support/fake-bin.js'
 
 /**
  * FCA-P7 AC1-AC5, AC7, AC10: the ledger derives lifecycle from observed facts
@@ -549,7 +549,9 @@ test('AC7: retention truncates oversized logs to the newest bytes and records it
     const b = ensureLedgerDir(state, 'foc-20261001t000000z-p0')
     writeFileSync(b.logPath, 'fresh')
     const now = Date.now() / 1000
-    execFileSync('touch', ['-d', `@${now - 1000}`, a.dir])
+    // FCA-P16: Use utimesSync instead of POSIX touch -d for portability
+    const oldTime = now - 1000
+    utimesSync(a.dir, oldTime, oldTime)
     const second = enforceRetention(state, { maxBytesPerPane: 1000, maxPanes: 1, quietMs: 0 }, T0)
     assert.deepEqual(second.dropped, ['foc-20260101t000000z-p0'])
     assert.equal(existsSync(join(a.dir, LOG_NAME)), false)
@@ -809,20 +811,19 @@ test('review #11: baseCommit values that could be read as options are rejected, 
 test('review #3: git probes never take index locks or run repo-local fsmonitor hooks, and cannot hang', () => {
   const root = scratch()
   try {
-    const realGit = execFileSync('sh', ['-c', 'command -v git'], { encoding: 'utf8' }).trim()
+    // FCA-P16: Use portable fake-bin helper instead of shell scripts
+    const realGit = findRealGit()
     const bin = join(root, 'bin')
     const log = join(root, 'log')
     mkdirSync(bin)
     writeFileSync(log, '')
-    writeFileSync(
-      join(bin, 'git'),
-      `#!/bin/sh\necho "OPTIONAL_LOCKS=$GIT_OPTIONAL_LOCKS $*" >> '${log}'\nexec '${realGit}' "$@"\n`,
-    )
-    chmodSync(join(bin, 'git'), 0o755)
+
+    createEnvLoggingGit(bin, log, realGit)
+
     const repo = join(root, 'repo')
     execFileSync('git', ['init', '-q', '-b', 'main', repo])
     const saved = process.env.PATH
-    process.env.PATH = `${bin}:${saved}`
+    process.env.PATH = prependToPath(bin, saved)
     try {
       defaultGitRunner(repo, ['status', '--porcelain'])
     } finally {
@@ -870,12 +871,24 @@ test('review #4: git outcomes are memoised for the TTL and re-read after it', ()
 test('review #8/#9: retention ignores symlinks and malformed names, ranks by id, spares recently-written logs; files are owner-only', () => {
   const state = scratch()
   const outside = scratch()
+  // FCA-P16: Track whether symlinks are available (may need privilege on Windows)
+  let symlinkAvailable = true
   try {
     const sessions = join(state, 'sessions')
     mkdirSync(sessions)
     // A symlinked entry pointing outside the tree must never be touched.
     writeFileSync(join(outside, 'pane.log'), 'x'.repeat(500))
-    symlinkSync(outside, join(sessions, 'foc-evil-p0'))
+    try {
+      symlinkSync(outside, join(sessions, 'foc-evil-p0'))
+    } catch (err) {
+      // FCA-P16: On Windows without Developer Mode, symlink creation fails with EPERM
+      const code = err instanceof Error && 'code' in err ? (err as NodeJS.ErrnoException).code : ''
+      if (code === 'EPERM' || code === 'ENOTSUP') {
+        symlinkAvailable = false
+      } else {
+        throw err
+      }
+    }
     // A malformed name is ignored.
     mkdirSync(join(sessions, 'Not_A_Receipt'))
     writeFileSync(join(sessions, 'Not_A_Receipt', 'pane.log'), 'y'.repeat(500))
@@ -888,11 +901,13 @@ test('review #8/#9: retention ignores symlinks and malformed names, ranks by id,
     assert.deepEqual(report.dropped, ['foc-20260101t000000z-p0'])
     assert.equal(existsSync(old.logPath), false)
     assert.equal(existsSync(mid.logPath), true)
-    assert.equal(
-      readFileSync(join(outside, 'pane.log'), 'utf8').length,
-      500,
-      'symlink target untouched',
-    )
+    if (symlinkAvailable) {
+      assert.equal(
+        readFileSync(join(outside, 'pane.log'), 'utf8').length,
+        500,
+        'symlink target untouched',
+      )
+    }
     assert.equal(
       readFileSync(join(sessions, 'Not_A_Receipt', 'pane.log'), 'utf8').length,
       500,
@@ -917,11 +932,13 @@ test('review #8/#9: retention ignores symlinks and malformed names, ranks by id,
       Date.now() + 601_000,
     )
     assert.deepEqual(enforced.truncated, ['foc-20261001t000000z-p0'], 'enforced once quiet')
-    // Owner-only permissions.
-    assert.equal(statSync(recent.dir).mode & 0o777, 0o700)
-    assert.equal(statSync(recent.logPath).mode & 0o777, 0o600)
-    const marker = join(recent.dir, TRUNCATED_NAME)
-    assert.equal(statSync(marker).mode & 0o777, 0o600)
+    // FCA-P16: Owner-only permissions are POSIX-only (no meaning on Windows)
+    if (process.platform !== 'win32') {
+      assert.equal(statSync(recent.dir).mode & 0o777, 0o700)
+      assert.equal(statSync(recent.logPath).mode & 0o777, 0o600)
+      const marker = join(recent.dir, TRUNCATED_NAME)
+      assert.equal(statSync(marker).mode & 0o777, 0o600)
+    }
   } finally {
     rmSync(state, { recursive: true, force: true })
     rmSync(outside, { recursive: true, force: true })

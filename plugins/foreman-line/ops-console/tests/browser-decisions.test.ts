@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
-import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { createServer } from 'node:http'
 import type { AddressInfo } from 'node:net'
 import { tmpdir } from 'node:os'
@@ -10,6 +10,7 @@ import { clearDecisionCaches } from '../src/decisions-remote.js'
 import { listAuditEntries } from '../src/invoke.js'
 import { buildHandler } from '../src/server.js'
 import { chromiumBinary, launchBrowser } from './support/cdp.js'
+import { createFakeBin, prependToPath } from './support/fake-bin.js'
 import { materialize, type Scenario } from './support/materialize.js'
 
 /**
@@ -64,13 +65,26 @@ test('Decisions: Show command presents (one audited `presented`), reveals a copy
   const bin = join(root, 'bin')
   mkdirSync(bin)
   writeFileSync(join(root, 'prs.json'), PRS)
-  writeFileSync(
-    join(bin, 'gh'),
-    `#!/bin/sh\nif [ "$1 $2" = "pr list" ]; then cat '${join(root, 'prs.json')}'; exit 0; fi\nexit 2\n`,
-  )
-  chmodSync(join(bin, 'gh'), 0o755)
+
+  // FCA-P16: Portable fake gh using Node.js script
+  const escapedPrsJson = join(root, 'prs.json').replace(/\\/g, '\\\\')
+  createFakeBin({
+    binDir: bin,
+    name: 'gh',
+    script: `
+const fs = require('fs');
+const args = process.argv.slice(2);
+const cmd = args.slice(0, 2).join(' ');
+if (cmd === 'pr list') {
+  process.stdout.write(fs.readFileSync('${escapedPrsJson}', 'utf8'));
+  process.exit(0);
+}
+process.exit(2);
+`,
+  })
+
   const savedPath = process.env.PATH
-  process.env.PATH = `${bin}:${savedPath}`
+  process.env.PATH = prependToPath(bin, savedPath)
   const handler = buildHandler(config, () => Date.parse(SCENARIO.now))
   const server = createServer((req, res) => handler(req, res))
   await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
