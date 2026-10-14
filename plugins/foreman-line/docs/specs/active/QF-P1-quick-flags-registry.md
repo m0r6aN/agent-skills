@@ -20,286 +20,280 @@ data_classification: internal
 
 ## Intent
 
-Author `plugins/foreman-line/docs/QUICK-FLAGS.md`: the single, versioned registry of the 14 quick flags the foreman-line Coordinator expands into fixed, auditable directives (charter D2′, D8). It defines each quick flag's expansion, persistence, arguments and gate interplay, plus the grant-record format, the conflict table and its order over time, the provenance rule, the destructive-action definition, the alias table and the gate-interplay statement. It must close plan-review findings R5, R6, R13, R16 and R18 and implement D2′/D4′/D5′/D9′/D10′ exactly. No quick flag may be readable as removing a gate. QF-P2 makes the registry operative; QF-P1 only writes it.
+Rebuild `plugins/foreman-line/docs/QUICK-FLAGS.md` as the single, versioned registry of the 14 quick flags (charter D2″, D8) under the design ratified at the second Gate 1 re-open (`gate1-reopen-d5-d9-2026-10-13.md`). Eleven quick flags are one-shot and have no stored form. Only `--strict`, `--nopush` and `--review2` persist, as lines of one `Active restrictions` entry in the goal's loop directive, and a stored line is honoured only to restrict (D5″, D9″). The registry defines each entry, the `Active restrictions` line format, the decision-log entry, the conflict table and its order over time, the provenance and inert-message rules, the destructive-action definition, the alias table and the gate-interplay statement. No quick flag may be readable as removing a gate. QF-P2 makes the registry operative; QF-P1 only writes it. This spec replaces the stored-grant spec and its amendments A1–A13; the requirements that survive are folded into the ACs below with their source IDs.
 
 ## Constraints
 
-- **Docs only, one file.** The builder creates exactly `plugins/foreman-line/docs/QUICK-FLAGS.md` and nothing else. No code, hook, expander or test (D1, `charter.md:29`).
-- **Authority order.** The amended D-rows (`charter.md:29-38`) and the coordinator triage (`plan-review-findings.md:70-92`) are binding. The charter's "Flag semantics (summary)" (`charter.md:40-65`) is **non-binding** where it differs. Known differences: `--resume <current-slug>`, `--nopush` blocking "merge", and `--ratify` "as currently drafted". The registry follows the amended rows, not the summary. Do not edit the charter.
-- **Normative wording.** Use "must"/"never" for requirements. Where a requirement below says **verbatim**, copy the quoted text exactly, on a single line (no hard wrap), so `grep -F` finds it:
-  - **V1** (`charter.md:21-22`, "flag" → "quick flag" per D9′): `A quick flag adjusts how much the Coordinator asks and does inside the gates and never removes a gate.`
-  - **V2** (D4′, `charter.md:32`): `Gate 1 (including one re-opened by triage), charter amendments, the plan-level review, the two-review rule, Step 0 gates, coordinator self-verification, the universal stop conditions, green-chain-contingent merge, human-only gates (OAuth, TTY approval), or destructive/outward-facing actions`
-  - **V3** (D10′, `charter.md:38`): ``Destructive = force-push, history rewrite, deleting branches/worktrees outside Stage-F cleanup, deleting data or files outside the parcel's `surfaces:`, or anything touching shared remote state.``
-  - **V4** (D10′, `charter.md:38`): `Outward-facing actions are denied unless a standing authorization grants them.`
-  - **V5** (`loop-directive.md:21`): `any red step voids it for that chain`
-  - **V6** (`plan-review-findings.md:85`, "flag" → "quick flag" per D9′/R20): `QUICK-FLAGS governs quick flag tokens only. Existing prose grants are neither reinterpreted nor revoked.`
-- **Entry structure** (needed so QF-P3 can check it mechanically, R11):
-  - one `### \`--<name>\`` heading per canonical quick flag
-  - each entry carries these labelled lines in this order: `Canonical:`, `Aliases:`, `Persistence:`, `Arguments:`, `Expansion:`, `Gate interplay:`, `Conflicts and revocation:`
-- **Term.** In prose, every "flag"/"flags" is preceded by "quick". The exceptions are literal tokens and one disambiguation sentence saying builder Step 0 "flags" (`COORDINATOR-PATTERN.md:7`, `skills/goal/SKILL.md:32`) are a different thing (D9′, R20).
-- **Builder Step 0.** Restate this spec, the single Allowed File, branch `qf-p1`/worktree and base, and stop for the coordinator's ruling before writing. Standing constraints apply (`plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`). The builder and reviewers run without route receipts, as direct invocations under loop-directive ruling 2026-10-13 (`loop-directive.md:57-58`).
+- **Docs only, one file.** The builder rewrites exactly `plugins/foreman-line/docs/QUICK-FLAGS.md`, starting from the current 596-line file where its text survives. No code, hook, expander or test (D1, `charter.md:31`).
+- **Authority order.** Canon (`COORDINATOR-PATTERN.md`, `skills/goal/SKILL.md`, `SPEC-CONVENTION.md`) governs. Below it: the amended D-rows (`charter.md:31-40`), the Gate 1 re-open record (`gate1-reopen-d5-d9-2026-10-13.md`), the plan-review triage (`plan-review-findings.md:70-92`), then this spec. The charter's "Flag semantics (summary)" (`charter.md:42-66`) is non-binding (AC-23). Do not edit the charter.
+- **Normative wording.** "must"/"never" for requirements. Where a requirement says **verbatim**, copy the quoted text exactly, on one line (no hard wrap), so `grep -F` finds it:
+  - **V1** (`charter.md:23-25`, "flag" → "quick flag" per D9″): `A quick flag adjusts how much the Coordinator asks and does inside the gates and never removes a gate.`
+  - **V2** (D4′, `charter.md:34`): `Gate 1 (including one re-opened by triage), charter amendments, the plan-level review, the two-review rule, Step 0 gates, coordinator self-verification, the universal stop conditions, green-chain-contingent merge, human-only gates (OAuth, TTY approval), or destructive/outward-facing actions`
+  - **V3** (D10′, `charter.md:40`): ``Destructive = force-push, history rewrite, deleting branches/worktrees outside Stage-F cleanup, deleting data or files outside the parcel's `surfaces:`, or anything touching shared remote state.``
+  - **V4** (D10′, `charter.md:40`): `Outward-facing actions are denied unless a standing authorization grants them.`
+  - **V5** (`loop-directive.md:22`): `any red step voids it for that chain`
+  - **V6** (`plan-review-findings.md:85`, "flag" → "quick flag"): `QUICK-FLAGS governs quick flag tokens only. Existing prose grants are neither reinterpreted nor revoked.`
+  - **V7** (D9″, `charter.md:39`): `Nothing stored in a file can grant authority or loosen any restriction: a stored entry is honoured only to restrict.`
+- **Term.** In prose every "flag"/"flags" is preceded by "quick" (hyphenated forms such as "quick-flag token" count). Exceptions: literal tokens, and one disambiguation sentence saying builder Step 0 "flags" (`COORDINATOR-PATTERN.md:7`, `skills/goal/SKILL.md:32`) are a different thing (D9″, R20). Avoid "flagged".
+- **Size.** `wc -l` of the registry is at most 350. Cells and labelled lines never contain a `|` other than as table delimiters.
+- **Builder Step 0.** Restate this spec, the single Allowed File, branch `qf-p1`, worktree `/home/cmorgan76/Repos/agent-skills-qf-p1` and the build base, then stop for the coordinator's ruling before writing. Standing constraints apply (`plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`). Builder and reviewers run without route receipts, as direct invocations per loop-directive ruling 2026-10-13 (`loop-directive.md:59-60`).
 
 ## Acceptance Criteria
 
-Each criterion names the decisions and plan-review findings it closes. Traceability: **R5** → AC-8; **R6** → AC-6, AC-7; **R13** → AC-17; **R16** → AC-9; **R18** → AC-16.
+Traceability to the plan-review findings QF-P1 closes: **R5** → AC-15; **R6** → AC-13, AC-14; **R13** → AC-7; **R16** → AC-16; **R18** → AC-21, AC-22. Source IDs in brackets refer to the triage files listed in Context & References.
 
-- [ ] **AC-1 Version and identity (D1, D2′, D7, R12).**
-  - The file exists and contains exactly one line matching `^Registry version: 1$`.
-  - It states that a change in meaning bumps the version and an editorial fix does not.
-  - It states that a bump never alters an existing grant record, which keeps its own expanded text and version.
-  - It declares itself the single source of truth, with goal records excluded from "documented once".
-  - It declares its scope as foreman-line only, and says it is prose the Coordinator interprets, with no hook or expander.
-- [ ] **AC-2 Fourteen entries (D5′, D8).**
-  - There are exactly 14 `###` quick-flag entries, one per D8 canonical name. The deferred names (`--lint-only`, `--no-sleep`, `--budget N`, `--model-frontier`) are not entries.
-  - Each entry has all seven labelled fields.
-  - `Persistence:` reads `one-shot` for `--asrec`, `--dry`, `--status`, `--explain`, `--brief`, `--ratify`, `--halt` and `--resume`.
-  - It reads `persistent` for `--blanket`, `--strict`, `--nopush`, `--dispatch-ok` and `--merge-ok`.
-  - It reads `persistent (current parcel)` for `--review2`.
-- [ ] **AC-3 Closed gate-interplay list (R11).**
-  - The registry declares exactly these seven values: `none`, `restricts`, `delegates-within-ratified-scope`, `standing-gate-2`, `standing-gate-3-green-chain`, `gate-1-human-only`, `loop-control`.
-  - Each entry's `Gate interplay:` holds exactly one of them, assigned as follows:
+### A. Shape
 
-    | Gate interplay | Quick flags |
-    |---|---|
-    | `none` | `--status`, `--explain`, `--brief`, `--halt` |
-    | `restricts` | `--strict`, `--nopush`, `--review2`, `--dry` |
-    | `delegates-within-ratified-scope` | `--blanket`, `--asrec` |
-    | `standing-gate-2` | `--dispatch-ok` |
-    | `standing-gate-3-green-chain` | `--merge-ok` |
-    | `gate-1-human-only` | `--ratify` |
-    | `loop-control` | `--resume` |
-- [ ] **AC-4 Gate-interplay statement (D4′, R2).**
-  - V1 and V2 are present.
-  - V2 is stated to apply to **every** quick flag, not only `--blanket` (`plan-review-findings.md:101`).
-  - The statement says `--ratify`, `--dispatch-ok` and `--merge-ok` are the human's own exercise of Gates 1/2/3 within canon limits (`COORDINATOR-PATTERN.md:51-53`), not waivers.
-  - It says `--merge-ok` never waives the green-chain contingency.
-  - It says `--ratify` is human-issued only.
-- [ ] **AC-5 `--blanket` (D4′, D10′, R2).**
-  - The expansion is an allowlist covering only design questions inside the ratified scope plus rulings the coordinator already owns.
-  - It covers nothing in V2, states that a Gate 1 re-opened by triage is Gate 1, and never grants an outward-facing action.
-  - Every decision taken under it is logged in the AC-13 format.
-- [ ] **AC-6 `--asrec` (D5′, D10′, R6).**
-  - The expansion is one-shot: take the recommended option on each open question and the last-recommended next step, then stop at the next human gate.
-  - It states that `--asrec` never grants a gate by answering a gate prompt.
-  - A recommended step that is outward-facing or destructive is not covered.
-  - Every decision is logged in the AC-13 format.
-  - While a `--strict` record is active, it is handled per OQ-1.
-- [ ] **AC-7 `--ratify` (D4′, R6).** The expansion is one-shot and human-issued only. A bare `--ratify` counts only if all of the following hold:
-  - (a) the Coordinator's previous turn showed the revision of every file that holds the text being ratified (`charter.md`, and for an amendment package the file holding the amendment text, e.g. `plan-review-findings.md`): each file's commit SHA, or its `git hash-object` output if uncommitted (amendment A2)
-  - (b) the file is unchanged since that turn
-  - (c) the same message contains neither `--asrec` nor `--blanket`
+- [ ] **AC-1 Version and identity (D1, D2″, D7) [A-12].**
+  - Exactly one line matches `^Registry version: 1$`.
+  - The registry declares itself the single source of truth for foreman-line quick flags; "documented once" excludes goal records (the `Active restrictions` entry, the decision log, the gate record). Scope is foreman-line only. It is prose the Coordinator interprets, with no hook, expander or parser.
+  - Version bump: every change bumps the version except these editorial classes: a typo fix, a formatting fix, or a corrected citation line number, each only where it touches no labelled entry line, alias, closed list or table cell (other than explanatory text after a Rule cell's rule IDs). Any edit to an `Expansion:` line bumps.
+  - A version-history table with columns `Version`, `Date`, `Change` and one row for version 1.
+  - A version change never adds, removes or alters an `Active restrictions` line (T5).
+- [ ] **AC-2 Fourteen entries (D8, D5″) [A8].**
+  - Exactly 14 headings of the form ``### `--<name>` ``, one per D8 canonical name. The deferred names (`--lint-only`, `--no-sleep`, `--budget N`, `--model-frontier`) are not entries.
+  - Each entry holds exactly these seven labelled lines, in this order, on consecutive lines with no blank line between them: `Canonical:`, `Aliases:`, `Persistence:`, `Arguments:`, `Expansion:`, `Gate interplay:`, `Conflicts and lifting:`. Each sits at column 0 as `Label: value`, on one line, with no bold. `Persistence:` and `Gate interplay:` hold bare values; `Canonical:` holds the backticked token; `Aliases:` holds backticked aliases separated by ", ", or `none`.
+  - `Persistence:` holds one value of the closed list `one-shot`, `persistent`, `persistent (current parcel)`, and `Gate interplay:` one value of the AC-3 list, assigned exactly as follows:
 
-  In addition:
-  - `--ratify <rev>` must equal the full revision value shown, or a prefix of at least 7 hex characters of it (A2).
-  - Failing (a), (b) or (c) means the ratification is refused and reported.
-  - The same rule governs ratifying amendments after a scoped Gate 1 re-open.
-  - The Coordinator never issues, infers or records `--ratify` on the developer's behalf.
-  - Other quick flags in a message where `--ratify` is refused are handled per OQ-3.
-- [ ] **AC-8 `--dispatch-ok` / `--merge-ok` (R5, D10′, SPEC-CONVENTION §8 item 4).**
-  - Both require at least one parcel ID. Each ID must appear in the charter's Parcels table. An ID outside the table is refused as stop-and-report (`loop-directive.md:20`).
-  - `--dispatch-ok` does not waive coordinator lint or the Step 0 gate.
-  - `--merge-ok` covers only the local merge of a named parcel's branch into the integration branch named in the goal's loop directive, contingent on the full chain being green. It carries V5.
-  - After a red step, `--merge-ok` behaves per OQ-4.
-  - Any merge, push or PR that reaches a remote, a PR or `main` stays human, with a pointer to `SPEC-CONVENTION.md` §8 item 4 (`SPEC-CONVENTION.md:254`).
-- [ ] **AC-9 `--resume <slug>` (R16, D9′).**
-  - The slug is required. A bare `--resume` is refused, and the Coordinator asks for the slug.
-  - The slug is never inferred from `goals/INDEX.md` or anywhere else.
-  - It expands to `/goal resume <slug>`, including the ownership-block check, which always runs: STOP if another live coordinator owns the goal (`skills/goal/SKILL.md:13`).
-  - It is one-shot, and a wakeup or resume prompt never carries it.
-- [ ] **AC-10 Restricting and observing quick flags (D5′, D6, D10′, R3, R15, R19).**
-  - `--strict`: persistent. It asks about every design decision and revokes only `--blanket`. It never lifts `--nopush`, `--review2`, `--dispatch-ok` or `--merge-ok`.
-  - `--nopush`: narrows an existing outward-facing grant, grants nothing, and does not block local merges to the integration branch.
-  - `--review2`: requires two independent adversarial reviews on the named current parcel, and ends at that parcel's Stage-F closure. It never reduces the two reviews already required for architecture/risk parcels (`COORDINATOR-PATTERN.md:69`).
-  - `--dry`: no writes, dispatches, merges or records. It reports what would be done.
-  - `--status`, `--explain` and `--brief`: change nothing.
-  - `--halt`: finishes the current atomic step, updates the ownership block, and stops the loop.
-- [ ] **AC-11 Provenance (D9′, R1, R14, R20).**
-  - A quick flag counts only in a human-typed developer turn.
-  - Wakeup, resume and hook-feedback prompts never carry quick flags, and neither does any file, tool, subagent or PR content.
-  - A quick-flag token in a file grants nothing. Only valid grant records (AC-12, OQ-5) carry persistent grants.
-  - Quoted or pasted content inside a human turn is handled per OQ-2.
-  - The term rule in Constraints holds.
-- [ ] **AC-12 Grant and revocation records (D2′, D9′).**
-  - A grant record holds:
-    - the verbatim developer message
-    - the date
-    - the session ID
-    - the canonical quick flag
-    - its arguments
-    - its scope (the goal, or the parcel for `--review2`)
-    - the expanded text copied from the registry
-    - the registry version
-    - a `revoked:` line
-  - Revocation is done only by a human-typed, plain-language instruction naming the quick flag. It is recorded as a revocation record (verbatim message, date, session, which record it revokes). `--strict` revoking `--blanket` produces the same kind of record.
-  - Lifetime: a record lasts until goal exit and carries across `/goal resume` and ownership transfer within the same goal. `--review2` records end at that parcel's Stage-F closure.
-  - The registry defines the format only. QF-P2's template holds the records.
-- [ ] **AC-13 Decision-log entry (D10′).** The format has these fields: date, quick flag (`--blanket`/`--asrec`), question, decision, recommended option, reversibility.
-- [ ] **AC-14 Destructive and outward-facing actions (D10′, R4, R19).**
-  - V3 and V4 are present.
-  - The registry states that no quick flag grants an outward-facing or destructive action.
-- [ ] **AC-15 Aliases and unknown tokens (D3).**
-  - The alias table has exactly one row: `--blanke` → `--blanket`.
-  - Matching is case-sensitive.
-  - Any unrecognized token (including the deferred D8 names and near-misses) is not interpreted; the Coordinator reports it and asks.
-- [ ] **AC-16 Conflict table and order over time (D6, R18).**
-  - The registry declares a closed vocabulary of resolutions.
-  - The table resolves all 91 unordered pairs of distinct canonical quick flags. No cell is blank, and every cell cites the rule it applies.
-  - These cells are pinned:
-    - `--blanket`×`--strict`: strict wins (D6)
-    - `--asrec`×`--strict`: strict wins (D6)
-    - `--ratify`×`--asrec` and `--ratify`×`--blanket`: `--ratify` is refused (R6)
-    - `--dry`× each persistent quick flag: nothing is recorded, and the Coordinator reports what would have been recorded
-    - `--status`, `--explain` and `--brief` × anything: independent
-    - `--review2`×`--blanket`: independent
-    - `--nopush`×`--merge-ok`: independent (D10′)
-  - The order-over-time section states:
-    - (T1) Within one message, the more restrictive quick flag wins and the Coordinator reports it.
-    - (T2) An active restrictive record is never lifted by a later delegating quick flag. A `--blanket` sent while `--strict` is active is refused and reported; the developer must revoke `--strict` (T3) and then re-send `--blanket`.
-    - (T3) Revocation works only as described in AC-12.
-    - (T4) Lifetime is as described in AC-12.
-    - (T5) A later registry version never changes an existing record.
-- [ ] **AC-17 Prose grants (R13).**
-  - V6 is present.
-  - The registry states that a prose grant is never treated as a quick-flag record, and that no quick flag widens a prose grant, and none reinterprets, edits or revokes one (amendment A1). Restrictive quick flags (`--strict`, `--nopush`, `--dry`, `--halt`, `--review2`) limit the Coordinator's conduct while they are active, whatever the source of the authority, and leave the prose grant's text and validity unchanged.
-- [ ] **AC-18 Charter summary superseded.** Where the registry covers `--resume`, `--nopush` and `--ratify`, it follows the amended rows (AC-7, AC-9, AC-10). It never cites `charter.md:40-65` as authority.
-- [ ] **AC-19 Scope discipline.**
-  - On branch `qf-p1`, `git diff --name-only <base>..HEAD`, where `<base>` is the `qf-p1` HEAD recorded in the build dispatch (amendment A3), lists only `plugins/foreman-line/docs/QUICK-FLAGS.md`.
-  - `git diff --check` is clean.
+    | Quick flag | Persistence | Gate interplay |
+    |---|---|---|
+    | `--blanket`, `--asrec` | one-shot | delegates-within-ratified-scope |
+    | `--ratify` | one-shot | gate-1-human-only |
+    | `--dispatch-ok` | one-shot | gate-2-one-shot |
+    | `--merge-ok` | one-shot | gate-3-one-shot-green-chain |
+    | `--resume` | one-shot | loop-control |
+    | `--dry` | one-shot | restricts |
+    | `--status`, `--explain`, `--brief`, `--halt` | one-shot | none |
+    | `--strict`, `--nopush` | persistent | restricts |
+    | `--review2` | persistent (current parcel) | restricts |
+  - `Conflicts and lifting:` holds only that quick flag's own refusal and win conditions, how it is lifted (persistent) or that nothing is stored or lifted (one-shot), and a pointer to the conflict table.
+- [ ] **AC-3 Closed gate-interplay list (R11).** The registry declares exactly seven values, each defined once in a table: `none`, `restricts`, `delegates-within-ratified-scope`, `gate-2-one-shot`, `gate-3-one-shot-green-chain`, `gate-1-human-only`, `loop-control`. No other value is valid.
+- [ ] **AC-4 Stored-grant machinery removed (D2″, D5″, D9″).** The registry defines no stored form of any one-shot quick flag and no record format other than the `Active restrictions` line (AC-19) and the decision-log entry (AC-20). It has no grant, revocation, void or derived records, no record ids, no owner-by-time rule, no pinned integration branch, charter revision or version blob, no records section and no JSON encoding. The retired-term check in the Verification Plan returns 0.
+
+### B. Authority boundaries
+
+- [ ] **AC-5 Gate-interplay statement (D4′, R2) [A4, A-8, BI-9].**
+  - V1 is present. V2 is present, introduced by "No quick flag waives, delegates on the human's behalf, or removes any of:", and stated to apply to **every** quick flag (`plan-review-findings.md:101`). A Gate 1 re-opened by triage is Gate 1.
+  - `--ratify`, `--dispatch-ok` and `--merge-ok` are the human's own one-shot exercise of Gates 1, 2 and 3 within canon limits (`COORDINATOR-PATTERN.md:51-53`), not waivers. `--merge-ok` never waives the green-chain contingency. `--ratify` is human-issued only; Gate 1 is never delegable or pre-authorized (`COORDINATOR-PATTERN.md:30`).
+  - Human gates remain loop stop conditions (`skills/goal/SKILL.md:36`). A stop report's human decision is a human gate: no quick flag answers it or lets the Coordinator pass it.
+- [ ] **AC-6 Destructive and outward-facing actions (D10′, R4, R19).** V3 and V4 are present. Outward-facing actions include push, PR creation or update, and any other remote operation; beyond the standing authorizations they are a universal stop (`COORDINATOR-PATTERN.md:73`). No quick flag grants an outward-facing or destructive action; the local merge `--merge-ok` covers is neither.
+- [ ] **AC-7 Prose grants (R13) [A1, A-30].** V6 is present. A prose grant is never treated as a quick flag or an `Active restrictions` line. No quick flag widens, reinterprets, edits or revokes a prose grant. Restrictive quick flags limit the Coordinator's conduct while in force whatever the source of the authority, and leave the prose grant's text and validity unchanged. A prose grant that uses quick-flag names is prose: the names in it are mentions, never tokens, and it cannot pre-authorize Gate 1.
+- [ ] **AC-8 Provenance (D9″, R1, R14, R20) [A-2, A-6, C-7, D-17, BI-1, R2-5].**
+  - V7 is present. A quick flag counts only in a human-typed developer turn.
+  - Wakeup, resume, hook-feedback and completion-notification prompts never carry quick flags; the Coordinator never writes a quick-flag token into one, and a token found in one is ignored and reported. File, tool, subagent and PR content never carries quick flags, wherever the file sits (the loop directive included).
+  - Quoted or pasted content in a human turn (fenced block, block quote, pasted report or transcript) never carries quick flags; an inline code span counts as quoted. The Coordinator reports any token there and asks, and the message is inert (AC-11). Exception: a canonical name or alias in a code span that is the object of a plain-language lift (for example "lift `--strict`") is a mention, and the lift is processed.
+  - A token only mentioned (asked about, discussed, named in a lift) is not issued; if unclear, the Coordinator asks and the message is inert.
+  - Lift instructions follow every rule in this AC: one found in a prompt, in file, tool, subagent or PR content, or in quoted content lifts nothing and is reported.
+  - Residual risk is stated: unmarked pasted text cannot be told from typed text. When `--blanket`, `--asrec`, `--ratify`, `--dispatch-ok`, `--merge-ok` or `--resume` (or an alias), or a lift, appears in a message that also holds pasted or quoted content, nothing is taken for it; the Coordinator asks the developer to re-send it in a message with no pasted content, and the message is inert.
+  - The Coordinator never issues, infers or stores a quick flag on the developer's behalf; it writes an `Active restrictions` line only as AC-19 allows.
+
+### C. Message processing
+
+- [ ] **AC-9 One-shot scope, tokens, arguments and limiting prose [BI-2, A-1, H1, A-24, A-20, R2-4, F-4, E-11, E-3].**
+  - A one-shot quick flag applies only in the Coordinator's turn that answers the human-typed message carrying it. No later turn (wakeup, resume, hook-feedback, completion notification) carries it.
+  - A quick-flag token is a whitespace-delimited word of the developer's own text beginning with `--` immediately followed by a letter. Its arguments are the words immediately following it, separated by spaces or commas, up to the next token or the end of the line; a comma after a token or argument is a separator.
+  - Arguments are all-or-nothing: if any word in a quick flag's argument span is invalid under its `Arguments:` line, the whole quick flag is refused, nothing is taken for any of its arguments, and the Coordinator reports the invalid words and asks. A parcel ID is valid only if it equals an ID in the charter's Parcels table exactly and case-sensitively.
+  - Limiting prose: if other text in the message, on any line, limits, conditions, negates or excepts `--blanket`, `--asrec`, `--ratify`, `--dispatch-ok`, `--merge-ok` or `--resume` (or an alias), or names one of its parcels outside its argument span, that quick flag is refused. If other text names a parcel for `--review2`, `--review2` is refused (and honoured provisionally, AC-11). A lift instruction is not limiting prose; it is processed only under AC-19.
+- [ ] **AC-10 Aliases, unrecognized tokens, variants (D3) [A6, R2-5, K4, A-29].**
+  - The alias table has exactly one row: `--blanke` → `--blanket`. Matching is exact and case-sensitive. The alias table and the `Aliases:` lines agree both ways; QF-P3 cross-checks them.
+  - Any other token (deferred names, near-misses, anything not an entry) is unrecognized and never interpreted: the Coordinator processes none of that message's quick flags, reports the token and asks; the message is inert.
+  - Variants: for a word that is not, as typed (less a separator comma), a canonical name or alias, replace every Unicode dash with `-`, strip leading and trailing characters that are not letters, digits or `-`; if the result, compared case-insensitively, contains a canonical name or alias, or is a single `-` followed by one without its `--`, the word is a variant of that name (examples: `—nopush`, `(--halt)`, `**--strict**`, `--HALT`, `--dry-run`, `-halt`). A variant is never issued, is reported, and makes the message inert; a variant of a restrictive quick flag is honoured provisionally. The code-span lift exemption of AC-8 applies.
+- [ ] **AC-11 Inert messages [R2-3, K1, A-6, R2-6, R2-8, E-4, E-10, F-8, F-9, K15].**
+  - Any refusal of any quick flag makes its message inert, as do the cases AC-8, AC-9 and AC-10 name. On an inert message the Coordinator takes no write, dispatch, merge, decision or outward-facing action, and the loop stops: the owning session updates the ownership block, writes the stop report naming the pending question and every quick flag honoured provisionally, and cancels the pending wakeup (`ScheduleWakeup stop:true`, `skills/goal/SKILL.md:40`); a non-owner session writes none of these and reports.
+  - Held content is never processed later: every quick flag and lift in an inert message is dropped, and the developer re-sends what is still wanted. A lift in an inert message is not processed, so the restriction stays.
+  - Only an explicit human-typed reply answers the pending question. `--asrec`, `--blanket` and `--resume` never answer it; `--asrec` is refused while it is pending; `--resume` re-enters the loop in its stopped-awaiting-answer state. The answer is the human's prose; a quick flag issued in it is processed under its own entry.
+  - Provisional honouring: every recognized restrictive quick flag in an inert message (`--dry`, `--halt`, `--strict`, `--nopush`, `--review2`, or an alias), including one that is refused, quoted, in a code span or a variant, is honoured as if in force. `--dry` and `--halt` cover that message only. `--strict`, `--nopush` and `--review2` are written by the owner as `provisional` lines of the `Active restrictions` entry (AC-19), as part of the stop writes and so exempt from `--dry` (OQ-2); a provisional `--review2` gets one line per parcel in progress. The developer's answer confirms a provisional line by issuing the quick flag or removes it by a lift; until then it restricts.
+
+### D. Entries
+
+- [ ] **AC-12 `--blanket` (D4′, D10′, R2) [A-11, A-12].** One-shot. For the turn answering its message, the Coordinator decides on the developer's behalf only (1) design questions inside the ratified scope and (2) these enumerated rulings it already owns (`COORDINATOR-PATTERN.md:7`): rulings on the issues builders raise at Step 0 (the Step 0 gate itself still holds), ratification of spec amendments that change no locked decision, and triage of review findings. A later edit to canon never widens that list. It covers nothing in V2, never answers a stop report's human decision or a pending AC-11 question, and never grants an outward-facing or destructive action (such a step stops the Coordinator, which asks). Refused while a `--strict` line is in force. At Stage Zero it covers draft work only. Every decision is logged (AC-20).
+- [ ] **AC-13 `--asrec` (D4′, R6) [A-8, A-13, OQ-1 of the replaced spec].** One-shot. It covers only the questions asked, and the next step recommended, in the Coordinator's immediately previous turn in this session: it takes the recommended option on each, takes that step, then stops at the next human gate. Nothing stated elsewhere (a stop report, a file, an earlier session) is covered. Refused as a session's first developer message, in a message with `--resume`, while a `--strict` line is in force, and while an AC-11 question is pending. It never grants a gate by answering a gate prompt (Gate 1, 2, 3 or any human-only gate) and never answers a stop report's human decision. A recommended option or step that is outward-facing or destructive is not covered. At Stage Zero it covers draft work only: options taken are draft text that still needs Gate 1, and nothing is dispatched, merged, or written outside the draft charter. Every decision is logged (AC-20).
+- [ ] **AC-14 `--ratify` (D4′, R6) [A2, A-10, A-16, A-27, R2-9, BI-3, BI-8].** One-shot, human-issued only, binding to the Coordinator's immediately previous turn in this session.
+  - `Arguments:` optional `<rev>` values; each must equal a revision shown in that turn, in full or as a prefix of at least 7 hex characters; any other argument word refuses the whole ratification.
+  - It counts only if: (a) that turn presented the text being ratified (the charter's decision list or the amendment text) and showed the revision of every file holding it (`charter.md`, and for an amendment the file holding the amendment text): its commit SHA, or its `git hash-object` output if uncommitted (working copy differs from HEAD; no commit SHA is shown for such a file); (b) each such file is unchanged since that turn; (c) the message contains neither `--asrec` nor `--blanket` nor an alias of either.
+  - Refused in a message with `--resume` and as a session's first developer message. A refused ratification is reported and the message is inert. The same rule governs ratifying amendments after a scoped Gate 1 re-open.
+  - The Coordinator never issues, infers or stores `--ratify`. A passing ratification is entered in the goal's gate record, quoting the developer's message verbatim and the revisions shown; that entry is evidence of a past human act, never a quick-flag token, and never ratifies again. The registry defines no format for it.
+- [ ] **AC-15 `--dispatch-ok` and `--merge-ok` (R5, D10′) [A8, A9, A-1, BI-4, A-20].** Both one-shot; both require at least one parcel ID (a bare one is refused and the Coordinator asks).
+  - IDs are checked against the Parcels table of `charter.md` in the Coordinator's checkout as it stood before this message. The whole quick flag is refused, as stop-and-report (`loop-directive.md:21`), if any ID is not in that table (the "Exit step" row is not a parcel ID), if Gate 1 was not granted for the goal before this message (in any form, prose included), if `charter.md` has uncommitted changes in that checkout, or if any ID exists only in text that this message's `--ratify` ratifies, or if any ID's Parcels row was added or changed by charter text still awaiting Gate 1 when the message arrives (coordinator ruling on OQ-1, 2026-10-13).
+  - `--dispatch-ok` is the human's own Gate 2 for the named parcels. It is refused if any named parcel depends, in the Parcels table's dependency order, on a parcel not yet merged into the integration branch. It does not waive coordinator lint or the Step 0 gate. If in the answering turn any named parcel's shaping has not passed coordinator lint, nothing is dispatched under it; the Coordinator reports, and the developer re-sends.
+  - `--merge-ok` is the human's own Gate 3 for the local merge of each named parcel's branch into the integration branch named in the goal's loop directive, contingent on the full verification chain being green (`COORDINATOR-PATTERN.md:53`); it carries V5 verbatim. If in the answering turn any named parcel's chain is not green, nothing is merged; the Coordinator reports, and the developer re-sends after the chain is green. It covers no other merge. Any merge, push or PR reaching a remote, a PR or `main` stays human, with a pointer to `SPEC-CONVENTION.md` §8 item 4 (`SPEC-CONVENTION.md:254`) for that boundary only, never claiming it is satisfied for local merges.
+- [ ] **AC-16 `--resume <slug>` (R16, D9″) [A-21, R2-3, BI-7, E-4, F-9].** One-shot. The slug is required (bare `--resume` is refused and the Coordinator asks for it), is exactly one kebab-case word naming an existing `docs/goals/<slug>/` directory (any other argument word refuses the whole quick flag), and is never inferred from `goals/INDEX.md`, the session or anywhere else. It expands to `/goal resume <slug>` including the ownership-block check, which always runs (a read under `--dry` or `--halt`): if the block names another live coordinator, STOP and report (`skills/goal/SKILL.md:13`), which refuses `--resume` and makes the message inert. The resuming session honours every `Active restrictions` line (AC-19) and the pending question of the latest stop report. It grants nothing; no wakeup or resume prompt carries it.
+- [ ] **AC-17 `--dry`, `--halt` and the observers [A-7, A-23, K5, E-5, F-3].**
+  - `--dry`: for its message only, no writes, dispatches, merges, decisions or `Active restrictions` changes; the Coordinator reports what would be done, including each line it would write or remove. Reads (the ownership check included) still run. It does not enter, continue or advance the loop and schedules no wakeup. Canon stop writes are exempt: if the loop stops during the message (`--halt`, an inert message, a stop condition), the owning session updates the ownership block, writes the stop report (with, for an inert message, its provisional lines, AC-11) and cancels the pending wakeup; a non-owner writes nothing and reports.
+  - `--halt`: finishes the current atomic step, updates the ownership block, cancels the pending wakeup and stops the loop. Only the owning session writes the ownership block; another session stops its own loop, writes nothing and reports. It grants and lifts nothing.
+  - `--status` reports the loop state, ownership block, queue position, every `Active restrictions` line (marking provisional lines and spent `--review2` lines), every pending AC-11 question and every quick flag honoured provisionally, and changes nothing. `--explain` states the reasoning for the last decision or ruling; `--brief` leads the next report with a short summary (state, blockers, what the human must do). Both change nothing.
+- [ ] **AC-18 `--strict`, `--nopush`, `--review2` (D5″, D10′, R3, R15, R19) [A7, A-20, K15].**
+  - `--strict`: persistent. The Coordinator asks about every design decision instead of deciding it, including where a prose grant would let it decide. It lifts nothing and revokes nothing. While a `--strict` line is in force (provisional included), `--blanket` and `--asrec` are refused.
+  - `--nopush`: persistent. No outward-facing action, even where a standing authorization allows it. It narrows an existing grant, grants nothing, and does not block local merges to the integration branch.
+  - `--review2`: persistent (current parcel). It takes no argument and binds to the parcel in progress (dispatched and not yet closed at Stage F) when the message arrives; its line names that parcel. Refused with no parcel in progress, with more than one, or with any word in its span. That parcel needs two independent adversarial reviews before its chain can be green; it never reduces canon's two reviews for architecture/risk parcels (`COORDINATOR-PATTERN.md:69`). Once the parcel is closed at Stage F the line restricts nothing, stays until lifted, and `--status` shows it as spent.
+
+### E. Stored state
+
+- [ ] **AC-19 The `Active restrictions` entry (D5″, D9″) [E-4, F-12, K15].** The registry defines the entry's line format; QF-P2's template holds the entry.
+  - Line format (one line per restriction, values on one line, each newline in the message written as `\n`; no version, no id):
+
+    ```text
+    Active restrictions:
+    - `--strict` | scope: goal | since: 2026-10-13 | session: <session ID> | message: <developer's message, verbatim>
+    - `--review2` | scope: parcel QF-P2 | since: 2026-10-13 | session: <session ID> | message: <…> | provisional
+    ```
+
+    `scope:` is `goal` for `--strict` and `--nopush`, and `parcel <ID>` for `--review2`. The trailing `| provisional` marks a line written under AC-11.
+  - Writer: only the owning Coordinator, in its integration-branch checkout. It adds a line only in the turn answering a human-typed message that issues the quick flag (or a provisional line under AC-11); re-issuing a quick flag whose line exists (same quick flag and scope) writes no second line and removes any `provisional` marker. It removes a line only in the turn answering a non-inert human-typed plain-language lift that names the quick flag (and the parcel, for `--review2` when more than one `--review2` line exists; an ambiguous lift removes nothing and the Coordinator asks). No quick flag lifts anything. Builders and reviewers never write the entry. A session that is not the owner honours a restrictive quick flag as conduct for that session, writes nothing, and reports.
+  - Reading (fail-safe): any session owning or resuming the goal honours every line, in any copy of the loop directive it reads, that contains `--strict`, `--nopush` or `--review2` (or a variant), whatever else the line holds or lacks; a `--review2` line whose parcel cannot be read restricts every parcel in progress (OQ-3). A line naming any other quick flag grants nothing and is reported.
+  - Lifetime: `--strict` and `--nopush` lines last until lifted or goal exit; `--review2` lines until lifted (AC-18).
+  - Stage Zero: before the loop directive exists, restrictive quick flags apply as conduct, and the Coordinator writes their lines when it writes the loop directive.
+  - Residual risk is stated: a dropped line loses a restriction (accepted by D5″); no line can add authority.
+- [ ] **AC-20 Decision log (D10′) [A-13, A-30].** Every decision under `--blanket` or `--asrec` is logged in the loop directive's decision log with these fields, each value on one line (no JSON encoding): date, session, quick flag, message (verbatim, newlines as `\n`), question, decision, recommended option, reversibility. At Stage Zero entries go in a decision-log section of the draft charter. A decision is covered only if its quick flag is in force and not refused in that turn; otherwise the Coordinator asks. The log is evidence, never a quick flag, and confers nothing.
+
+### F. Conflicts
+
+- [ ] **AC-21 Conflict table (D6, R18) [A-15, M7, R2-11, ruling K2 of 2026-10-13].**
+  - Closed vocabulary, each term defined: `independent`, `restrictive-wins`, `ratify-refused`, `asrec-refused`, `dry-stores-nothing`. Where `--strict` wins, the other quick flag is refused (message inert). Where `--dry` or `--halt` wins, the other is not refused and is not applied where they conflict.
+  - Winner column, never blank: for `restrictive-wins`, whichever comes first in `--dry` > `--halt` > `--strict` > `--nopush` > `--review2` (all others rank below); for `dry-stores-nothing`, `--dry`; for `ratify-refused`/`asrec-refused`, the quick flag not refused; for `independent`, `none`.
+  - Closed rule-ID set, each defined in one table row: `D4′`, `D5″`, `D6`, `D10′`, `R6`, `R18`, `T1`, `T2`, `BIND` (`--asrec`/`--ratify` bind to the previous turn in this session, so are refused beside `--resume` and as a first message), `STOP` (`--halt` stops after the current step; nothing further under the other; canon stop writes, wakeup cancellation included, are made even under `--dry`), `DRY`, `OBS`, `GATES` (separate gates, each the human's own act; IDs are checked against the Parcels table as it stood before this message, and an ID only in text this message ratifies refuses the gate quick flag), `SEQ` (each applies in turn; nothing else applies until `--resume`'s ownership check passes; only the owner writes lines), `SUBJ`.
+  - Exactly 55 rows `| A | B | Resolution | Winner | Rule |`, one per unordered pair of the 11 non-observer quick flags, each pair once; every Rule cell begins with one or more rule IDs from the set, separated by ", " and followed by ": ". One sentence states the closed `OBS` rule for the 36 pairs involving `--status`, `--explain` or `--brief`: `independent`, Winner `none`.
+  - These 21 rows are pinned (key = the pair in byte order); the other 34 are `independent` with Winner `none`:
+
+    | Resolution | Winner | Pairs | First rule ID |
+    |---|---|---|---|
+    | `restrictive-wins` | `--dry` | `--dry` × `--blanket`, `--asrec`, `--ratify`, `--dispatch-ok`, `--merge-ok`, `--halt`, `--resume` | `DRY` (`STOP` for `--halt`) |
+    | `restrictive-wins` | `--halt` | `--halt` × `--blanket`, `--asrec`, `--dispatch-ok`, `--merge-ok`, `--resume` | `STOP` |
+    | `restrictive-wins` | `--strict` | `--strict` × `--blanket`, `--asrec` | `D6` |
+    | `dry-stores-nothing` | `--dry` | `--dry` × `--strict`, `--nopush`, `--review2` | `DRY` |
+    | `ratify-refused` | the other | `--ratify` × `--blanket`, `--asrec` | `R6` |
+    | `ratify-refused` | `--resume` | `--ratify` × `--resume` | `BIND` |
+    | `asrec-refused` | `--resume` | `--asrec` × `--resume` | `BIND` |
+  - Among the `independent` rows: `--ratify` × `--dispatch-ok`/`--merge-ok` cite `GATES`; `--nopush` × `--merge-ok` cites `D10′`; `--review2` × `--blanket` cites `R18`; `--strict` × `--dispatch-ok`, `--merge-ok`, `--nopush`, `--review2` cite `D5″`; `--resume` × `--blanket`, `--dispatch-ok`, `--merge-ok`, `--strict`, `--nopush`, `--review2` cite `SEQ`.
+  - The table is unordered and applies equally to aliases. Whenever a message is inert, no cell applies; only AC-11 provisional honouring does.
+- [ ] **AC-22 Order over time (D5″, D6, R18).** T1: within one message the more restrictive quick flag wins and the Coordinator reports (D6). T2: an active restriction is never lifted by a delegating quick flag; `--blanket` or `--asrec` sent while `--strict` is in force is refused; a message that lifts `--strict` and carries either refuses it, so the message is inert and the lift is not processed (the developer lifts first, then re-sends). T3: only a human-typed plain-language lift removes a line (AC-19). T4: lifetimes as AC-19. T5: a registry version change never adds, removes or alters a line.
+
+### G. Authority and scope
+
+- [ ] **AC-23 Authority section; charter summary non-binding.** The registry cites as its goal-level authority the charter's D1, D2″, D3, D4′, D5″, D6, D7, D8, D9″, D10′ (`goals/quick-flags/charter.md:31-40`), `goals/quick-flags/gate1-reopen-d5-d9-2026-10-13.md`, and the plan-review triage (`goals/quick-flags/plan-review-findings.md:70-92`), and states: nothing in this registry relaxes canon; if any text appears to, canon governs and the Coordinator stops and reports (BI-9). It never cites the charter's summary (`charter.md:42-66`) as authority and follows the amended rows where the summary differs: `--resume` (slug required), `--nopush` (local merges not blocked), `--ratify` (bound to shown revisions, not "as currently drafted"), `--dispatch-ok`/`--merge-ok` (one-shot, not "standing"), `--strict` (revokes nothing).
+- [ ] **AC-24 Scope discipline [A3, A11].** Against the `qf-p1` build base recorded in the build dispatch, the only changed path outside the coordinator-owned paths (`docs/goals/quick-flags/**`, `docs/kickstarters/**`, `docs/specs/**` under `plugins/foreman-line/`) is `plugins/foreman-line/docs/QUICK-FLAGS.md`; no untracked file exists; `git diff --check` on the registry is clean.
 
 ## Out of Scope
 
-- QF-P2:
-  - the goal-skill "Quick flags" section and its synced copy
-  - `templates/kickstarters/loop-directive-template.md`
-  - the COORDINATOR-PATTERN cross-reference
-  - any actual grant records or decision-log entries
-- QF-P0: the authority-registry corpus amendment and its sweep diff. Whether `QUICK-FLAGS.md` should become an authority-registry source is an input to QF-P0 shaping, not decided here.
-- QF-P3: the structural conformance check, its package and any test code.
-- The exit-step dry-read walkthrough.
-- Any edit to `charter.md`, `loop-directive.md`, `plan-review-findings.md`, `COORDINATOR-PATTERN.md`, `skills/goal/SKILL.md`, `SPEC-CONVENTION.md`, `STANDING-CONSTRAINTS.md`, `goals/INDEX.md` or `authority-registry/**`.
-- Reinterpreting, revoking or migrating any existing prose grant (e.g. `goals/ops-console-roadmap-authority.md:10-21`, `goals/operator-developer-cortex-memory/ownership-transfer-2026-10-12-01a131a9.md:10-16`).
-- The deferred quick flags (`--lint-only`, `--no-sleep`, `--budget N`, `--model-frontier`), and any quick flag outside D8.
-- Push, PR, remote operations, status flips, registration and receipts.
+- QF-P2: the goal-skill "Quick flags" section and its synced copy; `templates/kickstarters/loop-directive-template.md` (which holds the `Active restrictions` entry and decision log); the COORDINATOR-PATTERN cross-reference; any actual `Active restrictions` line, decision-log entry or gate-record entry.
+- QF-P0 (authority-registry corpus amendment and sweep diff), QF-P3 (structural conformance check), and the exit-step dry-read walkthrough.
+- Any edit to `charter.md`, `loop-directive.md`, `plan-review-findings.md`, the triage files, `COORDINATOR-PATTERN.md`, `skills/goal/SKILL.md`, `SPEC-CONVENTION.md`, `STANDING-CONSTRAINTS.md`, `goals/INDEX.md` or `authority-registry/**`.
+- Reinterpreting, revoking or migrating any existing prose grant (e.g. `goals/ops-console-roadmap-authority.md:10-21`).
+- Deferred quick flags (`--lint-only`, `--no-sleep`, `--budget N`, `--model-frontier`) and any name outside D8.
+- Any stored form of a one-shot quick flag; push, PR, remote operations, status flips, registration and receipts.
 
 ## Context & References
 
-- `plugins/foreman-line/docs/goals/quick-flags/charter.md`:
-  - Objective: lines 17-22
-  - D1–D10 as amended: lines 29-38
-  - summary (non-binding): lines 40-65
-  - QF-P1 row: line 70
-- `plugins/foreman-line/docs/goals/quick-flags/plan-review-findings.md`:
-  - R5: line 29
-  - R6: line 30
-  - R13: line 37
-  - R16: line 40
-  - R18: line 42
-  - four waiver routes: lines 56-60
-  - triage: lines 70-92
-  - proposed D2′–D10′: lines 100-104
-- `plugins/foreman-line/docs/goals/quick-flags/loop-directive.md`:
-  - integration branch: line 8
-  - Gate 2/3 grants and "red voids": lines 20-21
-  - not granted: line 22
-  - record section: line 33
-  - ruling: lines 57-58
-- `plugins/foreman-line/docs/COORDINATOR-PATTERN.md`:
-  - D4 role: line 7
-  - Gate 1: line 30
-  - gate table: lines 51-53
-  - verbatim authorizations: line 55
-  - two-review rule: line 69
-  - stop conditions: line 73
-- `plugins/foreman-line/skills/goal/SKILL.md`:
-  - resume parsing: line 13
-  - per-parcel cycle: line 32
-  - human gates are stop conditions: line 36
-- `plugins/foreman-line/docs/SPEC-CONVENTION.md`:
-  - §4.8 Allowed Files
-  - §8 item 4 (Gate 3 bypass proof): line 254
-- `plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml:2129`: precedent wording for an integration-branch-only merge where any red step voids the grant.
-- `plugins/foreman-line/authority-registry/src/validate.ts:206-217`: the fixed source paths, which don't include `QUICK-FLAGS.md`.
+- `plugins/foreman-line/docs/goals/quick-flags/`:
+  - `charter.md`: Objective 19-25; D-rows 31-40 (D2″ 32, D4′ 34, D5″ 35, D9″ 39, D10′ 40); summary (non-binding) 42-66; Parcels 68-76 (QF-P1 72, Exit step 76); exit criterion 78-84.
+  - `gate1-reopen-d5-d9-2026-10-13.md`: the re-open, K2 scope ruling, tripwire accounting, findings that stay valid.
+  - `plan-review-findings.md`: R5 29, R6 30, R13 37, R16 40, R18 42; waiver routes 56-60; triage 70-92; D4′ proposal 101.
+  - `loop-directive.md`: integration branch 8; Gate 2/3 grants 21-22; not granted 23; blanket/asrec 24; `Active restrictions` 34-37; ruling 59-60.
+  - Triage files, source of bracketed IDs: `qf-p1-review-triage-2026-10-13.md` (A-n, H/M/L-n), `qf-p1-review-triage-round2-2026-10-13.md` (R2-n, C-n, D-n), `qf-p1-review-triage-round3-2026-10-13.md` (E-n, F-n). Unhyphenated A1–A13 and the BI-n and K-n items refer to the replaced spec's amendments, in this file's git history (`git show dfdbfa04:plugins/foreman-line/docs/specs/active/QF-P1-quick-flags-registry.md`).
+- `plugins/foreman-line/docs/COORDINATOR-PATTERN.md`: role 7; commentary rule 28; Gate 1 30; gate table 51-53; verbatim authorizations 55; two-review rule 69; stop conditions 73.
+- `plugins/foreman-line/skills/goal/SKILL.md`: resume 13; Stage Zero 16-20; loop directive 26-30; per-parcel cycle 32; human gates 36; stop 40.
+- `plugins/foreman-line/docs/SPEC-CONVENTION.md`: §4.8 Allowed Files; §8 item 4 at line 254.
+- `plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml:2129` (integration-branch-only merge precedent); `authority-registry/src/validate.ts:206-217` (fixed source paths; `QUICK-FLAGS.md` is not one).
 
 ## Assumptions
 
-- `QUICK-FLAGS.md` does not exist at shaping time (verified by a `find` of `plugins/foreman-line` for `QUICK-FLAGS*`, which returned nothing).
-- QF-P1 cannot cause authority-registry drift, because its single file is not a registry source (`validate.ts:206-217`).
-- The goal's integration branch is `feat/foreman-line-quick-flags` (`loop-directive.md:8`). The registry names the target generically as "the integration branch named in the goal's loop directive" (D7 is foreman-line-wide, not this goal only).
-- Goal exit is not restated here. QF-P1 contributes only "QUICK-FLAGS.md is merged to the integration branch" (`charter.md:76-82`), and a green parcel does not satisfy the goal exit.
+- `QUICK-FLAGS.md` exists on `qf-p1` at 596 lines (`wc -l`), built for the replaced design; it is a base, not a constraint.
+- QF-P1 cannot cause authority-registry drift: `grep -c QUICK-FLAGS authority-registry/src/validate.ts` returns 0.
+- The goal's integration branch is `feat/foreman-line-quick-flags` (`loop-directive.md:8`); the registry names it generically ("the integration branch named in the goal's loop directive", D7).
+- QF-P1 contributes only "QUICK-FLAGS.md is merged to the integration branch" to the exit criterion (`charter.md:78-84`).
 
 ## Open Questions
 
-**Coordinator rulings 2026-10-13: OQ-1 through OQ-5 are resolved by accepting each stated default as binding.** Coordinator lint ran on disk: the spec-linter validates with exit 0, V1–V5 match their sources, and all 29 path:line citations resolve in range.
+Found while authoring, after the Step 0 answers. **Coordinator lint rulings 2026-10-13: OQ-1 accepted (now in AC-15); OQ-2 and OQ-3 accepted as applied.**
 
-These were found while authoring, after the Step 0 answers. Each has a recommended default, and the ACs cite them. Coordinator lint rules on them before promotion.
-
-- **OQ-1: `--asrec` while a `--strict` record is active.** **Default:** refused and reported, by applying D6 to the active state (the same pattern as T2 for `--blanket`).
-- **OQ-2: quick-flag tokens inside quoted or pasted content in a human turn** (fenced code, block quotes, a pasted report). **Default:** they don't count. The Coordinator reports the token and asks.
-- **OQ-3: other quick flags in a message where `--ratify` is refused.** **Default:** each is processed under its own entry, and the refusal is reported. `--asrec` then stops at the Gate 1 prompt, since it never grants a gate.
-- **OQ-4: `--merge-ok` after a red step.** **Default:** the grant is voided for the parcel whose chain went red. Other parcels named in the same record are unaffected. A fresh green chain on that parcel after rework is covered only if the developer issues `--merge-ok` for it again. This does not affect the loop directive's prose Gate 3 grant (V6).
-- **OQ-5: Grant-record validity.** **Default:** a record counts only if all of the following hold:
-  - it was written by the owning Coordinator in the turn that answers the human-typed message it quotes
-  - it has every AC-12 field
-  - its verbatim message contains the token as typed: the canonical name or a documented alias (A1)
-  - its registry version exists
-
-  Anything else grants nothing. Residual risk: anyone with write access to the loop directive can still forge a record. D9′ accepts that risk by design, and reviewers should record whether the registry's text narrows it.
-
-## Amendments (coordinator-ratified 2026-10-13, builder Step 0 rulings; committed alone before code)
-
-- **A1 (F2, F11).** AC-17 and OQ-5 reworded as above. `--nopush` etc. remain meaningful over prose grants as conduct limits only.
-- **A2 (F8, F9).** AC-7(a) binds to the revision of every file holding the text being ratified; revision format is a commit SHA or `git hash-object` output, matched exactly or by a prefix of at least 7 hex characters. This is spec-level; it does not change any locked decision, but it is recorded for the developer's awareness.
-- **A3 (F4).** AC-19 `<base>` is the `qf-p1` HEAD recorded in the build dispatch.
-- **A4 (F3).** V2 is introduced with "No quick flag waives, delegates on the human's behalf, or removes any of:". The next sentence states that `--ratify`, `--dispatch-ok` and `--merge-ok` are the human's own exercise of Gates 1, 2 and 3 (`--merge-ok` remaining green-chain contingent).
-- **A5 (F5).** Closed pair-resolution vocabulary: `independent`, `restrictive-wins`, `ratify-refused`, `dry-records-nothing`. `--dry` wins against `--asrec`, `--resume`, `--ratify` and `--halt` (restrictive-wins; `--ratify` under `--dry` ratifies nothing and reports whether checks (a)–(c) would pass; `--halt` under `--dry` writes no ownership block and reports). `--halt` wins against `--asrec` and `--resume`. All other non-observer pairs are `independent`. If a `--resume` ownership check STOPs, no other quick flag in that message is processed.
-- **A6 (F6).** A message containing an unrecognized token processes none of its quick flags; the Coordinator reports and asks.
-- **A7 (F7).** `--review2` takes no argument; it binds to the parcel active when the message arrives and the record names it; with no active parcel it is refused.
-- **A8 (F10, F12, F13, F14).** A revocation record points to its target by composite key (date, session, canonical quick flag, arguments); the target's `revoked:` line starts `revoked: no` and is later updated to cite the revocation. One `--asrec` covers only the questions open when it arrives plus the last-recommended step, and always stops at the next human gate. Each entry field is one line at column 0, `Label: value`, no bold; `Persistence:` and `Gate interplay:` hold bare values; `Canonical:` and `Aliases:` hold backticked tokens (`Aliases: none` where there is none); "expanded text" in a record means the entry's `Expansion:` line copied verbatim. `--dispatch-ok` and `--merge-ok` refuse the charter's "Exit step" row, which is not a parcel ID.
-- **A9 (F15, F16, F17).** Cite SPEC-CONVENTION §8 item 4 only for the remote/PR/`main` boundary, never claiming it is satisfied for local merges. V1 is `charter.md:21-23`; the summary section ends at `charter.md:64`. Code-span literals are literal tokens; avoid "flagged" wording. The registry includes one sentence stating OQ-5's residual forgery risk.
-- **A10 (builder BI-1..BI-9, ruled 2026-10-13 after the build claim).** BI-1 is a real gap, ratified as an amendment: a quick-flag token that is only mentioned (asked about, discussed, or named inside a revocation instruction) is not issued; if unclear, the Coordinator asks and processes nothing. BI-2 (token and argument parsing definition), BI-3 (each `<rev>` must match one of several shown revisions), BI-4 (bare `--merge-ok`/`--dispatch-ok` refused), BI-5 (ambiguous composite key revokes nothing), BI-6 (a red step voids `--merge-ok` with no revocation record), BI-7 (the `--resume` ownership check runs as a read under `--dry`/`--halt`), BI-8 (a valid ratification is recorded in the gate record, quoting the developer's message), BI-9 ("nothing in this registry relaxes canon; canon governs") are accepted as fail-closed additions. Reviewers are directed to attack each.
-- **A11 (review triage, 2026-10-13).** The two adversarial reviews' accepted fixes are binding spec requirements for rework: see `plugins/foreman-line/docs/goals/quick-flags/qf-p1-review-triage-2026-10-13.md`, whose directives apply to **every** instance of each pattern, not only the listed ones. AC-19 is restated as commit-scoped: each builder commit on `qf-p1` after `c772a943^` changes only `plugins/foreman-line/docs/QUICK-FLAGS.md`. Coordinator commits (specs, kickstarters, triage) are excluded by name. AC-16 additionally requires every one of the 91 Rule cells to cite an ID from a closed rule set.
-- **A12 (round-2 triage, 2026-10-13).** Binding: `plugins/foreman-line/docs/goals/quick-flags/qf-p1-review-triage-round2-2026-10-13.md` (apply to every instance). A5 is superseded where it conflicts: the pair-resolution vocabulary has five terms (adds `asrec-refused`), and `--halt` under `--dry` stops the loop with canon-required writes exempt. Derived grant records are removed; partial revocation is revoke-and-reissue.
-- **A13 (rework 2 Step 0 rulings K1–K15, 2026-10-13).** K1: OQ-3 and AC-7's "each other quick flag is processed under its own entry" are superseded: any refusal of any quick flag makes its message inert (R2-3). K2: a same-message D6 loss is a refusal. K5: canon stop writes (ownership block, stop report) are exempt from `--dry`, including the inert-message stop report. K8: `A12` joins the closed rule-ID set. K3, K4, K6, K7, K9–K15 are accepted as the builder recommended (uniform JSON-string encoding of every record value; open-ended case-insensitive variant detection via dash normalization; version rows `pending` until the coordinator records the blob; unreadable ratified revision means refuse; `R18` for the `--merge-ok`×`--review2` cell; "older" means lower `id:`; owner by the introducing commit's time; Stage Zero restrictive conduct lapses when the loop directive is written; one §8 re-issue rule; `--review2` provisional scope is every active parcel).
+- **OQ-1 (accepted, now in AC-15).** The Q4 ruling refuses an ID that exists only in text this message ratifies. A row drafted and committed into `charter.md` but still awaiting Gate 1 passes AC-15 when no `--ratify` is in the message. **Recommended:** also refuse an ID whose Parcels row is added or changed by charter text awaiting Gate 1 when the message arrives. AC-15 states only the ruled rule until lint decides.
+- **OQ-2 (applied in AC-11).** Under a provisional `--dry`, are provisional `--strict`/`--nopush`/`--review2` lines written? **Default applied:** yes, as stop writes exempt from `--dry` (fail-safe; otherwise a resumed session loses them, E-4).
+- **OQ-3 (applied in AC-19).** A `--review2` line whose parcel cannot be read. **Default applied:** it restricts every parcel in progress (the fail-safe reading of Q12, matching K15).
 
 ## Verification Plan
 
-The coordinator runs these deterministic checks after the builder's claim:
+Run from the worktree root with `R=plugins/foreman-line/docs/QUICK-FLAGS.md` and `B=<qf-p1 build base from the build dispatch>`. Every command must give the stated result.
 
-1. `grep -c '^Registry version: 1$'` returns 1.
-2. ``grep -c '^### `--'`` returns 14, and the set of names equals the D8 set.
-3. Each entry has all seven labelled lines.
-4. Every `Gate interplay:` and `Persistence:` value matches AC-2 and AC-3.
-5. `grep -F` finds each of V1–V6.
-6. The alias table has exactly one row.
-7. The conflict table has 91 non-blank pair cells.
-8. The term rule holds: every prose "flag(s)" is preceded by "quick", apart from the allowed exceptions.
-9. `git diff --name-only` ⊆ Allowed Files, and `git diff --check` is clean.
+1. `grep -c '^Registry version: 1$' "$R"` → `1`. `wc -l < "$R"` → at most `350`.
+2. Entries and labels (AC-2): ``grep -c '^### `--' "$R"`` → `14`, and this prints `0`:
 
-Two independent frontier adversarial reviews follow (architecture/risk, `COORDINATOR-PATTERN.md:69`). They are read-only, per the ruling.
+   ```sh
+   awk 'BEGIN{split("Canonical:|Aliases:|Persistence:|Arguments:|Expansion:|Gate interplay:|Conflicts and lifting:",L,"|")}
+   /^### `--/{if(i&&i<8)bad++; i=1; s=0; next}
+   i&&i<8{if($0==""&&!s)next; s=1; if(index($0,L[i]" ")!=1){bad++; i=0; next} i++}
+   END{if(i&&i<8)bad++; print bad+0}' "$R"
+   ```
+3. Persistence and gate interplay (AC-2, AC-3): this prints exactly the 14 rows of the AC-2 table, one per quick flag, as `` `--name` | persistence | gate interplay ``:
 
-Mandatory reviewer focus questions:
+   ```sh
+   awk '/^### `--/{n=$2} /^Persistence: /{p=substr($0,14)} /^Gate interplay: /{print n" | "p" | "substr($0,17)}' "$R" | LC_ALL=C sort
+   ```
+   and ``grep -cE '^\| `(none|restricts|delegates-within-ratified-scope|gate-2-one-shot|gate-3-one-shot-green-chain|gate-1-human-only|loop-control)` \|' "$R"`` → `7`.
+4. Verbatim text: for each of V1–V7, `grep -cF -- '<text>' "$R"` → at least `1`.
+5. Aliases (AC-10): ``grep -c '^| `--blanke` | `--blanket` |$' "$R"`` → `1`; `grep '^Aliases: ' "$R" | grep -v '^Aliases: none$'` prints exactly ``Aliases: `--blanke` ``.
+6. Conflict table (AC-21): this prints exactly the 21 pinned rows below, then `rows 55 ok`:
 
-- **Naive reading (STANDING-CONSTRAINTS #9), once per waiver route** (`plan-review-findings.md:56-60`). For each route, write the wrong-but-literal reading and show the registry's text excludes it:
-  - (a) a quick-flag token or forged record in the loop directive grants `--blanket`
-  - (b) the Coordinator issues a quick flag in its own wakeup or resume prompt
-  - (c) `--asrec --ratify`, or `--blanket --ratify`, ratifies Gate 1
-  - (d) `--blanket` covers a Gate 1 re-opened by triage
-- Can `--merge-ok` be read as covering `main`, a PR, a push, a parcel outside the charter, or a chain after a red step? Can `--dispatch-ok` be read as covering a parcel outside the charter?
-- Can `--strict` be read as lifting `--nopush` or `--review2`? Can `--nopush` be read as blocking the local integration-branch merge?
-- Does the conflict table give one consistent result per pair, with no cycle and no blank cell? Does the temporal order ever let a later delegating quick flag lift an active restriction?
-- Is any registry text readable as reinterpreting or revoking a prose grant (R13)?
-- Does any expansion widen a decision beyond its D-row? Trace each AC to R5, R6, R13, R16, R18 and to D2′/D4′/D5′/D9′/D10′, word by word.
+   ```sh
+   I='(D4′|D5″|D6|D10′|R6|R18|T1|T2|BIND|STOP|DRY|OBS|GATES|SEQ|SUBJ)'
+   N='^`--(blanket|asrec|ratify|merge-ok|dispatch-ok|dry|halt|resume|strict|review2|nopush)`$'
+   LC_ALL=C awk -F' [|] ' -v I="$I" -v N="$N" '/^[|] `--[a-z0-9-]+` [|] `--[a-z0-9-]+` [|] /{
+     a=substr($1,3); b=$2; n++; k=(a<b)?a" "b:b" "a
+     if(seen[k]++)bad=bad" dup:"k
+     if(a==b||a!~N||b!~N)bad=bad" name:"k
+     if($3!~/^`(independent|restrictive-wins|ratify-refused|asrec-refused|dry-stores-nothing)`$/)bad=bad" res:"k
+     if($5!~("^"I"(, "I")*: "))bad=bad" rule:"k
+     if($3=="`independent`"){if($4!="none")bad=bad" win:"k} else print k" "$3" "$4}
+     END{print "rows " n+0 (bad?" BAD"bad:" ok")}' "$R" | LC_ALL=C sort
+   ```
+
+   ```text
+   `--asrec` `--dry` `restrictive-wins` `--dry`
+   `--asrec` `--halt` `restrictive-wins` `--halt`
+   `--asrec` `--ratify` `ratify-refused` `--asrec`
+   `--asrec` `--resume` `asrec-refused` `--resume`
+   `--asrec` `--strict` `restrictive-wins` `--strict`
+   `--blanket` `--dry` `restrictive-wins` `--dry`
+   `--blanket` `--halt` `restrictive-wins` `--halt`
+   `--blanket` `--ratify` `ratify-refused` `--blanket`
+   `--blanket` `--strict` `restrictive-wins` `--strict`
+   `--dispatch-ok` `--dry` `restrictive-wins` `--dry`
+   `--dispatch-ok` `--halt` `restrictive-wins` `--halt`
+   `--dry` `--halt` `restrictive-wins` `--dry`
+   `--dry` `--merge-ok` `restrictive-wins` `--dry`
+   `--dry` `--nopush` `dry-stores-nothing` `--dry`
+   `--dry` `--ratify` `restrictive-wins` `--dry`
+   `--dry` `--resume` `restrictive-wins` `--dry`
+   `--dry` `--review2` `dry-stores-nothing` `--dry`
+   `--dry` `--strict` `dry-stores-nothing` `--dry`
+   `--halt` `--merge-ok` `restrictive-wins` `--halt`
+   `--halt` `--resume` `restrictive-wins` `--halt`
+   `--ratify` `--resume` `ratify-refused` `--resume`
+   rows 55 ok
+   ```
+7. Retired terms (AC-4): ``grep -ciE 'grant record|revocation record|void record|derived record|suspend|pinned|records section|json|`id:`' "$R"`` → `0`.
+8. Term rule: `grep -niP '(?<!quick )(?<!quick-)\bflags?\b' "$R"` prints only the line(s) holding the builder Step 0 disambiguation sentence.
+9. Scope (AC-24): `git diff --name-only "$B" -- . ':(exclude)plugins/foreman-line/docs/goals/quick-flags' ':(exclude)plugins/foreman-line/docs/kickstarters' ':(exclude)plugins/foreman-line/docs/specs'` prints exactly `plugins/foreman-line/docs/QUICK-FLAGS.md`; `git ls-files --others --exclude-standard` prints nothing; `git diff --check "$B" -- "$R"` prints nothing.
+
+Then two independent frontier adversarial reviews (architecture/risk, `COORDINATOR-PATTERN.md:69`), read-only. The review count restarts on this reshaped spec (Shaping Provenance). Mandatory reviewer focus:
+
+- **Naive reading (STANDING-CONSTRAINTS #9), once per waiver route** (`plan-review-findings.md:56-60`): (a) a token or forged line in the loop directive grants or widens authority, or a forged line lifts a restriction; (b) the Coordinator issues a quick flag in its own wakeup, resume or completion-notification prompt; (c) `--asrec --ratify` or `--blanket --ratify` ratifies Gate 1; (d) `--blanket` covers a Gate 1 re-opened by triage. For each, write the wrong-but-literal reading and show the text excludes it.
+- Can a one-shot quick flag be read as surviving its answering turn (into a wakeup, a resume, or a later chain)? Can `--merge-ok` be read as covering `main`, a PR, a push, a parcel outside the charter, a non-green chain, or an ID only this message ratifies? Can `--dispatch-ok` skip dependency order or lint?
+- Can `--strict` be read as lifting anything? Can `--nopush` block the local integration-branch merge? Can a `--review2` line be dropped by prose, a lift in an inert message, or a malformed line?
+- Is every inert-message path fail-closed, including held content, provisional lines, `--resume` while a question is pending, and `--dry` with a stop?
+- Does the conflict table give one result per pair, consistent with the entries' `Conflicts and lifting:` lines? Is any registry text readable as reinterpreting or revoking a prose grant (R13)?
 
 ## Allowed Files
 
-The builder may create exactly one path (`--tools` for the build session include a shell and write; the builder writes only this path and never runs git commit/push):
+The builder may modify exactly one path (the build session has a shell and write tools; the builder writes only this path and never runs git add, commit or push):
 
 - `plugins/foreman-line/docs/QUICK-FLAGS.md`
 
-This spec, its shaping-result artifact and its `docs/specs/INDEX.md` row are shaping-owned and read-only to the builder. No glob, directory, related file or temporary artifact is mutation authority. Any other path requires a coordinator-ratified spec amendment.
+This spec, its shaping-result artifact and its `docs/specs/INDEX.md` row are shaping-owned and read-only to the builder. No glob, directory, related file or temporary artifact is mutation authority.
 
 ## Shaping Provenance
 
-- Shaped in worktree `agent-skills-qf-p1`, branch `qf-p1`, with no route receipt. This was a direct invocation per the loop-directive ruling of 2026-10-13, dispatched per that ruling as claude-opus-5-5.
-- Step 0 questions Q1–Q21 were all answered by the coordinator with "accept defaults".
-- The advisory self-check (frozen frontmatter schema plus §4 body sections) was traced by hand against `spec-linter/src/schemas.ts` and `shaping/src/self-check.ts`, because the session had no shell. Coordinator lint must execute it and remains the sole promotion authority.
+- Reshaped on 2026-10-13 in worktree `agent-skills-qf-p1`, branch `qf-p1`, by `claude-opus-5-5` (`PI_MODEL`), session `01a137c5-a3ef-7081-bfa2-09c067993d2e`, with no route receipt: a direct invocation per loop-directive ruling 2026-10-13. Kickstarter: `docs/kickstarters/quick-flags-shaping-QF-P1-reshape.md`.
+- Step 0 questions Q1–Q23 answered by the coordinator: Q1–Q3 and Q5–Q23 accepted as recommended (Q16: 55 explicit rows plus the closed `OBS` rule; Q17: cap 350). Q4 rejected: `--dispatch-ok`/`--merge-ok` check IDs against the Parcels table as it stood before the message, and an ID existing only in text the same message ratifies is refused (AC-15, `GATES`).
+- Tripwire accounting (Q23): per `gate1-reopen-d5-d9-2026-10-13.md`, the coordinator's disclosed reading is that the review/tripwire count restarts on this reshaped spec; the developer may overrule it. Rounds 1–3 remain in the triage files.
+- The replaced spec's Amendments A1–A13 and Open Questions OQ-1–OQ-5 are folded in or retired: record machinery (A8 revocation keys, A11 pinned branch, A12 derived records, A13 K3/K6/K7/K10–K13, OQ-5) is removed under D5″/D9″; the rest is carried with source IDs.
+- Self-check, run on this file: spec-linter `npx tsx src/cli.ts validate --repo-root <worktree> <spec>` exited 0; the shaping package's `selfCheckDraft` returned valid with no errors or warnings; the existing `qf-p1-quick-flags-registry.shaping-result.json` (slug from `deriveSessionSlug`) reads schema-valid and is byte-identical to what the emitter produces for this path, so it was left unchanged. Verification Plan commands 2, 3 and 6 were exercised on synthetic input, passing and failing as intended. Coordinator lint remains the sole promotion authority.

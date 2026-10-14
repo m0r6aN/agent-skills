@@ -7,7 +7,7 @@
 > 2026-10-08 hygiene pass). Regenerate or hand-update on every spec state change.
 
 Own TO-B0/TO-P0/TO-P1 lifecycle rows maintained 2026-10-10; other rows retain their recorded provenance.
-QF-P1 `draft` row added 2026-10-13 by the quick-flags shaping session (hand-updated).
+QF-P1 row added 2026-10-13 by the quick-flags shaping session, returned to `active` 2026-10-13 by the QF-P1 reshape under D2″/D5″/D9″ (hand-updated).
 
 | Ticket | Title | Status | Location |
 |---|---|---|---|
