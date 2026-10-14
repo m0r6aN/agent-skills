@@ -112,7 +112,9 @@ if (process.env.FAKE_GH === 'fail') {
 }
 const cmd = args.slice(0, 2).join(' ');
 if (cmd === 'pr list') {
-  process.stdout.write(fs.readFileSync('${escapedPrsJson}', 'utf8'));
+  // FCA-P16: Use fs.writeSync for synchronous writes; process.stdout.write is async
+  // and may be truncated when process.exit() is called immediately after.
+  fs.writeSync(1, fs.readFileSync('${escapedPrsJson}', 'utf8'));
   process.exit(0);
 }
 process.exit(2);

@@ -71,12 +71,22 @@ test('entry path refuses a held port typed (error: [port-in-use], exit 2)', asyn
     const env: NodeJS.ProcessEnv = { ...process.env, FOC_REPO_ROOT: REPO_ROOT, PORT: String(port) }
     delete env.FOC_EXTRA_ROOTS
     delete env.FOC_STATE_DIR
-    const run = spawnSync(TSX_BIN, ['src/server.ts'], {
-      cwd: OPS_CONSOLE_DIR,
-      encoding: 'utf8',
-      timeout: 30_000,
-      env,
-    })
+    // FCA-P16: On Windows, spawn the .cmd file via cmd.exe explicitly for proper exit code handling.
+    // Using shell: true with spawnSync can lose exit codes on Windows.
+    const isWin32 = process.platform === 'win32'
+    const run = isWin32
+      ? spawnSync('cmd', ['/c', TSX_BIN, 'src/server.ts'], {
+          cwd: OPS_CONSOLE_DIR,
+          encoding: 'utf8',
+          timeout: 30_000,
+          env,
+        })
+      : spawnSync(TSX_BIN, ['src/server.ts'], {
+          cwd: OPS_CONSOLE_DIR,
+          encoding: 'utf8',
+          timeout: 30_000,
+          env,
+        })
     assert.equal(run.status, 2, `expected exit 2, got ${run.status}: ${run.stderr}`)
     assert.match(run.stderr, /error: \[port-in-use\]/)
     assert.match(run.stderr, new RegExp(`127\\.0\\.0\\.1:${port} is already in use`))
