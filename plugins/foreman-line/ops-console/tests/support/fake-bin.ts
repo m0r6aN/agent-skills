@@ -139,11 +139,13 @@ if (process.env.FAKE_GH === 'fail') {
 
 const cmd = args.slice(0, 2).join(' ');
 if (cmd === 'pr list' && '${escapedPrs}') {
-  process.stdout.write(fs.readFileSync('${escapedPrs}', 'utf8'));
+  // FCA-P16: Use fs.writeSync for synchronous writes; process.stdout.write is async
+  // and may be truncated when process.exit() is called immediately after.
+  fs.writeSync(1, fs.readFileSync('${escapedPrs}', 'utf8'));
   process.exit(0);
 }
 if (args[0] === 'api' && '${escapedAnnotations}') {
-  process.stdout.write(fs.readFileSync('${escapedAnnotations}', 'utf8'));
+  fs.writeSync(1, fs.readFileSync('${escapedAnnotations}', 'utf8'));
   process.exit(0);
 }
 process.exit(2);
