@@ -53,8 +53,16 @@ test('execFileAsync respects maxBuffer (truncates without error)', async () => {
 })
 
 test('execFileAsync passes cwd to the child process', async () => {
-  const result = await execFileAsync('pwd', [], { cwd: '/tmp' })
-  assert.match(result.stdout, /\/tmp/)
+  // FCA-P16: cross-platform cwd check using node instead of pwd
+  const cwd = process.platform === 'win32' ? (process.env.TEMP ?? 'C:\\Windows\\Temp') : '/tmp'
+  const result = await execFileAsync('node', ['-e', 'console.log(process.cwd())'], { cwd })
+  // Normalize path separators for comparison
+  const normalizedOutput = result.stdout.trim().replace(/\\/g, '/')
+  const normalizedCwd = cwd.replace(/\\/g, '/')
+  assert.ok(
+    normalizedOutput.toLowerCase() === normalizedCwd.toLowerCase(),
+    `expected cwd ${normalizedCwd}, got ${normalizedOutput}`,
+  )
 })
 
 test('runAsync returns trimmed stdout for successful commands', async () => {
