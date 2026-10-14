@@ -1,7 +1,7 @@
 ---
 ticket: QF-P2
 title: Quick-flags integration (goal skill, loop-directive template, synced copy, COORDINATOR-PATTERN cross-reference)
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-10-14
 updated: 2026-10-14

@@ -2,7 +2,7 @@
 
 ## COORDINATOR OWNERSHIP — read before dispatching anything
 > **Queue owner: the pi coordinator session `01a139ff-f7bc-725c-808d-120548a55ef1`** (claimed 2026-10-14, at the QF-P1/QF-P2 parcel boundary; transferred from `01a136d7-28c5-73e4-85c6-6f53aefdf98b` on the developer's instruction, option 1 of the stop report). One goal, one coordinator. Ownership transfers only at parcel boundaries, by editing this block. If this block names another live coordinator, STOP and report.
-> **State:** `qf_p2_rework1_green_round2_review_blocked_on_anthropic_usage` (2026-10-14; QF-P2 shaped, built, round-1 reviewed and triaged, rework 1 applied, deterministic pass green; round-2 reviews undeliverable — anthropic third-party usage exhausted)
+> **State:** `qf_p2_merged_to_integration_qf_p0_shaping_next` (2026-10-14; QF-P2 Stage F complete; QF-P0 shaping is the next iteration, then QF-P3, then the exit dry-read walkthrough)
 
 **Resume:** `/goal resume quick-flags`
 **Integration branch:** `feat/foreman-line-quick-flags` (local; cut from local `main`). Parcel branches/worktrees: `qf-p1`, `qf-p2`, `qf-p0`, `qf-p3`, each in its own worktree, named in its kickstarter.
@@ -70,6 +70,14 @@ QF-P2 progress this session (coordinator `01a139ff-f7bc-725c-808d-120548a55ef1`,
 
 ## Ruling 2026-10-14 — reviewer route deviation (Clint)
 "Retry claude first. If that fails then we switch to openai/gpt-6.1-sol." The anthropic retry failed again (same 400). Round-2 (and, if needed, later) QF-P2 review sessions run as direct invocations on `openai/gpt-6.1-sol`, read-only (`--tools read,grep,find,ls,bash`), no route receipt. This is a recorded, explicit deviation from the 2026-10-13 ruling's `claude-opus-5-5` reviewer lane, scoped to this goal's remaining review work and not precedent. It does not widen any gate: reviewers stay fresh, independent, read-only and adversarial; triage and reproduction duties are unchanged. Builder lanes are unaffected.
+
+## Stage F record 2026-10-14 — QF-P2 closed
+QF-P2 (goal-skill Quick flags section, loop-directive template, synced copy, COORDINATOR-PATTERN cross-reference) built, reworked once on the round-1 triage (O-1/P-1 MEDIUM plus 8 LOW fixes), and reviewed in two rounds of two independent reviews; round 2 returned **ACCEPT (Q and R)** with no new findings (Q and R ran on `openai/gpt-6.1-sol` under the 2026-10-14 route deviation ruling). Deterministic pass on the coordinator machine: all 11 Verification Plan commands green, re-run after rework 1. Spec moved to `docs/specs/done/`. Gate 3 local merge into `feat/foreman-line-quick-flags` (`5d463d14`); nothing pushed. Synced copy committed separately as a reconciliation commit (`2eea7fc2`, Q10/Q11).
+**Tripwire accounting:** 0 of 2 (no falsified closure claim; the builder caught its own VP6 wrap split before claiming).
+**Open LOW findings, accepted as documented (round 1):** O-2 (gate-record carve-out inverse reading; V7 blocks it), O-9 (two historical line-28 citations describe the text QF-P2 was meant to change). Wording nits recorded in the triage's last line, not fixed.
+**Forwarded to the goal's exit report:** F-1 (no gate-record home before the loop directive exists), F-2 (no carry rule for pre-directive decision-log entries), O-7/P-4 (who may transfer ownership; "live" undefined — canon-inherited).
+**Inputs forwarded to QF-P3 shaping:** O-8/P-9 (checker gaps: §5 variant coverage beyond the VP5 PCRE, "flagged", wrapped placeholders, ownership block-quote form, decision-log boundary, heading-list diff, registry path forms in the mirror, entry contiguity in live directives); P-3's contiguity check.
+**Inputs forwarded to QF-P0:** expected authority-registry drift named in the spec's Assumptions (`goal-skill` excerpts at `authority-enforcement-registry.yaml:7443,7487,34815,34974` and the same lines in `tests/fixtures/pass-minimal.yaml`; the new `coordinator-pattern` section uncovered); QF-P0 runs the before/after sweep from QF-P2's build base `41f80463`.
 
 ## Stage F record 2026-10-14 — QF-P1 closed
 QF-P1 (reshaped under Gate 1 re-open D2″/D5″/D9″) built, reworked three times on the reshaped spec, and reviewed in four rounds of two independent frontier reviews each; round 4 returned **ACCEPT (M and N)** with only LOW findings. Deterministic pass on the coordinator machine: spec Verification Plan green (VP block 3 byte-identical to the spec's expected output). Spec moved to `docs/specs/done/`. Gate 3 local merge into `feat/foreman-line-quick-flags` only; nothing pushed.
