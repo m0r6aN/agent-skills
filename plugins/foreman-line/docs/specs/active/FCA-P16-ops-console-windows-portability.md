@@ -1,10 +1,10 @@
 ---
 ticket: FCA-P16
 title: Windows portability for ops-console tests and the UNSAFE_ROOT_PATTERN guard
-status: draft
+status: active
 owner: clinton.morgan
-created: 2026-10-15
-updated: 2026-10-15
+created: 2026-10-14
+updated: 2026-10-14
 risk: elevated
 surfaces: [plugins/foreman-line/ops-console/src/invoke.ts, plugins/foreman-line/ops-console/src/server.ts, plugins/foreman-line/ops-console/tests/]
 routing_class: architecture/risk
@@ -228,3 +228,14 @@ Final skip count will be tallied after implementation.
 - `plugins/foreman-line/ops-console/tests/server-bind.test.ts`
 - `plugins/foreman-line/ops-console/tests/spawn-plan.test.ts`
 - `plugins/foreman-line/ops-console/tests/support/materialize.ts`
+
+## Coordinator ratification — 2026-10-14
+
+Ratified under the owner's blanket authority (owner chose this parcel, 2026-10-14). Coordinator additions:
+
+1. **The 14-failure list is a floor.** CI exits early at the first failing check, so ops-console typecheck and lint, and any later-ordered test file behaviour, are unobserved on Windows. Sweep EVERY ops-console test, source file and script for POSIX assumptions (path separators, `/tmp`, shell scripts, chmod/symlink, env, `ss`/`tmux`, line endings, case-sensitivity), not only the listed tests.
+2. **Product behaviour first.** The `\` refusal in `UNSAFE_ROOT_PATTERN` is a product bug (every Windows root refused); fix it with platform-aware guard logic, keep the POSIX strictness, and mutation-test both platforms' guard rules on Linux (inject the platform into the function; never branch on `process.platform` inside an untestable closure).
+3. **Skip tripwire.** Every skip is named in a manifest, justified, and counted; the total must not exceed what the Skip Manifest states, and a skipped Linux behaviour needs a Windows-equivalent assertion where the behaviour exists.
+4. **CI loop is authorized for the builder:** push the branch `fix/fca-p16-windows` only and open a DRAFT PR to trigger the Windows runner. The builder never merges, never pushes any other branch, never edits workflow files.
+5. **Linux baseline** is the live count at dispatch (583); the Linux suite must stay green and no test may be weakened to pass on Windows (name each assertion changed and why).
+6. Foreign packages (pi-package test script, mutation-scope-guard) stay out of scope; report their CI state in the final message.
