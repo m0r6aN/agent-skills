@@ -256,3 +256,35 @@ test('guard negative control: guardedGhAsync wraps and enforces read-only', asyn
   )
   assert.equal(callCount, 1, 'invalid call should not invoke runner')
 })
+
+test('Reviewer B major: worktreeOutcome pre-fetch covers all paths reconcileGoal requests', async () => {
+  // FCA-P14: The pre-fetch collects all worktree paths from repo.worktrees and sessions.
+  // reconcileGoal only asks for outcomes from worktrees that match parcel keys.
+  // Since matched worktrees are a subset of repo.worktrees, the pre-fetch should
+  // always cover all requested paths.
+  //
+  // This test verifies that _prefetchMisses is always empty in the response.
+  await withTempRepoAsync(eventLoopScenario(), async ({ config }) => {
+    const result = await handleApi(
+      config,
+      {
+        method: 'GET',
+        pathname: '/api/reconcile',
+        query: new URLSearchParams('goal=goal-lag-test'),
+        body: {},
+      },
+      NOW_MS,
+    )
+
+    assert.equal(result.status, 200)
+
+    // The _prefetchMisses field should exist and be empty
+    const json = result.json as { _prefetchMisses?: string[] }
+    assert.ok('_prefetchMisses' in json, 'response should include _prefetchMisses diagnostic field')
+    assert.deepEqual(
+      json._prefetchMisses,
+      [],
+      'all worktreeOutcome paths should be pre-fetched (no misses)',
+    )
+  })
+})
