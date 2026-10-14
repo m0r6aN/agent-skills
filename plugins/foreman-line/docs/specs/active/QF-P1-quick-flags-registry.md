@@ -35,7 +35,7 @@ Rebuild `plugins/foreman-line/docs/QUICK-FLAGS.md` as the single, versioned regi
   - **V6** (`plan-review-findings.md:85`, "flag" → "quick flag"): `QUICK-FLAGS governs quick flag tokens only. Existing prose grants are neither reinterpreted nor revoked.`
   - **V7** (D9″, `charter.md:39`): `Nothing stored in a file can grant authority or loosen any restriction: a stored entry is honoured only to restrict.`
 - **Term.** In prose every "flag"/"flags" is preceded by "quick" (hyphenated forms such as "quick-flag token" count). Exceptions: literal tokens, and one disambiguation sentence saying builder Step 0 "flags" (`COORDINATOR-PATTERN.md:7`, `skills/goal/SKILL.md:32`) are a different thing (D9″, R20). Avoid "flagged".
-- **Size.** `wc -l` of the registry is at most 350. Cells and labelled lines never contain a `|` other than as table delimiters.
+- **Size.** `wc -l` of the registry is at most 370. Cells and labelled lines never contain a `|` other than as table delimiters.
 - **Builder Step 0.** Restate this spec, the single Allowed File, branch `qf-p1`, worktree `/home/cmorgan76/Repos/agent-skills-qf-p1` and the build base, then stop for the coordinator's ruling before writing. Standing constraints apply (`plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`). Builder and reviewers run without route receipts, as direct invocations per loop-directive ruling 2026-10-13 (`loop-directive.md:59-60`).
 
 ## Acceptance Criteria
@@ -141,7 +141,7 @@ Traceability to the plan-review findings QF-P1 closes: **R5** → AC-15; **R6** 
     `scope:` is `goal` for `--strict` and `--nopush`, and `parcel <ID>` for `--review2`. The trailing `| provisional` marks a line written under AC-11.
   - Writer: only the owning Coordinator, in its integration-branch checkout. It adds a line only in the turn answering a human-typed message that issues the quick flag (or a provisional line under AC-11); re-issuing a quick flag whose line exists (same quick flag and scope) writes no second line and removes any `provisional` marker. It removes a line only in the turn answering a non-inert human-typed plain-language lift that names the quick flag (and the parcel, for `--review2` when more than one `--review2` line exists; an ambiguous lift removes nothing and the Coordinator asks). No quick flag lifts anything. Builders and reviewers never write the entry. A session that is not the owner honours a restrictive quick flag as conduct for that session, writes nothing, and reports.
   - Reading (fail-safe): any session owning or resuming the goal honours every line, in any copy of the loop directive it reads, that contains `--strict`, `--nopush` or `--review2` (or a variant), whatever else the line holds or lacks; a `--review2` line whose parcel cannot be read restricts every parcel in progress (OQ-3). A line naming any other quick flag grants nothing and is reported.
-  - Lifetime: `--strict` and `--nopush` lines last until lifted or goal exit; `--review2` lines until lifted (AC-18).
+  - Lifetime: `--strict` and `--nopush` lines last until a human-typed lift (the final report at goal exit lists every active restriction); `--review2` lines until lifted (AC-18).
   - Stage Zero: before the loop directive exists, restrictive quick flags apply as conduct, and the Coordinator writes their lines when it writes the loop directive.
   - Residual risk is stated: a dropped line loses a restriction (accepted by D5″); no line can add authority.
 - [ ] **AC-20 Decision log (D10′) [A-13, A-30].** Every decision under `--blanket` or `--asrec` is logged in the loop directive's decision log with these fields, each value on one line (no JSON encoding): date, session, quick flag, message (verbatim, newlines as `\n`), question, decision, recommended option, reversibility. At Stage Zero entries go in a decision-log section of the draft charter. A decision is covered only if its quick flag is in force and not refused in that turn; otherwise the Coordinator asks. The log is evidence, never a quick flag, and confers nothing.
@@ -218,11 +218,15 @@ Found while authoring, after the Step 0 answers. **Coordinator lint rulings 2026
 - **`--dispatch-ok` with an unlinted parcel (AC-15):** nothing is dispatched for any named parcel; the Coordinator reports and the developer re-sends. This is not a refusal, so the message is not inert.
 - Issue 5-10 wording choices (gate-record entry has no stated location; `--brief` leads the report in the turn answering its message; `SEQ` also cited for the `--halt` rows; the 17 independent-row rule IDs; `Conflicts and lifting:` wording; no blank line after an entry heading) are accepted as the builder proposed.
 
+## Coordinator rulings after v2 review round 1 (2026-10-13)
+
+Binding: `plugins/foreman-line/docs/goals/quick-flags/qf-p1-v2-review-triage-2026-10-13.md` (apply each ruling to **every** instance of its pattern). The registry line cap is raised from 350 to 370 (all `350` occurrences in this spec are now `370`). AC-19's lifetime text "until a human-typed lift (the final report at goal exit lists every active restriction)" is replaced by "until a human-typed lift; the final report at goal exit lists every active restriction".
+
 ## Verification Plan
 
 Run from the worktree root with `R=plugins/foreman-line/docs/QUICK-FLAGS.md` and `B=<qf-p1 build base from the build dispatch>`. Every command must give the stated result.
 
-1. `grep -c '^Registry version: 1$' "$R"` → `1`. `wc -l < "$R"` → at most `350`.
+1. `grep -c '^Registry version: 1$' "$R"` → `1`. `wc -l < "$R"` → at most `370`.
 2. Entries and labels (AC-2): ``grep -c '^### `--' "$R"`` → `14`, and this prints `0`:
 
    ```sh
@@ -301,7 +305,7 @@ This spec, its shaping-result artifact and its `docs/specs/INDEX.md` row are sha
 ## Shaping Provenance
 
 - Reshaped on 2026-10-13 in worktree `agent-skills-qf-p1`, branch `qf-p1`, by `claude-opus-5-5` (`PI_MODEL`), session `01a137c5-a3ef-7081-bfa2-09c067993d2e`, with no route receipt: a direct invocation per loop-directive ruling 2026-10-13. Kickstarter: `docs/kickstarters/quick-flags-shaping-QF-P1-reshape.md`.
-- Step 0 questions Q1–Q23 answered by the coordinator: Q1–Q3 and Q5–Q23 accepted as recommended (Q16: 55 explicit rows plus the closed `OBS` rule; Q17: cap 350). Q4 rejected: `--dispatch-ok`/`--merge-ok` check IDs against the Parcels table as it stood before the message, and an ID existing only in text the same message ratifies is refused (AC-15, `GATES`).
+- Step 0 questions Q1–Q23 answered by the coordinator: Q1–Q3 and Q5–Q23 accepted as recommended (Q16: 55 explicit rows plus the closed `OBS` rule; Q17: cap 370). Q4 rejected: `--dispatch-ok`/`--merge-ok` check IDs against the Parcels table as it stood before the message, and an ID existing only in text the same message ratifies is refused (AC-15, `GATES`).
 - Tripwire accounting (Q23): per `gate1-reopen-d5-d9-2026-10-13.md`, the coordinator's disclosed reading is that the review/tripwire count restarts on this reshaped spec; the developer may overrule it. Rounds 1–3 remain in the triage files.
 - The replaced spec's Amendments A1–A13 and Open Questions OQ-1–OQ-5 are folded in or retired: record machinery (A8 revocation keys, A11 pinned branch, A12 derived records, A13 K3/K6/K7/K10–K13, OQ-5) is removed under D5″/D9″; the rest is carried with source IDs.
 - Self-check, run on this file: spec-linter `npx tsx src/cli.ts validate --repo-root <worktree> <spec>` exited 0; the shaping package's `selfCheckDraft` returned valid with no errors or warnings; the existing `qf-p1-quick-flags-registry.shaping-result.json` (slug from `deriveSessionSlug`) reads schema-valid and is byte-identical to what the emitter produces for this path, so it was left unchanged. Verification Plan commands 2, 3 and 6 were exercised on synthetic input, passing and failing as intended. Coordinator lint remains the sole promotion authority.
