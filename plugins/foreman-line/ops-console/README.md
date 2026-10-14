@@ -19,8 +19,10 @@ started?" at a glance. It consumes verification produced by others; it never pro
 - Every parcel state is **derived from disk on every request** (frozen FOC-P0
   rules R1–R5) — there is no stored status anywhere.
 - The console writes exactly two console-local files:
-  `state/notifications.json` (`foc-notifications/v1`) and
-  `state/invocation-audit.json` (`foc-invocation-audit/v1`, append-only). It
+  `state/notifications.json` (`foc-notifications/v1`),
+  `state/invocation-audit.json` (`foc-invocation-audit/v1`, append-only), and
+  `state/acknowledgements.json` (`foc-acknowledgements/v1`, evidence-bound with
+  append-only acknowledge/unacknowledge events). It
   never writes to `contracts/`, `docs/specs/`, `docs/receipts/`, or
   `docs/goals/` — proven by the negative control in
   `tests/read-only.test.ts`.
@@ -44,7 +46,7 @@ Environment:
 | Variable | Default | Meaning |
 |---|---|---|
 | `FOC_REPO_ROOT` | **required — no default** | Absolute root whose `docs/receipts/` and `plugins/foreman-line/docs/` are projected. Absent (`root-absent`) or relative (`root-not-absolute`) values are refused before startup with a typed `ConsoleRootUnresolvedError` (exit 2) — the console never derives the repo root from the working directory or its own module location (D1) |
-| `FOC_STATE_DIR` | `ops-console/state` | The ONLY writable directory (two fixed files) |
+| `FOC_STATE_DIR` | `ops-console/state` | The ONLY writable directory (three fixed files) |
 | `FOC_EXTRA_ROOTS` | *(empty)* | FCA-1: colon-separated absolute roots whose goal trees project too (`docs/goals`, `docs/INITIATIVES`, `plugins/foreman-line/docs/goals` per root). Goal keys qualify as `alias.slug` (alias = root directory name); bare slugs keep resolving to the primary root. |
 | `PORT` | `8081` | Listen port (`8080` inside the container) |
 | `FOC_HOST` | `127.0.0.1` | Loopback only; non-loopback requires `FOC_CONTAINER=1` and is refused otherwise |
