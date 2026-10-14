@@ -1,4 +1,9 @@
-# Foreman Ops Console (`ops-console`)
+# Foreman Ops Console
+
+Acknowledgement API: `GET /api/acknowledgements`, `POST /api/acknowledgements`
+(with `id`, 64-hex `fingerprint`, and optional `note`), and
+`DELETE /api/acknowledgements/:id`. Acknowledgements are stored in the
+console-local `state/acknowledgements.json` file and lapse when evidence changes. (`ops-console`)
 
 Local-only, **read-only** observer + human-gate presentation over the Foreman
 Line's existing truth sources (receipt chains, parcel specs, goal records). It

@@ -8,6 +8,10 @@ export function signalsHtml(signals, registry, options = {}) {
   const selected = options.selected || new Map()
   const rows = signals.slice(0, 200).map((signal) => {
     const selectable = eligibleActions(signal, registry).length > 0
+    const acknowledgement = signal.acknowledgement
+    const ackAction = signal.class === 'session-state' ? acknowledgement?.current
+      ? `<button type="button" data-unack="${esc(signal.id)}">Undo acknowledgement</button>`
+      : `<button type="button" data-ack="${esc(signal.id)}" data-fingerprint="${esc(signal.fingerprint || '')}">Acknowledge</button>` : ''
     const actions = allowedVerbs(signal, registry).map((verb) => {
       const entry = registry.find((e) => e.verb === verb && e.signalClasses.includes(signal.class))
       return `<button type="button" class="action-btn${entry.destructive ? ' danger' : ''}" data-signal-id="${esc(signal.id)}" data-subject="${esc(signal.subject)}" data-class="${esc(signal.class)}" data-verb="${esc(verb)}" title="${entry.destructive ? 'Separate guarded close/delete action' : entry.invocation === 'spawn' ? `Choose ${esc(verb)} for this item and review all selected work` : 'Review this action'}" ${entry.destructive ? 'data-destructive="true"' : ''}>${verb === 'close-delete' ? 'Close / delete…' : esc(verb[0].toUpperCase() + verb.slice(1))}</button>`
@@ -18,7 +22,7 @@ export function signalsHtml(signals, registry, options = {}) {
       <td><span class="chip chip-${signal.severity === 'urgent' ? 'red' : signal.severity === 'attention' ? 'amber' : 'neutral'}">${esc(signal.severity === 'attention' ? 'needs attention' : signal.severity)}</span></td>
       <td><code>${esc(signal.repo)}</code></td>
       <td><details><summary>${signal.evidence?.length || 0} evidence reference${signal.evidence?.length === 1 ? '' : 's'}</summary><ul>${(signal.evidence || []).map((e) => `<li><code>${esc(e)}</code></li>`).join('')}</ul></details></td>
-      <td class="actions">${actions || '<span class="muted">No registered action</span>'}</td></tr>`
+      <td class="actions">${ackAction}${actions || '<span class="muted">No registered action</span>'}${acknowledgement && !acknowledgement.current ? '<span>Changed since acknowledged</span>' : ''}</td></tr>`
   }).join('')
   return `<div class="list-meta"><span>${options.total ?? signals.length} finding${(options.total ?? signals.length) === 1 ? '' : 's'} in this view</span><div class="row"><button type="button" data-select-visible>Select visible page</button><button type="button" data-clear-visible>Clear visible page</button></div></div>
     <div class="table-wrap"><table class="signals-table"><thead><tr><th aria-label="Selection"></th><th>Work item</th><th>Priority</th><th>Repository</th><th>Evidence</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>`

@@ -1,5 +1,12 @@
 import { readFileSync, realpathSync } from 'node:fs'
 import { basename, isAbsolute, join, relative, sep } from 'node:path'
+import {
+  acknowledge,
+  isAlertAcknowledged,
+  listAcknowledgements,
+  signalFingerprint,
+  unacknowledge,
+} from './acknowledgements.js'
 import { ACTION_REGISTRY, type AutonomyEnvelope, dispatchAction } from './actions.js'
 import { deriveAlerts } from './alerts.js'
 import { type BrowseRefusalError, browseDirectory } from './browse.js'
@@ -407,6 +414,16 @@ export async function handleApi(
     if (method !== 'GET') return methodNotAllowed('GET')
     return withGoal(config, query, now, (projection, treeConfig) => {
       const alerts = deriveAlerts(projection.parcels, now)
+      const storedAcks = listAcknowledgements(config.stateDir)
+      const acknowledgements = alerts.map((alert) => {
+        const ack = storedAcks.find((entry) => entry.id === alert.id)
+        return {
+          id: alert.id,
+          acknowledgement: ack
+            ? { at: ack.at, note: ack.note, current: isAlertAcknowledged(config.stateDir, alert) }
+            : null,
+        }
+      })
       // Alert firing is the only trigger the frozen route table allows; it
       // records firings in the console-local store (OQ3) and nothing else.
       const notifications = syncAlerts(config.stateDir, alerts, now)
@@ -415,6 +432,7 @@ export async function handleApi(
         json: {
           goal: projection.goal.slug,
           alerts,
+          acknowledgements,
           notifications,
           // FCA-3 additive sibling: triage questions + recommendations with
           // copy-pasteable commands. Presentation only — nothing executes.
@@ -437,6 +455,42 @@ export async function handleApi(
         })),
       },
     }))
+  }
+
+  if (pathname === '/api/acknowledgements') {
+    if (method === 'GET')
+      return { status: 200, json: { acknowledgements: listAcknowledgements(config.stateDir) } }
+    if (method !== 'POST') return methodNotAllowed('GET, POST')
+    const body = isRecord(request.body) ? request.body : {}
+    const id = typeof body.id === 'string' ? body.id : ''
+    const fingerprint = typeof body.fingerprint === 'string' ? body.fingerprint : ''
+    const note = body.note
+    const sessionId = /^session-state:[A-Za-z0-9._:-]+$/.test(id)
+    const alertId = /^[A-Za-z0-9._:-]+:(?:hung|failed|tripwire)$/.test(id)
+    if (!sessionId && !alertId)
+      return {
+        status: 400,
+        json: { error: 'invalid acknowledgement id', reason: 'class-not-acknowledgeable' },
+      }
+    if (!/^[a-f0-9]{64}$/i.test(fingerprint))
+      return { status: 400, json: { error: 'invalid fingerprint', reason: 'invalid-fingerprint' } }
+    if (note !== undefined && (typeof note !== 'string' || note.length > 280))
+      return { status: 400, json: { error: 'invalid note', reason: 'invalid-note' } }
+    acknowledge(
+      config.stateDir,
+      { id, fingerprint, at: '', ...(typeof note === 'string' ? { note } : {}) },
+      now,
+    )
+    return { status: 200, json: { acknowledged: true } }
+  }
+
+  const acknowledgementRoute = /^\/api\/acknowledgements\/([^/]+)$/.exec(pathname)
+  if (acknowledgementRoute !== null) {
+    if (method !== 'DELETE') return methodNotAllowed('DELETE')
+    const id = decodeURIComponent(acknowledgementRoute[1] ?? '')
+    return unacknowledge(config.stateDir, id, now)
+      ? { status: 200, json: { acknowledged: false } }
+      : { status: 404, json: { error: 'unknown acknowledgement id', reason: 'unknown-id' } }
   }
 
   if (pathname === '/api/notifications') {
@@ -500,7 +554,23 @@ export async function handleApi(
         (severityFilter === null || signal.severity === severityFilter) &&
         (repoFilter === null || signal.repo === repoFilter),
     )
-    return { status: 200, json: { signals } }
+    const acks = listAcknowledgements(config.stateDir)
+    return {
+      status: 200,
+      json: {
+        signals: signals.map((signal) => {
+          const fingerprint = signalFingerprint(signal)
+          const ack = acks.find((entry) => entry.id === signal.id)
+          return {
+            ...signal,
+            fingerprint,
+            acknowledgement: ack
+              ? { at: ack.at, note: ack.note, current: ack.fingerprint === fingerprint }
+              : null,
+          }
+        }),
+      },
+    }
   }
 
   // FCA-P2 fleet registry (control-center amendment): declared multi-repo

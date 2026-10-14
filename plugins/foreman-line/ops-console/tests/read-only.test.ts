@@ -184,7 +184,8 @@ test('D2 structural guard: only notifications.ts, invoke.ts, fleet.ts, spawn.ts,
         name !== 'invoke.ts' &&
         name !== 'fleet.ts' &&
         name !== 'spawn.ts' &&
-        name !== 'ledger-store.ts'
+        name !== 'ledger-store.ts' &&
+        name !== 'acknowledgements.ts'
       ) {
         offenders.push(name)
       }
