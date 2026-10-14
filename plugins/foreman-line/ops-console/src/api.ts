@@ -131,6 +131,9 @@ export interface ApiDeps {
   readonly decisions?: AsyncDecisionsOptions
 }
 
+/** FCA-P14: in-process diagnostics (never serialised into a response; tests read it). */
+export const diagnostics: { prefetchMisses: string[] } = { prefetchMisses: [] }
+
 export async function handleApi(
   config: ConsoleConfig,
   request: ApiRequest,
@@ -268,12 +271,11 @@ export async function handleApi(
       // FCA-P14: pre-fetch miss tracking for worktree outcomes.
       // The pre-fetch should cover all paths reconcileGoal asks for.
       // If it misses, we return 'unknown' with an explicit marker so tests can detect it.
-      const prefetchMisses: string[] = []
       const worktreeOutcome = (path: string) => {
         const hit = outcomes.get(path)
         if (hit !== undefined) return hit
         // Invariant violation: path not pre-fetched. Track for debugging.
-        prefetchMisses.push(path)
+        diagnostics.prefetchMisses.push(path)
         return {
           worktree: 'unknown' as const,
           branch: null,
@@ -325,9 +327,6 @@ export async function handleApi(
             rule: stateOf.get(entry.parcel)?.rule ?? null,
             ...entry,
           })),
-          // FCA-P14: diagnostic for pre-fetch misses (should always be empty).
-          // A non-empty array indicates a bug in the pre-fetch logic.
-          _prefetchMisses: prefetchMisses,
         },
       }
     })

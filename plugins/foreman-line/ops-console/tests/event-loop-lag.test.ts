@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { handleApi } from '../src/api.js'
+import { diagnostics, handleApi } from '../src/api.js'
 import { assertReadOnlyGh, guardedGhAsync } from '../src/decisions-remote.js'
 import { clearSignalsInFlight, collectSignalsAsync } from '../src/signals.js'
 import { type Scenario, withTempRepoAsync } from './support/materialize.js'
@@ -263,7 +263,8 @@ test('Reviewer B major: worktreeOutcome pre-fetch covers all paths reconcileGoal
   // Since matched worktrees are a subset of repo.worktrees, the pre-fetch should
   // always cover all requested paths.
   //
-  // This test verifies that _prefetchMisses is always empty in the response.
+  // This test verifies the in-process miss counter stays empty (the response shape is unchanged).
+  diagnostics.prefetchMisses.length = 0
   await withTempRepoAsync(eventLoopScenario(), async ({ config }) => {
     const result = await handleApi(
       config,
@@ -278,11 +279,13 @@ test('Reviewer B major: worktreeOutcome pre-fetch covers all paths reconcileGoal
 
     assert.equal(result.status, 200)
 
-    // The _prefetchMisses field should exist and be empty
-    const json = result.json as { _prefetchMisses?: string[] }
-    assert.ok('_prefetchMisses' in json, 'response should include _prefetchMisses diagnostic field')
+    assert.equal(
+      '_prefetchMisses' in (result.json as object),
+      false,
+      'route shape unchanged: no diagnostic field in the response',
+    )
     assert.deepEqual(
-      json._prefetchMisses,
+      diagnostics.prefetchMisses,
       [],
       'all worktreeOutcome paths should be pre-fetched (no misses)',
     )
