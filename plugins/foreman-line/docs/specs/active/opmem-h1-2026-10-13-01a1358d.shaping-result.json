@@ -1,0 +1,6 @@
+{
+  "parcelSpecRefs": [
+    "plugins/foreman-line/docs/specs/active/OPMEM-H1-sqlite-dependency-remediation.md"
+  ],
+  "epics": []
+}
