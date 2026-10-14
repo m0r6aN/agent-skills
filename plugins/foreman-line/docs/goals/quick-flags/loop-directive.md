@@ -2,7 +2,7 @@
 
 ## COORDINATOR OWNERSHIP — read before dispatching anything
 > **Queue owner: the pi coordinator session `01a136d7-28c5-73e4-85c6-6f53aefdf98b`** (claimed 2026-10-13). One goal, one coordinator. Ownership transfers only at parcel boundaries, by editing this block. If this block names another live coordinator, STOP and report.
-> **State:** `qf_p1_review_round3_request_changes_tripwire_stop` (loop stopped 2026-10-13; this session owns the goal; `/goal resume quick-flags` after the developer chooses an option in the round-3 triage)
+> **State:** `qf_p1_reshape_step0` (resumed 2026-10-13 after Gate 1 re-open of D5/D9/D2; QF-P1 reshaped and rebuilt under D2″/D5″/D9″)
 
 **Resume:** `/goal resume quick-flags`
 **Integration branch:** `feat/foreman-line-quick-flags` (local; cut from local `main`). Parcel branches/worktrees: `qf-p1`, `qf-p2`, `qf-p0`, `qf-p3`, each in its own worktree, named in its kickstarter.
@@ -13,7 +13,7 @@ The Coordinator (D4): you consume verification, you never produce it. Charter: `
 
 ## Gate record
 
-- **Gate 1:** granted 2026-10-13 ("ratify as written"), re-ratified after plan review ("ratify the amendments as written"): D1–D10 as amended (D2′, D4′, D5′, D9′, D10′). Re-opening any decision re-opens Gate 1 for that decision only.
+- **Gate 1:** granted 2026-10-13 ("ratify as written"), re-ratified after plan review ("ratify the amendments as written"): D1–D10 as amended (D2′, D4′, D10′), then D2″, D5″, D9″ after the second scoped re-open on 2026-10-13 ("Ratify your recommendations"; see `gate1-reopen-d5-d9-2026-10-13.md`). Re-opening any decision re-opens Gate 1 for that decision only.
   Ratified revisions: `charter.md` as ratified at `90f72d50` (Gate 1 re-ratification, 2026-10-13); amendment text in `plan-review-findings.md` at `97b94e60`. Disclosure for the developer's confirmation: commit `2837d974` later edited the charter's Gate 2 request to add QF-P0, conforming it to the already-ratified Parcels table; no ratification entry cites that edit.
 
 ## Standing authorizations (granted by Clint 2026-10-13; scoped to this goal only)
@@ -21,7 +21,7 @@ The Coordinator (D4): you consume verification, you never produce it. Charter: `
 1. **Gate 2 (dispatch):** exactly QF-P1, QF-P2, QF-P0, QF-P3, in that dependency order (QF-P0 after QF-P2, QF-P3 after QF-P2). A new parcel idea is stop-and-report. Contingency: shaping must pass coordinator lint (every factual claim verified on disk) first.
 2. **Gate 3 (merge):** local merge of a parcel branch into `feat/foreman-line-quick-flags`, contingent on the full chain being green: closure check on the claim, deterministic pass, adversarial review(s) triaged, any red step voids it for that chain. Merge of the integration branch to `main` stays human.
 3. **Not granted:** push, PR, remote operations, force-push, history rewrite, repo-settings changes. All local work only.
-4. **Blanket/asrec:** none standing. Quick flags apply only per D9′ and are recorded below.
+4. **Blanket/asrec:** none standing. Delegating and gate quick flags are one-shot (D5″) and have no stored form. The only stored quick-flag state is the `Active restrictions` entry below.
 
 ## Per-iteration algorithm
 
@@ -31,9 +31,10 @@ The Coordinator (D4): you consume verification, you never produce it. Charter: `
 4. Update the state line above and the INDEX row at every parcel boundary.
 5. At the exit: dispatch the dry-read walkthrough reviewer, then write the stop report.
 
-## Quick-flag records and decision log
+## Active restrictions and decision log
 
-*(none yet)*
+Active restrictions: *(none)*
+Decision log: *(none yet)*
 
 ## Stop conditions (stop the loop, write a report naming what the human must do)
 
