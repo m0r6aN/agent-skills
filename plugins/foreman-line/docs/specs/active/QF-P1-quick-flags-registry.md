@@ -228,6 +228,8 @@ Round 2 rulings (2026-10-13): binding `plugins/foreman-line/docs/goals/quick-fla
 
 Builder Step 0 rulings for v2 rework 2 (3a–3k accepted as recommended): 3a merges are read as they stood before the message, including in the dependency-order check; 3b "includes the Parcels table" is a `--ratify` condition and part of the ratified-row definition, canon's prose Gate 1 is untouched and establishes no ratified rows by itself; 3c accepted (this goal's QF-P1/QF-P2 rows are refused for the gate quick flags until a ratification naming a revision is recorded; prose Gate 2/3 grants are unaffected); 3d a dash-only word followed by a word that equals a canonical name without its `--` is a variant, and the false-inert cost on ordinary prose is accepted; 3e a lift removing a line from every reachable copy is an explicit exception to the checkout clause, and an unreachable copy still restricts and is reported; 3f no change for `--ratify` in a non-owner session, ownership with `--resume` is decided after the `--resume` check; 3g the Branch check uses the same revision tie; 3h, 3i, 3j, 3k accepted as documented (version stays 1 pre-merge).
 
+Round 3 rulings (2026-10-13): binding `plugins/foreman-line/docs/goals/quick-flags/qf-p1-v2-review-triage-round3-2026-10-13.md` (apply each to every instance). In particular AC-19: the Reading rule honours the entry at the Writer's location and in every other copy the session reads; the Writer writes every copy the owner may write; between Gate 1 and the loop directive the entry lives in `restrictions.md` in the goal's directory.
+
 ## Verification Plan
 
 Run from the worktree root with `R=plugins/foreman-line/docs/QUICK-FLAGS.md` and `B=<qf-p1 build base from the build dispatch>`. Every command must give the stated result.
