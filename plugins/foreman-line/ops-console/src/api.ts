@@ -4,11 +4,10 @@ import { ACTION_REGISTRY, type AutonomyEnvelope, dispatchAction } from './action
 import { deriveAlerts } from './alerts.js'
 import { type BrowseRefusalError, browseDirectory } from './browse.js'
 import { type ConsoleConfig, goalTrees, resolveGoalKey, treeConfigFor } from './config.js'
-import { buildDecisions, type DecisionsOptions } from './decisions.js'
+import { type AsyncDecisionsOptions, buildDecisionsAsync } from './decisions.js'
 import {
-  addFleetRoot,
-  defaultFleetProbe,
-  describeRoot,
+  addFleetRootAsync,
+  describeRootAsync,
   type FleetRefusalError,
   type FleetState,
   loadFleetState,
@@ -17,19 +16,24 @@ import {
 } from './fleet.js'
 import { isRecord } from './guards.js'
 import { invokeFlow, listAuditEntries } from './invoke.js'
-import { ledgerEntries, liveProbes } from './ledger.js'
-import { readGitOutcome } from './ledger-git.js'
+import { asyncLiveProbes, ledgerEntriesAsync } from './ledger.js'
+import { readGitOutcomeAsync } from './ledger-git.js'
 import { deleteNotification, listNotifications, syncAlerts } from './notifications.js'
 import { projectGoal } from './project.js'
 import { assess, DISCREPANCY_CODES, reconcileGoal, type SessionEvidence } from './reconcile.js'
-import { gatherRepoFacts } from './reconcile-git.js'
-import { gatherPrFacts } from './reconcile-remote.js'
+import { gatherRepoFactsAsync } from './reconcile-git.js'
+import { gatherPrFactsAsync } from './reconcile-remote.js'
 import { remediesFor } from './remedy.js'
 import { loadRoutingPolicy } from './routing.js'
 import { listGoalSlugs, scanGoal } from './scan.js'
-import { collectSignals, SIGNAL_CLASSES, SIGNAL_SEVERITIES } from './signals.js'
-import { sessionProbeFor } from './signals-session.js'
-import { launchSpawnPlan, listSpawnReceipts, planSpawn, type SpawnRefusalError } from './spawn.js'
+import { collectSignalsAsync, SIGNAL_CLASSES, SIGNAL_SEVERITIES } from './signals.js'
+import { asyncSessionProbeFor } from './signals-session.js'
+import {
+  launchSpawnPlanAsync,
+  listSpawnReceipts,
+  planSpawn,
+  type SpawnRefusalError,
+} from './spawn.js'
 import { goalStatus } from './status.js'
 import type { ChainSummary, GoalProjection } from './types.js'
 
@@ -84,6 +88,29 @@ function withGoal(
   return render(projection, treeConfig)
 }
 
+/** FCA-P14: Async version of withGoal for routes using non-blocking calls. */
+async function asyncWithGoal(
+  config: ConsoleConfig,
+  query: URLSearchParams,
+  now: number,
+  render: (projection: GoalProjection, treeConfig: ConsoleConfig) => Promise<ApiResult>,
+): Promise<ApiResult> {
+  const goal = query.get('goal')
+  if (goal === null || goal.length === 0) {
+    return { status: 400, json: { error: 'missing required query parameter goal=<slug>' } }
+  }
+  const resolved = resolveGoalKey(config, goal)
+  if (resolved === null) {
+    return { status: 404, json: { error: `unknown goal ${JSON.stringify(goal)}` } }
+  }
+  const treeConfig = treeConfigFor(config, resolved.tree)
+  const projection = projectGoal(treeConfig, resolved.slug, now, goal, resolved.tree.treeRef)
+  if (projection === null) {
+    return { status: 404, json: { error: `unknown goal ${JSON.stringify(goal)}` } }
+  }
+  return render(projection, treeConfig)
+}
+
 function chainDocuments(config: ConsoleConfig, chain: ChainSummary | null): unknown[] {
   if (chain === null) return []
   const dir = join(config.receiptsDir, chain.workflowId)
@@ -101,15 +128,18 @@ function chainDocuments(config: ConsoleConfig, chain: ChainSummary | null): unkn
 
 /** Test seams only: production callers pass nothing and get the real `gh`/`git`. */
 export interface ApiDeps {
-  readonly decisions?: DecisionsOptions
+  readonly decisions?: AsyncDecisionsOptions
 }
 
-export function handleApi(
+/** FCA-P14: in-process diagnostics (never serialised into a response; tests read it). */
+export const diagnostics: { prefetchMisses: string[] } = { prefetchMisses: [] }
+
+export async function handleApi(
   config: ConsoleConfig,
   request: ApiRequest,
   now: number,
   deps: ApiDeps = {},
-): ApiResult {
+): Promise<ApiResult> {
   const { method, pathname, query } = request
 
   if (pathname === '/api/health') {
@@ -133,8 +163,8 @@ export function handleApi(
     // tree-qualified keys, activity, and attention counts per goal.
     const goals: unknown[] = []
     const statuses: unknown[] = []
-    // FCA-2: one signal scan feeds every goal's severity breakdown.
-    const allSignals = collectSignals(config, now)
+    // FCA-P14: async signal collection (non-blocking).
+    const allSignals = await collectSignalsAsync(config, now)
     for (const tree of goalTrees(config)) {
       const treeConfig = treeConfigFor(config, tree)
       for (const slug of listGoalSlugs(treeConfig)) {
@@ -176,9 +206,10 @@ export function handleApi(
   // local record vs local git vs remote, with a closed discrepancy vocabulary.
   // Read-only; one batch of git calls and one cached `gh pr list` per repo per
   // request - never per parcel. `state`/`rule` are echoed for display only.
+  // FCA-P14: fully async git/gh/ledger calls (non-blocking).
   if (pathname === '/api/reconcile') {
     if (method !== 'GET') return methodNotAllowed('GET')
-    return withGoal(config, query, now, (projection, treeConfig) => {
+    return asyncWithGoal(config, query, now, async (projection, treeConfig) => {
       // Real paths throughout: git reports real worktree paths, receipts may hold symlinks.
       const real = (path: string): string => {
         try {
@@ -191,8 +222,11 @@ export function handleApi(
       // The specs directory of THIS tree, repo-relative; outside the repository = unknown.
       const rel = relative(repoRoot, real(treeConfig.specsDir)).split(sep).join('/')
       const specsRel = rel === '' || rel.startsWith('..') || isAbsolute(rel) ? null : rel
-      const repo = gatherRepoFacts(repoRoot, undefined, specsRel)
-      const prs = gatherPrFacts(repoRoot, now)
+      // FCA-P14: async repo facts and PR facts (non-blocking).
+      const [repo, prs] = await Promise.all([
+        gatherRepoFactsAsync(repoRoot, undefined, specsRel),
+        gatherPrFactsAsync(repoRoot, now),
+      ])
       // Other goals' parcel keys: only used to recognise ambiguous links.
       const otherKeys: string[] = []
       for (const slug of listGoalSlugs(treeConfig)) {
@@ -206,8 +240,10 @@ export function handleApi(
       const receipts = listSpawnReceipts(config.stateDir).filter(
         (receipt) => real(receipt.repoRoot) === repoRoot,
       )
+      // FCA-P14: async ledger entries (non-blocking).
+      const ledger = await ledgerEntriesAsync(receipts, asyncLiveProbes(config), now)
       const sessions: SessionEvidence[] = []
-      for (const [id, entry] of ledgerEntries(receipts, liveProbes(config), now)) {
+      for (const [id, entry] of ledger) {
         const receipt = receipts.find((candidate) => candidate.id === id)
         if (receipt === undefined) continue
         sessions.push({
@@ -219,13 +255,34 @@ export function handleApi(
           orphanClean: entry.orphanClean,
         })
       }
-      const outcomes = new Map<string, ReturnType<typeof readGitOutcome>>()
+      // FCA-P14: pre-fetch all worktree outcomes in parallel (non-blocking).
+      // Collect all worktree paths from repo facts and session worktrees.
+      const allWorktreePaths = new Set<string>([
+        ...repo.worktrees.map((wt) => wt.path),
+        ...sessions.map((s) => s.worktreePath),
+      ])
+      const outcomesArray = await Promise.all(
+        [...allWorktreePaths].map(async (path) => ({
+          path,
+          fact: await readGitOutcomeAsync(path, repo.defaultRef),
+        })),
+      )
+      const outcomes = new Map(outcomesArray.map(({ path, fact }) => [path, fact]))
+      // FCA-P14: pre-fetch miss tracking for worktree outcomes.
+      // The pre-fetch should cover all paths reconcileGoal asks for.
+      // If it misses, we return 'unknown' with an explicit marker so tests can detect it.
       const worktreeOutcome = (path: string) => {
         const hit = outcomes.get(path)
         if (hit !== undefined) return hit
-        const fact = readGitOutcome(path, repo.defaultRef)
-        outcomes.set(path, fact)
-        return fact
+        // Invariant violation: path not pre-fetched. Track for debugging.
+        diagnostics.prefetchMisses.push(path)
+        return {
+          worktree: 'unknown' as const,
+          branch: null,
+          commitsAhead: null,
+          dirtyFiles: null,
+          pushed: null,
+        }
       }
       const reconciled = reconcileGoal({
         parcels: projection.parcels,
@@ -333,12 +390,16 @@ export function handleApi(
   // every human gate act waiting - open PRs (Gate 3) and R3 awaiting-gate
   // parcels (Gates 1/2) - with evidence and ages. Read-only: facts and (in later
   // stages) a presented command; nothing is merged, approved or dispatched here.
+  // FCA-P14: fully async git/gh calls (non-blocking).
   if (pathname === '/api/decisions') {
     if (method !== 'GET') return methodNotAllowed('GET')
     const repo = query.get('repo')
     return {
       status: 200,
-      json: buildDecisions(config, now, { ...deps.decisions, repo: repo === '' ? null : repo }),
+      json: await buildDecisionsAsync(config, now, {
+        ...deps.decisions,
+        repo: repo === '' ? null : repo,
+      }),
     }
   }
 
@@ -431,7 +492,9 @@ export function handleApi(
         },
       }
     }
-    const signals = collectSignals(config, now).filter(
+    // FCA-P14: async signal collection (non-blocking).
+    const allSignals = await collectSignalsAsync(config, now)
+    const signals = allSignals.filter(
       (signal) =>
         (classFilter === null || signal.class === classFilter) &&
         (severityFilter === null || signal.severity === severityFilter) &&
@@ -443,17 +506,18 @@ export function handleApi(
   // FCA-P2 fleet registry (control-center amendment): declared multi-repo
   // scope. Refusals are typed (4xx + `reason`); the only write target is
   // `state/fleet.json`.
+  // FCA-P14: async fleet operations (non-blocking git probes).
   if (pathname === '/api/fleet') {
     if (method !== 'GET') return methodNotAllowed('GET')
-    return { status: 200, json: { roots: fleetRoots(config) } }
+    return { status: 200, json: { roots: await fleetRootsAsync(config) } }
   }
 
   if (pathname === '/api/fleet/add') {
     if (method !== 'POST') return methodNotAllowed('POST')
     const body = isRecord(request.body) ? request.body : {}
     const root = typeof body.root === 'string' ? body.root : ''
-    return fleetMutation(config, () =>
-      addFleetRoot(loadFleetState(config.stateDir, config.repoRoot), root, defaultFleetProbe),
+    return fleetMutationAsync(config, () =>
+      addFleetRootAsync(loadFleetState(config.stateDir, config.repoRoot), root),
     )
   }
 
@@ -505,6 +569,7 @@ export function handleApi(
   // FCA-P5 spawn dispatch: shared controls + selected actions -> pure plan
   // (typed refusals in the plan stage) -> tmux launch -> receipts. The
   // response carries digests and worktree paths, never prompt payloads.
+  // FCA-P14: async worktree/tmux operations (non-blocking).
   if (pathname === '/api/spawn') {
     if (method !== 'POST') return methodNotAllowed('POST')
     const body = isRecord(request.body) ? request.body : {}
@@ -530,7 +595,7 @@ export function handleApi(
         })),
         now,
       })
-      const launch = launchSpawnPlan(config, plan, now)
+      const launch = await launchSpawnPlanAsync(config, plan, now)
       return {
         status: 200,
         json: {
@@ -560,22 +625,23 @@ export function handleApi(
   // FCA-P5 spawn receipts (control-center amendment): append-only receipt
   // list with derived pane liveness. Read-only route; the store is written by
   // the launcher only.
+  // FCA-P14: async ledger and session probes (non-blocking).
   if (pathname === '/api/spawns') {
     if (method !== 'GET') return methodNotAllowed('GET')
     // FCA-P7: `ledger` is ADDITIVE; every pre-existing field is unchanged.
     const receipts = listSpawnReceipts(config.stateDir)
-    const ledger = ledgerEntries(receipts, liveProbes(config), now)
+    const ledger = await ledgerEntriesAsync(receipts, asyncLiveProbes(config), now)
+    const sessionProbe = asyncSessionProbeFor(config.repoRoot)
+    const spawnsWithLiveness = await Promise.all(
+      receipts.map(async (receipt) => ({
+        ...receipt,
+        liveness: (await sessionProbe.sessionAlive(receipt.sessionName)) ? 'alive' : 'exited',
+        ledger: ledger.get(receipt.id) ?? null,
+      })),
+    )
     return {
       status: 200,
-      json: {
-        spawns: receipts.map((receipt) => ({
-          ...receipt,
-          liveness: sessionProbeFor(config.repoRoot).sessionAlive(receipt.sessionName)
-            ? 'alive'
-            : 'exited',
-          ledger: ledger.get(receipt.id) ?? null,
-        })),
-      },
+      json: { spawns: spawnsWithLiveness },
     }
   }
 
@@ -606,15 +672,30 @@ export function handleApi(
   return { status: 404, json: { error: `no such route ${method} ${pathname}` } }
 }
 
-function fleetRoots(config: ConsoleConfig): unknown[] {
+/** FCA-P14: Async fleet roots using non-blocking git probes. */
+async function fleetRootsAsync(config: ConsoleConfig): Promise<unknown[]> {
   const state = loadFleetState(config.stateDir, config.repoRoot)
-  return state.roots.map((root) => describeRoot(root, defaultFleetProbe))
+  return Promise.all(state.roots.map((root) => describeRootAsync(root)))
 }
 
-function fleetMutation(config: ConsoleConfig, mutate: () => FleetState): ApiResult {
+/** FCA-P14: Async fleet mutation using non-blocking git probes. */
+async function fleetMutationAsync(
+  config: ConsoleConfig,
+  mutate: () => Promise<FleetState>,
+): Promise<ApiResult> {
+  try {
+    saveFleetState(config.stateDir, await mutate())
+    return { status: 200, json: { ok: true, roots: await fleetRootsAsync(config) } }
+  } catch (err) {
+    return refusalResult(err)
+  }
+}
+
+/** Sync fleet mutation for paths that don't need git probes (e.g., remove). */
+async function fleetMutation(config: ConsoleConfig, mutate: () => FleetState): Promise<ApiResult> {
   try {
     saveFleetState(config.stateDir, mutate())
-    return { status: 200, json: { ok: true, roots: fleetRoots(config) } }
+    return { status: 200, json: { ok: true, roots: await fleetRootsAsync(config) } }
   } catch (err) {
     return refusalResult(err)
   }

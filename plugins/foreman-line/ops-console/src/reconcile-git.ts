@@ -1,6 +1,12 @@
 import { statSync } from 'node:fs'
+import { stat } from 'node:fs/promises'
 import { isAbsolute, join } from 'node:path'
-import { defaultGitRunner, type GitRunner } from './ledger-git.js'
+import {
+  type AsyncGitRunner,
+  defaultAsyncGitRunner,
+  defaultGitRunner,
+  type GitRunner,
+} from './ledger-git.js'
 
 /**
  * FCA-P8 local git fact gatherer (read-only: for-each-ref, worktree list,
@@ -246,5 +252,143 @@ export function gatherRepoFacts(
       worktrees: worktreesRaw !== null,
     },
     logTruncated: defaultLog.length >= LOG_LIMIT || allLog.length >= LOG_LIMIT,
+  }
+}
+
+/**
+ * FCA-P14: Async version of gatherRepoFacts using non-blocking spawn.
+ */
+export async function gatherRepoFactsAsync(
+  repoRoot: string,
+  run: AsyncGitRunner = defaultAsyncGitRunner,
+  specsRel: string | null = SPECS_REL,
+): Promise<RepoFacts> {
+  let defaultRef = await run(repoRoot, ['symbolic-ref', '--short', 'refs/remotes/origin/HEAD'])
+  if (defaultRef === null || defaultRef === '') {
+    const main = await run(repoRoot, ['rev-parse', '--verify', '-q', 'refs/remotes/origin/main'])
+    defaultRef = main === null ? null : 'origin/main'
+  }
+
+  // Run independent git calls concurrently
+  const [mergedRaw, branchesRaw, worktreesRaw, currentBranch, defaultLogRaw, allLogRaw, specsRaw] =
+    await Promise.all([
+      defaultRef === null
+        ? Promise.resolve('')
+        : run(repoRoot, [
+            'for-each-ref',
+            `--merged=${defaultRef}`,
+            'refs/heads',
+            'refs/remotes',
+            '--format=%(refname)',
+          ]),
+      run(repoRoot, [
+        'for-each-ref',
+        'refs/heads',
+        'refs/remotes',
+        '--format=%(refname)\t%(refname:short)\t%(objectname)\t%(upstream:short)\t%(upstream:track,nobracket)',
+      ]),
+      run(repoRoot, ['worktree', 'list', '--porcelain']),
+      run(repoRoot, ['symbolic-ref', '--short', '-q', 'HEAD']),
+      defaultRef === null
+        ? Promise.resolve('')
+        : run(repoRoot, ['log', defaultRef, '--format=%H%x1f%cI%x1f%s', '-n', String(LOG_LIMIT)]),
+      run(repoRoot, ['log', '--all', '--format=%H%x1f%cI%x1f%s', '-n', String(LOG_LIMIT)]),
+      defaultRef === null || specsRel === null
+        ? Promise.resolve(null)
+        : run(repoRoot, [
+            'ls-tree',
+            '-r',
+            '--name-only',
+            defaultRef,
+            '--',
+            `${specsRel}/active`,
+            `${specsRel}/done`,
+          ]),
+    ])
+
+  const merged = new Set(lines(mergedRaw))
+  const branches: BranchFact[] = lines(branchesRaw)
+    .map((line) => line.split('\t'))
+    .filter(
+      ([ref, short]) =>
+        ref !== undefined && short !== undefined && short !== 'origin/HEAD' && short !== 'origin',
+    )
+    .map(([ref, short, sha, upstream, track]) => {
+      const parsed = parseTrack(track ?? '')
+      const remote = (ref ?? '').startsWith('refs/remotes/')
+      return {
+        name: short ?? '',
+        remote,
+        sha: sha ?? '',
+        mergedIntoDefault: merged.has(ref ?? ''),
+        upstream: upstream === undefined || upstream === '' ? null : upstream,
+        aheadOfUpstream: upstream ? parsed.ahead : null,
+        behindUpstream: upstream ? parsed.behind : null,
+        upstreamGone: upstream ? parsed.gone : false,
+      }
+    })
+
+  const specLines = lines(specsRaw)
+  const remoteSpecFiles = specLines
+    .map((path) => {
+      const location: 'active' | 'done' | null =
+        specsRel !== null && path.startsWith(`${specsRel}/done/`)
+          ? 'done'
+          : specsRel !== null && path.startsWith(`${specsRel}/active/`)
+            ? 'active'
+            : null
+      return location === null ? null : { name: path.slice(path.lastIndexOf('/') + 1), location }
+    })
+    .filter((entry): entry is { name: string; location: 'active' | 'done' } => entry !== null)
+
+  let defaultDivergence: RepoFacts['defaultDivergence'] = null
+  if (defaultRef !== null) {
+    const localName = defaultRef.replace(/^origin\//, '')
+    const counts = await run(repoRoot, [
+      'rev-list',
+      '--left-right',
+      '--count',
+      `${localName}...${defaultRef}`,
+    ])
+    const match = counts === null ? null : /^(\d+)\s+(\d+)$/.exec(counts.trim())
+    if (match !== null) defaultDivergence = { ahead: Number(match[1]), behind: Number(match[2]) }
+  }
+
+  const refsAsOf = await fetchedAtAsync(run, repoRoot)
+  const defaultLog = parseLog(defaultLogRaw)
+  const allLog = parseLog(allLogRaw)
+
+  return {
+    repoRoot,
+    defaultRef,
+    refsAsOf,
+    currentBranch,
+    branches,
+    worktrees: parseWorktrees(worktreesRaw),
+    defaultLog,
+    allLog,
+    remoteSpecFiles,
+    defaultDivergence,
+    complete: {
+      branches: branchesRaw !== null,
+      merged: defaultRef === null || mergedRaw !== null,
+      specs: defaultRef !== null && specsRel !== null && specsRaw !== null,
+      defaultLog: defaultRef !== null && defaultLogRaw !== null,
+      worktrees: worktreesRaw !== null,
+    },
+    logTruncated: defaultLog.length >= LOG_LIMIT || allLog.length >= LOG_LIMIT,
+  }
+}
+
+/** FCA-P14: Async version of fetchedAt. */
+async function fetchedAtAsync(run: AsyncGitRunner, repoRoot: string): Promise<string | null> {
+  const common = await run(repoRoot, ['rev-parse', '--git-common-dir'])
+  if (common === null) return null
+  const dir = isAbsolute(common) ? common : join(repoRoot, common)
+  try {
+    const stats = await stat(join(dir, 'FETCH_HEAD'))
+    return new Date(stats.mtimeMs).toISOString()
+  } catch {
+    return null
   }
 }

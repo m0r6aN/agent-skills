@@ -1,8 +1,16 @@
 import { execFileSync } from 'node:child_process'
 import type { ConsoleConfig } from './config.js'
-import { type LedgerProbes, ledgerEntries, liveProbes } from './ledger.js'
+import {
+  type AsyncLedgerProbes,
+  asyncLiveProbes,
+  type LedgerProbes,
+  ledgerEntries,
+  ledgerEntriesAsync,
+  liveProbes,
+} from './ledger.js'
 import { makeSignal, type Signal, type SignalProvider } from './signals.js'
 import { listSpawnReceipts } from './spawn.js'
+import { execFileAsync } from './spawn-async.js'
 
 /**
  * FCA-P3 `session-state` provider (class decided 2026-10-11: its own closed
@@ -20,6 +28,11 @@ export interface SessionProbe {
   readonly sessionAlive: (sessionName: string) => boolean
 }
 
+/** FCA-P14: Async version of SessionProbe for non-blocking signal collection. */
+export interface AsyncSessionProbe {
+  readonly sessionAlive: (sessionName: string) => Promise<boolean>
+}
+
 export function sessionProbeFor(repoRoot: string): SessionProbe {
   return {
     // A2.9: explicit root anchor — the tmux client never inherits the
@@ -32,6 +45,22 @@ export function sessionProbeFor(repoRoot: string): SessionProbe {
           stdio: ['ignore', 'pipe', 'ignore'],
         })
         return true
+      } catch {
+        return false
+      }
+    },
+  }
+}
+
+/** FCA-P14: Async session probe using non-blocking spawn. */
+export function asyncSessionProbeFor(repoRoot: string): AsyncSessionProbe {
+  return {
+    sessionAlive: async (sessionName) => {
+      try {
+        const result = await execFileAsync('tmux', ['has-session', '-t', `=${sessionName}`], {
+          cwd: repoRoot,
+        })
+        return result.exitCode === 0
       } catch {
         return false
       }
@@ -55,6 +84,12 @@ export const sessionStateProvider: SignalProvider & {
     probe?: SessionProbe,
     ledgerProbes?: LedgerProbes,
   ): Signal[]
+  collectAsync(
+    config: ConsoleConfig,
+    now: number,
+    probe?: AsyncSessionProbe,
+    ledgerProbes?: AsyncLedgerProbes,
+  ): Promise<Signal[]>
 } = {
   class: 'session-state',
   collect(
@@ -90,6 +125,65 @@ export const sessionStateProvider: SignalProvider & {
       const stale = age > ATTENTION_WINDOW_MS
       const failed = failedState && entry.ledger === 'present' && !stale
       // tmux itself unavailable: nothing was observed, so nothing is flagged.
+      if (entry.tmux === 'unavailable') continue
+      signals.push(
+        makeSignal({
+          class: 'session-state',
+          severity: failed ? 'attention' : 'info',
+          repo: receipt.repoRoot,
+          subject: `${receipt.sessionName}-p${receipt.paneIndex}`,
+          evidence: [
+            receipt.worktreePath,
+            `harness: ${receipt.harness} ${receipt.model}`,
+            `ledger: ${entry.state}`,
+            ...entry.evidence,
+            ...(failedState && entry.ledger === 'present' && stale
+              ? ['older than 72 h: listed for the record, no longer demanding attention']
+              : []),
+            'worktree left for hygiene reaping (lumber-jack)',
+          ],
+          detectedAt,
+          actions: ['investigate', 'explain', 'close-delete'],
+        }),
+      )
+    }
+    return signals
+  },
+
+  /** FCA-P14: Non-blocking version using async session probe. */
+  async collectAsync(
+    config: ConsoleConfig,
+    now: number,
+    asyncProbe?: AsyncSessionProbe,
+    asyncLedgerProbes?: AsyncLedgerProbes,
+  ): Promise<Signal[]> {
+    const detectedAt = new Date(now).toISOString()
+    const receipts = listSpawnReceipts(config.stateDir)
+    const probe = asyncProbe ?? asyncSessionProbeFor(config.repoRoot)
+    const base = asyncLedgerProbes ?? asyncLiveProbes(config)
+    const entries = await ledgerEntriesAsync(receipts, base, now)
+
+    // Check all sessions concurrently
+    const aliveChecks = await Promise.all(
+      receipts.map(async (receipt) => ({
+        receipt,
+        alive: await probe.sessionAlive(receipt.sessionName),
+      })),
+    )
+
+    const signals: Signal[] = []
+    for (const { receipt, alive } of aliveChecks) {
+      if (alive) continue
+      const entry = entries.get(receipt.id)
+      if (entry === undefined) continue
+      if (entry.state === 'running' || entry.state === 'launching') continue
+      const failedState =
+        entry.state === 'exited-error' ||
+        entry.state === 'no-transcript' ||
+        entry.state === 'vanished'
+      const age = now - (Date.parse(receipt.createdAt) || now)
+      const stale = age > ATTENTION_WINDOW_MS
+      const failed = failedState && entry.ledger === 'present' && !stale
       if (entry.tmux === 'unavailable') continue
       signals.push(
         makeSignal({

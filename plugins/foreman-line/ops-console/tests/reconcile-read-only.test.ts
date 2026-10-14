@@ -132,7 +132,7 @@ const request = (path: string, method = 'GET') => ({
   query: new URLSearchParams(),
   body: {},
 })
-const reconcile = (config: Rig['config'], goal = 'g', method = 'GET') =>
+const reconcile = async (config: Rig['config'], goal = 'g', method = 'GET') =>
   handleApi(
     config,
     {
@@ -160,10 +160,10 @@ interface Body {
   parcels: Parcel[]
 }
 
-test('GET /api/reconcile: shape, counts by code, echoed (not derived) state, source ages', () => {
+test('GET /api/reconcile: shape, counts by code, echoed (not derived) state, source ages', async () => {
   const h = rig('ok')
   try {
-    const result = reconcile(h.config)
+    const result = await reconcile(h.config)
     assert.equal(result.status, 200)
     const body = result.json as Body
     assert.equal(body.goal, 'g')
@@ -193,10 +193,10 @@ test('GET /api/reconcile: shape, counts by code, echoed (not derived) state, sou
   }
 })
 
-test('AC7: gh unavailable degrades visibly; local facts stay; no remote-dependent code is asserted', () => {
+test('AC7: gh unavailable degrades visibly; local facts stay; no remote-dependent code is asserted', async () => {
   const h = rig('fail')
   try {
-    const result = reconcile(h.config)
+    const result = await reconcile(h.config)
     assert.equal(result.status, 200, 'degrades, never errors')
     const body = result.json as Body
     assert.equal(body.prs.available, false)
@@ -215,13 +215,13 @@ test('AC7: gh unavailable degrades visibly; local facts stay; no remote-dependen
   }
 })
 
-test('route contract: GET only; goal required; unknown goal 404', () => {
+test('route contract: GET only; goal required; unknown goal 404', async () => {
   const h = rig('ok')
   try {
-    assert.equal(reconcile(h.config, 'g', 'POST').status, 405)
-    assert.equal(reconcile(h.config, '').status, 400)
-    assert.equal(reconcile(h.config, 'does-not-exist').status, 404)
-    assert.equal(handleApi(h.config, request('/api/reconcile/x'), NOW).status, 404)
+    assert.equal((await reconcile(h.config, 'g', 'POST')).status, 405)
+    assert.equal((await reconcile(h.config, '')).status, 400)
+    assert.equal((await reconcile(h.config, 'does-not-exist')).status, 404)
+    assert.equal((await handleApi(h.config, request('/api/reconcile/x'), NOW)).status, 404)
   } finally {
     h.cleanup()
   }
@@ -249,12 +249,12 @@ function gitSubcommand(args: string[]): { sub: string; rest: string[] } {
   return { sub: rest[0] ?? '', rest: rest.slice(1) }
 }
 
-test('AC9 negative control: every git/gh subprocess is read-only, and the repository is unchanged', () => {
+test('AC9 negative control: every git/gh subprocess is read-only, and the repository is unchanged', async () => {
   const h = rig('ok')
   try {
     const before = h.snapshot()
     const mark = h.log().length
-    assert.equal(reconcile(h.config).status, 200)
+    assert.equal((await reconcile(h.config)).status, 200)
     // Captured immediately: the snapshot's own (read-only) git calls must not count.
     const commands = h.log().slice(mark)
     assert.equal(h.snapshot(), before, 'status, refs, worktrees, HEAD and FETCH_HEAD are unchanged')
@@ -312,10 +312,10 @@ test('AC9: no reconcile module imports a write-capable fs API or a mutating chil
   )
 })
 
-test('review: the response carries an assessment; a full PR list withholds absence findings through the API', () => {
+test('review: the response carries an assessment; a full PR list withholds absence findings through the API', async () => {
   const h = rig('ok')
   try {
-    const happy = reconcile(h.config).json as Body & {
+    const happy = (await reconcile(h.config)).json as Body & {
       assessment: { positive: boolean; absence: boolean; limits: string[] }
       prs: { truncated: boolean }
     }
@@ -340,7 +340,7 @@ test('review: the response carries an assessment; a full PR list withholds absen
       url: 'u',
     }))
     writeFileSync(join(h.config.repoRoot, '..', 'prs.json'), JSON.stringify(full))
-    const truncated = reconcile(h.config).json as typeof happy
+    const truncated = (await reconcile(h.config)).json as typeof happy
     assert.equal(truncated.prs.truncated, true)
     assert.equal(truncated.assessment.absence, false)
     assert.equal(truncated.assessment.positive, true)

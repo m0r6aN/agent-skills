@@ -32,6 +32,7 @@ Own TO-B0/TO-P0/TO-P1 lifecycle rows maintained 2026-10-10; other rows retain th
 | FCA-P11 | [Reconciliation follow-through — per-finding "do it" that prepares a scoped session](active/FCA-P11-reconciliation-followthrough.md) | `active` | `active/` |
 | FCA-P12 | [Acknowledge historical failures and triage notifications, bound to the evidence](active/FCA-P12-acknowledge-and-triage.md) | `active` | `active/` |
 | FCA-P13 | [Session access — correct attach, read a failed session's output, resume only when there is something to resume](active/FCA-P13-session-access-and-resume.md) | `active` | `active/` |
+| FCA-P14 | [Event-loop offload — non-blocking git/gh/process calls for ops-console API routes](active/FCA-P14-event-loop-offload.md) | `active` | `active/` |
 | FCA-U1 | [Workspace navigation and responsive operator layout](active/FCA-U1-workspace-navigation.md) | `active` | `active/` |
 | FCA-U2 | [Persistent selection and explicit session launch review](active/FCA-U2-selection-launch.md) | `active` | `active/` |
 | FCA-U3 | [Session monitoring and launch outcome handoff](active/FCA-U3-session-monitoring.md) | `active` | `active/` |

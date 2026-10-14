@@ -149,7 +149,8 @@ export function buildHandler(config: ConsoleConfig, now: () => number): RequestL
       return
     }
     const body = method === 'POST' ? await readBody(request) : undefined
-    const result = handleApi(
+    // FCA-P14: handleApi is now async
+    const result = await handleApi(
       config,
       { method, pathname, query: url.searchParams, body: body ?? {} },
       now(),

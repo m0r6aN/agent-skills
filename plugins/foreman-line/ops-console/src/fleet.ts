@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { isAbsolute, join } from 'node:path'
 import { type StateFile, stateFilePath } from './config.js'
 import { isRecord } from './guards.js'
+import { gitRunnerAsync } from './spawn-async.js'
 
 /**
  * FCA-P2 fleet registry: declared, ordered, deduplicated absolute repo roots
@@ -63,6 +64,7 @@ export class FleetRefusalError extends Error {
   }
 }
 
+/** Sync fleet probe — used by tests and any remaining sync code paths. */
 export const defaultFleetProbe: FleetProbe = {
   exists: (root) => existsSync(root),
   isGitWorkTree: (root) => existsSync(join(root, '.git')),
@@ -72,6 +74,20 @@ export const defaultFleetProbe: FleetProbe = {
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'ignore'],
     }).trim(),
+}
+
+/** FCA-P14: Async version of FleetProbe for non-blocking fleet operations. */
+export interface AsyncFleetProbe {
+  readonly exists: (root: string) => boolean
+  readonly isGitWorkTree: (root: string) => boolean
+  readonly git: (root: string, args: readonly string[]) => Promise<string | null>
+}
+
+/** FCA-P14: Default async fleet probe using non-blocking spawn. */
+export const defaultAsyncFleetProbe: AsyncFleetProbe = {
+  exists: (root) => existsSync(root),
+  isGitWorkTree: (root) => existsSync(join(root, '.git')),
+  git: (root, args) => gitRunnerAsync(root, args, 5000, 1024 * 1024),
 }
 
 const STORE_NAME: StateFile = 'fleet.json'
@@ -190,4 +206,67 @@ export function saveFleetState(stateDir: string, state: FleetState): void {
   parseState(JSON.stringify(state), state.roots[0] ?? '')
   mkdirSync(stateDir, { recursive: true })
   writeFileSync(stateFilePath(stateDir, STORE_NAME), `${JSON.stringify(state, null, 2)}\n`)
+}
+
+// FCA-P14: Async versions for non-blocking fleet operations
+
+async function gitSafeAsync(
+  probe: AsyncFleetProbe,
+  root: string,
+  args: readonly string[],
+): Promise<string | null> {
+  const out = await probe.git(root, args)
+  return out === null || out === '' ? null : out
+}
+
+/** FCA-P14: Async version of describeRoot 
+ derived on every call 
+ never persisted (D2/D3). */
+export async function describeRootAsync(
+  root: string,
+  probe: AsyncFleetProbe = defaultAsyncFleetProbe,
+): Promise<FleetRootDescription> {
+  if (!probe.exists(root)) return { root, liveness: 'absent', identity: null }
+  if (!probe.isGitWorkTree(root)) return { root, liveness: 'invalid', identity: null }
+  const [remote, head, upstream, current] = await Promise.all([
+    gitSafeAsync(probe, root, ['remote', 'get-url', 'origin']),
+    gitSafeAsync(probe, root, ['rev-parse', '--short', 'HEAD']),
+    gitSafeAsync(probe, root, ['rev-parse', '--abbrev-ref', 'origin/HEAD']),
+    gitSafeAsync(probe, root, ['symbolic-ref', '--short', 'HEAD']),
+  ])
+  const defaultBranch = upstream?.replace(/^origin\//, '') ?? current
+  return {
+    root,
+    liveness: 'ready',
+    identity: { remote, defaultBranch, head },
+  }
+}
+
+async function validateCandidateAsync(root: string, probe: AsyncFleetProbe): Promise<void> {
+  assertAbsolute(root)
+  if (!probe.exists(root)) {
+    throw new FleetRefusalError('root-absent', `fleet root refused: ${root} does not exist`)
+  }
+  if (!probe.isGitWorkTree(root)) {
+    throw new FleetRefusalError(
+      'not-a-git-work-tree',
+      `fleet root refused: ${root} is not a git work tree`,
+    )
+  }
+}
+
+/** FCA-P14: Async version of addFleetRoot for non-blocking fleet mutation. */
+export async function addFleetRootAsync(
+  state: FleetState,
+  root: string,
+  probe: AsyncFleetProbe = defaultAsyncFleetProbe,
+): Promise<FleetState> {
+  await validateCandidateAsync(root, probe)
+  if (state.roots.includes(root)) {
+    throw new FleetRefusalError(
+      'duplicate-root',
+      `fleet root refused: ${root} is already registered`,
+    )
+  }
+  return { schema: 'foc-fleet/v1', roots: [...state.roots, root] }
 }
