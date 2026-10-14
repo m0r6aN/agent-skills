@@ -8,6 +8,7 @@
 
 Own TO-B0/TO-P0/TO-P1 lifecycle rows maintained 2026-10-10; other rows retain their recorded provenance.
 QF-P1 row added 2026-10-13 by the quick-flags shaping session, reshaped under D2″/D5″/D9″ and moved to `done/` at Stage F 2026-10-13 (hand-updated).
+QF-P2 row added 2026-10-14 by the quick-flags QF-P2 shaping session at `draft` (hand-updated).
 
 | Ticket | Title | Status | Location |
 |---|---|---|---|
@@ -143,6 +144,7 @@ QF-P1 row added 2026-10-13 by the quick-flags shaping session, reshaped under D2
 | PMC-P2F | [Reuse the fixed provider-binding schema validator inside its owner](done/PMC-P2F-schema-validator-reuse.md) | `done` | `done/` |
 | PRAC-P0 | [Pi extension/hook API surface compatibility memo](done/PRAC-P0-pi-extension-hook-surface-compat.md) | `done` | `done/` |
 | QF-P1 | [Quick-flags registry (QUICK-FLAGS.md, versioned)](done/QF-P1-quick-flags-registry.md) | `done` | `done/` |
+| QF-P2 | [Quick-flags integration (goal skill, loop-directive template, synced copy, COORDINATOR-PATTERN cross-reference)](active/QF-P2-quick-flags-integration.md) | `draft` | `active/` |
 | RCM-HRO | [Private authenticated public catalog publication](active/RCM-HRO-authenticated-catalog-publication.md) | `active` | `active/` |
 | RCM-P0 | [Current-instance routing reconnaissance](done/RCM-P0-current-instance-recon.md) | `done` | `done/` |
 | RCM-P1A | [Supported bounded catalog eligibility wrapper](done/RCM-P1A-sanitized-snapshot-adapter.md) | `done` | `done/` |
@@ -159,4 +161,4 @@ QF-P1 row added 2026-10-13 by the quick-flags shaping session, reshaped under D2
 | WGT-P0BOOT | [Tracked Foreman Line bootstrap](done/WGT-P0BOOT-tracked-foreman-bootstrap.md) | `done` | `done/` |
 | WGT-R1 | [Foreman current-state and queue reconciliation](active/WGT-R1-foreman-current-state-reconciliation.md) | `active` | `active/` |
 
-Total: 126 specs (56 active/, 70 done/).
+Total: 127 specs (57 active/, 70 done/).
