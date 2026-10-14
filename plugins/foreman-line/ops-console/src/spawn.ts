@@ -324,9 +324,9 @@ export const defaultWorktreeRunner: WorktreeRunner = {
  */
 export function tmuxRunnerFor(repoRoot: string, socket?: string): TmuxRunner {
   const prefix = socket === undefined ? [] : ['-L', socket]
-  const exec = (args: readonly string[]): string =>
+  const exec = (args: readonly string[], cwd: string = repoRoot): string =>
     execFileSync('tmux', [...prefix, ...args], {
-      cwd: repoRoot,
+      cwd,
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'ignore'],
     })
@@ -386,8 +386,8 @@ export interface AsyncTmuxRunner {
 /** FCA-P14: Async tmux runner anchored to an explicit root. */
 export function asyncTmuxRunnerFor(repoRoot: string, socket?: string): AsyncTmuxRunner {
   const prefix = socket === undefined ? [] : ['-L', socket]
-  const exec = async (args: readonly string[]): Promise<string> => {
-    const result = await execFileAsync('tmux', [...prefix, ...args], { cwd: repoRoot })
+  const exec = async (args: readonly string[], cwd: string = repoRoot): Promise<string> => {
+    const result = await execFileAsync('tmux', [...prefix, ...args], { cwd })
     if (result.exitCode !== 0) {
       throw new Error(result.stderr || `tmux exited with code ${result.exitCode}`)
     }
