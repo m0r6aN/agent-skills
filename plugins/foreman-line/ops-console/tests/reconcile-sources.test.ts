@@ -115,7 +115,8 @@ test('gatherRepoFacts reads default ref, branches, merge state, upstream trackin
       const native = process.platform === 'win32' ? p.replace(/\//g, '\\') : p
       try {
         // realpathSync resolves short paths to full paths and normalizes separators
-        const real = realpathSync(native)
+        const real =
+          process.platform === 'win32' ? realpathSync.native(native) : realpathSync(native)
         return process.platform === 'win32' ? real.toLowerCase() : real
       } catch {
         // If path doesn't exist yet, fall back to resolve + toLowerCase
