@@ -1,0 +1,63 @@
+{
+  "utc": "2026-10-14T01:24:54.861Z",
+  "baseline": 421,
+  "windows": 422,
+  "linux": 422,
+  "baselineTestIdentitiesPreserved": true,
+  "linuxIdentitiesEqualWindows": true,
+  "added": [
+    [
+      "Keon.McpGateway.Tests.Cortex.NativeSqliteVersionTests.NativeSqliteVersion_IsAtLeast_3_50_2",
+      "Passed"
+    ]
+  ],
+  "integrationIdentitiesAndOutcomesUnchanged": [
+    [
+      "Keon.McpGateway.IntegrationTests.Tests.CollectiveIntegrationTests.Collective_tier_tools_list_includes_all_collective_and_cortex_tools",
+      "Passed"
+    ],
+    [
+      "Keon.McpGateway.IntegrationTests.Tests.CollectiveIntegrationTests.Cortex_tier_token_cannot_invoke_collective_deliberate",
+      "Passed"
+    ],
+    [
+      "Keon.McpGateway.IntegrationTests.Tests.CollectiveIntegrationTests.Deliberate_calls_real_collective_and_returns_deliberation_with_branches",
+      "NotExecuted"
+    ],
+    [
+      "Keon.McpGateway.IntegrationTests.Tests.CollectiveIntegrationTests.Full_collective_flow_deliberate_through_handoff_dispatch_succeeds",
+      "NotExecuted"
+    ],
+    [
+      "Keon.McpGateway.IntegrationTests.Tests.CortexIntegrationTests.Cortex_memory_search_returns_results_without_runtime_decide",
+      "Failed"
+    ],
+    [
+      "Keon.McpGateway.IntegrationTests.Tests.CortexIntegrationTests.Cortex_memory_write_returns_shard_id_with_full_receipt_chain",
+      "Failed"
+    ],
+    [
+      "Keon.McpGateway.IntegrationTests.Tests.CortexIntegrationTests.Cortex_memory_write_without_content_is_rejected",
+      "Failed"
+    ],
+    [
+      "Keon.McpGateway.IntegrationTests.Tests.CortexIntegrationTests.Cortex_tier_tools_list_includes_cortex_tools_and_excludes_collective",
+      "Passed"
+    ],
+    [
+      "Keon.McpGateway.IntegrationTests.Tests.CortexIntegrationTests.Cortex_write_via_mcp_protocol_surface_returns_structured_content",
+      "Failed"
+    ],
+    [
+      "Keon.McpGateway.IntegrationTests.Tests.CortexIntegrationTests.Runtime_tier_token_cannot_invoke_cortex_write",
+      "Failed"
+    ]
+  ],
+  "mutation": [
+    [
+      "Keon.McpGateway.Tests.Cortex.NativeSqliteVersionTests.NativeSqliteVersion_IsAtLeast_3_50_2",
+      "Failed"
+    ]
+  ],
+  "allThreeProjectGraphsChecked": true
+}

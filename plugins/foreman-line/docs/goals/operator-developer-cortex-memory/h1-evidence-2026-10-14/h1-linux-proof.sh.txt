@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+mkdir -p /work/source /work/native-proof
+cp /input/NativeProof.csproj /input/Program.cs /work/native-proof/
+tar -xf /input/h1-source.tar -C /work/source
+cd /work/source
+printf 'UTC=%s\n' "$(date -u +%FT%TZ)" > /evidence/h1-linux-meta.log
+sha256sum /input/h1-source.tar >> /evidence/h1-linux-meta.log
+dotnet --info > /evidence/h1-linux-dotnet-info.log
+dotnet restore Keon.McpGateway.slnx --force-evaluate --no-cache --nologo > /evidence/h1-linux-restore.log 2>&1
+dotnet list Keon.McpGateway.slnx package --include-transitive --vulnerable --no-restore > /evidence/h1-linux-audit.log 2>&1
+dotnet list Keon.McpGateway.slnx package --include-transitive --no-restore > /evidence/h1-linux-graph.log 2>&1
+dotnet test tests/Keon.McpGateway.Tests -c Release --nologo --no-restore --logger 'trx;LogFileName=h1-linux.trx' --results-directory /evidence/h1-linux-results > /evidence/h1-linux-test.log 2>&1
+dotnet test tests/Keon.McpGateway.Tests -c Release --nologo --no-build --filter FullyQualifiedName~NativeSqliteVersionTests --logger 'console;verbosity=detailed' > /evidence/h1-linux-native-test.log 2>&1
+dotnet publish src/Keon.McpGateway/Keon.McpGateway.csproj -c Release -r linux-x64 --self-contained false --nologo -o /evidence/h1-linux-publish > /evidence/h1-linux-publish.log 2>&1
+dotnet run --project /work/native-proof/NativeProof.csproj -c Release -- /evidence/h1-linux-publish/libe_sqlite3.so > /evidence/h1-linux-native-proof.log 2>&1
+printf 'LINUX_PROOF_COMMANDS_COMPLETED_UTC=%s\n' "$(date -u +%FT%TZ)" >> /evidence/h1-linux-meta.log

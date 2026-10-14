@@ -1,0 +1,17 @@
+## PASS
+
+**Observed runtime model:** `openai / gpt-6.1-sol`
+**Exact inspected head:** `bfd21823b1c8419ba320961591583b476e9df58e`
+
+My previous Linux isolation/provenance note is **closed**.
+
+- `h1-linux-launch.sh:11–20` records the immutable-image launch, selected pre-start inspection, execution, exit status, and cleanup.
+- `h1-linux-container-isolation.json:1` confirms exactly two owned mounts: **read-only `/input`** and writable `/evidence`; no extra mounts, published ports, devices, or privileged mode. The launcher supplies no extra environment or secret inputs.
+- `h1-linux-container-state.json:1` and `h1-linux-launch-meta.log:4–6` confirm successful completion. Container ID and cleanup records agree.
+- Independently checked the input archive SHA-256 and **all archive file bytes against the inspected head**. Launcher and in-container measurements match; provenance no longer depends on a hardcoded commit string.
+- Repeated Linux TRX contains **422 passed / 0 failed / 0 skipped**, with full identities equal to Windows and all **421 baseline identities preserved**.
+- Repeated restore/audit/graph evidence covers all three projects with the approved **10.0.13 → 2.1.13** chain and no affected **2.1.11**.
+- Repeated native proof measures **SQLite 3.53.3**. The actual published Linux asset retains SHA-256 `b0f5c48026fedcf9f05cf31c6fadf9e1e001ca59cd85aa68b8b6814e52c18a07`.
+- Read-only rerun of `h1-evidence-check.cjs` passes.
+
+**No remaining concern from my review.** Source worktree is clean at the unchanged head; nothing was modified. This is a local H1 review pass, not a production/merge or overall OPMEM-readiness claim. Gate3 remains human handoff.

@@ -1,0 +1,29 @@
+using System.Globalization;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+
+if (args.Length != 1 || !Path.IsPathFullyQualified(args[0]) || !File.Exists(args[0]))
+    throw new ArgumentException("Supply exactly one existing absolute published native-library path.");
+var path = Path.GetFullPath(args[0]);
+Console.WriteLine($"UTC={DateTimeOffset.UtcNow:O}");
+Console.WriteLine($"ASSET={path}");
+using (var stream = File.OpenRead(path))
+    Console.WriteLine($"SHA256={Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant()}");
+var handle = NativeLibrary.Load(path); // Exact file only; no provider/system-library search.
+try
+{
+    var versionFunction = Marshal.GetDelegateForFunctionPointer<NativeText>(NativeLibrary.GetExport(handle, "sqlite3_libversion"));
+    var raw = Marshal.PtrToStringUTF8(versionFunction()) ?? throw new InvalidOperationException("NULL version");
+    Console.WriteLine($"SQLITE_VERSION={raw}");
+    var parts = raw.Split('.');
+    if (parts.Length != 3 || parts.Any(p => p.Length == 0 || p.Any(c => c < '0' || c > '9')))
+        throw new InvalidOperationException("Invalid full numeric three-component version");
+    var numbers = parts.Select(p => int.Parse(p, NumberStyles.None, CultureInfo.InvariantCulture)).ToArray();
+    if (new Version(numbers[0], numbers[1], numbers[2]) < new Version(3, 50, 2))
+        throw new InvalidOperationException("Published native SQLite is below 3.50.2");
+    Console.WriteLine("FLOOR_3_50_2=PASS");
+}
+finally { NativeLibrary.Free(handle); }
+
+[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+delegate IntPtr NativeText();

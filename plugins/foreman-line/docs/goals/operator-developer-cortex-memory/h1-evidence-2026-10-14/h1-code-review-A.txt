@@ -1,0 +1,37 @@
+# OPMEM-H1 Independent Adversarial Review — VERDICT: **PASS-WITH-NOTES**
+
+**Observed model/session:** Claude (claude-code harness, PI session); fresh independent review, no builder/coordinator/reviewer context imported.
+**Examined head:** `bfd21823b1c8419ba320961591583b476e9df58e` on `feat/opmem-h1-sqlite-01a1358d`, worktree verified clean before and after review; base `0e0878a5` immutable, exactly one commit between them.
+
+## Verified claims (each independently examined, not taken from the evidence index)
+
+| Check | Result | Evidence locator |
+|---|---|---|
+| Diff scope = exactly 3 allowed paths | ✅ | `git diff 0e0878a5..bfd21823 --name-status`: 2×M (csproj), 1×A (test); nothing else |
+| Version-only byte change | ✅ | `cmp -l` on both csproj blobs: each +1 byte (`10.0.0`→`10.0.13`), all other byte diffs are the 1-byte shift; no BOM/EOL/whitespace changes |
+| Exactly one new `[Fact]`, no Theory | ✅ | `NativeSqliteVersionTests.cs`: 1 `[Fact]`, 0 `[Theory]`/`[InlineData]` |
+| No suppressions/feed changes | ✅ | No `NuGet.config`/`Directory.Packages.props`/`global.json` tracked at head; no `NoWarn`/`NuGetAudit`/`RestoreSources` in manifests |
+| All 3 resolved graphs (Win+Linux) | ✅ | `h1-windows-graph.log` lines 5–147, `h1-linux-graph.log`: Gateway/Tests/IntegrationTests all at Microsoft.Data.Sqlite(.Core) 10.0.13 + SQLitePCLRaw bundle/core/lib/provider 2.1.13; zero `2.1.11` occurrences |
+| Vulnerability audit all 3 projects | ✅ | `h1-windows-audit.log`, `h1-linux-audit.log`: no vulnerable packages, all three projects listed |
+| Test identity preservation (not count-only) | ✅ | I re-extracted all `UnitTest name=` sets myself: baseline 421 unique + exactly `NativeSqliteVersion_IsAtLeast_3_50_2` = Windows 422 = Linux 422 set; all Passed (422/0/0 both platforms) |
+| Integration 3P/5F/2skip identity | ✅ | Re-extracted testName→outcome pairs from both TRX: 10 identities, byte-identical outcomes baseline vs after (`diff … IDENTICAL`); `INTEGRATION_EXIT=1` honestly recorded — no false-green claim |
+| Native proof vs metadata | ✅ | `native-proof/Program.cs` is BCL-only, requires absolute path, `NativeLibrary.Load(path)` exact-file (no provider/system fallback), calls `sqlite3_libversion` |
+| Published assets real + hashes | ✅ | I re-hashed: `h1-win-publish/e_sqlite3.dll` = `b7385d…fb2e`, `linux-evidence/h1-linux-publish/libe_sqlite3.so` = `b0f5c4…8a07` — both match proof logs **and** are byte-identical to the natives inside cached `sqlitepclraw.lib.e_sqlite3/2.1.13` package; measured `sqlite_version()` = **3.53.3 ≥ 3.50.2** on both platforms |
+| Linux ran at candidate head | ✅ | `SOURCE_COMMIT` in meta is hardcoded (see Note 2), but I extracted `h1-source.tar` (179 files) and byte-compared every file against `git show bfd21823:` — all identical. `dotnet-info`: ubuntu 24.04, linux-x64, genuine Linux execution |
+| Floor-mutation kill | ✅ | `h1-mutation/.../NativeSqliteVersionTests.cs` diff vs head copy = floor 99.0.0 + message string only, in owned copy outside parcel; `h1-mutation.trx`: 1 executed / 1 **failed**, measuring 3.53.3; `MUTATION_EXIT=1`; parcel worktree never touched |
+| Floor-logic adversarial inspection | ✅ | Fail-closed on all probed classes: `"3.9"` (2 components) → throw; `"3.50"` → throw; major 4 → correctly passes; suffix/sign/whitespace/unicode-digit → non-ASCII-digit rejection → throw; empty component → throw; Int32 overflow → `checked` → throw. Numeric component comparison, not string ordering. `DBNull`→`""` → 1-component → throw. ITestOutputHelper prints measured value (seen in both native-test logs) |
+| IntegrationTests manifest untouched | ✅ | Not in diff; byte-identical to base by construction |
+
+## Findings (severity-ranked)
+
+1. **LOW — Container invocation not evidenced.** `h1-linux-container.log` is 0 bytes; the exact `docker run` command (read-only input mount, no secrets/services, use of pinned image `sha256:9087b2…cd82f`) cannot be corroborated from logs. Mitigated: tarball=head independently verified, genuine Linux execution confirmed, outputs internally consistent. Actionable: coordinator closure should capture the container command line for reproduction.
+2. **LOW — `SOURCE_COMMIT` in `linux-evidence/h1-linux-meta.log` is a hardcoded printf** (`linux-input/h1-linux-proof.sh` line 7), not a measured value. The claim happens to be true (I verified all 179 tar files byte-identical to head), but the evidence mechanism is self-asserted. Actionable: future proofs should hash the tar or compute a tree hash inside the container.
+3. **INFO — Aggressive timeline** (entire Windows+Linux proof 01:15:20–01:16:22 UTC) is tight but internally consistent: TRX internal times (Win test 17s, Linux 14s), native-proof timestamps interleave correctly, runs were concurrent. No ordering anomaly found.
+4. **INFO — Windows audit used an extra implicit machine source** (`C:\Program Files (x86)\Microsoft SDKs\NuGetPackages\` fallback folder). Not a parcel feed change; Linux audit used nuget.org only and agrees.
+5. **OUT-OF-SCOPE BASELINE (no fix):** pre-existing CS8604 nullability warnings in `src/Keon.McpGateway/Auth/RoleBinding.cs:121–125` (visible in both publish logs); pre-existing 5 integration failures / 2 skips under mock-only environment — correctly documented, unchanged, not claimed fixed.
+
+## Scope honesty
+
+No deployment, live-service, or production side effects observed; branch target is `opmem/integration` only. The evidence makes **no** claim of deployed fix or full OPMEM readiness, and neither does this review: runtime remote exploitability was not established, and an H1 local pass is not a deployed security fix. Gate 3 merge still requires distinct-agent bypass proof or human handoff — current human-authenticated `gh` capability was not assumed or tested.
+
+**Verdict: PASS-WITH-NOTES** — all eight acceptance criteria within reviewer-verifiable scope are substantiated by primary evidence; notes 1–2 are evidence-hygiene items for coordinator closure, not defects in the candidate change.

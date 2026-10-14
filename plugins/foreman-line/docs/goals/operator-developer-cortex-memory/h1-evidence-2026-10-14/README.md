@@ -1,0 +1,7 @@
+# Selected H1 evidence (private coordinator repository)
+
+These are retained data records, not Gateway mutation scope or executable product code. `.log` files are deliberately tracked despite general log ignores; raw package-table trailing spaces and EOF blank lines are preserved (Git may normalize CRLF to LF under existing settings). Source and authored documentation diffs pass ordinary `git diff --check`; only retained `.log` data are checked with trailing-space/EOF-blank allowances, without changing any repository policy/configuration.
+
+Reviewer prose copies retain wording; three intentional Markdown hard-break trailing-space pairs in reviewer B copies are trimmed for doc hygiene. Full original authoritative JSONL transcripts remain retained outside repos with SHA256 recorded in `artifact-inventory-and-usage.json`. Usage metadata, not speculative model narrative, determines actual model identity.
+
+Large TRX/raw transcripts/source archives/published binaries remain in the local root recorded by the inventory, with hashes; not all files required by the copied checker are in this selected folder. `.txt` script/harness copies are reproduction documentation, not new run authority. Reconstruct owned paths and exact immutable source before execution. Audit results are collection-time evidence; local proof is not deployment or full integration readiness. Main stop/evidence map is in `../h1-verification-and-gate3-stop-2026-10-14.md`.

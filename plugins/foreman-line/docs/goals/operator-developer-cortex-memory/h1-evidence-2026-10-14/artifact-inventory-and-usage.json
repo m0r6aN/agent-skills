@@ -1,0 +1,220 @@
+{
+  "collectedUtc": "2026-10-14T01:28:23.669Z",
+  "sourceHead": "bfd21823b1c8419ba320961591583b476e9df58e",
+  "localRoot": "D:\\Repos\\opmem-dispatch-01a1358d",
+  "evidence": [
+    {
+      "path": "h1-baseline-results/h1-baseline.trx",
+      "bytes": 1412143,
+      "sha256": "87f76eee2ae486b3e0d24b83522b7889a106cded1eebc868fbcbd9c15737f2e1"
+    },
+    {
+      "path": "h1-windows-results/h1-windows.trx",
+      "bytes": 1416310,
+      "sha256": "32ee75c25c43f868b1fedf6bf0577d8f75bd4997958fbaee8984751f2f1b6bcf"
+    },
+    {
+      "path": "linux-evidence/h1-linux-results/h1-linux.trx",
+      "bytes": 1415774,
+      "sha256": "6c44fef58dd34d9705932607eb325dc5131aa8e720ca7098300c10247ae1526d"
+    },
+    {
+      "path": "h1-integration-baseline-results/h1-integration-baseline.trx",
+      "bytes": 29043,
+      "sha256": "fbbc71b8a0be5f4b0f4eb422b3fda451ce722dcdb8db080cd38491c85aaabaf5"
+    },
+    {
+      "path": "h1-integration-after-results/h1-integration-after.trx",
+      "bytes": 29043,
+      "sha256": "a3da9e3d92d61861cd48c2e2073e13a457b07dd96259e82464a34e637027ac57"
+    },
+    {
+      "path": "h1-mutation-results/h1-mutation.trx",
+      "bytes": 4921,
+      "sha256": "97cf18f8fa375e59046e70efadb9a9d4331c6194a9356fb03321e1aa109dcee1"
+    },
+    {
+      "path": "h1-mutation.log",
+      "bytes": 2075,
+      "sha256": "413d44814dbc7d814372f99ca868cb14cd0449ed7e8e1def4d06e735e536b998"
+    },
+    {
+      "path": "h1-source.tar",
+      "bytes": 1751040,
+      "sha256": "a0d7c22e2b4e8db2513780b2ed09e9ecabcfd9a77155f0e4931a05173a479f84"
+    },
+    {
+      "path": "h1-source.zip",
+      "bytes": 464100,
+      "sha256": "7db26870738eb2e756ec1356fe6c2fb97808f606728c6a55b3a5d9063d931ca1"
+    },
+    {
+      "path": "linux-input/h1-source.tar",
+      "bytes": 1751040,
+      "sha256": "a0d7c22e2b4e8db2513780b2ed09e9ecabcfd9a77155f0e4931a05173a479f84"
+    },
+    {
+      "path": "h1-win-publish/e_sqlite3.dll",
+      "bytes": 1978880,
+      "sha256": "b7385d722c83fb52142a00477a726723745916d22a555711ee89834c1111fb2e"
+    },
+    {
+      "path": "linux-evidence/h1-linux-publish/libe_sqlite3.so",
+      "bytes": 1470784,
+      "sha256": "b0f5c48026fedcf9f05cf31c6fadf9e1e001ca59cd85aa68b8b6814e52c18a07"
+    },
+    {
+      "path": "h1-linux-launch.sh",
+      "bytes": 1760,
+      "sha256": "febd34931e6734921c1e196c42c5d7d8e4660c328a346aa8246a80cdfbe9c8b9"
+    },
+    {
+      "path": "linux-input/h1-linux-proof.sh",
+      "bytes": 1576,
+      "sha256": "5a30cf4acdf1986a1aa714441b8409f19c72979dfd0128f7e07117a624848b2c"
+    },
+    {
+      "path": "h1-windows-proof.sh",
+      "bytes": 2319,
+      "sha256": "8012e098cb305cf8816169db4c63d3655812c4ccf550b19d093497e3bb34ffe3"
+    },
+    {
+      "path": "native-proof/Program.cs",
+      "bytes": 1621,
+      "sha256": "03df77c3f768ac98cca190436e57e57958adc88616d7c488ae3877c0d85b02ea"
+    },
+    {
+      "path": "native-proof/NativeProof.csproj",
+      "bytes": 238,
+      "sha256": "cdd6f0b4e4b9c72196431282fc7f42508e52e0f6a10b88a948a157bbdabd220b"
+    }
+  ],
+  "usages": [
+    {
+      "call": "h1-shaping",
+      "models": [
+        "openrouter/moonshotai/kimi-k3"
+      ],
+      "stopReasons": [
+        "toolUse",
+        "stop"
+      ],
+      "usageReportedUsd": 0.071689,
+      "rawTranscriptSha256": "33cbfcd6285f57fb4ff80e714aea49f30e5122d54fe58c90fbd87ab3901e8872"
+    },
+    {
+      "call": "h1-plan-review",
+      "models": [
+        "anthropic/claude-fable-5"
+      ],
+      "stopReasons": [
+        "toolUse",
+        "stop"
+      ],
+      "usageReportedUsd": 0.665558,
+      "rawTranscriptSha256": "03750cea8f9066eca1be22765712f53036f6586b2f4680c90224f96a6fe7f72b"
+    },
+    {
+      "call": "h1-builder-step0",
+      "models": [
+        "openrouter/moonshotai/kimi-k3"
+      ],
+      "stopReasons": [
+        "toolUse",
+        "stop"
+      ],
+      "usageReportedUsd": 0.029296,
+      "rawTranscriptSha256": "eb96177be48dc352356300f3a8b9b3bf4a3225f89883007a82150426fbb6d910"
+    },
+    {
+      "call": "h1-builder-implementation",
+      "models": [
+        "openrouter/moonshotai/kimi-k3"
+      ],
+      "stopReasons": [
+        "toolUse",
+        "stop"
+      ],
+      "usageReportedUsd": 0.169623,
+      "rawTranscriptSha256": "1018cf6537956035f3e17f564f1a2d97f1f4739d7466d08c1b666be1d9598b14"
+    },
+    {
+      "call": "h1-builder-rework-step0",
+      "models": [
+        "openrouter/moonshotai/kimi-k3"
+      ],
+      "stopReasons": [
+        "stop"
+      ],
+      "usageReportedUsd": 0.018205,
+      "rawTranscriptSha256": "9d885a84b1bcaac0c5347ffd82e3c984845ba901ffce182e7c49b3da593ef024"
+    },
+    {
+      "call": "h1-builder-rework",
+      "models": [
+        "openrouter/moonshotai/kimi-k3"
+      ],
+      "stopReasons": [
+        "toolUse",
+        "stop"
+      ],
+      "usageReportedUsd": 0.068402,
+      "rawTranscriptSha256": "036d7848e261b8a91dde74e335146f02d2080197ba057309b6b1c141efa41b40"
+    },
+    {
+      "call": "h1-code-review-A",
+      "models": [
+        "anthropic/claude-fable-5"
+      ],
+      "stopReasons": [
+        "toolUse",
+        "error",
+        "stop"
+      ],
+      "usageReportedUsd": 1.699329,
+      "rawTranscriptSha256": "2b3384fad83a864f01ed5041194caf6fa22e00b4c91cbe9f6927423a6d31ff1e"
+    },
+    {
+      "call": "h1-code-review-B",
+      "models": [
+        "openai/gpt-6.1-sol"
+      ],
+      "stopReasons": [
+        "toolUse",
+        "stop"
+      ],
+      "usageReportedUsd": 0.294309,
+      "rawTranscriptSha256": "f4c7ad9cfeb6f0d95a4efbe8a643f4eab0f9c9f63f445ba6f0f87d985b72bce7"
+    },
+    {
+      "call": "h1-code-review-A-followup",
+      "models": [
+        "anthropic/claude-fable-5"
+      ],
+      "stopReasons": [
+        "toolUse",
+        "stop"
+      ],
+      "usageReportedUsd": 0.757369,
+      "rawTranscriptSha256": "249dcc68e86728bc44294983388b055d6e017009e6c1e2b0758356b9808f08fc"
+    },
+    {
+      "call": "h1-code-review-B-followup",
+      "models": [
+        "openai/gpt-6.1-sol"
+      ],
+      "stopReasons": [
+        "toolUse",
+        "stop"
+      ],
+      "usageReportedUsd": 0.083693,
+      "rawTranscriptSha256": "04f57748d885f2c92386ff46d6b4fcf3d34f203782199c3e56b637b9214a4670"
+    }
+  ],
+  "h1UsageReportedUsd": 3.857473,
+  "predecessorRecordedUsd": 191.1,
+  "knownSubtotalUsd": 194.957473,
+  "architectureParcelGuardUsd": 45,
+  "cumulativeGuardUsd": 400,
+  "limits": "Usage/catalog evidence, not independently reconciled billed balance; historical unknown costs remain unknown. No spend reset or complete-cost claim."
+}
