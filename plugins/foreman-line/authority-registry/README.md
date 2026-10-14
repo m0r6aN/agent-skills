@@ -551,3 +551,43 @@ Constraint 14 preserves the complete conditional plugin/marketplace duty: each l
 The historical repository annotation has a distinct excluded identity. The unchanged historical thesis retains its item, rule and noncontrolling provenance effect at paragraph 2. The historical library-name correction retains its item and exclusion. These finite source-version, locator and value mappings precede privileged and frozen identity lookup; they do not introduce a general historical regeneration mode.
 
 The new migration's supporting decision diagnostic is exact and independently pinned. Repository-aware validation also reads the actual decision Git blob at the adopted source commit. That historical decision ratifies the finite source plan only; mapping approval and implementation dispatch have separate recorded authority. Diagnostic evidence does not itself grant authority.
+
+## R33 post-QF-P2 finite quick-flags adoption
+
+QF-P0 advances the committed snapshot to `da6d73103027d49e35f654101b7f8b1778643800`
+from the shipped registry at `7f3391ccc2cb273c357cd9cc0768fa39bbd149e0`. The new
+`registry-rework-7f3391c` record appends to the exact R32 history; R32's former head is pinned
+at its original canonical record digest. Historical tables, source disclosures and command
+results remain historical, not relabelled as this adoption's evidence.
+
+`src/r33-migrations.ts` binds ten finite source units: two identity-preserving goal-skill
+re-values, two heading-only entries, and six complete paragraph publications. It carries the
+committed predecessor items/rules, exact successor items/rules, six audit appendices and the
+independently derived manifest/record pins. Generation checks predecessor correspondence,
+live source bindings, committed target bytes and Git object custody before emitting both
+identical YAML artifacts. Validation reserves each identity, location, normalized value,
+disposition, full rule shape and audit rationale before legacy fallbacks. The R31 live snapshot
+check advances finitely, retaining its historical literal and the unchanged governed plan units.
+All eighteen snapshot hashes attest actual blobs at the adopted commit; no source is added.
+
+The successor denominator is 1,774 inventory items, 552 rules, 206 audit candidacies and
+23 reconciliations. Five new paragraphs describe structural restrictions, not implemented
+runtime refusals; the sixth describes nonbinding Builder Step 0 terminology. Both target
+sources remain corroborating coordinator-pattern sources scoped to all Foreman goals. This
+curation changes no grant, gate, protected operation or volatile boundary. It neither registers
+QUICK-FLAGS as a new source nor completes QF-P3 or the goal exit walkthrough.
+
+The previous general chain discussion describes its historical rounds. R33 additionally binds
+the entire reviewed shipped head, including both exact command obligations and Git custody
+entries; deletion, substitution and in-place re-anchoring are not valid R33 regeneration paths.
+A later chartered succession must preserve these historical subjects and publish new typed
+correspondence. A green registry or digest is not ratification, a receipt or permission to act.
+
+`evidence/qf-p0/` records the immutable eight-violation before measurement against current
+post-QF-P2 canon, the zero-violation after measurement, their deterministic complete diff,
+committed provenance and actual command outputs/direct exits. Evidence hashes are acyclic:
+provenance binds core evidence/artifacts but not itself or the transcript; `SHA256SUMS` binds
+those files but excludes itself and the own-goal amendment record. Parcel-time source freezes
+are checked in the deterministic pass, not against a moving Git base in the shipped suite.
+Two fresh independent architecture/risk reviews, coordinator triage and the human gates remain
+handoff obligations outside this package.
