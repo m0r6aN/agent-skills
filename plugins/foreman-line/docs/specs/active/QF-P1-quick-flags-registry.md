@@ -220,7 +220,7 @@ Found while authoring, after the Step 0 answers. **Coordinator lint rulings 2026
 
 ## Coordinator rulings after v2 review round 1 (2026-10-13)
 
-Binding: `plugins/foreman-line/docs/goals/quick-flags/qf-p1-v2-review-triage-2026-10-13.md` (apply each ruling to **every** instance of its pattern). The registry line cap is raised from 350 to 370 (all `350` occurrences in this spec are now `370`). AC-19's lifetime text "until a human-typed lift (the final report at goal exit lists every active restriction)" is replaced by "until a human-typed lift; the final report at goal exit lists every active restriction".
+Binding: `plugins/foreman-line/docs/goals/quick-flags/qf-p1-v2-review-triage-2026-10-13.md` (apply each ruling to **every** instance of its pattern). The registry line cap is raised from 350 to 370 (all `350` occurrences in this spec are now `370`). AC-19's lifetime text no longer ends a `--strict`/`--nopush` line at goal exit: it lasts until a human-typed lift, and the final report at goal exit lists every active restriction.
 
 ## Verification Plan
 
