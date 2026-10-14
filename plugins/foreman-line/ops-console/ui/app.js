@@ -356,7 +356,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       saveDraft()
       const wrapper = event.target.closest('[data-launch-item]')
       const item = wrapper && state.selected.get(wrapper.dataset.launchItem)
-      if (item && event.target.matches('[data-extra-text]')) item.extraText = event.target.value || null
+      if (item && event.target.matches('[data-extra-text]')) { event.target.value = event.target.value.slice(0, 2000); item.extraText = event.target.value || null }
     })
     on(form, 'change', (event) => {
       saveDraft()

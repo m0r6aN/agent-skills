@@ -12,7 +12,7 @@ export function launchItemHtml(item, registry) {
   const choices = eligibleActions(item.signal, registry)
   return `<div class="launch-item" data-launch-item="${esc(item.signal.id)}"><div class="row"><div><strong>${esc(item.signal.subject)}</strong><span class="meta">${esc(item.signal.repo)} · ${esc(item.signal.class)}</span></div><button type="button" data-remove-selection aria-label="Remove ${esc(item.signal.subject)} from selection">Remove</button></div>
     <label class="stack-label">Action<select data-verb aria-label="Action for ${esc(item.signal.subject)}"><option value="">Choose an action</option>${choices.map((e) => `<option value="${esc(e.verb)}" ${e.verb === item.verb ? 'selected' : ''}>${esc(e.verb)}</option>`).join('')}</select></label>
-    <label class="stack-label">Extra direction for ${esc(item.signal.subject)} (optional)<textarea data-extra-text aria-label="Extra direction for ${esc(item.signal.subject)}" rows="3">${esc(item.extraText ?? '')}</textarea></label>
+    <label class="stack-label">Extra direction for ${esc(item.signal.subject)} (optional)<textarea data-extra-text maxlength="2000" aria-label="Extra direction for ${esc(item.signal.subject)}" rows="3">${esc(item.extraText ?? '')}</textarea></label>
     <div class="permissions"><label>Decisions<select data-permission="decisions" aria-label="Decisions for ${esc(item.signal.subject)}"><option value="partial" ${item.autonomy.decisions === 'partial' ? 'selected' : ''}>Partial</option><option value="full" ${item.autonomy.decisions === 'full' ? 'selected' : ''}>Full</option></select></label>${['commit', 'push', 'openPr', 'merge'].map((name) => `<label><input type="checkbox" data-permission="${name}" ${item.autonomy[name] ? 'checked' : ''} ${name === 'merge' ? 'disabled' : ''}>${name === 'openPr' ? 'Open PR' : name === 'merge' ? 'Merge (human-owned)' : name[0].toUpperCase() + name.slice(1)}</label>`).join('')}</div>
     ${item.bulkIssue ? `<p class="flags" role="status">${esc(item.bulkIssue)}</p>` : ''}
     ${item.unavailable ? `<p class="flags" role="status">${esc(item.unavailable)}</p>` : ''}
@@ -105,6 +105,9 @@ export function readControls(form) {
  * (FCA-P5): { controls, actions: [{..., extraText}] }.
  */
 export function spawnRequest(selectionPayloads, controls) {
-  const actions = selectionToActions(selectionPayloads)
+  const actions = selectionToActions(selectionPayloads).map((action) => ({
+    ...action,
+    extraText: typeof action.extraText === 'string' ? action.extraText.slice(0, 2000) : action.extraText,
+  }))
   return { controls: { ...controls }, actions }
 }
