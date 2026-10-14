@@ -1,0 +1,15 @@
+  Determining projects to restore...
+  Restored D:\Repos\opmem-worktrees\gateway-p5a-01a1358d\src\Keon.McpGateway\Keon.McpGateway.csproj (in 840 ms).
+  Restored D:\Repos\opmem-worktrees\gateway-p5a-01a1358d\tests\Keon.McpGateway.Tests\Keon.McpGateway.Tests.csproj (in 844 ms).
+D:\Repos\opmem-worktrees\gateway-p5a-01a1358d\src\Keon.McpGateway\Auth\RoleBinding.cs(121,13): warning CS8604: Possible null reference argument for parameter 'RoleId' in 'RoleBinding.RoleBinding(string RoleId, string RoleGeneration, string ProfileId, IReadOnlyList<string> GrantScopes, string SessionId, string? TaskId)'. [D:\Repos\opmem-worktrees\gateway-p5a-01a1358d\src\Keon.McpGateway\Keon.McpGateway.csproj]
+D:\Repos\opmem-worktrees\gateway-p5a-01a1358d\src\Keon.McpGateway\Auth\RoleBinding.cs(122,13): warning CS8604: Possible null reference argument for parameter 'RoleGeneration' in 'RoleBinding.RoleBinding(string RoleId, string RoleGeneration, string ProfileId, IReadOnlyList<string> GrantScopes, string SessionId, string? TaskId)'. [D:\Repos\opmem-worktrees\gateway-p5a-01a1358d\src\Keon.McpGateway\Keon.McpGateway.csproj]
+D:\Repos\opmem-worktrees\gateway-p5a-01a1358d\src\Keon.McpGateway\Auth\RoleBinding.cs(123,13): warning CS8604: Possible null reference argument for parameter 'ProfileId' in 'RoleBinding.RoleBinding(string RoleId, string RoleGeneration, string ProfileId, IReadOnlyList<string> GrantScopes, string SessionId, string? TaskId)'. [D:\Repos\opmem-worktrees\gateway-p5a-01a1358d\src\Keon.McpGateway\Keon.McpGateway.csproj]
+D:\Repos\opmem-worktrees\gateway-p5a-01a1358d\src\Keon.McpGateway\Auth\RoleBinding.cs(125,13): warning CS8604: Possible null reference argument for parameter 'SessionId' in 'RoleBinding.RoleBinding(string RoleId, string RoleGeneration, string ProfileId, IReadOnlyList<string> GrantScopes, string SessionId, string? TaskId)'. [D:\Repos\opmem-worktrees\gateway-p5a-01a1358d\src\Keon.McpGateway\Keon.McpGateway.csproj]
+  Keon.McpGateway -> D:\Repos\opmem-worktrees\gateway-p5a-01a1358d\src\Keon.McpGateway\bin\Release\net10.0\Keon.McpGateway.dll
+D:\Repos\opmem-worktrees\gateway-p5a-01a1358d\tests\Keon.McpGateway.Tests\Auth\RoleBindingTests.cs(785,31): warning CS8619: Nullability of reference types in value of type 'Dictionary<string, string?[]>' doesn't match target type 'IReadOnlyDictionary<string, string[]>'. [D:\Repos\opmem-worktrees\gateway-p5a-01a1358d\tests\Keon.McpGateway.Tests\Keon.McpGateway.Tests.csproj]
+  Keon.McpGateway.Tests -> D:\Repos\opmem-worktrees\gateway-p5a-01a1358d\tests\Keon.McpGateway.Tests\bin\Release\net10.0\Keon.McpGateway.Tests.dll
+Test run for D:\Repos\opmem-worktrees\gateway-p5a-01a1358d\tests\Keon.McpGateway.Tests\bin\Release\net10.0\Keon.McpGateway.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+Results File: D:\Repos\opmem-dispatch-01a1358d\h1-integrated-results\h1-integrated.trx
+
+Passed!  - Failed:     0, Passed:   422, Skipped:     0, Total:   422, Duration: 12 s - Keon.McpGateway.Tests.dll (net10.0)

@@ -1,4 +1,6 @@
-# OPMEM-H1 — verified candidate; STOP awaiting human Gate3 merge
+# OPMEM-H1 — historical verified candidate / pre-merge Gate3 stop
+
+**Source hold superseded:** actual human integration merge#51 verified atb3a4b1b; see `h1-closure-2026-10-14.md`. This is retained pre-merge evidence, not the current queue state. Separate #227 record CI remains red, tracked upstream#230; no deployment claim.
 
 **Recorded:** 2026-10-14 UTC. Sole coordinator `01a1358d-711a-7345-8874-901c5e2b50e3` retains ownership. User authorized separate narrow remediation; no waiver of technical gates. **H1 is locally verified, NOT merged/Stage-F accepted/deployed; P5a remains undispatched.** No worker/poll/wakeup running.
 

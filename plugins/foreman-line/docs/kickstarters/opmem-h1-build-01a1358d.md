@@ -4,7 +4,7 @@ This is a provenance record, not a new launch/approval/registration receipt. Sol
 
 ## Binding inputs
 
-- `plugins/foreman-line/docs/specs/active/OPMEM-H1-sqlite-dependency-remediation.md`
+- `plugins/foreman-line/docs/specs/done/OPMEM-H1-sqlite-dependency-remediation.md` (active at dispatch; archived after actual human integration merge#51, source closure in `h1-closure-2026-10-14.md`)
 - `plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`
 - `plugins/foreman-line/docs/goals/operator-developer-cortex-memory/owner-h1-authorization-2026-10-13.md`
 - `plugins/foreman-line/docs/goals/operator-developer-cortex-memory/h1-plan-review-triage-2026-10-13.md`

@@ -1,0 +1,94 @@
+{
+  "valid": true,
+  "frontmatter": {
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      "advisory: surfaces entry 'src/Keon.McpGateway/Keon.McpGateway.csproj' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4",
+      "advisory: surfaces entry 'tests/Keon.McpGateway.Tests/Keon.McpGateway.Tests.csproj' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4",
+      "advisory: surfaces entry 'tests/Keon.McpGateway.Tests/Cortex/NativeSqliteVersionTests.cs' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4"
+    ]
+  },
+  "body": {
+    "valid": true,
+    "errors": []
+  },
+  "errors": []
+}
+ARCHIVED_SPEC_CHECK_ONLY: no ShapingResult emitted or rewritten; original active-at-emission payload remains historical provenance.
+(node:36296) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  accomplish
+  ✓  api-and-interface-design
+  ✓  browser-testing-with-devtools
+  ✓  ci-cd-and-automation
+  ✓  code-review-and-quality
+  ✓  code-simplification
+  ✓  constraint-driven-development
+  ✓  context-engineering
+  ✓  debugging-and-error-recovery
+  ✓  deprecation-and-migration
+  ✓  documentation-and-adrs
+  ✓  doubt-driven-development
+  ✓  frontend-ui-engineering
+  ✓  get-app-specs
+  ✓  git-workflow-and-versioning
+  ✓  go-live-readiness
+  ✓  idea-refine (section checks exempt)
+  ✓  incremental-implementation
+  ✓  initiative-coordination
+  ✓  interview-me
+  ✓  lumber-jack
+  ✓  modernize
+  ✓  modernizer
+  ✓  observability-and-instrumentation
+  ✓  parcel-compiler
+  ✓  performance-optimization
+  ✓  planning-and-task-breakdown
+  ✓  security-and-hardening
+  ✓  security-review
+  ✓  shipping-and-launch
+  ✓  source-driven-development
+  ✓  spec-driven-development
+  ✓  synced
+  ✓  test-driven-development
+  ✓  using-agent-skills (section checks exempt)
+
+35 skills checked — 0 error(s), 0 warning(s) — PASSED
+Checking command parity...
+  ✓  accomplish
+  ✓  build
+  ✓  code-simplify
+  ✓  constraints
+  ✓  plan (planning in toml dirs)
+  ✓  review
+  ✓  ship
+  ✓  spec
+  ✓  test
+  ✓  webperf
+
+Checking description sync...
+  ✓  accomplish
+  ✓  build
+  ✓  code-simplify
+  ✓  constraints
+  ✓  plan
+  ✓  review
+  ✓  ship
+  ✓  spec
+  ✓  test
+  ✓  webperf
+
+10 commands checked — 0 error(s) — PASSED
+Checking spec/plan/todo artifact paths...
+
+  ✓  .claude/commands/spec.md
+  ✓  .claude/commands/plan.md
+  ✓  .claude/commands/build.md
+  ✓  skills/spec-driven-development/SKILL.md
+  ✓  skills/planning-and-task-breakdown/SKILL.md
+  ✓  docs/getting-started.md
+  ✓  docs/adoption-guide.md
+
+7 files checked — 0 error(s) — PASSED
+surface-pin-precheck: all pins match or known-base; zero drift.

@@ -1,10 +1,10 @@
 ---
 ticket: OPMEM-H1
 title: Remediate vulnerable Gateway native SQLite dependency
-status: active
+status: done
 owner: clinton.morgan
 created: 2026-10-13
-updated: 2026-10-13
+updated: 2026-10-14
 risk: elevated
 surfaces:
   - src/Keon.McpGateway/Keon.McpGateway.csproj
@@ -60,6 +60,9 @@ Any additional tracked path requires a coordinator amendment before editing. No 
 P5a memory protocol implementation, arbitrary dependency modernization, changing Runtime/Cortex/bridge/Pi, production promotion, Azure/Neon/credentials, modifying native upstream code or restoring other owners' work. An H1 local pass is not a deployed security fix or P8/P9 validation.
 
 ## Context & References
+
+- Accepted integration merge: https://github.com/Keon-Systems/keon-mcp-gateway/pull/51 (`b3a4b1b529ea0b804c07c681c69de8d4e2aebfdf`, exact tree equal reviewed candidate `bfd21823b1c8419ba320961591583b476e9df58e`).
+- `plugins/foreman-line/docs/goals/operator-developer-cortex-memory/h1-closure-2026-10-14.md` — integration-only closure, human Gate3 evidence and separate documentation-CI hold.
 
 - `plugins/foreman-line/docs/goals/operator-developer-cortex-memory/owner-h1-authorization-2026-10-13.md`
 - `plugins/foreman-line/docs/goals/operator-developer-cortex-memory/resume-stop-report-2026-10-13-01a1358d.md`
