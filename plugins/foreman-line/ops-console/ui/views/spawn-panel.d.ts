@@ -10,7 +10,6 @@ export declare function spawnPanelHtml(options?: {
   controls?: Record<string, string>
   selections?: import('./selection.js').SelectedTarget[]
   registry?: import('./selection.js').RegistryEntry[]
-  extra?: string
   error?: string
   page?: number
   retryRequired?: boolean
@@ -26,5 +25,4 @@ export declare function readControls(form: {
 export declare function spawnRequest(
   selectionPayloads: readonly Record<string, unknown>[],
   controls: Record<string, string>,
-  extraText: string | null,
 ): { controls: Record<string, string>; actions: Array<Record<string, unknown>> }

@@ -65,6 +65,15 @@ docker run -d --name foreman-hub --restart unless-stopped `
 > it refuses at startup exactly like the local run. Open
 > http://127.0.0.1:8081/ — no login, loopback only.
 
+## Reconciliation follow-through (FCA-P11)
+
+Reconciliation findings may offer **Prepare session** for explicitly mapped
+options. This only selects the parcel, sets its per-item instruction, and opens
+the existing launch-review dialog; it never starts a session or performs a
+write. Instructions are bounded to 2,000 characters with the safety footer
+preserved. Options without an authorized action remain disabled and show
+copyable commands. See `docs/specs/active/FCA-P11-reconciliation-followthrough.md`.
+
 ## API (frozen route table — FOC-P0 X1)
 
 | Route | Effect |
@@ -98,6 +107,13 @@ frozen pattern (UUID, 6-digit sequence, `^[a-z0-9-]+$` slug, absolute
 before any spawn, and refusals are audited like executions. Spawns use a
 frozen minimal environment (no caller-env passthrough) and the configured
 repo root as working directory.
+
+## Selected-action launch review
+
+Each selected finding has its own editable optional extra direction in the launch
+panel. It is sent with that finding's spawn action and appended verbatim to only
+that action's prompt; editing one item does not change another. Harness, model,
+thinking level, and budget remain shared launch controls.
 
 ## Session ledger (FCA-P7)
 

@@ -36,6 +36,7 @@ export type SpawnRefusalReason =
   | 'unsupported-thinking'
   | 'unsupported-budget'
   | 'unregistered-action'
+  | 'invalid-extra-text'
   | 'tmux-unavailable'
   | 'launch-failure'
 
@@ -194,6 +195,12 @@ export function planSpawn(request: SpawnPlanRequest): SpawnPlan {
       envelope,
       null,
     )
+    if (typeof action.extraText === 'string' && action.extraText.length > 2000) {
+      throw new SpawnRefusalError(
+        'invalid-extra-text',
+        'spawn refused: extraText exceeds 2,000 characters',
+      )
+    }
     const extra = action.extraText == null ? '' : `\n\nEXTRA DIRECTION:\n${action.extraText}`
     const prompt = `${base}${controlsBlock(harness.id, controls)}${extra}`
     const worktreePath = worktreePathFor(action.repoRoot, action.subject, stamp)

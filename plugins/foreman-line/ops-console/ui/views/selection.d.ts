@@ -25,6 +25,7 @@ export interface SelectedTarget {
   manualAction: boolean
   manualPermissions: boolean
   bulkIssue: string | null
+  extraText: string | null
 }
 export declare function eligibleActions(signal: Pick<TargetSignal, 'actions' | 'class'>, registry: readonly RegistryEntry[]): RegistryEntry[]
 export declare function actionSignature(entry: RegistryEntry | undefined): string
