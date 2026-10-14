@@ -364,7 +364,12 @@ test('GET /api/decisions is read-only, refuses other methods, and leaves /api/ga
       await handleApi(config, request('GET', '/api/gates?goal=goal-dec'), NOW),
     )
     const res = await handleApi(config, request('GET', '/api/decisions'), NOW, {
-      decisions: { gh: noGh, git: () => 'origin/main' },
+      decisions: {
+        gh: async () => {
+          throw new Error('gh unavailable')
+        },
+        git: async () => 'origin/main',
+      },
     })
     assert.equal(res.status, 200)
     const json = res.json as DecisionsResponse
@@ -375,7 +380,12 @@ test('GET /api/decisions is read-only, refuses other methods, and leaves /api/ga
     )
     assert.equal(gatesAfter, gatesBefore)
     const filtered = await handleApi(config, request('GET', '/api/decisions?repo=/nowhere'), NOW, {
-      decisions: { gh: noGh, git: () => 'origin/main' },
+      decisions: {
+        gh: async () => {
+          throw new Error('gh unavailable')
+        },
+        git: async () => 'origin/main',
+      },
     })
     assert.equal(filtered.status, 200)
     assert.equal((filtered.json as DecisionsResponse).items.length, 0)

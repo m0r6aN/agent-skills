@@ -4,7 +4,7 @@ import { ACTION_REGISTRY, type AutonomyEnvelope, dispatchAction } from './action
 import { deriveAlerts } from './alerts.js'
 import { type BrowseRefusalError, browseDirectory } from './browse.js'
 import { type ConsoleConfig, goalTrees, resolveGoalKey, treeConfigFor } from './config.js'
-import { buildDecisions, type DecisionsOptions } from './decisions.js'
+import { type AsyncDecisionsOptions, buildDecisionsAsync } from './decisions.js'
 import {
   addFleetRootAsync,
   describeRootAsync,
@@ -16,19 +16,24 @@ import {
 } from './fleet.js'
 import { isRecord } from './guards.js'
 import { invokeFlow, listAuditEntries } from './invoke.js'
-import { asyncLiveProbes, ledgerEntries, ledgerEntriesAsync, liveProbes } from './ledger.js'
-import { readGitOutcome } from './ledger-git.js'
+import { asyncLiveProbes, ledgerEntriesAsync } from './ledger.js'
+import { readGitOutcomeAsync } from './ledger-git.js'
 import { deleteNotification, listNotifications, syncAlerts } from './notifications.js'
 import { projectGoal } from './project.js'
 import { assess, DISCREPANCY_CODES, reconcileGoal, type SessionEvidence } from './reconcile.js'
-import { gatherRepoFacts } from './reconcile-git.js'
+import { gatherRepoFactsAsync } from './reconcile-git.js'
 import { gatherPrFactsAsync } from './reconcile-remote.js'
 import { remediesFor } from './remedy.js'
 import { loadRoutingPolicy } from './routing.js'
 import { listGoalSlugs, scanGoal } from './scan.js'
 import { collectSignalsAsync, SIGNAL_CLASSES, SIGNAL_SEVERITIES } from './signals.js'
 import { asyncSessionProbeFor } from './signals-session.js'
-import { launchSpawnPlan, listSpawnReceipts, planSpawn, type SpawnRefusalError } from './spawn.js'
+import {
+  launchSpawnPlanAsync,
+  listSpawnReceipts,
+  planSpawn,
+  type SpawnRefusalError,
+} from './spawn.js'
 import { goalStatus } from './status.js'
 import type { ChainSummary, GoalProjection } from './types.js'
 
@@ -123,7 +128,7 @@ function chainDocuments(config: ConsoleConfig, chain: ChainSummary | null): unkn
 
 /** Test seams only: production callers pass nothing and get the real `gh`/`git`. */
 export interface ApiDeps {
-  readonly decisions?: DecisionsOptions
+  readonly decisions?: AsyncDecisionsOptions
 }
 
 export async function handleApi(
@@ -198,7 +203,7 @@ export async function handleApi(
   // local record vs local git vs remote, with a closed discrepancy vocabulary.
   // Read-only; one batch of git calls and one cached `gh pr list` per repo per
   // request - never per parcel. `state`/`rule` are echoed for display only.
-  // FCA-P14: async gh calls (non-blocking).
+  // FCA-P14: fully async git/gh/ledger calls (non-blocking).
   if (pathname === '/api/reconcile') {
     if (method !== 'GET') return methodNotAllowed('GET')
     return asyncWithGoal(config, query, now, async (projection, treeConfig) => {
@@ -214,8 +219,11 @@ export async function handleApi(
       // The specs directory of THIS tree, repo-relative; outside the repository = unknown.
       const rel = relative(repoRoot, real(treeConfig.specsDir)).split(sep).join('/')
       const specsRel = rel === '' || rel.startsWith('..') || isAbsolute(rel) ? null : rel
-      const repo = gatherRepoFacts(repoRoot, undefined, specsRel)
-      const prs = await gatherPrFactsAsync(repoRoot, now)
+      // FCA-P14: async repo facts and PR facts (non-blocking).
+      const [repo, prs] = await Promise.all([
+        gatherRepoFactsAsync(repoRoot, undefined, specsRel),
+        gatherPrFactsAsync(repoRoot, now),
+      ])
       // Other goals' parcel keys: only used to recognise ambiguous links.
       const otherKeys: string[] = []
       for (const slug of listGoalSlugs(treeConfig)) {
@@ -229,8 +237,10 @@ export async function handleApi(
       const receipts = listSpawnReceipts(config.stateDir).filter(
         (receipt) => real(receipt.repoRoot) === repoRoot,
       )
+      // FCA-P14: async ledger entries (non-blocking).
+      const ledger = await ledgerEntriesAsync(receipts, asyncLiveProbes(config), now)
       const sessions: SessionEvidence[] = []
-      for (const [id, entry] of ledgerEntries(receipts, liveProbes(config), now)) {
+      for (const [id, entry] of ledger) {
         const receipt = receipts.find((candidate) => candidate.id === id)
         if (receipt === undefined) continue
         sessions.push({
@@ -242,13 +252,31 @@ export async function handleApi(
           orphanClean: entry.orphanClean,
         })
       }
-      const outcomes = new Map<string, ReturnType<typeof readGitOutcome>>()
+      // FCA-P14: pre-fetch all worktree outcomes in parallel (non-blocking).
+      // Collect all worktree paths from repo facts and session worktrees.
+      const allWorktreePaths = new Set<string>([
+        ...repo.worktrees.map((wt) => wt.path),
+        ...sessions.map((s) => s.worktreePath),
+      ])
+      const outcomesArray = await Promise.all(
+        [...allWorktreePaths].map(async (path) => ({
+          path,
+          fact: await readGitOutcomeAsync(path, repo.defaultRef),
+        })),
+      )
+      const outcomes = new Map(outcomesArray.map(({ path, fact }) => [path, fact]))
+      // Sync lookup for reconcileGoal - all paths already pre-fetched.
       const worktreeOutcome = (path: string) => {
         const hit = outcomes.get(path)
         if (hit !== undefined) return hit
-        const fact = readGitOutcome(path, repo.defaultRef)
-        outcomes.set(path, fact)
-        return fact
+        // Fallback for paths not pre-fetched (should not happen).
+        return {
+          worktree: 'unknown' as const,
+          branch: null,
+          commitsAhead: null,
+          dirtyFiles: null,
+          pushed: null,
+        }
       }
       const reconciled = reconcileGoal({
         parcels: projection.parcels,
@@ -356,12 +384,16 @@ export async function handleApi(
   // every human gate act waiting - open PRs (Gate 3) and R3 awaiting-gate
   // parcels (Gates 1/2) - with evidence and ages. Read-only: facts and (in later
   // stages) a presented command; nothing is merged, approved or dispatched here.
+  // FCA-P14: fully async git/gh calls (non-blocking).
   if (pathname === '/api/decisions') {
     if (method !== 'GET') return methodNotAllowed('GET')
     const repo = query.get('repo')
     return {
       status: 200,
-      json: buildDecisions(config, now, { ...deps.decisions, repo: repo === '' ? null : repo }),
+      json: await buildDecisionsAsync(config, now, {
+        ...deps.decisions,
+        repo: repo === '' ? null : repo,
+      }),
     }
   }
 
@@ -531,6 +563,7 @@ export async function handleApi(
   // FCA-P5 spawn dispatch: shared controls + selected actions -> pure plan
   // (typed refusals in the plan stage) -> tmux launch -> receipts. The
   // response carries digests and worktree paths, never prompt payloads.
+  // FCA-P14: async worktree/tmux operations (non-blocking).
   if (pathname === '/api/spawn') {
     if (method !== 'POST') return methodNotAllowed('POST')
     const body = isRecord(request.body) ? request.body : {}
@@ -556,7 +589,7 @@ export async function handleApi(
         })),
         now,
       })
-      const launch = launchSpawnPlan(config, plan, now)
+      const launch = await launchSpawnPlanAsync(config, plan, now)
       return {
         status: 200,
         json: {

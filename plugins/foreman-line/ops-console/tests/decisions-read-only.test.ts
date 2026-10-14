@@ -250,6 +250,9 @@ test('the decisions modules write no files, run no mutating verb and spawn nothi
     'no mutating gh verb appears in the adapter',
   )
   // Every runner call in the remote module goes through guardedGh.
+  // FCA-P14: sync and async variants both guard their runner.
   assert.match(remote, /guardedGh\(options\.run \?\? defaultGhRunner\)/)
-  assert.equal((remote.match(/run\(repoRoot,/g) ?? []).length, 2)
+  assert.match(remote, /guardedGhAsync\(options\.run \?\? defaultAsyncGhRunner\)/)
+  // 2 sync + 2 async = 4 guarded runner calls
+  assert.equal((remote.match(/run\(repoRoot,/g) ?? []).length, 4)
 })

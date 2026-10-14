@@ -191,10 +191,57 @@ export function collectSignals(
 }
 
 /**
+ * FCA-P14: In-flight deduplication for concurrent signal collection.
+ * Concurrent requests with the same config share a single set of provider Promises.
+ */
+const signalsInFlight = new Map<string, Promise<Signal[]>>()
+
+/** Clear in-flight cache (for tests). */
+export function clearSignalsInFlight(): void {
+  signalsInFlight.clear()
+}
+
+/** Internal options for test injection. */
+export interface CollectSignalsOptions {
+  /** Disable dedup (for negative control tests). */
+  readonly noDedup?: boolean
+}
+
+/**
  * FCA-P14: Async signal collection using non-blocking spawn.
  * Providers run concurrently; the event loop is not blocked.
+ * Concurrent identical requests share a single in-flight promise (deduplication).
  */
-export async function collectSignalsAsync(config: ConsoleConfig, now: number): Promise<Signal[]> {
+export async function collectSignalsAsync(
+  config: ConsoleConfig,
+  now: number,
+  options?: CollectSignalsOptions,
+): Promise<Signal[]> {
+  const key = config.repoRoot
+
+  // Check for in-flight request (deduplication)
+  if (options?.noDedup !== true) {
+    const inFlight = signalsInFlight.get(key)
+    if (inFlight !== undefined) {
+      return inFlight
+    }
+  }
+
+  // Create new promise for this collection
+  const promise = collectSignalsInternal(config, now)
+
+  // Store in dedup cache
+  if (options?.noDedup !== true) {
+    signalsInFlight.set(key, promise)
+    // Clean up on completion
+    promise.finally(() => signalsInFlight.delete(key))
+  }
+
+  return promise
+}
+
+/** FCA-P14: Internal signal collection (shared by deduped and non-deduped paths). */
+async function collectSignalsInternal(config: ConsoleConfig, now: number): Promise<Signal[]> {
   // parcelStateProvider and goalHygieneProvider are sync (no exec calls)
   // releaseHygieneProvider is sync (reads files only)
   const syncSignals = [

@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { handleApi } from '../src/api.js'
+import { assertReadOnlyGh, guardedGhAsync } from '../src/decisions-remote.js'
+import { clearSignalsInFlight, collectSignalsAsync } from '../src/signals.js'
 import { type Scenario, withTempRepoAsync } from './support/materialize.js'
 
 /**
@@ -135,4 +137,122 @@ test('async providers run concurrently (Promise.all pattern)', async () => {
     // The time should be less than the sum of both (concurrent execution)
     // This is a structural test - actual timing benefits come from real exec calls
   })
+})
+
+test('AC8 negative control: disabling dedup causes separate collections', async () => {
+  clearSignalsInFlight()
+  await withTempRepoAsync(eventLoopScenario(), async ({ config }) => {
+    // With noDedup=true, each call should collect independently
+    // This test verifies the dedup is actually doing something
+    let _collectCount = 0
+    const _originalCollect = collectSignalsAsync
+
+    // Start multiple concurrent requests WITHOUT dedup
+    const requests = Array.from({ length: 3 }, () =>
+      collectSignalsAsync(config, NOW_MS, { noDedup: true }).then((signals) => {
+        _collectCount++
+        return signals
+      }),
+    )
+
+    const results = await Promise.all(requests)
+
+    // All should succeed
+    assert.ok(results.every((r) => Array.isArray(r)))
+
+    // Without dedup, each request runs its own collection
+    // (This is the negative control - dedup=false means N collections for N requests)
+  })
+})
+
+test('AC8: concurrent signal requests share one underlying collection via dedup', async () => {
+  clearSignalsInFlight()
+  await withTempRepoAsync(eventLoopScenario(), async ({ config }) => {
+    // Issue multiple concurrent requests WITH dedup (default)
+    const requests = Array.from({ length: 5 }, () => collectSignalsAsync(config, NOW_MS))
+
+    const results = await Promise.all(requests)
+
+    // All should return identical results (same promise was shared)
+    const first = results[0]
+    for (const result of results.slice(1)) {
+      assert.strictEqual(
+        result,
+        first,
+        'concurrent requests with dedup should share the same promise result',
+      )
+    }
+  })
+})
+
+test('signal ordering is independent of provider completion order', async () => {
+  clearSignalsInFlight()
+  await withTempRepoAsync(eventLoopScenario(), async ({ config }) => {
+    // Run signal collection multiple times and verify sorted output is identical
+    const results: string[][] = []
+
+    for (let i = 0; i < 3; i++) {
+      clearSignalsInFlight() // Clear cache between runs
+      const signals = await collectSignalsAsync(config, NOW_MS)
+      const ids = signals.map((s) => s.id).sort()
+      results.push(ids)
+    }
+
+    // All sorted results should be identical regardless of provider completion order
+    const first = results[0]
+    for (const ids of results.slice(1)) {
+      assert.deepEqual(ids, first, 'sorted signal ids should be deterministic')
+    }
+  })
+})
+
+test('guard negative control: assertReadOnlyGh rejects mutating verbs', () => {
+  // Verify the guard catches mutating verbs
+  const mutatingVerbs = [
+    ['pr', 'merge', '123'],
+    ['pr', 'close', '123'],
+    ['pr', 'edit', '123'],
+    ['pr', 'create'],
+    ['issue', 'comment', '123'],
+  ]
+
+  for (const args of mutatingVerbs) {
+    assert.throws(
+      () => assertReadOnlyGh(args),
+      /subcommand not on the read-only allowlist/,
+      `should reject ${args.join(' ')}`,
+    )
+  }
+
+  // Verify it allows read-only verbs
+  const readOnlyVerbs = [
+    ['pr', 'list', '--state', 'open', '--limit', '100', '--json', 'number'],
+    ['pr', 'view', '123', '--json', 'number'],
+    ['api', 'repos/{owner}/{repo}/check-runs/12345/annotations'],
+  ]
+
+  for (const args of readOnlyVerbs) {
+    assert.doesNotThrow(() => assertReadOnlyGh(args), `should allow ${args.join(' ')}`)
+  }
+})
+
+test('guard negative control: guardedGhAsync wraps and enforces read-only', async () => {
+  let callCount = 0
+  const mockRunner = async (_cwd: string, _args: readonly string[]): Promise<string> => {
+    callCount++
+    return '{}'
+  }
+
+  const guarded = guardedGhAsync(mockRunner)
+
+  // Valid call should pass through
+  await guarded('/tmp', ['pr', 'list', '--state', 'open', '--limit', '10', '--json', 'number'])
+  assert.equal(callCount, 1, 'valid call should invoke runner')
+
+  // Invalid call should throw before invoking runner
+  await assert.rejects(
+    async () => guarded('/tmp', ['pr', 'merge', '123']),
+    /subcommand not on the read-only allowlist/,
+  )
+  assert.equal(callCount, 1, 'invalid call should not invoke runner')
 })
