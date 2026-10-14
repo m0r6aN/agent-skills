@@ -93,7 +93,7 @@ Traceability:
   - before Gate 1: an `Active restrictions` entry in the draft charter, plus a decision-log section in the same file;
   - between Gate 1 and the loop directive: `${CLAUDE_PLUGIN_ROOT}/docs/goals/<goal-slug>/restrictions.md`, a goal record and not charter text, holding the entry plus a decision-log section (`QUICK-FLAGS.md:228,244`).
 
-  It says the owner carries the restriction lines into the loop directive when it writes it. It points to registry §9 for line format, writer, reading, lifting and lifetime. It states no carry rule for decision-log entries, because the registry defines none (F-2).
+  It says the owner carries the lines of every earlier entry (the draft charter's and `restrictions.md`'s) into the loop directive when it writes it (builder Step 0 ruling C1). It points to registry §9 for line format, writer, reading, lifting and lifetime. It states no carry rule for decision-log entries, because the registry defines none (F-2).
 - [ ] **AC-5 Stage Zero, line 18 (lessons ledger, `defects_lessons.md:231`; Q15, OQ-1 ruled at lint).** Line 18 becomes exactly the text below, on one line. The only change is that ` applies.` becomes ` applies; and whether the goal will store any state beyond its prose standing authorizations and gate record: such stored state may only restrict, never grant or widen authority.`
 
   ```text
@@ -152,7 +152,7 @@ Traceability:
   - It has numbered placeholders for the Gate 2 grant, the Gate 3 grant and what is not granted.
 - [ ] **AC-12 Active restrictions and decision log (Q4; input 1).** The section holds, in this order:
   1. Prose with no line starting with `- `. It says that the entry's line format, writer, reading, lifting and lifetime, and the decision-log entry format, are defined only in registry §9. It also says nothing in the entry can grant authority or loosen a restriction (registry §4).
-  2. A sentence telling the owner, when this file is first written, to carry into the entry below the lines of the earlier entry: the draft charter's before Gate 1, or `docs/goals/<GOAL-SLUG>/restrictions.md`'s after it (registry §9).
+  2. A sentence telling the owner, when this file is first written, to carry into the entry below the lines of every earlier entry: the draft charter's (written before Gate 1) and `docs/goals/<GOAL-SLUG>/restrictions.md`'s (written after it) (registry §9; builder Step 0 ruling C1 — "or" read literally could silently drop a restriction, and §9 reads each earlier entry as a copy until carried).
   3. The line `Active restrictions:` alone. The line after it is empty, so the entry holds no line (§9 boundary, `QUICK-FLAGS.md:216`; see OQ-2).
   4. The line `Decision log:` alone, followed by nothing but an empty line before the next heading.
 
@@ -230,6 +230,7 @@ Traceability:
 - `plugins/foreman-line/authority-registry/src/validate.ts:206-217`: the `coordinator-pattern` and `goal-skill` canon sources. `plugins/foreman-line/verification/src/d19-audit.ts:701-702`: path labels only.
 - `plugins/foreman-line/shaping/src/emit.ts:43` (`deriveSessionSlug`); `plugins/foreman-line/shaping/src/self-check.ts:184` (`selfCheckDraft`).
 - `plugins/foreman-line/docs/SPEC-CONVENTION.md`: §4.7 surfaces 113-125; §4.8 Allowed Files 127-140.
+- Builder Step 0 rulings (2026-10-14, coordinator session `01a139ff-f7bc-725c-808d-120548a55ef1`): C1 accepted (AC-4 and AC-12 item 2 carry the "every earlier entry" wording; the literal "or" could drop a restriction, against §9's each-entry-is-a-copy rule); A confirmed (`$B=41f80463`; the one commit above it adds only this goal's coordinator-owned build kickstarter, excluded by Verification Plan command 11); B confirmed ("version 3" in Context & References is a line citation, not a version number; no added text states a version number); D confirmed (the §9 Writer's second copy is a copy, not a home; AC-10 names both copies); E confirmed (AC-15 "this charter governs" used as written); F confirmed (the wakeup/resume quick-flag rule lives only in the template, per OQ-4); G accepted within AC-11's intent (the Gate record sentence reads "For what an entry must name to tie a charter revision to a ratification, see registry §3 and §8." then `*(none yet)*`; no format defined); H noted for reviewers only, no text change (reviewer focus (b) already covers the OQ-1/OQ-3 readings); L confirmed (the template names "the /goal skill" and uses no skill paths, keeping the clean-room grep at 0).
 
 ## Assumptions
 
