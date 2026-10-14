@@ -53,6 +53,8 @@ export interface ScenarioChain {
   readonly mergeSha?: 'hex40' | 'bad'
   readonly corrupt?: number | null
   readonly breakLink?: number | null
+  /** When true, all timestamps are written as unparseable strings (FCA-P10 AC3). */
+  readonly invalidTimestamps?: boolean
   readonly specRefs?: readonly string[]
   readonly sidecars?: readonly string[]
   readonly routing?: {
@@ -74,6 +76,7 @@ export interface ExpectedProjection {
   readonly rule: string
   readonly failureCode?: FailureCode
   readonly chainEvidence?: 'present' | 'absent'
+  readonly specLocation?: 'active' | 'done' | 'none'
   readonly thresholdMs?: number
   readonly thresholdSource?: 'goal-override' | 'default'
   readonly flags?: readonly string[]
@@ -154,7 +157,11 @@ function materializeChain(
   chain.stages.forEach((stage, sequence) => {
     const names = SUBJECT_KINDS[stage] ?? { kind: 'Unknown', slug: 'unknown' }
     const offsetHours = chain.timestampOffsetHours?.[sequence] ?? -1
-    const timestamp = new Date(now + offsetHours * 3_600_000).toISOString()
+    // FCA-P10: invalidTimestamps produces schema-valid strings that Date.parse returns NaN for.
+    // The string matches ISO_UTC_PATTERN but is not a valid calendar date.
+    const timestamp = chain.invalidTimestamps
+      ? `9999-99-99T99:99:99.${String(sequence).padStart(3, '0')}Z`
+      : new Date(now + offsetHours * 3_600_000).toISOString()
     let subject: unknown = {}
     if (stage === 'A') {
       subject = {

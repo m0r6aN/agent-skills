@@ -2,8 +2,8 @@
 
 Local-only, **read-only** observer + human-gate presentation over the Foreman
 Line's existing truth sources (receipt chains, parcel specs, goal records). It
-answers "what is running, hung, awaiting a gate, failed, or complete?" at a
-glance. It consumes verification produced by others; it never produces it
+answers "what is running, hung, awaiting a gate, failed, complete, or not
+started?" at a glance. It consumes verification produced by others; it never produces it
 (charter D2/D4; FOC-P0 contract).
 
 - **Port 8081 on loopback (`127.0.0.1`) only — no authentication.** The

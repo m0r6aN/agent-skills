@@ -1,0 +1,20 @@
+{
+  "name": "not-started",
+  "description": "R4a not-started: queued parcel with no chain, no spec, no sidecar, no liveness — never progressed in the record.",
+  "now": "2026-10-13T12:00:00.000Z",
+  "goal": {
+    "slug": "goal-ns",
+    "queue": ["1. **P1** queued."]
+  },
+  "specs": [],
+  "sidecars": [],
+  "expected": [
+    {
+      "parcel": "P1",
+      "state": "not-started",
+      "rule": "R4a",
+      "chainEvidence": "absent",
+      "specLocation": "none"
+    }
+  ]
+}
