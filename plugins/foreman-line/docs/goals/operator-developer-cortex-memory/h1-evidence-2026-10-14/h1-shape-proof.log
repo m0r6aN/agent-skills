@@ -1,0 +1,3 @@
+EXACT_VERSION_ONLY src/Keon.McpGateway/Keon.McpGateway.csproj
+EXACT_VERSION_ONLY tests/Keon.McpGateway.Tests/Keon.McpGateway.Tests.csproj
+INTEGRATION_MANIFEST_BYTE_IDENTICAL

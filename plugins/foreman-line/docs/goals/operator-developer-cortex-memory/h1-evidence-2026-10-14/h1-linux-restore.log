@@ -1,0 +1,4 @@
+  Determining projects to restore...
+  Restored /work/source/src/Keon.McpGateway/Keon.McpGateway.csproj (in 7.71 sec).
+  Restored /work/source/tests/Keon.McpGateway.IntegrationTests/Keon.McpGateway.IntegrationTests.csproj (in 7.9 sec).
+  Restored /work/source/tests/Keon.McpGateway.Tests/Keon.McpGateway.Tests.csproj (in 7.9 sec).

@@ -4,13 +4,13 @@
 **Recorded:** 2026-10-10  
 **Owner:** Clinton Morgan  
 **Coordinator:** Pi session `01a1358d-711a-7345-8874-901c5e2b50e3`, appointed 2026-10-13 by explicit owner replacement at the stopped post-P4b boundary; existing ratifications/grants/budgets/limits preserved (`ownership-transfer-2026-10-13-01a1358d.md`); predecessors historical
-**State:** P0–P4b accepted; stopped before P5a dispatch for S-1 security dependency disposition outside manifest (`resume-stop-report-2026-10-13-01a1358d.md`); isolated baseline 421 passed / 0 failed / 0 skipped. External main promotions Gateway #50 / Cortex #68 observed after predecessor handoff; deployment unverified, remote integration branches deleted. Future code merges remain non-deploying only; production/cloud/credentials remain owner stop items.
+**State:** P0–P4b accepted. Owner approved separate OPMEM-H1; narrow candidate `bfd21823b1c8419ba320961591583b476e9df58e` independently verified (dual PASS, Windows/Linux422/0/0, published nativeSQLite3.53.3). STOP awaiting actual human Gate3 merge only to non-deploying Gateway `opmem/integration`; no distinct agent bypass proven. H1 not yet Stage-F accepted/S-1 integrated-closed, P5a undispatched. See `h1-verification-and-gate3-stop-2026-10-14.md` / `h1-publication-2026-10-14.md`. External main promotions Gateway#50/Cortex#68 observed; deployment unverified. Gateway integration restored at current main base, Cortex restoration deferred. Production/cloud/credentials remain owner stop items.
 
 **Mode:** multi-project initiative; sequential parcel execution under preserved non-destructive grant and exact-head independent evidence gates
 
 ## Current authority / freshness precedence
 
-Read `ownership-transfer-2026-10-13-01a1358d.md`, `loop-directive.md`, the post-P4b `handoff.md`, the 2026-10-12 blanket grant/delegated dispositions, accepted P0 manifests and P1–P4 closures first. Chronological pre-P0 holds and draft-only statements below are historical, not current operational state. Requirement D1–D18 and the goal exit criterion are unchanged. External main promotions do not authorize this session to deploy, prove live health, or complete P8/P9. Original plan and Stage A inputs are preserved.
+Read `h1-verification-and-gate3-stop-2026-10-14.md`, `h1-publication-2026-10-14.md`, `owner-h1-authorization-2026-10-13.md`, `ownership-transfer-2026-10-13-01a1358d.md`, `loop-directive.md`, the post-P4b `handoff.md`, the 2026-10-12 blanket grant/delegated dispositions, accepted P0 manifests and P1–P4 closures first. Chronological pre-P0 holds and draft-only statements below are historical, not current operational state. Requirement D1–D18 and the goal exit criterion are unchanged. External main promotions do not authorize this session to deploy, prove live health, or complete P8/P9. Original plan and Stage A inputs are preserved.
 
 ## Objective and priority
 

@@ -1,0 +1,33 @@
+const fs = require('fs');
+const path = require('path');
+const root = __dirname;
+function results(file) {
+  const xml = fs.readFileSync(path.join(root, file), 'utf8');
+  return [...xml.matchAll(/<UnitTestResult\b([^>]+)>/g)].map(m => {
+    const attrs = Object.fromEntries([...m[1].matchAll(/([\w]+)="([^"]*)"/g)].map(x => [x[1], x[2]]));
+    return [attrs.testName, attrs.outcome];
+  }).sort((a,b) => a[0].localeCompare(b[0]));
+}
+const baseline = results('h1-baseline-results/h1-baseline.trx');
+const windows = results('h1-windows-results/h1-windows.trx');
+const linux = results('linux-evidence/h1-linux-results/h1-linux.trx');
+if (baseline.length !== 421 || windows.length !== 422 || linux.length !== 422 || [...baseline,...windows,...linux].some(r => r[1] !== 'Passed')) throw Error('Unit count/outcome mismatch');
+const added = windows.filter(r => !baseline.some(b => b[0] === r[0]));
+if (added.length !== 1 || !added[0][0].includes('NativeSqliteVersionTests') || baseline.some(b => !windows.some(w => w[0] === b[0]))) throw Error('Baseline identity drift');
+if (JSON.stringify(windows) !== JSON.stringify(linux)) throw Error('Linux test identity drift');
+const integrationBase = results('h1-integration-baseline-results/h1-integration-baseline.trx');
+const integrationAfter = results('h1-integration-after-results/h1-integration-after.trx');
+if (integrationBase.length !== 10 || JSON.stringify(integrationBase) !== JSON.stringify(integrationAfter)) throw Error('Integration identity/outcome drift');
+const mutation = results('h1-mutation-results/h1-mutation.trx');
+if (mutation.length !== 1 || mutation[0][1] !== 'Failed' || mutation[0][0] !== added[0][0]) throw Error('Mutation not a genuine named test failure');
+for (const prefix of ['h1-windows', 'linux-evidence/h1-linux']) {
+  const restore = fs.readFileSync(path.join(root,prefix+'-restore.log'),'utf8');
+  const audit = fs.readFileSync(path.join(root,prefix+'-audit.log'),'utf8');
+  const graph = fs.readFileSync(path.join(root,prefix+'-graph.log'),'utf8');
+  if (/warning NU|error NU|downgrade/i.test(restore)) throw Error('Restore warning');
+  if ((audit.match(/has no vulnerable packages/g)||[]).length !== 3) throw Error('Audit scope failure');
+  if (/2\.1\.11/.test(graph)) throw Error('Affected SQLite package retained');
+  const sections = graph.split(/Project '/).slice(1);
+  if (sections.length !== 3 || sections.some(s => !/Microsoft\.Data\.Sqlite\s+(?:10\.0\.13\s+)?10\.0\.13/.test(s) || !/Microsoft\.Data\.Sqlite\.Core\s+10\.0\.13/.test(s) || ['bundle_e_sqlite3','core','lib.e_sqlite3','provider.e_sqlite3'].some(k => !s.includes('SQLitePCLRaw.'+k) || !new RegExp('SQLitePCLRaw\\.'+k.replaceAll('.','\\.')+'\\s+2\\.1\\.13').test(s)))) throw Error('Unexpected SQLite graph');
+}
+console.log(JSON.stringify({utc:new Date().toISOString(),baseline:421,windows:422,linux:422,baselineTestIdentitiesPreserved:true,linuxIdentitiesEqualWindows:true,added, integrationIdentitiesAndOutcomesUnchanged:integrationAfter,mutation,allThreeProjectGraphsChecked:true},null,2));

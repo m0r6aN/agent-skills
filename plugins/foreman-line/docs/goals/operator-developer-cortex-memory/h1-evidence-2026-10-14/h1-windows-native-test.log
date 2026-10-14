@@ -1,0 +1,18 @@
+Test run for D:\Repos\opmem-worktrees\gateway-h1-01a1358d\tests\Keon.McpGateway.Tests\bin\Release\net10.0\Keon.McpGateway.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+D:\Repos\opmem-worktrees\gateway-h1-01a1358d\tests\Keon.McpGateway.Tests\bin\Release\net10.0\Keon.McpGateway.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.13)
+[xUnit.net 00:00:00.08]   Discovering: Keon.McpGateway.Tests
+[xUnit.net 00:00:00.15]   Discovered:  Keon.McpGateway.Tests
+[xUnit.net 00:00:00.17]   Starting:    Keon.McpGateway.Tests
+[xUnit.net 00:00:00.23]   Finished:    Keon.McpGateway.Tests
+  Passed Keon.McpGateway.Tests.Cortex.NativeSqliteVersionTests.NativeSqliteVersion_IsAtLeast_3_50_2 [22 ms]
+  Standard Output Messages:
+ Measured native sqlite_version(): 3.53.3
+
+
+
+Test Run Successful.
+Total tests: 1
+     Passed: 1
+ Total time: 0.9290 Seconds
