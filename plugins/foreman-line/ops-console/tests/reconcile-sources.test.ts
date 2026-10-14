@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import test from 'node:test'
@@ -107,12 +107,20 @@ test('gatherRepoFacts reads default ref, branches, merge state, upstream trackin
     )
 
     // FCA-P16: Normalize paths for cross-platform comparison.
-    // Windows paths: case-insensitive, may use forward slashes from git.
-    // Use resolve() to normalize separators and toLowerCase() for case.
+    // Windows paths: case-insensitive, may use forward slashes from git,
+    // and tmpdir() may return short paths (e.g. runner~1) while git outputs full paths.
+    // Use realpathSync to resolve to canonical paths, then normalize case.
     const normalizePath = (p: string): string => {
       // Replace forward slashes with native separators before resolving (git may output with /)
       const native = process.platform === 'win32' ? p.replace(/\//g, '\\') : p
-      return process.platform === 'win32' ? resolve(native).toLowerCase() : resolve(native)
+      try {
+        // realpathSync resolves short paths to full paths and normalizes separators
+        const real = realpathSync(native)
+        return process.platform === 'win32' ? real.toLowerCase() : real
+      } catch {
+        // If path doesn't exist yet, fall back to resolve + toLowerCase
+        return process.platform === 'win32' ? resolve(native).toLowerCase() : resolve(native)
+      }
     }
     const normalizedWt = normalizePath(wt)
     const match = facts.worktrees.find(
