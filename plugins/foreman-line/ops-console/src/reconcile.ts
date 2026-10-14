@@ -26,6 +26,19 @@ import type { ParcelProjection, QueueItem } from './types.js'
  *   subjects are WEAK traces: displayed, never asserted from.
  */
 
+export const SCOPE_FOOTER =
+  'Report findings only. Change nothing. Do not merge, push, close, delete, or fetch. Stop when the question is answered.'
+export const OPTION_ACTS: Record<DiscrepancyCode, readonly (('investigate' | 'explain') | null)[]> =
+  {
+    'shipped-unrecorded': [null, 'investigate', null],
+    'recorded-unshipped': ['investigate', 'investigate', null],
+    'unmerged-work': ['investigate', null, null],
+    'orphan-worktree': ['investigate', null],
+    'never-started': [null, 'investigate', null],
+    'local-remote-divergence': ['explain', 'explain'],
+    'stale-abandoned': ['investigate', 'investigate', null, null],
+  }
+
 export const DISCREPANCY_CODES = [
   'shipped-unrecorded',
   'recorded-unshipped',
@@ -269,6 +282,7 @@ function optionsFor(
             answer: 'Yes — the work shipped, the record is behind',
             recommendation:
               'Complete the record instead of redoing the work: move the spec to done/ (fix inbound links and INDEX.md), mark the queue item ☑ SHIPPED + CLOSED with the PR reference, and update the state line (Stage F).',
+            act: null,
             commands: [
               ctx.pr === null
                 ? `gh pr list --search "${ctx.key}" --state merged`
@@ -280,12 +294,14 @@ function optionsFor(
             answer: 'Partly — more of the parcel remains',
             recommendation:
               'Keep it open and record what remains as a new queue item; do not mark it closed.',
+            act: null,
             commands: [`$EDITOR "${ctx.loop}"`],
           },
           {
             answer: 'No — the PR is unrelated to the parcel (last resort)',
             recommendation:
               'Say why in the state line so the link is not trusted again; the parcel stays as it is.',
+            act: null,
             commands: [`$EDITOR "${ctx.loop}"`],
           },
         ],
@@ -298,6 +314,7 @@ function optionsFor(
             answer: 'The work exists under another name',
             recommendation:
               'Find it (branch, PR, commit message) and add the key to the record so it links; do not redo it.',
+            act: null,
             commands: [
               `git -C "${ctx.repo}" log --all --oneline -i --grep="${ctx.key}"`,
               `gh pr list --state all --search "${ctx.key}"`,
@@ -306,12 +323,14 @@ function optionsFor(
           {
             answer: 'The work exists locally but was never pushed',
             recommendation: 'Push it and open a PR; the record then matches reality.',
+            act: null,
             commands: [`git -C "${ctx.repo}" branch -a --list "*${ctx.key.toLowerCase()}*"`],
           },
           {
             answer: 'The record was closed in error (last resort)',
             recommendation:
               'Reopen the queue item with a one-line disposition rather than deleting history.',
+            act: null,
             commands: [`$EDITOR "${ctx.loop}"`],
           },
         ],
@@ -324,6 +343,7 @@ function optionsFor(
             answer: 'It is ready or nearly ready',
             recommendation:
               'Resume it in place: finish, verify, and carry it to a PR and merge rather than restarting.',
+            act: null,
             commands:
               ctx.path === null
                 ? [`gh pr list --search "${ctx.key}"`]
@@ -332,6 +352,7 @@ function optionsFor(
           {
             answer: 'It diverged from the default branch',
             recommendation: 'Rebase or merge the default branch into it first, then re-verify.',
+            act: null,
             commands:
               ctx.path === null
                 ? []
@@ -344,6 +365,7 @@ function optionsFor(
             answer: 'It is stale and unwanted (last resort)',
             recommendation:
               'Close the PR or defer the item with a one-line disposition; keep the branch until you are sure.',
+            act: null,
             commands: [`$EDITOR "${ctx.loop}"`],
           },
         ],
@@ -357,12 +379,14 @@ function optionsFor(
             answer: 'Resume the work in it',
             recommendation:
               'Start a fresh session in the same worktree rather than cutting another.',
+            act: null,
             commands: ctx.path === null ? [] : [`git -C "${ctx.path}" status`],
           },
           {
             answer: 'It is leftover (last resort)',
             recommendation:
               'Reap it through the confirmation-gated close/delete action or the lumber-jack skill; git refuses to remove a dirty worktree.',
+            act: null,
             commands:
               ctx.path === null ? [] : [`git -C "${ctx.repo}" worktree remove "${ctx.path}"`],
           },
@@ -377,6 +401,7 @@ function optionsFor(
             answer: 'Yes — it is next in the queue',
             recommendation:
               'Shape and dispatch it through the normal gates; it needs a spec first.',
+            act: null,
             commands: [`$EDITOR "${ctx.loop}"`],
           },
           {
@@ -384,6 +409,7 @@ function optionsFor(
               'It shipped under another identity (bundled drop, renamed, or no per-parcel PR)',
             recommendation:
               'Key-based search cannot see bundled or renamed delivery. Find the delivering PR or commit (check the goal state line and the default branch), then complete the record: mark the queue item ☑ SHIPPED + CLOSED with that reference. Do not redo the work.',
+            act: null,
             commands: [
               `git -C "${ctx.repo}" log origin/main --oneline -i --grep="${ctx.key}"`,
               `$EDITOR "${ctx.loop}"`,
@@ -393,6 +419,7 @@ function optionsFor(
             answer: 'It was deferred or superseded (last resort)',
             recommendation:
               'Record a one-line disposition on the queue item so it stops reading as stalled.',
+            act: null,
             commands: [`$EDITOR "${ctx.loop}"`],
           },
         ],
@@ -404,12 +431,14 @@ function optionsFor(
           {
             answer: 'Local is ahead of remote',
             recommendation: 'Push the branch (or open the PR) so the remote record matches.',
+            act: null,
             commands: [`git -C "${ctx.repo}" status -sb`],
           },
           {
             answer: 'Remote is ahead of local',
             recommendation:
               'Fetch and fast-forward before judging the parcel; local state may simply be old.',
+            act: null,
             commands: [`git -C "${ctx.repo}" fetch origin`, `git -C "${ctx.repo}" status -sb`],
           },
         ],
@@ -422,6 +451,7 @@ function optionsFor(
             answer: 'Check the weak traces first',
             recommendation:
               'Review the traces listed in the evidence (spec on the default branch, commits naming the key) before deciding; they may show the work shipped under another name.',
+            act: null,
             commands: [`git -C "${ctx.repo}" log origin/main --oneline -i --grep="${ctx.key}"`],
           },
           {
@@ -429,6 +459,7 @@ function optionsFor(
               'It shipped under another identity (bundled drop, renamed, or no per-parcel PR)',
             recommendation:
               'Find the delivering PR or commit, then complete the record (mark ☑ SHIPPED + CLOSED with the reference). Do not redo the work.',
+            act: null,
             commands: [
               `git -C "${ctx.repo}" log origin/main --oneline -i --grep="${ctx.key}"`,
               `$EDITOR "${ctx.loop}"`,
@@ -437,12 +468,14 @@ function optionsFor(
           {
             answer: 'It is intentionally paused',
             recommendation: 'Add a `hung-threshold: Nh` line so it stops reading as hung.',
+            act: null,
             commands: [`$EDITOR "${ctx.loop}"`],
           },
           {
             answer: 'It is abandoned (last resort)',
             recommendation:
               'Close or defer the queue item with a one-line disposition; do not delete the record.',
+            act: null,
             commands: [`$EDITOR "${ctx.loop}"`],
           },
         ],
@@ -719,7 +752,17 @@ export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
         summary,
         evidence,
         question: guide.question,
-        options: guide.options,
+        options: guide.options.map((option, index) => {
+          const verb = OPTION_ACTS[code][index] ?? null
+          const weak = ctx.confidence === 'weak-traces'
+          const body = `Parcel: ${key}\nGoal: reconciliation follow-through\nCode: ${code}\nOption: ${option.answer}\nRecommendation: ${option.recommendation}\nEvidence: ${evidence.join('; ')}${weak ? '\nVerify; the work may have shipped under another identity.' : ''}`
+          const marker = ' (shortened)'
+          const instruction =
+            body.length + 2 + SCOPE_FOOTER.length <= 2000
+              ? `${body}\n\n${SCOPE_FOOTER}`
+              : `${body.slice(0, 2000 - SCOPE_FOOTER.length - marker.length - 2)}${marker}\n\n${SCOPE_FOOTER}`
+          return { ...option, act: verb ? { verb, instruction } : null }
+        }),
       })
     }
     const asOf = prs.asOf ?? 'n/a'

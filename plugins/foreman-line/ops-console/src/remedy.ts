@@ -15,6 +15,7 @@ export interface RemedyOption {
   readonly answer: string
   readonly recommendation: string
   readonly commands: readonly string[]
+  readonly act: { readonly verb: 'investigate' | 'explain'; readonly instruction: string } | null
 }
 
 export interface Remedy {
@@ -49,12 +50,14 @@ function hungRemedy(
       answer: 'The builder is idle-but-alive and its work is intact',
       recommendation:
         'Resume the existing builder in its worktree and let it finish — the heartbeat recovers as soon as receipts progress. Do not re-dispatch: the work would duplicate.',
+      act: null,
       commands: [`cd "${worktree}"`, stateLine],
     })
     options.push({
       answer: 'The pause is intentional (waiting on review, CI, or me)',
       recommendation:
         'Widen this goal’s heartbeat so an honest pause is not reported hung — add a `hung-threshold: Nh` override line to the goal record.',
+      act: null,
       commands: [stateLine],
     })
   }
@@ -63,6 +66,7 @@ function hungRemedy(
       answer: 'The work exists somewhere (branch, PR, stash, or the builder session)',
       recommendation:
         'Recover and complete it in place: find the branch or PR, resume the session that produced it, and carry the work to a merge rather than restarting.',
+      act: null,
       commands: [
         `git -C "${config.repoRoot}" branch --list '*${parcel.parcel}*' '*${projection.goal.slug}*'`,
         `gh pr list --search "${parcel.parcel}"`,
@@ -73,12 +77,14 @@ function hungRemedy(
     answer: 'The work shipped, only the record is missing',
     recommendation:
       'Complete the record instead of redoing the work: mark the queue item ☑ SHIPPED + CLOSED with its PR/merge reference and update the state line (the goal’s Stage-F closure step).',
+    act: null,
     commands: [stateLine],
   })
   options.push({
     answer: 'Nothing of value exists — the work is stale and unwanted',
     recommendation:
       'Close or defer the queue item in the goal record with a one-line disposition (why it is not worth finishing). This is the last resort: prefer any option above.',
+    act: null,
     commands: [stateLine],
   })
 
@@ -102,16 +108,19 @@ const FAILURE_QUESTIONS: Record<
         answer: 'Yes — the work exists, the chain evidence is damaged',
         recommendation:
           'Validate to see exactly where the chain breaks, then re-emit ONLY the broken stage from its real evidence. Never forge a receipt: re-run the stage that produced it.',
+        act: null,
       },
       {
         answer: 'The chain is unrecoverable but a PR or branch holds the work',
         recommendation:
           'Re-anchor under a fresh workflow id and walk the stages from the preserved artifacts — the work is kept, only the receipt history restarts.',
+        act: null,
       },
       {
         answer: 'Nothing of value exists behind the chain',
         recommendation:
           'Re-dispatch the parcel fresh. Last resort: prefer preserving anything above.',
+        act: null,
       },
     ],
   },
@@ -122,16 +131,19 @@ const FAILURE_QUESTIONS: Record<
         answer: 'Yes — the findings are addressable',
         recommendation:
           'Bounded rework in place: re-dispatch the SAME builder with the findings (one active writer), then take a fresh independent re-review of the final SHA. The reviewed work is kept.',
+        act: null,
       },
       {
         answer: 'Some findings are wrong or acceptable',
         recommendation:
           'Triage them into documented waivers pinned by identity + location + value, cite the evidence, then re-run verification. Record the triage in the state line.',
+        act: null,
       },
       {
         answer: 'The work is beyond repair',
         recommendation:
           'Re-dispatch fresh with the review findings folded into the kickstarter as standing constraints. Last resort.',
+        act: null,
       },
     ],
   },
@@ -142,16 +154,19 @@ const FAILURE_QUESTIONS: Record<
         answer: 'Legitimate — the tests changed for a real reason',
         recommendation:
           'Record a ratified amendment (alone-first commit) explaining the test-count delta, then re-run the deterministic pass. The tripwire retires only with the amendment on record.',
+        act: null,
       },
       {
         answer: 'Unknown — I need to see what happened to the tests',
         recommendation:
           'Investigate before anything else: a tripwire usually means tests were weakened or deleted. Reproduce with the test-count diff and restore anything missing.',
+        act: null,
       },
       {
         answer: 'It is not legitimate',
         recommendation:
           'Stop the parcel (two fires on one parcel is the standing stop condition) and route to the human owner for a ruling.',
+        act: null,
       },
     ],
   },
@@ -162,11 +177,13 @@ const FAILURE_QUESTIONS: Record<
         answer: 'The drift is cosmetic or already reconciled',
         recommendation:
           'Re-run the closure verification on fresh main; if it passes, record the drift as re-verified and keep the parcel closed.',
+        act: null,
       },
       {
         answer: 'The drift is real',
         recommendation:
           'File a small follow-up debt item that references the closed parcel, and open a narrow new parcel for exactly the drift — the completed work stays completed.',
+        act: null,
       },
     ],
   },
@@ -188,6 +205,7 @@ function failedRemedy(
     question: entry.question,
     options: entry.options.map((option) => ({
       ...option,
+      act: null,
       commands:
         code === 'chain-invalid' && option.answer.startsWith('Yes')
           ? [validate, stateLine]
@@ -218,12 +236,14 @@ function gateRemedy(
           answer: 'Yes — the charter is sound',
           recommendation:
             'Ratify: add the Gate-1 RATIFIED/GRANTED line (owner + date) to the goal charter. The gate flips on the next projection.',
+          act: null,
           commands: [charter],
         },
         {
           answer: 'Not yet — questions are open',
           recommendation:
             'Send it back to shaping with the open questions listed in the charter; the gate stays pending and nothing dispatches.',
+          act: null,
           commands: [charter],
         },
       ],
@@ -235,6 +255,7 @@ function gateRemedy(
           answer: 'Yes — dispatch the existing spec',
           recommendation:
             'Grant dispatch through the allowlisted approval flow — presented here only; the console never approves anything itself.',
+          act: null,
           commands: [
             `approval approve ${parcel.parcel} --repo-root "${config.repoRoot}"`,
             stateLine,
@@ -244,6 +265,7 @@ function gateRemedy(
           answer: 'Hold — not ready',
           recommendation:
             'Keep the item queued and note what is missing in the state line. The gate remains the stop line.',
+          act: null,
           commands: [stateLine],
         },
       ],
@@ -255,12 +277,14 @@ function gateRemedy(
           answer: 'Yes — the checks are green',
           recommendation:
             'Human merge — review the PR and merge it yourself (the console never merges). The merge SHA then closes the chain through Stage F.',
+          act: null,
           commands: [`gh pr list --search "${parcel.parcel}"`, 'gh pr merge <number>', stateLine],
         },
         {
           answer: 'No — something is red',
           recommendation:
             'Route back to the red step (deterministic pass or review): any red step voids the merge authorization for that PR.',
+          act: null,
           commands: [stateLine],
         },
       ],
@@ -296,6 +320,7 @@ function ratificationUnknownRemedy(projection: GoalProjection): Remedy | null {
       {
         answer: 'The records conflict or are unreadable — I will reconcile them',
         recommendation: `Inspect and reconcile the actual sources first (${where}). Make one current record authoritative; never rewrite historical evidence to fit the parser. ${withhold}`,
+        act: null,
         commands: [],
       },
       {
@@ -303,12 +328,14 @@ function ratificationUnknownRemedy(projection: GoalProjection): Remedy | null {
         recommendation:
           'Ask the owner for a ruling on the current Gate-1 status, then record that ruling as a fresh current record. ' +
           withhold,
+        act: null,
         commands: [],
       },
       {
         answer: 'Leave it unresolved for now',
         recommendation:
           'Park the goal with an honest state line (why ratification is unknown and what would resolve it). Last resort: prefer either option above.',
+        act: null,
         commands: [],
       },
     ],
@@ -327,17 +354,20 @@ function ratificationRemedy(config: ConsoleConfig, projection: GoalProjection): 
         answer: 'Yes — ratify the charter',
         recommendation:
           'Add the Gate-1 RATIFIED/GRANTED line (owner + date) to the charter; parcels can then pass their own gates.',
+        act: null,
         commands: [editorCmd(config, projection.goal.charterRef)],
       },
       {
         answer: 'Not yet — more shaping needed',
         recommendation: 'List the open questions in the charter and keep the gate pending.',
+        act: null,
         commands: [editorCmd(config, projection.goal.charterRef)],
       },
       {
         answer: 'No — park the goal',
         recommendation:
           'Write a parking line in the state block (why, and what would revive it) so the goal stops asking for attention honestly.',
+        act: null,
         commands: [editorCmd(config, projection.goal.loopDirectiveRef)],
       },
     ],
