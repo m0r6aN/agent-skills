@@ -1,3 +1,7 @@
+const LOOP_DIRECTIVE_HINT =
+  // biome-ignore lint/suspicious/noTemplateCurlyInString: '${REPO_ROOT}' is intentional placeholder text shown to operators, not a template
+  '${REPO_ROOT}/plugins/foreman-line/docs/goals/GOAL-SLUG/loop-directive.md'
+
 import { basename } from 'node:path'
 import type { LedgerEntry } from './ledger.js'
 import type { GitFact } from './ledger-git.js'
@@ -705,7 +709,7 @@ export function reconcileGoal(input: ReconcileInput): Reconciliation[] {
         confidence?: 'asserted' | 'weak-traces'
       } = {},
     ) => {
-      const loop = `${repo.repoRoot}/plugins/foreman-line/docs/goals/<goal>/loop-directive.md`
+      const loop = LOOP_DIRECTIVE_HINT
       const guide = optionsFor(code, {
         repo: repo.repoRoot,
         key,

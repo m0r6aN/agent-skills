@@ -400,7 +400,7 @@ const E4_PINNED_COUNTS: Record<string, number> = {
   'bypass-outage-harness/src/channels/gate.ts': 1,
   'bypass-outage-harness/src/channels/outage.ts': 1,
   'bypass-outage-harness/src/index.ts': 2,
-  'bypass-outage-harness/src/surface-refs.ts': 1,
+  'bypass-outage-harness/src/surface-refs.ts': 2,
   'bypass-outage-harness/src/vectors.ts': 1,
   'kernel-contracts/src/generate.ts': 1,
   'kernel-lease/src/measure.ts': 2,
@@ -462,7 +462,13 @@ const E4_PINNED: ReadonlyMap<string, readonly string[]> = new Map([
     [`join(${E4_PLUGIN_ROOT_DIRNAME},'tests','fixtures','specs','divergence-fixture-spec.md',)`],
   ],
   ['bypass-outage-harness/src/index.ts', [E4_PACKAGE_ROOT_HOP, E4_SELF_URL]],
-  ['bypass-outage-harness/src/surface-refs.ts', [E4_PLUGIN_ROOT_DIRNAME]],
+  [
+    'bypass-outage-harness/src/surface-refs.ts',
+    [
+      E4_PLUGIN_ROOT_DIRNAME,
+      "join(dirname(fileURLToPath(import.meta.url)),'..','pins','surface-pins.json')",
+    ],
+  ],
   ['bypass-outage-harness/src/vectors.ts', [`join(${E4_PACKAGE_ROOT_DIRNAME},'tests','fixtures')`]],
   ['kernel-contracts/src/generate.ts', [E4_SELF_DIR]],
   ['kernel-lease/src/measure.ts', [E4_SELF_DIR, E4_SELF_RESOLVE]],
@@ -629,6 +635,9 @@ const RULED_DATA_PATH_CONSTANTS: Record<
   'verification/src/adversarial/index.ts': [
     { name: 'MATRIX_REPO_PATH', value: RULED_DATA_MATRIX_VALUE, count: 1 },
   ],
+  'ops-console/src/reconcile-git.ts': [
+    { name: 'SPECS_REL', value: `${REPO_LITERAL}/docs/specs`, count: 1 },
+  ],
   'verification/src/harness/index.ts': [
     { name: 'AC_CONVENTION_PATH', value: RULED_DATA_AC_CONVENTION_VALUE, count: 1 },
     { name: 'MATRIX_REPO_PATH', value: RULED_DATA_MATRIX_VALUE, count: 1 },
@@ -778,11 +787,19 @@ const RULED_PROSE_MENTION_DATA: Record<
   'bypass-outage-harness/src/channels/gate.ts': [
     { name: 'ENV_PREREQ_MESSAGE', mentions: [`${REPO_LITERAL}/dispatch/`] },
   ],
+  'ops-console/src/reconcile.ts': [
+    {
+      name: 'LOOP_DIRECTIVE_HINT',
+      mentions: [`${REPO_LITERAL}/docs/goals/GOAL-SLUG/loop-directive.md`],
+    },
+  ],
 }
 const RULED_PROSE_MENTION_LITERAL_COUNT = 1
 /** SHA-256 of JSON.stringify([...mentions].sort()) encoded as UTF-8. */
 const RULED_PROSE_MENTION_DIGEST =
-  '0ee5e6365f331cfef5a7a68d87727ffc3cebfc65723bf31a9b8fc6ed1029ecb2'
+  // Verified printed prose-mention set: gate.ts 'plugins/foreman-line/dispatch/' and
+  // reconcile.ts 'plugins/foreman-line/docs/goals/GOAL-SLUG/loop-directive.md' only.
+  'dc49f8bddb9ff19148588305ceef111ad1cc849ac59ec8bdb8d4f693705a1aca'
 
 /**
  * A scoped ruling entry: identity (the file) + location (the named enclosing
@@ -852,6 +869,18 @@ const FORM_RACER =
   SPAWN_ASYNC_NAME +
   "(process.execPath,['--import','tsx',workerPath,'contention',dbRoot,barrierDir,String(racer),String(repeat),String(CONTENTION_PLAN.attemptsPerRacer),],{stdio:['ignore','pipe','pipe']},)"
 const RULED_CLASS4_SCOPED_SITES: Record<string, Record<string, readonly ScopedPin[]>> = {
+  // The exec wrapper passes { cwd } (default repoRoot) to the underlying process call;
+  // tmux is cwd-independent. Pinned by file + scope + exact stripped form + cardinality.
+  'ops-console/src/spawn.ts': {
+    tmuxRunnerFor: [
+      { role: 'spawn/tmux-wrapper', form: "exec(['-V'])", count: 1 },
+      { role: 'spawn/tmux-wrapper', form: 'exec(args)', count: 2 },
+    ],
+    asyncTmuxRunnerFor: [
+      { role: 'spawn/tmux-wrapper-async', form: "exec(['-V'])", count: 1 },
+      { role: 'spawn/tmux-wrapper-async', form: 'exec(args)', count: 1 },
+    ],
+  },
   'bypass-outage-harness/src/channels/bypass.ts': {
     runBypSp01: [{ role: 'spawn/tool-call-actor', form: FORM_BYPASS_ACTOR, count: 1 }],
     runBypSp02: [{ role: 'spawn/detached-actor', form: FORM_BYPASS_ACTOR, count: 1 }],
@@ -967,6 +996,11 @@ const RULED_CLASS5_NORMALIZATION_SITES: Record<string, Record<string, readonly S
     ],
     retirementVerificationViolations: [
       { role: 'root/required-input-normalization', form: 'resolve(repoRoot)', count: 1 },
+    ],
+  },
+  'ops-console/src/config.ts': {
+    ledgerDirPath: [
+      { role: 'receipt-id/containment-normalization', form: 'resolve(root,receiptId)', count: 1 },
     ],
   },
   'bypass-outage-harness/src/channels/fixtures.ts': {
