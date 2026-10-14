@@ -230,6 +230,8 @@ Builder Step 0 rulings for v2 rework 2 (3a–3k accepted as recommended): 3a mer
 
 Round 3 rulings (2026-10-13): binding `plugins/foreman-line/docs/goals/quick-flags/qf-p1-v2-review-triage-round3-2026-10-13.md` (apply each to every instance). In particular AC-19: the Reading rule honours the entry at the Writer's location and in every other copy the session reads; the Writer writes every copy the owner may write; between Gate 1 and the loop directive the entry lives in `restrictions.md` in the goal's directory.
 
+Builder Step 0 rulings for v2 rework 3 (C1–C11 accepted as recommended): C1 the dash-only-word rule uses the existing "result" (strip characters that are not letters, digits or `-`); C2 for `--review2` the "still restricts" test is "as it applies to the lifted parcel", and a line whose parcel cannot be read still counts; C3 a line naming several restrictive quick flags is removed only when the message lifts every one it names; C4 until the loop directive exists the owner is the session that started `/goal <concept>`; C5 draft-charter lines stay and are read as a copy until the loop directive is written, then carried; C6 the decision log, before the loop directive exists, goes in a decision-log section of the file holding the restriction lines; C7 a Gate 1 ratification, including one re-opened by triage, presents the decision list and Parcels table with any amendment text; C8–C11 accepted as documented; K-6, L-4 and L-8 add no text; the goal skill and template naming `restrictions.md` is forwarded to QF-P2.
+
 ## Verification Plan
 
 Run from the worktree root with `R=plugins/foreman-line/docs/QUICK-FLAGS.md` and `B=<qf-p1 build base from the build dispatch>`. Every command must give the stated result.
