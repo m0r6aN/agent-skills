@@ -21,6 +21,8 @@ const NOW = Date.parse('2026-10-13T12:00:00.000Z')
 const SOCKET = `ledger-test-${process.pid}`
 
 function tmuxPresent(): boolean {
+  // FCA-P16: tmux is not available on Windows
+  if (process.platform === 'win32') return false
   try {
     execFileSync('tmux', ['-V'], { stdio: 'ignore' })
     return true

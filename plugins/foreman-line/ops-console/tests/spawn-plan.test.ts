@@ -84,8 +84,10 @@ test('K selected actions -> exactly one session with K panes (pi argv snapshot)'
     ],
     'pi argv snapshot: real help-verified flags',
   )
+  // FCA-P16: Normalize path separators for cross-platform comparison
+  const normalizePath = (p: string) => p.replace(/\\/g, '/')
   assert.deepEqual(
-    plan.panes.map((pane) => pane.worktreePath),
+    plan.panes.map((pane) => normalizePath(pane.worktreePath)),
     [
       '/repos/agent-skills-worktrees/pr-170-red-20261011t120000z',
       '/repos/agent-skills-worktrees/goal-p1-20261011t120000z',

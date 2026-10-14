@@ -1,19 +1,12 @@
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
-import {
-  chmodSync,
-  existsSync,
-  mkdirSync,
-  mkdtempSync,
-  readFileSync,
-  rmSync,
-  writeFileSync,
-} from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import test from 'node:test'
 import { handleApi } from '../src/api.js'
 import { clearPrCache } from '../src/reconcile-remote.js'
+import { createFakeBin, findRealGit, prependToPath } from './support/fake-bin.js'
 import { materialize, type Scenario } from './support/materialize.js'
 
 /**
@@ -62,6 +55,7 @@ function git(cwd: string, ...args: string[]): string {
 
 interface Rig {
   config: ReturnType<typeof materialize>['config']
+  root: string // FCA-P16: expose root for test file access
   log: () => string[]
   snapshot: () => string
   cleanup: () => void
@@ -69,7 +63,7 @@ interface Rig {
 
 function rig(ghMode: 'ok' | 'fail'): Rig {
   clearPrCache()
-  const realGit = execFileSync('sh', ['-c', 'command -v git'], { encoding: 'utf8' }).trim()
+  const realGit = findRealGit()
   const root = mkdtempSync(join(tmpdir(), 'reconcile-ro-'))
   const consoleRoot = join(root, 'console')
   const { config } = materialize(consoleRoot, SCENARIO)
@@ -86,22 +80,53 @@ function rig(ghMode: 'ok' | 'fail'): Rig {
   const logFile = join(root, 'invocations.log')
   mkdirSync(bin)
   writeFileSync(logFile, '')
-  writeFileSync(
-    join(bin, 'git'),
-    `#!/bin/sh\necho "git $*" >> '${logFile}'\nexec '${realGit}' "$@"\n`,
-  )
-  writeFileSync(
-    join(bin, 'gh'),
-    `#!/bin/sh\necho "gh $*" >> '${logFile}'\nif [ "$FAKE_GH" = fail ]; then echo "gh: not logged in; run gh auth login" >&2; exit 1; fi\nif [ "$1 $2" = "pr list" ]; then cat '${join(root, 'prs.json')}'; exit 0; fi\nexit 2\n`,
-  )
+
+  // FCA-P16: Portable fake binaries using Node.js scripts
+  const escapedLogFile = logFile.replace(/\\/g, '\\\\')
+  const escapedRealGit = realGit.replace(/\\/g, '\\\\')
+  const escapedPrsJson = join(root, 'prs.json').replace(/\\/g, '\\\\')
+
+  createFakeBin({
+    binDir: bin,
+    name: 'git',
+    script: `
+const fs = require('fs');
+const { spawnSync } = require('child_process');
+const args = process.argv.slice(2);
+fs.appendFileSync('${escapedLogFile}', 'git ' + args.join(' ') + '\\n');
+const result = spawnSync('${escapedRealGit}', args, { stdio: 'inherit' });
+process.exit(result.status ?? 1);
+`,
+  })
+
+  createFakeBin({
+    binDir: bin,
+    name: 'gh',
+    script: `
+const fs = require('fs');
+const args = process.argv.slice(2);
+fs.appendFileSync('${escapedLogFile}', 'gh ' + args.join(' ') + '\\n');
+if (process.env.FAKE_GH === 'fail') {
+  process.stderr.write('gh: not logged in; run gh auth login\\n');
+  process.exit(1);
+}
+const cmd = args.slice(0, 2).join(' ');
+if (cmd === 'pr list') {
+  process.stdout.write(fs.readFileSync('${escapedPrsJson}', 'utf8'));
+  process.exit(0);
+}
+process.exit(2);
+`,
+  })
+
   writeFileSync(join(root, 'prs.json'), PRS)
-  chmodSync(join(bin, 'git'), 0o755)
-  chmodSync(join(bin, 'gh'), 0o755)
+
   const savedPath = process.env.PATH
-  process.env.PATH = `${bin}:${savedPath}`
+  process.env.PATH = prependToPath(bin, savedPath)
   process.env.FAKE_GH = ghMode
   return {
     config,
+    root, // FCA-P16: expose for test file access
     log: () =>
       readFileSync(logFile, 'utf8')
         .split('\n')
@@ -200,7 +225,8 @@ test('AC7: gh unavailable degrades visibly; local facts stay; no remote-dependen
     assert.equal(result.status, 200, 'degrades, never errors')
     const body = result.json as Body
     assert.equal(body.prs.available, false)
-    assert.match(body.prs.reason ?? '', /not logged in/)
+    // FCA-P16: gh auth failure message varies between local (not logged in) and CI (GH_TOKEN)
+    assert.match(body.prs.reason ?? '', /not logged in|GH_TOKEN/)
     assert.equal(body.prs.asOf, null)
     for (const parcel of body.parcels) {
       assert.deepEqual(
@@ -339,7 +365,8 @@ test('review: the response carries an assessment; a full PR list withholds absen
       closedAt: '2026-10-02T00:00:00Z',
       url: 'u',
     }))
-    writeFileSync(join(h.config.repoRoot, '..', 'prs.json'), JSON.stringify(full))
+    // FCA-P16: Use exposed root path directly for consistency with fake gh script
+    writeFileSync(join(h.root, 'prs.json'), JSON.stringify(full))
     const truncated = (await reconcile(h.config)).json as typeof happy
     assert.equal(truncated.prs.truncated, true)
     assert.equal(truncated.assessment.absence, false)

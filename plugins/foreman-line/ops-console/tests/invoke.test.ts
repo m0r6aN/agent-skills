@@ -3,7 +3,14 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import test from 'node:test'
 import { saveFleetState } from '../src/fleet.js'
-import { FLOW_REGISTRY, invokeFlow, listAuditEntries, presentCommand } from '../src/invoke.js'
+import {
+  FLOW_REGISTRY,
+  invokeFlow,
+  isUnsafeRoot,
+  listAuditEntries,
+  presentCommand,
+  unsafeRootMessage,
+} from '../src/invoke.js'
 import { fileMtimes, type Scenario, treeSnapshot, withTempRepo } from './support/materialize.js'
 
 /**
@@ -385,14 +392,110 @@ test('FCA-P9: the pr-merge path spawns nothing (negative control: invoke source 
   assert.doesNotMatch(text, /spawnSync\(\s*['"](gh|git)['"]/)
 })
 
-test('FCA-P9: a DECLARED fleet root containing a quote, $, backtick, backslash or control char is refused, never escaped', () => {
+test('FCA-P9: a DECLARED fleet root containing a quote, $, backtick, or control char is refused (backslash: POSIX only)', () => {
   withTempRepo(scenario([]), ({ config }) => {
-    for (const bad of ['/tmp/a"b', '/tmp/a$b', '/tmp/a`b', '/tmp/a\\b', '/tmp/a\nb']) {
+    // Always refused on both platforms
+    for (const bad of ['/tmp/a"b', '/tmp/a$b', '/tmp/a`b', '/tmp/a\nb']) {
       saveFleetState(config.stateDir, { schema: 'foc-fleet/v1', roots: [config.repoRoot, bad] })
       const outcome = invokeFlow(config, { flow: 'pr-merge', argv: mergeArgv(bad) }, NOW_MS)
       assert.equal(outcome.action, 'refused', JSON.stringify(bad))
-      assert.match(outcome.reason ?? '', /never escaped/, JSON.stringify(bad))
+      assert.match(
+        outcome.reason ?? '',
+        /cannot be safely interpolated|never escaped/,
+        JSON.stringify(bad),
+      )
       assert.equal(outcome.command, '')
     }
+    // Backslash refused on POSIX (current platform during Linux CI)
+    if (process.platform !== 'win32') {
+      const backslash = '/tmp/a\\b'
+      saveFleetState(config.stateDir, {
+        schema: 'foc-fleet/v1',
+        roots: [config.repoRoot, backslash],
+      })
+      const outcome = invokeFlow(config, { flow: 'pr-merge', argv: mergeArgv(backslash) }, NOW_MS)
+      assert.equal(outcome.action, 'refused', 'backslash refused on POSIX')
+    }
   })
+})
+
+// ------------------------------------------------------------------ FCA-P16 platform-aware guard
+
+test('FCA-P16: isUnsafeRoot on POSIX refuses backslash, quotes, $, backtick, control chars', () => {
+  // Backslash is unsafe on POSIX (shell escape character)
+  assert.equal(isUnsafeRoot('C:\\path\\file', 'linux'), true, 'backslash on linux')
+  assert.equal(isUnsafeRoot('C:\\path\\file', 'darwin'), true, 'backslash on darwin')
+  // All platforms refuse these
+  assert.equal(isUnsafeRoot('/tmp/a"b', 'linux'), true, 'quote')
+  assert.equal(isUnsafeRoot('/tmp/a$b', 'linux'), true, 'dollar')
+  assert.equal(isUnsafeRoot('/tmp/a`b', 'linux'), true, 'backtick')
+  assert.equal(isUnsafeRoot('/tmp/a\x00b', 'linux'), true, 'null char')
+  assert.equal(isUnsafeRoot('/tmp/a\nb', 'linux'), true, 'newline')
+  assert.equal(isUnsafeRoot('/tmp/a\x7fb', 'linux'), true, 'DEL char')
+  // Clean paths are safe
+  assert.equal(isUnsafeRoot('/home/user/repos/project', 'linux'), false)
+  assert.equal(isUnsafeRoot('/Users/dev/code', 'darwin'), false)
+})
+
+test('FCA-P16: isUnsafeRoot on Windows allows backslash (path sep), refuses %, ^, quotes, $, backtick, control chars', () => {
+  // Backslash is ALLOWED on Windows (path separator)
+  assert.equal(isUnsafeRoot('C:\\Users\\dev\\repos', 'win32'), false, 'backslash allowed on win32')
+  assert.equal(isUnsafeRoot('D:\\projects\\foo', 'win32'), false)
+  // Windows-specific: % and ^ are cmd/PowerShell metacharacters
+  assert.equal(isUnsafeRoot('C:\\path%var%', 'win32'), true, 'percent is cmd expansion')
+  assert.equal(isUnsafeRoot('C:\\path^char', 'win32'), true, 'caret is cmd escape')
+  // Universal refusals
+  assert.equal(isUnsafeRoot('C:\\path"name', 'win32'), true, 'quote')
+  assert.equal(isUnsafeRoot('C:\\path$var', 'win32'), true, 'dollar')
+  assert.equal(isUnsafeRoot('C:\\path`cmd', 'win32'), true, 'backtick')
+  assert.equal(isUnsafeRoot('C:\\path\x00', 'win32'), true, 'null char')
+  assert.equal(isUnsafeRoot('C:\\path\n', 'win32'), true, 'newline')
+})
+
+test('FCA-P16: isUnsafeRoot uses current platform by default', () => {
+  // Test that the default parameter works (no explicit platform)
+  const safePath = process.platform === 'win32' ? 'C:\\Users\\dev' : '/home/user'
+  assert.equal(isUnsafeRoot(safePath), false, 'clean path for current platform')
+})
+
+test('FCA-P16: unsafeRootMessage varies by platform', () => {
+  const posix = unsafeRootMessage('linux')
+  const win = unsafeRootMessage('win32')
+  assert.match(posix, /backslash/, 'POSIX message mentions backslash')
+  assert.match(win, /%/, 'Windows message mentions %')
+  assert.match(win, /\^/, 'Windows message mentions ^')
+  assert.doesNotMatch(win, /backslash/, 'Windows message does not mention backslash')
+})
+
+test('FCA-P16: mutation test - isUnsafeRoot correctly identifies each forbidden character class', () => {
+  // Each character class should independently trigger refusal
+  const classes = {
+    posix: [
+      { char: '"', name: 'quote' },
+      { char: '$', name: 'dollar' },
+      { char: '`', name: 'backtick' },
+      { char: '\\', name: 'backslash' },
+      { char: '\x00', name: 'null' },
+      { char: '\x1f', name: 'control-last' },
+      { char: '\x7f', name: 'del' },
+    ],
+    win32: [
+      { char: '"', name: 'quote' },
+      { char: '$', name: 'dollar' },
+      { char: '`', name: 'backtick' },
+      { char: '%', name: 'percent' },
+      { char: '^', name: 'caret' },
+      { char: '\x00', name: 'null' },
+      { char: '\x1f', name: 'control-last' },
+      { char: '\x7f', name: 'del' },
+    ],
+  }
+  for (const { char, name } of classes.posix) {
+    assert.equal(isUnsafeRoot(`/safe/path${char}here`, 'linux'), true, `POSIX ${name}`)
+  }
+  for (const { char, name } of classes.win32) {
+    assert.equal(isUnsafeRoot(`C:\\safe\\path${char}here`, 'win32'), true, `win32 ${name}`)
+  }
+  // Backslash is safe on Windows
+  assert.equal(isUnsafeRoot('C:\\safe\\path', 'win32'), false, 'win32 backslash is path sep')
 })

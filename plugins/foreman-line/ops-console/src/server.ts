@@ -72,14 +72,36 @@ export class ConsoleBindError extends Error {
   }
 }
 
-/** Map a raw listen failure to the typed bind refusal for the attempted bind. */
-export function toBindError(err: unknown, bind: BindTarget): ConsoleBindError {
+/**
+ * Returns the platform-appropriate command to find the process holding a port.
+ * @param port The port number.
+ * @param platform The platform (injectable for testing).
+ */
+export function portRemedyCommand(
+  port: number,
+  platform: NodeJS.Platform = process.platform,
+): string {
+  return platform === 'win32' ? `netstat -aon | findstr :${port}` : `ss -ltnp | grep ':${port}'`
+}
+
+/**
+ * Map a raw listen failure to the typed bind refusal for the attempted bind.
+ * @param err The raw error from listen().
+ * @param bind The attempted bind target.
+ * @param platform The platform (injectable for testing).
+ */
+export function toBindError(
+  err: unknown,
+  bind: BindTarget,
+  platform: NodeJS.Platform = process.platform,
+): ConsoleBindError {
   const errnoCode =
     err instanceof Error && 'code' in err ? (err as NodeJS.ErrnoException).code : undefined
   if (errnoCode === 'EADDRINUSE') {
+    const remedy = portRemedyCommand(bind.port, platform)
     return new ConsoleBindError(
       'port-in-use',
-      `${bind.host}:${bind.port} is already in use — another process (often a stale ops console that survived an earlier session) is already listening there; stop it (ss -ltnp | grep ':${bind.port}') or start with PORT=<free port>`,
+      `${bind.host}:${bind.port} is already in use — another process (often a stale ops console that survived an earlier session) is already listening there; stop it (${remedy}) or start with PORT=<free port>`,
     )
   }
   const detail = err instanceof Error ? err.message : String(err)
