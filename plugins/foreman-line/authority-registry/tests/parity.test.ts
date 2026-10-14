@@ -62,5 +62,6 @@ test('R13 typed canonical sample carries the normative Markdown audit contract',
   // item.a9cf544f084d - the other three retired §5 rows were never audit candidates), so
   // 202 - 2 = 200 rows. Derivation and predecessor rows are pinned in semantic-invariants.test.ts
   // ("R13 every excluded audit candidate...") via R32_ITEM_MIGRATIONS.
-  assert.equal(sample.normativeMarkdownAudit?.length, 200)
+  // R33 appends the six explicitly published Quick flags paragraph candidacies: 200 + 6 = 206.
+  assert.equal(sample.normativeMarkdownAudit?.length, 206)
 })

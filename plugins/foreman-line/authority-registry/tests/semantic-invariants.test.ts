@@ -11,6 +11,14 @@ import {
   R32_ITEM_MIGRATIONS,
   R32_RULE_STATEMENT_MIGRATIONS,
 } from '../src/r32-migrations.js'
+import {
+  R33_AUDIT_ROWS,
+  R33_BINDING_MANIFEST,
+  R33_ITEM_MIGRATIONS,
+  R33_PRIOR_MANIFEST,
+  R33_PRIOR_REGISTRY_COMMIT,
+  R33_SOURCE_SNAPSHOT,
+} from '../src/r33-migrations.js'
 import type {
   AuthorityEnforcementRegistry,
   AuthorityQuery,
@@ -231,7 +239,19 @@ function r32ExpectedRuleShape(prior: AuthorityRule): AuthorityRule {
       prior.normalizedStatement,
     bindingDigest: '',
   }
-  return { ...mapped, bindingDigest: bindingDigestFor(mapped) }
+  const rebound = { ...mapped, bindingDigest: bindingDigestFor(mapped) }
+  const qf = R33_ITEM_MIGRATIONS.find((e) => e.priorRules.some((r) => r.ruleId === prior.ruleId))
+  if (qf !== undefined) {
+    // QF-P0 re-values only these two rules: prove the R32 projection equals the typed prior.
+    assert.deepEqual(
+      rebound,
+      qf.priorRules.find((r) => r.ruleId === prior.ruleId),
+    )
+    const successor = qf.newRules.find((r) => r.ruleId === prior.ruleId)
+    ok(successor)
+    return successor
+  }
+  return rebound
 }
 
 /**
@@ -368,11 +388,13 @@ test('each of the six classifications is accepted and summarized independently',
     // rule.fk-charter.1d6405c6eacd) and two narrative-provenance rules (goal.ratification-ledger:
     // rule.fk-charter.3df7b6a51799 and rule.fk-charter.5722ad7bc5ab); the other four counts carry
     // over unchanged. Derivation: 276 + 2 = 278, 109 + 2 = 111.
-    'pre-action-refusal': 278,
+    // R33: five restrictive complete paragraphs, 278 + 5 = 283; no grant or runtime promotion.
+    'pre-action-refusal': 283,
     'post-action-detection': 13,
     'ci-static-check': 78,
     'independent-review-human-judgment': 53,
-    'narrative-provenance': 111,
+    // R33: one Step 0 terminology paragraph, 111 + 1 = 112; other classes unchanged.
+    'narrative-provenance': 112,
     unsupported: 13,
   })
 })
@@ -609,7 +631,8 @@ test('deleting the chain head invalidates rather than promoting a pinned record'
   // R32 migration: the shipped chain head advanced to the R32 record; pre-R32 head was
   // 'registry-rework-446700d' (now a pinned history record). Subject preserved: the head is
   // whatever record validate binds to the live manifest.
-  const chainHeadId = 'registry-rework-521214e'
+  // R33 demotes registry-rework-521214e unchanged; this deletion probe follows the live head.
+  const chainHeadId = 'registry-rework-7f3391c'
   const kept = structuredClone(valid).reconciliations.filter(
     (record) => record.reconciliationId !== chainHeadId,
   )
@@ -2197,7 +2220,8 @@ test('R13 normative Markdown audit has exactly 145 source-authored records', () 
   assert.deepEqual(r13Audit().slice(0, 143), expected)
   // R32 migration: was 202 (the R31 audit: 198 historical rows + the 4 typed R31 append rows).
   // 202 - 2 retired audit candidacies = 200.
-  assert.equal(r13Audit().length, 200)
+  // R33 appends six finite paragraph candidacies; the R32 200-row subject remains the prefix.
+  assert.equal(r13Audit().length, 206)
 })
 
 test('R13 normative Markdown audit binds every candidate to its exact item and value', () => {
@@ -2271,7 +2295,12 @@ test('R13 every excluded audit candidate has one item-specific rationale', () =>
   const expectedHistorical = r32ExpectedAuditRows(historical)
   assert.equal(expectedHistorical.length, 196)
   assert.deepEqual(r13Audit().slice(0, 196), expectedHistorical)
-  assert.deepEqual(r13Audit(), [...expectedHistorical, ...r32ExpectedAuditRows(proposed.audit)])
+  // R33 preserves the exact R32 200-row subject and appends the six curated paragraph rows.
+  assert.deepEqual(r13Audit(), [
+    ...expectedHistorical,
+    ...r32ExpectedAuditRows(proposed.audit),
+    ...R33_AUDIT_ROWS,
+  ])
   for (const record of proposed.audit) {
     const unit = proposed.units.find(
       (candidate) => candidate.sourceId === record.sourceId && candidate.itemId === record.itemId,
@@ -4338,7 +4367,8 @@ test('R14 a new rule wearing an approved Gate 2 rule name cannot inherit its ALL
 // 'registry-rework-446700d' (the R31 record, now a pinned history record). Subject preserved:
 // every mutation below targets whichever record validate binds to the live manifest, so the
 // mutation targets follow the CURRENT head's command layout and never a pinned predecessor.
-const CHAIN_HEAD_ID = 'registry-rework-521214e'
+// R33 migration: registry-rework-521214e remains exact pinned history; current-head probes follow R33.
+const CHAIN_HEAD_ID = 'registry-rework-7f3391c'
 
 type Reconciliation = AuthorityEnforcementRegistry['reconciliations'][number]
 type Evidence = Reconciliation['observedEvidence'][number]
@@ -4642,7 +4672,8 @@ test('AC4 O4 hermetic residual remains explicit for a generic nonreserved succes
   // demotes the R31 head into the pinned set (RECONCILIATION_RECORD_DIGESTS gains its entry) and
   // appends the R32 head, so the pinned prefix is 22 records (21 pinned + the R32 head) and the
   // generic successor appended by rechain() sits at index 22.
-  assert.deepEqual(headMutated.reconciliations.slice(0, 22), full.reconciliations)
+  // R33 preserves those 22 records and appends its exact head; generic successor now sits at 23.
+  assert.deepEqual(headMutated.reconciliations.slice(0, 23), full.reconciliations)
   assert.equal(registryBindingManifestDigest(headMutated), registryBindingManifestDigest(before))
   const restored = structuredClone(headMutated)
   const restoredTarget = restored.reconciliations
@@ -6096,6 +6127,10 @@ test('R30 corroboration adds exactly 67 reciprocal edges without changing the de
             ...additions,
             ...r31ExpectedItemRuleIds(source.sourceId, item.itemId),
             ...adoptionLinks,
+            // R33 finite paragraph publications add their own reciprocal edges, not corroboration.
+            ...(R33_ITEM_MIGRATIONS.find(
+              (e) => e.sourceId === source.sourceId && e.itemId === item.itemId,
+            )?.new.ruleIds ?? []),
           ]),
         ].sort(),
         `${source.sourceId}:${item.itemId}: exact reciprocal set preserves legacy links`,
@@ -6126,7 +6161,9 @@ test('R30 corroboration adds exactly 67 reciprocal edges without changing the de
 })
 
 test('R31 independently prescribed successor counts and source snapshot are adopted', () => {
-  assert.equal(full.sourceSnapshotCommit, '6356bca419b4a139528ceb3de38fb51aabb989d3') // R32 migration: was 8d500704c9e3d6d8b652bbe838aa3623f88203fc (R31 source snapshot)
+  // R33 advances the truthful global committed snapshot; 6356bca419b4a139528ceb3de38fb51aabb989d3
+  // remains the historical R32 source snapshot, after R31's 8d500704c9e3d6d8b652bbe838aa3623f88203fc.
+  assert.equal(full.sourceSnapshotCommit, R33_SOURCE_SNAPSHOT)
   // R32 migration: was [18, 1585, 542, 202, 21] (the R31-prescribed successor counts). The R32
   // corpus re-pin moves each count with a visible derivation:
   //   items: 1585 + 200 corpus additions (73 fk-charter, 61 fk-plan-review-findings, 7
@@ -6144,7 +6181,8 @@ test('R31 independently prescribed successor counts and source snapshot are adop
       full.normativeMarkdownAudit.length,
       full.reconciliations.length,
     ],
-    [18, 1766, 546, 200, 22],
+    // R33: [18, 1766, 546, 200, 22] + [0, 8, 6, 6, 1] from the finite approved publications.
+    [18, 1774, 552, 206, 23],
   )
   assert.ok(full.rules.some((r) => r.ruleId === 'rule.standing-constraints.constraint-14'))
 })
@@ -6156,7 +6194,10 @@ test('R32 reconciliation disposition counts derive from the typed migration tabl
   // summary, record section R32.2 and r32-migrations.ts agree triple-wise. Predecessor: the
   // pre-W2c summary hand-typed "269 typed item entries … 235 locator re-anchors … 20 same-anchor
   // re-values … 14 spec-linter structural constructs retire" against tables holding 275/252/19.
-  const disposition = headOf(full).scopedDisposition
+  // This assertion names R32's frozen summary, not whichever amendment currently heads the chain.
+  const record = full.reconciliations.find((r) => r.reconciliationId === 'registry-rework-521214e')
+  ok(record)
+  const disposition = record.scopedDisposition
   const adoptedIds = new Set(
     R32_ITEM_MIGRATIONS.filter((entry) => entry.disposition === 'adopted').map(
       (entry) => entry.itemId,
@@ -6571,7 +6612,9 @@ test('R31 full source-authored rule shapes, designated bases and ordered referen
   // audit candidacies ahead of them (foreman-line-plan:item.389ca82e4c31, item.a9cf544f084d), so
   // the same four independently reviewed append rows now occupy 196..199 behind the 196 mapped
   // historical rows.
-  assert.deepEqual(full.normativeMarkdownAudit.slice(196), r32ExpectedAuditRows(oracle.audit))
+  // Preserve the four R31 rows at the R32-derived 196..199 positions, then bind all six R33 rows.
+  assert.deepEqual(full.normativeMarkdownAudit.slice(196, 200), r32ExpectedAuditRows(oracle.audit))
+  assert.deepEqual(full.normativeMarkdownAudit.slice(200), R33_AUDIT_ROWS)
 })
 
 test('R31 complete prior-item correspondence and exact reciprocal sets include every current item', () => {
@@ -6626,7 +6669,20 @@ test('R31 complete prior-item correspondence and exact reciprocal sets include e
         expectedLocator.locatorDigest,
         `${source.sourceId}:${item.itemId}:locator`,
       )
-      if (migration?.newValueDigest !== undefined && migration.newValueDigest !== null) {
+      const qf = R33_ITEM_MIGRATIONS.find(
+        (e) => e.sourceId === source.sourceId && e.itemId === item.itemId,
+      )
+      if (qf !== undefined) {
+        ok(qf.prior)
+        assert.equal(qf.prior.normalizedExcerpt, expected.normalizedExcerpt)
+        assert.equal(qf.prior.valueDigest, expected.valueDigest)
+        assert.equal(qf.priorLocatorDigest, expectedLocator.locatorDigest)
+        assert.equal(item.normalizedExcerpt, qf.new.normalizedExcerpt)
+      }
+      if (
+        qf !== undefined ||
+        (migration?.newValueDigest !== undefined && migration.newValueDigest !== null)
+      ) {
         assert.equal(
           sha256(normalizeRuleText(item.normalizedExcerpt)),
           item.valueDigest,
@@ -6641,7 +6697,7 @@ test('R31 complete prior-item correspondence and exact reciprocal sets include e
       }
       assert.equal(
         item.valueDigest,
-        migration?.newValueDigest ?? expected.valueDigest,
+        qf?.new.valueDigest ?? migration?.newValueDigest ?? expected.valueDigest,
         `${source.sourceId}:${item.itemId}:valueDigest`,
       )
       assert.deepEqual(item.ruleIds, expected.ruleIds, `${source.sourceId}:${item.itemId}:ruleIds`)
@@ -6671,6 +6727,12 @@ test('R31 complete prior-item correspondence and exact reciprocal sets include e
   for (const { sourceId, item } of additions) {
     additionsBySource.set(sourceId, (additionsBySource.get(sourceId) ?? 0) + 1)
     const migration = r32ItemMigrationFor(sourceId, item.itemId)
+    const qf = R33_ITEM_MIGRATIONS.find((e) => e.sourceId === sourceId && e.itemId === item.itemId)
+    if (qf?.disposition === 'adopted') {
+      const { lineHint: _liveHint, ...liveLocator } = item.locator
+      const { lineHint: _expectedHint, ...expectedLocator } = qf.new.locator
+      assert.deepEqual({ ...item, locator: liveLocator }, { ...qf.new, locator: expectedLocator })
+    }
     if (migration?.disposition === 'adopted') continue
     const idFromLocator = `item.${sha256(canonicalJson({ sourceId, locator: item.locator })).slice(0, 12)}`
     const idFromAnchor = `item.${sha256(item.locator.anchor).slice(0, 12)}`
@@ -6685,9 +6747,12 @@ test('R31 complete prior-item correspondence and exact reciprocal sets include e
   assert.deepEqual(
     Object.fromEntries([...additionsBySource.entries()].sort(([l], [r]) => l.localeCompare(r))),
     {
+      // R33: six goal-skill units and two coordinator-pattern units add to the R32 200-item set.
+      'coordinator-pattern': 2,
       'fk-charter': 73,
       'fk-plan-review-findings': 61,
       'foreman-line-plan': 1,
+      'goal-skill': 6,
       'spec-convention': 7,
       'spec-frontmatter-schema': 16,
       'spec-linter-cli': 21,
@@ -6700,7 +6765,12 @@ test('R31 complete prior-item correspondence and exact reciprocal sets include e
   const addedRules = full.rules.filter(
     (rule) => !baseline.rules.some((old) => old.ruleId === rule.ruleId),
   )
-  const expectedAdded = [r31Contract().newRule, ...r32AdoptionRules]
+  // R33 adds only the six explicitly published adoption sets; re-values retain their rule IDs.
+  const expectedAdded = [
+    r31Contract().newRule,
+    ...r32AdoptionRules,
+    ...R33_ITEM_MIGRATIONS.filter((e) => e.disposition === 'adopted').flatMap((e) => e.newRules),
+  ]
   assert.deepEqual(
     addedRules.map((rule) => rule.ruleId).sort(),
     expectedAdded.map((rule) => rule.ruleId).sort(),
@@ -6748,7 +6818,8 @@ test('R31 complete prior-item correspondence and exact reciprocal sets include e
       r32ItemMigrationFor(rule.authorityBasisRef.sourceId, rule.authorityBasisRef.itemId) !==
         undefined ||
       R32_RULE_STATEMENT_MIGRATIONS.some((entry) => entry.ruleId === rule.ruleId) ||
-      claimRebaselines.some(([ruleId]) => ruleId === rule.ruleId)
+      claimRebaselines.some(([ruleId]) => ruleId === rule.ruleId) ||
+      R33_ITEM_MIGRATIONS.some((e) => e.priorRules.some((r) => r.ruleId === rule.ruleId))
     if (touched) affected.add(rule.ruleId)
   }
   assert.deepEqual(changedRules.map((rule) => rule.ruleId).sort(), [...affected].sort())
@@ -6796,10 +6867,23 @@ test('R31 twenty canonical historical records and exact independently pinned app
   // record's superseding command result. W2b correction: the manifest moved with the W2b curation
   // corrections (pre-W2b value 4b541bd25b5ce993a7e640f481da80b39de6d17b1234deb2c77e7bb5300b723b);
   // derivation: src/registry.ts R32_BINDING_MANIFEST, asserted live by generate.ts's drift guard.
+  // Preserve the historical R32 manifest subject, independently recomputed from committed YAML.
+  const r32 = parse(
+    execFileSync(
+      'git',
+      [
+        'show',
+        `${R33_PRIOR_REGISTRY_COMMIT}:plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml`,
+      ],
+      { cwd: join(packageRoot, '..', '..', '..'), encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 },
+    ),
+  ) as AuthorityEnforcementRegistry
   assert.equal(
-    registryBindingManifestDigest(full),
+    registryBindingManifestDigest(r32),
     'd7b9d84157186891595a56a631b6a1d6b5bcd71c9137f216c0871b8caf4ea218',
   )
+  assert.equal(registryBindingManifestDigest(r32), R33_PRIOR_MANIFEST)
+  assert.equal(registryBindingManifestDigest(full), R33_BINDING_MANIFEST)
   assert.equal(
     sha256(canonicalJson(full.reconciliations[20])),
     oracle.proposedRecordCanonicalSha256,

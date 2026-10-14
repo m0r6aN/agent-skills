@@ -1,0 +1,57 @@
+{
+  "beforeValid": false,
+  "afterValid": true,
+  "beforeCount": 8,
+  "afterCount": 0,
+  "removed": [
+    {
+      "code": "SOURCE_ITEM_UNCOVERED",
+      "locator": "md-block:# /goal — the Coordinator entry point > ## Quick flags:paragraph:1",
+      "message": "binding prose block is not inventoried",
+      "sourcePath": "plugins/foreman-line/skills/goal/SKILL.md"
+    },
+    {
+      "code": "SOURCE_ITEM_UNCOVERED",
+      "locator": "md-block:# /goal — the Coordinator entry point > ## Quick flags:paragraph:2",
+      "message": "binding prose block is not inventoried",
+      "sourcePath": "plugins/foreman-line/skills/goal/SKILL.md"
+    },
+    {
+      "code": "SOURCE_ITEM_UNCOVERED",
+      "locator": "md-block:# /goal — the Coordinator entry point > ## Quick flags:paragraph:3",
+      "message": "binding prose block is not inventoried",
+      "sourcePath": "plugins/foreman-line/skills/goal/SKILL.md"
+    },
+    {
+      "code": "SOURCE_ITEM_UNCOVERED",
+      "locator": "md-block:# /goal — the Coordinator entry point > ## Quick flags:paragraph:4",
+      "message": "binding prose block is not inventoried",
+      "sourcePath": "plugins/foreman-line/skills/goal/SKILL.md"
+    },
+    {
+      "code": "SOURCE_ITEM_UNCOVERED",
+      "locator": "md-block:# /goal — the Coordinator entry point > ## Quick flags:paragraph:5",
+      "message": "binding prose block is not inventoried",
+      "sourcePath": "plugins/foreman-line/skills/goal/SKILL.md"
+    },
+    {
+      "code": "SOURCE_ITEM_UNCOVERED",
+      "locator": "md-block:# The Coordinator Pattern > ## Quick flags:paragraph:1",
+      "message": "binding prose block is not inventoried",
+      "sourcePath": "plugins/foreman-line/docs/COORDINATOR-PATTERN.md"
+    },
+    {
+      "code": "VALUE_DIGEST_MISMATCH",
+      "locator": "md-block:# /goal — the Coordinator entry point > ## Generate the loop directive, then become the loop:paragraph:1",
+      "message": "operative normalized source value changed",
+      "sourcePath": "plugins/foreman-line/skills/goal/SKILL.md"
+    },
+    {
+      "code": "VALUE_DIGEST_MISMATCH",
+      "locator": "md-block:# /goal — the Coordinator entry point > ## Stage Zero — run it, don't skip it:list-item:1",
+      "message": "operative normalized source value changed",
+      "sourcePath": "plugins/foreman-line/skills/goal/SKILL.md"
+    }
+  ],
+  "added": []
+}

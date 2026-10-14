@@ -13,6 +13,16 @@ import {
   type R32AnchorMigration,
 } from './r32-migrations.js'
 import {
+  R33_AUDIT_ROWS,
+  R33_BINDING_MANIFEST,
+  R33_ITEM_MIGRATIONS,
+  R33_PRIOR_MANIFEST,
+  R33_PRIOR_REGISTRY_COMMIT,
+  R33_RECONCILIATION,
+  R33_RECORD_DIGEST,
+  R33_SOURCE_SNAPSHOT,
+} from './r33-migrations.js'
+import {
   allSchemaFiles,
   NORMATIVE_MARKDOWN_AUDIT_KEYS,
   R12_LEGACY_MARKDOWN_RULE_TARGETS,
@@ -97,7 +107,8 @@ const SNAPSHOT = '51857a3a7796b393c0c0a68712f98c06e7015d79'
  * worktree bytes; their snapshot attestation records this commit's bytes; the R32 record names the
  * residual for independent review.
  */
-const CURRENT_SNAPSHOT = R32_SOURCE_SNAPSHOT
+// R33 adopts committed blobs; the R32 disclosure above remains historical, not relabelled.
+const CURRENT_SNAPSHOT = R33_SOURCE_SNAPSHOT
 
 /**
  * The three volatile regions R24 authorizes, with the extents R27 corrected.
@@ -11989,6 +12000,11 @@ function buildSource(definition: SourceDefinition): {
     ['cat-file', '-p', `${CURRENT_SNAPSHOT}:${definition.path}`],
     { cwd: repoRoot },
   )
+  if (
+    (definition.sourceId === 'goal-skill' || definition.sourceId === 'coordinator-pattern') &&
+    !bytes.equals(snapshotBytes)
+  )
+    throw new Error(`R33 target source differs from its adopted committed blob: ${definition.path}`)
   // Snapshot evidence attests the pinned commit, never mutable worktree bytes. `content` is masked,
   // so every locator, ordinal, and digest below is derived from the governed surface only.
   const content = definition.path.endsWith('.md')
@@ -12059,6 +12075,22 @@ function buildSource(definition: SourceDefinition): {
     const normalizedExcerpt = normalizeRuleText(text)
     const itemId = itemIdFor(definition, entry)
     const valueDigest = sha256(normalizedExcerpt)
+    const r33 = R33_ITEM_MIGRATIONS.find(
+      (candidate) =>
+        candidate.sourceId === definition.sourceId &&
+        (candidate.itemId === itemId || candidate.new.locator.anchor === locator.anchor),
+    )
+    if (r33 !== undefined) {
+      if (
+        itemId !== r33.itemId ||
+        locatorDigestFor(locator) !== r33.newLocatorDigest ||
+        normalizedExcerpt !== r33.new.normalizedExcerpt ||
+        valueDigest !== r33.new.valueDigest
+      )
+        throw new Error(`R33 curated source mapping drift: ${r33.unit}`)
+      rules.push(...structuredClone(r33.newRules))
+      return { ...structuredClone(r33.new), locator }
+    }
     if (locator.kind === 'heading') {
       return {
         itemId,
@@ -13299,21 +13331,40 @@ function buildRegistry(): AuthorityEnforcementRegistry {
     rules,
     operationAuthority: operation,
     reconciliations: [],
-    normativeMarkdownAudit: [...normativeMarkdownAudit, ...structuredClone(R31_AUDIT_ROWS)],
+    normativeMarkdownAudit: [
+      ...normativeMarkdownAudit,
+      ...structuredClone(R31_AUDIT_ROWS),
+      ...structuredClone(R33_AUDIT_ROWS),
+    ],
     volatileRegions: volatileRegionsFor(sources),
   }
   // Historical attestations retain the exact committed bytes and their original source subject:
   // the R31 registry's complete record set, including its now-pinned former head.
   const priorR30 = registryAtCommit(R31_PRIOR_REGISTRY_COMMIT)
   const priorR31 = registryAtCommit(R32_PRIOR_REGISTRY_COMMIT)
-  const history = structuredClone(priorR31.reconciliations)
+  const priorR32 = registryAtCommit(R33_PRIOR_REGISTRY_COMMIT)
+  const history = structuredClone(priorR32.reconciliations)
   const adopted = { ...provisional, reconciliations: history }
+  for (const entry of R33_ITEM_MIGRATIONS) {
+    const prior = priorR32.sources
+      .find((source) => source.sourceId === entry.sourceId)
+      ?.inventoryItems.find((item) => item.itemId === entry.itemId)
+    if (canonicalJson(prior ?? null) !== canonicalJson(entry.prior))
+      throw new Error(`R33 predecessor item correspondence changed: ${entry.unit}`)
+    const priorRules = priorR32.rules.filter((rule) =>
+      entry.priorRules.some((expected) => expected.ruleId === rule.ruleId),
+    )
+    if (canonicalJson(priorRules) !== canonicalJson(entry.priorRules))
+      throw new Error(`R33 predecessor rule correspondence changed: ${entry.unit}`)
+  }
   if (
     registryBindingManifestDigest(priorR30) !== R31_PRIOR_MANIFEST ||
     registryBindingManifestDigest(priorR31) !== R31_BINDING_MANIFEST ||
-    registryBindingManifestDigest(adopted) !== R32_BINDING_MANIFEST
+    registryBindingManifestDigest(priorR32) !== R32_BINDING_MANIFEST ||
+    registryBindingManifestDigest(priorR32) !== R33_PRIOR_MANIFEST ||
+    registryBindingManifestDigest(adopted) !== R33_BINDING_MANIFEST
   )
-    throw new Error('R32 independently reviewed binding manifest mismatch')
+    throw new Error('R33 independently reviewed binding manifest mismatch')
   const r31Record = history.find(
     (candidate) => candidate.reconciliationId === R31_RECONCILIATION.reconciliationId,
   )
@@ -13329,7 +13380,7 @@ function buildRegistry(): AuthorityEnforcementRegistry {
   }
   if (
     sha256(
-      execFileSync('git', ['cat-file', 'blob', `${CURRENT_SNAPSHOT}:${R31_DECISION_PATH}`], {
+      execFileSync('git', ['cat-file', 'blob', `${R32_SOURCE_SNAPSHOT}:${R31_DECISION_PATH}`], {
         cwd: repoRoot,
       }),
     ) !== R31_DECISION_BLOB_DIGEST
@@ -13337,9 +13388,28 @@ function buildRegistry(): AuthorityEnforcementRegistry {
     throw new Error('R31 plan decision Git blob mismatch')
   if (sha256(canonicalJson(r31Record)) !== R31_RECORD_DIGEST)
     throw new Error('R31 independently reviewed reconciliation pin mismatch')
-  const record = r32ReconciliationRecord(sources)
-  if (sha256(canonicalJson(record)) !== R32_RECORD_DIGEST)
+  const r32Record = r32ReconciliationRecord(priorR32.sources)
+  if (
+    sha256(canonicalJson(r32Record)) !== R32_RECORD_DIGEST ||
+    canonicalJson(history.at(-1)) !== canonicalJson(r32Record)
+  )
     throw new Error('R32 independently reviewed reconciliation pin mismatch')
+  const record = structuredClone(R33_RECONCILIATION)
+  if (sha256(canonicalJson(record)) !== R33_RECORD_DIGEST)
+    throw new Error('R33 independently reviewed reconciliation pin mismatch')
+  for (const evidence of record.observedEvidence) {
+    if (
+      evidence.kind === 'git-commit' &&
+      sha256(execFileSync('git', ['cat-file', '-p', evidence.reference], { cwd: repoRoot })) !==
+        evidence.digest
+    )
+      throw new Error('R33 Git commit custody mismatch')
+  }
+  if (record.supersedingEvidence === null) throw new Error('R33 superseding SourceRef missing')
+  for (const ref of [...record.observedRefs, record.supersedingEvidence]) {
+    if (canonicalJson(refFor(sources, ref.sourceId, ref.itemId)) !== canonicalJson(ref))
+      throw new Error(`R33 live SourceRef correspondence changed: ${ref.itemId}`)
+  }
   return { ...adopted, reconciliations: [...history, record] }
 }
 
