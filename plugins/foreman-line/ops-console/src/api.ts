@@ -2,6 +2,7 @@ import { readFileSync, realpathSync } from 'node:fs'
 import { basename, isAbsolute, join, relative, sep } from 'node:path'
 import {
   acknowledge,
+  alertFingerprint,
   isAlertAcknowledged,
   listAcknowledgements,
   signalFingerprint,
@@ -476,6 +477,31 @@ export async function handleApi(
       return { status: 400, json: { error: 'invalid fingerprint', reason: 'invalid-fingerprint' } }
     if (note !== undefined && (typeof note !== 'string' || note.length > 280))
       return { status: 400, json: { error: 'invalid note', reason: 'invalid-note' } }
+    let currentFingerprint: string | undefined
+    if (sessionId) {
+      const signal = (await collectSignalsAsync(config, now)).find((entry) => entry.id === id)
+      if (signal) currentFingerprint = signalFingerprint(signal)
+    } else {
+      for (const tree of goalTrees(config)) {
+        const treeConfig = treeConfigFor(config, tree)
+        for (const slug of listGoalSlugs(treeConfig)) {
+          const projection = projectGoal(treeConfig, slug, now)
+          if (!projection) continue
+          const alert = deriveAlerts(projection.parcels, now).find((entry) => entry.id === id)
+          if (alert) currentFingerprint = alertFingerprint(alert)
+        }
+      }
+    }
+    if (currentFingerprint === undefined)
+      return { status: 404, json: { error: 'unknown alert or signal id', reason: 'unknown-id' } }
+    if (currentFingerprint !== fingerprint)
+      return {
+        status: 409,
+        json: {
+          error: 'evidence fingerprint does not match current alert or signal',
+          reason: 'fingerprint-mismatch',
+        },
+      }
     acknowledge(
       config.stateDir,
       { id, fingerprint, at: '', ...(typeof note === 'string' ? { note } : {}) },

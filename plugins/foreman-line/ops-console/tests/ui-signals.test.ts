@@ -37,6 +37,21 @@ test('only registered class/verb pairs render; unsupported bulk targets have no 
   assert.equal(unavailable.querySelector('[data-select]'), null)
 })
 
+test('currently acknowledged rows are visually distinct from changed or unacknowledged rows', () => {
+  const doc = new JSDOM(
+    signalsHtml(
+      [
+        signal({ id: 'current', acknowledgement: { current: true, at: 'now' } }),
+        signal({ id: 'changed', acknowledgement: { current: false, at: 'then' } }),
+      ],
+      ACTION_REGISTRY,
+    ),
+  ).window.document
+  assert.ok(doc.querySelector('[data-id="current"].acknowledged'))
+  assert.match(doc.querySelector('[data-id="current"]')?.textContent ?? '', /Acknowledged/)
+  assert.equal(doc.querySelector('[data-id="changed"].acknowledged'), null)
+})
+
 test('N selections carry N actions with independent autonomy and authoritative evidence', () => {
   const payloads = selectionToActions(
     SIGNALS.map((signal, i) => ({

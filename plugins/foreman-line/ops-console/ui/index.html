@@ -71,6 +71,8 @@
     th { color: var(--muted); font-weight: 500; font-size: .75rem; background: var(--bg); }
     tbody tr:last-child td { border-bottom: 0; }
     .signal-row:hover, .parcel-row:hover { background: var(--panel2); }
+    .signal-row.acknowledged { opacity: .68; background: var(--panel2); }
+    .signal-row.acknowledged .subject::after { content: ' · acknowledged'; color: var(--muted); font-size: .75em; }
     .subject { font-weight: 600; display: block; }
     .meta { font-size: .75rem; display: block; margin-top: .25rem; }
     .actions { min-width: 12rem; }

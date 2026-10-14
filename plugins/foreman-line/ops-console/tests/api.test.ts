@@ -96,6 +96,27 @@ async function withApi<T>(run: (config: ConsoleConfig, root: string) => Promise<
   })
 }
 
+test('acknowledgement POST refuses unknown IDs and mismatched current evidence; DELETE refuses unknown IDs', async () => {
+  await withApi(async (config) => {
+    const unknownPost = await call(config, 'POST', '/api/acknowledgements', {
+      id: 'session-state:unknown',
+      fingerprint: 'a'.repeat(64),
+    })
+    assert.equal(unknownPost.status, 404)
+    assert.deepEqual(unknownPost.json, {
+      error: 'unknown alert or signal id',
+      reason: 'unknown-id',
+    })
+
+    const unknownDelete = await call(config, 'DELETE', '/api/acknowledgements/unknown-id')
+    assert.equal(unknownDelete.status, 404)
+    assert.deepEqual(unknownDelete.json, {
+      error: 'unknown acknowledgement id',
+      reason: 'unknown-id',
+    })
+  })
+})
+
 test('GET /api/health reports the read-only localhost posture', async () => {
   await withApi(async (config) => {
     const result = await call(config, 'GET', '/api/health')
