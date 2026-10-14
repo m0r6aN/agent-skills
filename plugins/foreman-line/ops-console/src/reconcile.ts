@@ -1,5 +1,5 @@
-// biome-ignore lint/suspicious/noTemplateCurlyInString: '${REPO_ROOT}' is intentional placeholder text shown to operators, not a template
 const LOOP_DIRECTIVE_HINT =
+  // biome-ignore lint/suspicious/noTemplateCurlyInString: '${REPO_ROOT}' is intentional placeholder text shown to operators, not a template
   '${REPO_ROOT}/plugins/foreman-line/docs/goals/GOAL-SLUG/loop-directive.md'
 
 import { basename } from 'node:path'
