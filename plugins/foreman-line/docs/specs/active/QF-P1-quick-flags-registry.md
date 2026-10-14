@@ -210,6 +210,14 @@ Found while authoring, after the Step 0 answers. **Coordinator lint rulings 2026
 - **OQ-2 (applied in AC-11).** Under a provisional `--dry`, are provisional `--strict`/`--nopush`/`--review2` lines written? **Default applied:** yes, as stop writes exempt from `--dry` (fail-safe; otherwise a resumed session loses them, E-4).
 - **OQ-3 (applied in AC-19).** A `--review2` line whose parcel cannot be read. **Default applied:** it restricts every parcel in progress (the fail-safe reading of Q12, matching K15).
 
+## Coordinator rulings after builder Step 0 (2026-10-13)
+
+- **Words after a no-argument quick flag (AC-9, AC-18):** the literal reading. Any word in the span of a quick flag whose `Arguments:` is `none` refuses it and makes the message inert. There is no per-flag exception.
+- **Answering a stop report (AC-5 vs AC-11, AC-14, AC-15):** the human's answer is the human's own prose. A gate quick flag issued in that prose is the human's own act and is processed under its entry. "No quick flag answers a stop report" means a quick flag never answers on the human's behalf.
+- **A line naming several restrictive quick flags (AC-19):** it restricts as every restrictive quick flag it contains (fail safe). A lift removes only lines whose own quick flag is the one lifted; if the lifted name still appears on another line, the restriction stays and the Coordinator reports it.
+- **`--dispatch-ok` with an unlinted parcel (AC-15):** nothing is dispatched for any named parcel; the Coordinator reports and the developer re-sends. This is not a refusal, so the message is not inert.
+- Issue 5-10 wording choices (gate-record entry has no stated location; `--brief` leads the report in the turn answering its message; `SEQ` also cited for the `--halt` rows; the 17 independent-row rule IDs; `Conflicts and lifting:` wording; no blank line after an entry heading) are accepted as the builder proposed.
+
 ## Verification Plan
 
 Run from the worktree root with `R=plugins/foreman-line/docs/QUICK-FLAGS.md` and `B=<qf-p1 build base from the build dispatch>`. Every command must give the stated result.
