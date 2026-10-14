@@ -101,8 +101,8 @@ export function execFileAsync(
 
     child.on('close', (code: number | null, _signal: NodeJS.Signals | null) => {
       if (timer !== undefined) clearTimeout(timer)
-      if (timedOut) {
-        reject(new ExecTimeoutError(bin, timeout!))
+      if (timedOut && timeout !== undefined) {
+        reject(new ExecTimeoutError(bin, timeout))
         return
       }
       resolve({ stdout, stderr, exitCode: code })

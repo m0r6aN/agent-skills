@@ -5,7 +5,7 @@ import test from 'node:test'
 import { type ApiRequest, type ApiResult, handleApi } from '../src/api.js'
 import type { ConsoleConfig } from '../src/config.js'
 import { resolveBind } from '../src/server.js'
-import { type Scenario, withTempRepo, withTempRepoAsync } from './support/materialize.js'
+import { type Scenario, withTempRepoAsync } from './support/materialize.js'
 
 /**
  * FOC-P2 frozen route table behavior + FOC-P3 gate/alert/notification routes +

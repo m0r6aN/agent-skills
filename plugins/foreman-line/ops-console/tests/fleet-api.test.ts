@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import test from 'node:test'
 import { type ApiResult, handleApi } from '../src/api.js'
 import type { ConsoleConfig } from '../src/config.js'
-import { type Scenario, withTempRepo, withTempRepoAsync } from './support/materialize.js'
+import { type Scenario, withTempRepoAsync } from './support/materialize.js'
 
 /**
  * FCA-P2 fleet API surface: `GET /api/fleet`, `POST /api/fleet/add|remove`,

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { type ApiRequest, handleApi } from '../src/api.js'
+import { handleApi } from '../src/api.js'
 import { type Scenario, withTempRepoAsync } from './support/materialize.js'
 
 /**
@@ -93,7 +93,9 @@ test('AC8: in-flight deduplication for concurrent signal collection (mock counte
     }
 
     // All should return the same signals (derived from same snapshot)
-    const first = (results[0]!.json as { signals: unknown[] }).signals
+    const firstResult = results[0]
+    assert.ok(firstResult !== undefined, 'should have at least one result')
+    const first = (firstResult.json as { signals: unknown[] }).signals
     for (const result of results.slice(1)) {
       assert.deepEqual(
         (result.json as { signals: unknown[] }).signals,
@@ -124,7 +126,7 @@ test('async providers run concurrently (Promise.all pattern)', async () => {
       ),
     ])
 
-    const elapsed = performance.now() - start
+    const _elapsed = performance.now() - start
 
     assert.equal(goals.status, 200)
     assert.equal(signals.status, 200)

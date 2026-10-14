@@ -6,9 +6,8 @@ import { type BrowseRefusalError, browseDirectory } from './browse.js'
 import { type ConsoleConfig, goalTrees, resolveGoalKey, treeConfigFor } from './config.js'
 import { buildDecisions, type DecisionsOptions } from './decisions.js'
 import {
-  addFleetRoot,
-  defaultFleetProbe,
-  describeRoot,
+  addFleetRootAsync,
+  describeRootAsync,
   type FleetRefusalError,
   type FleetState,
   loadFleetState,
@@ -17,23 +16,18 @@ import {
 } from './fleet.js'
 import { isRecord } from './guards.js'
 import { invokeFlow, listAuditEntries } from './invoke.js'
-import { ledgerEntries, liveProbes } from './ledger.js'
+import { asyncLiveProbes, ledgerEntries, ledgerEntriesAsync, liveProbes } from './ledger.js'
 import { readGitOutcome } from './ledger-git.js'
 import { deleteNotification, listNotifications, syncAlerts } from './notifications.js'
 import { projectGoal } from './project.js'
 import { assess, DISCREPANCY_CODES, reconcileGoal, type SessionEvidence } from './reconcile.js'
 import { gatherRepoFacts } from './reconcile-git.js'
-import { gatherPrFacts, gatherPrFactsAsync } from './reconcile-remote.js'
+import { gatherPrFactsAsync } from './reconcile-remote.js'
 import { remediesFor } from './remedy.js'
 import { loadRoutingPolicy } from './routing.js'
 import { listGoalSlugs, scanGoal } from './scan.js'
-import {
-  collectSignals,
-  collectSignalsAsync,
-  SIGNAL_CLASSES,
-  SIGNAL_SEVERITIES,
-} from './signals.js'
-import { sessionProbeFor } from './signals-session.js'
+import { collectSignalsAsync, SIGNAL_CLASSES, SIGNAL_SEVERITIES } from './signals.js'
+import { asyncSessionProbeFor } from './signals-session.js'
 import { launchSpawnPlan, listSpawnReceipts, planSpawn, type SpawnRefusalError } from './spawn.js'
 import { goalStatus } from './status.js'
 import type { ChainSummary, GoalProjection } from './types.js'
@@ -474,17 +468,18 @@ export async function handleApi(
   // FCA-P2 fleet registry (control-center amendment): declared multi-repo
   // scope. Refusals are typed (4xx + `reason`); the only write target is
   // `state/fleet.json`.
+  // FCA-P14: async fleet operations (non-blocking git probes).
   if (pathname === '/api/fleet') {
     if (method !== 'GET') return methodNotAllowed('GET')
-    return { status: 200, json: { roots: fleetRoots(config) } }
+    return { status: 200, json: { roots: await fleetRootsAsync(config) } }
   }
 
   if (pathname === '/api/fleet/add') {
     if (method !== 'POST') return methodNotAllowed('POST')
     const body = isRecord(request.body) ? request.body : {}
     const root = typeof body.root === 'string' ? body.root : ''
-    return fleetMutation(config, () =>
-      addFleetRoot(loadFleetState(config.stateDir, config.repoRoot), root, defaultFleetProbe),
+    return fleetMutationAsync(config, () =>
+      addFleetRootAsync(loadFleetState(config.stateDir, config.repoRoot), root),
     )
   }
 
@@ -591,22 +586,23 @@ export async function handleApi(
   // FCA-P5 spawn receipts (control-center amendment): append-only receipt
   // list with derived pane liveness. Read-only route; the store is written by
   // the launcher only.
+  // FCA-P14: async ledger and session probes (non-blocking).
   if (pathname === '/api/spawns') {
     if (method !== 'GET') return methodNotAllowed('GET')
     // FCA-P7: `ledger` is ADDITIVE; every pre-existing field is unchanged.
     const receipts = listSpawnReceipts(config.stateDir)
-    const ledger = ledgerEntries(receipts, liveProbes(config), now)
+    const ledger = await ledgerEntriesAsync(receipts, asyncLiveProbes(config), now)
+    const sessionProbe = asyncSessionProbeFor(config.repoRoot)
+    const spawnsWithLiveness = await Promise.all(
+      receipts.map(async (receipt) => ({
+        ...receipt,
+        liveness: (await sessionProbe.sessionAlive(receipt.sessionName)) ? 'alive' : 'exited',
+        ledger: ledger.get(receipt.id) ?? null,
+      })),
+    )
     return {
       status: 200,
-      json: {
-        spawns: receipts.map((receipt) => ({
-          ...receipt,
-          liveness: sessionProbeFor(config.repoRoot).sessionAlive(receipt.sessionName)
-            ? 'alive'
-            : 'exited',
-          ledger: ledger.get(receipt.id) ?? null,
-        })),
-      },
+      json: { spawns: spawnsWithLiveness },
     }
   }
 
@@ -637,15 +633,30 @@ export async function handleApi(
   return { status: 404, json: { error: `no such route ${method} ${pathname}` } }
 }
 
-function fleetRoots(config: ConsoleConfig): unknown[] {
+/** FCA-P14: Async fleet roots using non-blocking git probes. */
+async function fleetRootsAsync(config: ConsoleConfig): Promise<unknown[]> {
   const state = loadFleetState(config.stateDir, config.repoRoot)
-  return state.roots.map((root) => describeRoot(root, defaultFleetProbe))
+  return Promise.all(state.roots.map((root) => describeRootAsync(root)))
 }
 
-function fleetMutation(config: ConsoleConfig, mutate: () => FleetState): ApiResult {
+/** FCA-P14: Async fleet mutation using non-blocking git probes. */
+async function fleetMutationAsync(
+  config: ConsoleConfig,
+  mutate: () => Promise<FleetState>,
+): Promise<ApiResult> {
+  try {
+    saveFleetState(config.stateDir, await mutate())
+    return { status: 200, json: { ok: true, roots: await fleetRootsAsync(config) } }
+  } catch (err) {
+    return refusalResult(err)
+  }
+}
+
+/** Sync fleet mutation for paths that don't need git probes (e.g., remove). */
+async function fleetMutation(config: ConsoleConfig, mutate: () => FleetState): Promise<ApiResult> {
   try {
     saveFleetState(config.stateDir, mutate())
-    return { status: 200, json: { ok: true, roots: fleetRoots(config) } }
+    return { status: 200, json: { ok: true, roots: await fleetRootsAsync(config) } }
   } catch (err) {
     return refusalResult(err)
   }

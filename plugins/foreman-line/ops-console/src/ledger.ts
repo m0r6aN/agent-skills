@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process'
 import { closeSync, openSync, readSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { type ConsoleConfig, ledgerDirPath } from './config.js'
-import { type AsyncGitCache, type GitFact, makeAsyncGitCache, makeGitCache } from './ledger-git.js'
+import { type GitFact, makeAsyncGitCache, makeGitCache } from './ledger-git.js'
 import { LOG_NAME, TRUNCATED_NAME } from './ledger-store.js'
 import {
   defaultPiSessionsDir,
@@ -622,6 +622,232 @@ export function ledgerEntries(
   const entries = new Map<string, LedgerEntry>()
   for (const receipt of receipts) {
     const entry = deriveLedgerEntry(receipt, bounded, now, siblingCount.get(receipt.sessionName))
+    entries.set(
+      receipt.id,
+      skipped.has(receipt.id)
+        ? {
+            ...entry,
+            evidence: [
+              ...entry.evidence,
+              'not fully probed: the ledger time budget was exhausted; refresh to retry',
+            ],
+          }
+        : entry,
+    )
+  }
+  return entries
+}
+
+/**
+ * FCA-P14: Async version of deriveLedgerEntry using non-blocking probes.
+ */
+export async function deriveLedgerEntryAsync(
+  receipt: SpawnReceipt,
+  probes: AsyncLedgerProbes,
+  now: number,
+  siblings?: number,
+): Promise<LedgerEntry> {
+  const ledger: LedgerEntry['ledger'] = typeof receipt.ledgerDir === 'string' ? 'present' : 'absent'
+  // Run tmux, transcript, git probes concurrently
+  const [tmux, transcript, git] = await Promise.all([
+    probes.tmux(receipt.sessionName),
+    Promise.resolve(probes.transcript(receipt)), // sync file read
+    probes.git(receipt),
+  ])
+  let output = probes.output(receipt) // sync file read
+  const evidence: string[] = []
+  let exit: LedgerEntry['exit'] = { status: null, signal: null, at: null }
+  let state: LifecycleState = 'unknown'
+  let paneAlive = false
+
+  const noMessages = transcript.link === 'none' || transcript.messages === 0
+  const transcriptFailed = transcript.link === 'linked' && transcript.lastStopReason === 'error'
+  const age = now - (Date.parse(receipt.createdAt) || now)
+
+  if (tmux.kind === 'unavailable') {
+    evidence.push(`tmux unavailable: ${tmux.reason}`)
+  } else {
+    const match =
+      tmux.kind === 'found'
+        ? paneFor(receipt, tmux.panes, siblings)
+        : { pane: null, ambiguous: false }
+    const pane = match.pane
+    if (match.ambiguous) {
+      state = 'unknown'
+      evidence.push(
+        'cannot attribute panes: no pane id was recorded and tmux no longer holds one pane per receipt of this session',
+      )
+    } else if (pane !== null && !pane.dead) {
+      paneAlive = true
+      const screen = await probes.screen(receipt, pane.paneId)
+      output = withScreen(output, screen)
+      if (noMessages && age < LAUNCH_GRACE_MS) {
+        state = 'launching'
+        evidence.push('pane alive; no transcript yet (within launch grace)')
+      } else {
+        state = 'running'
+        if (noMessages) evidence.push('pane alive but pi has written no transcript')
+      }
+    } else if (pane !== null) {
+      const screen = await probes.screen(receipt, pane.paneId)
+      output = withScreen(output, screen)
+      exit = {
+        status: pane.deadStatus,
+        signal: pane.deadSignal,
+        at: isoFromEpochSeconds(pane.deadTime),
+      }
+      if (pane.deadSignal !== null) {
+        state = 'exited-error'
+        evidence.push(`pane killed by signal ${pane.deadSignal}`)
+      } else if (pane.deadStatus === 0) {
+        const endingCheckable = noMessages || transcript.link === 'linked'
+        state = noMessages
+          ? 'no-transcript'
+          : transcriptFailed
+            ? 'exited-error'
+            : endingCheckable
+              ? 'exited-clean'
+              : 'unknown'
+        evidence.push(
+          'pane exited with status 0 (process ended; this is not proof the work is complete)',
+        )
+        if (!endingCheckable) {
+          evidence.push(
+            'exit status 0, but the transcript could not be joined, so whether it ended in an error is unknown',
+          )
+        }
+      } else if (pane.deadStatus !== null) {
+        state = 'exited-error'
+        evidence.push(`pane exited with status ${pane.deadStatus}`)
+      } else {
+        state = 'unknown'
+        evidence.push('pane is dead but tmux reported no exit status')
+      }
+    } else if (ledger === 'present') {
+      state = 'vanished'
+      evidence.push('tmux session/pane is gone and no exit status was retained')
+    } else {
+      evidence.push('receipt predates the session ledger; no pane record was retained')
+    }
+  }
+
+  if (state === 'exited-error' || state === 'no-transcript' || state === 'vanished') {
+    if (noMessages)
+      evidence.push(
+        'no transcript: pi never exchanged a message (prompt not delivered or session failed at startup)',
+      )
+  }
+  if (transcriptFailed) {
+    evidence.push(
+      `transcript: the last assistant message ended with an error${transcript.lastErrorMessage === null ? '' : `: ${transcript.lastErrorMessage}`}`,
+    )
+  } else if (transcript.link === 'linked' && transcript.lastStopReason === 'aborted') {
+    evidence.push('transcript: the last assistant message was aborted')
+  }
+  if (transcript.link === 'unknown') {
+    evidence.push('transcript could not be read or is too large to summarize: the join is unknown')
+  } else if (transcript.link === 'none' && transcript.rejected > 0) {
+    evidence.push(
+      `${transcript.rejected} transcript file(s) in the session directory name a different working directory and were not used`,
+    )
+  }
+  if (transcript.link === 'ambiguous') {
+    evidence.push(`transcript join ambiguous: ${transcript.files.length} candidate files`)
+  }
+  if (output.providerError !== null) evidence.push(`output: ${output.providerError}`)
+  if (output.truncated) evidence.push('pane log truncated by retention')
+  if (ledger === 'absent' && output.present === false)
+    evidence.push('no captured output (legacy receipt)')
+
+  const orphanClean =
+    tmux.kind !== 'unavailable' &&
+    !paneAlive &&
+    git.worktree === 'present' &&
+    git.commitsAhead === 0 &&
+    git.dirtyFiles === 0
+  if (orphanClean)
+    evidence.push('orphan-clean: worktree has no commits and no changes and no live pane')
+
+  return {
+    receiptId: receipt.id,
+    state,
+    tmux: tmux.kind,
+    ledger,
+    evidence,
+    exit,
+    transcript,
+    git,
+    output,
+    orphanClean,
+  }
+}
+
+/**
+ * FCA-P14: Async version of ledgerEntries using non-blocking probes.
+ * Probes sessions concurrently; the event loop is not blocked.
+ */
+export async function ledgerEntriesAsync(
+  receipts: readonly SpawnReceipt[],
+  probes: AsyncLedgerProbes,
+  now: number,
+  budgetMs: number = LEDGER_BUDGET_MS,
+  clock: () => number = Date.now,
+): Promise<Map<string, LedgerEntry>> {
+  const started = clock()
+  const siblingCount = new Map<string, number>()
+  for (const receipt of receipts) {
+    siblingCount.set(receipt.sessionName, (siblingCount.get(receipt.sessionName) ?? 0) + 1)
+  }
+
+  // Group receipts by session to minimize tmux probes
+  const sessionGroups = new Map<string, SpawnReceipt[]>()
+  for (const receipt of receipts) {
+    const group = sessionGroups.get(receipt.sessionName) ?? []
+    group.push(receipt)
+    sessionGroups.set(receipt.sessionName, group)
+  }
+
+  // Probe all sessions concurrently (memoized per session)
+  const tmuxMemo = new Map<string, TmuxSessionFact>()
+  await Promise.all(
+    [...sessionGroups.keys()].map(async (sessionName) => {
+      const fact = await probes.tmux(sessionName)
+      tmuxMemo.set(sessionName, fact)
+    }),
+  )
+
+  // Create bounded probes that use the memoized tmux facts
+  const skipped = new Set<string>()
+  const overBudget = (receipt: SpawnReceipt): boolean => {
+    if (clock() - started <= budgetMs) return false
+    skipped.add(receipt.id)
+    return true
+  }
+
+  const bounded: AsyncLedgerProbes = {
+    tmux: async (sessionName) => tmuxMemo.get(sessionName) ?? { kind: 'absent' },
+    output: probes.output,
+    transcript: probes.transcript,
+    git: async (receipt) => (overBudget(receipt) ? UNKNOWN_GIT : probes.git(receipt)),
+    screen: async (receipt, paneId) =>
+      overBudget(receipt) ? null : probes.screen(receipt, paneId),
+  }
+
+  // Derive entries concurrently
+  const entryResults = await Promise.all(
+    receipts.map(async (receipt) => {
+      const entry = await deriveLedgerEntryAsync(
+        receipt,
+        bounded,
+        now,
+        siblingCount.get(receipt.sessionName),
+      )
+      return { receipt, entry }
+    }),
+  )
+
+  const entries = new Map<string, LedgerEntry>()
+  for (const { receipt, entry } of entryResults) {
     entries.set(
       receipt.id,
       skipped.has(receipt.id)

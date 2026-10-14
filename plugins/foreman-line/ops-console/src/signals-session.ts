@@ -1,6 +1,13 @@
 import { execFileSync } from 'node:child_process'
 import type { ConsoleConfig } from './config.js'
-import { type LedgerProbes, ledgerEntries, liveProbes } from './ledger.js'
+import {
+  type AsyncLedgerProbes,
+  asyncLiveProbes,
+  type LedgerProbes,
+  ledgerEntries,
+  ledgerEntriesAsync,
+  liveProbes,
+} from './ledger.js'
 import { makeSignal, type Signal, type SignalProvider } from './signals.js'
 import { listSpawnReceipts } from './spawn.js'
 import { execFileAsync } from './spawn-async.js'
@@ -81,7 +88,7 @@ export const sessionStateProvider: SignalProvider & {
     config: ConsoleConfig,
     now: number,
     probe?: AsyncSessionProbe,
-    ledgerProbes?: LedgerProbes,
+    ledgerProbes?: AsyncLedgerProbes,
   ): Promise<Signal[]>
 } = {
   class: 'session-state',
@@ -148,13 +155,13 @@ export const sessionStateProvider: SignalProvider & {
     config: ConsoleConfig,
     now: number,
     asyncProbe?: AsyncSessionProbe,
-    ledgerProbes?: LedgerProbes,
+    asyncLedgerProbes?: AsyncLedgerProbes,
   ): Promise<Signal[]> {
     const detectedAt = new Date(now).toISOString()
     const receipts = listSpawnReceipts(config.stateDir)
     const probe = asyncProbe ?? asyncSessionProbeFor(config.repoRoot)
-    const base = ledgerProbes ?? liveProbes(config)
-    const entries = ledgerEntries(receipts, base, now)
+    const base = asyncLedgerProbes ?? asyncLiveProbes(config)
+    const entries = await ledgerEntriesAsync(receipts, base, now)
 
     // Check all sessions concurrently
     const aliveChecks = await Promise.all(
