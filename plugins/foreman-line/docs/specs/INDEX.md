@@ -6,7 +6,7 @@
 > `done/` is listed as `done/` (the stale `active/` duplicates were removed in the
 > 2026-10-08 hygiene pass). Regenerate or hand-update on every spec state change.
 
-Own TO-B0/TO-P1 lifecycle rows maintained 2026-10-10; FCA-P11 follow-through coverage updated 2026-10-14; other rows retain their recorded provenance.
+Own TO-B0/TO-P1 lifecycle rows maintained 2026-10-10; FCA-P11 follow-through coverage updated 2026-10-14; FCA-P12 acknowledgement implementation updated 2026-10-14; other rows retain their recorded provenance.
 
 | Ticket | Title | Status | Location |
 |---|---|---|---|
