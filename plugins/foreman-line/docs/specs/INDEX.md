@@ -147,6 +147,7 @@ QF-P0 row added 2026-10-14 by the quick-flags QF-P0 shaping session at `draft`; 
 | QF-P0 | [Authority-registry corpus amendment for post-QF-P2 quick-flags canon](done/QF-P0-authority-registry-corpus-amendment.md) | `done` | `done/` |
 | QF-P1 | [Quick-flags registry (QUICK-FLAGS.md, versioned)](done/QF-P1-quick-flags-registry.md) | `done` | `done/` |
 | QF-P2 | [Quick-flags integration (goal skill, loop-directive template, synced copy, COORDINATOR-PATTERN cross-reference)](done/QF-P2-quick-flags-integration.md) | `done` | `done/` |
+| QF-P3 | [Quick-flags structural conformance check](active/QF-P3-quick-flags-conformance-check.md) | `draft` | `active/` |
 | RCM-HRO | [Private authenticated public catalog publication](active/RCM-HRO-authenticated-catalog-publication.md) | `active` | `active/` |
 | RCM-P0 | [Current-instance routing reconnaissance](done/RCM-P0-current-instance-recon.md) | `done` | `done/` |
 | RCM-P1A | [Supported bounded catalog eligibility wrapper](done/RCM-P1A-sanitized-snapshot-adapter.md) | `done` | `done/` |
