@@ -26,8 +26,9 @@ const SELECTIONS = [
 
 test('shared controls render exactly once; budget presets have no Unlimited; copy says one session/N panes', () => {
   const doc = new JSDOM(spawnPanelHtml({ count: 2 })).window.document
-  for (const name of ['harness', 'model', 'thinking', 'budget', 'extra'])
+  for (const name of ['harness', 'model', 'thinking', 'budget'])
     assert.equal(doc.querySelectorAll(`[name="${name}"]`).length, 1)
+  assert.equal(doc.querySelectorAll('[data-extra-text]').length, 0)
   assert.deepEqual(
     [...doc.querySelectorAll('[name="budget"] option')].map((o) => o.getAttribute('value')),
     [...BUDGET_PRESETS],
@@ -49,11 +50,18 @@ test('composed request feeds the real planner: K explicit actions become one ses
     budget: '$20',
   }
   const extra = 'Preserve existing work first.\nSecond line exactly as typed.'
-  const request = spawnRequest(SELECTIONS, controls, extra)
+  const configured = SELECTIONS.map((item, index) => ({
+    ...item,
+    extraText: index === 0 ? extra : 'Different per-item direction.',
+  }))
+  const request = spawnRequest(configured, controls)
   assert.deepEqual(request.controls, controls)
   assert.equal(request.actions.length, 2)
   for (const action of request.actions) {
-    assert.equal(action.extraText, extra)
+    assert.equal(
+      action.extraText,
+      action.verb === 'remediate' ? extra : 'Different per-item direction.',
+    )
     assert.equal(typeof action.repoRoot, 'string')
     assert.equal(typeof action.autonomy, 'object')
   }
@@ -65,7 +73,8 @@ test('composed request feeds the real planner: K explicit actions become one ses
   })
   assert.equal(plan.sessionName, 'foc-ui')
   assert.equal(plan.panes.length, 2)
-  assert.ok(plan.panes[1]?.prompt.endsWith(`EXTRA DIRECTION:\n${extra}`))
+  assert.ok(plan.panes[0]?.prompt.endsWith(`EXTRA DIRECTION:\n${extra}`))
+  assert.ok(plan.panes[1]?.prompt.endsWith('EXTRA DIRECTION:\nDifferent per-item direction.'))
 })
 
 test('missing Investigate requires explicit choices; reviewed controls post once and successful selection clears', async () => {
@@ -80,7 +89,8 @@ test('missing Investigate requires explicit choices; reviewed controls post once
     ui.input('[name="model"]', 'opus')
     ui.input('[name="thinking"]', 'xhigh', 'change')
     ui.input('[name="budget"]', '$50', 'change')
-    ui.input('[name="extra"]', 'Keep existing work first.')
+    ui.input('[data-launch-item="ci"] [data-extra-text]', 'CI-specific direction.')
+    ui.input('[data-launch-item="parcel"] [data-extra-text]', 'Parcel-specific direction.')
     const form = ui.doc.querySelector('#spawn-form') as HTMLFormElement
     assert.equal(readControls(form).harness, 'pi')
     ui.click('#spawn-run')
@@ -98,7 +108,10 @@ test('missing Investigate requires explicit choices; reviewed controls post once
       actions.map((a) => a.verb),
       ['remediate', 'explain'],
     )
-    assert.ok(actions.every((a) => a.extraText === 'Keep existing work first.'))
+    assert.deepEqual(
+      actions.map((a) => a.extraText),
+      ['CI-specific direction.', 'Parcel-specific direction.'],
+    )
     assert.equal(ui.doc.querySelectorAll('[data-select]:checked').length, 0)
     assert.equal((ui.doc.querySelector('#selection-bar') as HTMLElement).hidden, true)
   } finally {

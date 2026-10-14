@@ -99,6 +99,13 @@ before any spawn, and refusals are audited like executions. Spawns use a
 frozen minimal environment (no caller-env passthrough) and the configured
 repo root as working directory.
 
+## Selected-action launch review
+
+Each selected finding has its own editable optional extra direction in the launch
+panel. It is sent with that finding's spawn action and appended verbatim to only
+that action's prompt; editing one item does not change another. Harness, model,
+thinking level, and budget remain shared launch controls.
+
 ## Session ledger (FCA-P7)
 
 Every launched pane leaves an evidence-backed record, derived on each read from

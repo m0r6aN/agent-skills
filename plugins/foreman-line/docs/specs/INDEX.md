@@ -29,13 +29,14 @@ Own TO-B0/TO-P0/TO-P1 lifecycle rows maintained 2026-10-10; other rows retain th
 | FCA-P8 | [Reconciliation view — local vs remote parcel state, history, and hung explanations](active/FCA-P8-reconciliation-view.md) | `active` | `active/` |
 | FCA-P9 | [Decisions queue — Gate 3 merge, Gate 1 ratification and Gate 2 dispatch, presented not performed](active/FCA-P9-decisions-queue.md) | `active` | `active/` |
 | FCA-P10 | [Parcel state amendment — separate "not started" from "stalled" (FOC-P0 C4 rule R4a)](active/FCA-P10-not-started-state.md) | `active` | `active/` |
-| FCA-P11 | [Reconciliation follow-through — per-finding "do it" that prepares a scoped session](active/FCA-P11-reconciliation-followthrough.md) | `active` | `active/` |
+| FCA-P11 | [Reconciliation follow-through — per-finding "do it" that prepares a scoped session (per-item launch directions)](active/FCA-P11-reconciliation-followthrough.md) | `active` | `active/` |
 | FCA-P12 | [Acknowledge historical failures and triage notifications, bound to the evidence](active/FCA-P12-acknowledge-and-triage.md) | `active` | `active/` |
 | FCA-P13 | [Session access — correct attach, read a failed session's output, resume only when there is something to resume](active/FCA-P13-session-access-and-resume.md) | `active` | `active/` |
 | FCA-P14 | [Event-loop offload — non-blocking git/gh/process calls for ops-console API routes](active/FCA-P14-event-loop-offload.md) | `active` | `active/` |
 | FCA-P16 | [Windows portability for ops-console tests and the UNSAFE_ROOT_PATTERN guard](active/FCA-P16-ops-console-windows-portability.md) | `active` | `active/` |
 | FCA-U1 | [Workspace navigation and responsive operator layout](active/FCA-U1-workspace-navigation.md) | `active` | `active/` |
 | FCA-U2 | [Persistent selection and explicit session launch review](active/FCA-U2-selection-launch.md) | `active` | `active/` |
+| FCA-P11 | [Per-selected-item extra direction in spawn review](active/FCA-P11-per-item-extra-direction.md) | `active` | `active/` |
 | FCA-U3 | [Session monitoring and launch outcome handoff](active/FCA-U3-session-monitoring.md) | `active` | `active/` |
 | FK-P0 | [Foreman Kernel - canon authority and enforcement registry](active/FK-P0-canon-authority-enforcement-registry.md) | `active` | `active/` |
 | FK-P10 | [Foreman Kernel - lease and transition engine](done/FK-P10-lease-transition-engine.md) | `done` | `done/` |
