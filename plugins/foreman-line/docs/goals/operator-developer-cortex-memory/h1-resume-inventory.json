@@ -1,0 +1,39 @@
+{
+  "utc": "2026-10-14T02:36:49.787Z",
+  "candidate": "bfd21823b1c8419ba320961591583b476e9df58e",
+  "merge": "b3a4b1b529ea0b804c07c681c69de8d4e2aebfdf",
+  "tree": "af68acf9f6f2e7ce1b8546805083d661f3e5e7c8",
+  "mergeTreeEqualsReviewedCandidate": true,
+  "mergedTests": {
+    "path": "h1-integrated-results/h1-integrated.trx",
+    "sha256": "6c942966212db9f80e6bd6b520661d4625ea0344b0b6203ab662b5874e962bcc",
+    "count": 422,
+    "allPassed": true,
+    "fullIdentitiesEqualReviewedWindows": true
+  },
+  "usages": [
+    {
+      "call": "p5a-shaping",
+      "models": [
+        "openrouter/moonshotai/kimi-k3"
+      ],
+      "observedUsageUsd": 1.433448,
+      "rawTranscriptSha256": "ffdcbc247e422059751d9f3dad79cb4a35277b68becbfe8024307829a6639d6a",
+      "timedOut": true
+    },
+    {
+      "call": "p5a-shaping-recovery",
+      "models": [
+        "openrouter/moonshotai/kimi-k3"
+      ],
+      "observedUsageUsd": 0.10829,
+      "rawTranscriptSha256": "a810d78c1e66808ea93b4db029d2387855a69c73172ac2a5dfd4f8527bcbbbb2",
+      "timedOut": false
+    }
+  ],
+  "p5aPreliminaryShapingObservedUsd": 1.541738,
+  "h1ObservedUsd": 3.857473,
+  "predecessorRecordedUsd": 191.1,
+  "knownSubtotalUsd": 196.499211,
+  "limits": "First shaping attempt timed out420s without final deliverable; observed usage includes completed message_end records only and is not a billed-total proof. One180s text-only recovery completed. Prior historical unknowns and any unmetered interrupted provider work remain unknown, never zero; no new builder/request after this preliminary recovery."
+}

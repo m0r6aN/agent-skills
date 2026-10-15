@@ -104,7 +104,7 @@ function detailsHtml(p, open) {
   const found = (p.discrepancies || []).map((d) => `<section class="rec-finding"><h4>${esc(DISCREPANCY_LABELS[d.code] || d.code)}${d.confidence === 'weak-traces' ? ' <span class="muted">(weak traces only)</span>' : ''}</h4><p>${esc(d.summary)}</p>
     <p class="meta">Evidence</p>${list(d.evidence.map(esc))}
     <p><strong>${esc(d.question)}</strong></p>
-    <ol class="rec-options">${d.options.map((o) => `<li><strong>${esc(o.answer)}</strong><br>${esc(o.recommendation)}${o.commands.length ? `<div>${o.commands.map((c) => `<code class="rec-cmd">${esc(c)}</code>`).join('')}</div>` : ''}</li>`).join('')}</ol></section>`).join('')
+    <ol class="rec-options">${d.options.map((o) => `<li><strong>${esc(o.answer)}</strong><br>${esc(o.recommendation)}${o.act ? `<button type="button" data-prepare-session data-parcel="${esc(p.parcel)}" data-verb="${esc(o.act.verb)}" data-instruction="${esc(o.act.instruction)}">Prepare session</button>` : `<p class="meta">Needs ${d.code === 'shipped-unrecorded' ? 'closure-proposal' : 'hygiene-actions'} (not yet available)</p>`}${o.commands.length ? `<div>${o.commands.map((c) => `<code class="rec-cmd">${esc(c)}</code>`).join('')}</div>` : ''}</li>`).join('')}</ol></section>`).join('')
   const shown = (p.history || []).length
   const truncated = Number.isInteger(p.historyTotal) && p.historyTotal > shown ? `<p class="meta">Showing the newest ${esc(shown)} of ${esc(p.historyTotal)} events.</p>` : ''
   const history = (p.history || []).length
@@ -121,7 +121,7 @@ export function reconcileRowsHtml(parcels, options = {}) {
     const signal = status ? signals.find((s) => s.class === 'parcel-state' && s.subject === `${status.key}/${p.parcel}` && s.repo === status.repoRoot && eligibleActions(s, registry).length) : null
     const select = signal ? `<input type="checkbox" data-select="${esc(signal.id)}" ${selected.has(signal.id) ? 'checked' : ''} aria-label="Select parcel ${esc(p.parcel)} for an investigation session">` : '<span class="muted" title="No supported action for this parcel">—</span>'
     return `<tr class="rec-row" data-rec-parcel="${esc(p.parcel)}"><td data-label="Select">${select}</td>
-      <td data-label="Parcel"><strong>${esc(p.parcel)}</strong><span class="meta"><span class="chip chip-${p.state === 'complete' || p.state === 'running' ? 'green' : 'neutral'}">${esc(p.state || 'unknown')}</span> rule ${esc(p.rule || '—')}</span></td>
+      <td data-label="Parcel"><strong>${esc(p.parcel)}</strong><span class="meta"><span class="chip chip-${p.state === 'complete' || p.state === 'running' || p.state === 'not-started' ? 'green' : 'neutral'}">${p.state === 'not-started' ? 'Not started' : esc(p.state || 'unknown')}</span> rule ${esc(p.rule || '—')}</span></td>
       <td data-label="Local">${localHtml(p)}</td><td data-label="Remote">${remoteHtml(p)}</td>
       <td data-label="Discrepancy">${discrepancyChips(p)}${detailsHtml(p, open.has(p.parcel))}</td></tr>`
   }).join('')

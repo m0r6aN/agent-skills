@@ -15,7 +15,7 @@ import {
   type OpenPrFacts,
   summariseChecks,
 } from '../src/decisions-remote.js'
-import { type Scenario, withTempRepo } from './support/materialize.js'
+import { type Scenario, withTempRepo, withTempRepoAsync } from './support/materialize.js'
 
 /**
  * FCA-P9 decisions queue: composition of PR facts into merge items (order,
@@ -342,7 +342,6 @@ test('gate items: R3 G1 and G2 parcels listed with evidence; tip-E (G3) parcels 
     assert.match(by.get('P2')?.chainLocator ?? '', /docs\/receipts\//)
     assert.ok((by.get('P1')?.evidence ?? '').length > 0)
     assert.equal(by.has('P3'), false, 'tip E is Gate 3, served by the PR list')
-    assert.equal(by.get('P1')?.command, null)
     assert.equal(out.counts.G1, 1)
     assert.equal(out.counts.G2, 1)
     assert.equal(out.counts.merge, 0)
@@ -354,29 +353,39 @@ test('gate items: R3 G1 and G2 parcels listed with evidence; tip-E (G3) parcels 
   })
 })
 
-test('GET /api/decisions is read-only, refuses other methods, and leaves /api/gates byte-identical', () => {
+test('GET /api/decisions is read-only, refuses other methods, and leaves /api/gates byte-identical', async () => {
   clearDecisionCaches()
-  withTempRepo(gateScenario(), ({ config }) => {
+  await withTempRepoAsync(gateScenario(), async ({ config }) => {
     const request = (method: string, path: string): ApiRequest => {
       const url = new URL(path, 'http://localhost')
       return { method, pathname: url.pathname, query: url.searchParams, body: {} }
     }
     const gatesBefore = JSON.stringify(
-      handleApi(config, request('GET', '/api/gates?goal=goal-dec'), NOW),
+      await handleApi(config, request('GET', '/api/gates?goal=goal-dec'), NOW),
     )
-    const res = handleApi(config, request('GET', '/api/decisions'), NOW, {
-      decisions: { gh: noGh, git: () => 'origin/main' },
+    const res = await handleApi(config, request('GET', '/api/decisions'), NOW, {
+      decisions: {
+        gh: async () => {
+          throw new Error('gh unavailable')
+        },
+        git: async () => 'origin/main',
+      },
     })
     assert.equal(res.status, 200)
     const json = res.json as DecisionsResponse
     assert.ok(Array.isArray(json.items))
-    assert.equal(handleApi(config, request('POST', '/api/decisions'), NOW).status, 405)
+    assert.equal((await handleApi(config, request('POST', '/api/decisions'), NOW)).status, 405)
     const gatesAfter = JSON.stringify(
-      handleApi(config, request('GET', '/api/gates?goal=goal-dec'), NOW),
+      await handleApi(config, request('GET', '/api/gates?goal=goal-dec'), NOW),
     )
     assert.equal(gatesAfter, gatesBefore)
-    const filtered = handleApi(config, request('GET', '/api/decisions?repo=/nowhere'), NOW, {
-      decisions: { gh: noGh, git: () => 'origin/main' },
+    const filtered = await handleApi(config, request('GET', '/api/decisions?repo=/nowhere'), NOW, {
+      decisions: {
+        gh: async () => {
+          throw new Error('gh unavailable')
+        },
+        git: async () => 'origin/main',
+      },
     })
     assert.equal(filtered.status, 200)
     assert.equal((filtered.json as DecisionsResponse).items.length, 0)
@@ -427,5 +436,83 @@ test('buildDecisions merges real-shaped gh output through the guarded runner and
       'api',
       'repos/{owner}/{repo}/check-runs/115392291023/annotations',
     ])
+  })
+})
+
+// ------------------------------------------------------------------ FCA-P9 stages 2-3: commands
+
+test('G1/G2 commands come from the existing flows (approve + reject for G1, dispatch for G2); presented text only', () => {
+  clearDecisionCaches()
+  withTempRepo(gateScenario(), ({ config }) => {
+    const out = buildDecisions(config, NOW, { gh: noGh, git: () => 'origin/main' })
+    const by = new Map(
+      out.items.filter((i): i is GateItem => i.kind === 'gate').map((g) => [g.parcel, g]),
+    )
+    const p1 = by.get('P1')
+    assert.equal(p1?.command?.flow, 'approval-approve')
+    assert.equal(p1?.command?.text, `approval approve ${p1?.slug} --repo-root ${config.repoRoot}`)
+    assert.equal(p1?.altCommand?.flow, 'approval-reject')
+    assert.equal(p1?.altCommand?.text, `approval reject ${p1?.slug} --repo-root ${config.repoRoot}`)
+    assert.equal(p1?.approvalShow, true)
+    assert.equal(p1?.commandNote, null)
+    const p2 = by.get('P2')
+    if (p2?.slug === null) {
+      assert.equal(p2.command, null, 'no slug, no command')
+      assert.match(p2.commandNote ?? '', /no approval slug/)
+    } else {
+      assert.equal(p2?.command?.flow, 'dispatch-execute')
+      assert.equal(p2?.altCommand ?? null, null)
+    }
+  })
+})
+
+test('a gate item on a non-primary root carries no command and says why; no guard is widened', () => {
+  clearDecisionCaches()
+  withTempRepo(gateScenario(), ({ config }) => {
+    // Negative control: the primary differs from the tree root, as for a non-primary fleet root.
+    const out = buildDecisions({ ...config, repoRoot: '/somewhere/else' }, NOW, {
+      gh: noGh,
+      git: () => 'origin/main',
+    })
+    const gates = out.items.filter((i): i is GateItem => i.kind === 'gate')
+    assert.ok(gates.length > 0)
+    for (const g of gates) {
+      assert.equal(g.command, null)
+      assert.equal(g.altCommand ?? null, null)
+      assert.equal(g.approvalShow, false)
+      assert.equal(g.commandNote, "command not presented: root is not the console's primary root")
+    }
+  })
+})
+
+test('merge items carry `cd "<root>" && gh pr merge <N>` with no strategy flag; a root with unsafe characters yields no command', () => {
+  clearDecisionCaches()
+  const gh = () =>
+    JSON.stringify([
+      {
+        number: 218,
+        title: 't',
+        url: 'https://github.com/o/r/pull/218',
+        headRefName: 'feat/x',
+        headRefOid: 'a'.repeat(40),
+        baseRefName: 'main',
+        isDraft: false,
+        mergeable: 'MERGEABLE',
+        mergeStateStatus: 'BLOCKED',
+        reviewDecision: '',
+        latestReviews: [],
+        statusCheckRollup: [],
+        createdAt: '2026-10-13T10:00:00Z',
+        updatedAt: '2026-10-13T11:00:00Z',
+      },
+    ])
+  withTempRepo(gateScenario(), ({ config }) => {
+    const out = buildDecisions(config, NOW, { gh, git: () => 'origin/main' })
+    const m = out.items.find((i): i is MergeItem => i.kind === 'merge')
+    assert.equal(m?.command?.flow, 'pr-merge')
+    assert.deepEqual(m?.command?.argv, ['merge', '218', '--repo-root', config.repoRoot])
+    assert.equal(m?.command?.text, `cd "${config.repoRoot}" && gh pr merge 218`)
+    assert.doesNotMatch(m?.command?.text ?? '', /--(merge|squash|rebase|auto|admin|delete-branch)/)
+    assert.equal(m?.commandNote, null)
   })
 })

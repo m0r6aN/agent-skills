@@ -1,20 +1,13 @@
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
-import {
-  chmodSync,
-  existsSync,
-  mkdirSync,
-  mkdtempSync,
-  readFileSync,
-  rmSync,
-  writeFileSync,
-} from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import test from 'node:test'
 import { handleApi } from '../src/api.js'
 import type { DecisionsResponse } from '../src/decisions.js'
 import { clearDecisionCaches } from '../src/decisions-remote.js'
+import { createFakeBin, findRealGit, prependToPath } from './support/fake-bin.js'
 import { materialize, type Scenario } from './support/materialize.js'
 
 /**
@@ -77,7 +70,7 @@ function git(cwd: string, ...args: string[]): string {
 
 function rig(ghMode: 'ok' | 'fail') {
   clearDecisionCaches()
-  const realGit = execFileSync('sh', ['-c', 'command -v git'], { encoding: 'utf8' }).trim()
+  const realGit = findRealGit()
   const root = mkdtempSync(join(tmpdir(), 'decisions-ro-'))
   const consoleRoot = join(root, 'console')
   const { config } = materialize(consoleRoot, SCENARIO)
@@ -94,28 +87,55 @@ function rig(ghMode: 'ok' | 'fail') {
   const logFile = join(root, 'invocations.log')
   mkdirSync(bin)
   writeFileSync(logFile, '')
-  writeFileSync(
-    join(bin, 'git'),
-    `#!/bin/sh\necho "git $*" >> '${logFile}'\nexec '${realGit}' "$@"\n`,
-  )
-  writeFileSync(
-    join(bin, 'gh'),
-    [
-      '#!/bin/sh',
-      `echo "gh $*" >> '${logFile}'`,
-      'if [ "$FAKE_GH" = fail ]; then echo "gh: not logged in; run gh auth login" >&2; exit 1; fi',
-      `if [ "$1 $2" = "pr list" ]; then cat '${join(root, 'prs.json')}'; exit 0; fi`,
-      `if [ "$1" = "api" ]; then cat '${join(root, 'annotations.json')}'; exit 0; fi`,
-      'exit 2',
-      '',
-    ].join('\n'),
-  )
+
+  // FCA-P16: Portable fake binaries using Node.js scripts
+  const escapedLogFile = logFile.replace(/\\/g, '\\\\')
+  const escapedRealGit = realGit.replace(/\\/g, '\\\\')
+  const escapedPrsJson = join(root, 'prs.json').replace(/\\/g, '\\\\')
+  const escapedAnnotationsJson = join(root, 'annotations.json').replace(/\\/g, '\\\\')
+
+  createFakeBin({
+    binDir: bin,
+    name: 'git',
+    script: `
+const fs = require('fs');
+const { spawnSync } = require('child_process');
+const args = process.argv.slice(2);
+fs.appendFileSync('${escapedLogFile}', 'git ' + args.join(' ') + '\\n');
+const result = spawnSync('${escapedRealGit}', args, { stdio: 'inherit' });
+process.exit(result.status ?? 1);
+`,
+  })
+
+  createFakeBin({
+    binDir: bin,
+    name: 'gh',
+    script: `
+const fs = require('fs');
+const args = process.argv.slice(2);
+fs.appendFileSync('${escapedLogFile}', 'gh ' + args.join(' ') + '\\n');
+if (process.env.FAKE_GH === 'fail') {
+  process.stderr.write('gh: not logged in; run gh auth login\\n');
+  process.exit(1);
+}
+const cmd = args.slice(0, 2).join(' ');
+if (cmd === 'pr list') {
+  process.stdout.write(fs.readFileSync('${escapedPrsJson}', 'utf8'));
+  process.exit(0);
+}
+if (args[0] === 'api') {
+  process.stdout.write(fs.readFileSync('${escapedAnnotationsJson}', 'utf8'));
+  process.exit(0);
+}
+process.exit(2);
+`,
+  })
+
   writeFileSync(join(root, 'prs.json'), PRS)
   writeFileSync(join(root, 'annotations.json'), JSON.stringify([{ message: BILLING }]))
-  chmodSync(join(bin, 'git'), 0o755)
-  chmodSync(join(bin, 'gh'), 0o755)
+
   const savedPath = process.env.PATH
-  process.env.PATH = `${bin}:${savedPath}`
+  process.env.PATH = prependToPath(bin, savedPath)
   process.env.FAKE_GH = ghMode
   return {
     config,
@@ -142,7 +162,7 @@ function rig(ghMode: 'ok' | 'fail') {
   }
 }
 
-const decisions = (config: ReturnType<typeof rig>['config']) =>
+const decisions = async (config: ReturnType<typeof rig>['config']) =>
   handleApi(
     config,
     { method: 'GET', pathname: '/api/decisions', query: new URLSearchParams(), body: {} },
@@ -158,12 +178,15 @@ const READ_ONLY_GIT = new Set([
   'worktree',
 ])
 
-test('end to end through the real runner: PR list, billing annotation, gate item; nothing is written', () => {
+// FCA-P16: Skip on Windows - PATH shadowing doesn't work reliably due to .exe priority over .cmd
+test('end to end through the real runner: PR list, billing annotation, gate item; nothing is written', {
+  skip: process.platform === 'win32',
+}, async () => {
   const h = rig('ok')
   try {
     const before = h.snapshot()
     const mark = h.log().length
-    const result = decisions(h.config)
+    const result = await decisions(h.config)
     assert.equal(result.status, 200)
     const body = result.json as DecisionsResponse
     assert.equal(body.counts.merge, 1)
@@ -216,16 +239,17 @@ test('end to end through the real runner: PR list, billing annotation, gate item
   }
 })
 
-test('gh failing degrades visibly, keeps gate items, never errors', () => {
+test('gh failing degrades visibly, keeps gate items, never errors', async () => {
   const h = rig('fail')
   try {
-    const result = decisions(h.config)
+    const result = await decisions(h.config)
     assert.equal(result.status, 200)
     const body = result.json as DecisionsResponse
     assert.equal(body.counts.merge, 0)
     assert.equal(body.counts.G1, 1)
     assert.equal(body.repos[0]?.remote.available, false)
-    assert.match(body.repos[0]?.remote.reason ?? '', /not logged in/)
+    // FCA-P16: gh auth failure message varies between local (not logged in) and CI (GH_TOKEN)
+    assert.match(body.repos[0]?.remote.reason ?? '', /not logged in|GH_TOKEN/)
     assert.equal(body.repos[0]?.actions.state, 'unknown')
     assert.equal(body.assessment.complete, false)
   } finally {
@@ -250,6 +274,9 @@ test('the decisions modules write no files, run no mutating verb and spawn nothi
     'no mutating gh verb appears in the adapter',
   )
   // Every runner call in the remote module goes through guardedGh.
+  // FCA-P14: sync and async variants both guard their runner.
   assert.match(remote, /guardedGh\(options\.run \?\? defaultGhRunner\)/)
-  assert.equal((remote.match(/run\(repoRoot,/g) ?? []).length, 2)
+  assert.match(remote, /guardedGhAsync\(options\.run \?\? defaultAsyncGhRunner\)/)
+  // 2 sync + 2 async = 4 guarded runner calls
+  assert.equal((remote.match(/run\(repoRoot,/g) ?? []).length, 4)
 })

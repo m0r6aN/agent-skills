@@ -9,7 +9,7 @@ import {
   SEVERITY_FOR_STATE,
   type SignalRefusalError,
 } from '../src/signals.js'
-import { type Scenario, withTempRepo } from './support/materialize.js'
+import { type Scenario, withTempRepo, withTempRepoAsync } from './support/materialize.js'
 
 /**
  * FCA-P3 signal layer (Task 4): the `Signal` type with its closed class
@@ -101,9 +101,9 @@ test('parcel-state provider reproduces projection output as signals', () => {
   })
 })
 
-test('GET /api/signals filters by repo/class/severity and validates filter values', () => {
-  withTempRepo(signalsScenario(), ({ config }) => {
-    const all = handleApi(
+test('GET /api/signals filters by repo/class/severity and validates filter values', async () => {
+  await withTempRepoAsync(signalsScenario(), async ({ config }) => {
+    const all = await handleApi(
       config,
       { method: 'GET', pathname: '/api/signals', query: new URLSearchParams(), body: {} },
       NOW_MS,
@@ -113,7 +113,7 @@ test('GET /api/signals filters by repo/class/severity and validates filter value
       .signals
     assert.ok(signals.length > 0)
 
-    const byClass = handleApi(
+    const byClass = await handleApi(
       config,
       {
         method: 'GET',
@@ -125,7 +125,7 @@ test('GET /api/signals filters by repo/class/severity and validates filter value
     )
     assert.equal((byClass.json as { signals: unknown[] }).signals.length, signals.length)
 
-    const bySeverity = handleApi(
+    const bySeverity = await handleApi(
       config,
       {
         method: 'GET',
@@ -141,7 +141,7 @@ test('GET /api/signals filters by repo/class/severity and validates filter value
       ),
     )
 
-    const byRepo = handleApi(
+    const byRepo = await handleApi(
       config,
       {
         method: 'GET',
@@ -152,7 +152,7 @@ test('GET /api/signals filters by repo/class/severity and validates filter value
       NOW_MS,
     )
     assert.equal((byRepo.json as { signals: unknown[] }).signals.length, signals.length)
-    const wrongRepo = handleApi(
+    const wrongRepo = await handleApi(
       config,
       {
         method: 'GET',
@@ -164,7 +164,7 @@ test('GET /api/signals filters by repo/class/severity and validates filter value
     )
     assert.equal((wrongRepo.json as { signals: unknown[] }).signals.length, 0)
 
-    const badClass = handleApi(
+    const badClass = await handleApi(
       config,
       {
         method: 'GET',
@@ -177,7 +177,7 @@ test('GET /api/signals filters by repo/class/severity and validates filter value
     assert.equal(badClass.status, 400)
     assert.equal((badClass.json as { reason?: string }).reason, 'unknown-class')
 
-    const badSeverity = handleApi(
+    const badSeverity = await handleApi(
       config,
       {
         method: 'GET',
@@ -189,7 +189,7 @@ test('GET /api/signals filters by repo/class/severity and validates filter value
     )
     assert.equal((badSeverity.json as { reason?: string }).reason, 'unknown-severity')
 
-    const wrongMethod = handleApi(
+    const wrongMethod = await handleApi(
       config,
       { method: 'POST', pathname: '/api/signals', query: new URLSearchParams(), body: {} },
       NOW_MS,

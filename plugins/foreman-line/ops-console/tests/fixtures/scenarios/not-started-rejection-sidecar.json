@@ -1,0 +1,20 @@
+{
+  "name": "not-started-rejection-sidecar",
+  "description": "R4 hung: queued parcel with ONLY a rejection sidecar (no spec, no chain) — a sidecar is progress, so this is stalled (hung), not not-started.",
+  "now": "2026-10-13T12:00:00.000Z",
+  "goal": {
+    "slug": "goal-ns-rej",
+    "queue": ["1. **P1** rejected, awaiting rework."]
+  },
+  "specs": [],
+  "sidecars": [{ "kind": "rejection", "spec": "P1-nosuchspec.md", "decision": "rejected" }],
+  "expected": [
+    {
+      "parcel": "P1",
+      "state": "hung",
+      "rule": "R4",
+      "chainEvidence": "absent",
+      "specLocation": "none"
+    }
+  ]
+}

@@ -1,9 +1,14 @@
-# Foreman Ops Console (`ops-console`)
+# Foreman Ops Console
+
+Acknowledgement API: `GET /api/acknowledgements`, `POST /api/acknowledgements`
+(with `id`, 64-hex `fingerprint`, and optional `note`), and
+`DELETE /api/acknowledgements/:id`. Acknowledgements are stored in the
+console-local `state/acknowledgements.json` file and lapse when evidence changes. (`ops-console`)
 
 Local-only, **read-only** observer + human-gate presentation over the Foreman
 Line's existing truth sources (receipt chains, parcel specs, goal records). It
-answers "what is running, hung, awaiting a gate, failed, or complete?" at a
-glance. It consumes verification produced by others; it never produces it
+answers "what is running, hung, awaiting a gate, failed, complete, or not
+started?" at a glance. It consumes verification produced by others; it never produces it
 (charter D2/D4; FOC-P0 contract).
 
 - **Port 8081 on loopback (`127.0.0.1`) only — no authentication.** The
@@ -14,8 +19,10 @@ glance. It consumes verification produced by others; it never produces it
 - Every parcel state is **derived from disk on every request** (frozen FOC-P0
   rules R1–R5) — there is no stored status anywhere.
 - The console writes exactly two console-local files:
-  `state/notifications.json` (`foc-notifications/v1`) and
-  `state/invocation-audit.json` (`foc-invocation-audit/v1`, append-only). It
+  `state/notifications.json` (`foc-notifications/v1`),
+  `state/invocation-audit.json` (`foc-invocation-audit/v1`, append-only), and
+  `state/acknowledgements.json` (`foc-acknowledgements/v1`, evidence-bound with
+  append-only acknowledge/unacknowledge events). It
   never writes to `contracts/`, `docs/specs/`, `docs/receipts/`, or
   `docs/goals/` — proven by the negative control in
   `tests/read-only.test.ts`.
@@ -39,7 +46,7 @@ Environment:
 | Variable | Default | Meaning |
 |---|---|---|
 | `FOC_REPO_ROOT` | **required — no default** | Absolute root whose `docs/receipts/` and `plugins/foreman-line/docs/` are projected. Absent (`root-absent`) or relative (`root-not-absolute`) values are refused before startup with a typed `ConsoleRootUnresolvedError` (exit 2) — the console never derives the repo root from the working directory or its own module location (D1) |
-| `FOC_STATE_DIR` | `ops-console/state` | The ONLY writable directory (two fixed files) |
+| `FOC_STATE_DIR` | `ops-console/state` | The ONLY writable directory (three fixed files) |
 | `FOC_EXTRA_ROOTS` | *(empty)* | FCA-1: colon-separated absolute roots whose goal trees project too (`docs/goals`, `docs/INITIATIVES`, `plugins/foreman-line/docs/goals` per root). Goal keys qualify as `alias.slug` (alias = root directory name); bare slugs keep resolving to the primary root. |
 | `PORT` | `8081` | Listen port (`8080` inside the container) |
 | `FOC_HOST` | `127.0.0.1` | Loopback only; non-loopback requires `FOC_CONTAINER=1` and is refused otherwise |
@@ -64,6 +71,15 @@ docker run -d --name foreman-hub --restart unless-stopped `
 > required `FOC_REPO_ROOT` to the mount point (`/data`); a container without
 > it refuses at startup exactly like the local run. Open
 > http://127.0.0.1:8081/ — no login, loopback only.
+
+## Reconciliation follow-through (FCA-P11)
+
+Reconciliation findings may offer **Prepare session** for explicitly mapped
+options. This only selects the parcel, sets its per-item instruction, and opens
+the existing launch-review dialog; it never starts a session or performs a
+write. Instructions are bounded to 2,000 characters with the safety footer
+preserved. Options without an authorized action remain disabled and show
+copyable commands. See `docs/specs/active/FCA-P11-reconciliation-followthrough.md`.
 
 ## API (frozen route table — FOC-P0 X1)
 
@@ -99,6 +115,13 @@ before any spawn, and refusals are audited like executions. Spawns use a
 frozen minimal environment (no caller-env passthrough) and the configured
 repo root as working directory.
 
+## Selected-action launch review
+
+Each selected finding has its own editable optional extra direction in the launch
+panel. It is sent with that finding's spawn action and appended verbatim to only
+that action's prompt; editing one item does not change another. Harness, model,
+thinking level, and budget remain shared launch controls.
+
 ## Session ledger (FCA-P7)
 
 Every launched pane leaves an evidence-backed record, derived on each read from
@@ -128,9 +151,15 @@ observed facts (never stored as status):
 see (merge state, review decision, checks, stack order) with their age, and **never
 says an item is ready**. `mergeable: UNKNOWN` stays unknown.
 
-- **Presents, never performs.** Stage 1 shows facts only; later stages add the exact
-  command for you to run in a terminal. The console never merges, approves or
-  dispatches.
+- **Presents, never performs.** Each row has a "Show command" button. Pressing it is one
+  `/api/invoke` presentation, audited `presented`; only then is the exact command revealed
+  for you to run in a terminal. Gate 1 shows approve and reject (`approval-approve`,
+  `approval-reject`), Gate 2 shows `dispatch-execute`, Gate 3 shows
+  `cd "<root>" && gh pr merge <N>` (flow `pr-merge`, present-only, no strategy flag, so `gh`
+  asks you). Gate commands are offered for the console's primary root only; other roots say
+  so. `pr-merge` refuses (audited `refused`) a bad PR number, a relative, undeclared or
+  quote/`$`/backtick/control-character root, extra argv, and any mode other than `present`.
+  The console never merges, approves or dispatches.
 - **"Actions not starting" is evidence, not inference.** The banner appears only when
   a failing check-run's annotation carries GitHub's billing wording, quoted verbatim.
   A failed check without that annotation reads "Failed, cause unknown".

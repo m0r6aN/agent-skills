@@ -1,9 +1,9 @@
 # Coordinator Directive — Operator-developer Cortex memory
 
 **Goal slug:** `operator-developer-cortex-memory`  
-**Recorded:** 2026-10-10; ownership/freshness checkpoint updated 2026-10-13 (coordinator `01a1358d`)
-**State:** `P0–P4b ACCEPTED; COORDINATOR 01a1358d STOPPED BEFORE P5a DISPATCH AWAITING SECURITY DISPOSITION S-1 (PRE-EXISTING SQLITE CVE OUTSIDE MANIFEST); 421/0/0 BASELINE; EXTERNAL main PROMOTIONS #50/#68 OBSERVED, DEPLOYMENT UNVERIFIED; REMOTE INTEGRATION REFS DELETED; CLOUD/PRODUCTION = OWNER STOP ITEMS`
-**Scheduling:** synchronous coordinator loop in the owning session (no wakeup tool in this harness); human gates are NOT stop conditions except destructive/production-affecting actions — see `ownership-transfer-2026-10-12-01a131a9.md`
+**Recorded:** 2026-10-10; H1 verification/stop checkpoint updated 2026-10-14 (coordinator `01a1358d`)
+**State:** `P0–P4b AND H1 SOURCE ACCEPTED; HUMAN #51 MERGED TO INTEGRATION b3a4b1b, EXACT REVIEWED TREE, MERGED BASELINE422/0/0; S-1 CLOSED FOR INTEGRATION ONLY; P5a PRELIMINARY SHAPING RECOVERED, NOT DISPATCHABLE/NO BUILDER; STOP FOR SCOPE/PLAN ADMISSION AND SEPARATE #227 RED CI (UNCHANGED pi-package MISSING LOCK); DEPLOYMENT UNVERIFIED; CLOUD/PRODUCTION = OWNER STOP ITEMS`
+**Scheduling:** synchronous coordinator loop, no wakeup tool/worker/poll running. Preserved delegated consent is not re-requested; actual missing identity/bypass/human-only technical gates and destructive/production-affecting actions remain stop conditions under current SPEC-CONVENTION §8.
 
 ## COORDINATOR OWNERSHIP — read before any dispatch
 
@@ -13,12 +13,12 @@
 | Sole coordinator | Pi session `01a1358d-711a-7345-8874-901c5e2b50e3` |
 | Previous coordinators | Most recent: `01a131a9-5c16-724a-a016-3353a124592d`, stopped after P4b per `handoff.md` and released per owner; earlier appointments historical. |
 | Appointment | 2026-10-13 explicit owner replacement, verbatim in `ownership-transfer-2026-10-13-01a1358d.md`; preserve all existing ratifications, authorizations, budgets and limits. Prior blanket grant/dispositions remain recorded in the 2026-10-12 transfer and delegated-decision record. |
-| Boundary | Post-P4b parcel boundary; no worker reported in predecessor handoff, no worker launched by successor. No global external-session liveness claim. |
+| Boundary | H1 source closed after real human merge; fresh P5a preliminary shaper completed one recovery after420s timeout, no builder/draft artifact. All worker sessions settled, none running; no global external-session liveness claim. |
 | Appointment scope | All OPMEM gates owner-delegated (recorded as such, never as human receipts). Destructive / production-affecting actions (incl. merges to auto-deploying `main` of keon-cortex / keon-mcp-gateway, cloud/Neon/credential changes) remain stop-for-owner. USD 25 P0 cap retained; later parcels: recorded spend per parcel. |
 | Current session provenance | `PI_PROVIDER=openai`, `PI_MODEL=gpt-6.1-sol`, `PI_SESSION_ID=01a1358d-711a-7345-8874-901c5e2b50e3`; observed metadata, not a Foreman route receipt |
-| Coordinator publication workspace | `D:/Repos/agent-skills-worktrees/opmem-coord-20261013-01a1358d`, branch `coord/opmem-resume-20261013-01a1358d`, base `9578ed1645561e85d100e79dce29459d8bd43088`; predecessor worktrees and dispatch evidence retained untouched. |
+| Coordinator publication workspace | Current H1: `D:/Repos/agent-skills-worktrees/opmem-h1-coord-01a1358d`, branch `coord/opmem-h1-01a1358d`, base `543b261bba8c67265b1628fdb5834c287dac80ba`; prior successor #220 externally merged, all predecessor worktrees retained. |
 | Transfer rule | One goal, one coordinator. Transfer only at parcel boundaries by explicit owner direction and update to this ownership block |
-| Last state change | 2026-10-13 — transfer/freshness reconciled; isolated Gateway baseline 421 passed / 0 failed / 0 skipped. STOPPED before P5a dispatch for S-1 security dependency disposition outside manifest; `resume-stop-report-2026-10-13-01a1358d.md`. Ownership retained; no worker/wakeup. Recorded predecessor spend USD 191.10, USD 45 architecture-parcel / USD 400 cumulative guards preserved; prior unknown spend stays unknown. |
+| Last state change | 2026-10-14 — actual human #51 mergeb3a4b1b tree equals dual-reviewedbfd21823; merged422/0/0. `h1-closure-2026-10-14.md` closes S-1 integration-only; P5a scope/plan admission and #227 upstream red CI hold. Ownership retained, no worker/wakeup. H1 usage3.857473 + P5a preliminary observed1.541738 + predecessor191.10 = known196.499211;45/400 guards, historical unknowns and any interrupted unmetered work preserved, not claimed fully billed. |
 
 An incoming session is not automatically the owner. If it is not the session above, stop and ask the owner for a boundary transfer. If another live owner is discovered, stop and reconcile; directory absence is a scoped local observation, not proof about every external session.
 
@@ -26,7 +26,7 @@ An incoming session is not automatically the owner. If it is not the session abo
 
 ## Read on resume
 
-1. `resume-stop-report-2026-10-13-01a1358d.md`, `ownership-transfer-2026-10-13-01a1358d.md`, this ownership block and `charter.md` — S-1 stop/disposition, successor authority, actual remote freshness and limitations.
+1. `h1-closure-2026-10-14.md`, `p5a-shaping-proposal-and-hold-2026-10-14.md`, `h1-publication-2026-10-14.md`, `h1-resume-inventory.json`, `owner-h1-authorization-2026-10-13.md`, `ownership-transfer-2026-10-13-01a1358d.md`, this ownership block and `charter.md` — H1 actual integration closure, P5a scope/provenance hold, upstream red record CI, preserved authority/limits.
 2. `handoff.md`, `ownership-transfer-2026-10-12-01a131a9.md`, `owner-delegated-decisions-2026-10-12-01a131a9.md` — preserved decisions, spend guards, production boundary, routes and deviations.
 3. `follow-on-parcel-manifests.md` §P5a onward, `p0-triage-2026-10-12.md`, `p1-triage-2026-10-12.md` and upstream parcel closures/carry-forwards — binding seams, exact allowed paths, T-35/T-36, OD-22/OD-23.
 4. Accepted P0 boundary/event/validation contracts. Original Stage A inputs remain historical and untouched; they are not current completion evidence.
@@ -105,7 +105,8 @@ The presented approvals bound that response as follows:
 | OPMEM-P2a/P2b | Accepted; #62/#63 | elevated / architecture/risk |
 | OPMEM-P3a/P3b | Accepted; #64/#65 | elevated / architecture/risk |
 | OPMEM-P4a/P4b | Accepted; #66/#67 | elevated / architecture/risk |
-| OPMEM-P5a | NEXT but STOPPED for S-1 dependency-security disposition; baseline 421/0/0; no shaping/build dispatch | elevated / architecture/risk |
+| OPMEM-H1 | SOURCE ACCEPTED; actual human #51 integration mergeb3a4b1b = reviewed tree, merged422/0/0; S-1 integrationclosed; record PR#227 separate red CI hold | elevated / architecture/risk |
+| OPMEM-P5a | Preliminary shaping proposal obtained; recommended serial split/explicit path amendments not yet ratified/linted/reviewed; no actual Stage A draft or builder | elevated / architecture/risk |
 | OPMEM-P5b | Queued; private fresh-clone import under OD-1 only when shaped | elevated / architecture/risk |
 | OPMEM-P6 | Queued; depends on P5b | elevated / architecture/risk |
 | OPMEM-P7 | Queued; package/root named at shaping, depends on P6 | standard / implementation/standard |
@@ -116,7 +117,7 @@ The presented approvals bound that response as follows:
 ## Current execution algorithm
 
 1. Check sole ownership and exact remote refs; do not trust retained stale tracking refs after branch deletion.
-2. Shape P5a from accepted manifests + carry-forwards in a fresh session; verify factual premises on disk; record any amendments alone before code.
+2. H1 actual human merge verified/source closed. Reconcile #227 upstream CI-owner prerequisite and interrupted shaping envelope/accounting; explicitly disposition P5a proposed split/exact amendments, emit real draft specs/ShapingResult, obtain fresh independent plan review, factual-lint/Gate2 and standalone amendments before code. Do not treat preliminary shaper prose as a dispatchable contract.
 3. Record named isolated Gateway worktree/base and full-suite baseline; non-deploying merge target only. Recreate an absent integration branch only under the reversible Git grant, never by promoting to main/develop.
 4. Dispatch builder Step 0, rule on flags, then GO only within approved exact paths. Bound/account each request; guard USD 45 per architecture parcel and USD 400 cumulative, predecessor recorded USD 191.10 carried forward.
 5. Closure-check claims against disk, rerun deterministic tests, dual independent frontier reviews, reproduce disputes, scoped rework with its own Step 0 and test-count tripwire; no source fixes by reviewers.
@@ -151,9 +152,9 @@ Every eventual kickstarter references `plugins/foreman-line/docs/kickstarters/ST
 
 No polling or short wakeups. No workers are currently running. On a future interrupted worker cycle, first establish whether a worker is actually live; unclaimed surviving disk work is not a completion claim.
 
-## Current stop report — 2026-10-13, sole coordinator 01a1358d
+## Current stop report — 2026-10-14, sole coordinator 01a1358d
 
-See `resume-stop-report-2026-10-13-01a1358d.md`. Written stopped state; no model request, code changes, production/cloud/credential operation, worker, polling or wakeup. Sole ownership retained. Next owner action is narrow S-1 remediation scope or explicit bounded risk disposition for the pre-existing SQLite dependency advisory outside P5a's file authority. This is not a repeated ownership/requirements/P0/Git approval request. Remote base restoration and P5a shaping resume only after the stop is resolved.
+See `h1-closure-2026-10-14.md` and `p5a-shaping-proposal-and-hold-2026-10-14.md`. H1 actual human integration mergeverified, exacttree/reviewchain,422mergedbaseline; S-1 integrationclosed, no deployclaim. #227 remains unmerged and required CI red from unchanged pi-package no-lock prerequisite. Hold record merge; route narrow upstream source-owner repair, never hide package/CI changes in H1. Preliminary P5a recovered planning output requires explicit split/path/design rulings, actual draft emission/lint and independent decomposition review before Gate2/build. Timeout/knownusage recorded without resetting historicalunknowns. No repeated H1 scope/merge consent, automated human-token merge, production/cloud/credentials, worker/poll/wakeup. Sole ownership retained; P5a builder undispatched.
 
 ## Historical stop report / next safe action — before the latest owner decisions
 

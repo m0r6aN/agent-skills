@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import test from 'node:test'
 import { type ApiResult, handleApi } from '../src/api.js'
 import type { ConsoleConfig } from '../src/config.js'
-import { type Scenario, withTempRepo } from './support/materialize.js'
+import { type Scenario, withTempRepoAsync } from './support/materialize.js'
 
 /**
  * FCA-P2 fleet API surface: `GET /api/fleet`, `POST /api/fleet/add|remove`,
@@ -31,7 +31,12 @@ function fleetScenario(): Scenario {
   }
 }
 
-function call(config: ConsoleConfig, method: string, pathname: string, body?: unknown): ApiResult {
+async function call(
+  config: ConsoleConfig,
+  method: string,
+  pathname: string,
+  body?: unknown,
+): Promise<ApiResult> {
   const url = new URL(pathname, 'http://localhost')
   return handleApi(
     config,
@@ -44,9 +49,9 @@ function reason(result: ApiResult): unknown {
   return (result.json as { reason?: unknown }).reason
 }
 
-test('GET /api/fleet lists the primary root with derived identity + liveness', () => {
-  withTempRepo(fleetScenario(), ({ config }) => {
-    const result = call(config, 'GET', '/api/fleet')
+test('GET /api/fleet lists the primary root with derived identity + liveness', async () => {
+  await withTempRepoAsync(fleetScenario(), async ({ config }) => {
+    const result = await call(config, 'GET', '/api/fleet')
     assert.equal(result.status, 200)
     const roots = (
       result.json as { roots: { root: string; liveness: string; identity: unknown }[] }
@@ -58,11 +63,11 @@ test('GET /api/fleet lists the primary root with derived identity + liveness', (
   })
 })
 
-test('POST /api/fleet/add registers a real work tree and persists to state/fleet.json', () => {
-  withTempRepo(fleetScenario(), ({ config }) => {
+test('POST /api/fleet/add registers a real work tree and persists to state/fleet.json', async () => {
+  await withTempRepoAsync(fleetScenario(), async ({ config }) => {
     const extra = join(config.repoRoot, 'sibling-project')
     mkdirSync(join(extra, '.git'), { recursive: true })
-    const result = call(config, 'POST', '/api/fleet/add', { root: extra })
+    const result = await call(config, 'POST', '/api/fleet/add', { root: extra })
     assert.equal(result.status, 200)
     const roots = (result.json as { roots: { root: string }[] }).roots
     assert.deepEqual(
@@ -70,7 +75,7 @@ test('POST /api/fleet/add registers a real work tree and persists to state/fleet
       [config.repoRoot, extra],
     )
     // Persisted: a fresh GET sees the same registry.
-    const after = call(config, 'GET', '/api/fleet')
+    const after = await call(config, 'GET', '/api/fleet')
     assert.deepEqual(
       (after.json as { roots: { root: string }[] }).roots.map((entry) => entry.root),
       [config.repoRoot, extra],
@@ -78,28 +83,31 @@ test('POST /api/fleet/add registers a real work tree and persists to state/fleet
   })
 })
 
-test('POST /api/fleet/add typed refusals are non-mutating', () => {
-  withTempRepo(fleetScenario(), ({ config }) => {
-    const relative = call(config, 'POST', '/api/fleet/add', { root: 'rel/ative' })
+test('POST /api/fleet/add typed refusals are non-mutating', async () => {
+  await withTempRepoAsync(fleetScenario(), async ({ config }) => {
+    const relative = await call(config, 'POST', '/api/fleet/add', { root: 'rel/ative' })
     assert.equal(relative.status, 400)
     assert.equal(reason(relative), 'root-not-absolute')
 
-    const absent = call(config, 'POST', '/api/fleet/add', { root: '/no/such/project' })
+    const absent = await call(config, 'POST', '/api/fleet/add', { root: '/no/such/project' })
     assert.equal(reason(absent), 'root-absent')
 
     const plain = join(config.repoRoot, 'not-a-repo')
     mkdirSync(plain, { recursive: true })
     assert.equal(
-      reason(call(config, 'POST', '/api/fleet/add', { root: plain })),
+      reason(await call(config, 'POST', '/api/fleet/add', { root: plain })),
       'not-a-git-work-tree',
     )
 
     const extra = join(config.repoRoot, 'sibling-project')
     mkdirSync(join(extra, '.git'), { recursive: true })
-    call(config, 'POST', '/api/fleet/add', { root: extra })
-    assert.equal(reason(call(config, 'POST', '/api/fleet/add', { root: extra })), 'duplicate-root')
+    await call(config, 'POST', '/api/fleet/add', { root: extra })
+    assert.equal(
+      reason(await call(config, 'POST', '/api/fleet/add', { root: extra })),
+      'duplicate-root',
+    )
 
-    const after = call(config, 'GET', '/api/fleet')
+    const after = await call(config, 'GET', '/api/fleet')
     assert.deepEqual(
       (after.json as { roots: { root: string }[] }).roots.map((entry) => entry.root),
       [config.repoRoot, extra],
@@ -107,23 +115,23 @@ test('POST /api/fleet/add typed refusals are non-mutating', () => {
   })
 })
 
-test('POST /api/fleet/remove: extras removable; primary immutable; unknown is 404', () => {
-  withTempRepo(fleetScenario(), ({ config }) => {
+test('POST /api/fleet/remove: extras removable; primary immutable; unknown is 404', async () => {
+  await withTempRepoAsync(fleetScenario(), async ({ config }) => {
     const extra = join(config.repoRoot, 'sibling-project')
     mkdirSync(join(extra, '.git'), { recursive: true })
-    call(config, 'POST', '/api/fleet/add', { root: extra })
+    await call(config, 'POST', '/api/fleet/add', { root: extra })
 
-    const primary = call(config, 'POST', '/api/fleet/remove', { root: config.repoRoot })
+    const primary = await call(config, 'POST', '/api/fleet/remove', { root: config.repoRoot })
     assert.equal(primary.status, 400)
     assert.equal(reason(primary), 'root-primary-immutable')
 
-    const unknown = call(config, 'POST', '/api/fleet/remove', { root: '/no/such/project' })
+    const unknown = await call(config, 'POST', '/api/fleet/remove', { root: '/no/such/project' })
     assert.equal(unknown.status, 404)
     assert.equal(reason(unknown), 'root-unknown')
 
-    const removed = call(config, 'POST', '/api/fleet/remove', { root: extra })
+    const removed = await call(config, 'POST', '/api/fleet/remove', { root: extra })
     assert.equal(removed.status, 200)
-    const after = call(config, 'GET', '/api/fleet')
+    const after = await call(config, 'GET', '/api/fleet')
     assert.deepEqual(
       (after.json as { roots: { root: string }[] }).roots.map((entry) => entry.root),
       [config.repoRoot],
@@ -131,27 +139,35 @@ test('POST /api/fleet/remove: extras removable; primary immutable; unknown is 40
   })
 })
 
-test('GET /api/fs/browse lists one level and refuses bad paths typed', () => {
-  withTempRepo(fleetScenario(), ({ config }) => {
-    const ok = call(config, 'GET', `/api/fs/browse?path=${encodeURIComponent(config.repoRoot)}`)
+test('GET /api/fs/browse lists one level and refuses bad paths typed', async () => {
+  await withTempRepoAsync(fleetScenario(), async ({ config }) => {
+    const ok = await call(
+      config,
+      'GET',
+      `/api/fs/browse?path=${encodeURIComponent(config.repoRoot)}`,
+    )
     assert.equal(ok.status, 200)
     const entries = (ok.json as { entries: { name: string }[] }).entries
     assert.ok(entries.some((entry) => entry.name === '.git'))
 
-    const missing = call(config, 'GET', '/api/fs/browse')
+    const missing = await call(config, 'GET', '/api/fs/browse')
     assert.equal(missing.status, 400)
 
-    const relative = call(config, 'GET', `/api/fs/browse?path=${encodeURIComponent('rel/ative')}`)
+    const relative = await call(
+      config,
+      'GET',
+      `/api/fs/browse?path=${encodeURIComponent('rel/ative')}`,
+    )
     assert.equal(relative.status, 400)
     assert.equal(reason(relative), 'path-not-absolute')
   })
 })
 
-test('fleet + browse routes enforce method guards like the rest of the table', () => {
-  withTempRepo(fleetScenario(), ({ config }) => {
-    assert.equal(call(config, 'POST', '/api/fleet').status, 405)
-    assert.equal(call(config, 'GET', '/api/fleet/add').status, 405)
-    assert.equal(call(config, 'GET', '/api/fleet/remove').status, 405)
-    assert.equal(call(config, 'POST', '/api/fs/browse').status, 405)
+test('fleet + browse routes enforce method guards like the rest of the table', async () => {
+  await withTempRepoAsync(fleetScenario(), async ({ config }) => {
+    assert.equal((await call(config, 'POST', '/api/fleet')).status, 405)
+    assert.equal((await call(config, 'GET', '/api/fleet/add')).status, 405)
+    assert.equal((await call(config, 'GET', '/api/fleet/remove')).status, 405)
+    assert.equal((await call(config, 'POST', '/api/fs/browse')).status, 405)
   })
 })

@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 import test from 'node:test'
-import type { GitRunner } from '../src/ledger-git.js'
+import { GIT_MAX_BUFFER, type GitRunner } from '../src/ledger-git.js'
 import { gatherRepoFacts, LOG_LIMIT, parseWorktrees } from '../src/reconcile-git.js'
 import {
   clearPrCache,
@@ -19,7 +19,25 @@ import {
  * FCA-P8 fact gatherers: local git facts against REAL repositories (bare
  * remote, worktrees, upstream tracking) and the `gh` adapter against an
  * injected runner. Every failure mode degrades to unavailable, never a guess.
+ *
+ * FCA-P16: Windows CI runners are significantly slower than Linux. Use a longer
+ * git timeout on Windows to avoid spurious timeouts on shared runners.
  */
+const WINDOWS_GIT_TIMEOUT_MS = 30_000
+const testGitRunner: GitRunner = (cwd, args) => {
+  try {
+    return execFileSync('git', ['-C', cwd, '-c', 'core.fsmonitor=false', ...args], {
+      cwd,
+      encoding: 'utf8',
+      timeout: process.platform === 'win32' ? WINDOWS_GIT_TIMEOUT_MS : 10_000,
+      maxBuffer: GIT_MAX_BUFFER,
+      env: { ...process.env, GIT_OPTIONAL_LOCKS: '0' },
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).replace(/\s+$/, '')
+  } catch {
+    return null
+  }
+}
 function git(cwd: string, ...args: string[]): string {
   return execFileSync('git', ['-C', cwd, '-c', 'user.name=t', '-c', 'user.email=t@t', ...args], {
     encoding: 'utf8',
@@ -35,7 +53,10 @@ function commitFile(repo: string, rel: string, body: string, message: string): v
   git(repo, 'commit', '-q', '-m', message)
 }
 
-test('gatherRepoFacts reads default ref, branches, merge state, upstream tracking, specs, worktrees, logs', () => {
+// FCA-P16: Longer timeout for Windows CI where git operations are slower
+test('gatherRepoFacts reads default ref, branches, merge state, upstream tracking, specs, worktrees, logs', {
+  timeout: process.platform === 'win32' ? 60_000 : 30_000,
+}, () => {
   const root = mkdtempSync(join(tmpdir(), 'reconcile-git-'))
   try {
     const bare = join(root, 'remote.git')
@@ -59,7 +80,8 @@ test('gatherRepoFacts reads default ref, branches, merge state, upstream trackin
     const wt = join(root, 'wt-foc-p3')
     git(repo, 'worktree', 'add', '-q', '-b', 'spawn/foc-p3', wt)
 
-    const facts = gatherRepoFacts(repo)
+    // FCA-P16: Use testGitRunner with longer timeout for Windows CI
+    const facts = gatherRepoFacts(repo, testGitRunner)
     assert.equal(facts.defaultRef, 'origin/main')
     assert.equal(facts.currentBranch, 'main')
     assert.deepEqual(facts.defaultDivergence, { ahead: 0, behind: 0 })
@@ -84,7 +106,32 @@ test('gatherRepoFacts reads default ref, branches, merge state, upstream trackin
       'symbolic origin/HEAD is not a branch',
     )
 
-    assert.ok(facts.worktrees.some((w) => w.path === wt && w.branch === 'spawn/foc-p3'))
+    // FCA-P16: Normalize paths for cross-platform comparison.
+    // Windows paths: case-insensitive, may use forward slashes from git,
+    // and tmpdir() may return short paths (e.g. runner~1) while git outputs full paths.
+    // Use realpathSync to resolve to canonical paths, then normalize case.
+    const normalizePath = (p: string): string => {
+      // Replace forward slashes with native separators before resolving (git may output with /)
+      const native = process.platform === 'win32' ? p.replace(/\//g, '\\') : p
+      try {
+        // realpathSync resolves short paths to full paths and normalizes separators
+        const real =
+          process.platform === 'win32' ? realpathSync.native(native) : realpathSync(native)
+        return process.platform === 'win32' ? real.toLowerCase() : real
+      } catch {
+        // If path doesn't exist yet, fall back to resolve + toLowerCase
+        return process.platform === 'win32' ? resolve(native).toLowerCase() : resolve(native)
+      }
+    }
+    const normalizedWt = normalizePath(wt)
+    const match = facts.worktrees.find(
+      (w) => normalizePath(w.path) === normalizedWt && w.branch === 'spawn/foc-p3',
+    )
+    assert.ok(
+      match !== undefined,
+      `worktree ${normalizedWt} with branch spawn/foc-p3 not found; ` +
+        `actual worktrees: ${JSON.stringify(facts.worktrees.map((w) => ({ path: normalizePath(w.path), branch: w.branch })))}`,
+    )
     assert.ok(
       facts.defaultLog.some((c) => c.subject === 'feat: FOC-P0 contract' && c.sha.length === 40),
     )

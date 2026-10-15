@@ -1,0 +1,44 @@
+## Plan Review — OPMEM-H1 SQLite Dependency Remediation (draft spec)
+
+**Verdict: APPROVE-WITH-FIXES** — plan is coherent, authority-aligned, and security-honest; two acceptance-boundary ambiguities should be clarified before GO. No blockers requiring re-shaping.
+
+### Evidence verified (7 tool calls)
+
+- Worktree `gateway-h1-01a1358d` is clean, at declared base `0e0878a…`, branch `feat/opmem-h1-sqlite-01a1358d` — matches spec and owner authorization exactly.
+- Both named manifests reference `Microsoft.Data.Sqlite 10.0.0` (src csproj line 17, test csproj line 14 — matching the lint record's *corrected* locators, confirming the lint caught and fixed the shaper's bad 22/16 locators).
+- No `Directory.Packages.props` / `Directory.Build.props` / `nuget.config` at root → csproj version edits are effective; no central-package-management collision. The load-bearing decision (10.0.13 → SQLitePCLRaw 2.1.13) has a working mutation path.
+- New test path `tests/Keon.McpGateway.Tests/Cortex/NativeSqliteVersionTests.cs` is absent; directory exists with two sibling Cortex tests → **no silent file collision**.
+- `Keon.McpGateway.slnx` exists and contains **three** projects, including `tests/Keon.McpGateway.IntegrationTests`, which has **no direct** SQLite reference (ProjectReference only) → spec's "two direct manifests" claim is factually correct.
+
+### Findings
+
+**F1 (fix required) — AC2 vulnerable-scan scope omits the third project.**
+Locator: spec *Acceptance Criteria* #2 ("source/test project `dotnet list <project> package --include-transitive --vulnerable`").
+`Keon.McpGateway.IntegrationTests.csproj` is in the slnx restore graph and transitively resolves SQLitePCLRaw native through its ProjectReference to the Gateway. As written, AC2's scan can be satisfied while the third project's resolved graph is never inspected; AC3's "vulnerable 2.1.11 is absent" similarly doesn't say *from which graphs*.
+**Correction:** In AC2/AC3, enumerate all three projects (or run the transitive-vulnerable scan at solution level) and state explicitly: IntegrationTests is *scan/graph-verification scope*, not mutation scope (its file remains byte-identical to base per AC1).
+
+**F2 (fix required) — 421/422 baseline not pinned to a named suite.**
+Locator: AC4 ("`dotnet test tests/Keon.McpGateway.Tests` … 422/0/0: all 421 baseline tests preserved").
+The repo contains a second test project the spec never mentions. AC4's command happens to scope correctly, but the spec's narrative baseline ("the 421-test baseline") is repo-level language checked by a project-level command. A future executor or reviewer could satisfy/dispute the count against the wrong suite, and the Integration suite — whose transitive native library *does* change — is silently unexecuted with no recorded rationale.
+**Correction:** State in Constraints or AC4: "The 421-test baseline is exactly the `Keon.McpGateway.Tests` project suite (per `h1-baseline.trx`); `Keon.McpGateway.IntegrationTests` is deliberately not executed in this parcel because [it requires live services excluded by constraints / it is not part of the recorded baseline], and its non-execution is not evidence of compatibility." The Linux AC7 "same full suite" should likewise name the project.
+
+**F3 (optional) — AC5 mutation-check venue lives only in the shaping record.**
+Locator: AC5 ("a disposable mutation changing its floor to 99.0.0 fails") vs. shaping record ruling ("disposable owned copy; never edits reviewer/parcel source").
+AC5 alone doesn't say *where* the mutation happens; standing-constraint Reviewer rule #11 plus the shaping ruling resolve it, but the spec is the frozen contract.
+**Correction:** Append to AC5: "performed on a disposable owned copy outside the parcel worktree; parcel source is never mutated."
+
+**F4 (optional) — AC1 wording vs. new-file addition.**
+Locator: AC1 ("exactly the three allowed source paths differ from base"). The third path is a *new* file; "differ from base" is satisfied by addition, but stating "two modified + one added, no other tracked or newly tracked paths" would make the diff check mechanical and close the "extra untracked file committed" gap.
+
+### Mandate items with no finding
+
+- **Decomposition coherence:** Unit test (AC5) proves the *test-run* native lib; AC6/AC7 independently prove *published* win-x64/linux-x64 assets by absolute path + hash. The spec correctly treats these as distinct proofs ("Windows proof is not Linux proof") — no conflation.
+- **Approved-vs-executed authority:** Owner authorization ("two direct SQLite package manifests and one narrowly focused runtime-version regression test") maps 1:1 onto the spec's three Allowed Files; branch, immutable base, `opmem/integration`-only merge, no-deploy, dual family-independent reviews, and spend guards all match verbatim. The administrative conflict-marker repair is correctly fenced as a separate commit outside H1 scope.
+- **No weakened security claim:** Spec repeatedly disclaims metadata-as-proof, requires measured `sqlite_version() >= 3.50.2` (correct floor for CVE-2025-6965, fixed in 3.50.2), mandates stop-for-ruling on floor failure rather than silent broader upgrades, timestamps the audit claim, and explicitly denies deployed-fix/OPMEM-completion claims. Shaper's `git clean -xdf` suggestion was correctly rejected.
+- **Stop rules:** Step 0 restate-and-stop, coordinator GO, failing-floor stop, unrelated-finding stop, and amendment-before-extra-file rules are all present and consistent with standing constraints (#10, #11, #13 analogues honored).
+
+### Disposition
+
+APPROVE-WITH-FIXES: apply F1 and F2 as text clarifications to the spec before builder GO (both are acceptance-boundary gaps that could let a passing run silently under-verify the third project or miscount the baseline); F3/F4 are optional hardening. No source edits, commits, or evidence were created by this review; reviewer worktree state at review end: clean, HEAD `0e0878a…`.
+
+Stopping as instructed.

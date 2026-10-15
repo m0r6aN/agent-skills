@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+out=D:/Repos/opmem-dispatch-01a1358d
+image=sha256:9087b2e7762d148ff39cbf3766cd7fffe608dbd9990c8673c2cbb77f6eacd82f
+name=opmem-h1-proof-closure-01a1358d
+# Exactly these two owned mounts; no -e, secrets, Docker socket or live-service mount.
+export MSYS_NO_PATHCONV=1
+printf 'UTC=%s\n' "$(date -u +%FT%TZ)" > "$out/h1-linux-launch-meta.log"
+sha256sum "$out/linux-input/h1-source.tar" >> "$out/h1-linux-launch-meta.log"
+git get-tar-commit-id < "$out/linux-input/h1-source.tar" >> "$out/h1-linux-launch-meta.log"
+docker create --name "$name" --mount type=bind,src=D:/Repos/opmem-dispatch-01a1358d/linux-input,target=/input,readonly --mount type=bind,src=D:/Repos/opmem-dispatch-01a1358d/linux-evidence,target=/evidence "$image" bash /input/h1-linux-proof.sh > "$out/h1-linux-container-id.log"
+# Select only non-secret isolation/provenance fields; do not dump Config.Env.
+docker inspect "$name" --format '{"id":{{json .Id}},"image":{{json .Image}},"mounts":{{json .Mounts}},"ports":{{json .HostConfig.PortBindings}},"privileged":{{json .HostConfig.Privileged}},"devices":{{json .HostConfig.Devices}},"networkMode":{{json .HostConfig.NetworkMode}},"command":{{json .Config.Cmd}}}' > "$out/h1-linux-container-isolation.json"
+set +e
+docker start -a "$name" > "$out/h1-linux-container.log" 2>&1
+start_exit=$?
+set -e
+docker inspect "$name" --format '{{json .State}}' > "$out/h1-linux-container-state.json"
+container_exit=$(docker inspect "$name" --format '{{.State.ExitCode}}')
+docker rm "$name" > "$out/h1-linux-container-cleanup.log"
+printf 'START_EXIT=%s\nCONTAINER_EXIT=%s\nEND_UTC=%s\n' "$start_exit" "$container_exit" "$(date -u +%FT%TZ)" >> "$out/h1-linux-launch-meta.log"
+test "$start_exit" = 0 && test "$container_exit" = 0

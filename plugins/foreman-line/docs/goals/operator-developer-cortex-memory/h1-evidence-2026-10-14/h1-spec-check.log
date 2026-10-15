@@ -1,0 +1,28 @@
+{
+  "valid": true,
+  "frontmatter": {
+    "valid": true,
+    "errors": [],
+    "warnings": [
+      "advisory: surfaces entry 'src/Keon.McpGateway/Keon.McpGateway.csproj' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4",
+      "advisory: surfaces entry 'tests/Keon.McpGateway.Tests/Keon.McpGateway.Tests.csproj' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4",
+      "advisory: surfaces entry 'tests/Keon.McpGateway.Tests/Cortex/NativeSqliteVersionTests.cs' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4"
+    ]
+  },
+  "body": {
+    "valid": true,
+    "errors": []
+  },
+  "errors": []
+}
+{
+  "artifactPath": "D:/Repos/agent-skills-worktrees/opmem-h1-coord-01a1358d/plugins/foreman-line/docs/specs/active/opmem-h1-2026-10-13-01a1358d.shaping-result.json",
+  "payload": {
+    "parcelSpecRefs": [
+      "plugins/foreman-line/docs/specs/active/OPMEM-H1-sqlite-dependency-remediation.md"
+    ],
+    "epics": []
+  }
+}
+(node:41284) ExperimentalWarning: Transform Types is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)

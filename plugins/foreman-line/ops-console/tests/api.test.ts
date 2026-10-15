@@ -5,7 +5,7 @@ import test from 'node:test'
 import { type ApiRequest, type ApiResult, handleApi } from '../src/api.js'
 import type { ConsoleConfig } from '../src/config.js'
 import { resolveBind } from '../src/server.js'
-import { type Scenario, withTempRepo } from './support/materialize.js'
+import { type Scenario, withTempRepoAsync } from './support/materialize.js'
 
 /**
  * FOC-P2 frozen route table behavior + FOC-P3 gate/alert/notification routes +
@@ -65,7 +65,12 @@ const POLICY_YAML = [
   '',
 ].join('\n')
 
-function call(config: ConsoleConfig, method: string, path: string, body?: unknown): ApiResult {
+async function call(
+  config: ConsoleConfig,
+  method: string,
+  path: string,
+  body?: unknown,
+): Promise<ApiResult> {
   const url = new URL(path, 'http://localhost')
   const request: ApiRequest = {
     method,
@@ -76,8 +81,8 @@ function call(config: ConsoleConfig, method: string, path: string, body?: unknow
   return handleApi(config, request, NOW_MS)
 }
 
-function withApi<T>(run: (config: ConsoleConfig, root: string) => T): T {
-  return withTempRepo(apiScenario(), ({ config, root }) => {
+async function withApi<T>(run: (config: ConsoleConfig, root: string) => Promise<T>): Promise<T> {
+  return withTempRepoAsync(apiScenario(), async ({ config, root }) => {
     const policyPath = join(
       root,
       'plugins',
@@ -91,9 +96,30 @@ function withApi<T>(run: (config: ConsoleConfig, root: string) => T): T {
   })
 }
 
-test('GET /api/health reports the read-only localhost posture', () => {
-  withApi((config) => {
-    const result = call(config, 'GET', '/api/health')
+test('acknowledgement POST refuses unknown IDs and mismatched current evidence; DELETE refuses unknown IDs', async () => {
+  await withApi(async (config) => {
+    const unknownPost = await call(config, 'POST', '/api/acknowledgements', {
+      id: 'session-state:unknown',
+      fingerprint: 'a'.repeat(64),
+    })
+    assert.equal(unknownPost.status, 404)
+    assert.deepEqual(unknownPost.json, {
+      error: 'unknown alert or signal id',
+      reason: 'unknown-id',
+    })
+
+    const unknownDelete = await call(config, 'DELETE', '/api/acknowledgements/unknown-id')
+    assert.equal(unknownDelete.status, 404)
+    assert.deepEqual(unknownDelete.json, {
+      error: 'unknown acknowledgement id',
+      reason: 'unknown-id',
+    })
+  })
+})
+
+test('GET /api/health reports the read-only localhost posture', async () => {
+  await withApi(async (config) => {
+    const result = await call(config, 'GET', '/api/health')
     assert.equal(result.status, 200)
     const json = result.json as { ok: boolean; repoRoot: string; posture: string }
     assert.equal(json.ok, true)
@@ -102,9 +128,9 @@ test('GET /api/health reports the read-only localhost posture', () => {
   })
 })
 
-test('GET /api/goals and /api/goals/:slug render goal records; unknown goals 404', () => {
-  withApi((config) => {
-    const list = call(config, 'GET', '/api/goals')
+test('GET /api/goals and /api/goals/:slug render goal records; unknown goals 404', async () => {
+  await withApi(async (config) => {
+    const list = await call(config, 'GET', '/api/goals')
     assert.equal(list.status, 200)
     const goals = (list.json as { goals: { slug: string }[] }).goals
     assert.deepEqual(
@@ -112,7 +138,7 @@ test('GET /api/goals and /api/goals/:slug render goal records; unknown goals 404
       ['goal-api'],
     )
 
-    const detail = call(config, 'GET', '/api/goals/goal-api')
+    const detail = await call(config, 'GET', '/api/goals/goal-api')
     assert.equal(detail.status, 200)
     const goal = detail.json as { items: { key: string }[]; ratification: { status: string } }
     assert.deepEqual(
@@ -121,13 +147,13 @@ test('GET /api/goals and /api/goals/:slug render goal records; unknown goals 404
     )
     assert.equal(goal.ratification.status, 'granted')
 
-    assert.equal(call(config, 'GET', '/api/goals/ghost').status, 404)
+    assert.equal((await call(config, 'GET', '/api/goals/ghost')).status, 404)
   })
 })
 
-test('GET /api/parcels returns the projection; chain and logs routes walk one parcel', () => {
-  withApi((config) => {
-    const parcels = call(config, 'GET', '/api/parcels?goal=goal-api')
+test('GET /api/parcels returns the projection; chain and logs routes walk one parcel', async () => {
+  await withApi(async (config) => {
+    const parcels = await call(config, 'GET', '/api/parcels?goal=goal-api')
     assert.equal(parcels.status, 200)
     const projection = parcels.json as {
       parcels: { parcel: string; state: string }[]
@@ -139,7 +165,7 @@ test('GET /api/parcels returns the projection; chain and logs routes walk one pa
     )
     assert.deepEqual(projection.unmappedChains, [])
 
-    const chain = call(config, 'GET', '/api/parcels/P1/chain?goal=goal-api')
+    const chain = await call(config, 'GET', '/api/parcels/P1/chain?goal=goal-api')
     assert.equal(chain.status, 200)
     const chainJson = chain.json as {
       chain: { members: unknown[]; sidecars: string[]; valid: boolean }
@@ -153,9 +179,9 @@ test('GET /api/parcels returns the projection; chain and logs routes walk one pa
     )
     assert.equal(chainJson.duplicateChain, false)
 
-    assert.equal(call(config, 'GET', '/api/parcels/NOPE/chain?goal=goal-api').status, 404)
+    assert.equal((await call(config, 'GET', '/api/parcels/NOPE/chain?goal=goal-api')).status, 404)
 
-    const logs = call(config, 'GET', '/api/parcels/P1/logs?goal=goal-api')
+    const logs = await call(config, 'GET', '/api/parcels/P1/logs?goal=goal-api')
     assert.equal(logs.status, 200)
     const logsJson = logs.json as {
       chainDocuments: { locator: string }[]
@@ -168,9 +194,9 @@ test('GET /api/parcels returns the projection; chain and logs routes walk one pa
   })
 })
 
-test('GET /api/gates renders gate proxies and goal ratification read-only', () => {
-  withApi((config) => {
-    const result = call(config, 'GET', '/api/gates?goal=goal-api')
+test('GET /api/gates renders gate proxies and goal ratification read-only', async () => {
+  await withApi(async (config) => {
+    const result = await call(config, 'GET', '/api/gates?goal=goal-api')
     assert.equal(result.status, 200)
     const json = result.json as {
       ratification: { status: string }
@@ -182,9 +208,9 @@ test('GET /api/gates renders gate proxies and goal ratification read-only', () =
   })
 })
 
-test('GET /api/alerts fires hung/failed alerts into the console-local notification store', () => {
-  withApi((config) => {
-    const result = call(config, 'GET', '/api/alerts?goal=goal-api')
+test('GET /api/alerts fires hung/failed alerts into the console-local notification store', async () => {
+  await withApi(async (config) => {
+    const result = await call(config, 'GET', '/api/alerts?goal=goal-api')
     assert.equal(result.status, 200)
     const json = result.json as {
       alerts: { kind: string; parcel: string }[]
@@ -200,24 +226,24 @@ test('GET /api/alerts fires hung/failed alerts into the console-local notificati
     )
 
     // Firing is idempotent per alert id.
-    const again = call(config, 'GET', '/api/alerts?goal=goal-api')
+    const again = await call(config, 'GET', '/api/alerts?goal=goal-api')
     const againJson = again.json as { notifications: unknown[] }
     assert.deepEqual(againJson.notifications, json.notifications)
 
-    const listed = call(config, 'GET', '/api/notifications')
+    const listed = await call(config, 'GET', '/api/notifications')
     const notifications = (listed.json as { notifications: { id: string }[] }).notifications
     assert.ok(notifications.length > 0)
     const firstId = notifications[0]?.id ?? ''
-    const deleted = call(config, 'DELETE', `/api/notifications/${firstId}`)
+    const deleted = await call(config, 'DELETE', `/api/notifications/${firstId}`)
     assert.equal(deleted.status, 200)
     assert.equal((deleted.json as { deleted: boolean }).deleted, true)
-    assert.equal(call(config, 'DELETE', `/api/notifications/${firstId}`).status, 404)
+    assert.equal((await call(config, 'DELETE', `/api/notifications/${firstId}`)).status, 404)
   })
 })
 
-test('GET /api/routing renders policy class×ceiling and per-parcel routing read-only', () => {
-  withApi((config) => {
-    const result = call(config, 'GET', '/api/routing?goal=goal-api')
+test('GET /api/routing renders policy class×ceiling and per-parcel routing read-only', async () => {
+  await withApi(async (config) => {
+    const result = await call(config, 'GET', '/api/routing?goal=goal-api')
     assert.equal(result.status, 200)
     const json = result.json as {
       policy: {
@@ -237,13 +263,13 @@ test('GET /api/routing renders policy class×ceiling and per-parcel routing read
   })
 })
 
-test('POST /api/invoke routes to the frozen flow registry and reports refusals', () => {
-  withApi((config) => {
-    const refused = call(config, 'POST', '/api/invoke', { flow: 'deploy', argv: [] })
+test('POST /api/invoke routes to the frozen flow registry and reports refusals', async () => {
+  await withApi(async (config) => {
+    const refused = await call(config, 'POST', '/api/invoke', { flow: 'deploy', argv: [] })
     assert.equal(refused.status, 200)
     assert.equal((refused.json as { action: string }).action, 'refused')
 
-    const presented = call(config, 'POST', '/api/invoke', {
+    const presented = await call(config, 'POST', '/api/invoke', {
       flow: 'approval-approve',
       argv: ['approve', 'p1-alpha', '--repo-root', config.repoRoot],
     })
@@ -251,15 +277,15 @@ test('POST /api/invoke routes to the frozen flow registry and reports refusals',
   })
 })
 
-test('route table: unknown routes 404, wrong methods 405, missing goal param 400', () => {
-  withApi((config) => {
-    assert.equal(call(config, 'GET', '/api/unknown').status, 404)
-    assert.equal(call(config, 'POST', '/api/goals').status, 405)
-    assert.equal(call(config, 'DELETE', '/api/parcels/P1/chain?goal=goal-api').status, 405)
-    assert.equal(call(config, 'GET', '/api/parcels').status, 400)
-    assert.equal(call(config, 'GET', '/api/parcels?goal=ghost').status, 404)
-    assert.equal(call(config, 'POST', '/api/notifications').status, 405)
-    assert.equal(call(config, 'GET', '/api/invoke').status, 405)
+test('route table: unknown routes 404, wrong methods 405, missing goal param 400', async () => {
+  await withApi(async (config) => {
+    assert.equal((await call(config, 'GET', '/api/unknown')).status, 404)
+    assert.equal((await call(config, 'POST', '/api/goals')).status, 405)
+    assert.equal((await call(config, 'DELETE', '/api/parcels/P1/chain?goal=goal-api')).status, 405)
+    assert.equal((await call(config, 'GET', '/api/parcels')).status, 400)
+    assert.equal((await call(config, 'GET', '/api/parcels?goal=ghost')).status, 404)
+    assert.equal((await call(config, 'POST', '/api/notifications')).status, 405)
+    assert.equal((await call(config, 'GET', '/api/invoke')).status, 405)
   })
 })
 
@@ -275,8 +301,8 @@ test('D6 bind rule: loopback by default, non-loopback refused without FOC_CONTAI
   assert.throws(() => resolveBind({ PORT: 'nope' }), /PORT must be an integer/)
 })
 
-test('the served policy file is read-only input: nothing rewrote routing-policy.yaml', () => {
-  withApi((config, root) => {
+test('the served policy file is read-only input: nothing rewrote routing-policy.yaml', async () => {
+  await withApi(async (config, root) => {
     const policyPath = join(
       root,
       'plugins',
@@ -285,7 +311,7 @@ test('the served policy file is read-only input: nothing rewrote routing-policy.
       'routing-policy.yaml',
     )
     const before = readFileSync(policyPath, 'utf8')
-    call(config, 'GET', '/api/routing?goal=goal-api')
+    await call(config, 'GET', '/api/routing?goal=goal-api')
     assert.equal(readFileSync(policyPath, 'utf8'), before)
   })
 })

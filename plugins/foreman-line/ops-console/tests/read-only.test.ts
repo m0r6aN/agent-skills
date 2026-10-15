@@ -13,7 +13,13 @@ import {
 } from '../src/config.js'
 import { invokeFlow } from '../src/invoke.js'
 import { projectGoal } from '../src/project.js'
-import { fileMtimes, type Scenario, treeSnapshot, withTempRepo } from './support/materialize.js'
+import {
+  fileMtimes,
+  type Scenario,
+  treeSnapshot,
+  withTempRepo,
+  withTempRepoAsync,
+} from './support/materialize.js'
 
 /**
  * D2 read-only negative control: the console NEVER mutates goal, receipt, or
@@ -77,7 +83,7 @@ function richScenario(): Scenario {
   }
 }
 
-function exerciseEveryRoute(config: ConsoleConfig): void {
+async function exerciseEveryRoute(config: ConsoleConfig): Promise<void> {
   const routes: { method: string; path: string; body?: unknown }[] = [
     { method: 'GET', path: '/api/health' },
     { method: 'GET', path: '/api/goals' },
@@ -109,7 +115,7 @@ function exerciseEveryRoute(config: ConsoleConfig): void {
   ]
   for (const route of routes) {
     const url = new URL(route.path, 'http://localhost')
-    const result = handleApi(
+    const result = await handleApi(
       config,
       {
         method: route.method,
@@ -123,14 +129,14 @@ function exerciseEveryRoute(config: ConsoleConfig): void {
   }
 }
 
-test('D2 negative control: the full API surface leaves goal/receipt/spec trees byte- and mtime-identical', () => {
-  withTempRepo(richScenario(), ({ config, root }) => {
+test('D2 negative control: the full API surface leaves goal/receipt/spec trees byte- and mtime-identical', async () => {
+  await withTempRepoAsync(richScenario(), async ({ config, root }) => {
     const before = treeSnapshot(root, TRUTH_DIRS)
     const beforeTimes = fileMtimes(root, TRUTH_DIRS)
 
     const projection = projectGoal(config, 'goal-ro', NOW_MS)
     assert.ok(projection !== null, 'projection itself is exercised')
-    exerciseEveryRoute(config)
+    await exerciseEveryRoute(config)
 
     // A presented human-gate invocation and an executed read-only flow must
     // both leave the truth sources untouched.
@@ -178,7 +184,8 @@ test('D2 structural guard: only notifications.ts, invoke.ts, fleet.ts, spawn.ts,
         name !== 'invoke.ts' &&
         name !== 'fleet.ts' &&
         name !== 'spawn.ts' &&
-        name !== 'ledger-store.ts'
+        name !== 'ledger-store.ts' &&
+        name !== 'acknowledgements.ts'
       ) {
         offenders.push(name)
       }

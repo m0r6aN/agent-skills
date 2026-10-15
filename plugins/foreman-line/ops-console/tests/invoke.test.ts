@@ -1,8 +1,17 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import test from 'node:test'
-import { invokeFlow, listAuditEntries } from '../src/invoke.js'
+import { saveFleetState } from '../src/fleet.js'
+import {
+  FLOW_REGISTRY,
+  invokeFlow,
+  isUnsafeRoot,
+  listAuditEntries,
+  presentCommand,
+  unsafeRootMessage,
+} from '../src/invoke.js'
 import { fileMtimes, type Scenario, treeSnapshot, withTempRepo } from './support/materialize.js'
 
 /**
@@ -289,4 +298,213 @@ test('A1: the audit log is append-only, sequential, and records executed + prese
       assert.equal(store.entries.length, 3)
     },
   )
+})
+
+// ------------------------------------------------------------------ FCA-P9 pr-merge
+
+const mergeArgv = (root: string, n = '218') => ['merge', n, '--repo-root', root]
+
+test('FCA-P9: pr-merge is present-only: renders the exact command, audits one `presented`, spawns nothing', () => {
+  withTempRepo(scenario([]), ({ config }) => {
+    assert.equal(FLOW_REGISTRY['pr-merge']?.mode, 'present')
+    assert.equal(FLOW_REGISTRY['pr-merge']?.spawnCli, null)
+    const outcome = invokeFlow(
+      config,
+      { flow: 'pr-merge', argv: mergeArgv(config.repoRoot), mode: 'present' },
+      NOW_MS,
+    )
+    assert.equal(outcome.action, 'presented')
+    assert.equal(outcome.command, `cd "${config.repoRoot}" && gh pr merge 218`)
+    assert.equal(outcome.exitCode, null)
+    const audit = listAuditEntries(config.stateDir)
+    assert.equal(audit.length, 1)
+    assert.equal(audit[0]?.action, 'presented')
+    assert.equal(audit[0]?.mode, 'present')
+  })
+})
+
+test('FCA-P9: pr-merge refuses (audited `refused`) bad numbers, relative/undeclared/unsafe roots, extra argv and any non-present mode', () => {
+  withTempRepo(scenario([]), ({ config }) => {
+    const root = config.repoRoot
+    const cases: [string, { argv: readonly string[]; mode?: unknown }][] = [
+      ['zero', { argv: mergeArgv(root, '0') }],
+      ['leading zero', { argv: mergeArgv(root, '07') }],
+      ['non-numeric', { argv: mergeArgv(root, 'abc') }],
+      ['shell text', { argv: mergeArgv(root, '1; rm -rf /') }],
+      ['oversize', { argv: mergeArgv(root, '12345678') }],
+      ['relative root', { argv: mergeArgv('relative/root') }],
+      ['undeclared root', { argv: mergeArgv(join(root, 'other')) }],
+      ['root with unsafe chars', { argv: mergeArgv('/tmp/a"b') }],
+      ['extra argv', { argv: [...mergeArgv(root), '--squash'] }],
+      ['mode execute', { argv: mergeArgv(root), mode: 'execute' }],
+      ['mode spawn', { argv: mergeArgv(root), mode: 'spawn' }],
+      ['mode non-string', { argv: mergeArgv(root), mode: true }],
+    ]
+    for (const [label, c] of cases) {
+      const before = listAuditEntries(config.stateDir).length
+      const outcome = invokeFlow(config, { flow: 'pr-merge', ...c }, NOW_MS)
+      assert.equal(outcome.action, 'refused', label)
+      assert.equal(outcome.command, '', `${label}: a refusal carries no copyable command`)
+      const audit = listAuditEntries(config.stateDir)
+      assert.equal(audit.length, before + 1, label)
+      assert.equal(audit.at(-1)?.action, 'refused', label)
+    }
+  })
+})
+
+test('FCA-P9: pr-merge accepts a root declared in fleet state and only those', () => {
+  withTempRepo(scenario([]), ({ config }) => {
+    // FCA-P16: Use platform-appropriate temp path
+    const other = join(tmpdir(), 'fleet-other-root')
+    saveFleetState(config.stateDir, {
+      schema: 'foc-fleet/v1',
+      roots: [config.repoRoot, other],
+    })
+    const ok = invokeFlow(config, { flow: 'pr-merge', argv: mergeArgv(other) }, NOW_MS)
+    assert.equal(ok.action, 'presented')
+    assert.equal(ok.command, `cd "${other}" && gh pr merge 218`)
+    const notDeclared = join(tmpdir(), 'not-declared')
+    const no = invokeFlow(config, { flow: 'pr-merge', argv: mergeArgv(notDeclared) }, NOW_MS)
+    assert.equal(no.action, 'refused')
+  })
+})
+
+test('FCA-P9: presentCommand validates with the same guards and audits nothing', () => {
+  withTempRepo(scenario([]), ({ config }) => {
+    const ok = presentCommand(config, 'pr-merge', mergeArgv(config.repoRoot))
+    assert.ok('text' in ok)
+    // FCA-P16: Use platform-appropriate path with unsafe chars
+    const unsafePath = process.platform === 'win32' ? 'C:\\tmp\\x"y' : '/tmp/x"y'
+    assert.ok('refused' in presentCommand(config, 'pr-merge', mergeArgv(unsafePath)))
+    assert.ok(
+      'refused' in
+        presentCommand(config, 'approval-show', ['show', 'a', '--repo-root', config.repoRoot]),
+    )
+    assert.equal(listAuditEntries(config.stateDir).length, 0)
+  })
+})
+
+test('FCA-P9: the pr-merge path spawns nothing (negative control: invoke source has no gh/git-merge spawn)', async () => {
+  const { readFileSync } = await import('node:fs')
+  const text = readFileSync(new URL('../src/invoke.ts', import.meta.url), 'utf8')
+  const spawns = text.match(/spawnSync\(/g) ?? []
+  assert.equal(spawns.length, 1, 'exactly one spawn site, behind spawnCli')
+  assert.match(text, /flow\.mode === 'present'[\s\S]*?return outcome[\s\S]*?spawnSync\(/)
+  assert.doesNotMatch(text, /spawnSync\(\s*['"](gh|git)['"]/)
+})
+
+test('FCA-P9: a DECLARED fleet root containing a quote, $, backtick, or control char is refused (backslash: POSIX only)', () => {
+  withTempRepo(scenario([]), ({ config }) => {
+    // FCA-P16: Use platform-appropriate base path prefix for absolute paths
+    const baseDir = process.platform === 'win32' ? 'C:\\tmp' : '/tmp'
+    // Always refused on both platforms
+    const badPaths = [
+      `${baseDir}${process.platform === 'win32' ? '\\' : '/'}a"b`,
+      `${baseDir}${process.platform === 'win32' ? '\\' : '/'}a$b`,
+      `${baseDir}${process.platform === 'win32' ? '\\' : '/'}a\`b`,
+      `${baseDir}${process.platform === 'win32' ? '\\' : '/'}a\nb`,
+    ]
+    for (const bad of badPaths) {
+      saveFleetState(config.stateDir, { schema: 'foc-fleet/v1', roots: [config.repoRoot, bad] })
+      const outcome = invokeFlow(config, { flow: 'pr-merge', argv: mergeArgv(bad) }, NOW_MS)
+      assert.equal(outcome.action, 'refused', JSON.stringify(bad))
+      assert.match(
+        outcome.reason ?? '',
+        /cannot be safely interpolated|never escaped/,
+        JSON.stringify(bad),
+      )
+      assert.equal(outcome.command, '')
+    }
+    // Backslash refused on POSIX (current platform during Linux CI)
+    if (process.platform !== 'win32') {
+      const backslash = '/tmp/a\\b'
+      saveFleetState(config.stateDir, {
+        schema: 'foc-fleet/v1',
+        roots: [config.repoRoot, backslash],
+      })
+      const outcome = invokeFlow(config, { flow: 'pr-merge', argv: mergeArgv(backslash) }, NOW_MS)
+      assert.equal(outcome.action, 'refused', 'backslash refused on POSIX')
+    }
+  })
+})
+
+// ------------------------------------------------------------------ FCA-P16 platform-aware guard
+
+test('FCA-P16: isUnsafeRoot on POSIX refuses backslash, quotes, $, backtick, control chars', () => {
+  // Backslash is unsafe on POSIX (shell escape character)
+  assert.equal(isUnsafeRoot('C:\\path\\file', 'linux'), true, 'backslash on linux')
+  assert.equal(isUnsafeRoot('C:\\path\\file', 'darwin'), true, 'backslash on darwin')
+  // All platforms refuse these
+  assert.equal(isUnsafeRoot('/tmp/a"b', 'linux'), true, 'quote')
+  assert.equal(isUnsafeRoot('/tmp/a$b', 'linux'), true, 'dollar')
+  assert.equal(isUnsafeRoot('/tmp/a`b', 'linux'), true, 'backtick')
+  assert.equal(isUnsafeRoot('/tmp/a\x00b', 'linux'), true, 'null char')
+  assert.equal(isUnsafeRoot('/tmp/a\nb', 'linux'), true, 'newline')
+  assert.equal(isUnsafeRoot('/tmp/a\x7fb', 'linux'), true, 'DEL char')
+  // Clean paths are safe
+  assert.equal(isUnsafeRoot('/home/user/repos/project', 'linux'), false)
+  assert.equal(isUnsafeRoot('/Users/dev/code', 'darwin'), false)
+})
+
+test('FCA-P16: isUnsafeRoot on Windows allows backslash (path sep), refuses %, ^, quotes, $, backtick, control chars', () => {
+  // Backslash is ALLOWED on Windows (path separator)
+  assert.equal(isUnsafeRoot('C:\\Users\\dev\\repos', 'win32'), false, 'backslash allowed on win32')
+  assert.equal(isUnsafeRoot('D:\\projects\\foo', 'win32'), false)
+  // Windows-specific: % and ^ are cmd/PowerShell metacharacters
+  assert.equal(isUnsafeRoot('C:\\path%var%', 'win32'), true, 'percent is cmd expansion')
+  assert.equal(isUnsafeRoot('C:\\path^char', 'win32'), true, 'caret is cmd escape')
+  // Universal refusals
+  assert.equal(isUnsafeRoot('C:\\path"name', 'win32'), true, 'quote')
+  assert.equal(isUnsafeRoot('C:\\path$var', 'win32'), true, 'dollar')
+  assert.equal(isUnsafeRoot('C:\\path`cmd', 'win32'), true, 'backtick')
+  assert.equal(isUnsafeRoot('C:\\path\x00', 'win32'), true, 'null char')
+  assert.equal(isUnsafeRoot('C:\\path\n', 'win32'), true, 'newline')
+})
+
+test('FCA-P16: isUnsafeRoot uses current platform by default', () => {
+  // Test that the default parameter works (no explicit platform)
+  const safePath = process.platform === 'win32' ? 'C:\\Users\\dev' : '/home/user'
+  assert.equal(isUnsafeRoot(safePath), false, 'clean path for current platform')
+})
+
+test('FCA-P16: unsafeRootMessage varies by platform', () => {
+  const posix = unsafeRootMessage('linux')
+  const win = unsafeRootMessage('win32')
+  assert.match(posix, /backslash/, 'POSIX message mentions backslash')
+  assert.match(win, /%/, 'Windows message mentions %')
+  assert.match(win, /\^/, 'Windows message mentions ^')
+  assert.doesNotMatch(win, /backslash/, 'Windows message does not mention backslash')
+})
+
+test('FCA-P16: mutation test - isUnsafeRoot correctly identifies each forbidden character class', () => {
+  // Each character class should independently trigger refusal
+  const classes = {
+    posix: [
+      { char: '"', name: 'quote' },
+      { char: '$', name: 'dollar' },
+      { char: '`', name: 'backtick' },
+      { char: '\\', name: 'backslash' },
+      { char: '\x00', name: 'null' },
+      { char: '\x1f', name: 'control-last' },
+      { char: '\x7f', name: 'del' },
+    ],
+    win32: [
+      { char: '"', name: 'quote' },
+      { char: '$', name: 'dollar' },
+      { char: '`', name: 'backtick' },
+      { char: '%', name: 'percent' },
+      { char: '^', name: 'caret' },
+      { char: '\x00', name: 'null' },
+      { char: '\x1f', name: 'control-last' },
+      { char: '\x7f', name: 'del' },
+    ],
+  }
+  for (const { char, name } of classes.posix) {
+    assert.equal(isUnsafeRoot(`/safe/path${char}here`, 'linux'), true, `POSIX ${name}`)
+  }
+  for (const { char, name } of classes.win32) {
+    assert.equal(isUnsafeRoot(`C:\\safe\\path${char}here`, 'win32'), true, `win32 ${name}`)
+  }
+  // Backslash is safe on Windows
+  assert.equal(isUnsafeRoot('C:\\safe\\path', 'win32'), false, 'win32 backslash is path sep')
 })

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+root=D:/Repos/opmem-worktrees/gateway-h1-01a1358d
+out=D:/Repos/opmem-dispatch-01a1358d
+cd "$root"
+printf 'UTC=%s\nHEAD=%s\n' "$(date -u +%FT%TZ)" "$(git rev-parse HEAD)" > "$out/h1-windows-proof-meta.log"
+dotnet restore Keon.McpGateway.slnx --force-evaluate --no-cache --nologo > "$out/h1-windows-restore.log" 2>&1
+dotnet list Keon.McpGateway.slnx package --include-transitive --vulnerable --no-restore > "$out/h1-windows-audit.log" 2>&1
+dotnet list Keon.McpGateway.slnx package --include-transitive --no-restore > "$out/h1-windows-graph.log" 2>&1
+dotnet test tests/Keon.McpGateway.Tests -c Release --nologo --no-restore --logger 'trx;LogFileName=h1-windows.trx' --results-directory "$out/h1-windows-results" > "$out/h1-windows-test.log" 2>&1
+dotnet test tests/Keon.McpGateway.Tests -c Release --nologo --no-build --filter FullyQualifiedName~NativeSqliteVersionTests --logger 'console;verbosity=detailed' > "$out/h1-windows-native-test.log" 2>&1
+set +e
+env -u ANTHROPIC_API_KEY -u OPENAI_API_KEY -u KEON_IT_CORTEX_URL -u KEON_IT_COLLECTIVE_PROJECT dotnet test tests/Keon.McpGateway.IntegrationTests -c Release --nologo --no-restore --logger 'trx;LogFileName=h1-integration-after.trx' --results-directory "$out/h1-integration-after-results" > "$out/h1-integration-after.log" 2>&1
+integration_exit=$?
+set -e
+printf 'INTEGRATION_EXIT=%s\n' "$integration_exit" >> "$out/h1-windows-proof-meta.log"
+dotnet publish src/Keon.McpGateway/Keon.McpGateway.csproj -c Release -r win-x64 --self-contained false --nologo -o "$out/h1-win-publish" > "$out/h1-win-publish.log" 2>&1
+dotnet run --project "$out/native-proof/NativeProof.csproj" -c Release -- "$out/h1-win-publish/e_sqlite3.dll" > "$out/h1-win-native-proof.log" 2>&1
+cd "$out/h1-mutation"
+set +e
+dotnet test tests/Keon.McpGateway.Tests -c Release --nologo --filter FullyQualifiedName~NativeSqliteVersionTests --logger 'trx;LogFileName=h1-mutation.trx' --results-directory "$out/h1-mutation-results" > "$out/h1-mutation.log" 2>&1
+mutation_exit=$?
+set -e
+printf 'MUTATION_EXIT=%s\n' "$mutation_exit" >> "$out/h1-windows-proof-meta.log"
+if [ "$mutation_exit" = 0 ]; then echo 'ERROR: floor mutation unexpectedly passed'; exit 1; fi
+printf 'WINDOWS_PROOF_COMMANDS_COMPLETED_UTC=%s\n' "$(date -u +%FT%TZ)" >> "$out/h1-windows-proof-meta.log"

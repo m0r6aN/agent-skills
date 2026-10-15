@@ -10,7 +10,7 @@ const NO_WRITE = { decisions: 'partial', commit: false, push: false, openPr: fal
 export function selectTarget(signal, registry) {
   const entry = eligibleActions(signal, registry).find((e) => e.verb === 'investigate')
   return { signal, verb: entry?.verb || null, autonomy: { ...(entry?.autonomy || NO_WRITE), merge: false },
-    signature: actionSignature(entry), unavailable: null, needsReview: false,
+    signature: actionSignature(entry), unavailable: null, needsReview: false, extraText: null,
     manualAction: false, manualPermissions: false, bulkIssue: null }
 }
 // Suggested changes can narrow existing authority, never widen it.

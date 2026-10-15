@@ -486,6 +486,21 @@ test('stale-abandoned lists weak traces so the operator can verify before closin
   assert.match(evidence, /spec is on origin\/main in active\/ \(weak trace\)/)
 })
 
+test('FCA-P10: stale-abandoned fires for not-started parcels with weak traces', () => {
+  // FCA-P10 extended stale-abandoned to fire for not-started (was hung-only).
+  // A not-started parcel with weak traces should get stale-abandoned.
+  const r = run([parcel('NTS-P0', { state: 'not-started', specLocation: 'none' })], {
+    repo: repo({
+      defaultLog: [
+        { sha: 'aabbccdd', at: '2026-10-01T00:00:00Z', subject: 'WIP NTS-P0 partial work' },
+      ],
+    }),
+  }).get('NTS-P0')
+  assert.deepEqual(codes(r), ['stale-abandoned'])
+  const evidence = r?.discrepancies[0]?.evidence.join('\n') ?? ''
+  assert.match(evidence, /1 commit on origin\/main name the key \(weak trace\)/)
+})
+
 test('AC5: history merges receipts, commits, PR events and sessions chronologically; absent sources are listed', () => {
   const chain = {
     workflowId: 'w',

@@ -281,3 +281,91 @@ test('console: a failed decisions read says so; a later failure keeps the last g
     ctx.close()
   }
 })
+
+test('commands stay hidden until "Show command"; the press is one presented /api/invoke and then reveals the server text', async () => {
+  const cmd = {
+    flow: 'pr-merge',
+    argv: ['merge', '1', '--repo-root', '/repo'],
+    text: 'cd "/repo" && gh pr merge 1',
+  }
+  const route = data([merge(1, { command: cmd })])
+  // Rendered alone: the command text is not in the HTML before the press.
+  const html = decisionsHtml(route)
+  assert.match(html, /data-show-command/)
+  assert.doesNotMatch(html, /gh pr merge 1/)
+  const invokes: Record<string, unknown>[] = []
+  const ctx = await mountConsole({
+    '/api/decisions': route,
+    '/api/invoke': (_p: string, options?: RequestInit) => {
+      const body = JSON.parse(String(options?.body)) as Record<string, unknown>
+      invokes.push(body)
+      return { action: 'presented', command: 'cd "/repo" && gh pr merge 1', reason: null }
+    },
+  })
+  try {
+    ctx.click('[data-view="decisions"]')
+    await ctx.settle()
+    assert.equal(invokes.length, 0)
+    assert.doesNotMatch(ctx.doc.getElementById('decisions-body')?.textContent ?? '', /gh pr merge/)
+    ctx.click('[data-show-command]')
+    await ctx.settle()
+    assert.equal(invokes.length, 1)
+    assert.deepEqual(invokes[0], { flow: 'pr-merge', argv: cmd.argv, mode: 'present' })
+    assert.match(ctx.doc.getElementById('decisions-body')?.textContent ?? '', /gh pr merge 1/)
+    assert.match(
+      ctx.doc.getElementById('decisions-body')?.textContent ?? '',
+      /The console will not run it/,
+    )
+    assert.ok(ctx.doc.querySelector('[data-copy]'))
+  } finally {
+    ctx.close()
+  }
+})
+
+test('a refused presentation reveals nothing and says so; a gate item offers approve and reject buttons and a null-command note', async () => {
+  const g1 = {
+    ...gate('P1', 'G1'),
+    slug: 'p1',
+    command: {
+      flow: 'approval-approve',
+      argv: ['approve', 'p1', '--repo-root', '/repo'],
+      text: 'x',
+    },
+    altCommand: {
+      flow: 'approval-reject',
+      argv: ['reject', 'p1', '--repo-root', '/repo'],
+      text: 'y',
+    },
+    commandNote: null,
+    approvalShow: true,
+  }
+  const g2 = {
+    ...gate('P2', 'G2'),
+    commandNote: "command not presented: root is not the console's primary root",
+  }
+  const html = decisionsHtml(data([g1, g2]))
+  assert.match(html, /Show approve command/)
+  assert.match(html, /Show reject command/)
+  assert.match(html, /Show approval details/)
+  assert.match(
+    html,
+    /root is not the console&#39;s primary root|root is not the console's primary root/,
+  )
+  const ctx = await mountConsole({
+    '/api/decisions': data([g1]),
+    '/api/invoke': () => ({ action: 'refused', command: '', reason: 'nope' }),
+  })
+  try {
+    ctx.click('[data-view="decisions"]')
+    await ctx.settle()
+    ctx.click('[data-show-command]')
+    await ctx.settle()
+    assert.doesNotMatch(
+      ctx.doc.getElementById('decisions-body')?.textContent ?? '',
+      /approval approve/,
+    )
+    assert.match(ctx.doc.getElementById('decisions-body')?.textContent ?? '', /Not shown/)
+  } finally {
+    ctx.close()
+  }
+})

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
-import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { createServer } from 'node:http'
 import type { AddressInfo } from 'node:net'
 import { tmpdir } from 'node:os'
@@ -9,6 +9,7 @@ import test from 'node:test'
 import { clearPrCache } from '../src/reconcile-remote.js'
 import { buildHandler } from '../src/server.js'
 import { chromiumBinary, launchBrowser } from './support/cdp.js'
+import { createFakeBin, prependToPath } from './support/fake-bin.js'
 import { materialize, type Scenario } from './support/materialize.js'
 
 /**
@@ -71,13 +72,26 @@ test('AC6: Reconciliation renders findings, filters, explains, survives refresh,
   const bin = join(root, 'bin')
   mkdirSync(bin)
   writeFileSync(join(root, 'prs.json'), PRS)
-  writeFileSync(
-    join(bin, 'gh'),
-    `#!/bin/sh\nif [ "$1 $2" = "pr list" ]; then cat '${join(root, 'prs.json')}'; exit 0; fi\nexit 2\n`,
-  )
-  chmodSync(join(bin, 'gh'), 0o755)
+
+  // FCA-P16: Portable fake gh using Node.js script
+  const escapedPrsJson = join(root, 'prs.json').replace(/\\/g, '\\\\')
+  createFakeBin({
+    binDir: bin,
+    name: 'gh',
+    script: `
+const fs = require('fs');
+const args = process.argv.slice(2);
+const cmd = args.slice(0, 2).join(' ');
+if (cmd === 'pr list') {
+  process.stdout.write(fs.readFileSync('${escapedPrsJson}', 'utf8'));
+  process.exit(0);
+}
+process.exit(2);
+`,
+  })
+
   const savedPath = process.env.PATH
-  process.env.PATH = `${bin}:${savedPath}`
+  process.env.PATH = prependToPath(bin, savedPath)
   const handler = buildHandler(config, () => Date.parse(SCENARIO.now))
   const server = createServer((req, res) => handler(req, res))
   await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
@@ -124,7 +138,8 @@ test('AC6: Reconciliation renders findings, filters, explains, survives refresh,
     )
     assert.match(explained, /PR #7 MERGED/)
     assert.match(explained, /Complete the record instead of redoing the work/)
-    assert.match(explained, /Why this is “hung”/)
+    // FCA-P10 AC7: a not-started parcel shows no hung explanation
+    assert.doesNotMatch(explained, /Why this is "hung"/, 'not-started parcel has no hung panel')
     await browser.evaluate(`document.getElementById('refresh').click()`)
     await browser.waitFor(
       `document.getElementById('console-status').textContent.includes('up to date')`,

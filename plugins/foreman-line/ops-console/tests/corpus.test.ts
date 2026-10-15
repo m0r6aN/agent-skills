@@ -95,7 +95,14 @@ test('AC5: corpus covers every ParcelStateValue and both named confusion cases +
   const states = new Set(
     scenarios.flatMap((scenario) => scenario.expected.map((entry) => entry.state)),
   )
-  for (const value of ['running', 'hung', 'awaiting-gate', 'failed', 'complete'] as const) {
+  for (const value of [
+    'running',
+    'hung',
+    'awaiting-gate',
+    'failed',
+    'complete',
+    'not-started',
+  ] as const) {
     assert.ok(states.has(value), `corpus covers state ${value}`)
   }
   const byName = new Map(scenarios.map((scenario) => [scenario.name, scenario]))

@@ -1,0 +1,155 @@
+Project 'Keon.McpGateway' has the following package references
+   [net10.0]: 
+   Top-level Package                      Requested   Resolved
+   > JsonSchema.Net                       7.4.0       7.4.0   
+   > Microsoft.Data.Sqlite                10.0.13     10.0.13 
+   > System.IdentityModel.Tokens.Jwt      8.14.0      8.14.0  
+
+   Transitive Package                           Resolved
+   > Humanizer.Core                             2.14.1  
+   > Json.More.Net                              2.1.1   
+   > JsonPointer.Net                            5.3.1   
+   > Microsoft.Data.Sqlite.Core                 10.0.13 
+   > Microsoft.IdentityModel.Abstractions       8.14.0  
+   > Microsoft.IdentityModel.JsonWebTokens      8.14.0  
+   > Microsoft.IdentityModel.Logging            8.14.0  
+   > Microsoft.IdentityModel.Tokens             8.14.0  
+   > SQLitePCLRaw.bundle_e_sqlite3              2.1.13  
+   > SQLitePCLRaw.core                          2.1.13  
+   > SQLitePCLRaw.lib.e_sqlite3                 2.1.13  
+   > SQLitePCLRaw.provider.e_sqlite3            2.1.13  
+
+Project 'Keon.McpGateway.IntegrationTests' has the following package references
+   [net10.0]: 
+   Top-level Package                       Requested   Resolved
+   > coverlet.collector                    6.0.4       6.0.4   
+   > Microsoft.AspNetCore.Mvc.Testing      10.0.2      10.0.2  
+   > Microsoft.NET.Test.Sdk                17.14.1     17.14.1 
+   > System.IdentityModel.Tokens.Jwt       8.14.0      8.14.0  
+   > xunit                                 2.9.3       2.9.3   
+   > xunit.runner.visualstudio             3.1.4       3.1.4   
+   > Xunit.SkippableFact                   1.4.13      1.4.13  
+
+   Transitive Package                                             Resolved
+   > Humanizer.Core                                               2.14.1  
+   > Json.More.Net                                                2.1.1   
+   > JsonPointer.Net                                              5.3.1   
+   > JsonSchema.Net                                               7.4.0   
+   > Microsoft.AspNetCore.TestHost                                10.0.2  
+   > Microsoft.CodeCoverage                                       17.14.1 
+   > Microsoft.Data.Sqlite                                        10.0.13 
+   > Microsoft.Data.Sqlite.Core                                   10.0.13 
+   > Microsoft.Extensions.Configuration                           10.0.2  
+   > Microsoft.Extensions.Configuration.Abstractions              10.0.2  
+   > Microsoft.Extensions.Configuration.Binder                    10.0.2  
+   > Microsoft.Extensions.Configuration.CommandLine               10.0.2  
+   > Microsoft.Extensions.Configuration.EnvironmentVariables      10.0.2  
+   > Microsoft.Extensions.Configuration.FileExtensions            10.0.2  
+   > Microsoft.Extensions.Configuration.Json                      10.0.2  
+   > Microsoft.Extensions.Configuration.UserSecrets               10.0.2  
+   > Microsoft.Extensions.DependencyInjection                     10.0.2  
+   > Microsoft.Extensions.DependencyInjection.Abstractions        10.0.2  
+   > Microsoft.Extensions.DependencyModel                         10.0.2  
+   > Microsoft.Extensions.Diagnostics                             10.0.2  
+   > Microsoft.Extensions.Diagnostics.Abstractions                10.0.2  
+   > Microsoft.Extensions.FileProviders.Abstractions              10.0.2  
+   > Microsoft.Extensions.FileProviders.Physical                  10.0.2  
+   > Microsoft.Extensions.FileSystemGlobbing                      10.0.2  
+   > Microsoft.Extensions.Hosting                                 10.0.2  
+   > Microsoft.Extensions.Hosting.Abstractions                    10.0.2  
+   > Microsoft.Extensions.Logging                                 10.0.2  
+   > Microsoft.Extensions.Logging.Abstractions                    10.0.2  
+   > Microsoft.Extensions.Logging.Configuration                   10.0.2  
+   > Microsoft.Extensions.Logging.Console                         10.0.2  
+   > Microsoft.Extensions.Logging.Debug                           10.0.2  
+   > Microsoft.Extensions.Logging.EventLog                        10.0.2  
+   > Microsoft.Extensions.Logging.EventSource                     10.0.2  
+   > Microsoft.Extensions.Options                                 10.0.2  
+   > Microsoft.Extensions.Options.ConfigurationExtensions         10.0.2  
+   > Microsoft.Extensions.Primitives                              10.0.2  
+   > Microsoft.IdentityModel.Abstractions                         8.14.0  
+   > Microsoft.IdentityModel.JsonWebTokens                        8.14.0  
+   > Microsoft.IdentityModel.Logging                              8.14.0  
+   > Microsoft.IdentityModel.Tokens                               8.14.0  
+   > Microsoft.TestPlatform.ObjectModel                           17.14.1 
+   > Microsoft.TestPlatform.TestHost                              17.14.1 
+   > Newtonsoft.Json                                              13.0.3  
+   > SQLitePCLRaw.bundle_e_sqlite3                                2.1.13  
+   > SQLitePCLRaw.core                                            2.1.13  
+   > SQLitePCLRaw.lib.e_sqlite3                                   2.1.13  
+   > SQLitePCLRaw.provider.e_sqlite3                              2.1.13  
+   > System.Diagnostics.EventLog                                  10.0.2  
+   > Validation                                                   2.4.18  
+   > xunit.abstractions                                           2.0.3   
+   > xunit.analyzers                                              1.18.0  
+   > xunit.assert                                                 2.9.3   
+   > xunit.core                                                   2.9.3   
+   > xunit.extensibility.core                                     2.9.3   
+   > xunit.extensibility.execution                                2.9.3   
+
+Project 'Keon.McpGateway.Tests' has the following package references
+   [net10.0]: 
+   Top-level Package                       Requested   Resolved
+   > coverlet.collector                    6.0.4       6.0.4   
+   > JsonSchema.Net                        7.4.0       7.4.0   
+   > Microsoft.AspNetCore.Mvc.Testing      10.0.2      10.0.2  
+   > Microsoft.Data.Sqlite                 10.0.13     10.0.13 
+   > Microsoft.NET.Test.Sdk                17.14.1     17.14.1 
+   > System.IdentityModel.Tokens.Jwt       8.14.0      8.14.0  
+   > xunit                                 2.9.3       2.9.3   
+   > xunit.runner.visualstudio             3.1.4       3.1.4   
+
+   Transitive Package                                             Resolved
+   > Humanizer.Core                                               2.14.1  
+   > Json.More.Net                                                2.1.1   
+   > JsonPointer.Net                                              5.3.1   
+   > Microsoft.AspNetCore.TestHost                                10.0.2  
+   > Microsoft.CodeCoverage                                       17.14.1 
+   > Microsoft.Data.Sqlite.Core                                   10.0.13 
+   > Microsoft.Extensions.Configuration                           10.0.2  
+   > Microsoft.Extensions.Configuration.Abstractions              10.0.2  
+   > Microsoft.Extensions.Configuration.Binder                    10.0.2  
+   > Microsoft.Extensions.Configuration.CommandLine               10.0.2  
+   > Microsoft.Extensions.Configuration.EnvironmentVariables      10.0.2  
+   > Microsoft.Extensions.Configuration.FileExtensions            10.0.2  
+   > Microsoft.Extensions.Configuration.Json                      10.0.2  
+   > Microsoft.Extensions.Configuration.UserSecrets               10.0.2  
+   > Microsoft.Extensions.DependencyInjection                     10.0.2  
+   > Microsoft.Extensions.DependencyInjection.Abstractions        10.0.2  
+   > Microsoft.Extensions.DependencyModel                         10.0.2  
+   > Microsoft.Extensions.Diagnostics                             10.0.2  
+   > Microsoft.Extensions.Diagnostics.Abstractions                10.0.2  
+   > Microsoft.Extensions.FileProviders.Abstractions              10.0.2  
+   > Microsoft.Extensions.FileProviders.Physical                  10.0.2  
+   > Microsoft.Extensions.FileSystemGlobbing                      10.0.2  
+   > Microsoft.Extensions.Hosting                                 10.0.2  
+   > Microsoft.Extensions.Hosting.Abstractions                    10.0.2  
+   > Microsoft.Extensions.Logging                                 10.0.2  
+   > Microsoft.Extensions.Logging.Abstractions                    10.0.2  
+   > Microsoft.Extensions.Logging.Configuration                   10.0.2  
+   > Microsoft.Extensions.Logging.Console                         10.0.2  
+   > Microsoft.Extensions.Logging.Debug                           10.0.2  
+   > Microsoft.Extensions.Logging.EventLog                        10.0.2  
+   > Microsoft.Extensions.Logging.EventSource                     10.0.2  
+   > Microsoft.Extensions.Options                                 10.0.2  
+   > Microsoft.Extensions.Options.ConfigurationExtensions         10.0.2  
+   > Microsoft.Extensions.Primitives                              10.0.2  
+   > Microsoft.IdentityModel.Abstractions                         8.14.0  
+   > Microsoft.IdentityModel.JsonWebTokens                        8.14.0  
+   > Microsoft.IdentityModel.Logging                              8.14.0  
+   > Microsoft.IdentityModel.Tokens                               8.14.0  
+   > Microsoft.TestPlatform.ObjectModel                           17.14.1 
+   > Microsoft.TestPlatform.TestHost                              17.14.1 
+   > Newtonsoft.Json                                              13.0.3  
+   > SQLitePCLRaw.bundle_e_sqlite3                                2.1.13  
+   > SQLitePCLRaw.core                                            2.1.13  
+   > SQLitePCLRaw.lib.e_sqlite3                                   2.1.13  
+   > SQLitePCLRaw.provider.e_sqlite3                              2.1.13  
+   > System.Diagnostics.EventLog                                  10.0.2  
+   > xunit.abstractions                                           2.0.3   
+   > xunit.analyzers                                              1.18.0  
+   > xunit.assert                                                 2.9.3   
+   > xunit.core                                                   2.9.3   
+   > xunit.extensibility.core                                     2.9.3   
+   > xunit.extensibility.execution                                2.9.3   
+

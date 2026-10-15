@@ -3,7 +3,7 @@ import { needsFor } from '../needs.js'
 import { esc, fileLink } from './shell.js'
 import { eligibleActions } from './selection.js'
 
-const STATES = ['running', 'hung', 'awaiting-gate', 'failed', 'complete']
+const STATES = ['running', 'hung', 'awaiting-gate', 'failed', 'complete', 'not-started']
 
 export function gatePill(gate) {
   return `<span class="pill ${esc(gate.status)}">${esc(gate.gate)} ${esc(gate.status)}</span> ${esc(gate.detail)}`
@@ -13,6 +13,7 @@ const EMPTY_ATTENTION = {
   hung: 0,
   failed: 0,
   awaitingGate: 0,
+  notStarted: 0,
   ratificationPending: 0,
   signals: { info: 0, attention: 0, urgent: 0 },
   total: 0,
@@ -43,7 +44,7 @@ export function boardHtml(parcels, status, options = {}) {
       const chip = needs ? `<span class="chip ${needs.includes('red') ? 'chip-red' : 'chip-amber'}">${p.state === 'awaiting-gate' ? 'gate' : 'needs attention'}</span>` : ''
       return `<tr class="parcel-row ${needs}"><td>${select}</td>
       <td><button class="detail-btn" type="button" data-parcel="${esc(p.parcel)}" aria-label="Inspect parcel ${esc(p.parcel)}">${esc(p.parcel)}</button><span class="meta">rule ${esc(p.rule)} · chain ${esc(p.chainEvidence)}</span>${signal ? '' : '<span class="meta">No supported action</span>'}</td>
-      <td><span class="chip chip-${p.state === 'complete' || p.state === 'running' ? 'green' : 'neutral'}">${esc(p.state)}</span> ${chip}</td>
+      <td><span class="chip chip-${p.state === 'complete' || p.state === 'running' || p.state === 'not-started' ? 'green' : 'neutral'}">${p.state === 'not-started' ? 'Not started' : esc(p.state)}</span> ${chip}</td>
       <td><span class="meta">${esc(p.heartbeat?.lastProgressAt || 'No progress timestamp')}<br>${p.liveness?.live ? 'Live worktree evidence' : 'No live worktree evidence'}</span>${p.failure ? `<div class="flags">${esc(p.failure.code)}</div>` : ''}${p.flags?.length ? `<div class="flags">${esc(p.flags.join(', '))}</div>` : ''}</td>
       <td><button type="button" data-parcel="${esc(p.parcel)}">Inspect evidence</button></td></tr>`
     })

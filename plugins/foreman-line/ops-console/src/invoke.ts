@@ -10,6 +10,7 @@ import {
   type StateFile,
   stateFilePath,
 } from './config.js'
+import { loadFleetState } from './fleet.js'
 import { isRecord } from './guards.js'
 
 /**
@@ -42,6 +43,11 @@ export type InvokeAction = 'executed' | 'presented' | 'refused' | 'spawned'
 export interface FlowRequest {
   readonly flow: string
   readonly argv: readonly string[]
+  /**
+   * Optional requested mode. `pr-merge` is present-only (FCA-P9 A4): any value
+   * other than `present` is refused and audited. Other flows ignore it.
+   */
+  readonly mode?: unknown
 }
 
 export interface InvokeOutcome {
@@ -78,7 +84,48 @@ const UUID_PATTERN = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{
 const AUDIT_NAME: StateFile = 'invocation-audit.json'
 const OUTPUT_CAP = 16_384
 
-type ArgKind = 'verb' | 'slug' | 'repo-root-flag' | 'repo-root' | 'receipts-path'
+const PR_NUMBER_PATTERN = /^[1-9][0-9]{0,6}$/
+
+/**
+ * Platform-aware root path safety guard (FCA-P9, FCA-P16).
+ *
+ * A root is interpolated into `cd "<root>" && gh pr merge <N>`. On POSIX,
+ * backslash is a shell escape; on Windows, it's the path separator. The guard:
+ * - POSIX: refuses `"`, `$`, `` ` ``, `\`, and control characters (`\u0000–\u001f`, `\u007f`).
+ * - Windows: allows `\` (path separator), refuses `"`, `$`, `` ` ``, `%`, `^`, and control characters.
+ *
+ * @param value The root path to validate.
+ * @param platform The platform to validate for (injectable for testing; defaults to `process.platform`).
+ * @returns `true` if the root contains unsafe characters for the given platform.
+ */
+// biome-ignore lint/suspicious/noControlCharactersInRegex: control characters are the point
+const UNSAFE_ROOT_POSIX = /["$`\\\u0000-\u001f\u007f]/
+// biome-ignore lint/suspicious/noControlCharactersInRegex: control characters are the point
+const UNSAFE_ROOT_WIN32 = /["$`%^\u0000-\u001f\u007f]/
+
+export function isUnsafeRoot(value: string, platform: NodeJS.Platform = process.platform): boolean {
+  const pattern = platform === 'win32' ? UNSAFE_ROOT_WIN32 : UNSAFE_ROOT_POSIX
+  return pattern.test(value)
+}
+
+/**
+ * Returns a human-readable explanation for why a root is unsafe.
+ * @param platform The platform context.
+ */
+export function unsafeRootMessage(platform: NodeJS.Platform = process.platform): string {
+  return platform === 'win32'
+    ? 'root contains a quote, $, backtick, %, ^ or control character and cannot be safely interpolated'
+    : 'root contains a quote, $, backtick, backslash or control character and is never escaped'
+}
+
+type ArgKind =
+  | 'verb'
+  | 'slug'
+  | 'repo-root-flag'
+  | 'repo-root'
+  | 'repo-root-fleet'
+  | 'pr-number'
+  | 'receipts-path'
 
 interface FlowSpec {
   readonly mode: 'execute' | 'present'
@@ -87,6 +134,8 @@ interface FlowSpec {
   readonly verb: string
   readonly commandPrefix: string
   readonly spawnCli: 'approval' | 'receipts' | null
+  /** Custom command renderer; absent = `<prefix> <args after verb>`. */
+  readonly renderer?: 'pr-merge'
 }
 
 export const FLOW_REGISTRY: Record<string, FlowSpec> = {
@@ -117,6 +166,15 @@ export const FLOW_REGISTRY: Record<string, FlowSpec> = {
     verb: 'executeDispatch',
     commandPrefix: 'dispatch approval-cli executeDispatch',
     spawnCli: null,
+  },
+  // FCA-P9 A4: present-only, never spawned, never `execute`.
+  'pr-merge': {
+    mode: 'present',
+    argv: ['verb', 'pr-number', 'repo-root-flag', 'repo-root-fleet'],
+    verb: 'merge',
+    commandPrefix: 'gh pr merge',
+    spawnCli: null,
+    renderer: 'pr-merge',
   },
   'receipts-validate': {
     mode: 'execute',
@@ -152,6 +210,25 @@ function validateArg(
         ? null
         : `--repo-root must equal the configured repo root ${config.repoRoot}`
     }
+    case 'pr-number':
+      return PR_NUMBER_PATTERN.test(value)
+        ? null
+        : `PR number must match ^[1-9][0-9]{0,6}$, got ${JSON.stringify(value)}`
+    case 'repo-root-fleet': {
+      if (!isAbsolute(value)) return `--repo-root must be absolute, got ${JSON.stringify(value)}`
+      if (isUnsafeRoot(value)) {
+        return unsafeRootMessage()
+      }
+      let roots: readonly string[]
+      try {
+        roots = loadFleetState(config.stateDir, config.repoRoot).roots
+      } catch {
+        return 'fleet state unreadable: no declared fleet root can be confirmed'
+      }
+      return resolve(value) === value && roots.includes(value)
+        ? null
+        : 'root is not a declared fleet root'
+    }
     case 'receipts-path': {
       // D1 guard first (P2b-i / D19 class 5): relative receipt paths resolve
       // against the configured repo root — never the process cwd — and the
@@ -176,6 +253,12 @@ function validateArg(
 }
 
 function renderCommand(spec: FlowSpec, argv: readonly string[]): string {
+  if (spec.renderer === 'pr-merge') {
+    // Only a fully validated argv is ever rendered; refusals carry no command text.
+    return argv.length === 4 && argv[1] !== undefined && argv[3] !== undefined
+      ? `cd "${argv[3]}" && gh pr merge ${argv[1]}`
+      : ''
+  }
   // argv[0] is the frozen verb, already named in the command prefix.
   return `${spec.commandPrefix} ${argv.slice(1).join(' ')}`.trim()
 }
@@ -261,6 +344,33 @@ export function recordAuditEntry(stateDir: string, entry: AuditEntry): void {
 const SPAWN_ENV: Record<string, string> =
   process.platform === 'win32' ? { SystemRoot: 'C:\\Windows' } : {}
 
+/**
+ * Pure presentation of a present-mode flow: validates the argv with the SAME
+ * guards as `invokeFlow` and renders the command, but audits nothing and spawns
+ * nothing. Returns null (with the refusal reason) when the argv would be refused.
+ * The decisions queue uses this so it can never present a command the flow would
+ * refuse.
+ */
+export function presentCommand(
+  config: ConsoleConfig,
+  flow: string,
+  argv: readonly string[],
+): { readonly text: string } | { readonly refused: string } {
+  const spec = FLOW_REGISTRY[flow]
+  if (spec === undefined || spec.mode !== 'present') {
+    return { refused: `${JSON.stringify(flow)} is not a present-mode flow` }
+  }
+  if (argv.length !== spec.argv.length) return { refused: 'argv surface mismatch' }
+  for (let i = 0; i < spec.argv.length; i++) {
+    const kind = spec.argv[i]
+    const value = argv[i]
+    if (kind === undefined || value === undefined) return { refused: 'argument missing' }
+    const error = validateArg(kind, value, spec, config)
+    if (error !== null) return { refused: error }
+  }
+  return { text: renderCommand(spec, argv) }
+}
+
 export function invokeFlow(
   config: ConsoleConfig,
   request: FlowRequest,
@@ -277,7 +387,12 @@ export function invokeFlow(
     stderr: '',
   }
   let refusal: { reason: string; command: string } | null = null
-  if (spec === undefined) {
+  if (request.flow === 'pr-merge' && request.mode !== undefined && request.mode !== 'present') {
+    refusal = {
+      reason: `pr-merge is present-only; mode ${JSON.stringify(request.mode)} refused before any spawn`,
+      command: '',
+    }
+  } else if (spec === undefined) {
     refusal = {
       reason: `unknown flow ${JSON.stringify(request.flow)} (registry is a closed set)`,
       command: '',
@@ -285,7 +400,7 @@ export function invokeFlow(
   } else if (argv.length !== spec.argv.length) {
     refusal = {
       reason: `frozen argv surface for ${request.flow} is exactly ${spec.argv.length} argument(s), got ${argv.length}`,
-      command: renderCommand(spec, argv),
+      command: spec.renderer === undefined ? renderCommand(spec, argv) : '',
     }
   } else {
     for (let i = 0; i < spec.argv.length; i++) {
@@ -299,7 +414,7 @@ export function invokeFlow(
       if (error !== null) {
         refusal = {
           reason: `refused before any spawn: ${error}`,
-          command: renderCommand(spec, argv),
+          command: spec.renderer === undefined ? renderCommand(spec, argv) : '',
         }
         break
       }

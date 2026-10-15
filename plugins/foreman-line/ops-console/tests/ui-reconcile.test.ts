@@ -255,6 +255,104 @@ test('every string from git, GitHub and disk is escaped', () => {
   assert.ok((doc.body.textContent ?? '').includes(hostile))
 })
 
+test('UI action option prepares an editable investigate session without granting merge or write permissions', async () => {
+  const act = {
+    verb: 'investigate',
+    instruction: 'Compare the merged work with the parcel record.',
+  }
+  const rec = data([
+    parcelRec({
+      discrepancies: [
+        finding({
+          options: [
+            { answer: 'Investigate', recommendation: 'Check the record.', commands: [], act },
+          ],
+        }),
+      ],
+    }),
+  ])
+  const ui = await mountConsole({ '/api/reconcile': rec })
+  try {
+    ui.click('[data-view="reconcile"].nav-btn')
+    await ui.settle()
+    assert.equal(ui.doc.querySelectorAll('#reconcile-body [data-prepare-session]').length, 1)
+    ui.click('#reconcile-body [data-prepare-session]')
+    assert.equal(ui.doc.querySelector('#launch-dialog')?.hasAttribute('open'), true)
+    const action = [...ui.doc.querySelectorAll('[data-verb]')].find(
+      (node) => (node as HTMLSelectElement).value === 'investigate',
+    )
+    assert.ok(action, 'the selected launch item carries the investigate verb')
+    assert.deepEqual(ACTION_REGISTRY.find((entry) => entry.verb === 'investigate')?.autonomy, {
+      decisions: 'partial',
+      commit: false,
+      push: false,
+      openPr: false,
+      merge: false,
+    })
+    const instruction = ui.doc.querySelector('[data-extra-text]') as HTMLTextAreaElement
+    assert.equal(instruction.value, act.instruction)
+    instruction.value = 'Edited direction'
+    instruction.dispatchEvent(new ui.dom.window.Event('input', { bubbles: true }))
+    assert.equal(
+      (ui.doc.querySelector('[data-extra-text]') as HTMLTextAreaElement).value,
+      'Edited direction',
+    )
+    const item = ui.doc.querySelector('.launch-item')?.textContent ?? ''
+    assert.match(item, /investigate/)
+    assert.match(ui.doc.querySelector('.permissions')?.textContent ?? '', /Merge stays human-owned/)
+    for (const permission of ['commit', 'push', 'openPr', 'merge']) {
+      assert.equal(
+        (ui.doc.querySelector(`[data-permission="${permission}"]`) as HTMLInputElement).checked,
+        false,
+      )
+    }
+    assert.equal(
+      (ui.doc.querySelector('[data-permission="merge"]') as HTMLInputElement).disabled,
+      true,
+    )
+    assert.deepEqual(
+      ui.requests.filter((r) => r.body && !r.path.startsWith('/api/health')),
+      [],
+    )
+  } finally {
+    ui.close()
+  }
+})
+
+test('UI unavailable action shows needed module and copyable commands without a prepare button', async () => {
+  const rec = data([
+    parcelRec({
+      discrepancies: [
+        finding({
+          options: [
+            {
+              answer: 'Resolve',
+              recommendation: 'Use these commands.',
+              commands: ['gh pr view 163', 'git status --short'],
+              act: null,
+            },
+          ],
+        }),
+      ],
+    }),
+  ])
+  const ui = await mountConsole({ '/api/reconcile': rec })
+  try {
+    ui.click('[data-view="reconcile"].nav-btn')
+    await ui.settle()
+    const body = ui.doc.querySelector('#reconcile-body')
+    assert.ok(body)
+    assert.match(body.textContent ?? '', /Needs closure-proposal \(not yet available\)/)
+    assert.deepEqual(
+      [...body.querySelectorAll('.rec-cmd')].map((node) => node.textContent),
+      ['gh pr view 163', 'git status --short'],
+    )
+    assert.equal(body.querySelectorAll('[data-prepare-session]').length, 0)
+  } finally {
+    ui.close()
+  }
+})
+
 test('selection checkbox only where the parcel has an eligible action signal (same rule as the board)', () => {
   const status = { key: 'g', repoRoot: '/repos/x' }
   const withSignal = new JSDOM(

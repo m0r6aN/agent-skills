@@ -1,0 +1,21 @@
+{
+  "name": "not-started-projected-sidecar",
+  "description": "R3 awaiting-gate: queued parcel with ONLY a projected sidecar (no spec, no chain, no decision) — R3 wins over R4a.",
+  "now": "2026-10-13T12:00:00.000Z",
+  "goal": {
+    "slug": "goal-ns-proj",
+    "queue": ["1. **P1** shaped; awaiting human approval."]
+  },
+  "specs": [],
+  "sidecars": [{ "kind": "projected", "spec": "P1-nosuchspec.md" }],
+  "expected": [
+    {
+      "parcel": "P1",
+      "state": "awaiting-gate",
+      "rule": "R3",
+      "chainEvidence": "absent",
+      "specLocation": "none",
+      "gates": { "G1": "pending" }
+    }
+  ]
+}

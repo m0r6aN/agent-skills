@@ -1,0 +1,28 @@
+# OPMEM-H1 Follow-up Review — Final Verdict: **PASS**
+
+**Inspected head:** `bfd21823b1c8419ba320961591583b476e9df58e`, worktree clean before and after this follow-up; source/diff/tests confirmed unchanged from my original review.
+
+**Actual observed runtime metadata (recorded, not guessed):** `PI_PROVIDER=anthropic`, `PI_MODEL=claude-fable-5`, `PI_SESSION_ID=OPMEM-H1-code-A-01a1358d`. This matches the follow-up's statement A. Statement B ("actual model openai/gpt-6.1-sol") **contradicts the runtime environment I can observe** and I do not adopt it; if B refers to a different session (e.g., reviewer B), that is outside my lane per the no-cross-reviewer rule. My verdict's model attribution stands on the observed PI metadata above.
+
+## Note closure assessment
+
+**Note 1 (LOW — container invocation not evidenced): CLOSED.**
+- `h1-linux-launch.sh` is the actual saved launcher; pre-start `docker inspect` captured to `h1-linux-container-isolation.json`: exactly two mounts — `/input` bind `RW:false` (readonly) and `/evidence` bind `RW:true`, both owned dispatch paths; `ports:{}`, `privileged:false`, `devices:[]`, no Docker socket, no `-e`/secret injection in the create line; command `bash /input/h1-linux-proof.sh`; image is the pinned immutable ID `sha256:9087b2…cd82f` matching `h1-linux-image-id.log`.
+- `h1-linux-container-state.json`: exited 0, `StartedAt` 01:24:12Z / `FinishedAt` 01:24:53Z, matching `h1-linux-launch-meta.log` (`START_EXIT=0`, `CONTAINER_EXIT=0`) and container ID/cleanup logs. Empty `h1-linux-container.log` is now explainable and immaterial (all inner output redirected to `/evidence`).
+- `networkMode:bridge` is required for the contract-authorized online NuGet restore — not a secret/service exposure.
+
+**Note 2 (LOW — hardcoded SOURCE_COMMIT): CLOSED.**
+- `linux-input/h1-linux-proof.sh` now **measures** the archive SHA inside the container (`sha256sum /input/h1-source.tar` → `a0d7c2…9f84` in `h1-linux-meta.log`); launcher records the same SHA plus `git get-tar-commit-id` → `bfd21823…`.
+- Independently reproduced by me: my own `sha256sum` of `linux-input/h1-source.tar` = root `h1-source.tar` = `a0d7c2…9f84` (the identical archive I previously byte-compared file-by-file against head), and my own `git get-tar-commit-id` returns `bfd21823…`.
+
+## Reproduction integrity (refreshed primary Linux evidence re-examined)
+
+- `h1-linux.trx`: 422/422 passed, internal times 01:24:34–01:24:46 strictly inside the container run window; identity re-extracted by me: baseline 421 + exactly `NativeSqliteVersion_IsAtLeast_3_50_2`, all 422 `outcome="Passed"`.
+- Audit: all three projects, no vulnerable packages; graph: 10.0.13 / SQLitePCLRaw 2.1.13 across the board, zero `2.1.11`.
+- Native proof: same asset path, **same hash** `b0f5c4…8a07` (byte-identical to the 2.1.13 package native verified previously), measured `SQLITE_VERSION=3.53.3`, `FLOOR_3_50_2=PASS` — timestamp 01:24:52Z inside the run.
+
+## Final
+
+Both prior notes are closed with measured, independently reproduced evidence; nothing in the reproduction altered parcel source (head unchanged, worktree clean). No production, deployment, or merge claim is made or supported; Gate 3 remains human handoff.
+
+**Final verdict: PASS** at examined head `bfd21823b1c8419ba320961591583b476e9df58e`.

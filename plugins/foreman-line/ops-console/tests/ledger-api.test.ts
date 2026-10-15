@@ -5,7 +5,7 @@ import type { LedgerProbes, OutputFact, TmuxSessionFact } from '../src/ledger.js
 import type { TranscriptFact } from '../src/ledger-transcript.js'
 import { ATTENTION_WINDOW_MS, sessionStateProvider } from '../src/signals-session.js'
 import { listSpawnReceipts, recordSpawnReceipt, type SpawnReceipt } from '../src/spawn.js'
-import { type Scenario, withTempRepo } from './support/materialize.js'
+import { type Scenario, withTempRepo, withTempRepoAsync } from './support/materialize.js'
 
 /**
  * FCA-P7 AC6 (additive API) and the session-state severity rules. Receipts are
@@ -106,10 +106,10 @@ const dead = (status: number): TmuxSessionFact => ({
   ],
 })
 
-test('AC6: GET /api/spawns adds only `ledger`; every original field is byte-identical; legacy reads unknown', () => {
-  withTempRepo(SCENARIO, ({ config }) => {
+test('AC6: GET /api/spawns adds only `ledger`; every original field is byte-identical; legacy reads unknown', async () => {
+  await withTempRepoAsync(SCENARIO, async ({ config }) => {
     recordSpawnReceipt(config.stateDir, LEGACY)
-    const result = handleApi(
+    const result = await handleApi(
       config,
       { method: 'GET', pathname: '/api/spawns', query: new URLSearchParams(), body: {} },
       NOW,

@@ -36,6 +36,30 @@
 > D7 requires a scoped Gate 1 amendment first. Gate 1 ratification capture and
 > Gate 3 merge remain owner acts with no console capture path; Stage-F
 > spec-move and merge decisions stay with the coordinator/owner.
+> **2026-10-13 (owner confirmation, in session): ownership re-confirmed to the
+> current coordinator session.** Standing Gate 2 EXTENDED to FCA-P9 (stage 2,
+> present-mode `pr-merge`; stage 1 merged in PR #223) and FCA-P10–FCA-P13, each
+> effective once its spec passes coordinator lint. **Gate 3 DELEGATED to
+> coordinator judgement**, still contingent on the full green verification
+> chain (any red step voids it). Blanket authority to make decisions and run
+> non-destructive actions to complete the goal. Destructive actions (worktree or
+> branch deletion, force push, remote deletes) remain outside this grant unless
+> routed through the confirmation-gated hygiene flows. Next queue: FCA-P9 stage 2
+> -> event-loop offload (coordinator-scheduled before P11; needs its own spec) ->
+> FCA-P10 -> FCA-P11 -> FCA-P12 -> FCA-P13. `closure-proposal`/`hygiene-actions`
+> stay unspecced (A8/A9 provisional).
+> **2026-10-14 coordinator state (stop report):** FCA-P9 stages 2-3 MERGED
+> (#225), FCA-P10 MERGED (#226, merged by the owner with CI red), FCA-P14 event-loop
+> offload built + reviewed, PR #228 open (not merged: CI). **CI finding:** main's
+> foreman-line-ci fails for two separable reasons: (1) every sweep shard died at
+> `npm ci` EUSAGE (no lockfile in `plugins/foreman-line/pi-package`; fix: PR #229);
+> (2) behind that, `ops-console/test` fails on the Windows CI runner (~15 tests:
+> gh/git fake-runner, symlink/permission, port, pi-argv snapshot tests written and
+> verified on this Linux machine). The coordinator's deterministic passes ran on
+> Linux, not the Windows/PowerShell environment this directive mandates, so FCA-P9..P14
+> are NOT verified on Windows. Gate 3 is therefore withheld on #228/#229 pending
+> an owner ruling. Next after unblock: FCA-P11 -> FCA-P12 -> FCA-P13 -> FCA-P15
+> (projection fs-scan yielding, from the FCA-P14 AC2 ruling).
 
 **Resume prompt** (fresh session, after Gate 1): `/goal resume foreman-ops-console`
 

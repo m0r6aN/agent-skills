@@ -115,7 +115,7 @@ test('contextual help contains contract caveats, traps keyboard focus and return
     assert.equal(ui.doc.activeElement?.id, 'workflow-help')
     ui.click('#signals-body [data-select]')
     ui.click('#review-launch')
-    ui.input('[name="extra"]', 'Do not lose this draft.')
+    ui.input('[data-launch-item] [data-extra-text]', 'Do not lose this draft.')
     ui.input('[name="model"]', 'manual-model')
     ;(ui.doc.querySelector('[data-launch-help]') as HTMLButtonElement).focus()
     ui.click('[data-launch-help]')
@@ -134,7 +134,7 @@ test('contextual help contains contract caveats, traps keyboard focus and return
     help.dispatchEvent(new ui.dom.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
     assert.equal(ui.doc.activeElement?.hasAttribute('data-launch-help'), true)
     assert.equal(
-      (ui.doc.querySelector('[name="extra"]') as HTMLInputElement).value,
+      (ui.doc.querySelector('[data-launch-item] [data-extra-text]') as HTMLTextAreaElement).value,
       'Do not lose this draft.',
     )
     assert.equal((ui.doc.querySelector('[name="model"]') as HTMLInputElement).value, 'manual-model')
@@ -191,7 +191,7 @@ test('selection and launch draft survive filters/navigation/refresh; launch uses
     ui.click('#review-launch')
     assert.equal(ui.doc.querySelectorAll('[name="harness"]').length, 1)
     assert.equal(ui.doc.querySelectorAll('[data-launch-item]').length, 2)
-    ui.input('[name="extra"]', 'Preserve existing work.')
+    ui.input('[data-launch-item] [data-extra-text]', 'Preserve existing work.')
     ui.input('[name="model"]', 'opus', 'change')
     ui.input('[data-launch-item] [data-verb]', 'remediate', 'change')
     ui.click('[data-launch-item] [data-permission="push"]')
@@ -201,7 +201,7 @@ test('selection and launch draft survive filters/navigation/refresh; launch uses
     await ui.app.refresh()
     ui.click('#review-launch')
     assert.equal(
-      (ui.doc.querySelector('[name="extra"]') as HTMLTextAreaElement).value,
+      (ui.doc.querySelector('[data-launch-item] [data-extra-text]') as HTMLTextAreaElement).value,
       'Preserve existing work.',
     )
     assert.equal((ui.doc.querySelector('[name="model"]') as HTMLSelectElement).value, 'opus')
@@ -315,7 +315,7 @@ test('failed launch keeps draft, explains uncertainty, does not retry; escape re
   try {
     ui.click('[data-select]')
     ui.click('#review-launch')
-    ui.input('[name="extra"]', 'Keep me')
+    ui.input('[data-launch-item] [data-extra-text]', 'Keep me')
     ui.click('#spawn-run')
     await ui.settle()
     assert.match(ui.doc.querySelector('#spawn-result')?.textContent ?? '', /may have started/i)
@@ -325,7 +325,10 @@ test('failed launch keeps draft, explains uncertainty, does not retry; escape re
       ?.dispatchEvent(new ui.dom.window.Event('cancel', { cancelable: true }))
     assert.equal(ui.doc.activeElement?.id, 'review-launch')
     ui.click('#review-launch')
-    assert.equal((ui.doc.querySelector('[name="extra"]') as HTMLTextAreaElement).value, 'Keep me')
+    assert.equal(
+      (ui.doc.querySelector('[data-launch-item] [data-extra-text]') as HTMLTextAreaElement).value,
+      'Keep me',
+    )
   } finally {
     ui.close()
   }

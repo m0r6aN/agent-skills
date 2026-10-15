@@ -1,0 +1,45 @@
+## PASS-WITH-NOTES
+
+**Observed reviewer model:** `openai / gpt-6.1-sol`
+**Examined head:** `bfd21823b1c8419ba320961591583b476e9df58e`
+**Compared base:** `0e0878a5938ada21409e6e95ab8d2ea260c2f6b5`
+
+No blocking implementation defect found. Final acceptance needs the evidence-provenance closure below.
+
+### Severity-ranked finding
+
+**Low — retained Linux evidence does not establish mount isolation.**
+
+- **Locators:** evidence-root `h1-linux-container.log` is **0 bytes**; `h1-linux-image-id.log:1`; `linux-input/h1-linux-proof.sh:3–7`.
+- The script proves extraction into `/work/source`, but does not contain the outer Docker invocation or its mount configuration.
+- Read-only Docker events independently confirm container `fc36118ff775e6422d92359871f245499a61a3bc4bec169b2952400488eec77c` used the recorded immutable image, exited **0**, and was destroyed. They do **not** establish read-only input mounts or absence of additional mounts.
+- **Action:** during coordinator reproduction, retain a sanitized launch command and mount/configuration summary—without credential values—showing read-only input, disposable build scratch, and no host `obj/bin`, secret, or service mounts. Until then, those isolation claims remain unverified, not disproved.
+
+### Verified checks
+
+- **Exact scope and bytes:** only the three approved paths changed. Each manifest is byte-identical to base after replacing its single SQLite version literal `10.0.0` → `10.0.13`. The IntegrationTests manifest is byte-identical to base. No configuration, feed, suppression, workflow, or unrelated tracked change.
+- **Correct snapshots:** all **179 files** in `h1-source.tar`, `linux-input/h1-source.tar`, and `h1-source.zip` match the committed head byte-for-byte; archive commit markers agree.
+- **Resolved dependencies:** Windows/Linux graph logs cover all three projects and resolve provider/Core **10.0.13** and SQLitePCLRaw bundle/core/provider/native **2.1.13**, with no **2.1.11**. Current Windows asset graphs corroborate this and show audit enabled for **all** dependencies at **low** severity.
+- **Audit evidence:** both fresh restore logs contain no NuGet vulnerability/downgrade warning; each solution audit reports three projects without known vulnerable packages. This is collection-time evidence, not a permanent security guarantee.
+- **Identity preservation:** independent XML parsing compared test names, classes, methods, and outcomes—not merely counts:
+  - Baseline: **421 passed**
+  - Windows and Linux: **422 passed / 0 failed / 0 skipped**
+  - Exactly one added identity: `NativeSqliteVersion_IsAtLeast_3_50_2`
+  - Windows integration: identical **3 passed / 5 failed / 2 skipped**, including unchanged failure diagnostics.
+- **Floor/parser behavior:** `tests/Keon.McpGateway.Tests/Cortex/NativeSqliteVersionTests.cs:36–94` performs full numeric parsing and lexicographic component comparison. An isolated probe compiled the byte-identical test against controlled SQL/xUnit stubs: **39 cases passed**, including `3.9.9` rejection, `4.0.0` acceptance, boundary versions, and rejection of suffixes, empty components, signs, whitespace, non-ASCII digits, null/DBNull, and overflow.
+- **Genuine mutation failure:** the disposable mutation changes only the numeric floor and diagnostic. Its named test fails because measured **3.53.3** is below **99.0.0** (`h1-mutation.log` and its TRX), not because of a build/discovery failure.
+
+### Actual published native assets
+
+Both retained assets match their logged SHA-256 and the corresponding **2.1.13 package member byte-for-byte**.
+
+| Platform | Measured version | SHA-256 |
+|---|---:|---|
+| Windows x64 | `3.53.3` | `b7385d722c83fb52142a00477a726723745916d22a555711ee89834c1111fb2e` |
+| Linux x64 | `3.53.3` | `b0f5c48026fedcf9f05cf31c6fadf9e1e001ca59cd85aa68b8b6814e52c18a07` |
+
+Locators: `h1-win-native-proof.log:2–5`, `linux-evidence/h1-linux-native-proof.log:2–5`, and `native-proof/Program.cs:5–15`. The harness loads the absolute asset and resolves its native export without provider/system fallback. I independently loaded the exact Windows DLL and obtained **3.53.3**; Linux execution was verified through its primary logs and artifact checks, not independently rerun.
+
+**Limits:** existing integration failures and nullable warnings remain out-of-scope baseline issues. No deployed-fix, remote-exploitability, full OPMEM-readiness, second-review, or Gate3 bypass claim is made.
+
+**Final control:** source worktree remains **clean**, at the unchanged examined head. No parcel, evidence, or configuration files were modified.

@@ -6,7 +6,13 @@
  * marker (`chainEvidence: 'absent'`) for the complete-with-absent-chain case
  * and the contract's reviewer question 3 makes it non-optional.
  */
-export type ParcelStateValue = 'running' | 'hung' | 'awaiting-gate' | 'failed' | 'complete'
+export type ParcelStateValue =
+  | 'running'
+  | 'hung'
+  | 'awaiting-gate'
+  | 'failed'
+  | 'complete'
+  | 'not-started'
 
 export type FailureCode = 'chain-invalid' | 'red-review' | 'tripwire' | 'closure-drift'
 

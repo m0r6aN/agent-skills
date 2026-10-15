@@ -16,7 +16,7 @@ const absoluteRoot = (value) => typeof value === 'string' && /^(?:\/|[A-Za-z]:[\
 export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   const win = doc.defaultView
   const state = { view: 'signals', scope: '', goal: null, repoRoot: '', statuses: [], signals: [], registry: [], fleet: [], spawns: [],
-    loaded: {}, loadErrors: {}, decisions: null, decisionsError: '', decisionsFilter: '', reconcile: null, reconcileError: '', reconcileFilter: '', reconcileOpen: new Set(), projection: null, remedies: [], queries: {}, pages: {}, selected: new Map(), suggested: true, bulk: {}, bulkResult: '', controls: {}, extra: '', browseSelection: null, launchError: '', submitting: false, launchPage: 0, highlightSession: null, revealSession: false, detailParcel: null, retryRequired: false, retryAcknowledged: false }
+    loaded: {}, loadErrors: {}, decisions: null, decisionsError: '', decisionsFilter: '', decisionsShown: new Map(), decisionsApprovals: new Map(), reconcile: null, reconcileError: '', reconcileFilter: '', reconcileOpen: new Set(), projection: null, remedies: [], queries: {}, pages: {}, selected: new Map(), suggested: true, bulk: {}, bulkResult: '', controls: {}, browseSelection: null, launchError: '', submitting: false, launchPage: 0, highlightSession: null, revealSession: false, detailParcel: null, retryRequired: false, retryAcknowledged: false }
   let generation = 0
   let goalGeneration = 0
   let reconcileGeneration = 0
@@ -92,6 +92,13 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       const rows = queueRows(), page = pageRows(rows)
       el('signals-body').innerHTML = rows.length ? signalsHtml(page.rows, state.registry, { selected: state.selected, total: rows.length }) + page.pager : emptyHtml(state.signals.length ? 'No matching work' : 'No findings', 'Change filters or repository scope. Refresh to check for new findings.')
       wireSignalRows(el('signals-body'))
+      el('signals-body').querySelectorAll('[data-ack]').forEach((button) => on(button, 'click', async () => {
+        const note = globalThis.prompt?.('Optional acknowledgement note') || ''
+        try { await api('/api/acknowledgements', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: button.dataset.ack, fingerprint: button.dataset.fingerprint, note }) }); await refresh() } catch (err) { status(err.message, true) }
+      }))
+      el('signals-body').querySelectorAll('[data-unack]').forEach((button) => on(button, 'click', async () => {
+        try { await api(`/api/acknowledgements/${encodeURIComponent(button.dataset.unack)}`, { method: 'DELETE' }); await refresh() } catch (err) { status(err.message, true) }
+      }))
     }
     if (state.view === 'board') {
       const parcels = (state.projection?.parcels || []).filter((p) => matches(`${state.goal} ${p.parcel}`) && (!el('parcel-status').value || p.state === el('parcel-status').value))
@@ -120,6 +127,19 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
         // Re-renders (refresh, filter) must not collapse what the operator is reading.
         el('reconcile-body').querySelectorAll('.rec-row').forEach((row) => on(row.querySelector('.rec-details summary'), 'click', () => queueMicrotask(() => { const details = row.querySelector('.rec-details'); if (details.open) state.reconcileOpen.add(row.dataset.recParcel); else state.reconcileOpen.delete(row.dataset.recParcel) })))
         el('reconcile-body').querySelectorAll('[data-rec-filter]').forEach((button) => on(button, 'click', () => { state.reconcileFilter = button.dataset.recFilter; state.pages.reconcile = 0; renderCurrent() }))
+        el('reconcile-body').querySelectorAll('[data-prepare-session]').forEach((button) => on(button, 'click', () => {
+          const row = button.closest('.rec-row')
+          const checkbox = row?.querySelector('[data-select]')
+          const signal = state.signals.find((item) => item.id === checkbox?.dataset.select)
+          const entry = state.registry.find((item) => item.verb === button.dataset.verb && item.signalClasses.includes(signal?.class))
+          if (!signal || !entry) { status('No eligible session action is available for this parcel.', true); return }
+          const item = state.selected.get(signal.id) || selectTarget(signal, state.registry)
+          chooseAction(item, entry, state.suggested)
+          item.needsReview = false
+          item.extraText = button.dataset.instruction || null
+          state.selected.set(signal.id, item)
+          updateSelectionBar(); updateSpawnPanel(); openDialog(el('launch-dialog'))
+        }))
       }
     }
     if (state.view === 'decisions') {
@@ -127,7 +147,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       if (!data) el('decisions-body').innerHTML = state.decisionsError ? emptyHtml('Could not load decisions', `${state.decisionsError}. Use Refresh to retry.`) : emptyHtml('Loading decisions…', 'Reading pull requests and gate state. This can take a few seconds.')
       else {
         const stale = state.decisions.stale ? `<div class="banner warn" role="status"><strong>Showing the last successful read</strong> (${esc(data.generatedAt)}); refreshing failed: ${esc(state.decisions.stale)}.</div>` : ''
-        el('decisions-body').innerHTML = stale + decisionsHtml(data, { filter: state.decisionsFilter, query: state.queries.decisions, page: Math.min(state.pages.decisions || 0, Math.max(0, Math.ceil(filterItems(data.items, state.decisionsFilter, state.queries.decisions).length / DECISIONS_PAGE_SIZE) - 1)) })
+        el('decisions-body').innerHTML = stale + decisionsHtml(data, { filter: state.decisionsFilter, query: state.queries.decisions, shown: state.decisionsShown, approvals: state.decisionsApprovals, page: Math.min(state.pages.decisions || 0, Math.max(0, Math.ceil(filterItems(data.items, state.decisionsFilter, state.queries.decisions).length / DECISIONS_PAGE_SIZE) - 1)) })
         wireDecisions(el('decisions-body'))
       }
     }
@@ -163,6 +183,24 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
   }
   function wireDecisions(body) {
     body.querySelectorAll('[data-dec-filter]').forEach((button) => on(button, 'click', () => { state.decisionsFilter = button.dataset.decFilter; state.pages.decisions = 0; renderCurrent() }))
+    body.querySelectorAll('[data-show-command]').forEach((button) => on(button, 'click', async () => {
+      const feedback = button.parentElement.querySelector('[data-show-status]')
+      try {
+        const outcome = await api('/api/invoke', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ flow: button.dataset.flow, argv: JSON.parse(button.dataset.argv), mode: 'present' }) })
+        if (outcome.action !== 'presented' || typeof outcome.command !== 'string' || !outcome.command) throw new Error(outcome.reason || 'The console did not present this command')
+        state.decisionsShown.set(button.dataset.showCommand, outcome.command)
+        renderCurrent()
+        ;[...doc.querySelectorAll('[data-show-command]')].find((node) => node.dataset.showCommand === button.dataset.showCommand)?.focus()
+      } catch (err) { feedback.textContent = `Not shown: ${err.message}` }
+    }))
+    body.querySelectorAll('[data-approval-show]').forEach((button) => on(button, 'click', async () => {
+      const feedback = button.parentElement.querySelector('[data-show-status]')
+      try {
+        const outcome = await api('/api/invoke', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ flow: 'approval-show', argv: JSON.parse(button.dataset.argv) }) })
+        state.decisionsApprovals.set(button.dataset.approvalShow, `${outcome.stdout || ''}${outcome.stderr || ''}`.trim() || `approval show exited ${outcome.exitCode}`)
+        renderCurrent()
+      } catch (err) { feedback.textContent = `Not shown: ${err.message}` }
+    }))
     body.querySelectorAll('[data-copy]').forEach((button) => on(button, 'click', async () => {
       const feedback = button.parentElement.querySelector('[data-copy-status]')
       try { const clipboard = win?.navigator?.clipboard || globalThis.navigator?.clipboard; if (!clipboard) throw new Error(); await clipboard.writeText(button.dataset.copy); feedback.textContent = 'Copied. Run it in a terminal.' }
@@ -311,7 +349,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
     const focusData = el('spawn-panel').contains(active) ? { ...active.dataset } : null
     const focusItem = active?.closest('[data-launch-item]')?.dataset.launchItem
     state.launchPage = Math.min(state.launchPage, Math.max(0, Math.ceil(state.selected.size / 200) - 1))
-    el('spawn-panel').innerHTML = spawnPanelHtml({ count: state.selected.size, controls: state.controls, selections: [...state.selected.values()], registry: state.registry, extra: state.extra, error: state.launchError, page: state.launchPage, suggested: state.suggested, bulk: state.bulk, bulkResult: state.bulkResult, retryRequired: state.retryRequired, retryAcknowledged: state.retryAcknowledged })
+    el('spawn-panel').innerHTML = spawnPanelHtml({ count: state.selected.size, controls: state.controls, selections: [...state.selected.values()], registry: state.registry, error: state.launchError, page: state.launchPage, suggested: state.suggested, bulk: state.bulk, bulkResult: state.bulkResult, retryRequired: state.retryRequired, retryAcknowledged: state.retryAcknowledged })
     const form = el('spawn-form')
     el('spawn-run').disabled = launchBlocked()
     if (focusData && Object.keys(focusData).length) {
@@ -320,8 +358,13 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
         Object.entries(focusData).every(([key, value]) => node.dataset[key] === value))
       ;(replacement || doc.querySelector('[data-close-dialog]')).focus()
     }
-    function saveDraft() { state.controls = readControls(form); state.extra = form.querySelector('[name="extra"]').value }
-    on(form, 'input', saveDraft)
+    function saveDraft() { state.controls = readControls(form) }
+    on(form, 'input', (event) => {
+      saveDraft()
+      const wrapper = event.target.closest('[data-launch-item]')
+      const item = wrapper && state.selected.get(wrapper.dataset.launchItem)
+      if (item && event.target.matches('[data-extra-text]')) { event.target.value = event.target.value.slice(0, 2000); item.extraText = event.target.value || null }
+    })
     on(form, 'change', (event) => {
       saveDraft()
       const node = event.target, wrapper = node.closest('[data-launch-item]')
@@ -377,7 +420,7 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       state.submitting = true; el('spawn-run').disabled = true; el('spawn-result').textContent = 'Launching… Do not resubmit.'
       const ids = [...state.selected.keys()], selections = [...state.selected.values()]
       try {
-        const result = await api('/api/spawn', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(spawnRequest(selections, state.controls, state.extra)) })
+        const result = await api('/api/spawn', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(spawnRequest(selections, state.controls)) })
         const launched = result.launch?.launched
         if (!result.plan?.sessionName || !Array.isArray(launched) || launched.length !== ids.length || new Set(launched).size !== ids.length || !launched.every((index) => Number.isInteger(index) && index >= 0 && index < ids.length) || result.launch?.failed != null) throw new Error('Launch response did not confirm every requested pane')
         const name = result.plan.sessionName

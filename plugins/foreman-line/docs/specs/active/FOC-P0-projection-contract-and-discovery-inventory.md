@@ -426,3 +426,48 @@ Mandated reviewer focus questions (dual review, architecture/risk):
    which the console could mint a receipt, fake a TTY, auto-approve, or spawn
    anything outside the allowlist — and does the audit log capture refusals as
    well as executions?
+
+---
+
+## Amendment FCA-P10 — 2026-10-13
+
+**Owner-ratified amendment:** this section records a change to the frozen C4
+vocabulary granted by the owner on 2026-10-13 under the capability-map
+authority (A2). The frozen text above is not rewritten; this appendix adds
+to it.
+
+### Change summary
+
+1. **Sixth state value:** `ParcelStateValue` is now `'running' | 'hung' |
+   'awaiting-gate' | 'failed' | 'complete' | 'not-started'`.
+2. **Rule R4a (inserted between R3 and R4):** not R1–R3 AND no mapped receipt
+   chain AND no spec file maps to the parcel AND no approval, rejection or
+   projected sidecar joins it AND no liveness. Such a parcel has *never
+   progressed*: its progress timestamp is `null` for want of any source, not
+   for want of recency.
+3. **R4 narrowed, not redefined:** R4 is unchanged in text except that it is
+   reached only when a parcel has a chain, a spec or a sidecar, i.e. when
+   "stalled" is true.
+
+### Intent
+
+Of the 34 `hung` parcels measured on 2026-10-13 (`main` b8fe06b6), 20 met
+R4a's conditions (no chain, no spec, progress `null`) and should read
+`not-started` instead of `hung`. "Hung" there meant "the record holds nothing
+for it", telling the operator something is broken when nothing was ever
+running. This amendment separates "not started" from "stalled".
+
+### Unchanged
+
+R1, R2, R3, R5, gate proxies, thresholds, liveness composite, progress-timestamp
+definition, and the `ParcelProjection` shape (other than the widened `state`
+union) are unchanged by this amendment.
+
+### Consumer impact
+
+- `SEVERITY_FOR_STATE['not-started']` is `'info'`.
+- `ACTIONS_FOR_STATE['not-started']` is `['investigate', 'explain']`.
+- `GoalAttention.notStarted` is present; `total` excludes it.
+- `deriveAlerts` produces no alert for `not-started`.
+- The board, filters and chips render "Not started" in a non-alarming style;
+  the word "hung" never appears for such a parcel.

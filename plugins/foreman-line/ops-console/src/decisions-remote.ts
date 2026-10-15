@@ -1,6 +1,8 @@
 import { isRecord } from './guards.js'
 import {
+  type AsyncGhRunner,
   DEFAULT_TTL_MS,
+  defaultAsyncGhRunner,
   defaultGhRunner,
   FAILURE_TTL_MS,
   type GhRunner,
@@ -58,6 +60,14 @@ export function assertReadOnlyGh(args: readonly string[]): void {
 /** Wrap a runner so a disallowed argv is refused before anything is spawned. */
 export function guardedGh(run: GhRunner): GhRunner {
   return (cwd, args) => {
+    assertReadOnlyGh(args)
+    return run(cwd, args)
+  }
+}
+
+/** FCA-P14: Async version of guardedGh for non-blocking operations. */
+export function guardedGhAsync(run: AsyncGhRunner): AsyncGhRunner {
+  return async (cwd, args) => {
     assertReadOnlyGh(args)
     return run(cwd, args)
   }
@@ -364,6 +374,115 @@ export function gatherAnnotation(
   let fact: AnnotationFact
   try {
     const raw = run(repoRoot, ['api', `repos/{owner}/{repo}/check-runs/${checkRunId}/annotations`])
+    const parsed: unknown = JSON.parse(raw)
+    if (!Array.isArray(parsed)) throw new Error('gh returned unparseable output')
+    const messages = parsed
+      .filter(isRecord)
+      .map((annotation) => str(annotation.message))
+      .filter((message) => message !== '')
+    fact = {
+      checkRunId,
+      available: true,
+      reason: null,
+      asOf: new Date(now).toISOString(),
+      messages,
+      billing: messages.some(isBillingMessage),
+    }
+  } catch (error) {
+    fact = {
+      checkRunId,
+      available: false,
+      reason: reasonOf(error),
+      asOf: null,
+      messages: [],
+      billing: false,
+    }
+  }
+  annotationCache.delete(key)
+  annotationCache.set(key, { at: now, fact })
+  while (annotationCache.size > ANNOTATION_CACHE_MAX) {
+    const oldest = annotationCache.keys().next().value
+    if (oldest === undefined) break
+    annotationCache.delete(oldest)
+  }
+  return fact
+}
+
+/** FCA-P14: Async options for non-blocking operations. */
+export interface AsyncRemoteOptions {
+  readonly run?: AsyncGhRunner
+  readonly ttlMs?: number
+}
+
+/** FCA-P14: Async version of gatherOpenPrs using non-blocking spawn. */
+export async function gatherOpenPrsAsync(
+  repoRoot: string,
+  now: number,
+  options: AsyncRemoteOptions = {},
+): Promise<OpenPrFacts> {
+  const ttl = options.ttlMs ?? DEFAULT_TTL_MS
+  const hit = prCache.get(repoRoot)
+  if (
+    hit !== undefined &&
+    ttl > 0 &&
+    now - hit.at < (hit.facts.available && !hit.facts.stale ? ttl : Math.max(ttl, FAILURE_TTL_MS))
+  ) {
+    return hit.facts
+  }
+  const run = guardedGhAsync(options.run ?? defaultAsyncGhRunner)
+  let facts: OpenPrFacts
+  try {
+    const prs = parseOpenPrs(
+      await run(repoRoot, [
+        'pr',
+        'list',
+        '--state',
+        'open',
+        '--limit',
+        String(OPEN_PR_LIMIT),
+        '--json',
+        PR_FIELDS,
+      ]),
+    )
+    if (prs === null) throw new Error('gh returned unparseable output')
+    facts = {
+      available: true,
+      reason: null,
+      asOf: new Date(now).toISOString(),
+      stale: false,
+      prs,
+      truncated: prs.length >= OPEN_PR_LIMIT,
+    }
+    lastGood.set(repoRoot, facts)
+  } catch (error) {
+    const reason = reasonOf(error)
+    const previous = lastGood.get(repoRoot)
+    facts =
+      previous === undefined
+        ? { available: false, reason, asOf: null, stale: false, prs: [], truncated: false }
+        : { ...previous, reason, stale: true }
+  }
+  if (ttl > 0) prCache.set(repoRoot, { at: now, facts })
+  return facts
+}
+
+/** FCA-P14: Async version of gatherAnnotation using non-blocking spawn. */
+export async function gatherAnnotationAsync(
+  repoRoot: string,
+  checkRunId: number,
+  now: number,
+  options: AsyncRemoteOptions = {},
+): Promise<AnnotationFact> {
+  const key = `${repoRoot}\u0000${checkRunId}`
+  const hit = annotationCache.get(key)
+  if (hit !== undefined && (hit.fact.available || now - hit.at < FAILURE_TTL_MS)) return hit.fact
+  const run = guardedGhAsync(options.run ?? defaultAsyncGhRunner)
+  let fact: AnnotationFact
+  try {
+    const raw = await run(repoRoot, [
+      'api',
+      `repos/{owner}/{repo}/check-runs/${checkRunId}/annotations`,
+    ])
     const parsed: unknown = JSON.parse(raw)
     if (!Array.isArray(parsed)) throw new Error('gh returned unparseable output')
     const messages = parsed
