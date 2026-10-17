@@ -1,8 +1,0 @@
-
-Id Name              State
--- ----              -----
- 1 pi-council-grok   Running
- 3 pi-council-codex  Running
- 5 pi-council-claude Running
- 7 pi-council-gemini Running
-

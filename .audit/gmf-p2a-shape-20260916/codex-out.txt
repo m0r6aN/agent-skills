@@ -1,8 +1,0 @@
-TOP 3 BRUTAL FINDINGS
-1. The v2 contract is not a contract: table names, columns/types/nullability, foreign-key/unique keys, append-only guards, and cross-table identities are unspecified; “unique on every new table” can pass while being unusable or unsafe for P2B’s atomic attempt/reservation/slot/receipt commit.
-2. “Migration failure leaves v1 intact” is untestable as written: no single-transaction migration protocol, supported/rejected version-state matrix, or deterministic fault-injection case is required; concurrent “multiple processes” is weakened to same-process instance/restart analogues.
-3. The Allowed-Files/effect-disabled proof is porous: `git diff --name-only` omits untracked files and, after staging, misses the index, so it cannot establish that forbidden code or generated artifacts were untouched; raw-SQL row dumps also do not prove schema/affinity preservation.
-TOP 3 MOVES
-1. Amend the draft with a v2 schema ledger: exact DDL, each PK/UNIQUE/FK/check/index, immutable-row rule, and explicit links/cardinalities from spend to attempt, reservation, slot, receipt, pending state, terminal, and settlement, mapped to P1-C107/C109/C110/C115/C116.
-2. Require a version-state table (empty/v1/populated-v1/v2/unknown/future/partial), one explicit transactional upgrade boundary with version write last, and deterministic injected DDL/commit failure plus true separate-process initializer/racer tests that raw-SQL verify rollback and final schema.
-3. Replace file-scope evidence with a base-tree manifest covering committed, staged, unstaged, and untracked paths, plus hashes of every forbidden path; make independent SQL assert `sqlite_master`, `PRAGMA table_info/index_list/foreign_key_list`, values/types, and constraints before/after migration.
