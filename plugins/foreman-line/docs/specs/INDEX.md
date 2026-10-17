@@ -6,7 +6,10 @@
 > `done/` is listed as `done/` (the stale `active/` duplicates were removed in the
 > 2026-10-08 hygiene pass). Regenerate or hand-update on every spec state change.
 
-Own TO-B0/TO-P1 lifecycle rows maintained 2026-10-10; FCA-P11 follow-through coverage updated 2026-10-14; other rows retain their recorded provenance.
+Own TO-B0/TO-P0/TO-P1 lifecycle rows maintained 2026-10-10; FCA-P11 follow-through coverage updated 2026-10-14; FCA-P12 acknowledgement implementation updated 2026-10-14; other rows retain their recorded provenance.
+QF-P1 row added 2026-10-13 by the quick-flags shaping session, reshaped under D2″/D5″/D9″ and moved to `done/` at Stage F 2026-10-13 (hand-updated).
+QF-P2 row added 2026-10-14 by the quick-flags QF-P2 shaping session at `draft`; promoted `active` at coordinator lint and moved to `done/` at Stage F 2026-10-14 (hand-updated).
+QF-P0 row added 2026-10-14 by the quick-flags QF-P0 shaping session at `draft`; promoted `active` at coordinator lint and moved to `done/` at Stage F 2026-10-14 (hand-updated).
 
 | Ticket | Title | Status | Location |
 |---|---|---|---|
@@ -145,6 +148,10 @@ Own TO-B0/TO-P1 lifecycle rows maintained 2026-10-10; FCA-P11 follow-through cov
 | PMC-P2E | [Governed caller retirement and new user-entry split record](active/PMC-P2E-config-caller-migration.md) | `draft` | `active/` |
 | PMC-P2F | [Reuse the fixed provider-binding schema validator inside its owner](done/PMC-P2F-schema-validator-reuse.md) | `done` | `done/` |
 | PRAC-P0 | [Pi extension/hook API surface compatibility memo](done/PRAC-P0-pi-extension-hook-surface-compat.md) | `done` | `done/` |
+| QF-P0 | [Authority-registry corpus amendment for post-QF-P2 quick-flags canon](done/QF-P0-authority-registry-corpus-amendment.md) | `done` | `done/` |
+| QF-P1 | [Quick-flags registry (QUICK-FLAGS.md, versioned)](done/QF-P1-quick-flags-registry.md) | `done` | `done/` |
+| QF-P2 | [Quick-flags integration (goal skill, loop-directive template, synced copy, COORDINATOR-PATTERN cross-reference)](done/QF-P2-quick-flags-integration.md) | `done` | `done/` |
+| QF-P3 | [Quick-flags structural conformance check](active/QF-P3-quick-flags-conformance-check.md) | `draft` | `active/` |
 | RCM-HRO | [Private authenticated public catalog publication](active/RCM-HRO-authenticated-catalog-publication.md) | `active` | `active/` |
 | RCM-P0 | [Current-instance routing reconnaissance](done/RCM-P0-current-instance-recon.md) | `done` | `done/` |
 | RCM-P1A | [Supported bounded catalog eligibility wrapper](done/RCM-P1A-sanitized-snapshot-adapter.md) | `done` | `done/` |
@@ -161,4 +168,4 @@ Own TO-B0/TO-P1 lifecycle rows maintained 2026-10-10; FCA-P11 follow-through cov
 | WGT-P0BOOT | [Tracked Foreman Line bootstrap](done/WGT-P0BOOT-tracked-foreman-bootstrap.md) | `done` | `done/` |
 | WGT-R1 | [Foreman current-state and queue reconciliation](active/WGT-R1-foreman-current-state-reconciliation.md) | `active` | `active/` |
 
-Total: 125 specs (56 active/, 69 done/).
+Total: 128 specs (56 active/, 72 done/).

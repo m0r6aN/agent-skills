@@ -87,3 +87,7 @@ The lessons ledger (`docs/transcripts/defects_lessons.md`) is provenance and coo
 ## Lineage and extraction
 
 This charter generalizes: the Foreman Line coordinator carryover (role + 11-step loop), the 2026-07-15 loop directive (long-running mechanics, ownership, standing authorizations), and `plugins/foreman-line/skills/parcel-driven-development/` (parcel mechanics). Extraction rule, applied to this document as to everything else: promote to the PDD skill / a company-wide package only after the pattern survives its next real goals - extract from shipped practice, never build the platform first.
+
+## Quick flags
+
+Developer quick flags are defined once, in the versioned registry `plugins/foreman-line/docs/QUICK-FLAGS.md`; the `/goal` skill's Quick flags section points to it. A quick flag adjusts how much the Coordinator asks and does inside the gates and never removes a gate. QUICK-FLAGS governs quick flag tokens only. Existing prose grants are neither reinterpreted nor revoked. Quick flags are not standing authorizations: those stay in the goal's loop directive as verbatim prose, with their scope and their contingencies (see The three human gates, above). A restrictive quick flag still limits the Coordinator's conduct under a prose grant and leaves that grant unchanged (registry §3). Where the registry and this charter differ, this charter governs.

@@ -1,5 +1,6 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
+import { isAlertAcknowledged } from './acknowledgements.js'
 import type { Alert } from './alerts.js'
 import { type StateFile, stateFilePath } from './config.js'
 import { isRecord } from './guards.js'
@@ -85,7 +86,7 @@ export function syncAlerts(
   const known = new Set(store.notifications.map((entry) => entry.alertId))
   const added: Notification[] = []
   for (const alert of alerts) {
-    if (known.has(alert.id)) continue
+    if (known.has(alert.id) || isAlertAcknowledged(stateDir, alert)) continue
     known.add(alert.id)
     added.push({
       id: `ntf-${alert.id}`,

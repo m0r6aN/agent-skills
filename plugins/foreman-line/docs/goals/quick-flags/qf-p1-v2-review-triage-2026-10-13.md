@@ -1,0 +1,27 @@
+# QF-P1 v2 (reshaped design) review triage — 2026-10-13
+
+**Reviews:** G and H (`qf-p1-v2-review-G/H-findings-...`), independent, frontier (`claude-opus-5-5`), read-only. Both: **REQUEST CHANGES** with **no BLOCKER and no HIGH**. Both ran all nine spec Verification Plan commands with the stated results, traced all 24 ACs and V1–V7 as satisfied, found no path that waives a §3 item, and passed the git-detection control (HEAD unchanged). The mutation tests each found the same two checker gaps (VP2 extra label line; VP6 does not bind the 17 independent rows' first rule ID).
+**Coordinator closure check before review (on disk):** 346 lines, 14 entries, labels in order, 55 conflict rows (none missing or extra), V1–V7, retired-term grep 0, `git diff --check` clean, scope clean.
+**Agreement (both, independently):** G-2/H-2, G-3+G-4/H-3, G-6/H-4, G-7/H-6, G-8/H-1 (same family), G-10/H-7, G-11/H-9. No disputes.
+**Tripwire accounting:** this is rework 1 of the reshaped parcel (see `gate1-reopen-d5-d9-2026-10-13.md`); no tripwire has fired on the reshaped parcel.
+
+| Finding(s) | Sev | Disposition | Ruling (apply to **every** instance; sweep the whole file) |
+|---|---|---|---|
+| G-1 | MED | Fix (spec + registry) | Delete "or goal exit" from the `--strict`/`--nopush` lifetime. Restriction lines end only by a human-typed lift. At goal exit the final report lists every active restriction so the human can lift it. |
+| G-2, H-2 | MED | Fix | The reading rule applies **only** to lines of the `Active restrictions` entry (any copy). Stop reports, the decision log, the gate record, and any `message:` text are never read as restriction lines, and the lift test "still appears on another line" counts only entry lines. |
+| G-3, G-4, H-3, G-5(part) | MED | Fix | GATES precondition for `--dispatch-ok`/`--merge-ok`: Gate 1 is **currently** granted for the goal (a pending re-open is not granted, in any form of ratification, prose included), no open scoped Gate 1 re-open blocks a named parcel, and each named parcel's Parcels row is identical to the text in the last charter revision the gate record shows ratified. Any doubt: refuse. The GATES checks read the integration-branch checkout. |
+| G-5 | MED | Fix | `--asrec` takes no step that needs Gate 2 or Gate 3 unless a standing authorization already covers it; it stops at that step. State it in the `--asrec` Expansion and its §7 row. |
+| G-6, H-4, H-11 | MED | Fix | `--ratify` ratifies only the presented decision list or amendment text. It grants no standing Gate 2/3 authorization and no outward-facing authorization; those need the human's explicit prose. The gate record names the parts shown. A `--ratify <rev>` that names revisions must name every shown revision, or none. |
+| G-7, H-6 | MED | Fix | `--merge-ok` target must equal the charter's ratified Branch and the loop directive's integration-branch name as read in the integration-branch checkout, and is never `main`. A mismatch is stop-and-report. |
+| G-8, H-1 | LOW/MED | Fix (sweep) | Add after V7: prose standing authorizations are governed by canon and §3, not by V7. Qualify with "among quick flags, only" in every "only the human's own `--dispatch-ok`/`--merge-ok`" sentence (D4′ rule text and both Rule cells), then re-sweep the file for any other unqualified "only/never" sentence. |
+| G-9 | LOW | Fix | A session that becomes owner writes every provisional restriction it is honouring. Stage Zero restrictive conduct is recorded in the draft charter. |
+| G-10, H-7 | LOW | Fix | In a restriction line, `message:` is the last field; `\` and `\|` in it are escaped; `since:` is `YYYY-MM-DD`. |
+| G-12 | LOW | Fix | "Dependency order" means the Parcels table's row order (fails closed). |
+| G-13 | LOW | Fix | `--halt`: the current atomic step is the one in progress when the message arrived; nothing the message itself requests is started. |
+| G-14, H-5, H-10, H-12 | LOW | Fix | A repeated quick flag in one message refuses it. A word that, minus a leading single `-`, contains a canonical name is a variant. The dash set is the Unicode `Dash` property plus U+2212; format characters (category Cf) and whitespace-like characters are deleted before matching. A message that issues and lifts the same restrictive quick flag is unclear (inert). No ratification of any form in a message carrying `--asrec` or `--blanket` counts as Gate 1. Skill/slash-command expansion of the human's own typed command is human-typed (forward the naming detail to QF-P2). |
+| H-8 | LOW | Fix | An existing restriction line is honoured under the most restrictive meaning of any registry version since it was written. |
+| G-11, H-9 | LOW | Accept as QF-P3 input | The checker gaps (extra label line after the 7th; first rule ID of the 17 independent pinned rows; `\|` in cells; closed-row count) are carried to the QF-P3 shaping brief; they are not QF-P1 changes. |
+| Nits | — | Fix cheaply | Replace the goal-specific `loop-directive.md:21` citation with the generic "stop-and-report"; reconcile the `--dry --ratify` refused/report wording; state that a lift naming `--review2` and a parcel is exempt from the parcel-naming refusal. |
+
+**Cap:** line cap raised from 350 to **370** (ruled in the spec). Each fix must replace or tighten text before adding; net growth must be justified.
+**Tripwire for rework 1:** retired-term grep stays 0; 14 entries; 55 rows + OBS rule; V1–V7; labels; no new mechanism (no stored grants, ids, voids, pins). The builder's completion claim must include post-edit greps for every pattern swept.

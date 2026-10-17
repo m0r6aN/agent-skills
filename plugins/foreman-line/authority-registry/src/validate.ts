@@ -12,6 +12,14 @@ import {
   R32_SOURCE_SNAPSHOT,
 } from './r32-migrations.js'
 import {
+  R33_AUDIT_ROWS,
+  R33_ITEM_MIGRATIONS,
+  R33_PLAN_BLOB_DIGEST,
+  R33_RECONCILIATION,
+  R33_RECORD_DIGEST,
+  R33_SOURCE_SNAPSHOT,
+} from './r33-migrations.js'
+import {
   NORMATIVE_MARKDOWN_AUDIT_KEYS,
   R12_LEGACY_MARKDOWN_RULE_TARGETS,
   R12_PRIOR_REGISTRY_COMMIT,
@@ -98,6 +106,8 @@ const REQUIRED_REWORK_MIGRATIONS = [
   // it here instead of in the head constant. The pinned value is its existing R31 record digest -
   // history pins never advance.
   'registry-rework-446700d',
+  // R33 demotes the exact R32 head; deletion cannot promote this historical identity.
+  'registry-rework-521214e',
 ] as const
 /**
  * AC4 obligation 6 as amended by R22 - the shipped chain head, bound through channels that do NOT
@@ -116,14 +126,14 @@ const REQUIRED_REWORK_MIGRATIONS = [
  * invalidate the shipped registry. Measured: it does exactly that, AND still admits the
  * delete-and-substitute attack, because a pin binds only a record that is still present.
  */
-const SHIPPED_CHAIN_HEAD_ID = 'registry-rework-521214e'
+const SHIPPED_CHAIN_HEAD_ID = R33_RECONCILIATION.reconciliationId
 /**
  * The canonical record digest of the shipped head, consulted ONLY once the record is no longer the
  * head. While it IS the head it stays bound to the live manifest, so appending a legitimately
  * amended registry does not require regenerating or re-pinning anything; once a successor demotes
  * it, it becomes a historical record and is bound exactly like the records before it.
  */
-const SHIPPED_CHAIN_HEAD_RECORD_DIGEST = R32_RECORD_DIGEST
+const SHIPPED_CHAIN_HEAD_RECORD_DIGEST = R33_RECORD_DIGEST
 const REQUIRED_OPERATIONS = [
   'gate1.ratify',
   'gate2.dispatch',
@@ -379,6 +389,12 @@ const R11_PROTECTED_NORMATIVE_ITEMS: Readonly<Record<string, string>> = {
 }
 
 const RECONCILIATION_CONTRACT = {
+  'registry-rework-7f3391c': {
+    topic: R33_RECONCILIATION.topic,
+    status: R33_RECONCILIATION.migrationStatus,
+    refs: R33_RECONCILIATION.observedRefs.map((ref) => `${ref.sourceId}:${ref.itemId}`),
+    rules: R33_RECONCILIATION.authoritativeRuleIds,
+  },
   'registry-rework-521214e': {
     topic: R32_RECONCILIATION_TOPIC,
     status: 'superseded-by-amendment',
@@ -693,6 +709,10 @@ const PRIOR_R10_BINDING_MANIFEST_DIGEST =
   '99d9bed01cd5a7957457e24c82cbcc3645ebf591415d6072c26130d3b8a2e8d7'
 
 const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> = {
+  'registry-rework-7f3391c': [
+    R33_RECONCILIATION.scopedDisposition,
+    R33_RECONCILIATION.unresolvedConsequence,
+  ],
   'registry-rework-521214e': [R32_RECONCILIATION_DISPOSITION, R32_RECONCILIATION_CONSEQUENCE],
   'registry-rework-446700d': [
     R31_RECONCILIATION.scopedDisposition,
@@ -786,6 +806,8 @@ const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> 
 }
 
 const RECONCILIATION_RECORD_DIGESTS: Readonly<Record<string, string>> = {
+  // R33 pins the demoted R32 head at its original canonical digest, never a re-anchor.
+  'registry-rework-521214e': R32_RECORD_DIGEST,
   'registry-rework-66a514d': '6d39f17f70b25ce44030e729c62d975b45a8597b99af8c22f19c6a3cbfba92d7',
   // Demoted from chain head by R32; bound at its existing R31 record digest, byte-stable.
   'registry-rework-446700d': R31_RECORD_DIGEST,
@@ -2207,7 +2229,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
   if (
     expectedNormativeMarkdownAudit.some((record) => record === null) ||
     canonicalJson(document.normativeMarkdownAudit) !==
-      canonicalJson([...expectedNormativeMarkdownAudit, ...R31_AUDIT_ROWS])
+      canonicalJson([...expectedNormativeMarkdownAudit, ...R31_AUDIT_ROWS, ...R33_AUDIT_ROWS])
   ) {
     violations.push(
       violation(
@@ -2216,7 +2238,8 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         // exact 202" after the derived audit had already moved to its R32 size).
         `normative Markdown audit must equal the exact ${
           expectedNormativeMarkdownAudit.filter((record) => record !== null).length +
-          R31_AUDIT_ROWS.length
+          R31_AUDIT_ROWS.length +
+          R33_AUDIT_ROWS.length
         } item-specific source-authored dispositions`,
       ),
     )
@@ -2384,6 +2407,68 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     }
   }
 
+  // Finite R33 curation precedes every fallback: identity, location, value, disposition and
+  // complete rule shape are independent obligations, not an allowlist keyed on a name.
+  if (document.sourceSnapshotCommit !== R33_SOURCE_SNAPSHOT)
+    violations.push(
+      violation('MIGRATION_EVIDENCE_INVALID', 'R33 adopted committed source snapshot changed'),
+    )
+  for (const expected of R33_ITEM_MIGRATIONS) {
+    const item = itemsByRef.get(referenceKey(expected.sourceId, expected.itemId))
+    const source = sourcesById.get(expected.sourceId)
+    const withoutHint = (candidate: InventoryItem) => {
+      const { lineHint: _hint, ...locator } = candidate.locator
+      return { ...candidate, locator }
+    }
+    if (
+      item === undefined ||
+      source === undefined ||
+      source.inventoryItems.filter(
+        (candidate) =>
+          candidate.locator.kind === expected.new.locator.kind &&
+          candidate.locator.anchor === expected.new.locator.anchor,
+      ).length !== 1 ||
+      locatorDigestFor(item.locator) !== expected.newLocatorDigest ||
+      canonicalJson(withoutHint(item)) !== canonicalJson(withoutHint(expected.new))
+    )
+      violations.push(
+        violation(
+          'AUTHORITY_ESCALATION',
+          `R33 reserved item '${expected.sourceId}:${expected.itemId}' differs from its complete reviewed binding`,
+          { ruleId: expected.itemId },
+        ),
+      )
+    for (const shape of expected.newRules) {
+      const rule = document.rules.find((candidate) => candidate.ruleId === shape.ruleId)
+      if (rule === undefined || canonicalJson(rule) !== canonicalJson(shape))
+        violations.push(
+          violation(
+            'AUTHORITY_ESCALATION',
+            `R33 reserved rule '${shape.ruleId}' differs from its complete reviewed shape`,
+            { ruleId: shape.ruleId },
+          ),
+        )
+    }
+    const audit = R33_AUDIT_ROWS.find(
+      (row) => row.sourceId === expected.sourceId && row.itemId === expected.itemId,
+    )
+    if (
+      audit !== undefined &&
+      canonicalJson(
+        document.normativeMarkdownAudit.filter(
+          (row) => row.sourceId === audit.sourceId && row.itemId === audit.itemId,
+        ),
+      ) !== canonicalJson([audit])
+    )
+      violations.push(
+        violation(
+          'RULE_SEMANTICS_UNCURATED',
+          `R33 audit candidacy '${audit.sourceId}:${audit.itemId}' differs from its exact reviewed disposition`,
+          { ruleId: audit.itemId },
+        ),
+      )
+  }
+
   // These finite source-version mappings precede every legacy fallback. No reserved identity
   // can recover admission by changing its claim, assurance, basis, or source tuple.
   for (const expected of R31_SOURCE_ITEMS) {
@@ -2392,7 +2477,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     if (
       source === undefined ||
       item === undefined ||
-      source.snapshotEvidence.commit !== R32_SOURCE_SNAPSHOT ||
+      source.snapshotEvidence.commit !== R33_SOURCE_SNAPSHOT ||
       source.inventoryItems.filter(
         (candidate) =>
           candidate.locator.kind === expected.locator.kind &&
@@ -2408,7 +2493,9 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         ? source.snapshotEvidence.fullFileSha256 !==
           '57e345f9294cb8fcd8c3d90325505c80903648f60522f820061a5f8f288a86ac'
         : source.snapshotEvidence.fullFileSha256 !==
-          'dcca81e1e38e245bc6b8bc8ddfdbd44b8b7546c4f0663639256fb421f686f8eb') ||
+          (source.snapshotEvidence.commit === R33_SOURCE_SNAPSHOT
+            ? R33_PLAN_BLOB_DIGEST
+            : 'dcca81e1e38e245bc6b8bc8ddfdbd44b8b7546c4f0663639256fb421f686f8eb')) ||
       locatorDigestFor(item.locator) !== expected.locatorDigest ||
       item.normalizedExcerpt !== expected.normalizedExcerpt ||
       item.valueDigest !== expected.valueDigest ||
@@ -2979,6 +3066,16 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
         ),
       )
     }
+    if (
+      record.reconciliationId === R33_RECONCILIATION.reconciliationId &&
+      canonicalJson(record) !== canonicalJson(R33_RECONCILIATION)
+    )
+      violations.push(
+        violation(
+          'MIGRATION_EVIDENCE_INVALID',
+          `R33 migration '${record.reconciliationId}' differs from its exact reviewed prior/new correspondence`,
+        ),
+      )
     const contract =
       RECONCILIATION_CONTRACT[record.reconciliationId as keyof typeof RECONCILIATION_CONTRACT]
     const prose = RECONCILIATION_PROSE[record.reconciliationId]
@@ -4986,7 +5083,13 @@ export function sweepRegistrySources(document: unknown, repoRoot: string): Valid
           const bytes = runGit(root, ['cat-file', '-p', evidence.reference])
           if (sha256(bytes) !== evidence.digest) {
             violations.push(
-              violation('MIGRATION_EVIDENCE_INVALID', 'Git object evidence digest changed'),
+              violation(
+                'MIGRATION_EVIDENCE_INVALID',
+                'Git object evidence digest changed',
+                reconciliation.reconciliationId === R33_RECONCILIATION.reconciliationId
+                  ? { locator: evidence.reference }
+                  : {},
+              ),
             )
           }
         } catch {

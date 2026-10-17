@@ -82,6 +82,7 @@ function hasGoalRecords(goalsDir: string): boolean {
 
 export const STATE_FILES = [
   'notifications.json',
+  'acknowledgements.json',
   'invocation-audit.json',
   'fleet.json',
   'spawns.json',

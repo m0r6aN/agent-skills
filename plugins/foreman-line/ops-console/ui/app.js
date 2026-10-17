@@ -92,6 +92,13 @@ export function startConsole(doc, fetcher = globalThis.fetch.bind(globalThis)) {
       const rows = queueRows(), page = pageRows(rows)
       el('signals-body').innerHTML = rows.length ? signalsHtml(page.rows, state.registry, { selected: state.selected, total: rows.length }) + page.pager : emptyHtml(state.signals.length ? 'No matching work' : 'No findings', 'Change filters or repository scope. Refresh to check for new findings.')
       wireSignalRows(el('signals-body'))
+      el('signals-body').querySelectorAll('[data-ack]').forEach((button) => on(button, 'click', async () => {
+        const note = globalThis.prompt?.('Optional acknowledgement note') || ''
+        try { await api('/api/acknowledgements', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: button.dataset.ack, fingerprint: button.dataset.fingerprint, note }) }); await refresh() } catch (err) { status(err.message, true) }
+      }))
+      el('signals-body').querySelectorAll('[data-unack]').forEach((button) => on(button, 'click', async () => {
+        try { await api(`/api/acknowledgements/${encodeURIComponent(button.dataset.unack)}`, { method: 'DELETE' }); await refresh() } catch (err) { status(err.message, true) }
+      }))
     }
     if (state.view === 'board') {
       const parcels = (state.projection?.parcels || []).filter((p) => matches(`${state.goal} ${p.parcel}`) && (!el('parcel-status').value || p.state === el('parcel-status').value))

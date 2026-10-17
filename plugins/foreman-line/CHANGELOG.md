@@ -9,6 +9,10 @@
   `/foreman-line:foreman-shaping`. Expands like Pi's `/skill:<name>` with
   `${CLAUDE_PLUGIN_ROOT}` resolved to the plugin root; goal commands
   tab-complete goal slugs; `/foreman-line:probe` self-tests the install.
+- Worktree-hygiene restore (FCA-P3): `ops-console/state/notifications.json`
+  left tracking again. It is a console-written runtime store, untracked and
+  gitignored on 2026-10-11, then re-tracked in `4ffb114d`; untracking stops the
+  derived local state from churning the working tree on every console run.
 
 ## 0.2.1 — 2026-10-11
 
