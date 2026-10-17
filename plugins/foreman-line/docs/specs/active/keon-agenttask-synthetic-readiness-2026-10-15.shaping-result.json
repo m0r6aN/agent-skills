@@ -1,0 +1,12 @@
+{
+  "parcelSpecRefs": [
+    "plugins/foreman-line/docs/specs/active/HKR-P0-authority-and-contract-baseline.md",
+    "plugins/foreman-line/docs/specs/active/HKR-P1-synthetic-reconstruction-and-evidence.md",
+    "plugins/foreman-line/docs/specs/active/HKR-P2-custody-classification-and-isolation.md",
+    "plugins/foreman-line/docs/specs/active/HKR-P3-candidate-ledger-and-race-safety.md",
+    "plugins/foreman-line/docs/specs/active/HKR-P4-bounded-local-extraction-route.md",
+    "plugins/foreman-line/docs/specs/active/HKR-P5-reference-review-and-metrics.md",
+    "plugins/foreman-line/docs/specs/active/HKR-P6-independent-synthetic-readiness.md"
+  ],
+  "epics": []
+}

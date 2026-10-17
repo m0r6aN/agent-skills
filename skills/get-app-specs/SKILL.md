@@ -1,6 +1,6 @@
 ---
 name: get-app-specs
-description: Extract a canonical application specification from a codebase — features, business rules, requirements, domain canon, and dependencies — each evidence-backed, confidence-labeled, and liveness-checked (does this code actually get triggered?), with open questions surfaced. Use when taking a standalone inventory of what an app actually does (audit, onboarding, pre-rewrite archaeology), or as Phase 0 of the modernizer skill to produce the APP_SPECIFICATION.md baseline that behavioral contracts map to.
+description: Extract a canonical application specification from a codebase — features, business rules, requirements, domain canon, and dependencies — each evidence-backed, confidence-labeled, and liveness-checked (does this code actually get triggered?), with open questions surfaced. Use when taking a standalone inventory of what an app actually does (audit, onboarding, pre-rewrite archaeology), or as Phase 0 of the modernize skill to produce the APP_SPECIFICATION.md baseline that behavioral contracts map to.
 metadata:
   author: The Brotherhood
   keywords:
@@ -18,7 +18,7 @@ metadata:
 
 Derive a canonical, evidence-backed specification of what an application does — independent of how it is implemented. Output a single authoritative `APP_SPECIFICATION.md` that inventories features, business rules, technical requirements, domain canon, and dependencies, with a confidence label and source evidence on every claim, a liveness verdict on every capability, and every gap surfaced as an explicit open question.
 
-This skill describes behavior. It does not redesign, refactor, or rewrite. When used as modernizer Phase 0, its output is the baseline that all downstream contracts trace back to.
+This skill describes behavior. It does not redesign, refactor, or rewrite. When used as modernize Phase 0, its output is the baseline that all downstream contracts trace back to.
 
 ## Overview
 
@@ -53,7 +53,7 @@ Optional supporting artifacts when scope warrants:
 
 ## Identifier Schemes
 
-Every item gets a stable ID. These are the IDs the modernizer contract schema links against (`linked_requirements`).
+Every item gets a stable ID. These are the IDs the modernize contract schema links against (`linked_requirements`).
 
 | Prefix | Meaning | Example |
 |-|-|-|
@@ -68,13 +68,13 @@ Headless/automated processes are captured as `F-*` too — a scheduled job is a 
 
 ### Namespacing under parallel discovery
 
-Under the modernizer's choreography (multiple discovery nodes running concurrently over different scopes), IDs are **namespaced by scope** so they are collision-free by construction — no central allocator, no cross-node coordination. A node prepends a dot-separated, UPPERCASE scope prefix (derived from its choreography node `path`) to every ID it emits:
+Under the modernize's choreography (multiple discovery nodes running concurrently over different scopes), IDs are **namespaced by scope** so they are collision-free by construction — no central allocator, no cross-node coordination. A node prepends a dot-separated, UPPERCASE scope prefix (derived from its choreography node `path`) to every ID it emits:
 
 - `BACKEND.BILLING.F-003` · `BACKEND.BILLING.BR-007` · `FRONTEND.CHECKOUT.CANON-002`
 
 Rules:
 - The numeric suffix is unique **within its namespace** — each node numbers its own `F-001`, `F-002`, … from scratch; the prefix guarantees global uniqueness. That is the whole point: provenance is encoded and no two nodes can collide without coordinating.
-- Namespace segments are UPPERCASE alphanumeric, start with a letter, dot-separated. Contract-linked IDs (`F`/`BR`/`R`/`CANON`) MUST match `^([A-Z][A-Z0-9]*\.)*(F|BR|R|CANON)-[0-9]+$` — the exact pattern the modernizer's `contract.schema.json` / `manifest.schema.json` accept. `DEP`/`OQ` follow the same prefix convention.
+- Namespace segments are UPPERCASE alphanumeric, start with a letter, dot-separated. Contract-linked IDs (`F`/`BR`/`R`/`CANON`) MUST match `^([A-Z][A-Z0-9]*\.)*(F|BR|R|CANON)-[0-9]+$` — the exact pattern the modernize's `contract.schema.json` / `manifest.schema.json` accept. `DEP`/`OQ` follow the same prefix convention.
 - **Bare IDs (`F-003`) are valid for a single-scope / standalone run** (no parallel decomposition) — the bare form is just the empty namespace. Both forms are accepted downstream.
 - Namespace derives from stable scope, not run order. Retire-don't-recycle still holds within a namespace.
 
@@ -203,7 +203,7 @@ Exit criteria:
 
 ## Handoff to the Modernizer
 
-When this runs as modernizer Phase 0:
+When this runs as modernize Phase 0:
 - `APP_SPECIFICATION.md` becomes the canonical inventory consumed by Phase I (Discovery and Contract Drafting).
 - Phase I contracts set `linked_requirements` to the `F-/BR-/R-/CANON-` IDs defined here (namespaced, e.g. `BACKEND.BILLING.F-003`, or bare for a single-scope run); the contract schema enforces that every contract links ≥1 baseline ID matching the `linked_requirements` pattern.
 - Unresolved `OQ-*` items, plus all **Cold** / **Indeterminate** liveness items, route to the Phase II human validation gate.

@@ -1,5 +1,0 @@
-error: unexpected argument 'contract' found
-
-Usage: grok [OPTIONS] [PROMPT] [COMMAND]
-
-For more information, try '--help'.

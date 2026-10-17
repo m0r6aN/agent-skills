@@ -1,9 +1,0 @@
-TOP 3 BRUTAL FINDINGS
-1. Authority leak: PermissionSpendEnforcementServiceCollectionExtensions.cs:110 constructs the ledger, whose constructor runs InitializeSchema, so merged P2A code auto-migrates any configured authoritative DB to v2; "no authoritative database is ever migrated" is false post-merge and that activation path is unguarded.
-2. Migration contradiction: v1 sets journal_mode=WAL before any transaction (it cannot run inside BEGIN), so unless reordered, malformed/unknown states are mutated before pre-DDL rejection; "exact v1 shape" has no comparator; fault injection only after first CREATE is weak proof.
-3. Integrity gaps: nullable PreEffectReceipts.SlotAllocationId silently disables its composite FK (SQLite MATCH SIMPLE); TerminalReceipts/Settlements bind only EffectAttemptId, admitting terminals/settlements with no pre-effect commit; AttemptOrdinal is unconstrained against SpendIndex, and "new permission/spend" paraphrases A1-D21 ambiguously.
-
-TOP 3 MOVES
-1. Add PermissionSpendEnforcementServiceCollectionExtensions.cs as a byte-identical read-only anchor; replace the "never migrated" sentence with: merged code migrates configured DBs on construction, so activation/deployment against any real DB stays withheld pending a separate ratified decision.
-2. Fix order: Open, foreign_keys ON, busy_timeout, BEGIN IMMEDIATE, classify, DDL, user_version=2, COMMIT, then WAL only for accepted states; define shape equality as normalized sqlite_master (type,name,tbl_name,sql); assert rejected-state file bytes/journal mode unchanged; inject faults at every DDL index plus pre-version-write.
-3. Make SlotAllocationId NOT NULL or cite the frozen clause allowing slotless attempts; add (EffectAttemptId, PreEffectReceiptId) composite FKs to TerminalReceipts and Settlements or mark them explicit P2C invariants; quote A1-D21 verbatim and CHECK AttemptOrdinal = SpendIndex or drop ordinal uniqueness.

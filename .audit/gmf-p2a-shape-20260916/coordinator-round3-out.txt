@@ -1,8 +1,0 @@
-TOP 3 BRUTAL FINDINGS
-1. The final draft is specific enough for an independent builder and reviewer to identify scope escape: it names the storage relations, integrity constraints, migration states, and proof observations.
-2. The key remaining risk is implementation fidelity, not unshaped policy: the builder must preserve the no-effect boundary while realizing the private fault seam and multi-host migration test in only the two allowed files.
-3. A clean final review must not be mistaken for dispatch authority; the draft must remain untracked/draft until coordinator lint and an explicit P2A-only Gate 2 decision.
-TOP 3 MOVES
-1. Independently inspect every V2 Storage Contract relation and every Migration Contract state against the frozen P1 clauses.
-2. Reject any implementation that creates a transaction, reconciliation, or effect path instead of only durable storage/migration shape.
-3. If both reviews pass, issue a shaping handoff that identifies the draft/result and next action: coordinator lint followed by an exact P2A-only Gate-2 request.

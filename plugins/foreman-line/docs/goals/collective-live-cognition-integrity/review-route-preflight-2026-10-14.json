@@ -1,0 +1,590 @@
+{
+  "kind": "coordinator-offline-route-preflight",
+  "goal": "collective-live-cognition-integrity",
+  "requested_exact_identity": "anthropic/claude-fable-5-1",
+  "fallback_allowed": false,
+  "token_allowances": "Conservative planning allowances only; no review packet was assembled and no provider input was sent.",
+  "policy_sha256": "868fead84eec550bffec3248d3f31f289213f656e213d0a6967cdebc5c395700",
+  "receipt": {
+    "kind": "pi-route-receipt",
+    "schema_version": 1,
+    "resolver": "@foreman-line/routing-policy/pi-resolver@1",
+    "status": "stop",
+    "attested_state": "static-conformance",
+    "receipt_id": "87cf2dbcbdd68d85ee5344d9631ce589ff75ff13e5607609fed4b35221d7a01c",
+    "issued_at": "2026-10-14T00:57:10.076Z",
+    "lane": "L2",
+    "request": {
+      "lane": "L2",
+      "routing_class": "architecture/risk",
+      "data_class": "internal",
+      "require_tool_use": false,
+      "require_structured_output": false,
+      "independence_excluded_families": [
+        "openai"
+      ],
+      "required_context_tokens": 220000,
+      "required_output_tokens": 8192,
+      "remaining_budget_usd": 5,
+      "projected_input_tokens": 200000,
+      "projected_output_tokens": 8192,
+      "required_inputs": [
+        "text"
+      ],
+      "required_thinking_level": "high"
+    },
+    "lane_config": {
+      "lane": "L2",
+      "role_family": "verifier",
+      "subroles": [
+        "adversarial-reviewer",
+        "verifier",
+        "security-auditor"
+      ],
+      "routing_class": "architecture/risk",
+      "authority_cap": [
+        "verdict",
+        "findings-recommendation"
+      ],
+      "authority_prohibited": [
+        "approve",
+        "merge",
+        "release",
+        "edit-artifact",
+        "accept-own-findings"
+      ],
+      "provider_rule": {
+        "kind": "pinned-provider",
+        "pinned_provider": {
+          "state": "unavailable",
+          "residual": "L2_PINNED_PROVIDER_UNSET"
+        }
+      },
+      "quality_tolerance": {
+        "state": "unavailable",
+        "residual": "DELTA_L_UNSET"
+      },
+      "thinking_level": {
+        "state": "declared",
+        "value": "high",
+        "source": "charter.md#initial-pi-provider-and-lane-matrix row 2"
+      },
+      "budget": {
+        "ceiling_usd": 25,
+        "remaining_budget_usd": 5,
+        "projected_cost_usd": null
+      },
+      "data_controls": {
+        "data_collection": "deny",
+        "zdr": true
+      }
+    },
+    "evaluations": [
+      {
+        "binding_id": "opencode/claude-sonnet-5-5",
+        "candidate": "claude-sonnet-5-5",
+        "role": "primary",
+        "ranking_inputs": [
+          {
+            "input": "R1",
+            "verdict": false,
+            "evidence": "data_classes declared (public) from gate-1-amendment-09.md#n1 (Zen §Privacy capture 2026-10-07, evidence/zen-docs-20261007.html: zero-retention/no-training baseline; OpenAI/Anthropic upstreams retain 30d — public only; wider is owner attestation)",
+            "detail": "not eligible for data class 'internal'"
+          },
+          {
+            "input": "R2",
+            "verdict": false,
+            "evidence": "no tool/structured capability required; inputs [text|image]; thinking_levels [xhigh|max]",
+            "detail": "required capability missing, unverified, or unsatisfiable — the named refusals record the failing predicate"
+          },
+          {
+            "input": "R3",
+            "verdict": true,
+            "evidence": "declared family 'anthropic'",
+            "detail": "family independent of the excluded set"
+          },
+          {
+            "input": "R4",
+            "verdict": true,
+            "evidence": "context_window=1000000 max_output=128000",
+            "detail": "context and output budget sufficient"
+          },
+          {
+            "input": "R5",
+            "verdict": true,
+            "evidence": "cost {unit: usd_per_mtok} from pmc-live-availability-probe-2026-10-07.md#7.4 (agrees with the models.dev capture)",
+            "detail": "projected $0.481920 within remaining $5"
+          },
+          {
+            "input": "R6",
+            "verdict": false,
+            "evidence": "availability AVAILABILITY_UNVERIFIED",
+            "detail": "availability unverified (catalogue presence is never a proxy)"
+          },
+          {
+            "input": "R7",
+            "verdict": false,
+            "evidence": "quality QUALITY_UNRECORDED",
+            "detail": "no lane-scoped quality record"
+          }
+        ],
+        "refusals": [
+          {
+            "name": "ENDPOINT_DIVERGENCE_REFUSED",
+            "detail": "binding 'opencode/claude-sonnet-5-5' catalogue endpoint 'https://opencode.ai/zen' diverges from registered 'https://opencode.ai/zen/v1' (H-EP)"
+          },
+          {
+            "name": "DATA_CLASS_INELIGIBLE",
+            "detail": "binding 'opencode/claude-sonnet-5-5' is not eligible for 'internal'"
+          },
+          {
+            "name": "THINKING_LEVEL_UNSUPPORTED",
+            "detail": "binding 'opencode/claude-sonnet-5-5' lacks the requested thinking level 'high' (D8: refuses rather than silently downgrading)"
+          },
+          {
+            "name": "AVAILABILITY_UNVERIFIED",
+            "detail": "binding 'opencode/claude-sonnet-5-5' has no A6 live-availability attestation"
+          },
+          {
+            "name": "QUALITY_UNRECORDED",
+            "detail": "binding 'opencode/claude-sonnet-5-5' has no lane-scoped model-quality record"
+          }
+        ],
+        "holds": [],
+        "residuals": [
+          "AVAILABILITY_UNVERIFIED",
+          "QUALITY_UNRECORDED"
+        ],
+        "rankable": false
+      },
+      {
+        "binding_id": "opencode/gpt-6-luna",
+        "candidate": "gpt-6-luna",
+        "role": "fallback",
+        "ranking_inputs": [
+          {
+            "input": "R1",
+            "verdict": false,
+            "evidence": "data_classes declared (public) from gate-1-amendment-09.md#n1 (Zen §Privacy capture 2026-10-07, evidence/zen-docs-20261007.html: zero-retention/no-training baseline; OpenAI/Anthropic upstreams retain 30d — public only; wider is owner attestation)",
+            "detail": "not eligible for data class 'internal'"
+          },
+          {
+            "input": "R2",
+            "verdict": true,
+            "evidence": "no tool/structured capability required; inputs [text|image]; thinking_levels [off|minimal|low|medium|high|xhigh|max]",
+            "detail": "required capabilities satisfied (tool/structured, input modality, thinking level)"
+          },
+          {
+            "input": "R3",
+            "verdict": false,
+            "evidence": "declared family 'openai'",
+            "detail": "family 'openai' is excluded by the independence obligation"
+          },
+          {
+            "input": "R4",
+            "verdict": true,
+            "evidence": "context_window=1050000 max_output=128000",
+            "detail": "context and output budget sufficient"
+          },
+          {
+            "input": "R5",
+            "verdict": true,
+            "evidence": "cost {unit: usd_per_mtok} from pmc-live-availability-probe-2026-10-07.md#7.4 (agrees with the models.dev capture)",
+            "detail": "projected $0.024096 within remaining $5"
+          },
+          {
+            "input": "R6",
+            "verdict": true,
+            "evidence": "attests 'live-availability' from pmc-live-availability-probe-2026-10-07.md#7.3 (PONG; aligned endpoint)",
+            "detail": "live-availability attested"
+          },
+          {
+            "input": "R7",
+            "verdict": false,
+            "evidence": "quality QUALITY_UNRECORDED",
+            "detail": "no lane-scoped quality record"
+          }
+        ],
+        "refusals": [
+          {
+            "name": "DATA_CLASS_INELIGIBLE",
+            "detail": "binding 'opencode/gpt-6-luna' is not eligible for 'internal'"
+          },
+          {
+            "name": "INDEPENDENCE_VIOLATION",
+            "detail": "binding 'opencode/gpt-6-luna' family 'openai' collapses reviewer independence (A2: denied, never downgraded)"
+          },
+          {
+            "name": "QUALITY_UNRECORDED",
+            "detail": "binding 'opencode/gpt-6-luna' has no lane-scoped model-quality record"
+          }
+        ],
+        "holds": [],
+        "residuals": [
+          "QUALITY_UNRECORDED"
+        ],
+        "rankable": false
+      },
+      {
+        "binding_id": "openrouter/anthropic/claude-opus-5.5",
+        "candidate": "claude-opus-5-5",
+        "role": "primary",
+        "ranking_inputs": [
+          {
+            "input": "R1",
+            "verdict": true,
+            "evidence": "data_classes declared (public|internal|restricted) from pmc-p1-fallback-contract-2026-09-26.md#s2-item-3 (pre-cutover eligibility lists, transcribed; CUTOVER-P4)",
+            "detail": "serves data class 'internal'"
+          },
+          {
+            "input": "R2",
+            "verdict": false,
+            "evidence": "no tool/structured capability required; inputs unavailable; thinking_levels unavailable",
+            "detail": "required capability missing, unverified, or unsatisfiable — the named refusals record the failing predicate"
+          },
+          {
+            "input": "R3",
+            "verdict": true,
+            "evidence": "declared family 'anthropic'",
+            "detail": "family independent of the excluded set"
+          },
+          {
+            "input": "R4",
+            "verdict": false,
+            "evidence": "context CONTEXT_UNKNOWN / output CONTEXT_UNKNOWN",
+            "detail": "context facts unknown"
+          },
+          {
+            "input": "R5",
+            "verdict": false,
+            "evidence": "cost COST_UNKNOWN",
+            "detail": "cost facts unknown"
+          },
+          {
+            "input": "R6",
+            "verdict": false,
+            "evidence": "availability AVAILABILITY_UNVERIFIED",
+            "detail": "availability unverified (catalogue presence is never a proxy)"
+          },
+          {
+            "input": "R7",
+            "verdict": false,
+            "evidence": "quality QUALITY_UNRECORDED",
+            "detail": "no lane-scoped quality record"
+          }
+        ],
+        "refusals": [
+          {
+            "name": "INPUTS_UNKNOWN",
+            "detail": "binding 'openrouter/anthropic/claude-opus-5.5' has unknown input-modality facts; the request requires [text] (D8: a model-side fact is never guessed)"
+          },
+          {
+            "name": "THINKING_LEVELS_UNKNOWN",
+            "detail": "binding 'openrouter/anthropic/claude-opus-5.5' has unknown thinking-level support; the request requires 'high' (D8)"
+          },
+          {
+            "name": "CONTEXT_UNKNOWN",
+            "detail": "binding 'openrouter/anthropic/claude-opus-5.5' context facts are unknown"
+          },
+          {
+            "name": "COST_UNKNOWN",
+            "detail": "binding 'openrouter/anthropic/claude-opus-5.5': cost facts unknown"
+          },
+          {
+            "name": "AVAILABILITY_UNVERIFIED",
+            "detail": "binding 'openrouter/anthropic/claude-opus-5.5' has no A6 live-availability attestation"
+          },
+          {
+            "name": "QUALITY_UNRECORDED",
+            "detail": "binding 'openrouter/anthropic/claude-opus-5.5' has no lane-scoped model-quality record"
+          }
+        ],
+        "holds": [
+          "OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY"
+        ],
+        "residuals": [
+          "AVAILABILITY_UNVERIFIED",
+          "CONTEXT_UNKNOWN",
+          "COST_UNKNOWN",
+          "QUALITY_UNRECORDED"
+        ],
+        "rankable": false
+      },
+      {
+        "binding_id": "openrouter/openai/gpt-6-astra",
+        "candidate": "gpt-6-astra",
+        "role": "fallback",
+        "ranking_inputs": [
+          {
+            "input": "R1",
+            "verdict": true,
+            "evidence": "data_classes declared (public|internal|restricted) from pmc-p1-fallback-contract-2026-09-26.md#s2-item-3 (pre-cutover eligibility lists, transcribed; CUTOVER-P4)",
+            "detail": "serves data class 'internal'"
+          },
+          {
+            "input": "R2",
+            "verdict": false,
+            "evidence": "no tool/structured capability required; inputs unavailable; thinking_levels unavailable",
+            "detail": "required capability missing, unverified, or unsatisfiable — the named refusals record the failing predicate"
+          },
+          {
+            "input": "R3",
+            "verdict": false,
+            "evidence": "declared family 'openai'",
+            "detail": "family 'openai' is excluded by the independence obligation"
+          },
+          {
+            "input": "R4",
+            "verdict": true,
+            "evidence": "context_window=1050000 max_output=128000",
+            "detail": "context and output budget sufficient"
+          },
+          {
+            "input": "R5",
+            "verdict": true,
+            "evidence": "cost {unit: usd_per_mtok} from pmc-p0-capability-baseline.md#ac5",
+            "detail": "projected $2.409600 within remaining $5"
+          },
+          {
+            "input": "R6",
+            "verdict": false,
+            "evidence": "availability AVAILABILITY_UNVERIFIED",
+            "detail": "availability unverified (catalogue presence is never a proxy)"
+          },
+          {
+            "input": "R7",
+            "verdict": false,
+            "evidence": "quality QUALITY_UNRECORDED",
+            "detail": "no lane-scoped quality record"
+          }
+        ],
+        "refusals": [
+          {
+            "name": "INPUTS_UNKNOWN",
+            "detail": "binding 'openrouter/openai/gpt-6-astra' has unknown input-modality facts; the request requires [text] (D8: a model-side fact is never guessed)"
+          },
+          {
+            "name": "THINKING_LEVELS_UNKNOWN",
+            "detail": "binding 'openrouter/openai/gpt-6-astra' has unknown thinking-level support; the request requires 'high' (D8)"
+          },
+          {
+            "name": "INDEPENDENCE_VIOLATION",
+            "detail": "binding 'openrouter/openai/gpt-6-astra' family 'openai' collapses reviewer independence (A2: denied, never downgraded)"
+          },
+          {
+            "name": "AVAILABILITY_UNVERIFIED",
+            "detail": "binding 'openrouter/openai/gpt-6-astra' has no A6 live-availability attestation"
+          },
+          {
+            "name": "QUALITY_UNRECORDED",
+            "detail": "binding 'openrouter/openai/gpt-6-astra' has no lane-scoped model-quality record"
+          }
+        ],
+        "holds": [],
+        "residuals": [
+          "AVAILABILITY_UNVERIFIED",
+          "QUALITY_UNRECORDED"
+        ],
+        "rankable": false
+      },
+      {
+        "binding_id": "anthropic/claude-fable-5-1",
+        "candidate": "claude-fable-5.1",
+        "role": "primary",
+        "ranking_inputs": [
+          {
+            "input": "R1",
+            "verdict": true,
+            "evidence": "data_classes declared (public|internal|restricted) from gate-1-amendment-06.md#n6 (OWNER ATTESTATION — PREMISE FALSIFIED: it assumed commercial-API terms; pmc-live-availability-probe-2026-10-07.md#1 measured authType=oauth on this host. Resolve per that probe §4 before relying on internal/restricted.)",
+            "detail": "serves data class 'internal'"
+          },
+          {
+            "input": "R2",
+            "verdict": false,
+            "evidence": "no tool/structured capability required; inputs [text|image]; thinking_levels [off|xhigh|max]",
+            "detail": "required capability missing, unverified, or unsatisfiable — the named refusals record the failing predicate"
+          },
+          {
+            "input": "R3",
+            "verdict": true,
+            "evidence": "declared family 'anthropic'",
+            "detail": "family independent of the excluded set"
+          },
+          {
+            "input": "R4",
+            "verdict": true,
+            "evidence": "context_window=1000000 max_output=128000",
+            "detail": "context and output budget sufficient"
+          },
+          {
+            "input": "R5",
+            "verdict": true,
+            "evidence": "cost {unit: usd_per_mtok} from gate-1-amendment-06.md#evidence-basis",
+            "detail": "projected $2.409600 within remaining $5"
+          },
+          {
+            "input": "R6",
+            "verdict": true,
+            "evidence": "attests 'live-availability' from pmc-live-availability-probe-2026-10-07.md#3-live-availability",
+            "detail": "live-availability attested"
+          },
+          {
+            "input": "R7",
+            "verdict": false,
+            "evidence": "quality QUALITY_UNRECORDED",
+            "detail": "no lane-scoped quality record"
+          }
+        ],
+        "refusals": [
+          {
+            "name": "THINKING_LEVEL_UNSUPPORTED",
+            "detail": "binding 'anthropic/claude-fable-5-1' lacks the requested thinking level 'high' (D8: refuses rather than silently downgrading)"
+          },
+          {
+            "name": "QUALITY_UNRECORDED",
+            "detail": "binding 'anthropic/claude-fable-5-1' has no lane-scoped model-quality record"
+          }
+        ],
+        "holds": [],
+        "residuals": [
+          "QUALITY_UNRECORDED"
+        ],
+        "rankable": false
+      },
+      {
+        "binding_id": "anthropic/claude-opus-5-5",
+        "candidate": "claude-opus-5-5",
+        "role": "fallback",
+        "ranking_inputs": [
+          {
+            "input": "R1",
+            "verdict": true,
+            "evidence": "data_classes declared (public|internal|restricted) from gate-1-amendment-06.md#n6 (OWNER ATTESTATION — PREMISE FALSIFIED: it assumed commercial-API terms; pmc-live-availability-probe-2026-10-07.md#1 measured authType=oauth on this host. Resolve per that probe §4 before relying on internal/restricted.)",
+            "detail": "serves data class 'internal'"
+          },
+          {
+            "input": "R2",
+            "verdict": true,
+            "evidence": "no tool/structured capability required; inputs [text|image]; thinking_levels [off|minimal|low|medium|high|xhigh|max]",
+            "detail": "required capabilities satisfied (tool/structured, input modality, thinking level)"
+          },
+          {
+            "input": "R3",
+            "verdict": true,
+            "evidence": "declared family 'anthropic'",
+            "detail": "family independent of the excluded set"
+          },
+          {
+            "input": "R4",
+            "verdict": true,
+            "evidence": "context_window=1000000 max_output=128000",
+            "detail": "context and output budget sufficient"
+          },
+          {
+            "input": "R5",
+            "verdict": true,
+            "evidence": "cost {unit: usd_per_mtok} from gate-1-amendment-06.md#evidence-basis",
+            "detail": "projected $0.963840 within remaining $5"
+          },
+          {
+            "input": "R6",
+            "verdict": true,
+            "evidence": "attests 'live-availability' from pmc-live-availability-probe-2026-10-07.md#3-live-availability",
+            "detail": "live-availability attested"
+          },
+          {
+            "input": "R7",
+            "verdict": false,
+            "evidence": "quality QUALITY_UNRECORDED",
+            "detail": "no lane-scoped quality record"
+          }
+        ],
+        "refusals": [
+          {
+            "name": "QUALITY_UNRECORDED",
+            "detail": "binding 'anthropic/claude-opus-5-5' has no lane-scoped model-quality record"
+          }
+        ],
+        "holds": [],
+        "residuals": [
+          "QUALITY_UNRECORDED"
+        ],
+        "rankable": false
+      }
+    ],
+    "selection": {
+      "rule": "not-reached",
+      "reason": "stopped: L2_PINNED_PROVIDER_UNSET",
+      "order": [],
+      "chosen": null
+    },
+    "route": null,
+    "fallback_handoff": null,
+    "stops": [
+      {
+        "name": "L2_PINNED_PROVIDER_UNSET",
+        "detail": "lane L2 pins a single declared provider (A3); the declaration value is unset and due before any resolve-time use (a54 item 2) — fail closed"
+      }
+    ],
+    "unproven_claims": [
+      {
+        "claim": "live-availability attestation (A6) per binding",
+        "state": "unproven",
+        "residual": "AVAILABILITY_UNVERIFIED"
+      },
+      {
+        "claim": "available context / max output tokens (R4)",
+        "state": "unproven",
+        "residual": "CONTEXT_UNKNOWN"
+      },
+      {
+        "claim": "unit price or budget input (R5)",
+        "state": "unproven",
+        "residual": "COST_UNKNOWN"
+      },
+      {
+        "claim": "per-lane quality tolerance delta_L (a54 disposition 5)",
+        "state": "unproven",
+        "residual": "DELTA_L_UNSET"
+      },
+      {
+        "claim": "fallback \"comparable or higher\" verdict (rubric §1)",
+        "state": "unproven",
+        "residual": "FALLBACK_SUITABILITY_UNPROVEN"
+      },
+      {
+        "claim": "owner-attested identity pending live attestation (rubric §3)",
+        "state": "unproven",
+        "residual": "OWNER_ATTESTED_PENDING_LIVE_AVAILABILITY"
+      },
+      {
+        "claim": "lane-scoped model-quality record (A6) per binding",
+        "state": "unproven",
+        "residual": "QUALITY_UNRECORDED"
+      },
+      {
+        "claim": "Pi thinking-level handling semantics on the pinned runtime (H-PI hold, compat memo 0.87.1)",
+        "state": "unproven"
+      },
+      {
+        "claim": "R7 score-ordered refinement (rubric §4 step 2): the representation records R7 presence, not a score",
+        "state": "unproven"
+      }
+    ],
+    "signature": "23f463124583a99bb4afda7ce051e6dee0ba3d31235f06564402f7b5930871d7"
+  },
+  "launch_verdict": {
+    "ok": false,
+    "mode": "route",
+    "refusals": [
+      {
+        "name": "RECEIPT_STATUS_REFUSED",
+        "detail": "only an approved pi-route-receipt authorizes a session (A1); got kind 'pi-route-receipt' status 'stop'"
+      }
+    ],
+    "bypassed_checks": []
+  },
+  "provider_requests": 0,
+  "reviewer_input_tokens": 0,
+  "reviewer_output_tokens": 0
+}
