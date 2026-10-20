@@ -7,6 +7,8 @@ description: Reusable methodology for coordinating multi-agent, multi-session, a
 
 A methodology for shipping large features and multi-project initiatives by composing small, isolated, agent-built parts against stable contracts, with coordinator-owned sequencing, persistent state, integration readiness, and release gate discipline.
 
+For Pantheon under a verified, active OM-PAN-001 grant, apply `docs/standing-mandates/OM-PAN-001.md`; this exception does not apply to other goals or create Runtime authority. A worker reports contract gaps to its coordinator; that report is not an automatic owner-approval request.
+
 ## Core Principle
 
 > Prefer contract-first, parcel-sized development. Agents produce isolated, testable parts against stable interfaces. Coordination happens through contracts, initiative state, dependency graphs, integration surfaces, verification evidence, and merge discipline, not through agents negotiating with each other.

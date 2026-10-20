@@ -100,6 +100,8 @@ work and you owe its builder nothing.**
 `git status` is clean and no commits exist beyond `<COMMIT-SHA>` (Standing
 Constraint #10) — the permission envelope is a layer, not the guarantee.
 
+For Pantheon under a verified, active OM-PAN-001 grant, apply `docs/standing-mandates/OM-PAN-001.md`; this exception does not apply to other goals or create Runtime authority. Step 0 waits for the coordinator's evidence comparison; an exact match requires no human confirmation. Any later rework uses the same rule. The native bootstrap grant is explicitly separate from a Runtime/resolver receipt; do not fabricate one.
+
 ## Step 0 — restate and STOP (mandatory gate)
 
 Before reviewing, state the approved route you are running on and confirm it

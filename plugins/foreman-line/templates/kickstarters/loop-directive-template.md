@@ -13,7 +13,7 @@
 > `<INTEGRATION-BRANCH-CHECKOUT>` (an absolute path, or the same as the
 > working copy). Claimed `<CLAIM-DATE>`: `<CLAIM-PROVENANCE>`.
 > **State:** `<STATE>` (updated on every stop). One goal, one coordinator.
-> Ownership transfers only at parcel boundaries, by editing this block; a
+> With a verified succession mandate, transfers use its lease/CAS/fencing procedure and reconcile pending effects. Otherwise ownership transfers only at parcel boundaries, by editing this block; a
 > transfer updates the session ID and both paths together. If this block names
 > another live coordinator, STOP and report; never assume.
 
@@ -50,7 +50,7 @@ reinterprets or revokes one (registry §3).
 
 ## Queue (strict order)
 
-In the charter's dependency order. A new parcel idea is stop-and-report.
+In the charter's dependency order. Under OM-PAN-001, the coordinator may split/refine within-scope parcels without widening authority; material changes stop dependent work for one exception. Other new parcel ideas are stop-and-report.
 
 1. `<PARCEL-1-ID>`: `<ONE-LINER, RISK, ROUTING CLASS>`
 2. `<PARCEL-2-ID>`: `<ONE-LINER, RISK, ROUTING CLASS>`
@@ -80,7 +80,7 @@ Decision log:
 
 ## Stop conditions
 
-Stop the loop and write a report naming exactly what the human must do when:
+Under verified OM-PAN-001, use its automatic hold/recovery and precise exception policy; independent authorized work continues, and an empty queue is not proof closure. Outside that scope, stop the loop and write a report naming exactly what the human must do when:
 
 1. A frozen contract needs modification.
 2. A tripwire fires twice on one parcel.
@@ -101,10 +101,12 @@ quick flags; the Coordinator writes no quick-flag token into one (registry §4).
 
 ## Crash recovery
 
+For OM-PAN-001, apply the actual EX6 succession and session-floor rules in `docs/standing-mandates/OM-PAN-001.md` before any recovery dispatch. No generic fresh session bypasses the eight-session ceiling, single reserved checker successor, author exclusions or builder deadline. After permanent cutover, native recovery never reopens automatically; persist the deduplicated post-cutover repair exception and continue read-only reconstruction.
+
 On any wake (scheduled, a completion notice, or a human nudge) while expecting
 a builder or reviewer result, first check whether that session is still
 running. No completion claim from a session that is not running means process
 death, not completion: its work is unclaimed even if it survives on disk, and
-unclaimed disk state is never accepted as done. Recover with a fresh session
+unclaimed disk state is never accepted as done. Where the applicable mandate permits it, recover with a fresh session
 whose Step 0 restates the original directive, inventories what exists on disk
 against it, and stops for your ruling; then continue the loop.

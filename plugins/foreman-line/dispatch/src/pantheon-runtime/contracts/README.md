@@ -1,0 +1,61 @@
+# Pantheon boundary contracts v1
+
+This goal-scoped module is pure validation and vocabulary. Importing it performs no I/O, starts no process, opens no socket, reads no clock and consumes no permission. Public input is `unknown`. Success is always `{ status: "structurally-valid", trust: "unverified", value }`; it is neither admission, human approval nor a capability. A plausible fabricated reference may be structurally valid and remains untrusted. Unknown keys refuse, including `accepted` and `admitted`.
+
+P01 freezes these contracts for P02 integration; activation and B1 acceptance require the independent checker and both fresh whole-unit P01+P02 reviews. Source changes invalidate coverage. The ratified workflow is in `docs/standing-mandates/OM-PAN-001.md`; this module does not update universal model-family rules or frozen contract registries.
+
+## Data and ownership
+
+`DispatchIntent` binds full worker/parent session, actor, host ID and host identity hash, goal/parcel/job/attempt IDs; mandate/spec/active-plan/source/artifact/config SHA-256 digests; exact Git source/base heads; worktree/branch; exact relative allowed-file list; existing Foreman role vocabulary; open registry profile key; requested tools/network; issued/deadline timestamps; fencing epoch; operation; authority references; and separated monetary evidence. Fields and ordered lists are compared exactly; callers must preserve the coordinator's ordering. Paths are explicit ASCII relative ordinary-file names, with no traversal, absolute path, glob, backslash, device name, `.git` component or case-colliding duplicate. This deliberately narrow syntax does not establish filesystem containment: the host must reject symlinks, aliases, protected paths and hostile patch contents during materialization.
+
+SHA-256 artifact digests are 64 lowercase hex characters; Git heads are 40 lowercase hex characters. Runtime `permissionHash` and `effectDescriptorHash` preserve `sha256:<64 lowercase hex>` from `AuthorityBinding`/`IPermission`. `grantHash`, `bindingHash` and `decisionHash` are transport pins of the exact referenced stored artifacts; they do not invent an identifier on Runtime's binding. The reference names Runtime's grant ID, permission-event receipt ID, permission ID, decision receipt ID and nullable delegation-chain ID. P02 must resolve these against authentic stored Runtime objects and verify canonical/signature semantics; no caller-provided object can become a root.
+
+`compareStep0` validates both the expected descriptor and restatement, compares every field recursively and returns `exact-match` or `hold` with field-specific mismatches. Any unresolved flag holds. Missing/invalid fields refuse. Exact match advances only the coordinator handshake under independently verified standing authority. The worker never authorizes itself. Ordinary mismatch/rework produces no human prompt.
+
+`MoneyEvidence` keeps estimate, reservation, provider token counters, local estimate, provisional exposure and reconciled invoice separate and explicitly nullable. Amounts use USD integer micro-units in `[0, Number.MAX_SAFE_INTEGER]`; absent fields, fractions, negative zero, overflow and nonfinite values refuse. Provider counters contain input and combined output (including thinking), preventing a second additive thinking counter. The parser performs no spending arithmetic, reservation, pricing or release; P03 owns checked transactional arithmetic and evidence authentication. A null bill is unknown, never zero.
+
+`ReviewResult` separates substantive text, verdict, findings, exact full coverage, explicit limitations and provenance. A pass with findings and a changes-required verdict without findings refuse. Expected subject is supplied separately and binds all constituent repository/head/artifact references, spec, active-plan and trusted-test digests. Wrong coverage, artifact/head, subject or provenance identity refuses. These are structural completeness checks, not judgments of substantive review quality.
+
+`EvidenceProvenance` distinguishes original capture from formatting projection; both parse only as `unverified`. Original and derived references must match for an original capture. A formatting projection requires a distinct derived hash and verifier-record reference, which remain unverified. Model-supplied provider IDs cannot authenticate anything. `VerifiedEvidence` is a nominal consumer-owned type with no factory here; its type brand is not a security boundary. P04/P05 must authenticate real host capture, trusted end-turn, conclusive delivery, final usage and cleanup; the separate formatting verifier must reproduce raw-visible mapping, exact permitted coverage/ID mapping and unchanged substantive fields and bind original/request/subject/reconciler/derived hashes. No boolean option upgrades trust.
+
+`validateIndependence` describes only `OM-PAN-001-A9` for this exact goal. It checks distinct author/reviewer identities and sessions, fresh contexts, declared provider/family/profile, read-only judge/verifier seats and the two-seat authority/security floor. These claims also require host authentication. Same-vendor permission never clears universal exclusion sets. P05 must bind these seats to the actual review captures and complete author set.
+
+`classifyAuthorityDelta` returns affected fields for changes to intent, expanded scope/hosts/accounts/recipients/access, increased total ceiling, changed residual risk or production posture. Unchanged/narrowed authority is ordinary refinement. Evidence failure, missing dependency and routine rework are automatic holds; they do not manufacture material authority exceptions. `MaterialException` requires an actual material delta plus exact descriptor, deduplication key, explanation and evidence references, but supplies no approval.
+
+## Private NDJSON contract for P02/P05
+
+Version is exactly `pantheon-wire/v1`. One frame is one LF-terminated JSON object, no CR or additional literal newline. Limit is **65,536 UTF-8 bytes including LF**, depth **16**, data nodes **8,192**, and each list **256** elements. Identifiers are at most 128 characters, relative paths 512, ordinary text 4,096, review text 32,768. Numeric epoch/cursor values are nonnegative safe integers. Unknown operations, unknown keys, malformed input and duplicate decoded object keys at every depth refuse. There is no serializer that silently truncates a frame.
+
+Every frame carries version, kind, full identity, request ID/hash, fencing epoch, exact operation, artifact reference and event cursor:
+
+- `request` adds the complete dispatch descriptor; duplicated identity, epoch, operation, source head and artifact hash must agree.
+- `response` adds `disposition: pending | denied`, nullable typed `denial`, and nullable closed `recoveryOwner`. Pending requires both null. Denied requires a reason and owner. Operational reasons include unavailable admission, revocation, expiry, stale epoch, budget, unavailable Runtime, unauthenticated identity, scope, unverified evidence and unknown-delivery hold; structural reasons remain separate parser refusal results.
+- `completion` adds event ID, observation `succeeded | failed | unknown` and unverified provenance. Identity, request hash and exact result artifact must agree. These observations are never Runtime terminal records, do not settle money or release occupancy, and cannot turn isolated staging into merge or local exit into provider termination.
+
+P02 must bound raw bytes before buffering/strict UTF-8 decoding, authenticate its actually launched child/container association through private pipes and derive caller identity outside JSON. P03 rechecks current epoch at the transaction. P04/P05 persist completion events before delivery and authenticate/deduplicate event IDs and cursors across restarts. This parser has no durable state, replay detector, clock or cryptographic verifier.
+
+Custody startup/succession is a distinct trusted host control action with the fixed `pantheon-coordinator-v1` container profile. It is absent from the application operation map and cannot be requested as arbitrary process launch. The trusted control plane owns CAS/lease release/expiry and fencing.
+
+## Closed application operation map
+
+`OPERATIONS` is declarative requirements, not a supported-capability registry. Every operation still defaults to unavailable until its specified consumer is accepted and its actual authority/effect binding is verified.
+
+| Operation | Consumer | Required effect contract |
+|---|---|---|
+| `model.infer` | P04 | Existing `fleet.model.infer` only for exact inference semantics, with P02/P03 fresh committed admission |
+| `patch.stage` | P04 | Existing `fleet.patch.promote` isolated-ref staging only; never successful merge |
+| `worker.execute` | P04 | Proposed P03 `pantheon.v1.worker.execute` extension with successful-worker terminal |
+| `worker.verify` | P04/P05 | Proposed P03 `pantheon.v1.worker.verify` extension with independent verifier evidence |
+| `repository.prepare`, `repository.push` | P04/P05 | Proposed P03 distinct Git effect/terminal bindings |
+| `repository.pr`, `repository.merge` | P05 | Proposed P03 PR/exact-head merge bindings; current rules/checks and both whole-unit reviews |
+| `memory.project`, `memory.recall` | P06 | Proposed P03 Cortex effects, scoped tenant/role and durable outbox |
+| `status.read`, `artifact.read` | P02/P05 | Authenticated bounded read; no effect admission |
+| `worker.remote` | P08 | Reserved P08 operation only; no B execution in P01/P02 |
+
+The `pantheon.v1.*` names are proposed versioned application-to-store bindings for P03, not existing fleet-v2 classes. P03 must ratify its additive contract before actuator integration. Existing `fleet.worker.execute` has failure terminals only; existing `fleet.patch.promote` has isolated-ref outcomes only. Preserve those tables, meanings, rows and tests.
+
+P02 uses real `IExecutionHandler` and `IPermissionSpendGate` through a stable fail-closed typed interface. P03 later extracts shared pure verification, owns one typed `BEGIN IMMEDIATE` and one connection-local PermissionSpendLedger consumption, and commits spend/attempt/pre-effect/occupancy/reservation/outbox together. It returns satisfied with non-null Spend only after commit. Handler failure cannot undo consumed permission. Replay returns prior status without effects. Foreman and Cortex remain projections; no second approving store exists here.
+
+## Verification limits
+
+Focused tests exercise valid controls and negative structure/path/identity/hash/tools/flags/money/review/independence/delta/frame invariants. These tests never claim authentic Runtime admission, actual provider completion, durable event provenance or OS containment. Trusted independent verification and both B1 substantive reviews remain separate gates.

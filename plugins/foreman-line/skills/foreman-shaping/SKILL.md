@@ -11,6 +11,8 @@ artifact; you do not promote it, register it, or mint a receipt. The determinist
 machinery you call lives in `plugins/foreman-line/shaping/` — this skill is the
 interaction guidance around it.
 
+For Pantheon under a verified, active OM-PAN-001 grant, apply `docs/standing-mandates/OM-PAN-001.md`; this exception does not apply to other goals or create Runtime authority. Shaping returns drafts; the coordinator may then invoke verified lint/promotion separately without a human turn.
+
 ## Inputs
 
 - **A raw idea** (required) — the concept to shape.
@@ -25,8 +27,7 @@ interaction guidance around it.
 2. **Surface constraints and propose a decomposition** into one or more parcels,
    in dependency order, each with a risk level and routing class.
 3. **Ask clarifying questions in small batches** — numbered, each with a
-   **recommended default** attached. Propose, let the developer dispose. Never
-   silently resolve a design question.
+   **recommended default** attached. For verified OM-PAN-001, record routine resolutions within ratified intent and escalate material authority deltas only. Otherwise propose, let the developer dispose; never silently resolve a design question.
 4. **Write the drafts.** Author each parcel spec under
    `plugins/foreman-line/docs/specs/active/` at **`status: draft`** (draft is not
    dispatchable — SPEC-CONVENTION §3). Run the package's two-layer advisory

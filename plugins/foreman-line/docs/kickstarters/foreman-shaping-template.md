@@ -55,6 +55,8 @@ Anthropic models use dots (e.g. `openrouter/anthropic/claude-opus-5.5`).
 - Environment: Windows. Node toolchain commands run in **PowerShell only**; run
   `node -v` first (must satisfy `>=24.11.1`).
 
+For Pantheon under a verified, active OM-PAN-001 grant, apply `docs/standing-mandates/OM-PAN-001.md`; this exception does not apply to other goals or create Runtime authority. Step 0 waits for the coordinator's evidence comparison; an exact match requires no human confirmation. Any later rework uses the same rule. The native bootstrap grant is explicitly separate from a Runtime/resolver receipt; do not fabricate one.
+
 ## Step 0 — restate and STOP (mandatory gate)
 
 Before writing any draft: restate the idea in your own words; enumerate the

@@ -107,13 +107,14 @@ A genuine spec *gap* is a flag to raise at Step 0 or the moment you hit it; the
 coordinator rules and, if needed, ratifies an amendment before further work.
 Silently designing around a gap is the failure this gate exists to prevent.
 
+For Pantheon under a verified, active OM-PAN-001 grant, apply `docs/standing-mandates/OM-PAN-001.md`; this exception does not apply to other goals or create Runtime authority. Step 0 waits for the coordinator's evidence comparison; an exact match requires no human confirmation. Any later rework uses the same rule. The native bootstrap grant is explicitly separate from a Runtime/resolver receipt; do not fabricate one.
+
 ## Step 0 — restate and STOP (mandatory gate)
 
 Before writing any code or artifact:
 
 1. **State the approved route you are running on and confirm it matches the
-   approved route receipt; a mismatch is a launch-boundary failure — say so and
-   STOP.**
+   approved route receipt, or the exact actual OM-PAN-001 bounded native dispatch when operating before cutover. Native dispatch is not a Runtime receipt. A mismatch holds this worker.**
 2. Restate the deliverables in your own words, and state what is explicitly
    **out of scope** per the spec.
 3. **Inventory the current state on disk against the spec** — what exists,
@@ -175,8 +176,7 @@ concrete command or inspection that catches it, not just the risk.>`
 
 ## STOP boundary
 
-Commit to `<BRANCH-NAME>`. **Do not open a PR. Do not merge.** Gate 3 is human
-and never delegated. Report back with your evidence; the coordinator then
+Commit to `<BRANCH-NAME>`. **Do not open a PR. Do not merge.** Gate 3 belongs to the coordinator only where verified standing authority delegates it; otherwise it remains human. The builder receives no merge authority. Report back with your evidence; the coordinator then
 dispatches adversarial review.
 
 ## Completion report
