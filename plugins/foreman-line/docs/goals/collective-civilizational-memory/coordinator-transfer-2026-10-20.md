@@ -1,3 +1,10 @@
+> CURRENT October21: Native continuation APPROVED and attempted once at repair
+> Step0; unsuccessful because ChatGPT Subscription Sharing usage limit reached.
+> No reset time returned. No source stage/code/reviews/retry/fallback. Current
+> loop and evidence/p1a-native-sol-stop-record-20261021.json supersede older
+> pending-approval/account-login/uncertain-call-hold wording. Original94.6 kept;
+> GenSpark95.7reported+94.6reserved=190.3. Existing source baseline238unchanged.
+
 > October21 Omarchy read-only preflight PASS: found prior successful connection
 > in local MachineB records; strict stored-key SSH to cmorgan76@10.0.0.174 worked.
 > Linux, exact Pi executable path and help verified with three bounded metadata

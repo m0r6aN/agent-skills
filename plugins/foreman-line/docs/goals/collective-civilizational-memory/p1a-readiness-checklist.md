@@ -1,3 +1,10 @@
+> CURRENT October21: Native continuation APPROVED and attempted once at repair
+> Step0; unsuccessful because ChatGPT Subscription Sharing usage limit reached.
+> No reset time returned. No source stage/code/reviews/retry/fallback. Current
+> loop and evidence/p1a-native-sol-stop-record-20261021.json supersede older
+> pending-approval/account-login/uncertain-call-hold wording. Original94.6 kept;
+> GenSpark95.7reported+94.6reserved=190.3. Existing source baseline238unchanged.
+
 > CURRENT October21: owner credit exception APPROVED. Implementation request01
 > returned HTTP524/no candidate or usage; source unchanged. Further sends HELD
 > on uncertain upstream completion/accounting. Reported95.7 + reserved94.6=190.3.

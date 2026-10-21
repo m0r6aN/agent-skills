@@ -1,0 +1,14 @@
+{
+  "recordedAtUtc": "2026-10-21T19:13:27.798039+00:00",
+  "directOwnerQuote": "Approved, brother. Keep the 94.6-credit reservation and proceed with the bounded native-Sol continuation using the existing OAuth allowance. Keep the other limits and independent reviews intact.",
+  "proposal": "p1a-native-sol-continuation-proposal-20261021.md",
+  "priorReservationRetained": 94.6,
+  "nativeSourceAllowance": "one remaining focused repair, Step0 then source, existing OAuth only",
+  "inputOperationalMax": 36000,
+  "step0MaxOutput": 1536,
+  "sourceMaxOutput": 8192,
+  "combinedObservationSeconds": 600,
+  "retryFallback": false,
+  "independentReviews": "two fresh Opus requests retained",
+  "uncertainCallDisposition": "delivery-unusable, possible unseen generation accepted; upstream cancellation/billing not falsely established"
+}

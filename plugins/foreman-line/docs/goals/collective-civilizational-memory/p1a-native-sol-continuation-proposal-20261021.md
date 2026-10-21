@@ -1,3 +1,8 @@
+> CURRENT: Owner approved this continuation. One native repair Step0 prompt was
+> submitted and failed with the ChatGPT Subscription Sharing usage-limit error.
+> No source proposal sent, no code changed, no retry/fallback. Source/reviews remain
+> unexecuted. Stop record: evidence/p1a-native-sol-stop-record-20261021.json.
+
 # P1A one bounded native-Sol continuation — proposed, not executed
 
 ## The single decision
@@ -10,7 +15,8 @@ only. No API-key/PAYG substitution, new cash purchase, OpenCode credit spend,
 auto-recharge/settings change, extra repair, merge, deployment or later parcel.
 
 This is a combined uncertain-outcome/transport disposition, not a request to
-repeat settled scope/gates or raise GenSpark limits. Status: **PROPOSED**.
+repeat settled scope/gates or raise GenSpark limits. Status: **APPROVED by direct owner instruction October21**.
+Exact authorization: evidence/p1a-native-sol-owner-approval-20261021.json.
 
 ## Exact scope and route
 

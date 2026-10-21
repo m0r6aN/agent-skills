@@ -12,8 +12,8 @@
     "p1a-implementation-20261021-01/receipt.json"
   ],
   "implementationAttempts": 1,
-  "repairAttempts": 0,
-  "formalStep0": "PASS; independently disposed; implementation held solely on next-call daily budget",
+  "repairAttempts": 1,
+  "formalStep0": "Original GenSpark Step0 PASS; later native repair Step0 unsuccessful (quota)",
   "reviewsAandB": "not run",
   "globalLimitsUnchanged": {
     "perRun": 100,
@@ -29,12 +29,19 @@
   "step0ReportedCredits": 44,
   "differenceAccountVsReportedCredits": 1.1,
   "differenceDisposition": "Conservatively counted in shared-day/effort consumption; no downward reconciliation or invented attribution.",
-  "updatedAtUtc": "2026-10-21T18:02:20.749462+00:00",
+  "updatedAtUtc": "2026-10-21T19:20:52.284249+00:00",
   "implementationStatus": "HTTP524; no returned candidate/identity/usage, outcome unknown; no code applied",
   "unresolvedAttemptReservation": 94.6,
   "reportedPlusConservativeReservation": 190.3,
   "remainingP1ACeilingAfterReservation": 509.7,
   "accountDeltaSinceBuildStart": 86.9,
   "accountDeltaAttribution": "Unknown shared usage; not a provider usage receipt",
-  "ownerApprovedDayException": "p1a-credit-exception-approval-20261021.json"
+  "ownerApprovedDayException": "p1a-credit-exception-approval-20261021.json",
+  "repairSourceAttempts": 0,
+  "repairStep0": "unsuccessful: ChatGPT Subscription Sharing limit; no text/tokens reported",
+  "nativeOAuthReportedUsageTokens": 0,
+  "nativeOAuthBilling": "unknown, kept separate from GenSpark credit accounting",
+  "nativeStep0Receipt": "native-sol-step0-failure-disposition-20261021.json",
+  "ownerNativeDisposition": "approved; original delivery unusable/possible unseen generation accepted;94.6 retained",
+  "executionHold": "Native Subscription Sharing allowance exhausted; no retry/fallback under failed phase"
 }
