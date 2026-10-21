@@ -1,0 +1,7 @@
+{
+  "sha256": "5a95eae47d3013e742781c96bf40700e608aff3c07353bcd66fd1dc1cf0df88a",
+  "estimatedTokens": 29568,
+  "operationalInputBound": 35632,
+  "maxOutput": 8192,
+  "conservativeCreditReservation": 94.6
+}

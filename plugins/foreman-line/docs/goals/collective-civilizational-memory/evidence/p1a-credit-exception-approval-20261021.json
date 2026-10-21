@@ -1,0 +1,18 @@
+{
+  "recordedAtUtc": "2026-10-21T17:57:18.469424+00:00",
+  "owner": "Clinton Morgan",
+  "directQuote": "Approved, brother. Raise today's shared ceiling to 1,000 prepaid credits, with P1A capped at 700 total including what's already spent. Keep the other limits and proceed through the build, reviews, and bounded repair.",
+  "localDay": "2026-10-21",
+  "timezone": "America/New_York",
+  "sharedDayCeiling": 1000,
+  "P1ATotalCeiling": 700,
+  "P1AAlreadyReportedSpent": 95.7,
+  "otherLimits": {
+    "perRequest": 100,
+    "effort": 9000,
+    "minimumReserve": 1000,
+    "otherInitiativesDailyAllowance": 300
+  },
+  "scope": "Existing approved proposal, one build, two independent reviews, at most one focused repair with Step0 and bounded closures/local verification",
+  "noPurchaseMergeDeployImportsLaterParcels": true
+}

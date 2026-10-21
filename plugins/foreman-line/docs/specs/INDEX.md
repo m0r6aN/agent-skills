@@ -22,7 +22,7 @@ hash, official schema and genesis-chain validation all pass:
 [verification](../goals/collective-civilizational-memory/evidence/approval-verification-20261021.json).
 P1A now has a separately authorized status-only active derivative; B/C/D remain draft.
 Original approved scope remains pinned; no fabricated current-bytes hash match or new approval.
-Gate2: **P1A artifact-only dispatch APPROVED; formal Step0 PASS; implementation BUDGET HELD**.
+Gate2: **P1A artifact-only dispatch APPROVED; formal Step0 PASS; implementation01 HTTP524; uncertain-outcome HOLD**.
 B/C/D remain HOLD. See [decision/envelope](../goals/collective-civilizational-memory/evidence/p1a-gate2-artifact-mode-20261021.json).
 P1A active SHA256 `e11b0da82f80b4dd1a993ae3993951782360f1a5adb791a14f438a12c6ce55e1`
 is a status-only derivative of the original approved scope below. Base efb5f4bc;
@@ -31,7 +31,7 @@ tools/repository/effect authority; the scoped host performs all file operations.
 
 | Parcel / status | Accountable owner | Dependencies | Exact spec path | Spec SHA-256 | Worktree / branch | Evidence |
 |---|---|---|---|---|---|---|
-| CCM-P1A / active, Step0 PASS, budget held | fresh-01 coordinator | Approved tree and qualified execution envelope | `plugins/foreman-line/docs/specs/active/CCM-P1A-memory-graph-contracts.md` | `2db53117a6d990355cff5c0cf7f09a058bcf2a78c55b35a659395ae9b45f2dd8` | Created/clean, baseline238 PASS: `D:/Repos/ccm-worktrees/cortex-p1a`, `feat/foreman-line-ccm-p1a` | [Work order](../kickstarters/ccm-p1a-fresh-20261020.md), [baseline manifest](../goals/collective-civilizational-memory/evidence/p1a-baseline-20261021-03/manifest.json) |
+| CCM-P1A / active, Step0 PASS, transport held | fresh-01 coordinator | Approved tree and qualified execution envelope | `plugins/foreman-line/docs/specs/active/CCM-P1A-memory-graph-contracts.md` | `2db53117a6d990355cff5c0cf7f09a058bcf2a78c55b35a659395ae9b45f2dd8` | Created/clean, baseline238 PASS: `D:/Repos/ccm-worktrees/cortex-p1a`, `feat/foreman-line-ccm-p1a` | [Work order](../kickstarters/ccm-p1a-fresh-20261020.md), [baseline manifest](../goals/collective-civilizational-memory/evidence/p1a-baseline-20261021-03/manifest.json) |
 | CCM-P1B / draft | fresh-01 coordinator | Accepted P1A contract/fixture pins; independent numeric acceptance | `plugins/foreman-line/docs/specs/active/CCM-P1B-gravity-v2-fixtures.md` | `4d08fab475d32bdcd3643c5c77f9569f39d2360899fe55049a8dfc778b42d2e1` | Not assigned | [Readiness](../goals/collective-civilizational-memory/p1a-readiness-checklist.md) |
 | CCM-P1C / draft | fresh-01 coordinator | Accepted P1A shared wire/fixture pins | `plugins/foreman-line/docs/specs/active/CCM-P1C-collective-wire-compatibility.md` | `b782e06829119a3993c18155e331882a44a7c82cf6dd05ec8061c7e9f3c26c09` | Not assigned | [Readiness](../goals/collective-civilizational-memory/p1a-readiness-checklist.md) |
 | CCM-P1D / draft | fresh-01 coordinator | Accepted P1A DDL/profile; actual database access separately authorized | `plugins/foreman-line/docs/specs/active/CCM-P1D-postgres-capability-check.md` | `33d2f4d90c57db9c4583328a50442e1fed37e9a2de421742661b7553d6f86603` | Not assigned | [Readiness](../goals/collective-civilizational-memory/p1a-readiness-checklist.md) |

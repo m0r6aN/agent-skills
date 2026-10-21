@@ -23,7 +23,8 @@ accepted specific Pi/Claude plan review remain settled; do not rerun or reopen t
 
 - R01–R08 complete for pre-dispatch readiness in the artifact-only mode below.
   Actual emitted-worktree baseline passed238 and formal Step0 independently passed.
-  Implementation is held on the existing shared-day credit cap; no code changed.
+  Owner approved October21 day exception. Implementation01 HTTP524, no candidate
+  or source edits; further requests held on uncertain provider completion/usage.
 - [Actual P1A Gate2](evidence/p1a-gate2-artifact-mode-20261021.json): APPROVED for
   P1A artifact-only delivery. B/C/D remain draft/held. Formal Step0 PASS.
 - Human W1-P3 approved the four-parcel tree at15:54:57.907 UTC on October21.
@@ -69,11 +70,12 @@ metadata establishes exact IDs/capacity/rates; reported identities are proxy
 runtime metadata, not cryptographic upstream identity proof or model prose.
 
 Internal P1A ceiling **700 prepaid credits including qualification**, within the
-existing owner-authorized GenSpark effort; no new purchase, cash conversion or
-raised global limit. Covers formal Step0, one implementation, two independent
+existing owner-authorized GenSpark effort; owner separately approved the October21
+shared-day ceiling1000. No new purchase or cash conversion. Covers formal Step0, one implementation, two independent
 reviews, at most one focused repair with new Step0 and bounded own-finding closure.
 Worst-case phase estimate with conservative rounding plus qualification678.7credits.
-Existing limits still bind:100 per run,300 per America/New_York day,9000 effort,
+Limits bind:100 per run,1000 shared on October21 only (other initiatives retain300),
+revert300 per America/New_York day thereafter,9000 effort,
 1000-account reserve. Reconcile live balance/known shared usage and current rates
 before every phase; if the conservative next phase does not fit, stop before send.
 No automatic cap raise or retry. Cash billing/parent-host cost remain unknown and
@@ -120,12 +122,19 @@ is the assigned work order. Exact five mutation paths:
 2. COMPLETE: actual worktree baseline238 passed, source unchanged. Evidence:
    `evidence/p1a-worktree-baseline-20261021-01/manifest.json`.
 3. COMPLETE: formal Step0 exact seven AC/five paths/base/spec, host independently
-   [disposed PASS](evidence/p1a-step0-disposition-20261021.json). Scope GO remains
-   conditional on budget: 224.4/300 shared credits used, next reservation94.6
-   exceeds remaining75.6. No build sent. P1A reported total95.7 credits.
-   [One concrete owner proposal](p1a-one-day-credit-proposal-20261021.md) is
-   UNAPPROVED; existing caps remain. No new schedule/background continuation.
-4. One complete bounded source proposal; inspect/validate JSON and code before
+   [disposed PASS](evidence/p1a-step0-disposition-20261021.json). Owner approved
+   the [October21 exception](evidence/p1a-credit-exception-approval-20261021.json):
+   shared1000, P1A total700 including prior spend, all other limits retained.
+4. ATTEMPTED/UNSUCCESSFUL: implementation01 HTTP524 after125.269s, no returned
+   candidate/model/usage/request-id. No source edits. Local shared balance fell
+   9692→9605.1;86.9 debit attribution unknown. P1A reported95.7 plus full94.6
+   unresolved reservation=190.3; conservative remaining509.7. Known shared-day
+   used315.7, still under approved1000. This is a transport/accounting hold,
+   not an approval or exhausted-budget hold. Preserve receipt; do not resend or
+   relabel a retry as repair. [Triage](evidence/p1a-implementation-triage-20261021.json).
+   No supported result-retrieval/cancellation route or provider request-id known.
+   Resolve/dispose this exact uncertain attempt/usage before further paid sends.
+   Once eligible: one complete bounded source proposal; inspect/validate JSON and code before
    exact scoped host application. No model-returned commands. Verify allowed diff,
    required commands and old test-count tripwire. No builder self-acceptance.
 5. Fresh independent reviews on exact source/spec/host evidence; keep them blind
@@ -150,3 +159,11 @@ This file is the current carryover, not a transcript. Earlier proposals/history
 are preserved in prior commits and evidence, including aa18951b and91f926fb;
 do not replay them as current blockers. Custody stays with fresh-01 while the
 originating oversight operates this explicitly delegated bounded work unit.
+
+## Additional owner-identified host option
+
+Clinton reminded oversight on October21 that local Linux/Omarchy laptop Pi agent
+sessions are available as an option. Connection, exact model/session, permission,
+independence and cost remain to be verified before use. No assumption of free
+usage or equivalent loaded controls. Reconcile existing in-flight work before
+using another host; no duplicate worker or coordinator ownership transfer.

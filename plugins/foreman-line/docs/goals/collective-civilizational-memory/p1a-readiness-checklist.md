@@ -1,3 +1,9 @@
+> CURRENT October21: owner credit exception APPROVED. Implementation request01
+> returned HTTP524/no candidate or usage; source unchanged. Further sends HELD
+> on uncertain upstream completion/accounting. Reported95.7 + reserved94.6=190.3.
+> Reviews/repair not run. Current loop and implementation triage govern; older
+> credit-hold/proposed-not-approved wording below is historical.
+
 # CCM-P1A — finite readiness checklist and current handoff
 
 ## Current R08 — COMPLETE for artifact-only delivery; budget hold

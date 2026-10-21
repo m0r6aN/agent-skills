@@ -45,5 +45,7 @@ all 238 baseline tests; tracked source is unchanged. Formal Step0 returned exact
 seven AC and five paths and has passed independent host disposition. R01-R08
 readiness is complete for this mode; budget is a separate execution hold.
 
-Status: **PROPOSED / NOT APPROVED**. Existing 300/day remains binding until a
-direct owner decision. No background continuation is scheduled.
+Status: **APPROVED by direct owner instruction, October 21 only**.
+Exact approval: `evidence/p1a-credit-exception-approval-20261021.json`.
+The prior proposal text above defines the accepted exception. No background
+continuation is scheduled.

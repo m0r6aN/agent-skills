@@ -1,4 +1,8 @@
-# CCM-P1A artifact-mode work order — STEP0 PASS / BUDGET HOLD
+> CURRENT: owner approved October21 credit exception. Build request01 HTTP524,
+> no candidate/usage, no source applied; further sends held on uncertain upstream
+> outcome. Reviews/repair unused. Exact current loop/triage supersede prior holds.
+
+# CCM-P1A artifact-mode work order — STEP0 PASS / TRANSPORT OUTCOME HOLD
 
 Current admission (supersedes historical draft/no-dispatch text below):
 [P1A Gate2](../goals/collective-civilizational-memory/evidence/p1a-gate2-artifact-mode-20261021.json)

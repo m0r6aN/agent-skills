@@ -8,25 +8,33 @@
     "genspark-opus-review-qualification-20261021-01/receipt.json",
     "genspark-opus-review-qualification-20261021-02/receipt.json",
     "genspark-sol-scope-qualification-20261021-01/receipt.json",
-    "p1a-formal-step0-20261021-01/receipt.json"
+    "p1a-formal-step0-20261021-01/receipt.json",
+    "p1a-implementation-20261021-01/receipt.json"
   ],
-  "implementationAttempts": 0,
+  "implementationAttempts": 1,
   "repairAttempts": 0,
   "formalStep0": "PASS; independently disposed; implementation held solely on next-call daily budget",
   "reviewsAandB": "not run",
   "globalLimitsUnchanged": {
     "perRun": 100,
-    "perDayAmericaNewYork": 300,
+    "perDayAmericaNewYork": "1000 on October21 only; other initiatives allowance300; reverts300 next day",
     "effort": 9000,
     "reserve": 1000
   },
   "dollarCost": "unknown/not converted",
   "automaticRetry": false,
-  "accountObservedBalance": 9695.3,
-  "knownSharedDayUsed": 224.4,
+  "accountObservedBalance": 9605.1,
+  "knownSharedDayUsed": 315.7,
   "accountDeltaSincePreviousCheck": 45.1,
   "step0ReportedCredits": 44,
   "differenceAccountVsReportedCredits": 1.1,
   "differenceDisposition": "Conservatively counted in shared-day/effort consumption; no downward reconciliation or invented attribution.",
-  "updatedAtUtc": "2026-10-21T17:10:56.612103+00:00"
+  "updatedAtUtc": "2026-10-21T18:02:20.749462+00:00",
+  "implementationStatus": "HTTP524; no returned candidate/identity/usage, outcome unknown; no code applied",
+  "unresolvedAttemptReservation": 94.6,
+  "reportedPlusConservativeReservation": 190.3,
+  "remainingP1ACeilingAfterReservation": 509.7,
+  "accountDeltaSinceBuildStart": 86.9,
+  "accountDeltaAttribution": "Unknown shared usage; not a provider usage receipt",
+  "ownerApprovedDayException": "p1a-credit-exception-approval-20261021.json"
 }
