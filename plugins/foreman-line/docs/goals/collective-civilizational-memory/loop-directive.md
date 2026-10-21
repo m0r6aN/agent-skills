@@ -1,45 +1,50 @@
-# CCM coordinator loop — current handoff, October21 20:29UTC
+# CCM coordinator loop — current handoff, October21 20:53UTC
 
-## Current streamed source result — known truncation, not accepted
+## Current package, independent-review failure and bounded stop
 
-Clinton explicitly approved ONE streamed Sol source recovery, <=$0.18 additional
-estimated token cost, keeping both reservations and accepting possible unseen
-output from the previous HTTP520. [Exact approval](evidence/openai-api-stream-approval-20261021.json).
-Passed API scope check was reused; no paid Step0 repeat. One first-party Responses
-request, exactgpt-6.1-sol/medium/default, max8192totaloutput, input29607 actual,
-no tools/retry/background/store/fallback. Requestreq_e74a912f0e004279981fb32966c7bb3b
-returned HTTP200 SSE and terminal **incomplete / max_output_tokens** at20:29:34UTC.
-Output8192 includes735reasoning; no automatic continuation or new generation.
-Receipt's generic local assertion-failure status does not override the captured
-known terminal incomplete status. Full package JSON is truncated/invalid.
+Clinton approved the one document-only completion via oversight. It COMPLETED
+exactSol/medium/default,28282input/4031output including147reasoning, no retry;
+conservative token valuation$0.111015 within$0.14. [Result](evidence/openai-api-document-result-20261021.json).
+OriginalfourUTF8candidatehashes frozen and verified. Approved packet bytes unchanged.
+One local default-decoding mismatch was corrected BEFORE HTTP/capturecreation;
+not an extra model attempt. The complete5path package was assembled with the
+explicit provenance-marker substitution and actual unchanged imported definitions
+and baseline evidence. [Pins](evidence/p1a-complete-package-20261021.json).
 
-Four complete JSON fields were safely recovered PRIVATELY: taxonomy, models_v2,
-canonical fixture, tests. The normative document is incomplete. Exact candidate
-hashes and capture manifest: [result](evidence/openai-api-stream-result-20261021.json).
-A separate private snapshot of pinned base plus only these4fields passed328tests,
-including all238original test identities and90new; old taxonomy AST nodes preserved.
-This is a diagnostic, NOT complete P1A acceptance. Admitted worktree remains clean,
-baseefb5f4bc, no source applied, no commit/PR/merge. Both independent reviews NOT RUN
-because reviewing a package already known incomplete would waste their allowance.
+Actual isolated worktree source candidate now exists, NOT ACCEPTED/committed:
+D:/Repos/ccm-worktrees/cortex-p1a, branchfeat/foreman-line-ccm-p1a, baseefb5f4bc.
+Exactly5allowedpaths changed/untracked. Required tests328PASS, all238oldidentities
+retained+90new. v1 source/replay unchanged. Black/isort fail2files; mypy16errors.
+Four frozen hashes are still unchanged. One PRIVATE mechanicalpatch proposal
+adds signatures/typeddispatchmap and formats2files; it passesBlack/isort/mypy and
+328tests, but is NOT APPLIED to admitted source under the explicitfreeze.
+[Mechanical proposal](p1a-mechanical-correction-proposal-20261021.md).
 
-Stream conservative token valuation$0.1559375 < approved$0.18. Returned cache usage
-would value standard tokens at$0.0848864; actual invoice billing is unknown. Keep
-conservative value for reserves: scope$0.08157 + stream$0.1559375 + prior failed
-source uncertainty$0.17192 = **$0.4094275**. Original GenSpark94.6 remains separate;
-GenSpark95.7reported+94.6reserved=190.3of700. Other caps/reviews unchanged.
+**ReviewerA attempted/UNSUCCESSFUL.** Exact GenSparkOpus5.5, max2304, no tools,
+retry0. finishlength, all2304output thinking, zero reviewtext. Actualinput37320
+exceeded26500operational bound;127.6reportedcredits exceeded100percall despite99
+reservation. Input estimator cl100k/o200k+20percent was insufficient. Actualprompt
+hash was reconciled to physicalCRLFfile; newline conversion does not explain the
+full input discrepancy. Do not hide or down-reconcile control failure.
+[Failure](evidence/p1a-review-A-failure-20261021.json). ReviewerB NOT SENT: failed
+preventive input/cost and visible-output controls forbid another blindpaidcall.
+Two successful fresh independent reviews remain required and absent.
 
-One [document-only completion proposal](p1a-document-completion-proposal-20261021.md)
-and exact unsent packet are prepared: freeze four candidate hashes, generate only
-the complete document, sameSol/medium/default, max4096output/input<=36000/600sec,
-one streamed request/no retry/tools/fallback, <=$0.14 additional estimate. Packet
-SHA1d649e1a3d9d87f90706a9ce1557b3cb8ba5d1bdf472fd23795721729ca80592;
-34187conservativeinput. No send yet: consumed one-stream authority does not cover
-this additional phase. No new unknown-outcome acceptance needed for known truncation.
-Do not repeat scope/model/key/tree approvals or regenerate four complete files.
-After a complete package: exact5path validation/tests then2fresh Opus reviews;
-no merge/deploy/import/later parcel or extra substantive repair inferred.
+GenSpark95.7prior +127.6reportedreviewA=223.3reported, original94.6unknown remains.
+BookA128conservatively from catalogcachewrite/output rates; P1Atotal318.3of700.
+Sharedbalance9380.7 at20:53Z;140.8movement duringreview is shared/unattributed,
+not exactAusage. No nextcall. API scope0.08157+stream0.1559375+document0.111015+
+failedsource reserve0.17192 = **$0.5204425**conservative known/reserved, actualinvoice
+unknown. Keep USD separate from GenSpark. Other limits retained; no capincrease.
 
-## Previous API/native history and settled authority
+[Stop evidence](evidence/p1a-document-and-review-stop-20261021.json) is current.
+No merge/deploy/import/laterparcel/schedule. Existing approvals/producerdependency/
+original94.6disposition remain settled; do not repeat scope/key/treeceremonies.
+Next narrow owner decision can admit exact no-model-cost mechanicalpatch to two
+frozen files. Reviewerroute needs concrete preventive cost/input and visibleoutput
+qualification before any further paid send; no broadproviderhunt/launcherproject.
+
+## Previous native and settled authority (history)
 
 ## Ownership and settled authority
 

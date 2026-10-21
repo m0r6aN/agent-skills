@@ -1,0 +1,21 @@
+{
+  "effortUsedConservative": 638.7,
+  "originalUncertaintyReserve": 94.6,
+  "P1ABookedBefore": 190.3,
+  "limitsRetained": {
+    "sharedDay": 1000,
+    "P1A": 700,
+    "effort": 9000,
+    "perCall": 100,
+    "minimumBalance": 1000
+  },
+  "phase": "review-A",
+  "twoReviewReservation": 198,
+  "stateRun": "sqlite-update-20261021",
+  "stateStatus": "update_candidate_applied_local_validation_reviews_running",
+  "sharedDayUsedConservative": 558.4,
+  "atUtc": "2026-10-21T20:51:20.9988314Z",
+  "reservedForEachReview": 99,
+  "plan": "plus",
+  "balance": 9509.4
+}

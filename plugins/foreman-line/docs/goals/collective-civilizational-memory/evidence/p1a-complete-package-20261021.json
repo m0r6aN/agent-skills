@@ -1,0 +1,23 @@
+{
+  "sourceBase": "efb5f4bcead899332f4f35f5e0b3a181eb988d2c",
+  "sourceWorktree": "D:\\Repos\\ccm-worktrees\\cortex-p1a",
+  "completePaths": [
+    "src/keon/cortex/envelope/taxonomy.py",
+    "src/keon/cortex/ingress/models_v2.py",
+    "tests/fixtures/ccm/contracts-v2.json",
+    "tests/test_ccm_contracts_v2.py",
+    "docs/specs/ccm-memory-graph-v2.md"
+  ],
+  "candidatePins": {
+    "src/keon/cortex/envelope/taxonomy.py": "1f2cacaefe3b5086ea4a556c50677ba9e1e3719d51b2944f74caf1712712424d",
+    "src/keon/cortex/ingress/models_v2.py": "86fc439b5a22f1b0625c64ce0dab494bd73c035d0350c9b59859bcb7d87173f6",
+    "tests/fixtures/ccm/contracts-v2.json": "de4bde4dfee3299dabc5d87cf53566266d3d798391417bbfa7ae40f1335c2dd8",
+    "tests/test_ccm_contracts_v2.py": "7814925b144a129bef7b64da5b120e63cbfae67f0c3815b9ccdbd48d19fda77e",
+    "docs/specs/ccm-memory-graph-v2.md": "3481152e93b611ebfe3ea53450ed629a733fd32139d0fa926f812c301cdbed4e"
+  },
+  "fourFrozenHashesRetained": true,
+  "documentTransform": "exact supplied decision/v4 provenance marker substitution plus unchanged imported definitions/baseline evidence; no model code altered",
+  "modelDocumentSha256": "67432b59e28b2adbd1df9e16b87a7417e6dac20bc023bcccbfda8081a9cea054",
+  "sourceAccepted": false,
+  "reviews": "not run"
+}

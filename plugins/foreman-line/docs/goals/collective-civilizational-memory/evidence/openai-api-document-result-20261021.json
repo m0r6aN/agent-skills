@@ -1,0 +1,81 @@
+{
+  "startedAtUtc": "2026-10-21T20:46:50.278228+00:00",
+  "requestedModel": "gpt-6.1-sol",
+  "requestCount": 1,
+  "retries": 0,
+  "status": "completed",
+  "inputSha256": "1d649e1a3d9d87f90706a9ce1557b3cb8ba5d1bdf472fd23795721729ca80592",
+  "maxOutput": 4096,
+  "capture": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\openai-api-document-20261021-01",
+  "httpStatus": 200,
+  "requestId": "req_39c48dfc125941f4ad8301190555faff",
+  "contentType": "text/event-stream; charset=utf-8",
+  "responseId": "resp_0a2ad2ccbd28689e016ad924bc957487d2938e26f70df56f9b",
+  "model": "gpt-6.1-sol",
+  "usage": {
+    "input_tokens": 28282,
+    "input_tokens_details": {
+      "cache_write_tokens": 28279,
+      "cached_tokens": 0
+    },
+    "output_tokens": 4031,
+    "output_tokens_details": {
+      "reasoning_tokens": 147
+    },
+    "total_tokens": 32313
+  },
+  "incompleteDetails": null,
+  "completedAtUtc": "2026-10-21T20:48:15.015941+00:00",
+  "events": 3888,
+  "captureBytes": 1098950,
+  "textBytes": 17213,
+  "conservativeTokenPriceUsd": 0.111015,
+  "ownerApprovalSource": "Direct human authorization relayed from oversight chat01a158b8-93f8-7423-b5b6-aaca46092870; scope reuse and both independent reviews explicit",
+  "privateFiles": {
+    "assembled-package.json": {
+      "bytes": 95247,
+      "sha256": "488faffcd4b6e9a9319691c5ee266ca2bca7025e976c76dff9d49e69967368f5"
+    },
+    "candidate.txt": {
+      "bytes": 17213,
+      "sha256": "5c5db1ffb97d94140b80ce5f8dbf121b18e841b296717576391e3583d03f0064"
+    },
+    "complete-tests.log": {
+      "bytes": 562,
+      "sha256": "077d7d70c5e38e8224a1d9360dce1f89c51589de25f6794b171f924240f48d8e"
+    },
+    "complete-tests.xml": {
+      "bytes": 44867,
+      "sha256": "f230b07ecbcab6de46b04433c5ecddc340fe6fc820238a3355852cdadb49b88a"
+    },
+    "envelope.json": {
+      "bytes": 935,
+      "sha256": "1df0f145eb0ab278969c323366538d9138fb95c204d970d05dff0a28bf91cee8"
+    },
+    "events.sse": {
+      "bytes": 1098950,
+      "sha256": "936af20bdb893f044aa4a3eb17dcb1c71c51ffcf5540d58b76e0960aab26b23f"
+    },
+    "receipt.json": {
+      "bytes": 1091,
+      "sha256": "85a0a1785a3542ef4ba55307bb84658815e6d245bcfd7d2c8de5326349dfb4e2"
+    },
+    "request.json": {
+      "bytes": 124337,
+      "sha256": "6da0fe8bc0113ce1b5af291dcdf8746db023ad3b20bc1e5e4c1472f3e75cfd7f"
+    },
+    "response.json": {
+      "bytes": 22706,
+      "sha256": "f92e943fd985b4f6e6c6ebe329441bf30cd452c0c61b9e1cbbf356ef51951dcb"
+    },
+    "review-A-input.txt": {
+      "bytes": 93688,
+      "sha256": "9035f091f9a751da4caa6db41132e305ca8d7ddd5faf6151f8830cf789f000c9"
+    },
+    "review-B-input.txt": {
+      "bytes": 92697,
+      "sha256": "790a005e90c5e98d2e6c837781580000b46bfc6cbec41c7c87245f811b6f770d"
+    }
+  },
+  "preSendLocalEncodingFix": "Initial freeze check failed before directory creation or HTTP; explicit UTF8 restored matching all four original hashes. Approved packet bytes unchanged. No extra model request."
+}

@@ -1,3 +1,11 @@
+> CURRENT October21 20:53UTC: Document completed within$0.14; five-path candidate
+> in isolated worktree328PASS/all238old retained. Four source hashes still frozen.
+> CIformat/type checks fail; private mechanicalfix passesall but NOT APPLIED.
+> ReviewerA unsuccessful/allthinking, input37320>26500 and127.6credits>100percall;
+> reviewerB NOT SENT. No further paidcall under failedcontrols. GenSpark318.3/700
+> conservative incl94.6; API$0.5204425known/reserved inclold$0.17192. Currentloop
+> and evidence/p1a-document-and-review-stop-20261021.json supersede older holds.
+
 > CURRENT October21 20:29UTC: Approved one streamed Sol source attempt returned
 > known incomplete/max_output_tokens8192. Four complete fields retained privately;
 > only normative document truncated. Diagnostic snapshot328passed includes all238
