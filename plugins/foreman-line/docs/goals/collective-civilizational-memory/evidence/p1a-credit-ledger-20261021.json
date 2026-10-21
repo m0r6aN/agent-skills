@@ -30,7 +30,7 @@
   "step0ReportedCredits": 44,
   "differenceAccountVsReportedCredits": 1.1,
   "differenceDisposition": "Conservatively counted in shared-day/effort consumption; no downward reconciliation or invented attribution.",
-  "updatedAtUtc": "2026-10-21T20:54:19.026000+00:00",
+  "updatedAtUtc": "2026-10-21T22:06:54.047397+00:00",
   "implementationStatus": "HTTP524; no returned candidate/identity/usage, outcome unknown; no code applied",
   "unresolvedAttemptReservation": 94.6,
   "reportedPlusConservativeReservation": 318.3,
@@ -44,7 +44,7 @@
   "nativeOAuthBilling": "unknown, kept separate from GenSpark credit accounting",
   "nativeStep0Receipt": "native-sol-step0-failure-disposition-20261021.json",
   "ownerNativeDisposition": "approved; original delivery unusable/possible unseen generation accepted;94.6 retained",
-  "executionHold": "Reviewer input/cost control failed; sourcefrozen withCIformat/typefailures; no further paid sends",
+  "executionHold": "Mechanicalpatch applied: black/isort/mypy and328testsPASS; paidreviews remain HELD pending qualified preventive input/cost/visible-output controls",
   "apiGenerationRequests": 4,
   "apiSourceAttempts": 2,
   "apiScope": "PASS",
@@ -67,5 +67,8 @@
   "accountDeltaDuringReview": 140.8,
   "futureRequiredReviewsPlannedReservationCredits": 198,
   "futureReviewReservationStatus": "Retained capacity planning only; no paiddispatch admitted until reviewercontrols qualified",
-  "totalBookedPlusRemainingReviewPlanCredits": 516.3
+  "totalBookedPlusRemainingReviewPlanCredits": 516.3,
+  "mechanicalPatchApplied": true,
+  "mechanicalPatchModelRequests": 0,
+  "mechanicalResult": "p1a-mechanical-result-20261021.json"
 }

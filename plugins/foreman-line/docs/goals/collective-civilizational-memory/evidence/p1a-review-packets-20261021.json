@@ -46,5 +46,13 @@
     "tests/test_ccm_contracts_v2.py": "7814925b144a129bef7b64da5b120e63cbfae67f0c3815b9ccdbd48d19fda77e",
     "docs/specs/ccm-memory-graph-v2.md": "3481152e93b611ebfe3ea53450ed629a733fd32139d0fa926f812c301cdbed4e"
   },
-  "estimatorDisposition": "FAILED for seatA; do not reuse this estimator as a preventive provider-input/cost bound"
+  "estimatorDisposition": "FAILED for seatA; do not reuse this estimator as a preventive provider-input/cost bound",
+  "currentAfterMechanicalPatch": {
+    "src/keon/cortex/envelope/taxonomy.py": "1f2cacaefe3b5086ea4a556c50677ba9e1e3719d51b2944f74caf1712712424d",
+    "src/keon/cortex/ingress/models_v2.py": "b0b48d4bd1ee87bbed053ad2fa614195f05035c68729a6879ebd20726d173c4a",
+    "tests/fixtures/ccm/contracts-v2.json": "de4bde4dfee3299dabc5d87cf53566266d3d798391417bbfa7ae40f1335c2dd8",
+    "tests/test_ccm_contracts_v2.py": "5d5e1fd95ca8d25d74bf5f878125838a2bc3112b5903f486306d1b7857f5b420",
+    "docs/specs/ccm-memory-graph-v2.md": "3481152e93b611ebfe3ea53450ed629a733fd32139d0fa926f812c301cdbed4e"
+  },
+  "preparedPacketStatus": "Historical premechanical inputs; A used unsuccessfully, B UNSENT/STale after2hashchanges. Regenerate only after reviewercontrols qualified."
 }

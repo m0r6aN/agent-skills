@@ -1,48 +1,39 @@
-# CCM coordinator loop — current handoff, October21 20:53UTC
+# CCM coordinator loop — current handoff, October21 22:06UTC
 
-## Current package, independent-review failure and bounded stop
+## Current deterministic checks PASS; paid reviews remain HELD
 
-Clinton approved the one document-only completion via oversight. It COMPLETED
-exactSol/medium/default,28282input/4031output including147reasoning, no retry;
-conservative token valuation$0.111015 within$0.14. [Result](evidence/openai-api-document-result-20261021.json).
-OriginalfourUTF8candidatehashes frozen and verified. Approved packet bytes unchanged.
-One local default-decoding mismatch was corrected BEFORE HTTP/capturecreation;
-not an extra model attempt. The complete5path package was assembled with the
-explicit provenance-marker substitution and actual unchanged imported definitions
-and baseline evidence. [Pins](evidence/p1a-complete-package-20261021.json).
+Direct human approval relayed from oversight authorized exact mechanicalpatch
+SHAfa8cdab381ff2bff4529e2bb032e0b042d125ab10249b484ccdca1b03dac3ef2,
+onlymodels_v2.py andtest_ccm_contracts_v2.py, retaining paidreview hold.
+[Approval](evidence/p1a-mechanical-approval-20261021.json). Verified original5pins,
+patchpaths/hash andbase beforegitapply. Original2files preserved privately.
+Other3candidatehashes unchanged. No other sourcepaths, modelrequests or spend.
 
-Actual isolated worktree source candidate now exists, NOT ACCEPTED/committed:
-D:/Repos/ccm-worktrees/cortex-p1a, branchfeat/foreman-line-ccm-p1a, baseefb5f4bc.
-Exactly5allowedpaths changed/untracked. Required tests328PASS, all238oldidentities
-retained+90new. v1 source/replay unchanged. Black/isort fail2files; mypy16errors.
-Four frozen hashes are still unchanged. One PRIVATE mechanicalpatch proposal
-adds signatures/typeddispatchmap and formats2files; it passesBlack/isort/mypy and
-328tests, but is NOT APPLIED to admitted source under the explicitfreeze.
-[Mechanical proposal](p1a-mechanical-correction-proposal-20261021.md).
+Actual isolated worktree Black/isort/mypy and required328tests PASS, all238old
+identities retained+90new. Oldv1/baselinefiles unchanged; gitdiffcheckPASS.
+[Actual results/newpins](evidence/p1a-mechanical-result-20261021.json) supersede
+older CI-failure/frozen-four wording. models_v2 SHA
+b0b48d4bd1ee87bbed053ad2fa614195f05035c68729a6879ebd20726d173c4a;
+newtestsSHA5d5e1fd95ca8d25d74bf5f878125838a2bc3112b5903f486306d1b7857f5b420.
+Candidate remains unaccepted/uncommitted inD:/Repos/ccm-worktrees/cortex-p1a,
+branchfeat/foreman-line-ccm-p1a, baseefb5f4bc, exactly5allowedpaths.
 
-**ReviewerA attempted/UNSUCCESSFUL.** Exact GenSparkOpus5.5, max2304, no tools,
-retry0. finishlength, all2304output thinking, zero reviewtext. Actualinput37320
-exceeded26500operational bound;127.6reportedcredits exceeded100percall despite99
-reservation. Input estimator cl100k/o200k+20percent was insufficient. Actualprompt
-hash was reconciled to physicalCRLFfile; newline conversion does not explain the
-full input discrepancy. Do not hide or down-reconcile control failure.
-[Failure](evidence/p1a-review-A-failure-20261021.json). ReviewerB NOT SENT: failed
-preventive input/cost and visible-output controls forbid another blindpaidcall.
-Two successful fresh independent reviews remain required and absent.
+PAID REVIEWS HELD by direct owner instruction until preventive input/cost and
+visible-output controls qualified. ReviewA priorfailure/allthinking/127.6credits
+and37320input is preserved, not accepted or retried. Bnever sent. Both successful
+fresh independent reviews remain required. Historical prepared reviewB input is
+stale aftermechanicalpatch; do not send it. No blindretry/capraise/alternatepaid
+reviewer/providerhunt/newcontrolproject/extra source repair/schedule authorized.
 
-GenSpark95.7prior +127.6reportedreviewA=223.3reported, original94.6unknown remains.
-BookA128conservatively from catalogcachewrite/output rates; P1Atotal318.3of700.
-Sharedbalance9380.7 at20:53Z;140.8movement duringreview is shared/unattributed,
-not exactAusage. No nextcall. API scope0.08157+stream0.1559375+document0.111015+
-failedsource reserve0.17192 = **$0.5204425**conservative known/reserved, actualinvoice
-unknown. Keep USD separate from GenSpark. Other limits retained; no capincrease.
+Accounting unchanged: GenSpark223.3reported +94.6originaluncertainty +0.4catalog
+roundup =318.3of700booked; remaining2reviews198capacityplanned gives516.3total.
+APIconservativeknown/reserved$0.5204425 includingoldsourceuncertainty$0.17192.
+No cross-unit conversion, no unknown reserve release. No merge/deploy/import/
+laterparcel orfull-goalacceptance. Existing settledscope/key/approval gates are
+not reopened. Next legitimate step is concrete reviewercontrol qualification
+within actual authority, before any further paiddispatch.
 
-[Stop evidence](evidence/p1a-document-and-review-stop-20261021.json) is current.
-No merge/deploy/import/laterparcel/schedule. Existing approvals/producerdependency/
-original94.6disposition remain settled; do not repeat scope/key/treeceremonies.
-Next narrow owner decision can admit exact no-model-cost mechanicalpatch to two
-frozen files. Reviewerroute needs concrete preventive cost/input and visibleoutput
-qualification before any further paid send; no broadproviderhunt/launcherproject.
+## Earlier package/reviewer result and settled authority (history)
 
 ## Previous native and settled authority (history)
 

@@ -1,3 +1,10 @@
+> CURRENT October21 22:06UTC: Exact owner-approved mechanicalpatch applied to
+>2files; actualworktree Black/isort/mypy and328testsPASS/all238oldretained. Other3
+>candidatehashes unchanged; originals preserved. No modelrequests/spend. Paid
+>reviews remain HELD by owner until preventiveinput/cost/visibleoutput controls
+>qualified; priorAfailed, Bunsent. No acceptance/merge/deploy. Currentresult:
+>evidence/p1a-mechanical-result-20261021.json; currentloop supersedes oldCIholds.
+
 > CURRENT October21 20:53UTC: Document completed within$0.14; five-path candidate
 > in isolated worktree328PASS/all238old retained. Four source hashes still frozen.
 > CIformat/type checks fail; private mechanicalfix passesall but NOT APPLIED.

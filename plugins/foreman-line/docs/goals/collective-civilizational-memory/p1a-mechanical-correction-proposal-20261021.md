@@ -1,3 +1,9 @@
+> DISPOSITION: Clinton explicitly APPROVED the exact two-file patch through
+> oversight. Applied once; actual worktree Black/isort/mypy and328testsPASS,
+> all238original identities retained. Original files preserved privately; other3
+> candidatehashes unchanged. See evidence/p1a-mechanical-result-20261021.json.
+> No modelrequests/spend. Paidreviews remain HELD; no acceptance or merge.
+
 # P1A mechanical CI correction — prepared, not applied
 
 The complete five-path candidate passes328required tests, retaining238original

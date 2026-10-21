@@ -1,8 +1,8 @@
 {
-  "atUtc": "2026-10-21T20:57:27.766438+00:00",
-  "status": "P1A completecandidate but unaccepted; CI failures and failed reviewercontrols",
+  "atUtc": "2026-10-21T22:06:54.047397+00:00",
+  "status": "Mechanicalpatch applied; deterministic checks PASS; independent-review controls HOLD",
   "document": "COMPLETED exactSol,4031output,conservative$0.111015<0.14; no retries",
-  "frozenFourHashesRetained": true,
+  "frozenFourHashesRetained": "Originals preserved; exactly2hashes changed under direct owner mechanicalpatch approval, other3candidatehashes unchanged",
   "sourceWorktree": "D:\\Repos\\ccm-worktrees\\cortex-p1a",
   "sourceStatus": " M src/keon/cortex/envelope/taxonomy.py\n?? docs/specs/ccm-memory-graph-v2.md\n?? src/keon/cortex/ingress/models_v2.py\n?? tests/fixtures/ccm/contracts-v2.json\n?? tests/test_ccm_contracts_v2.py\n",
   "tests": {
@@ -11,8 +11,7 @@
     "new": 90
   },
   "CI": {
-    "admittedCandidate": "black/isort fail2files; mypy16errors",
-    "privateMechanicalProposal": "black/isort/mypy and328testsPASS; not applied"
+    "currentAdmittedCandidate": "Black/isort/mypy and328testsPASS"
   },
   "reviewA": "attempted unsuccessful: length/all2304thinking/zero text; input37320>26500 and127.6reportedcredits>100limit",
   "reviewB": "NOT SENT because first reviewfailed control envelope",
@@ -31,5 +30,17 @@
     "apiConservativeKnownAndReserveUsd": 0.5204425
   },
   "stopRule": "No further paid reviewer/model request under failed cost/input/reasoning controls; no extra repair or changes to owner-frozen source. No merge/deploy/import/later parcel/schedule.",
-  "next": "One concrete private mechanicalpatch proposal available; independently qualify reviewer preventive token/cost and visible-output controls before any future send. No broadproviderhunt/launcherengineering inferred."
+  "next": "Paidreviews remain onhold until preventive input/cost/visible-output controls qualified; no further modelrequests authorized by mechanicalpatch",
+  "previousCI": {
+    "admittedCandidate": "black/isort fail2files; mypy16errors",
+    "privateMechanicalProposal": "black/isort/mypy and328testsPASS; not applied"
+  },
+  "currentCandidatePins": {
+    "src/keon/cortex/envelope/taxonomy.py": "1f2cacaefe3b5086ea4a556c50677ba9e1e3719d51b2944f74caf1712712424d",
+    "src/keon/cortex/ingress/models_v2.py": "b0b48d4bd1ee87bbed053ad2fa614195f05035c68729a6879ebd20726d173c4a",
+    "tests/fixtures/ccm/contracts-v2.json": "de4bde4dfee3299dabc5d87cf53566266d3d798391417bbfa7ae40f1335c2dd8",
+    "tests/test_ccm_contracts_v2.py": "5d5e1fd95ca8d25d74bf5f878125838a2bc3112b5903f486306d1b7857f5b420",
+    "docs/specs/ccm-memory-graph-v2.md": "3481152e93b611ebfe3ea53450ed629a733fd32139d0fa926f812c301cdbed4e"
+  },
+  "mechanicalResult": "p1a-mechanical-result-20261021.json"
 }
