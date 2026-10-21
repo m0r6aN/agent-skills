@@ -218,6 +218,34 @@ Two systems of record will drift unless the contract is explicit. This is the co
 3. When a spec's `updated:` date bumps for a material change, the ticket gets a comment: *"Spec updated: <permalink> — <one-line summary>."*
 4. Conflicts resolve as follows: Jira wins on delivery state (priority, schedule, assignment); the spec wins on implementation detail. If they disagree on scope, work **stops** until a human reconciles them. Agents do not adjudicate scope conflicts.
 
+### Scoped CCM foundation tracking exception — coordinator-ratified 2026-10-21
+
+Under Clinton Morgan's transferable Context oversight/process authorization, the
+originating oversight session approves this administrative exception for
+`collective-civilizational-memory` parcels **CCM-P1A, CCM-P1B, CCM-P1C and CCM-P1D
+only**, during local foundation development. It changes no locked product decision.
+For these four parcels, the CCM foundation ledger in `docs/specs/INDEX.md` is the
+delivery-state record instead of Jira; the existing CCM ticket/filename keys remain
+valid under §§2/4/5. Each ledger entry records status, accountable owner, dependencies,
+exact spec repository/path/commit and SHA-256, actual tree-approval record/hash,
+Gate 2 decision, named worktree/branch and evidence links. The assigned work order
+names the ledger path and parcel key; dispatch pins the committed ledger revision.
+The ledger pins the spec revision separately, avoiding a circular pair of mutually
+self-referential commit hashes. Material spec changes require refreshed spec pins
+and renewed applicable approval; ledger status changes never grant authority.
+
+This substitutes manual versioned local-ledger registration for W1-P4 Jira writes
+and its Stage-B RegistrationResult for these four parcels. Record Stage B as
+**NOT APPLICABLE UNDER THIS EXCEPTION**, never passed; mint no simulated registration
+receipt. Preserve genuine W1-P3 interactive tree approval and its Stage-A chain,
+parcel-specific Gate 2, Step 0, required independent reviews and Gate 3. Pending
+artifacts remain explicitly pending. The ledger cannot override spec scope; a scope
+conflict still stops for human reconciliation. No registration code, corporate
+allowlist, frozen schema, other goal, external publication, release or deployment
+is changed or authorized. Any later external tracker publication needs its own
+approved destination/process and actual links. Do not extend this exception beyond
+the four named foundation parcels by analogy.
+
 ---
 
 ## 6. Context Budget Discipline

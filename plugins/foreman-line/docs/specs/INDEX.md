@@ -1,5 +1,34 @@
 # Spec Index — plugins/foreman-line
 
+## CCM foundation delivery ledger
+
+Scoped local tracking under [SPEC-CONVENTION §5](../SPEC-CONVENTION.md),
+coordinator-ratified 2026-10-21 using Clinton's delegated process authority.
+Sole coordinator: `ccm-coordinator-20261020-fresh-01`; originating oversight chat:
+`01a155be-72a6-7b02-ac33-84dc64bbf102`. This section registers draft work locally;
+it does not approve the tree or authorize implementation. Jira W1-P4/Stage B is
+**NOT APPLICABLE UNDER THE CCM FOUNDATION EXCEPTION**, not passed.
+
+All four spec pins below are in repository `D:/Repos/agent-skills` at commit
+`d6c4adce4bad3b37e496afd3a7db48b525461bb2`; paths are relative to that repository.
+Human W1-P3 approval/Stage-A receipt and approved subject hash: **PENDING**.
+Gate 2: **HOLD for every parcel**. No builder or reviewer is admitted by this ledger.
+
+| Parcel / status | Accountable owner | Dependencies | Exact spec path | Spec SHA-256 | Worktree / branch | Evidence |
+|---|---|---|---|---|---|---|
+| CCM-P1A / draft | fresh-01 coordinator | Approved tree and qualified execution envelope | `plugins/foreman-line/docs/specs/active/CCM-P1A-memory-graph-contracts.md` | `2db53117a6d990355cff5c0cf7f09a058bcf2a78c55b35a659395ae9b45f2dd8` | Reserved, not created: `D:/Repos/ccm-worktrees/cortex-p1a`, `feat/ccm-p1a-contracts` | [Work order](../kickstarters/ccm-p1a-fresh-20261020.md), [baseline manifest](../goals/collective-civilizational-memory/evidence/p1a-baseline-20261021-02/manifest.json) |
+| CCM-P1B / draft | fresh-01 coordinator | Accepted P1A contract/fixture pins; independent numeric acceptance | `plugins/foreman-line/docs/specs/active/CCM-P1B-gravity-v2-fixtures.md` | `4d08fab475d32bdcd3643c5c77f9569f39d2360899fe55049a8dfc778b42d2e1` | Not assigned | [Readiness](../goals/collective-civilizational-memory/p1a-readiness-checklist.md) |
+| CCM-P1C / draft | fresh-01 coordinator | Accepted P1A shared wire/fixture pins | `plugins/foreman-line/docs/specs/active/CCM-P1C-collective-wire-compatibility.md` | `b782e06829119a3993c18155e331882a44a7c82cf6dd05ec8061c7e9f3c26c09` | Not assigned | [Readiness](../goals/collective-civilizational-memory/p1a-readiness-checklist.md) |
+| CCM-P1D / draft | fresh-01 coordinator | Accepted P1A DDL/profile; actual database access separately authorized | `plugins/foreman-line/docs/specs/active/CCM-P1D-postgres-capability-check.md` | `33d2f4d90c57db9c4583328a50442e1fed37e9a2de421742661b7553d6f86603` | Not assigned | [Readiness](../goals/collective-civilizational-memory/p1a-readiness-checklist.md) |
+
+The pre-P1A snapshot baseline is **238 passed**, with unchanged snapshot source.
+It is preparation evidence, not admitted-worktree acceptance, tree approval,
+builder qualification or goal completion. Status updates require actual evidence;
+dispatch must pin this ledger's committed revision and the separately approved
+spec subject. No spec-file bytes were changed to add this ledger.
+
+## General spec inventory
+
 > **Generated 2026-10-08** (ci-fail-fast coordinator). Rows are parsed from each
 > spec's frontmatter — `ticket`, `title`, `status` — with the folder as the lifecycle
 > authority (SPEC-CONVENTION §3 rule 1): a filename present in both `active/` and
