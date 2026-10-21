@@ -1,3 +1,11 @@
+> CURRENT October21 20:29UTC: Approved one streamed Sol source attempt returned
+> known incomplete/max_output_tokens8192. Four complete fields retained privately;
+> only normative document truncated. Diagnostic snapshot328passed includes all238
+> original identities; admitted worktree unchanged, P1A unaccepted, reviews NOT RUN.
+> Stream conservative$0.1559375 within$0.18; API known/reserved$0.4094275, original
+> GenSpark94.6 reserve unchanged. One document-only <=$0.14 completion proposed,
+> exact packet prepared but NOT SENT; current loop/result supersede older holds.
+
 > CURRENT October21 20:01UTC: Owner-funded OpenAI API key authenticated; exact
 > Sol API scope PASS (7AC/5paths), then one source request HTTP520/no candidate or
 > usage. Stopped without retry. Source unchanged/baseline238 retained; reviews

@@ -1,37 +1,45 @@
-# CCM coordinator loop — current handoff, October21 20:01UTC
+# CCM coordinator loop — current handoff, October21 20:29UTC
 
-## Current API result and stop boundary
+## Current streamed source result — known truncation, not accepted
 
-Owner instructed resume after adding OpenAI API credits, chose a new key, and
-reported saving it using `setx OPENAI_API_KEY`. That newer direct authority admits
-the bounded funded API route; old OAuth-only wording below is historical.
-Windows User environment was read in memory only; key never printed/copied or
-sent to the laptop. Model metadata GET200 exposed exactgpt-6.1-sol. One API scope
-check COMPLETED exactSol/default/medium,29400input/807output,0reasoning;
-host verified7AC/exact5paths/base/branch/activehash and disposed nonblocking flags.
-Step0 PASS is retained; do not repeat it.
+Clinton explicitly approved ONE streamed Sol source recovery, <=$0.18 additional
+estimated token cost, keeping both reservations and accepting possible unseen
+output from the previous HTTP520. [Exact approval](evidence/openai-api-stream-approval-20261021.json).
+Passed API scope check was reused; no paid Step0 repeat. One first-party Responses
+request, exactgpt-6.1-sol/medium/default, max8192totaloutput, input29607 actual,
+no tools/retry/background/store/fallback. Requestreq_e74a912f0e004279981fb32966c7bb3b
+returned HTTP200 SSE and terminal **incomplete / max_output_tokens** at20:29:34UTC.
+Output8192 includes735reasoning; no automatic continuation or new generation.
+Receipt's generic local assertion-failure status does not override the captured
+known terminal incomplete status. Full package JSON is truncated/invalid.
 
-The one source request then returned **HTTP520**, no candidate/requestID/returned
-identity/usage. Upstream generation and billing remain unknown. Two generation
-requests total in this API envelope, no retry/automatic continuation/fallback.
-No code changed; existing238-test baseline retained, no needless rerun. Independent
-reviews remain NOT RUN. P1A unaccepted; B/C/D held; no bulk-ingestion readiness.
+Four complete JSON fields were safely recovered PRIVATELY: taxonomy, models_v2,
+canonical fixture, tests. The normative document is incomplete. Exact candidate
+hashes and capture manifest: [result](evidence/openai-api-stream-result-20261021.json).
+A separate private snapshot of pinned base plus only these4fields passed328tests,
+including all238original test identities and90new; old taxonomy AST nodes preserved.
+This is a diagnostic, NOT complete P1A acceptance. Admitted worktree remains clean,
+baseefb5f4bc, no source applied, no commit/PR/merge. Both independent reviews NOT RUN
+because reviewing a package already known incomplete would waste their allowance.
 
-[API evidence/accounting](evidence/openai-api-resume-20261021.json) preserves
-receipts, exact authority, private capture hashes and source inputs. API scope
-conservative list-price estimate$0.08157 + source uncertainty reservation$0.17192
-= $0.25349 modeled/reserved, actual bill unknown. Keep USD separate from GenSpark
-95.7reported+94.6reserved=190.3of700. Shared1000October21 and all other limits
-unchanged. No third API request authorized by the completed envelope.
+Stream conservative token valuation$0.1559375 < approved$0.18. Returned cache usage
+would value standard tokens at$0.0848864; actual invoice billing is unknown. Keep
+conservative value for reserves: scope$0.08157 + stream$0.1559375 + prior failed
+source uncertainty$0.17192 = **$0.4094275**. Original GenSpark94.6 remains separate;
+GenSpark95.7reported+94.6reserved=190.3of700. Other caps/reviews unchanged.
 
-One [narrow streaming recovery proposal](p1a-api-stream-recovery-proposal-20261021.md)
-is prepared but NOT executed: reuse passedStep0, one same-model/source request,
-<=36k input/max8192output/600sec/no tools/retry, <=$0.18 additional estimate.
-It requires disposition of this NEW uncertain source outcome; do not ask again
-for the original94.6 disposition or settled approvals/key setup. Preserve both
-failed source attempts. Private capture is in the existing protected Windows
-parent, `openai-api-20261021-01`; raw source/model logs remain outside Git.
+One [document-only completion proposal](p1a-document-completion-proposal-20261021.md)
+and exact unsent packet are prepared: freeze four candidate hashes, generate only
+the complete document, sameSol/medium/default, max4096output/input<=36000/600sec,
+one streamed request/no retry/tools/fallback, <=$0.14 additional estimate. Packet
+SHA1d649e1a3d9d87f90706a9ce1557b3cb8ba5d1bdf472fd23795721729ca80592;
+34187conservativeinput. No send yet: consumed one-stream authority does not cover
+this additional phase. No new unknown-outcome acceptance needed for known truncation.
+Do not repeat scope/model/key/tree approvals or regenerate four complete files.
+After a complete package: exact5path validation/tests then2fresh Opus reviews;
+no merge/deploy/import/later parcel or extra substantive repair inferred.
 
+## Previous API/native history and settled authority
 
 ## Ownership and settled authority
 

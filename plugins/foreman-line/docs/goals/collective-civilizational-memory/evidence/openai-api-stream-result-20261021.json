@@ -1,0 +1,102 @@
+{
+  "startedAtUtc": "2026-10-21T20:27:24.172609+00:00",
+  "requestedModel": "gpt-6.1-sol",
+  "requestCount": 1,
+  "retries": 0,
+  "status": "failed_or_uncertain_no_retry",
+  "inputSha256": "5a95eae47d3013e742781c96bf40700e608aff3c07353bcd66fd1dc1cf0df88a",
+  "maxOutput": 8192,
+  "capture": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\openai-api-stream-20261021-01",
+  "httpStatus": 200,
+  "requestId": "req_e74a912f0e004279981fb32966c7bb3b",
+  "contentType": "text/event-stream; charset=utf-8",
+  "responseId": "resp_03fe635f3e0b2a1c016ad9202e885c87d297c9f2c1bcc04a1b",
+  "model": "gpt-6.1-sol",
+  "usage": {
+    "input_tokens": 29607,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 29604
+    },
+    "output_tokens": 8192,
+    "output_tokens_details": {
+      "reasoning_tokens": 735
+    },
+    "total_tokens": 37799
+  },
+  "incompleteDetails": {
+    "reason": "max_output_tokens"
+  },
+  "completedAtUtc": "2026-10-21T20:29:34.783024+00:00",
+  "events": 7464,
+  "captureBytes": 2114946,
+  "textBytes": 29079,
+  "conservativeTokenPriceUsd": 0.1559375,
+  "failureClass": "AssertionError",
+  "finishedAtUtc": "2026-10-21T20:29:34.787588+00:00",
+  "billing": "unknown",
+  "terminalStatus": "incomplete",
+  "disposition": "Known max_output_tokens truncation, not uncertain terminal status. No continuation or retry; four complete fields recovered privately, full package invalid.",
+  "standardTokenValuationWithReturnedCacheUsd": 0.0848864,
+  "actualBilling": "unknown; token valuations are estimates, not invoice receipts",
+  "reservationsRetained": {
+    "genSparkCredits": 94.6,
+    "priorApiSourceUsd": 0.17192
+  },
+  "partialDiagnostic": {
+    "passed": 328,
+    "originalTests": 238,
+    "newTests": 90,
+    "oldIdentitiesRetained": true,
+    "oldTaxonomyAstPreserved": true,
+    "fullContractDoc": false,
+    "acceptance": false,
+    "admittedWorktreeMutated": false
+  },
+  "privateFiles": {
+    "candidate.txt": {
+      "bytes": 29079,
+      "sha256": "bc9b9b1aabad244ff07690702267a32e1913b8eed937cf34eaa40a19934b973b"
+    },
+    "envelope.json": {
+      "bytes": 952,
+      "sha256": "d1acedb1062d2ed4721988e4fbdbdb5ae5d945fcdebd1b1e7fd07bd6f6cfbaa5"
+    },
+    "events.sse": {
+      "bytes": 2114946,
+      "sha256": "d52566555bc3a868d320cc9040908bad38291dc9b08b252d24bd4447d9f592c4"
+    },
+    "partial-inspection.json": {
+      "bytes": 1013,
+      "sha256": "fcbf7bc3c68d9b4e59409a2813591d355b7d678a9ff8f0af0405e3cc8116b5ac"
+    },
+    "partial-test-receipt.json": {
+      "bytes": 1474,
+      "sha256": "35e826120bd546679a0a1a43092ce203726753ef8cbf744705d61d1d6bb15848"
+    },
+    "partial-tests.log": {
+      "bytes": 559,
+      "sha256": "0fd34a85a8dcc3a4f917ad9039846a40439f9fa47bd4e6eebfc849f6abdcf6b2"
+    },
+    "partial-tests.xml": {
+      "bytes": 44867,
+      "sha256": "ca1fe5e192cc8aed3b59837a467c110b098bf11c9f051fcb41ae153ac0cb7b9e"
+    },
+    "receipt.json": {
+      "bytes": 1264,
+      "sha256": "244e221a83fb3b412e363f20fe2de83269616d3d995de3468ff62005c9b91e76"
+    },
+    "recovered-complete-fields.json": {
+      "bytes": 26563,
+      "sha256": "5bb4713d1b6ccd9d632e59de4d64f65110562bd375ed4b94cf56c93d42888da7"
+    },
+    "request.json": {
+      "bytes": 132217,
+      "sha256": "030bf8969b9e579567c535f7d1c2508d3da712846bbc5a86a206e50137545852"
+    },
+    "response.json": {
+      "bytes": 46396,
+      "sha256": "bd24f49d151ca59ded11561b57fcadc915218bf3b9bb3f9ff463e5b22754e06f"
+    }
+  }
+}

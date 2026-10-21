@@ -1,3 +1,7 @@
+> DISPOSITION: Owner APPROVED this exact single attempt. Executed once; known
+> incomplete/max_output_tokens8192, no continuation. Four complete fields private;
+> document truncated. See evidence/openai-api-stream-result-20261021.json and loop.
+
 # P1A possible streaming recovery — prepared, NOT authorized or sent
 
 The owner funded OpenAI API and refreshed the saved Windows key. Exact Sol model
