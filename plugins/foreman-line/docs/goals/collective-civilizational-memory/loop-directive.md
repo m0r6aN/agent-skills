@@ -1,4 +1,37 @@
-# CCM coordinator loop — current handoff, October 21
+# CCM coordinator loop — current handoff, October21 20:01UTC
+
+## Current API result and stop boundary
+
+Owner instructed resume after adding OpenAI API credits, chose a new key, and
+reported saving it using `setx OPENAI_API_KEY`. That newer direct authority admits
+the bounded funded API route; old OAuth-only wording below is historical.
+Windows User environment was read in memory only; key never printed/copied or
+sent to the laptop. Model metadata GET200 exposed exactgpt-6.1-sol. One API scope
+check COMPLETED exactSol/default/medium,29400input/807output,0reasoning;
+host verified7AC/exact5paths/base/branch/activehash and disposed nonblocking flags.
+Step0 PASS is retained; do not repeat it.
+
+The one source request then returned **HTTP520**, no candidate/requestID/returned
+identity/usage. Upstream generation and billing remain unknown. Two generation
+requests total in this API envelope, no retry/automatic continuation/fallback.
+No code changed; existing238-test baseline retained, no needless rerun. Independent
+reviews remain NOT RUN. P1A unaccepted; B/C/D held; no bulk-ingestion readiness.
+
+[API evidence/accounting](evidence/openai-api-resume-20261021.json) preserves
+receipts, exact authority, private capture hashes and source inputs. API scope
+conservative list-price estimate$0.08157 + source uncertainty reservation$0.17192
+= $0.25349 modeled/reserved, actual bill unknown. Keep USD separate from GenSpark
+95.7reported+94.6reserved=190.3of700. Shared1000October21 and all other limits
+unchanged. No third API request authorized by the completed envelope.
+
+One [narrow streaming recovery proposal](p1a-api-stream-recovery-proposal-20261021.md)
+is prepared but NOT executed: reuse passedStep0, one same-model/source request,
+<=36k input/max8192output/600sec/no tools/retry, <=$0.18 additional estimate.
+It requires disposition of this NEW uncertain source outcome; do not ask again
+for the original94.6 disposition or settled approvals/key setup. Preserve both
+failed source attempts. Private capture is in the existing protected Windows
+parent, `openai-api-20261021-01`; raw source/model logs remain outside Git.
+
 
 ## Ownership and settled authority
 
@@ -27,7 +60,7 @@ exception remain recorded in transfer/approval records. No unlimited spending,
 API-key/PAYG fallback, login/billing change, additional repair, merge/deploy/import,
 foreign-goal takeover or automatic schedule follows.
 
-## Actual latest outcome — technical quota hold
+## Previous native outcome — technical quota hold
 
 **Native repair Step0 attempted/unsuccessful.** Exact openai/gpt-6.1-sol via
 existing OAuth, medium, authenticated same-process preflight max1536, compactionoff,
@@ -94,7 +127,7 @@ loginrequest resolved. Exactremaining/key-workspacebinding unverified. No provid
 cash allowance inferred from GenSpark approval. OpenCode is not an automatic
 replacement for this specifically approved frontier Sol repair.
 
-## Next resumable boundary
+## Superseded OAuth-only resumable boundary (history)
 
 Existing OAuth Sharing allowance must become usable, or the owner must explicitly
 choose a separately bounded alternative. No reset time is known; do not guess,

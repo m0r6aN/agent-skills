@@ -29,7 +29,7 @@
   "step0ReportedCredits": 44,
   "differenceAccountVsReportedCredits": 1.1,
   "differenceDisposition": "Conservatively counted in shared-day/effort consumption; no downward reconciliation or invented attribution.",
-  "updatedAtUtc": "2026-10-21T19:20:52.284249+00:00",
+  "updatedAtUtc": "2026-10-21T20:03:03.183302+00:00",
   "implementationStatus": "HTTP524; no returned candidate/identity/usage, outcome unknown; no code applied",
   "unresolvedAttemptReservation": 94.6,
   "reportedPlusConservativeReservation": 190.3,
@@ -43,5 +43,13 @@
   "nativeOAuthBilling": "unknown, kept separate from GenSpark credit accounting",
   "nativeStep0Receipt": "native-sol-step0-failure-disposition-20261021.json",
   "ownerNativeDisposition": "approved; original delivery unusable/possible unseen generation accepted;94.6 retained",
-  "executionHold": "Native Subscription Sharing allowance exhausted; no retry/fallback under failed phase"
+  "executionHold": "OpenAI API scope PASS; source HTTP520, outcome/billing unknown; no retry or reviews; prior OAuth failure preserved",
+  "apiGenerationRequests": 2,
+  "apiSourceAttempts": 1,
+  "apiScope": "PASS",
+  "apiKnownConservativeTokenValuationUsd": 0.08157,
+  "apiSourceUncertainReservationUsd": 0.17192,
+  "apiReportedPlusReservationUsd": 0.25349,
+  "apiActualBilling": "unknown; distinct from GenSpark prepaid credits",
+  "apiResumeRecord": "openai-api-resume-20261021.json"
 }

@@ -1,3 +1,11 @@
+> CURRENT October21 20:01UTC: Owner-funded OpenAI API key authenticated; exact
+> Sol API scope PASS (7AC/5paths), then one source request HTTP520/no candidate or
+> usage. Stopped without retry. Source unchanged/baseline238 retained; reviews
+> NOT RUN. API$0.08157 modeled +$0.17192 uncertainty reserve; GenSpark190.3/700
+> including94.6 remains separate. Current loop/API receipts supersede older
+> OAuth-only hold wording. Reuse passed scope; any further source generation
+> requires disposition of this NEW uncertain API result. No keys copied/exported.
+
 > CURRENT: Native continuation approved then native repair Step0 failed on
 > ChatGPT Subscription Sharing limit. No source proposal or code applied.
 > OAuth allowance is the current hold; no reset time supplied, no retry/fallback.

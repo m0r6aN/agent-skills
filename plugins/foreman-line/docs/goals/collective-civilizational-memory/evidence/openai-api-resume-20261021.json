@@ -1,0 +1,133 @@
+{
+  "ownerInstructions": [
+    "I have added credits. Please resume and keep credit usage in mind when selecting models.",
+    "OpenAI API",
+    "Create a new one securely",
+    "Scratch that. I used setx OPENAI_API_KEY"
+  ],
+  "route": {
+    "providerCancellationGuarantee": false,
+    "conservativeInputEachMax": 36000,
+    "endpoint": "https://api.openai.com/v1/responses",
+    "retries": 0,
+    "outputsMax": [
+      1536,
+      8192
+    ],
+    "effort": "medium",
+    "tools": [],
+    "background": false,
+    "model": "gpt-6.1-sol",
+    "generationRequestsMax": 2,
+    "localObservationSecondsCombined": 600,
+    "serviceTier": "default",
+    "compaction": false,
+    "store": false
+  },
+  "sourceWorktree": "D:/Repos/ccm-worktrees/cortex-p1a",
+  "requiredIndependentReviews": "Two fresh separate Opus5.5, no review or acceptance claimed",
+  "sourceChanged": false,
+  "base": "efb5f4bcead899332f4f35f5e0b3a181eb988d2c",
+  "accounting": {
+    "taxesAndInvoice": "not verified",
+    "genSparkReported": 95.7,
+    "genSparkBooked": 190.3,
+    "source": "https://developers.openai.com/api/docs/models/gpt-6.1-sol",
+    "ownerNumericApiDollarCap": "not separately supplied; finite scope authorized by funded API resume",
+    "worstModeled": 0.27728,
+    "genSparkSharedOctober21Cap": 1000,
+    "genSparkReservation": 94.6,
+    "publishedPerMillion": {
+      "input": 2,
+      "cacheWrite": 2.5,
+      "output": 10
+    },
+    "unit": "USD OpenAI API token valuation, separate from GenSpark",
+    "genSparkP1ACap": 700,
+    "operatorImposedModeledCeiling": 0.3,
+    "knownTokenPriceEstimateUsd": 0.08157,
+    "sourceUncertainReservationUsd": 0.17192,
+    "knownPlusReservedUsd": 0.25349,
+    "actualApiBilling": "unknown; estimates are not invoice evidence"
+  },
+  "atUtc": "2026-10-21T20:00:37.9231635Z",
+  "status": "scope PASS; source HTTP520 with no candidate or usage; stopped without retry",
+  "task": "CCM-P1A bounded funded OpenAI API continuation",
+  "authCheck": {
+    "url": "https://api.openai.com/v1/models/gpt-6.1-sol",
+    "atUtc": "2026-10-21T19:56:49.9413680Z",
+    "inferenceRequests": 0,
+    "model": "gpt-6.1-sol",
+    "status": 200,
+    "requestId": "6ea7b4c8-bded-4f5c-952a-54e61e2782a9",
+    "method": "GET"
+  },
+  "mergeDeployImportAuthorized": false,
+  "credentialSource": "Windows saved User OPENAI_API_KEY, read in memory only; not copied to laptop or persisted by operator",
+  "privateCapture": "C:/Users/clint/AppData/Local/CCM-RLP-01-A1-private-01a15670/openai-api-20261021-01",
+  "step0": {
+    "outputTokens": 807,
+    "reasoningTokens": 0,
+    "inputTokens": 29400,
+    "conservativeListPriceUsd": 0.08157,
+    "status": "PASS",
+    "model": "gpt-6.1-sol",
+    "requestId": "req_1ab0891b020b421abc74f185aaee6c45",
+    "blockingFlags": []
+  },
+  "authorityInterpretation": "Latest explicit funded API resume and owner-provisioned saved key supersede earlier OAuth-only route restriction for this bounded continuation. No unlimited spending or new purchase authorized.",
+  "updatedAtUtc": "2026-10-21T20:03:03.183302+00:00",
+  "source": {
+    "phase": "source",
+    "httpStatus": 520,
+    "errorType": null,
+    "errorCode": null,
+    "requestId": null,
+    "atUtc": "2026-10-21T20:01:27.242489+00:00",
+    "billing": "unknown",
+    "retry": false
+  },
+  "nextBoundary": "New uncertain source outcome requires disposition before another generation. Preserve passed API Step0; do not repeat it. No approved third request.",
+  "privateFileManifest": {
+    "envelope.json": {
+      "bytes": 797,
+      "sha256": "2a6391f5f0df30523273c8aac05ba4cd359c4b5234f5e7663649d0200fcda546"
+    },
+    "source-receipt.json": {
+      "bytes": 205,
+      "sha256": "58e0ca36e0676f35d37a1c50e57379b61b39623dd8ef7659932781aefc8912ae"
+    },
+    "source-request.json": {
+      "bytes": 132218,
+      "sha256": "7621d2050d85781990eee263e025af00b7b863fcc9f3ae49f3c59510a9c315df"
+    },
+    "source-started.json": {
+      "bytes": 302,
+      "sha256": "4e2065a79d185d5a49307ffd041fd81d8943fca02f60f4ea8c44589efb18b242"
+    },
+    "step0-approved.json": {
+      "bytes": 294,
+      "sha256": "26516d971bc4e4732bb80dd838c677f41fa2264e04d9eed9af83b2d0d2864b99"
+    },
+    "step0-receipt.json": {
+      "bytes": 722,
+      "sha256": "50cd827c675cab32a1151487cffcde7082dab7843583226e2c269eb7791df7d6"
+    },
+    "step0-request.json": {
+      "bytes": 130974,
+      "sha256": "3ea243df3ce6b7dcb6eda78882562daa4e5c4c4bdf54740158a27890061ce67a"
+    },
+    "step0-response.json": {
+      "bytes": 5562,
+      "sha256": "11f2edcde4c1676168a95fcfa42dc06781ca156c7a18aacdf2c802eae465f1a5"
+    },
+    "step0-started.json": {
+      "bytes": 302,
+      "sha256": "6612989d7af541b953fc6f57e368848f0b1d17f0b192816161da95c664f7d061"
+    },
+    "step0-text.txt": {
+      "bytes": 3411,
+      "sha256": "60dfa835936611527dc4cb3e190b55385ee20e301c75e7029df8b1264e45b7b2"
+    }
+  }
+}
