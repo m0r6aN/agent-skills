@@ -76,7 +76,7 @@ Actual EX9 receipt exceptions/EX-OM-PAN-001-09-ratification.json SHA256 d32aeafc
 
 ## Common obligations
 
-Use only the exact 39 existing and six new paths in exceptions/EX-OM-PAN-001-09-rework-scope.json (756ce992039fe7678bed4fc10786e286a8eb1edf7149bbd66c57e3d8a7b664d1). Before dispatch, enumerate each builder's justified modified subset, pin prerequisite source, concrete jobs and final specification, and compare the complete Step 0. Reuse original sessions sequentially, one host-A worker. Each revision-1 builder receives one absolute 45-minute window including its checks; independent verification cannot extend it. Preserve all old failures and deadlines. No P00, general Runtime, analyzer, Verify, dependency, lockfile or global configuration changes. No paid requests, commits, pushes, merges or new agents by builders.
+Use only the exact 39 existing and six new paths in exceptions/EX-OM-PAN-001-09-rework-scope.json (756ce992039fe7678bed4fc10786e286a8eb1edf7149bbd66c57e3d8a7b664d1). Before dispatch, enumerate each builder's justified modified subset, pin prerequisite source, concrete jobs and final specification, and compare the complete Step 0. Reuse original sessions sequentially, one host-A worker. Historical EX9 used an uninterrupted absolute window; the ratified EX10 amendment below now governs remaining revision-1 builder time. Preserve all old failures and deadlines. No P00, general Runtime, analyzer, Verify, dependency, lockfile or global configuration changes. No paid requests, commits, pushes, merges or new agents by builders.
 
 Revision-1 final verification uses at most three independent 60-minute source windows across both constituent heads. Both fresh whole-unit reviewers must cover the final exact subject. Packet coverage remains complete within the existing 1 MiB request bound; report size before claiming readiness. Changed source requires new whole-unit coverage.
 
@@ -107,3 +107,30 @@ New edit windows do not reset original session identities, native-session counts
 - plugins/foreman-line/docs/goals/pantheon-incarnation-v0/execution-om-pan-001/P01-HANDOFF.md
 
 The specification itself is coordinator-owned and committed separately before implementation. Other source paths remain frozen. Add tests in these existing test files; do not add a new production fixture JSON path. The shared23-case test bundle is external evidence, mounted read-only as /wire/bundle.json with PANTHEON_WIRE_FIXTURES set. All original15 cases remain byte-identical. Test the required corrected codes, not current diagnostic outcomes.
+
+
+## Ratified EX10 segment-2 specification amendment — 2026-10-21T11:32:33.521Z
+
+Actual owner receipt exceptions/EX-OM-PAN-001-10-ratification.json SHA256 f643355f2dccedf9d6744feecd343145a98f7793b116f21f4ad6f7987e62e74b, message msg_01a15e39-49d5-73a2-9dfa-d09ffd3951d8 at 2026-10-21T11:29:35.189Z, binds proposal 1312dca562dfd4b889fd63ef202f4a7c0110ea284b8f9e83c6a40054b637e616. This is the current explicit supersession; earlier timings and failures remain historical evidence.
+
+EX10 replaces only EX9's uninterrupted rework-clock rule. Each original P01–P05 builder has 2700 total dispatched seconds per existing rework revision (maximum two revisions), split into at most three segments. Each segment has an immutable start and absolute deadline, exact allowed scope, original identity and matching Step0. Charge ceil elapsed seconds through durable pinned freeze and explicit slot release; all waiting, analysis and tests while dispatched count. Missing/disputed/late/unproven freeze charges the full allocation and holds on overrun. No pause inside a segment. Only verified effect-free freeze ends it early; independent checking then runs separately. Resume only for a concrete same-scope finding after checker slot release and within the remaining ledger balance. Require full job timeout plus cleanup before launch. No reset by head, label, chat or proposal; failures remain. Initial windows, max135 cumulative builder minutes, source windows3 per whole-unit revision, operational counters, original-session12-call cap, eight native sessions, both fresh reviews, all paid budgets/attempts/accounts/hosts/access and closed P00 source remain unchanged.
+
+No source acceptance, provider admission or new paid allowance follows from this specification. Both builders freeze before combined source check2/3. No source change after review may reuse stale seats.
+
+### Current P01 segment2 requirements
+
+Install actual EX10 authority and clock supersession in all nine listed documentary files, replacing current contradictory uninterrupted-window instructions. Preserve generic rules for other goals and all historical EX7/8/9 evidence. Executable contracts/tests stay byte-identical. Verify exact text coverage, links and modified-file allowlist, git diff --check, and unchanged executable/test digests; no implementation-mirroring new tests or unnecessary full-suite repeat for documentary-only edits. Final independent check still includes complete exact heads. Update handoff with real reporting, source manifest, original identity, clock and slot release.
+
+Use at most 1943 seconds from dispatch through verified freeze (including setup, Step0, checks and reporting). Deadline is recorded at dispatch, never at planning. Allowed builder modifications are exactly:
+
+- plugins/foreman-line/README.md
+- plugins/foreman-line/docs/COORDINATOR-PATTERN.md
+- plugins/foreman-line/docs/standing-mandates/OM-PAN-001.md
+- plugins/foreman-line/skills/goal/SKILL.md
+- plugins/foreman-line/skills/parcel-driven-development/SKILL.md
+- plugins/foreman-line/templates/kickstarters/loop-directive-template.md
+- plugins/foreman-line/templates/kickstarters/builder-template.md
+- plugins/foreman-line/templates/kickstarters/reviewer-template.md
+- plugins/foreman-line/docs/goals/pantheon-incarnation-v0/execution-om-pan-001/P01-HANDOFF.md
+
+This committed specification is coordinator-owned and frozen to the builder. No commits, network, credentials, new agents, paid requests or authority mutations by builders. Control evidence is written only inside the assigned artifact directory.
