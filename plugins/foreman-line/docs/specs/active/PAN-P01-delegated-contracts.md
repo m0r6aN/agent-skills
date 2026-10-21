@@ -4,7 +4,7 @@ title: Pantheon delegated workflow and pure boundary contracts
 status: active
 owner: clinton.morgan
 created: 2026-10-19
-updated: 2026-10-20
+updated: 2026-10-21
 risk: critical
 routing_class: architecture/risk
 surfaces: [plugins/foreman-line/docs/, plugins/foreman-line/dispatch/src/pantheon-runtime/contracts/]
@@ -134,3 +134,33 @@ Use at most 1943 seconds from dispatch through verified freeze (including setup,
 - plugins/foreman-line/docs/goals/pantheon-incarnation-v0/execution-om-pan-001/P01-HANDOFF.md
 
 This committed specification is coordinator-owned and frozen to the builder. No commits, network, credentials, new agents, paid requests or authority mutations by builders. Control evidence is written only inside the assigned artifact directory.
+
+
+## B1 revision 2: bounded final correction
+
+Coordinator specification frozen after independently sealed combined triage. The separate recorded dispatch starts the builder clock.
+
+This correction retains the ratified intent and existing EX9 source families. EX10 supplies at most 2700 dispatched seconds in at most three segments for this second and final rework revision, using the original P01 session and slot. No additional native session, provider attempt, spending, access, P00 repair or third revision is created. Both revision-1 substantive reviews remain changes_required and historical; no revision-1 acceptance is inferred. Coordinator commits this specification alone before builder edits.
+
+1. Define a language-independent text rule for every corresponding wire field. Preserve P01's current ECMAScript trimmed-text character set, including U+FEFF and excluding U+0085, explicitly enumerated in documentation. Require P02 to match that set instead of relying on .NET Trim defaults. Test leading/trailing characters and whitespace-only values, including FEFF,0085,00A0 and ordinary ASCII boundaries. Preserve structural-unverified results and all existing length/resource/unknown-field rules.
+2. Constrain canonical UTC timestamps to years 0001 through 9999 in both implementations. Reject year0000 as INVALID_SHAPE; retain calendar validity, leap-day and exact-format checks. No date normalization or implicit timezone conversion. Add shared positive/negative cases and existing test-file coverage. This disposition is independently confirmed in the combined triage.
+3. Document that parsing a correctly shaped effect hash and authority reference is not canonical descriptor derivation, permission resolution or admission. P03/P04 own exact descriptor-field hashing and mutation refusal at admission/execution. Preserve typed versioned operation semantics and existing fleet-v2 non-equivalence.
+4. Update handoff with actual tests, failures, exact tested-byte linkage, remaining clock and explicit effect-free slot release. Preserve historical evidence. Coordinator updates the specification date to 2026-10-21; builder must not edit specification.
+
+Exact builder paths: plugins/foreman-line/dispatch/src/pantheon-runtime/contracts/index.ts; plugins/foreman-line/dispatch/src/pantheon-runtime/contracts/README.md; plugins/foreman-line/dispatch/tests/pantheon-contracts.test.ts; plugins/foreman-line/docs/goals/pantheon-incarnation-v0/execution-om-pan-001/P01-HANDOFF.md. No new path, dependency or active workflow-wide amendment is necessary for these structural corrections.
+
+Run the full existing pinned offline Node24.19 job: Pi targeted tests, typecheck, complete tests and lint, retaining all869 prior tests and shared23 fixtures. Add meaningful edge regressions and shared new cases; test counts must account for all additions. Use exact source relocation and read-only Linux dependencies, network none, nonroot, existing resource limits and600-second timeout plus5-second cleanup. Full605-second margin must remain both before preparation and actual launch. Never edit source during a job. Freeze all19 reviewed files with hashes and raw command/result/cleanup evidence. Independent source checks and two fresh whole-unit reviews remain necessary.
+
+
+This current revision-2 specification supersedes conflicting earlier revision-specific instructions only for this final correction. Both previous review verdicts remain changes_required. Independent combined disposition: parcel-dispatch-r7/b1-r1-terminal-triage/seat2/combined-disposition.json, SHA256 d69ff4c8a5d7e7dae1636124d70e4e08a7085bcdb7759bd24c066b0e80af49ba. Ratified EX10 receipt: exceptions/EX-OM-PAN-001-10-ratification.json, SHA256 f643355f2dccedf9d6744feecd343145a98f7793b116f21f4ad6f7987e62e74b. Existing EX9 scope, all monetary/claim/session/access limits and closed P00 source remain unchanged.
+
+The explicit edge-whitespace set is U+0009–000D,0020,00A0,1680,2000–200A,2028,2029,202F,205F,3000,FEFF; U+0085 is excluded. Preserve separate control-character and stricter field-specific identifier/path rules. Shared bundle parcel-dispatch-r7/b1-r2-preparation/wire-bundle-r2.json, SHA256 2dc08eb860daa05ec58593b13aa9dd64bcf0b206d274d58b0b7a68504db56135, has51 cases with all original23 retained. Both implementations must satisfy identical structural/refusal outcomes. In P01 update the existing shared-test title/count/unique-ID expectations from23 to51; preserve the cases themselves. No fixture or synthetic success constitutes live Runtime admission.
+
+Final exact allowance is listed below. Coordinator-owned specification is not a builder edit path. No new file or source family, commits, provider calls, credentials or agents by builders. Each dispatch has an absolute deadline and one active host-A worker. Charge the entire dispatched interval through durable freeze and explicit release, rounded upward; missing/late/unproven freeze spends the whole allocation. No pause inside a segment, reset by head/label, or job without its complete timeout/cleanup margin. Only independently confirmed effect-free freeze can recover time for a permitted later segment.
+
+### Exact revision-2 builder modified-file allowance
+
+- plugins/foreman-line/dispatch/src/pantheon-runtime/contracts/index.ts
+- plugins/foreman-line/dispatch/src/pantheon-runtime/contracts/README.md
+- plugins/foreman-line/dispatch/tests/pantheon-contracts.test.ts
+- plugins/foreman-line/docs/goals/pantheon-incarnation-v0/execution-om-pan-001/P01-HANDOFF.md
