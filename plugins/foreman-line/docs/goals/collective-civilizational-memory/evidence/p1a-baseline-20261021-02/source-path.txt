@@ -1,0 +1,3 @@
+C:\Users\clint\AppData\Local\Programs\Python\Python313\python.exe
+C:\Users\clint\AppData\Local\Temp\ccm-baseline-20261021-v9opwehu\source\src\keon\cortex\ingress\models.py
+['C:\\Users\\clint\\AppData\\Local\\Temp\\ccm-baseline-20261021-v9opwehu\\source\\src\\keon\\cortex']

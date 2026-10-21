@@ -1,0 +1,12 @@
+parcelSpecRefs (4):
+  - plugins/foreman-line/docs/specs/active/CCM-P1A-memory-graph-contracts.md
+  - plugins/foreman-line/docs/specs/active/CCM-P1B-gravity-v2-fixtures.md
+  - plugins/foreman-line/docs/specs/active/CCM-P1C-collective-wire-compatibility.md
+  - plugins/foreman-line/docs/specs/active/CCM-P1D-postgres-capability-check.md
+
+epics (1):
+  Epic epic-collective-civilizational-memory-foundation-2026-10-19-01a155c3: Context: collective civilizational memory foundation
+    Story CCM-P1A-memory-graph-contracts: Cortex memory and temporal graph v2 contracts
+    Story CCM-P1B-gravity-v2-fixtures: Frozen gravity v2 scorer and retention simulations
+    Story CCM-P1C-collective-wire-compatibility: Collective civic memory v2 wire compatibility
+    Story CCM-P1D-postgres-capability-check: Read-only PostgreSQL capability check and evidence
