@@ -769,7 +769,7 @@ test('Pantheon: invalid string escapes in values and keys are malformed JSON', (
   refused(parseNdjsonFrame(`${' '.repeat(LIMITS.frameBytes)}"\\q"\n`), 'LIMIT_EXCEEDED')
 })
 
-test('Pantheon: shared 23-case wire contract', () => {
+test('Pantheon: shared 51-case wire contract', () => {
   const fixturePath = process.env.PANTHEON_WIRE_FIXTURES
   assert.ok(fixturePath, 'PANTHEON_WIRE_FIXTURES must name the shared read-only bundle')
   const bundle = JSON.parse(readFileSync(fixturePath, 'utf8')) as {
@@ -782,8 +782,8 @@ test('Pantheon: shared 23-case wire contract', () => {
     }[]
   }
   assert.equal(bundle.schema, 'pantheon.p01-wire-fixture-bundle.v1')
-  assert.equal(bundle.examples.length, 23)
-  assert.equal(new Set(bundle.examples.map((example) => example.id)).size, 23)
+  assert.equal(bundle.examples.length, 51)
+  assert.equal(new Set(bundle.examples.map((example) => example.id)).size, 51)
   for (const example of bundle.examples) {
     assert.equal(Buffer.byteLength(example.inputUtf8, 'utf8'), example.byteLength, example.id)
     const actual = parseNdjsonFrame(example.inputUtf8)
@@ -826,6 +826,87 @@ test('Pantheon: hostile objects, getters, cycles, prototypes and sparse arrays r
   assert.throws(() => {
     ;(parsed.allowedFiles as string[]).push('escape')
   })
+})
+for (const codePoint of [
+  0x0009,
+  0x000a,
+  0x000b,
+  0x000c,
+  0x000d,
+  0x0020,
+  0x00a0,
+  0x1680,
+  ...Array.from({ length: 11 }, (_, i) => 0x2000 + i),
+  0x2028,
+  0x2029,
+  0x202f,
+  0x205f,
+  0x3000,
+  0xfeff,
+]) {
+  test(`Pantheon: shared edge whitespace U+${codePoint.toString(16)} refuses`, () => {
+    const character = String.fromCodePoint(codePoint)
+    for (const field of ['worktree', 'branch']) {
+      for (const value of [character, `${character}value`, `value${character}`]) {
+        refused(parseDispatchIntent({ ...descriptor(), [field]: value }), 'INVALID_SHAPE')
+      }
+    }
+  })
+}
+test('Pantheon: non-edge Unicode text retains separate identifier constraints', () => {
+  for (const character of ['\u0085', '\u200b']) {
+    for (const field of ['worktree', 'branch']) {
+      for (const value of [character, `${character}value`, `value${character}`]) {
+        valid(parseDispatchIntent({ ...descriptor(), [field]: value }))
+      }
+    }
+    refused(parseDispatchIntent({ ...descriptor(), modelProfile: character }), 'INVALID_SHAPE')
+    refused(parseDispatchIntent({ ...descriptor(), allowedFiles: [character] }), 'INVALID_PATH')
+  }
+})
+test('Pantheon: interior whitespace preserves the separate control-character rule', () => {
+  for (const character of ['\t', '\n', '\r', '\u00a0', '\ufeff']) {
+    valid(parseDispatchIntent({ ...descriptor(), worktree: `a${character}b` }))
+  }
+  for (const character of ['\u0000', '\u000b', '\u000c', '\u001f']) {
+    refused(parseDispatchIntent({ ...descriptor(), worktree: `a${character}b` }), 'INVALID_SHAPE')
+  }
+})
+for (const date of ['0001-01-01', '0099-12-31', '2000-02-29', '9999-12-31']) {
+  test(`Pantheon: exact UTC calendar supports ${date} without year remapping`, () => {
+    const issuedAt = `${date}T00:00:00.000Z`
+    const deadline = `${date}T23:59:59.999Z`
+    const parsed = valid(parseDispatchIntent({ ...descriptor(), issuedAt, deadline }))
+    assert.equal(parsed.issuedAt, issuedAt)
+    assert.equal(parsed.deadline, deadline)
+  })
+}
+test('Pantheon: four-digit year zero refuses in both UTC fields', () => {
+  for (const field of ['issuedAt', 'deadline']) {
+    refused(
+      parseDispatchIntent({ ...descriptor(), [field]: '0000-01-01T00:00:00.000Z' }),
+      'INVALID_SHAPE',
+    )
+  }
+})
+for (const year of ['10000', '+010000', '-000001']) {
+  test(`Pantheon: extended UTC year ${year} retains length-limit precedence`, () => {
+    for (const field of ['issuedAt', 'deadline']) {
+      refused(
+        parseDispatchIntent({ ...descriptor(), [field]: `${year}-01-01T00:00:00.000Z` }),
+        'LIMIT_EXCEEDED',
+      )
+    }
+  })
+}
+test('Pantheon: invalid calendar days and non-increasing deadlines still refuse', () => {
+  for (const issuedAt of ['1900-02-29T00:00:00.000Z', '2026-02-30T00:00:00.000Z']) {
+    refused(parseDispatchIntent({ ...descriptor(), issuedAt }), 'INVALID_SHAPE')
+  }
+  refused(
+    parseDispatchIntent({ ...descriptor(), deadline: descriptor().issuedAt }),
+    'INVALID_SHAPE',
+  )
 })
 test('Pantheon: malformed Unicode cannot alias canonical evidence text', () => {
   refused(parseReviewResult({ ...review(), reviewText: '\ud800' }, subject()))

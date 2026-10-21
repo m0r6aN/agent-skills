@@ -111,11 +111,30 @@ function object(v: unknown, field: string, keys: readonly string[]): Data {
     deny('INVALID_SHAPE', field)
   return r
 }
+/** Fixed ECMAScript edge-whitespace set shared with non-JavaScript consumers. */
+const EDGE_WHITESPACE = new Set([
+  0x0009,
+  0x000a,
+  0x000b,
+  0x000c,
+  0x000d,
+  0x0020,
+  0x00a0,
+  0x1680,
+  ...Array.from({ length: 11 }, (_, i) => 0x2000 + i),
+  0x2028,
+  0x2029,
+  0x202f,
+  0x205f,
+  0x3000,
+  0xfeff,
+])
 function text(v: unknown, field: string, max = 4096): string {
   if (
     typeof v !== 'string' ||
-    !v.trim() ||
-    v !== v.trim() ||
+    !v.length ||
+    EDGE_WHITESPACE.has(v.charCodeAt(0)) ||
+    EDGE_WHITESPACE.has(v.charCodeAt(v.length - 1)) ||
     [...v].some((c) => c.charCodeAt(0) < 32 && !['\t', '\n', '\r'].includes(c))
   )
     deny('INVALID_SHAPE', field)
@@ -151,6 +170,7 @@ const utc: Reader<string> = (v, f) => {
   const s = text(v, f, 24)
   if (
     !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/.test(s) ||
+    s.startsWith('0000-') ||
     !Number.isFinite(Date.parse(s)) ||
     new Date(s).toISOString() !== s
   )
