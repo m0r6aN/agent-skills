@@ -1,5 +1,27 @@
 # CCM-P1A — finite readiness checklist and current handoff
 
+## Current authoritative update — personal approval verified 2026-10-21
+
+**7 complete / 1 open. R01–R07 complete for pre-dispatch readiness; R08 execution
+admission remains OPEN.** Clinton personally completed the W1-P3 typed ceremony.
+The real approval/Stage-A receipt, current four specs and exact projected tree
+match; receipt hash and official schema/genesis-chain checks pass. See
+[approval verification](evidence/approval-verification-20261021.json) and the
+[committed local delivery ledger](../../specs/INDEX.md).
+
+R06 now has the exact human-approved subject/work-order pins, immutable base and
+test identities, named worktree/branch/kickstarter, exact verification commands
+and 238-test unchanged-source snapshot baseline. The emitted-worktree baseline
+must still pass before edits under R08/Step 0; this is not a pre-emission circular
+gate. R07 has real human approval and registration under the scoped local process.
+All earlier OPEN/PENDING R06/R07 wording below is historical.
+
+R08: no builder/reviewer route is admitted. [Bounded execution evidence](evidence/r08-local-execution-gap-20261021.json)
+locates the missing demonstrated Pi permission-profile/task-envelope capability;
+the installed Jev model router is not that control. Existing EXA critique-only
+draft excludes code-writing workers. No blanket authorization is missing; no
+Gate 2, Step 0, live probe, model fallback or implementation follows from approval.
+
 ## Latest originating oversight update — 2026-10-21
 
 R01–R05 remain complete; **R06–R08 remain open with concrete progress**:

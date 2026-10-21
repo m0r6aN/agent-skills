@@ -11,7 +11,17 @@ it does not approve the tree or authorize implementation. Jira W1-P4/Stage B is
 
 All four spec pins below are in repository `D:/Repos/agent-skills` at commit
 `d6c4adce4bad3b37e496afd3a7db48b525461bb2`; paths are relative to that repository.
-Human W1-P3 approval/Stage-A receipt and approved subject hash: **PENDING**.
+Human W1-P3 approval: **COMPLETE**, Clinton Morgan, 2026-10-21 15:54:57.907 UTC.
+Approved subject hash:
+`9431a8649c2c1125da28e3e4a62f3d9cb15d69b8a1f83dd9c7b1291e8a9c2f96`.
+Actual [approval record](active/collective-civilizational-memory-foundation-2026-10-19-01a155c3.approval.json)
+and [Stage-A genesis receipt](../../../../docs/receipts/34014809-a177-4946-a29c-a71be1f311fe/000000-A-shaping-result.json),
+receipt hash `7072cdf78e67a322220a6a0e3098a11522d6ff3180b8a373cbc8d2b19fdd442f`.
+Current spec bytes, projected tree, subject/receipt binding, canonical receipt
+hash, official schema and genesis-chain validation all pass:
+[verification](../goals/collective-civilizational-memory/evidence/approval-verification-20261021.json).
+The four specs remain draft until actual parcel admission; do not rerun approval
+for this unchanged subject or treat its receipt as implementation acceptance.
 Gate 2: **HOLD for every parcel**. No builder or reviewer is admitted by this ledger.
 
 | Parcel / status | Accountable owner | Dependencies | Exact spec path | Spec SHA-256 | Worktree / branch | Evidence |

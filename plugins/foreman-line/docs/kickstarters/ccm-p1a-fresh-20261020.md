@@ -1,5 +1,13 @@
 # CCM-P1A isolated builder kickstarter — PREPARED / NOT DISPATCHED
 
+Human W1-P3 approval is now **COMPLETE**, verified 2026-10-21, subject
+`9431a8649c2c1125da28e3e4a62f3d9cb15d69b8a1f83dd9c7b1291e8a9c2f96`,
+workflow `34014809-a177-4946-a29c-a71be1f311fe`. Exact approval/receipt links are in
+the updated INDEX ledger and `evidence/approval-verification-20261021.json`.
+R06 preparation and R07 are complete. R08 alone remains open; older pending-human
+wording below is historical. All four work-order bytes remain unchanged/draft;
+actual parcel admission/promotion and emitted-worktree checks must precede edits.
+
 2026-10-21 update: local tracking is the scoped CCM ledger in `docs/specs/INDEX.md`
 under SPEC-CONVENTION §5, amendment commit
 `d51f5aef14849a4a4e0d17f789a2226fd52a6c66`; corporate Jira/Stage B is explicitly

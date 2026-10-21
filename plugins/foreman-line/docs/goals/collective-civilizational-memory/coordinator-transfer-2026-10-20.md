@@ -1,5 +1,23 @@
 # Context coordinator transfer
 
+## Verified human approval / current readiness — 2026-10-21
+
+Clinton returned successful personal W1-P3 approval output. The actual record and
+receipt were read and independently verified using 76 byte-matched shipped source
+files. Subject `9431a8649c2c1125da28e3e4a62f3d9cb15d69b8a1f83dd9c7b1291e8a9c2f96`
+matches the preview, projected tree and all four unchanged spec bytes. Stage-A
+workflow `34014809-a177-4946-a29c-a71be1f311fe`; receipt hash
+`7072cdf78e67a322220a6a0e3098a11522d6ff3180b8a373cbc8d2b19fdd442f` recomputes,
+and shipped document/chain validators pass. [Evidence](evidence/approval-verification-20261021.json).
+R06 pre-dispatch preparation and R07 approval/local registration are complete;
+**R08 is the only open readiness item, 7/8 complete**. Emitted-worktree verification
+and actual parcel Gate 2/Step 0 remain required before editing. No implementation
+or new approval was invoked. Older PENDING approval statements below are historical.
+
+Bounded local source inspection located the remaining execution-profile gap in
+`evidence/r08-local-execution-gap-20261021.json`; no broader provider search, new
+inference or infrastructure development. Coordinator ownership remains fresh-01.
+
 ## Current control and oversight disposition — 2026-10-21
 
 Clinton's originating chat instructed "Right on. Please proceed" after agreeing

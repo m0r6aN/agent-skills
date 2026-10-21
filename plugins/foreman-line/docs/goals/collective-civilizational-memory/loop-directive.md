@@ -1,5 +1,39 @@
 # CCM coordinator loop — bounded readiness carryover
 
+## Human tree approval verified — 2026-10-21 15:58 UTC
+
+Clinton personally ran the prepared W1-P3 command and supplied the exact slug.
+Actual approval record and Stage-A genesis are present. Independent deterministic
+verification recomputed subject hash
+`9431a8649c2c1125da28e3e4a62f3d9cb15d69b8a1f83dd9c7b1291e8a9c2f96`,
+current four spec hashes, projected-tree equality, receipt hash
+`7072cdf78e67a322220a6a0e3098a11522d6ff3180b8a373cbc8d2b19fdd442f`
+and shared correlation; shipped schema/genesis-chain validators pass. Workflow
+`34014809-a177-4946-a29c-a71be1f311fe`.
+[Verification](evidence/approval-verification-20261021.json) and
+[updated delivery ledger](../../specs/INDEX.md) bind the actual artifacts.
+Receipt signature is null by the shipped contract; no cryptographic approver
+signature or full-lifecycle seal is claimed. No new approval invocation occurred.
+
+**R06 COMPLETE for pre-dispatch preparation**: exact approved work order, immutable
+source/test pins, verification commands, snapshot baseline and named isolated
+kickstarter exist. Final admission/promotion and emitted-worktree verification
+before edits are R08/Step-0 prerequisites, not missing pre-emission outputs.
+**R07 COMPLETE** under the scoped local registration exception, with genuine
+human approval/Stage-A artifacts. **R08 alone remains OPEN; 7/8 readiness items
+complete.** Do not ask for tree approval or registration disposition again for
+these unchanged artifacts. Gate 2/Step 0 are not passed; no builder is running.
+
+R08 is now a located capability dependency, not an open-ended model search:
+[local harness evidence](evidence/r08-local-execution-gap-20261021.json) documents
+the Claude-only emitted profile, skill-expanding Pi integration, and installed
+Jev guard's advisory routing scope. No accepted code-writing Pi profile-load and
+cumulative task-envelope proof is established. Existing EXA-P3 is draft and
+explicitly excludes code-writing workers; do not claim it is an admitted builder
+path. Preserve current native coordinator custody and the existing candidate
+roster as unqualified. No provider probes, automatic retries, new adapters or
+settings changes are authorized by the receipt itself.
+
 ## Originating oversight disposition — 2026-10-21, after bounded proposal
 
 Read [current transfer addendum](coordinator-transfer-2026-10-20.md) first; this
