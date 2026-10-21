@@ -1,0 +1,40 @@
+{
+  "observedAtUtc": "2026-10-21T18:52:56.203504+00:00",
+  "source": "Authenticated retained OpenCode Console AX state, Overview and Go views",
+  "workspaceDisplayName": "Pi",
+  "workspaceId": "wrk_01M2QYQQFW5Y5XADF906C54T68",
+  "subscriptionLabel": "Go",
+  "paidPeriodEndAsDisplayed": "11/17/2026, 10:15:41 AM",
+  "displayedUsagePercent": {
+    "rolling": 0,
+    "weekly": 0,
+    "monthly": 0
+  },
+  "usagePrecision": "Rounded displayed percentages, NOT exact zero use or exact remaining per-model allowance",
+  "rollingResetAsDisplayed": "10/21/2026, 7:01:23 PM",
+  "weeklyResetAsDisplayed": "10/25/2026, 8:00:00 PM",
+  "monthlyResetAsDisplayed": "11/17/2026, 10:15:41 AM",
+  "creditBalanceUsd": 21.14,
+  "extraUsageEnabled": true,
+  "autoRecharge": {
+    "enabledAsDisplayed": true,
+    "chargeUsd": 20,
+    "belowBalanceUsd": 5
+  },
+  "workspaceMonthlyBudgetUsd": 100,
+  "workspaceMonthlyBudgetLeftUsd": 39.78,
+  "workspaceMonthlySpentUsd": 60.22,
+  "selectedRangeModelUsage": {
+    "modelId": "mimo-v2.6-pro",
+    "requests": 8,
+    "inputDisplayed": "10.4k",
+    "cacheReadDisplayed": "20.3k",
+    "outputDisplayed": "1.9k",
+    "costDisplayed": "<$0.01"
+  },
+  "keyToWorkspaceBindingIndependentlyVerified": false,
+  "settingsOrBillingChanged": false,
+  "inferenceSentByThisWork": false,
+  "knownSignedIn": true,
+  "credentialOrTokenOutput": false
+}

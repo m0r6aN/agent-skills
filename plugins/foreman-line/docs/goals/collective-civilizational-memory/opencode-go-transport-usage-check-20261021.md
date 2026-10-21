@@ -1,3 +1,10 @@
+> CURRENT: Owner signed in; authenticated Overview+Go views inspected read-only.
+> Go active, three usage windows display0% (rounded); MiMo8requests/<$0.01 for
+> selected range. Extra usage ON, credits$21.14, auto-recharge$20 below$5.
+> Workspace monthlybudget$100/$39.78left. No settings/billing change or inference.
+> Exact remaining allowance/key-to-workspace binding unverified. Account login
+> step below is historical/resolved; full observation JSON is in evidence/.
+
 # Exact OpenCode Go transport and usage check — October 21
 
 Result: configured exact route VERIFIED; local credential readiness VERIFIED

@@ -222,3 +222,21 @@ profile unauthenticated; accountadmission and original94.6uncertain-call
 disposition remain before generation. No source/inference/duplicateworker.
 One concrete native continuation is recorded for review, not executed; existing
 OpenCode console access gap does not hold independent reversible preparation.
+
+
+## Authenticated OpenCode check completed; one continuation proposal
+
+Owner confirmed sign-in. ActualGo/Overview readonly observation: Goactive,
+rolling/weekly/monthly display0% (rounded, no exact remaining claim). MiMo8requests
+<$0.01 selectedrange; ExtraON, credits21.14, auto-recharge20below5, workspacebudget
+100/39.78left. No settings/billing change or inference. Loginrequest resolved;
+actualkey-to-workspace binding unverified. Do not repeat login or treat credits
+as GenSpark units. Full accountobservation JSON retained locally.
+
+[One concrete native-Sol continuation](p1a-native-sol-continuation-proposal-20261021.md)
+is PROPOSED/notexecuted: original94.6uncertain reservation retained and explicit
+unseen-generation disposition; nativeexistingOAuthonly, one focusedrepair with
+Step01536/source8192/36kinput/600scombined, preparedcontrols/capture, no APIcash/
+OpenCodespend or extrarepair. Two originalfreshOpus reviews stillrequired within
+GenSpark700 and liveglobalguards. It does not require OpenCode paid-overflow
+changes. No modelprompt has been sent and no sourcechanged.

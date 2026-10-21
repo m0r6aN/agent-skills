@@ -17,10 +17,11 @@
     "cacheRead": 0.003625
   },
   "36000Input8192OutputPublishedTokenValuationUsd": 0.02278704,
-  "accountPlanRemainingQuotaExtraUsage": "unverified; console login required",
+  "accountPlanRemainingQuotaExtraUsage": "Authenticated Go subscription; rounded0% rolling/weekly/monthly; exactremaining unknown; ExtraON, balance21.14, auto-recharge20below5. No setting changed.",
   "inferenceAvailability": "not probed",
   "cashSpendApprovedByGenSparkCredits": false,
   "priorAttemptReservation": 94.6,
   "p1aReportedPlusReservation": 190.3,
-  "noSourceChanges": true
+  "noSourceChanges": true,
+  "authenticatedAccountObservation": "opencode-go-authenticated-account-observation-20261021.json"
 }
