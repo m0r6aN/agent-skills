@@ -68,3 +68,42 @@ The coordinator separately authorized deterministic existing Biome formatting on
 After freeze, the independent checker reproduces source tests and documentation scope/digests. B1 combines exact P01 and P02 source heads, spec/active-plan/trusted-test digests, and two fresh whole-unit frontier review passes. P02 may integrate against frozen unactivated P01; B1 acceptance is not claimed by this source file. Changed source invalidates affected coverage. Install accepted instructions only through supported package loading with exact loaded digests, never manual plugin-cache patching.
 
 No builder commit/push/PR/merge, credentials, provider/network request, production effect, package dependency change, control-authority mutation, subagent or reviewer receipt is authorized. Return durable handoff and source/test evidence, freeze, and notify coordinator. Any later source change requires explicit bounded rework.
+
+
+## Ratified EX9 revision-1 specification amendment — 2026-10-21T02:39:09.268Z
+
+Actual EX9 receipt exceptions/EX-OM-PAN-001-09-ratification.json SHA256 d32aeafcc4bf041f74a7edc8dc87073054b67124f9b127fcc7175b19a429659f authorizes this same-scope correction. These requirements supersede earlier conflicting builder-window, checker-counter, operation-map and toolchain wording for this revision. Earlier observations and failed outputs remain historical evidence. This specification creates no new spending, claim, native-session, account, host, access or P00 repair authority. Exact builder clocks and heads are recorded separately at dispatch.
+
+## Common obligations
+
+Use only the exact 39 existing and six new paths in exceptions/EX-OM-PAN-001-09-rework-scope.json (756ce992039fe7678bed4fc10786e286a8eb1edf7149bbd66c57e3d8a7b664d1). Before dispatch, enumerate each builder's justified modified subset, pin prerequisite source, concrete jobs and final specification, and compare the complete Step 0. Reuse original sessions sequentially, one host-A worker. Each revision-1 builder receives one absolute 45-minute window including its checks; independent verification cannot extend it. Preserve all old failures and deadlines. No P00, general Runtime, analyzer, Verify, dependency, lockfile or global configuration changes. No paid requests, commits, pushes, merges or new agents by builders.
+
+Revision-1 final verification uses at most three independent 60-minute source windows across both constituent heads. Both fresh whole-unit reviewers must cover the final exact subject. Packet coverage remains complete within the existing 1 MiB request bound; report size before claiming readiness. Changed source requires new whole-unit coverage.
+
+New edit windows do not reset original session identities, native-session counts, the 12-model-call per-builder-session limit, paid attempts, source revision counters or cumulative dollars. The completed P00 cycle stays closed. Preserve $75 total, $35 bootstrap, $20.25 P00, $15 other-parcel/whole-unit and $6 request limits, the 20 bootstrap/120 total claim limits, all holds and existing expiry. Before optional recovery, reserve the unfinished mandatory claim/session floor.
+
+## P01 correction obligations
+
+1. Replace conflicting model.infer and patch.stage operation bindings with the typed Pantheon admission/terminal path selected by R7. Keep existing fleet-v2 semantics unchanged. Proposed bindings are pantheon.v1.model.infer -> ModelResult and pantheon.v1.patch.stage -> PatchStaged; P03 owns the versioned transactional implementation. Do not imply that parsing these references admits an effect. Update the matching coordinator parcel specification and behavioral tests.
+2. Install the actual EX9 supersession in active Pantheon mandate, coordinator, skill, template and specification instructions as needed: separate initial and per-revision builder windows; source-check counters by whole-unit revision; operational counters by purpose and real identity; immutable P00 limits; unchanged money/call/session/access limits. Generic instructions for other goals remain intact. Existing true verification and repository gates stay automatic where evidence decides them.
+3. Consolidate Node 24.19.0 and its already verified digest. Preserve the initial builder failure and later independent 867-pass history, clearly distinguishing dates and evidence. Use the previously demonstrated Linux scratch copy of identical source for full-suite verification, retaining actual commands and timeouts. No timeout inflation or test omission.
+4. Preserve all boundary and hostile tests. Add assertions for the two corrected operation bindings and unchanged fleet-v2 non-equivalence. No authority receipt is manufactured by a pure validator.
+5. Align strict malformed-string handling with the wire contract: invalid Unicode/JSON string escapes return MALFORMED_JSON, including escapes in object keys. Preserve duplicate decoded-key rejection and bounded resource precedence. Run the independently prepared shared edge-fixture bundle after correction; a refused input with a different code is not cross-language conformance.
+
+
+### Exact revision-1 builder modified-file allowance
+
+- plugins/foreman-line/README.md
+- plugins/foreman-line/docs/COORDINATOR-PATTERN.md
+- plugins/foreman-line/docs/standing-mandates/OM-PAN-001.md
+- plugins/foreman-line/skills/goal/SKILL.md
+- plugins/foreman-line/skills/parcel-driven-development/SKILL.md
+- plugins/foreman-line/templates/kickstarters/loop-directive-template.md
+- plugins/foreman-line/templates/kickstarters/builder-template.md
+- plugins/foreman-line/templates/kickstarters/reviewer-template.md
+- plugins/foreman-line/dispatch/src/pantheon-runtime/contracts/index.ts
+- plugins/foreman-line/dispatch/src/pantheon-runtime/contracts/README.md
+- plugins/foreman-line/dispatch/tests/pantheon-contracts.test.ts
+- plugins/foreman-line/docs/goals/pantheon-incarnation-v0/execution-om-pan-001/P01-HANDOFF.md
+
+The specification itself is coordinator-owned and committed separately before implementation. Other source paths remain frozen. Add tests in these existing test files; do not add a new production fixture JSON path. The shared23-case test bundle is external evidence, mounted read-only as /wire/bundle.json with PANTHEON_WIRE_FIXTURES set. All original15 cases remain byte-identical. Test the required corrected codes, not current diagnostic outcomes.
