@@ -1,0 +1,22 @@
+{
+  "recordedAtUtc": "2026-10-21T18:45:55.731569+00:00",
+  "root": "/home/cmorgan76/.ccm-p1a-sol-controls-20261021-b7oamsof",
+  "captureFile": "/home/cmorgan76/.ccm-p1a-sol-controls-20261021-b7oamsof/rpc-live-capture.jsonl",
+  "captureSha256": "4b46f6755f23878a3d6b772396abd683bc960746e2dc0867409f233efc5756a5",
+  "captureBytes": 1783,
+  "captureMode": "0o600",
+  "captureOpenedBeforeProcess": true,
+  "stdoutDestination": "direct file descriptor, not parent buffered return only",
+  "exitCode": 0,
+  "inferencePromptsSubmitted": 0,
+  "state": {
+    "provider": "openai",
+    "model": "gpt-6.1-sol",
+    "maxTokens": 8192,
+    "compaction": false,
+    "messageCount": 0,
+    "pending": 0
+  },
+  "nativeSessionFileExists": false,
+  "nativeSessionCaveat": "Pi does not materialize this empty session on metadata alone; no proof of assistant/session write durability before a generation. Direct event capture is proven."
+}

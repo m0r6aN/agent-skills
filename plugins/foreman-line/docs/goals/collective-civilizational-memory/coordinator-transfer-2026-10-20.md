@@ -146,3 +146,19 @@ are unsuitable for the8192 bounded request until isolated controls are verified.
 Source supports cap propagation/compaction-disable; no live configuration changed.
 Original request01 full94.6reservation/uncertainoutcome hold and P1A role/reviewer
 requirements remain. No duplicate worker/coordinator or blanket failover.
+
+
+## Native Sol independent control preparation completed October21
+
+[Prepared finite profile](p1a-native-sol-control-preparation-20261021.md) passes
+actual no-generation RPC metadata checks: exactSol8192, compactionoff,
+retryoff/providerretry0, tools/extensions/MCP/skills/templatesoff, SSE/cachewarmingoff.
+Private new task root only; existing settings bytes unchanged, authmetadata
+unchanged. No credentials copied/linked; SDK created empty2-byteauthregistry.
+Direct private event capture verified from a separateSSH connection with matching
+hash. Native empty session file is NOT yetmaterialized; no assistant durability
+or actual provider-request/billing/cancellation proof claimed. Current isolated
+profile unauthenticated; accountadmission and original94.6uncertain-call
+disposition remain before generation. No source/inference/duplicateworker.
+One concrete native continuation is recorded for review, not executed; existing
+OpenCode console access gap does not hold independent reversible preparation.

@@ -1,0 +1,85 @@
+{
+  "checkedAtUtc": "2026-10-21T18:44:27.013497+00:00",
+  "privateRoot": "/home/cmorgan76/.ccm-p1a-sol-controls-20261021-b7oamsof",
+  "rootMode": "0o700",
+  "newAgentDir": "/home/cmorgan76/.ccm-p1a-sol-controls-20261021-b7oamsof/agent",
+  "credentialsCopiedOrLinked": false,
+  "inferencePromptsSubmitted": 0,
+  "rpcCommandTypes": [
+    "set_auto_compaction",
+    "set_auto_retry",
+    "set_session_name",
+    "get_state",
+    "get_session_stats",
+    "get_entries"
+  ],
+  "exitCode": 0,
+  "timedOut": false,
+  "responses": [
+    {
+      "command": "set_auto_compaction",
+      "success": true
+    },
+    {
+      "command": "set_auto_retry",
+      "success": true
+    },
+    {
+      "command": "set_session_name",
+      "success": true
+    },
+    {
+      "command": "get_state",
+      "success": true
+    },
+    {
+      "command": "get_session_stats",
+      "success": true
+    },
+    {
+      "command": "get_entries",
+      "success": true
+    }
+  ],
+  "effectiveModel": {
+    "provider": "openai",
+    "id": "gpt-6.1-sol",
+    "api": "openai-responses",
+    "baseUrl": "https://api.openai.com/v1",
+    "maxTokens": 8192,
+    "contextWindow": 272000
+  },
+  "runtimeState": {
+    "autoCompactionEnabled": false,
+    "isStreaming": false,
+    "isCompacting": false,
+    "messageCount": 0,
+    "pendingMessageCount": 0,
+    "sessionFile": "/home/cmorgan76/.ccm-p1a-sol-controls-20261021-b7oamsof/sessions/controls.jsonl"
+  },
+  "effectiveTaskSettings": {
+    "defaultTools": [],
+    "cacheWarming": "off",
+    "transport": "sse",
+    "retry": {
+      "enabled": false,
+      "maxRetries": 0,
+      "provider": {
+        "timeoutMs": 600000,
+        "maxRetries": 0,
+        "maxRetryDelayMs": 0
+      }
+    },
+    "compaction": {
+      "enabled": false
+    }
+  },
+  "metadataTranscriptBytes": 2728,
+  "metadataTranscriptSha256": "30769aad24cc498c98d35e4cfb761c048c742558f7e2898ef677c543e126dd01",
+  "sessionFileExists": false,
+  "sessionFileBytes": null,
+  "originalSettingsBytesUnchanged": true,
+  "originalAuthMetadataUnchanged": true,
+  "stderrPresent": true,
+  "authBoundary": "No auth in isolated profile; this proves bounded metadata selection, not authenticated delivery or account entitlement."
+}
