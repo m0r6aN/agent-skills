@@ -769,7 +769,7 @@ test('Pantheon: invalid string escapes in values and keys are malformed JSON', (
   refused(parseNdjsonFrame(`${' '.repeat(LIMITS.frameBytes)}"\\q"\n`), 'LIMIT_EXCEEDED')
 })
 
-test('Pantheon: shared 51-case wire contract', () => {
+test('Pantheon: shared 71-case wire contract', () => {
   const fixturePath = process.env.PANTHEON_WIRE_FIXTURES
   assert.ok(fixturePath, 'PANTHEON_WIRE_FIXTURES must name the shared read-only bundle')
   const bundle = JSON.parse(readFileSync(fixturePath, 'utf8')) as {
@@ -782,8 +782,8 @@ test('Pantheon: shared 51-case wire contract', () => {
     }[]
   }
   assert.equal(bundle.schema, 'pantheon.p01-wire-fixture-bundle.v1')
-  assert.equal(bundle.examples.length, 51)
-  assert.equal(new Set(bundle.examples.map((example) => example.id)).size, 51)
+  assert.equal(bundle.examples.length, 71)
+  assert.equal(new Set(bundle.examples.map((example) => example.id)).size, 71)
   for (const example of bundle.examples) {
     assert.equal(Buffer.byteLength(example.inputUtf8, 'utf8'), example.byteLength, example.id)
     const actual = parseNdjsonFrame(example.inputUtf8)
@@ -918,3 +918,146 @@ test('Pantheon: malformed Unicode cannot alias canonical evidence text', () => {
     ),
   )
 })
+
+function completion() {
+  const { descriptor: _, ...common } = request()
+  return {
+    ...common,
+    kind: 'completion',
+    eventId: 'event-1',
+    outcome: 'succeeded',
+    provenance: provenance(),
+  }
+}
+function ordered(value: unknown, order: number): unknown {
+  if (Array.isArray(value)) return value.map((item) => ordered(item, order))
+  if (value === null || typeof value !== 'object') return value
+  const entries = Object.entries(value)
+  if (order === 1) entries.reverse()
+  if (order === 2) {
+    const first = entries.shift()
+    if (first) entries.push(first)
+  }
+  return Object.fromEntries(entries.map(([key, item]) => [key, ordered(item, order)]))
+}
+const compoundCases = [
+  {
+    name: 'descriptor path before invalid version',
+    input: {
+      ...request(),
+      descriptor: { ...descriptor(), version: 'wrong', allowedFiles: ['../escape'] },
+    },
+    code: 'INVALID_PATH',
+    field: '$.descriptor.allowedFiles[0]',
+  },
+  {
+    name: 'complete artifact list before duplicate detection',
+    input: {
+      ...completion(),
+      provenance: {
+        ...provenance(),
+        subject: {
+          ...subject(),
+          artifacts: [artifact(), artifact(), { ...artifact(), path: '../escape' }],
+        },
+      },
+    },
+    code: 'INVALID_PATH',
+    field: '$.provenance.subject.artifacts[2].path',
+  },
+  {
+    name: 'subject artifact path before invalid unit',
+    input: {
+      ...completion(),
+      provenance: {
+        ...provenance(),
+        subject: { ...subject(), unit: '', artifacts: [{ ...artifact(), path: '../escape' }] },
+      },
+    },
+    code: 'INVALID_PATH',
+    field: '$.provenance.subject.artifacts[0].path',
+  },
+  {
+    name: 'provenance head mismatch before invalid state',
+    input: {
+      ...completion(),
+      provenance: {
+        ...provenance(),
+        state: 'verified',
+        result: { ...artifact(), sourceHead: 'd'.repeat(40) },
+      },
+    },
+    code: 'MISMATCH',
+    field: '$.provenance.original',
+  },
+  {
+    name: 'descriptor calendar before invalid path',
+    input: {
+      ...request(),
+      descriptor: {
+        ...descriptor(),
+        issuedAt: '0000-01-01T00:00:00.000Z',
+        allowedFiles: ['../escape'],
+      },
+    },
+    code: 'INVALID_SHAPE',
+    field: '$.descriptor.issuedAt',
+  },
+  {
+    name: 'provenance result path before invalid state',
+    input: {
+      ...completion(),
+      provenance: {
+        ...provenance(),
+        state: 'verified',
+        result: { ...artifact(), path: '../escape' },
+      },
+    },
+    code: 'INVALID_PATH',
+    field: '$.provenance.result.path',
+  },
+]
+for (const example of compoundCases) {
+  for (const order of [0, 1, 2]) {
+    test(`Pantheon: compound ${example.name}, property order ${order}`, () => {
+      const actual = parseNdjsonFrame(line(ordered(example.input, order)))
+      refused(actual, example.code)
+      if (actual.status === 'refused') assert.equal(actual.field, example.field)
+    })
+  }
+}
+for (const count of [4095, 4096, 4099, 4100, 4101]) {
+  test(`Pantheon: flat object ${count} keys reaches shape validation`, () => {
+    const input = Object.fromEntries(Array.from({ length: count }, (_, i) => [`k${i}`, 0]))
+    refused(parseNdjsonFrame(line(input)), 'INVALID_SHAPE')
+  })
+}
+for (const count of [8190, 8191, 8192]) {
+  test(`Pantheon: flat array ${count} includes length in capture precheck`, () => {
+    refused(
+      parseNdjsonFrame(line(Array(count).fill(0))),
+      count === 8190 ? 'INVALID_SHAPE' : 'LIMIT_EXCEEDED',
+    )
+  })
+}
+for (const order of [0, 1, 2]) {
+  test(`Pantheon: adjacent valid boundaries survive property order ${order}`, () => {
+    const input = {
+      ...request(),
+      descriptor: {
+        ...descriptor(),
+        allowedFiles: Array.from({ length: LIMITS.list }, (_, i) => `src/file-${i}.ts`),
+        worktree: 'w'.repeat(512),
+        branch: 'b'.repeat(256),
+      },
+    }
+    valid(parseNdjsonFrame(line(ordered(input, order))))
+    valid(parseNdjsonFrame(line(ordered(completion(), order))))
+    refused(
+      parseNdjsonFrame(
+        line({ ...input, descriptor: { ...input.descriptor, worktree: 'w'.repeat(513) } }),
+      ),
+      'LIMIT_EXCEEDED',
+    )
+  })
+}
