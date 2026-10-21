@@ -1,0 +1,24 @@
+{
+  "task": "CCM-P1A-artifact-mode-delivery-20261021",
+  "unit": "GenSpark prepaid credits",
+  "internalCeiling": 700,
+  "reportedSpent": 51.7,
+  "unattributedAccountDelta": "Reconcile before each next phase; no zero assertion",
+  "phaseReceipts": [
+    "genspark-opus-review-qualification-20261021-01/receipt.json",
+    "genspark-opus-review-qualification-20261021-02/receipt.json",
+    "genspark-sol-scope-qualification-20261021-01/receipt.json"
+  ],
+  "implementationAttempts": 0,
+  "repairAttempts": 0,
+  "formalStep0": "pending",
+  "reviewsAandB": "not run",
+  "globalLimitsUnchanged": {
+    "perRun": 100,
+    "perDayAmericaNewYork": 300,
+    "effort": 9000,
+    "reserve": 1000
+  },
+  "dollarCost": "unknown/not converted",
+  "automaticRetry": false
+}

@@ -1,0 +1,44 @@
+{
+  "started": "2026-10-21T16:16:53.0594288Z",
+  "model_requested": "claude-opus-5-5",
+  "prompt_sha256": "D869614278F84991C1B646D7F35C2D94D059A61D4799FBF0BD822E8C34A049FE",
+  "max_output_tokens": 1536,
+  "tools_granted": [],
+  "status": "incomplete_response_no_automatic_retry",
+  "retry_count": 0,
+  "model_reported": "claude-opus-5-5",
+  "request_id": "chatcmpl-f013db6c-ab58-4799-811c-82b2fb19ada2",
+  "finish_reason": "length",
+  "usage": {
+    "completion_tokens": 1536,
+    "prompt_tokens": 625,
+    "total_tokens": 2161,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 309,
+      "rejected_prediction_tokens": null,
+      "text_tokens": 1227
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "cache_write_tokens": 621,
+      "text_tokens": 0,
+      "cache_creation_tokens": 621,
+      "cache_creation_token_details": {
+        "ephemeral_5m_input_tokens": 621,
+        "ephemeral_1h_input_tokens": 0
+      }
+    },
+    "cache_creation_input_tokens": 621,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "global",
+    "speed": "standard"
+  },
+  "genspark_usage": {
+    "credits": 17.6,
+    "unit": "credit"
+  },
+  "finished": "2026-10-21T16:17:09.9544914Z"
+}

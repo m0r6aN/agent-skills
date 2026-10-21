@@ -1,0 +1,36 @@
+```json
+{
+  "verdict": "changes_required",
+  "findings": [
+    {
+      "line": 2,
+      "trigger": "A candidate supplies record[\"source_kind\"] = \"verified_tool\" or \"human_asserted\". Any caller can set this field.",
+      "consequence": "The caller label alone satisfies the producer condition. No authentication occurs. The candidate's record ID, content hash, tenant and current authorized scope are never bound to an approved producer.",
+      "required_property": "Supported standing requires independent authentication that binds the exact record ID, content hash, tenant and current authorized scope to an approved producer. Caller-supplied labels must not authenticate a producer."
+    },
+    {
+      "line": 3,
+      "trigger": "supplied_parents is an empty list or other empty iterable. all() over an empty sequence returns True.",
+      "consequence": "A record with zero parents passes the parent check. Combined with an accepted label, it is admitted with no parent at all.",
+      "required_property": "Every derived record must have at least one currently authoritative parent. An empty or missing parent set must fail closed."
+    },
+    {
+      "line": 3,
+      "trigger": "Each caller-supplied parent dict contains \"score\": 0.8 or higher. The parent can be fabricated, missing from the trusted store, out of scope, purged or unresolved.",
+      "consequence": "Untrusted parent assertions and numeric scores are accepted as proof of parentage. The trusted lookup is never consulted, so missing, out-of-scope, purged and unresolved parents are admitted.",
+      "required_property": "Each parent must be resolved through the trusted lookup and confirmed as currently authoritative and within the record's tenant and scope. Supplied parent data and scores must be treated as untrusted and must not grant standing."
+    },
+    {
+      "line": 4,
+      "trigger": "Any input where both the label and score conditions hold.",
+      "consequence": "The function returns True, meaning admitted as supported, based only on caller-controlled fields. No producer authentication and no trusted parent resolution happen on any path.",
+      "required_property": "A True result must occur only after producer authentication succeeds and at least one trusted, currently authoritative, in-scope parent resolves. Every other path must return a fail-closed result."
+    }
+  ],
+  "coverage_gaps": [
+    "Observed defects (lines 2-4) are distinct from omissions. The example contains no authentication step, no trusted parent lookup, and no tenant, scope, purge or currency checks. These omissions are reported as findings only because line 4 returns acceptance without them. The intended interfaces for authentication and trusted lookup are unknown.",
+    "Input mutation: the shown lines only read via .get() and do not mutate record or supplied_parents. This is an observation from the text only. It assumes .get() on the supplied objects has no side effects, and that is unknown.",
+    "Exception behavior is unknown. A non-dict record or parent, or a non-numeric score such as a string, may raise. Whether the caller treats an exception as a rejection (fail closed) or otherwise is not specified.",
+    "Edge values: a NaN score fails the >= comparison and would reject. A boolean True score compares as 1 and would pass. Whether score-type validation matters is moot, because scores must not grant standing at all.",
+    "The return contract is unspecified. It is unclear whether a boolean True means 'supported' and whether any distinct 'unsupported but stored' state exists.",
+    "Not assessed: the caller context, the definition of 'approved producer' and 'current authorized scope', concurrency or time-of-check issues between authentication and lookup, and logging or audit

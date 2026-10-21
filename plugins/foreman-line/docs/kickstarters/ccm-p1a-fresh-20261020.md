@@ -1,4 +1,16 @@
-# CCM-P1A isolated builder kickstarter — PREPARED / NOT DISPATCHED
+# CCM-P1A artifact-mode work order — DISPATCH APPROVED / STEP0 PENDING
+
+Current admission (supersedes historical draft/no-dispatch text below):
+[P1A Gate2](../goals/collective-civilizational-memory/evidence/p1a-gate2-artifact-mode-20261021.json)
+approves zero-tool GenSpark Sol source proposals and two separate fresh Opus reviews.
+Host applies only the five Allowed Files after real Step0/GO. Actual active work-order
+SHA256 e11b0da82f80b4dd1a993ae3993951782360f1a5adb791a14f438a12c6ce55e1;
+original human-approved scope remains d6c4adce/2db53117, unchanged except status.
+Base efb5f4bcead899332f4f35f5e0b3a181eb988d2c; branch feat/foreman-line-ccm-p1a
+(shipped emitter derivation, replacing uncreated reservation); worktree unchanged.
+Fresh snapshot baseline03 again238 pass; actual emitted-worktree baseline required.
+Use current loop/envelope for role restrictions, shared prepaid caps and stop rules.
+No native autonomous worker is admitted and no implementation GO is claimed.
 
 Human W1-P3 approval is now **COMPLETE**, verified 2026-10-21, subject
 `9431a8649c2c1125da28e3e4a62f3d9cb15d69b8a1f83dd9c7b1291e8a9c2f96`,

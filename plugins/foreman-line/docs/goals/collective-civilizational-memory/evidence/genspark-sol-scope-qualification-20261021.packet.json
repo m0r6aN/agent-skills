@@ -1,0 +1,10 @@
+{
+  "purpose": "Scope qualification, not builder dispatch or formal Step 0",
+  "bytes": 60913,
+  "estimatedTokensCl100k": 14222,
+  "sha256": "0ea404e773caed553e7a5a31669dc9d3d52f803400f9b0837d6fa40fa0182219",
+  "specSha256": "2db53117a6d990355cff5c0cf7f09a058bcf2a78c55b35a659395ae9b45f2dd8",
+  "proposedResponseTokens": 2048,
+  "toolsGranted": [],
+  "normalizedLfSha256": "f606cc60d327c1687b566b8b8ba76859b65846f7dd89738939c3f56f68f7a58d"
+}

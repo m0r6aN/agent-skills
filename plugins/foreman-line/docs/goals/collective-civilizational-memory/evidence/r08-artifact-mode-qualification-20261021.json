@@ -1,0 +1,89 @@
+{
+  "checkedAtUtc": "2026-10-21T16:30:07.857967+00:00",
+  "mode": "Artifact-only builder proposals plus supplied-text independent reviews; not autonomous repository workers",
+  "builder": {
+    "route": "genspark/gpt-6.1-sol",
+    "family": "OpenAI",
+    "receipt": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\collective-civilizational-memory\\evidence\\genspark-sol-scope-qualification-20261021-01\\receipt.json",
+    "criterionIds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "allowedFiles": [
+      "docs/specs/ccm-memory-graph-v2.md",
+      "src/keon/cortex/envelope/taxonomy.py",
+      "src/keon/cortex/ingress/models_v2.py",
+      "tests/test_ccm_contracts_v2.py",
+      "tests/fixtures/ccm/contracts-v2.json"
+    ],
+    "scopeResponse": "All seven criteria and five files correct; truthful missing-input flags. This is not formal Step 0."
+  },
+  "reviewers": [
+    {
+      "seat": "A",
+      "route": "genspark/claude-opus-5-5",
+      "family": "Anthropic",
+      "freshIndependentRequest": true,
+      "mustExcludeOtherReviewFindings": true
+    },
+    {
+      "seat": "B",
+      "route": "genspark/claude-opus-5-5",
+      "family": "Anthropic",
+      "freshIndependentRequest": true,
+      "mustExcludeOtherReviewFindings": true
+    }
+  ],
+  "reviewerQualification": {
+    "receipt": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\collective-civilizational-memory\\evidence\\genspark-opus-review-qualification-20261021-02\\receipt.json",
+    "syntheticDefectsCaught": [
+      "label-only trust",
+      "empty-parent vacuous truth",
+      "unresolved/asserted/stale parent scores"
+    ],
+    "initialAttempt": "Truncated; preserved unsuccessful, 17.6 credits",
+    "focusedRepair": "Completed; 8.8 credits; no automatic retry"
+  },
+  "independence": "Both reviewers differ in model family from OpenAI builder. They share Anthropic family with each other, but use independent fresh requests and isolated evidence packets, as allowed by L2 policy.",
+  "runtimeControls": {
+    "modelTools": [],
+    "modelRepoAccess": false,
+    "modelFilesystemEffects": false,
+    "transport": "Existing reviewed fixed-host single-request sender, redirects disabled, 180-second request timeout, no retry/follow-up loop",
+    "hostEffects": "Only after actual Gate 2 and Step 0; inspect/parse source artifacts, reject all paths except exact five, apply into named emitted worktree. No returned shell commands executed. Independently validate/test/review before acceptance.",
+    "claudeSettings": "No claim that GenSpark loads .claude settings. Zero repository authority is the actual worker restriction.",
+    "allowlistCanaries": [
+      [
+        "outside path",
+        "../outside.py",
+        false
+      ],
+      [
+        "absolute path",
+        "C:/Users/clint/.codex/config.toml",
+        false
+      ],
+      [
+        "unlisted source",
+        "src/keon/cortex/api.py",
+        false
+      ],
+      [
+        "allowed model",
+        "src/keon/cortex/ingress/models_v2.py",
+        true
+      ]
+    ]
+  },
+  "identityLimits": "Model identities are trusted proxy response metadata, not model prose or cryptographic proof of upstream server identity.",
+  "data": "Owner-authorized GenSpark offload for Cortex/Pantheon/Collective; minimum internal source context only, no credentials or personal imports. No newly asserted ZDR/account setting.",
+  "creditCostObserved": 51.7,
+  "actualDollarCharges": "Not established; credits are prepaid GenSpark units, not USD",
+  "nativeAlternatives": "Filesystem sandbox passed. Native ChatGPT login rejected exact model; environment API key rejected 401; no further credential or native probes.",
+  "result": "Candidate routes qualified only for the stated zero-tool mode. Finish packet completeness, literal envelope adoption and actual Gate 2 before builder work."
+}

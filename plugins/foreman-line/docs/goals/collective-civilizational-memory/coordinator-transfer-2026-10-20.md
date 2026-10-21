@@ -1,5 +1,17 @@
 # Context coordinator transfer
 
+## Current bounded work unit — artifact mode admitted 2026-10-21
+
+Custody remains fresh-01. Originating oversight adopted the existing GenSpark
+zero-tool source-proposal/review mode under Clinton's explicit continuing authority;
+see current loop and p1a-gate2-artifact-mode-20261021.json. One actual P1A Gate2,
+status-only activation, exact active/source hashes, fresh base efb5f4bc, same named
+worktree and emitter-derived branch are recorded. Formal Step0 and implementation
+GO remain pending. Native agents/profile bridges are not qualified by this mode;
+no new coordinator, API key, billing change, revived schedule or platform work.
+All budget phases use existing prepaid limits; qualification51.7credits includes
+failed first Opus truncation and its one bounded concise repair.
+
 ## Verified human approval / current readiness — 2026-10-21
 
 Clinton returned successful personal W1-P3 approval output. The actual record and
