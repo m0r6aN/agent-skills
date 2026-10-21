@@ -21,11 +21,11 @@ accepted specific Pi/Claude plan review remain settled; do not rerun or reopen t
 
 ## Current gate state
 
-- R01–R07 complete for pre-dispatch readiness. R08 route qualification/envelope
-  complete for the mode below; actual emitted-worktree baseline and formal Step0
-  remain before implementation GO. No implementation file has changed yet.
+- R01–R08 complete for pre-dispatch readiness in the artifact-only mode below.
+  Actual emitted-worktree baseline passed238 and formal Step0 independently passed.
+  Implementation is held on the existing shared-day credit cap; no code changed.
 - [Actual P1A Gate2](evidence/p1a-gate2-artifact-mode-20261021.json): APPROVED for
-  P1A artifact-only delivery. B/C/D remain draft/held. Step0 is not yet run.
+  P1A artifact-only delivery. B/C/D remain draft/held. Formal Step0 PASS.
 - Human W1-P3 approved the four-parcel tree at15:54:57.907 UTC on October21.
   Subject `9431a8649c2c1125da28e3e4a62f3d9cb15d69b8a1f83dd9c7b1291e8a9c2f96`;
   workflow `34014809-a177-4946-a29c-a71be1f311fe`; receipt hash
@@ -115,13 +115,16 @@ is the assigned work order. Exact five mutation paths:
 
 ## Next actions / parcel loop
 
-1. Verify emitter/source profile bytes, fresh base/path/branch; create own bootstrap,
-   emit actual worktree, prove HEAD/settings/clean tracked source, remove bootstrap.
-2. Run actual worktree baseline in the existing sanitized Python environment,
-   preserve identities/counts/output and source hashes. No install or root repair.
-3. Send formal Step0 only after live budget preflight; require seven AC, five paths,
-   exact base/worktree/branch and all flags. Explicit oversight disposition before
-   any implementation effects; the earlier scope qualification is not Step0.
+1. COMPLETE: shipped emitter created the named isolated worktree at exact base;
+   clean own bootstrap removed. [Emission](evidence/p1a-emission-20261021.json).
+2. COMPLETE: actual worktree baseline238 passed, source unchanged. Evidence:
+   `evidence/p1a-worktree-baseline-20261021-01/manifest.json`.
+3. COMPLETE: formal Step0 exact seven AC/five paths/base/spec, host independently
+   [disposed PASS](evidence/p1a-step0-disposition-20261021.json). Scope GO remains
+   conditional on budget: 224.4/300 shared credits used, next reservation94.6
+   exceeds remaining75.6. No build sent. P1A reported total95.7 credits.
+   [One concrete owner proposal](p1a-one-day-credit-proposal-20261021.md) is
+   UNAPPROVED; existing caps remain. No new schedule/background continuation.
 4. One complete bounded source proposal; inspect/validate JSON and code before
    exact scoped host application. No model-returned commands. Verify allowed diff,
    required commands and old test-count tripwire. No builder self-acceptance.

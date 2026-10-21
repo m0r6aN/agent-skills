@@ -1,0 +1,18 @@
+{
+  "recordedAtUtc": "2026-10-21T17:10:56.612103+00:00",
+  "accountObservationUtc": "2026-10-21T17:09:13.9433405Z",
+  "plan": "plus",
+  "balance": 9695.3,
+  "sharedLocalDay": "2026-10-21",
+  "knownSharedDayUsed": 224.4,
+  "dayLimit": 300,
+  "remainingToday": 75.6,
+  "nextPhase": "implementation",
+  "nextConservativeCreditReservation": 94.6,
+  "dayAfterReservation": 319.0,
+  "allowed": false,
+  "contextReportedSpent": 95.7,
+  "noImplementationSubmitted": true,
+  "proposedExceptionStatus": "NOT AUTHORIZED",
+  "proposal": "p1a-one-day-credit-proposal-20261021.md"
+}

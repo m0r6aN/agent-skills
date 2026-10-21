@@ -1,16 +1,17 @@
 # CCM-P1A — finite readiness checklist and current handoff
 
-## Current R08 — routes qualified, worktree/Step0 pending
+## Current R08 — COMPLETE for artifact-only delivery; budget hold
 
-R01–R07 complete. R08's **artifact-only routes and envelope are qualified**; actual
-P1A Gate2 dispatch is approved, while emitted-worktree baseline/formal Step0 and
-explicit implementation GO are still pending. No code effects yet. Builder Sol6.1
-and two fresh Opus5.5 reviews get zero tools/repo authority; host effects stay in
-five paths. Native autonomous routes remain unqualified. Source/price/qualification
-proof and exact shared prepaid limits are in the [current loop](loop-directive.md).
-Existing GenSpark entitlement/limits are reused, not raised. Qualification51.7credits.
-P1A active status-only derivation and fresh base efb5f4bc are recorded; snapshot
-baseline03 passed238. Older state prose below is historical; do not reopen it.
+**8/8 readiness items complete for the admitted P1A artifact-only route.** Actual
+emitted worktree at efb5f4bc passed238 baseline tests; formal Step0 independently
+passed all scope/pin/path checks and its flags were disposed. See
+[Step0 disposition](evidence/p1a-step0-disposition-20261021.json).
+No implementation request or code change yet. Shared day use224.4/300 leaves75.6,
+below the next conservative build reservation94.6. The
+[one-day proposal](p1a-one-day-credit-proposal-20261021.md) awaits owner decision;
+existing limits remain unchanged. P1A reports95.7 prepaid credits spent including
+qualification and Step0. Reviews have not run. B/C/D remain held. No background
+continuation is scheduled. Older readiness prose below is historical.
 
 ## Current authoritative update — personal approval verified 2026-10-21
 

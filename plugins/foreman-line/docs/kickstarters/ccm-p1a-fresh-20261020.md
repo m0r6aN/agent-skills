@@ -1,4 +1,4 @@
-# CCM-P1A artifact-mode work order — DISPATCH APPROVED / STEP0 PENDING
+# CCM-P1A artifact-mode work order — STEP0 PASS / BUDGET HOLD
 
 Current admission (supersedes historical draft/no-dispatch text below):
 [P1A Gate2](../goals/collective-civilizational-memory/evidence/p1a-gate2-artifact-mode-20261021.json)
@@ -8,9 +8,12 @@ SHA256 e11b0da82f80b4dd1a993ae3993951782360f1a5adb791a14f438a12c6ce55e1;
 original human-approved scope remains d6c4adce/2db53117, unchanged except status.
 Base efb5f4bcead899332f4f35f5e0b3a181eb988d2c; branch feat/foreman-line-ccm-p1a
 (shipped emitter derivation, replacing uncreated reservation); worktree unchanged.
-Fresh snapshot baseline03 again238 pass; actual emitted-worktree baseline required.
+Actual emitted-worktree baseline passed238; formal Step0 independently PASS.
+R01-R08 readiness complete for this mode; no build sent because shared day budget
+224.4/300 leaves75.6, below conservative next reservation94.6. Owner one-day
+credit proposal is unapproved. Current loop and disposition supersede older text.
 Use current loop/envelope for role restrictions, shared prepaid caps and stop rules.
-No native autonomous worker is admitted and no implementation GO is claimed.
+No native autonomous worker is admitted. Scope GO is conditional on budget.
 
 Human W1-P3 approval is now **COMPLETE**, verified 2026-10-21, subject
 `9431a8649c2c1125da28e3e4a62f3d9cb15d69b8a1f83dd9c7b1291e8a9c2f96`,

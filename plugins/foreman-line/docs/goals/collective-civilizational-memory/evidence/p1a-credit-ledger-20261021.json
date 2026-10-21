@@ -2,16 +2,17 @@
   "task": "CCM-P1A-artifact-mode-delivery-20261021",
   "unit": "GenSpark prepaid credits",
   "internalCeiling": 700,
-  "reportedSpent": 51.7,
+  "reportedSpent": 95.7,
   "unattributedAccountDelta": "Reconcile before each next phase; no zero assertion",
   "phaseReceipts": [
     "genspark-opus-review-qualification-20261021-01/receipt.json",
     "genspark-opus-review-qualification-20261021-02/receipt.json",
-    "genspark-sol-scope-qualification-20261021-01/receipt.json"
+    "genspark-sol-scope-qualification-20261021-01/receipt.json",
+    "p1a-formal-step0-20261021-01/receipt.json"
   ],
   "implementationAttempts": 0,
   "repairAttempts": 0,
-  "formalStep0": "pending",
+  "formalStep0": "PASS; independently disposed; implementation held solely on next-call daily budget",
   "reviewsAandB": "not run",
   "globalLimitsUnchanged": {
     "perRun": 100,
@@ -20,5 +21,12 @@
     "reserve": 1000
   },
   "dollarCost": "unknown/not converted",
-  "automaticRetry": false
+  "automaticRetry": false,
+  "accountObservedBalance": 9695.3,
+  "knownSharedDayUsed": 224.4,
+  "accountDeltaSincePreviousCheck": 45.1,
+  "step0ReportedCredits": 44,
+  "differenceAccountVsReportedCredits": 1.1,
+  "differenceDisposition": "Conservatively counted in shared-day/effort consumption; no downward reconciliation or invented attribution.",
+  "updatedAtUtc": "2026-10-21T17:10:56.612103+00:00"
 }
