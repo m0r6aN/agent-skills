@@ -1,0 +1,12 @@
+{
+  "version": {
+    "exit": 0,
+    "metadata": "1.3.0",
+    "error": ""
+  },
+  "resolvedExecutable": {
+    "exit": 0,
+    "metadata": "/home/cmorgan76/.local/share/mise/installs/pi/latest/pi/pi",
+    "error": ""
+  }
+}

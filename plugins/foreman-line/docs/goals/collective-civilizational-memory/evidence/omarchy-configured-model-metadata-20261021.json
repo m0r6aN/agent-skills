@@ -1,0 +1,13 @@
+{
+  "inferenceRequests": 0,
+  "settings": [
+    {
+      "path": "/home/cmorgan76/.pi/agent/settings.json",
+      "defaultProvider": "opencode-go",
+      "defaultModel": "mimo-v2.6-pro"
+    }
+  ],
+  "customProviders": [],
+  "packageMetadata": [],
+  "authFilePresenceOnly": true
+}

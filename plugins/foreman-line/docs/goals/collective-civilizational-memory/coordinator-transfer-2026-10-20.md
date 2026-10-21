@@ -126,3 +126,23 @@ Clinton's transferred authority permits routine coordination, reversible prepara
 Keep one coordinator, inexpensive qualified builders, compact packets, one implementation attempt plus one focused repair, truthful risk labels and required independent reviews. No broad councils, provider hunts, unrelated launcher engineering or fabricated budgets. Preserve dirty working trees and private review evidence. Production deployment, account/privacy weakening, destructive data/key actions, actual personal-history import and foreign-goal takeover are outside this handoff.
 
 Oversight heartbeat `context-foreman-oversight-while-clinton-is-away` remains attached to the existing oversight chat. Do not create a duplicate schedule. Maintain a concise durable progress record so oversight can observe completion and blockers without rereading full session history.
+
+
+## October21 exact OpenCode Go follow-through
+
+Owner routing preferences and explicit OpenCode correction are retained in
+[preferences](omarchy-owner-routing-preferences-20261021.md). Configured exact
+provider opencode-go/model mimo-v2.6-pro/defaultselection verified; local no-refresh
+auth check ready/api_key. No substitutions or supplied fallback router executed.
+[Transport/usage check](opencode-go-transport-usage-check-20261021.md) records
+installed legacy base versus current official endpoint (alias unverified),
+public allowance metering versus actual unknown account/quota/Extra state.
+Accessible console is at login; read-only account view requires existing sign-in.
+No service-key creation or inference probe. No new spend decision is requested.
+
+Native Sol ephemeral no-session/no-tool RPC get_state also passed with no prompt:
+exact modelselected,0messages/pending; actual defaults128000output/compactiontrue
+are unsuitable for the8192 bounded request until isolated controls are verified.
+Source supports cap propagation/compaction-disable; no live configuration changed.
+Original request01 full94.6reservation/uncertainoutcome hold and P1A role/reviewer
+requirements remain. No duplicate worker/coordinator or blanket failover.

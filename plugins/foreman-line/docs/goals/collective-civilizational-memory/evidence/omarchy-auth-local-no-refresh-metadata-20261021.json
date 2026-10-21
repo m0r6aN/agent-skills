@@ -1,0 +1,36 @@
+{
+  "checkedAtUtc": "2026-10-21T18:33:32.494868+00:00",
+  "noRefresh": true,
+  "inferenceRequests": 0,
+  "credentialsEmitted": false,
+  "checks": [
+    {
+      "provider": "opencode-go",
+      "exitCode": 0,
+      "fieldNames": [
+        "status",
+        "provider",
+        "authType"
+      ],
+      "metadata": {
+        "provider": "opencode-go",
+        "status": "ready",
+        "authType": "api_key"
+      }
+    },
+    {
+      "provider": "openai",
+      "exitCode": 0,
+      "fieldNames": [
+        "status",
+        "provider",
+        "authType"
+      ],
+      "metadata": {
+        "provider": "openai",
+        "status": "ready",
+        "authType": "oauth"
+      }
+    }
+  ]
+}

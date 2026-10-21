@@ -1,0 +1,26 @@
+{
+  "checkedAtUtc": "2026-10-21T18:41:00.652203+00:00",
+  "configuredProvider": "opencode-go",
+  "modelId": "mimo-v2.6-pro",
+  "defaultSelected": true,
+  "installedApi": "openai-completions",
+  "installedBaseUrl": "https://opencode.ai/inference/go/v1",
+  "officialEndpoint": "https://opencode.ai/inference/go/openai/v1/chat/completions",
+  "legacyAliasVerified": false,
+  "localAuthStatus": "ready",
+  "localAuthType": "api_key",
+  "credentialRefresh": false,
+  "inferenceRequests": 0,
+  "publishedRatesPerMillionUsd": {
+    "input": 0.435,
+    "output": 0.87,
+    "cacheRead": 0.003625
+  },
+  "36000Input8192OutputPublishedTokenValuationUsd": 0.02278704,
+  "accountPlanRemainingQuotaExtraUsage": "unverified; console login required",
+  "inferenceAvailability": "not probed",
+  "cashSpendApprovedByGenSparkCredits": false,
+  "priorAttemptReservation": 94.6,
+  "p1aReportedPlusReservation": 190.3,
+  "noSourceChanges": true
+}
