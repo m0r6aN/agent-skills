@@ -169,13 +169,20 @@ usage or equivalent loaded controls. Reconcile existing in-flight work before
 using another host; no duplicate worker or coordinator ownership transfer.
 
 
-## Single bounded recovery candidate — preparation only
+## Single bounded recovery candidate — read-only preflight PASS
 
-[Omarchy Pi preflight](p1a-omarchy-transport-preflight-20261021.md) isolates the
-one missing detail: existing SSH alias/user@host (nondefault port if applicable).
-Owner clarification is pending. No endpoint/connection guessed, no inference,
-provider hunt, retry, support message or new worker. Preflight reservation0
-inference credits; existing request01 full94.6 reservation stays. Laptop provider,
-model/controls/capture/cost remain unverified; no qualified paid alternative or
-uncertain-outcome waiver is claimed. Read-only preflight precedes any concrete
-continuation proposal. No further approval to the same failed request is sought.
+Owner asked us to find the connection in local records and complete preflight.
+Historical successful MachineB records supplied `cmorgan76@10.0.0.174`, dedicated
+identity `C:/Users/clint/.ssh/pantheon_machine_b`, stored ED25519 fingerprint.
+Local trust matched; actual strict public-key SSH succeeded. Three bounded
+metadata calls passed: Linux; Pi at `/home/cmorgan76/.local/share/mise/shims/pi`;
+that exact executable's help. No further SSH-details question is needed.
+[Completed preflight and evidence](p1a-omarchy-transport-preflight-20261021.md).
+
+Help advertises no-tools/no-extensions, JSON/RPC, provider/model and session capture;
+this is static support, not verified model/cost/limit/cancellation enforcement.
+No fourth command/version query, inference, session launch, network scan, auth/key/
+config change or worker. Exact model/provider/entitlement, bounded output/request
+and accounting/capture remain transport-specific gaps before a continuation
+proposal. Existing request01 full94.6 reservation and technical hold persist;
+this preflight used0 inference credits and did not dispose that uncertain call.

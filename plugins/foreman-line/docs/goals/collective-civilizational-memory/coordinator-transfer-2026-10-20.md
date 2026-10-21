@@ -1,3 +1,10 @@
+> October21 Omarchy read-only preflight PASS: found prior successful connection
+> in local MachineB records; strict stored-key SSH to cmorgan76@10.0.0.174 worked.
+> Linux, exact Pi executable path and help verified with three bounded metadata
+> commands. No inference/session/worker or credential/config mutation. SSH-detail
+> request resolved; model/provider/cost/control admission and request01 hold remain.
+> See p1a-omarchy-transport-preflight-20261021.md and two new evidence JSON records.
+
 > Current October21 handoff: owner day exception APPROVED (shared1000/P1A700).
 > First implementation source request returned HTTP524 without candidate/usage;
 > unchanged worktree, no review/repair yet. Known spend95.7 plus unresolved94.6

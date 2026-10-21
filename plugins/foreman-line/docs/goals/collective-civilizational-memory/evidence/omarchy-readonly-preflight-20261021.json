@@ -1,0 +1,44 @@
+{
+  "startedAtUtc": "2026-10-21T18:11:04.893257+00:00",
+  "destination": "cmorgan76@10.0.0.174",
+  "inferenceRequests": 0,
+  "remoteSessionStarted": false,
+  "configurationChanged": false,
+  "calls": [
+    {
+      "label": "os",
+      "remoteCommand": "uname -s",
+      "exitCode": 0,
+      "timedOut": false,
+      "elapsedSeconds": 0.549,
+      "stdoutMetadata": "Linux\n",
+      "stderr": "",
+      "stdoutOriginalBytes": 6,
+      "metadataExcerpted": false
+    },
+    {
+      "label": "pi-path",
+      "remoteCommand": "command -v pi",
+      "exitCode": 0,
+      "timedOut": false,
+      "elapsedSeconds": 0.283,
+      "stdoutMetadata": "/home/cmorgan76/.local/share/mise/shims/pi\n",
+      "stderr": "",
+      "stdoutOriginalBytes": 43,
+      "metadataExcerpted": false
+    },
+    {
+      "label": "pi-help",
+      "remoteCommand": "/home/cmorgan76/.local/share/mise/shims/pi --help",
+      "exitCode": 0,
+      "timedOut": false,
+      "elapsedSeconds": 0.857,
+      "stdoutMetadata": "pi - AI coding assistant with read, bash, edit, write tools\n\nUsage:\n  pi [options] [--] [@files...] [messages...]\n\n  pi <command> --help          Show help for install/remove/uninstall/update/list/config/auth/mcp\n  --provider <name>              Provider to search for --model (requires --model)\n  --model <pattern>              Model pattern or ID (supports \"provider/id\" and optional \":<thinking>\")\n  --mode <mode>                  Output mode: text (default), json, or rpc\n  --session <path|id>            Use specific session file or partial UUID\n  --session-id <id>              Use exact project session ID, creating it if missing\n  --session-dir <dir>            Directory for session storage and lookup\n  --no-session                   Don't save session (ephemeral)\n  --models <patterns>            Comma-separated model patterns for Ctrl+P cycling\n  --no-tools, -nt                Disable all tools by default (built-in and extension)\n  --thinking <level>             Set thinking level: off, minimal, low, medium, high, xhigh, max\n  --no-extensions, -ne           Disable extension discovery and built-in extensions (explicit -e paths still work)\n  --list-models [search]         List available models (with optional fuzzy search)\n  --help, -h                     Show this help\n  --version, -v                  Show version number\n  pi auth print-api-key --provider openai\n  pi auth print-bearer-token --provider openai-codex\n  pi \"Read package.json\" \"What dependencies do we have?\"\n  pi --provider openai --model gpt-4o-mini \"Help me refactor this code\"\n  # Use model with provider prefix (no --provider needed)\n  pi --model openai/gpt-4o \"Help me refactor this code\"\n  pi --model sonnet:high \"Solve this complex problem\"\n  pi --models claude-sonnet,claude-haiku,gpt-4o\n  pi --models \"github-copilot/*\"\n  pi --models sonnet:high,haiku:low\n  pi --thinking high \"Solve this complex problem\"\n  pi --export session.jsonl output.html\n  PI_CODING_AGENT_SESSION_DIR      - Session storage directory (overridden by --session-dir)",
+      "stderr": "",
+      "stdoutOriginalBytes": 10705,
+      "metadataExcerpted": true
+    }
+  ],
+  "finishedAtUtc": "2026-10-21T18:11:06.601115+00:00",
+  "result": "PASS metadata preflight"
+}

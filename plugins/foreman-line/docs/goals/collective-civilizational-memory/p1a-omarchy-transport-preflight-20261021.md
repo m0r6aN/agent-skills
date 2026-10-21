@@ -1,76 +1,66 @@
-# One next transport candidate — Omarchy Pi, read-only preflight only
+# Omarchy Pi transport preflight — completed October 21
 
-Status: PREPARATION READY / MISSING SSH DESTINATION. Not a qualified paid route.
-No uncertain-outcome continuation or retry is requested yet. Original request01
-remains unusable, generation/billing attribution unknown, full94.6 reservation
-retained (95.7 reported +94.6 reserved=190.3 of P1A700). October21 shared1000
-exception remains; this document neither disposes the failure nor spends credits.
+Status: **READ-ONLY METADATA PREFLIGHT PASS**. Connection details are resolved;
+no further SSH-details request is needed. This is not model/role admission,
+provider inference or uncertain-outcome continuation approval.
 
-## Why this single candidate
+## Established destination and source
 
-Clinton explicitly identified existing Pi sessions on his local Linux/Omarchy
-laptop as available. The current local alternatives record exact Sol unsupported
-for native Codex ChatGPT auth, existing native API key401, and GenSpark CLI's
-previous self-update side effect/default-auth401. Do not repeat those probes.
-The existing GenSpark sender failed the long source response with HTTP524.
+- Destination: `cmorgan76@10.0.0.174` (default SSH port22).
+- Existing identity: `C:/Users/clint/.ssh/pantheon_machine_b`; private content was
+  not inspected. Existing authentication succeeded without prompts or changes.
+- Source: prior successful October18 inventory in
+  `../pantheon-incarnation-v0/machine-b-preflight.md`, corroborated by that goal's
+  `gate-record.md` owner-supplied access record. Reading this evidence does not
+  transfer that goal or its permissions; today's user directly authorized this
+  Context read-only preflight.
+- Expected stored ED25519 fingerprint:
+  `SHA256:DYARjdrGe5f7RoL1lLGC6u102NYdFWiIAxNwLdSsv1A`.
+  Local known_hosts matched, and strict SSH verification succeeded. No new host
+  key was accepted or fresh out-of-band verification claimed.
 
-The one candidate is a persistent, locally captured Pi artifact-builder session
-on the owner-identified Omarchy host, requested model openai/gpt-6.1-sol. It is
-not another coordinator, autonomous repository worker or alternate model. Future
-reviewers remain separate fresh Anthropic-family seats; they are not launched by
-this preflight. Existing code/source trust qualification is not being reopened.
+## Three completed checks
 
-Persistent Pi session capture could make a connection loss recoverable from the
-remote session, avoiding dependence on one foreground Windows non-streaming
-HTTP response. It DOES NOT prove a different provider endpoint, elimination of
-HTTP524, a hard provider-request/output ceiling, cancellation or cost control.
-The remote configured provider must be verified not to repeat the same failing
-proxy transport, and session capture/limits must actually exist, before admission.
-No such facts are currently claimed for the laptop.
+1. `uname -s` → `Linux`, exit0,0.549s.
+2. `command -v pi` → `/home/cmorgan76/.local/share/mise/shims/pi`, exit0,0.283s.
+3. That exact executable's `--help` → successful metadata, exit0,0.857s.
 
-## Smallest missing detail and exact preparation action
+Windows OpenSSH used BatchMode, strict stored ED25519, dedicated identity,
+public-key-only authentication, no password/interactive fallback, no forwarding,
+no host-key updates, connect timeout10s and one connection attempt. Each fixed
+remote command had a15-second local timeout; retained stdout metadata was at
+most2KiB per command. No session/prompt, inference, installation, model download,
+configuration/key change, project write, Git mutation or network scan occurred.
+Ordinary SSH/Pi-help logs/cache effects are not claimed absent.
 
-Needed: the existing SSH alias OR user@hostname/IP, plus port only if nonstandard.
-Local Windows SSH exists. The inspected user SSH config has only Pythagora
-aliases, not Omarchy. Do not infer the laptop from those aliases, scan the LAN,
-guess usernames/addresses, change credentials/keys or start a guessed connection.
-A text clarification requesting this destination is pending in the owner chat.
+[Local identity/trust evidence](evidence/omarchy-local-connection-evidence-20261021.json)
+and [actual three-command evidence](evidence/omarchy-readonly-preflight-20261021.json)
+retain exact timestamps, commands, exits, timing and bounded excerpts. Pi help
+returned10705 bytes in memory; only selected metadata lines up to2KiB were retained.
 
-Once supplied, use the existing SSH client/key setup for bounded metadata reads,
-BatchMode=yes, StrictHostKeyChecking=yes, ConnectTimeout=10. Do not enroll an
-unknown host key or prompt for credentials. At most three fixed metadata commands:
-`uname -s`, `command -v pi`, and the resolved installed Pi's `--help`/version
-metadata as supported (combine help/version only if one documented flag supplies
-both; otherwise defer the extra command). Each has a15-second local limit and
-at most2KiB retained metadata output; retain exit status. No interactive terminal,
-model prompt, session start, downloads, package updates, login, broad filesystem
-scan or config/auth dump. If even this connection requires unavailable trust/auth,
-report the exact issue rather than changing it.
+## Transport-specific capability findings and remaining boundary
 
-Preflight model role: NONE. Provider inference requests:0. Output tokens:0.
-GenSpark credit reservation for preflight:0; prior94.6 remains reserved. Existing
-host/chat/SSH operating costs are not asserted zero. No new billing is authorized.
+Help documents provider/model selection, text/json/rpc output, session file/id/
+directory capture, `--no-tools` (built-in and extension tools), `--no-extensions`
+(extension discovery and built-in extensions), and thinking-level selection.
+This is static advertised support, not runtime enforcement evidence. No current
+Pi version query was added after the three-command cap; the prior October18
+record reported1.3.0, which is historical only.
 
-## What must be concrete before a paid continuation proposal
+The single candidate remains an isolated persistent Pi artifact-builder session
+on this host, requested `openai/gpt-6.1-sol`; no second coordinator or repository
+worker. Persistent remote session capture could make a connection loss
+recoverable, but a different host does not prove a different provider endpoint
+or prevent the original proxy's HTTP524. Exact configured provider/model,
+existing entitlement/cost units, output/one-request controls, disabled retry,
+actual safe session capture, timeout and cancellation limits remain unverified.
+No paid continuation command, rate/cost quote, loaded Foreman profile or actual
+model availability is invented from help text. Existing source/AC/reviewer
+qualification is not reopened by these transport-specific gaps.
 
-From installed help/known task-specific metadata only: exact model/provider
-endpoint, existing account entitlement and per-phase cost units, zero-tool/source-
-only effect restriction, output ceiling and its enforcement, disabled automatic
-retry/fallback, one fresh repair Step0, parent-visible session/result/usage capture,
-timeout and cancellation limitations. No inference to discover these properties.
-The requested repair inherits the exact existing five paths, base/spec hashes,
-seven AC, one focused repair ceiling and two independent fresh-review obligations.
-
-Candidate operational ceiling would remain8192 output tokens,36k input and one
-request for a source proposal, with600 seconds observation; the actual Pi/provider
-must support an adequately bounded profile. These are requirements, NOT verified
-flags or proof. No invented Pi command or configuration is supplied to force them.
-No provider-independent dollar or credit quote can be stated before the configured
-provider is known. An included subscription is not assumed free or sufficient.
-
-After the read-only preflight, present ONE exact transport-specific continuation
-with amount/scope/control limitations. It must explicitly dispose unusable
-request01, accept possible unseen generation, retain94.6 reservation and account
-for new cost within the approved ceilings. No generic retry approval is sought.
-If the route fails a requirement, stop with that concrete gap; do not broaden the
-provider search or weaken S01-S12/AC6/independent review requirements.
+Preflight inference requests0; inference credit reservation0. Original request01
+is still unusable with unknown upstream generation/billing attribution; preserve
+full94.6 reservation. Known P1A reported95.7 plus unresolved94.6=190.3 of700.
+October21 shared1000 exception and all other limits remain in force. Neither
+budget nor SSH success disposes the uncertain-call hold. No support message,
+retry/fallback, model session or duplicate worker was launched.
