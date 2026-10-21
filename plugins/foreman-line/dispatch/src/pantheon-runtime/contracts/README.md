@@ -24,7 +24,7 @@ SHA-256 artifact digests are 64 lowercase hex characters; Git heads are 40 lower
 
 ## Private NDJSON contract for P02/P05
 
-Version is exactly `pantheon-wire/v1`. One frame is one LF-terminated JSON object, no CR or additional literal newline. Limit is **65,536 UTF-8 bytes including LF**, depth **16**, data nodes **8,192**, and each list **256** elements. Identifiers are at most 128 characters, relative paths 512, ordinary text 4,096, review text 32,768. Numeric epoch/cursor values are nonnegative safe integers. Unknown operations, unknown keys, malformed input and duplicate decoded object keys at every depth refuse. There is no serializer that silently truncates a frame.
+Version is exactly `pantheon-wire/v1`. One frame is one LF-terminated JSON object, no CR or additional literal newline. Limit is **65,536 UTF-8 bytes including LF**, depth **16**, data nodes **8,192**, and each list **256** elements. Identifiers are at most 128 characters, relative paths 512, ordinary text 4,096, review text 32,768. Numeric epoch/cursor values are nonnegative safe integers. Unknown operations, unknown keys, malformed input and duplicate decoded object keys at every depth refuse. Invalid JSON string escapes, including Unicode escapes and object keys, return `MALFORMED_JSON`; resource limits encountered first retain `LIMIT_EXCEEDED`. There is no serializer that silently truncates a frame.
 
 Every frame carries version, kind, full identity, request ID/hash, fencing epoch, exact operation, artifact reference and event cursor:
 
@@ -42,8 +42,8 @@ Custody startup/succession is a distinct trusted host control action with the fi
 
 | Operation | Consumer | Required effect contract |
 |---|---|---|
-| `model.infer` | P04 | Existing `fleet.model.infer` only for exact inference semantics, with P02/P03 fresh committed admission |
-| `patch.stage` | P04 | Existing `fleet.patch.promote` isolated-ref staging only; never successful merge |
+| `model.infer` | P04 | Proposed P03 `pantheon.v1.model.infer` → `ModelResult`, with P02/P03 fresh committed admission |
+| `patch.stage` | P04 | Proposed P03 `pantheon.v1.patch.stage` → `PatchStaged`, with fresh committed admission; isolated-ref staging only, never merge |
 | `worker.execute` | P04 | Proposed P03 `pantheon.v1.worker.execute` extension with successful-worker terminal |
 | `worker.verify` | P04/P05 | Proposed P03 `pantheon.v1.worker.verify` extension with independent verifier evidence |
 | `repository.prepare`, `repository.push` | P04/P05 | Proposed P03 distinct Git effect/terminal bindings |
@@ -52,10 +52,12 @@ Custody startup/succession is a distinct trusted host control action with the fi
 | `status.read`, `artifact.read` | P02/P05 | Authenticated bounded read; no effect admission |
 | `worker.remote` | P08 | Reserved P08 operation only; no B execution in P01/P02 |
 
-The `pantheon.v1.*` names are proposed versioned application-to-store bindings for P03, not existing fleet-v2 classes. P03 must ratify its additive contract before actuator integration. Existing `fleet.worker.execute` has failure terminals only; existing `fleet.patch.promote` has isolated-ref outcomes only. Preserve those tables, meanings, rows and tests.
+The `pantheon.v1.*` names are proposed versioned application-to-store bindings for P03, not existing fleet-v2 classes. `requiredTerminal` explicitly names `ModelResult` and `PatchStaged` for inference/staging; its absence on other entries does not waive their stated terminal prerequisites. P03 owns the additive transactional implementation before actuator integration. Neither inference nor staging aliases a fleet-v2 effect. Existing `fleet.worker.execute` has failure terminals only; existing `fleet.patch.promote` has isolated-ref outcomes only. Preserve those tables, meanings, rows and tests.
 
 P02 uses real `IExecutionHandler` and `IPermissionSpendGate` through a stable fail-closed typed interface. P03 later extracts shared pure verification, owns one typed `BEGIN IMMEDIATE` and one connection-local PermissionSpendLedger consumption, and commits spend/attempt/pre-effect/occupancy/reservation/outbox together. It returns satisfied with non-null Spend only after commit. Handler failure cannot undo consumed permission. Replay returns prior status without effects. Foreman and Cortex remain projections; no second approving store exists here.
 
 ## Verification limits
 
 Focused tests exercise valid controls and negative structure/path/identity/hash/tools/flags/money/review/independence/delta/frame invariants. These tests never claim authentic Runtime admission, actual provider completion, durable event provenance or OS containment. Trusted independent verification and both B1 substantive reviews remain separate gates.
+
+Revision-1 checks use Node **24.19.0**, image `node@sha256:e5a8dee7bc1e6a215d224a7ef8206f7e77271bc3cabd5febf2beafac0674f174`, and the unchanged offline dependency archive. The prescribed job copies source into Linux scratch, verifies identical bytes, and runs the unchanged Pi test, typecheck, full suite and lint. Set `PANTHEON_WIRE_FIXTURES` to the external read-only 23-case bundle (SHA-256 `8dd6ae1305a0f9074817906b2b180d333c2ba94304ba7ca59157bbda49b16d46`); absence fails the shared-contract test. All original 15 cases remain unchanged. Required status, refusal code, trust and specified field must match, not merely refusal. Historical Node 24.22 failures and subsequent independent 867-pass recovery remain in the P01 handoff; neither substitutes for checks of revised source.

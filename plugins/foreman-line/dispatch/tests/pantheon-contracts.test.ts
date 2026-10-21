@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
 import {
   CONTRACT_VERSION,
@@ -600,7 +601,12 @@ test('Pantheon: closed operation map preserves extension and isolated staging bo
     null,
   ])
     refused(parseOperation(operation), 'UNKNOWN_OPERATION')
-  assert.equal(OPERATIONS['patch.stage'].effect, 'fleet.patch.promote')
+  assert.equal(OPERATIONS['model.infer'].effect, 'pantheon.v1.model.infer')
+  assert.equal(OPERATIONS['model.infer'].requiredTerminal, 'ModelResult')
+  assert.equal(OPERATIONS['patch.stage'].effect, 'pantheon.v1.patch.stage')
+  assert.equal(OPERATIONS['patch.stage'].requiredTerminal, 'PatchStaged')
+  assert.notEqual(OPERATIONS['model.infer'].effect, 'fleet.model.infer')
+  assert.notEqual(OPERATIONS['patch.stage'].effect, 'fleet.patch.promote')
   assert.notEqual(OPERATIONS['repository.merge'].effect, 'fleet.patch.promote')
   assert.notEqual(OPERATIONS['worker.execute'].effect, 'fleet.worker.execute')
   assert.equal(OPERATIONS['worker.remote'].consumer, 'P08')
@@ -753,6 +759,44 @@ test('Pantheon: wire byte, depth and collection bounds bite', () => {
     }),
     'LIMIT_EXCEEDED',
   )
+})
+test('Pantheon: invalid string escapes in values and keys are malformed JSON', () => {
+  for (const token of ['"\\q"', '"\\uZZZZ"', '"\\u12"', '"\t"']) {
+    refused(parseNdjsonFrame(`{"x":${token}}\n`), 'MALFORMED_JSON')
+    refused(parseNdjsonFrame(`{${token}:1}\n`), 'MALFORMED_JSON')
+  }
+  refused(parseNdjsonFrame(`${'['.repeat(17)}"\\q"${']'.repeat(17)}\n`), 'LIMIT_EXCEEDED')
+  refused(parseNdjsonFrame(`${' '.repeat(LIMITS.frameBytes)}"\\q"\n`), 'LIMIT_EXCEEDED')
+})
+
+test('Pantheon: shared 23-case wire contract', () => {
+  const fixturePath = process.env.PANTHEON_WIRE_FIXTURES
+  assert.ok(fixturePath, 'PANTHEON_WIRE_FIXTURES must name the shared read-only bundle')
+  const bundle = JSON.parse(readFileSync(fixturePath, 'utf8')) as {
+    schema: string
+    examples: {
+      id: string
+      inputUtf8: string
+      byteLength: number
+      expected: { status: string; trust?: string; code?: string; field?: string }
+    }[]
+  }
+  assert.equal(bundle.schema, 'pantheon.p01-wire-fixture-bundle.v1')
+  assert.equal(bundle.examples.length, 23)
+  assert.equal(new Set(bundle.examples.map((example) => example.id)).size, 23)
+  for (const example of bundle.examples) {
+    assert.equal(Buffer.byteLength(example.inputUtf8, 'utf8'), example.byteLength, example.id)
+    const actual = parseNdjsonFrame(example.inputUtf8)
+    assert.equal(actual.status, example.expected.status, example.id)
+    if (actual.status === 'structurally-valid') {
+      assert.equal(actual.trust, example.expected.trust, example.id)
+      assert.equal('admitted' in actual, false, example.id)
+    } else {
+      assert.equal(actual.code, example.expected.code, example.id)
+      if (example.expected.field !== undefined)
+        assert.equal(actual.field, example.expected.field, example.id)
+    }
+  }
 })
 test('Pantheon: hostile objects, getters, cycles, prototypes and sparse arrays refuse', () => {
   let getterCalls = 0

@@ -16,7 +16,7 @@ Full design and rationale: [docs/FOREMAN-LINE-PLAN.md](docs/FOREMAN-LINE-PLAN.md
 
 For Pantheon under a verified, active OM-PAN-001 grant, apply `docs/standing-mandates/OM-PAN-001.md`; this exception does not apply to other goals or create Runtime authority. Initial ratification and material authority changes remain owner decisions. Routine shaping, dispatch and eligible merge proceed automatically under the standing grant after evidence and repository checks. The general defaults below apply outside that scope.
 
-Pantheon's current EX4/EX5/EX6 revision-2 and R7 rules, completed P00 closure, B1/B2/B3 review units, finite native bootstrap and permanent cutover are recorded in that standing mandate. The pure [Pantheon boundary contracts](dispatch/src/pantheon-runtime/contracts/README.md) carry structural data only. Their parser tests do not establish Runtime admission; source acceptance, supported package loading and exact loaded digests remain required.
+Pantheon's actual EX4–EX9 amendments and R7 rules, EX7/EX8 P00 acceptance history, B1/B2/B3 review units, finite original-session rework windows and separate source/operational checker counters are recorded in that standing mandate. EX9 leaves old deadlines closed and all money, paid-attempt, native-session and access limits unchanged; it grants no P00 repair or plan/qualification rerun. Permanent native cutover remains required. The pure [Pantheon boundary contracts](dispatch/src/pantheon-runtime/contracts/README.md) carry structural data only. Their parser tests do not establish Runtime admission; source acceptance, supported package loading and exact loaded digests remain required.
 
 1. Goal-charter ratification.
 2. Parcel dispatch.

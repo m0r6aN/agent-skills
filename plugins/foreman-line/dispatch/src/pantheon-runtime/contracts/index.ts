@@ -473,26 +473,31 @@ export type OperationBinding = Readonly<{
   effect: string | null
   prerequisite: string
   exactBinding: string
+  requiredTerminal?: 'ModelResult' | 'PatchStaged'
 }>
 const op = (
   consumer: string,
   effect: string | null,
   prerequisite: string,
   exactBinding: string,
-): OperationBinding => Object.freeze({ consumer, effect, prerequisite, exactBinding })
+  requiredTerminal?: 'ModelResult' | 'PatchStaged',
+): OperationBinding =>
+  Object.freeze({ consumer, effect, prerequisite, exactBinding, requiredTerminal })
 /** Declarative requirements only. No entry asserts that the consumer is currently enabled. */
 export const OPERATIONS = Object.freeze({
   'model.infer': op(
     'P04',
-    'fleet.model.infer',
-    'P02/P03 fresh committed admission',
+    'pantheon.v1.model.infer',
+    'P02/P03 fresh committed admission; P03 additive ModelResult terminal',
     'request hash, provider/account/profile, token and micro-USD bounds',
+    'ModelResult',
   ),
   'patch.stage': op(
     'P04',
-    'fleet.patch.promote',
-    'P02/P03 fresh committed admission; isolated-ref semantics only',
+    'pantheon.v1.patch.stage',
+    'P02/P03 fresh committed admission; P03 additive PatchStaged terminal',
     'patch artifact hash, exact paths and isolated source/base ref; never merge',
+    'PatchStaged',
   ),
   'worker.execute': op(
     'P04',
@@ -1020,7 +1025,13 @@ function strictJson(source: string): unknown {
     const start = pos++
     while (pos < source.length) {
       const c = source[pos++]
-      if (c === '"') return JSON.parse(source.slice(start, pos)) as string
+      if (c === '"') {
+        try {
+          return JSON.parse(source.slice(start, pos)) as string
+        } catch {
+          return deny('MALFORMED_JSON', '$')
+        }
+      }
       if (c === '\\') pos++
     }
     return deny('MALFORMED_JSON', '$')
