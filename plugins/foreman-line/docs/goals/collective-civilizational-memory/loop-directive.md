@@ -167,3 +167,15 @@ sessions are available as an option. Connection, exact model/session, permission
 independence and cost remain to be verified before use. No assumption of free
 usage or equivalent loaded controls. Reconcile existing in-flight work before
 using another host; no duplicate worker or coordinator ownership transfer.
+
+
+## Single bounded recovery candidate — preparation only
+
+[Omarchy Pi preflight](p1a-omarchy-transport-preflight-20261021.md) isolates the
+one missing detail: existing SSH alias/user@host (nondefault port if applicable).
+Owner clarification is pending. No endpoint/connection guessed, no inference,
+provider hunt, retry, support message or new worker. Preflight reservation0
+inference credits; existing request01 full94.6 reservation stays. Laptop provider,
+model/controls/capture/cost remain unverified; no qualified paid alternative or
+uncertain-outcome waiver is claimed. Read-only preflight precedes any concrete
+continuation proposal. No further approval to the same failed request is sought.
