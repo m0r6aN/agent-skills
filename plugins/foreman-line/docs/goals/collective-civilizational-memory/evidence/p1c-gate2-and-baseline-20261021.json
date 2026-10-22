@@ -1,0 +1,67 @@
+{
+  "atUtc": "2026-10-22T02:46:21.235925+00:00",
+  "parcel": "CCM-P1C",
+  "gate2": "Approved under direct owner blanket non-destructive decisions/approvals, foundationratification settled",
+  "worktree": "D:\\Repos\\ccm-worktrees\\collective-p1c",
+  "branch": "feat/foreman-line-ccm-p1c",
+  "base": "70aabfc4b8e550d83fac4478dbf9d3d230898438",
+  "draftSpecSha256": "b782e06829119a3993c18155e331882a44a7c82cf6dd05ec8061c7e9f3c26c09",
+  "activeSpecSha256": "b5481f0f013fe79eec96d40534f3117f01d29a0c1a610b97797da13a0a6d0387",
+  "change": "status-only derivative, bodyunchanged",
+  "dependencyP1A": "cc3a6defa78849b8df8795c58ac65866f31179d5",
+  "P1AContractVersion": "ccm-contracts/2.0.1",
+  "fixtureSha256": "c419250a4a9e232aca9a168ffeb7bb20b3acaf9746e6b7bc06babad8c1de9e90",
+  "P1BDependency": false,
+  "builder": "Native Codex gpt-6-luna/low /root/p1c_builder; Step0PASS noflags; onebuild+onefocusedrepair",
+  "allowedFiles": "Exactly5 C#contract/test/copiedfixturepaths, no global serializer/project/config/dependency/worker/Gateway edits",
+  "billing": "Native accountusageunknown/separate; no new externalbuilderAPI/GenSpark generation",
+  "baselineTestIdentities": 314,
+  "sourceTestPins": 261,
+  "baselinePassed": true,
+  "runs": [
+    {
+      "name": "restore",
+      "exitCode": 0,
+      "seconds": 1.691,
+      "argv": [
+        "dotnet",
+        "restore",
+        "tests/Keon.Collective.Abstractions.Tests/Keon.Collective.Abstractions.Tests.csproj",
+        "--source",
+        "https://api.nuget.org/v3/index.json",
+        "--ignore-failed-sources"
+      ],
+      "outputSha256": "c30d128807626fba31c4a06ee44d1f1ad66f9d9565d319b505616457eeb01262"
+    },
+    {
+      "name": "baseline",
+      "exitCode": 0,
+      "seconds": 12.128,
+      "argv": [
+        "dotnet",
+        "test",
+        "tests/Keon.Collective.Abstractions.Tests/Keon.Collective.Abstractions.Tests.csproj",
+        "--no-restore",
+        "--configuration",
+        "Release",
+        "--logger",
+        "trx;LogFileName=baseline.trx",
+        "--results-directory",
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1c-20261021-01"
+      ],
+      "outputSha256": "d399429c2774904f9c7e85277309538458edb58a81cfb47c2a279e4eb0b3d3e9"
+    }
+  ],
+  "capture": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1c-20261021-01",
+  "externalReviewPlannedEnvelope": {
+    "P1CInitialCredits": 900,
+    "sharedNYOct21Credits": 4000,
+    "initialCallsMax": 2,
+    "initialPerCallCreditsMax": 400,
+    "retries": 0,
+    "accountFloor": 1000,
+    "effortCap": 9000,
+    "paidLaunch": "Only after implementation/host checks and exact finite token/profile record; no paidreview yet"
+  },
+  "accepted": false
+}

@@ -1,7 +1,7 @@
 ---
 ticket: CCM-P1C
 title: Collective civic memory v2 wire compatibility
-status: draft
+status: active
 owner: clinton.morgan
 created: '2026-10-19'
 updated: '2026-10-19'
