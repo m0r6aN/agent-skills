@@ -1,7 +1,7 @@
 ---
 ticket: CCM-P2B
 title: Bounded deterministic UTF-8 text chunker
-status: draft
+status: active
 owner: clinton.morgan
 created: '2026-10-22'
 updated: '2026-10-22'

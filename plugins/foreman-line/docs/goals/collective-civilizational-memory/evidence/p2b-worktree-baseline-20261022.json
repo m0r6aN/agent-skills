@@ -1,0 +1,62 @@
+{
+  "atUtc": "2026-10-22T05:00:45.640242+00:00",
+  "parcel": "CCM-P2B",
+  "sourceDispatched": false,
+  "base": "76fa7c6eda6a4859e7d3a64815c760a77d4c07f0",
+  "baseBothMainCIGreen": [
+    "39724637602",
+    "39724637630"
+  ],
+  "cleanWorktreeBeforeRun": true,
+  "trackedPins": 397,
+  "allRegularTrackedFilePins": true,
+  "gitlinksPinnedAsRepositoryEntriesOnly": [
+    "160000 306090e58b4663c7190feb932a6c1c371a12d861 0\t.claude/worktrees/ci-type-hygiene",
+    "160000 3a3cd7ed6ba6be6bec9670c1c50989310aaa0c1f 0\t.claude/worktrees/confident-cohen-25cd1d",
+    "160000 50d45f0a02db5c4e972ea07f5a3a719d0f92ad49 0\t.claude/worktrees/epic-panini-7fa8a9",
+    "160000 30f5e390447db6148221efbbcc2691abcd51a399 0\t.claude/worktrees/frosty-bardeen-3ba362",
+    "160000 747118d17485a419104f322e116011c447164d4e 0\t.claude/worktrees/hungry-montalcini-6759eb",
+    "160000 81357ead2438bb105feeb68eaab67afa3d6268db 0\t.claude/worktrees/keen-chatelet-0af2ea",
+    "160000 b5fedc08d1a66ced2bd4ac453fb33da956a9203e 0\t.claude/worktrees/lane2-outbox-replay-proof",
+    "160000 768bf36c6b5d4c34ba7035f6e65cd11336ea9b46 0\t.claude/worktrees/naughty-mendel-7cbcee",
+    "160000 868b16c1387d7372bdbb4b7f3dce172d52505894 0\t.claude/worktrees/pedantic-cori-a6b573",
+    "160000 4dfa9732dda580324c49e7214724ac36455f3bde 0\t.claude/worktrees/practical-brahmagupta-25b2b3",
+    "160000 b56c6d0cb046e5501f4fd1f8b65c03b631db8481 0\t.claude/worktrees/zen-easley-df6efe"
+  ],
+  "initialPreparationFailure": "First local preparation tried reading a pre-existing gitlink directory as a file; stopped before test collection/artifact writes. Corrected regular-file/hash vs gitlink/object pin semantics; empty private directory reused. No source mutation.",
+  "command": [
+    "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "-X",
+    "utf8",
+    "-B",
+    "-m",
+    "pytest",
+    "-p",
+    "pytest_asyncio.plugin",
+    "-p",
+    "no:cacheprovider",
+    "tests/",
+    "--tb=short",
+    "--junitxml=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2b-20261022-01\\baseline.xml"
+  ],
+  "exit": 0,
+  "seconds": 89.429,
+  "cases": 3028,
+  "passed": 2891,
+  "skipped": 137,
+  "failed": [],
+  "logsPrivate": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2b-20261022-01",
+  "env": "OS essentials incl SystemRoot, source PYTHONPATH, pytest asyncio explicit; provider/database/key env absent; no opt-in DB",
+  "limits": "No source edits, providers, DB, destructive or installed dependencies; no blind suite rerun",
+  "postconditionDisposition": "Collector expected3027, but actual accepted merge includes TWO additive foreign tenant-filter tests in tests/test_receipt_anchor.py (+124lines): PR85 and subsequent accepted change. All3026P2Afinal identities/dispositions retained plus2passing tests. pytest exit0,2891PASS137SKIP0FAIL; no rerun. Initial postcollection count assertion failure is metadata assumption only, not suite failure.",
+  "acceptedAdditionalIdentities": [
+    [
+      "tests.test_receipt_anchor.TestQueryByPolicyHash",
+      "test_find_by_policy_hash_excludes_foreign_tenant_from_faulty_provider"
+    ],
+    [
+      "tests.test_receipt_anchor.TestQueryByReceiptId",
+      "test_find_by_receipt_id_filters_foreign_tenant_records"
+    ]
+  ]
+}
