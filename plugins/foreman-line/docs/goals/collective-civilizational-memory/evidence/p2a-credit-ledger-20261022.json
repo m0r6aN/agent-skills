@@ -1,7 +1,7 @@
 {
-  "atUtc": "2026-10-22T04:47:59.211689+00:00",
+  "atUtc": "2026-10-22T04:55:07.296797+00:00",
   "parcel": "CCM-P2A",
-  "status": "Two complete independent closure PASS; exact-head CI triage before merge",
+  "status": "Accepted merged StageFclosed; all exact-head and merged-main workflows green; no further P2A paid calls",
   "unit": "GenSpark prepaid credits, operational estimates not proof of incremental billing",
   "reportedSpent": 743.6,
   "knownCompletedReviewConservativeCredits": 450.49399999999997,
@@ -62,5 +62,8 @@
       "reported": 121.0,
       "booked": 121.35475
     }
-  ]
+  ],
+  "acceptedCommit": "76fa7c6eda6a4859e7d3a64815c760a77d4c07f0",
+  "sourceHead": "cb794ba7c51dd3508c90832a892aaa2490894993",
+  "pr": "https://github.com/Keon-Systems/keon-cortex/pull/87"
 }
