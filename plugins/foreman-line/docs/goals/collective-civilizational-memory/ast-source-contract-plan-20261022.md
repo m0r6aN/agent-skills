@@ -66,6 +66,19 @@ Actual matching fixtures on every claimed host runtime are prerequisites for a
 compatibility claim; the prior Python 3.13.7 observations alone do not qualify it.
 No claim of all-language repository coverage or 500-files/min performance follows.
 
+Follow-through: the known local Programs/Python directory contains Python313 and
+Launcher only; this is not an exhaustive system runtime inventory. Twelve fixed
+synthetic fixtures passed on Python 3.13.7 with requested feature_version=(3,10),
+using an isolated-mode child with only four OS environment names. They cover
+nested lexical scopes, duplicate declarations, control blocks, decorated async,
+NFKC/NFD identifiers, multiline signatures, parse-only raise, malformed UTF-8,
+truncated syntax and except-star rejection. Evidence:
+evidence/ast-expanded-fixture-observations-20261022.json. Raw AST accepted the
+ASCII latin-1-cookie fixture, confirming the need for explicit cookie-policy
+prevalidation. These observations qualify neither an actual Python 3.10 host nor
+parser resource containment. A private Unicode fixture encoding mistake was
+corrected before this evidence was saved; no production source changed.
+
 Carry forward candidate 256 KiB source, 20,000 emitted tokenizer tokens, bracket
 depth 64 and 2,048 declarations as PROVISIONAL guard values. Define the token count
 to include every token yielded, including ENCODING/ENDMARKER when emitted; bracket

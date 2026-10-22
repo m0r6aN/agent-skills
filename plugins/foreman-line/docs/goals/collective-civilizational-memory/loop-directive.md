@@ -149,6 +149,11 @@ API, three proposed new source files, explicit Unicode/span/error semantics and
 six independent byte-oracle checks complete. Parser host grammar comparison,
 resource-limit qualification and execution boundary remain prerequisites, not
 waived by OS-only environment filtering. No implementation, worker or paid call.
+Twelve expanded small fixture observations now pass on local Python3.13.7 with
+requested3.10 grammar; actual3.10 host coverage and resource safety remain open.
+Evidence: ast-expanded-fixture-observations-20261022.json. Raw AST acceptance of
+an ASCII latin-1-cookie source confirms explicit UTF-8 cookie prevalidation is
+needed. No new delegated worker, provider call or supplied-source execution.
 Then P3 storage/outbox/batch fencing/deletion, P4 scoped retrieval/benchmark,
 P5 composition/graph, P6 lifecycle/caution/Gateway, P7 inheritance, P8 connectors.
 Source/authentication qualification remains ZERO before high-trust legacy backfill.
