@@ -76,7 +76,13 @@ not among reported child-exposed names; explicitly admitted source-only review
 continued on that route. This does NOT close the handling incident.
 
 HOLD new delegated shell workers until credential ownership/rotation/isolation
-disposition. Future role prompts must forbid all environment dumps and credential
+disposition. Owner explicitly directed safe preparation to continue via oversight.
+See credential-containment-handoff-20261022.md and next-ast-interface-preparation-20261022.md.
+The12:30UTC fixed parent subprocess check PASS mechanically excludes credential
+variables and starts asyncio; it is NOT native-worker/file/registry isolation.
+Oversight owns exact-name rotation steps; original Context custody stays here.
+No credential provisioning/testing/copy/revocation/restart or raw transcript scan.
+No new source/paid request; fresh current guards required before any next paid phase. Future role prompts must forbid all environment dumps and credential
 store inspection; use parent-owned OS-only test runners. This is procedural,
 not a hard sandbox claim. Do not create an unbounded launcher/security project.
 Read-only source shaping can be prepared under existing authority; do not send

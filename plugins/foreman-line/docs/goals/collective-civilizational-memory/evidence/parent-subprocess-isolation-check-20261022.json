@@ -1,0 +1,21 @@
+{
+  "atUtc": "2026-10-22T12:30:06.726783+00:00",
+  "scope": "Fixed deterministic parent subprocess only",
+  "fakeCanaryExclusion": "PASS",
+  "actualChild": {
+    "allowlistOnly": true,
+    "asyncioStartup": "PASS",
+    "credentialVariablesPresent": false
+  },
+  "environmentValuesPrintedOrSaved": false,
+  "providerRequests": 0,
+  "credentialTestsOrRegistryReads": 0,
+  "credentialsChanged": false,
+  "limitations": [
+    "Native agents and their exec tools still inherit their own environment; this helper does not change that",
+    "Same-user subprocess can access files/registry if allowed code asks; no OS credential-store sandbox established",
+    "No network, browser, or native-worker entitlement/isolation admission",
+    "Credential rotation and original transcript disposition remain OPEN"
+  ],
+  "disposition": "Allow bounded deterministic parent commands with explicit sanitized env; new credential-bearing delegated shell workers remain HELD"
+}
