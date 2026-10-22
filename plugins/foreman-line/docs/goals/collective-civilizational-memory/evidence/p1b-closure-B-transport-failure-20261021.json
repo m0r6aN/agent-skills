@@ -1,0 +1,29 @@
+{
+  "startedAtUtc": "2026-10-22T02:33:05.012785+00:00",
+  "phase": "closure-B",
+  "modelRequested": "claude-opus-5-5",
+  "effortRequested": "low",
+  "outputMax": 6144,
+  "inputBytes": 88640,
+  "inputSha256": "63a83db95fd912332fcc661ed7d898fb83df3410ef5037b3f9b5d11288fff5c4",
+  "inputOperationalBound": 92896,
+  "creditReservation": 350,
+  "modeledAtByteBoundCredits": 323.048,
+  "status": "failed_no_retry",
+  "retries": 0,
+  "requestsMax": 1,
+  "creditGuard": {
+    "balance": 8320.3,
+    "sharedDayUsed": 2366.81,
+    "effortUsed": 2447.11,
+    "P1BBookedBefore": 205.94475,
+    "newCycleBooked": 121.11,
+    "rawSharedDay": 2595.7,
+    "rawEffort": 2676.0,
+    "ownedPendingAlreadyInSharedLedger": 700,
+    "ourClosureCompletedPlusRemainingHold": 471.11,
+    "reservationAccounting": "Replace exact named P1B pending hold, retain all unrelated/unknown holds, conservatively count own completed book too"
+  },
+  "failureClass": "SSLError",
+  "finishedAtUtc": "2026-10-22T02:33:05.210247+00:00"
+}

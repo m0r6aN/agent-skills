@@ -43,6 +43,12 @@
         "coverage"
       ],
       "disposition": "Supply accepted S05-S07 text/exactsource hashes, baseline/diff outputs/defaultidentity independent recomputation in closurepacket; no new businessscope. Scores alreadycarryversions, captureactualbenchmark-ready sample. No v1source change."
+    },
+    {
+      "ids": [
+        "host.integratedFreshBoundary"
+      ],
+      "disposition": "Within SAME in-flight repair: R(day=S) initiallycomputed.8999999999999999 andmisclassifiesfresh. Use mathematically equivalent stable arithmetic, no threshold retuning/snap; integratecomputedR->projection at S,9S,27S for allinitialclasses."
     }
   ],
   "allowedFiles": "Same exact5paths",

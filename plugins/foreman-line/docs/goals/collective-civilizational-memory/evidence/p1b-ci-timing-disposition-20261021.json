@@ -1,0 +1,95 @@
+{
+  "atUtc": "2026-10-22T02:44:29.794686+00:00",
+  "head": "7f081ad886caedfae7b38d61c1616ec326143898",
+  "pr": "https://github.com/Keon-Systems/keon-cortex/pull/83",
+  "initialChecks": [
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39712509329/job/119607252820",
+      "name": "Tenant Isolation Proof",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39712509329/job/119607252829",
+      "name": "Proof Summary",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39712509329/job/119607252815",
+      "name": "Benchmark (fake provider)",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39712514673/job/119607254015",
+      "name": "Benchmark (fake provider)",
+      "state": "SKIPPED"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39712514673/job/119607254418",
+      "name": "Tenant Isolation Proof",
+      "state": "SKIPPED"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39712514673/job/119607254548",
+      "name": "Proof Summary",
+      "state": "SKIPPED"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39712514673/job/119606916132",
+      "name": "Unit Tests (3.11)",
+      "state": "CANCELLED"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39712514673/job/119606916104",
+      "name": "Lint + Type Check",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39712514673/job/119606916135",
+      "name": "Unit Tests (3.12)",
+      "state": "FAILURE"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39712514673/job/119606916008",
+      "name": "Import Gate (OSS must not reference governed)",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39712514673/job/119606915785",
+      "name": "Unit Tests (3.10)",
+      "state": "CANCELLED"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39712509329/job/119606898732",
+      "name": "Unit Tests (3.12)",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39712509329/job/119606898399",
+      "name": "Lint + Type Check",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39712509329/job/119606898567",
+      "name": "Unit Tests (3.11)",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39712509329/job/119606898552",
+      "name": "Unit Tests (3.10)",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39712509329/job/119606898652",
+      "name": "Import Gate (OSS must not reference governed)",
+      "state": "SUCCESS"
+    }
+  ],
+  "failure": "Only Unit3.12 tests/temporal/test_benchmark.py::TestBenchReceiptEmitOverhead::test_receipt_overhead_bounded[50], BM2ratio3.771104539737811 >3.0, resolve0.4ms/receipt1.4ms;2824passed137skipped. Othermatrixjobs cancelled, downstreamskipped.",
+  "logSha256": "a138137485a13b9977df526de9cf7decdc31b3ac52b149a9cea9636a0158c338",
+  "control": "Same candidate push run39712509329 all8jobsSUCCESS; candidate PRrun39712514673 timingfailure. Existing temporalbenchmark/source/threshold unchanged by five-path P1B.",
+  "disposition": "ONE targeted failed/cancelled/dependent job rerun on exactsamehead, under owner delegated non-destructive authority. Evidence-specific, no source/threshold/skip/environment changes. No further blindrerun if failure recurs; report/block merge and route existingowner.",
+  "retryAttemptMax": 1,
+  "notStabilityRepair": true,
+  "notSLOProof": true,
+  "mergeHeld": true
+}
