@@ -7,8 +7,9 @@ created: 2026-10-19
 updated: 2026-10-22
 risk: critical
 routing_class: architecture/risk
+verification_class: judgment-required
 surfaces: [plugins/foreman-line/docs/, plugins/foreman-line/dispatch/src/pantheon-runtime/contracts/]
-permission_profile: om-pan-001-native-bootstrap
+permission_profile: builder-architecture
 data_classification: internal
 ---
 

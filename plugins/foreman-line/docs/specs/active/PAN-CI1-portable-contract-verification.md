@@ -7,8 +7,9 @@ created: 2026-10-22
 updated: 2026-10-22
 risk: standard
 routing_class: implementation/standard
+verification_class: judgment-required
 surfaces: [plugins/foreman-line/dispatch/tests/, plugins/foreman-line/bypass-outage-harness/pins/, plugins/foreman-line/docs/specs/]
-permission_profile: om-pan-001-native-bootstrap
+permission_profile: builder-standard
 data_classification: internal
 ---
 
