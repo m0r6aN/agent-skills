@@ -138,3 +138,19 @@ parcel/day/effort limits, preserved unknown holds and no automatic retries).
 No paid budget is inferred merely from this draft. Completion supplies exact
 file hashes, commands/results/test identities, hostile-input coverage, versions,
 limits, usage and estimated/unknown costs. No builder approval, promotion or merge.
+
+
+### Accepted-base local timing disposition
+
+Before any P2A source existed, the complete Windows/Python3.13 baseline ran
+2993 cases:2855passed,137opt-in skipped, and only the pre-existing BM2
+`test_receipt_overhead_bounded[50]` failed (9.38x vs3.0,0.4ms vs4.1ms).
+Accepted base6139ddd8802540829eebce07215106e4b16ca360 passed both main CI runs
+39717649317/39717649103. This does not authorize a benchmark fix, threshold
+change, new skip or blind rerun. Keep all267original source/test/config pins,
+all2855passing baseline identities and137existing skip dispositions. Run and
+retain the complete candidate suite even if that same baseline timing case
+recurs; any other failure or new skip stops for concrete triage. All focused
+scrubber tests, formatting/types and actual exact-head CI must pass before
+acceptance/merge. Same baseline timing variance is not claimed repaired or
+ignored in whole-suite reporting. No P2A work owns BM2 or source issue81.
