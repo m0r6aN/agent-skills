@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import {
+  chmodSync,
   copyFileSync,
   lstatSync,
   mkdirSync,
@@ -28,6 +29,7 @@ const fixtureBudgetBytes = 64 * 1024 * 1024
 const requiredSources = [
   'authority-registry/src/generate.ts',
   'authority-registry/src/validate.ts',
+  'authority-registry/src/r33-migrations.ts',
   'spec-linter/src/grandfather.ts',
   'contract-readers/src/registry-data.ts',
   'jev-decisions/src/replay.ts',
@@ -88,6 +90,7 @@ test('PAN-CI2: pinned checksum admission and hostile source controls', async (t)
       const path = join(root, identity)
       mkdirSync(dirname(path), { recursive: true })
       copyFileSync(join(pluginRoot, identity), path)
+      chmodSync(path, 0o600)
     }
     put(manifestIdentity, manifest)
     // Observe real bounded-handle I/O, including deliberately short reads. Any full-file
@@ -276,6 +279,229 @@ process.on('exit', () => console.log('CI2_READ_BOUND_PROBE ' + JSON.stringify({ 
       assert.deepEqual(readFileSync(target), manifest)
       const result = run()
       assert.equal(result.status, 0, result.output)
+    })
+    const authorityIdentity = 'authority-registry/src/r33-migrations.ts'
+    const authorityPath = join(root, authorityIdentity)
+    const authoritySource = readFileSync(authorityPath, 'utf8')
+    const recordStart = authoritySource.indexOf("  {\n    unit: 'adopt-item.36fc26502361',")
+    assert.ok(recordStart >= 0)
+    const recordEnd = authoritySource.indexOf('\n  },', recordStart) + '\n  },'.length
+    assert.ok(recordEnd > recordStart)
+    const record = authoritySource.slice(recordStart, recordEnd)
+    const literal = /normalizedExcerpt:\s*("[^\n]+"),/.exec(record)?.[1]
+    assert.ok(literal)
+    const value = JSON.parse(literal) as string
+    assert.equal(Buffer.byteLength(value, 'utf8'), 750)
+    const mutateRecord = (changed: string) => authoritySource.replace(record, changed)
+    const rejectAuthority = async (name: string, changed: string) => {
+      await t.test(`D017 refuses ${name}`, () => {
+        assert.notEqual(changed, authoritySource, 'negative control must actually mutate its input')
+        try {
+          writeFileSync(authorityPath, changed)
+          const result = run()
+          assert.equal(result.status, 1, result.output)
+          assert.match(result.output, /D017 authority-text DATA:|\[class 3\]/)
+        } finally {
+          writeFileSync(authorityPath, authoritySource)
+        }
+      })
+    }
+    await rejectAuthority(
+      'full-value mutation retaining path mention',
+      mutateRecord(record.replaceAll('Developer quick flags', 'developer quick flags')),
+    )
+    await rejectAuthority(
+      'wrong migration unit',
+      mutateRecord(record.replace('adopt-item.36fc26502361', 'adopt-item.wrong')),
+    )
+    await rejectAuthority(
+      'wrong source identity',
+      mutateRecord(record.replace("sourceId: 'coordinator-pattern'", "sourceId: 'wrong'")),
+    )
+    await rejectAuthority(
+      'wrong item identity',
+      mutateRecord(record.replace("itemId: 'item.36fc26502361'", "itemId: 'item.wrong'")),
+    )
+    await rejectAuthority(
+      'wrong disposition',
+      mutateRecord(record.replace("disposition: 'adopted'", "disposition: 're-valued'")),
+    )
+    await rejectAuthority('wrong prior', mutateRecord(record.replace('prior: null', 'prior: {}')))
+    await rejectAuthority(
+      'wrong rule identity',
+      mutateRecord(
+        record.replace("ruleId: 'rule.coordinator-pattern.36fc26502361'", "ruleId: 'rule.wrong'"),
+      ),
+    )
+    await rejectAuthority(
+      'wrong declaration name',
+      authoritySource.replace('export const R33_ITEM_MIGRATIONS:', 'export const OTHER_MIGRATIONS:'),
+    )
+    await rejectAuthority(
+      'unexported declaration',
+      authoritySource.replace('export const R33_ITEM_MIGRATIONS:', 'const R33_ITEM_MIGRATIONS:'),
+    )
+    await rejectAuthority(
+      'mutable declaration',
+      authoritySource.replace('export const R33_ITEM_MIGRATIONS:', 'export let R33_ITEM_MIGRATIONS:'),
+    )
+    await rejectAuthority('nested declaration', `function nested() {\n${authoritySource}\n}\n`)
+    await rejectAuthority(
+      'shadow variable',
+      `${authoritySource}\nfunction shadow() { const R33_ITEM_MIGRATIONS = [] }\n`,
+    )
+    await rejectAuthority(
+      'shadow parameter',
+      `${authoritySource}\nfunction shadow(R33_ITEM_MIGRATIONS: unknown) {}\n`,
+    )
+    await rejectAuthority(
+      'shadow destructuring binding',
+      `${authoritySource}\nfunction shadow() { const { R33_ITEM_MIGRATIONS } = {} }\n`,
+    )
+    await rejectAuthority(
+      'duplicate declaration',
+      `${authoritySource}\nexport const R33_ITEM_MIGRATIONS = []\n`,
+    )
+    await rejectAuthority('duplicate record', mutateRecord(`${record}\n${record}`))
+    await rejectAuthority(
+      'duplicate excerpt occurrence',
+      mutateRecord(
+        record.replace(
+          `normalizedExcerpt:\n        ${literal},`,
+          `normalizedExcerpt: ${literal}, normalizedExcerpt: ${literal},`,
+        ),
+      ),
+    )
+    await rejectAuthority(
+      'duplicate statement occurrence',
+      mutateRecord(
+        record.replace(
+          `normalizedStatement:\n          ${literal},`,
+          `normalizedStatement: ${literal}, normalizedStatement: ${literal},`,
+        ),
+      ),
+    )
+    await rejectAuthority(
+      'missing excerpt',
+      mutateRecord(record.replace(`normalizedExcerpt:\n        ${literal},`, '')),
+    )
+    await rejectAuthority(
+      'missing statement',
+      mutateRecord(record.replace(`normalizedStatement:\n          ${literal},`, '')),
+    )
+    await rejectAuthority(
+      'moved excerpt property',
+      mutateRecord(record.replace('normalizedExcerpt:', 'differentExcerpt:')),
+    )
+    await rejectAuthority(
+      'moved statement property',
+      mutateRecord(record.replace('normalizedStatement:', 'differentStatement:')),
+    )
+    await rejectAuthority(
+      'moved record container',
+      mutateRecord(`  { wrapped: ${record.trim().slice(0, -1)} },`),
+    )
+    await rejectAuthority(
+      'moved value to constant',
+      `${mutateRecord(record.replace(literal, 'movedValue'))}\nconst movedValue = ${literal}\n`,
+    )
+    await rejectAuthority(
+      'computed migration key',
+      mutateRecord(record.replace('unit:', "['unit']:")),
+    )
+    await rejectAuthority(
+      'computed leaf key',
+      mutateRecord(record.replace('normalizedExcerpt:', "['normalizedExcerpt']:")),
+    )
+    await rejectAuthority(
+      'spread migration record',
+      mutateRecord(record.replace('    unit:', '    ...{},\n    unit:')),
+    )
+    await rejectAuthority(
+      'spread new object',
+      mutateRecord(record.replace("'new': {", "'new': { ...{},")),
+    )
+    await rejectAuthority(
+      'spread rule object',
+      mutateRecord(record.replace('newRules: [\n      {', 'newRules: [\n      { ...{},')),
+    )
+    await rejectAuthority(
+      'spread array record',
+      mutateRecord(`  ...[${record.trim().slice(0, -1)}],`),
+    )
+    await rejectAuthority(
+      'indirect array initializer',
+      authoritySource.replace(
+        'export const R33_ITEM_MIGRATIONS: readonly R33ItemMigration[] = [',
+        'export const R33_ITEM_MIGRATIONS = alias\nconst alias: readonly R33ItemMigration[] = [',
+      ),
+    )
+    await rejectAuthority(
+      'call array initializer',
+      authoritySource.replace(
+        'export const R33_ITEM_MIGRATIONS: readonly R33ItemMigration[] = [',
+        'export const R33_ITEM_MIGRATIONS = make()\nconst other: readonly R33ItemMigration[] = [',
+      ),
+    )
+    await rejectAuthority(
+      'call instead of leaf',
+      mutateRecord(record.replace(literal, `identity(${literal})`)),
+    )
+    await rejectAuthority(
+      'indirect new object',
+      mutateRecord(
+        record
+          .replace("'new': {", "'new': identity({")
+          .replace('    },\n    newLocatorDigest:', '    }),\n    newLocatorDigest:'),
+      ),
+    )
+    await rejectAuthority(
+      'extra rule array occurrence',
+      mutateRecord(record.replace('newRules: [', 'newRules: [{ ruleId: "extra" },')),
+    )
+    await rejectAuthority(
+      'same value in executable resolver',
+      `${authoritySource}\nresolve(${literal})\n`,
+    )
+    await rejectAuthority(
+      'third unpinned literal',
+      `${authoritySource}\nconst third = ${literal}\n`,
+    )
+    await t.test('D017 requires the exact file, even if identical data exists elsewhere', () => {
+      const other = put('authority-registry/src/r33-lookalike.ts', authoritySource)
+      rmSync(authorityPath)
+      try {
+        const result = run()
+        assert.equal(result.status, 1, result.output)
+        assert.match(result.output, /D017 authority-text DATA: required file .* is absent/)
+        assert.match(result.output, /\[class 3\].*r33-lookalike/)
+      } finally {
+        rmSync(other)
+        writeFileSync(authorityPath, authoritySource)
+      }
+    })
+    await t.test('D017 missing file without a replacement fails mandatory reconciliation', () => {
+      rmSync(authorityPath)
+      try {
+        const result = run()
+        assert.equal(result.status, 1, result.output)
+        assert.match(result.output, /D017 authority-text DATA: required file .* is absent/)
+      } finally {
+        writeFileSync(authorityPath, authoritySource)
+      }
+    })
+    await t.test('D017 restored leaves report distinct one-plus-one identities', () => {
+      assert.equal(readFileSync(authorityPath, 'utf8'), authoritySource)
+      const result = run()
+      assert.equal(result.status, 0, result.output)
+      for (const slot of ['new.normalizedExcerpt', 'newRules[0].normalizedStatement']) {
+        assert.ok(
+          result.output.includes(
+            `D017 authority-text DATA: ${authorityIdentity}#${slot}; expected=1; observed=1`,
+          ),
+          result.output,
+        )
+      }
     })
   } finally {
     measure()
