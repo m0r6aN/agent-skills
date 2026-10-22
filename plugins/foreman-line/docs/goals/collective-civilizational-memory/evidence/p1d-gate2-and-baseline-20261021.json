@@ -1,0 +1,90 @@
+{
+  "atUtc": "2026-10-22T02:57:32.005917+00:00",
+  "parcel": "CCM-P1D",
+  "gate2": "Approved under owner blanket non-destructive authority, foundationratification settled",
+  "worktree": "D:\\Repos\\ccm-worktrees\\cortex-p1d",
+  "branch": "feat/foreman-line-ccm-p1d",
+  "base": "cc3a6defa78849b8df8795c58ac65866f31179d5",
+  "P1BOrCDependency": false,
+  "draftSpecSha256": "33d2f4d90c57db9c4583328a50442e1fed37e9a2de421742661b7553d6f86603",
+  "activeSpecSha256": "b8867511f1063886a590ee64eb6fedd9e587dd45afeb6a9a5a40666a84418da0",
+  "change": "status-only derivative, bodyunchanged",
+  "builder": "NativeCodexgpt-6-luna/low /root/p1d_builder, Step0PASS andflagsdisposedbeforebuild,oneimpl+oneformalreviewrepair",
+  "scope": "Exactly3newpaths; fake-driverunitcheckeronly, missingconfigCLI mustnotnetwork; realdisposableDB andnamedtarget gatesremainseparate, no credentiallookup/provisioning/cloud bybuilder",
+  "driverMetadata": {
+    "name": "asyncpg",
+    "version": "0.31.0",
+    "connectSignature": "(dsn=None, *, host=None, port=None, user=None, password=None, passfile=None, service=None, servicefile=None, database=None, loop=None, timeout=60, statement_cache_size=100, max_cached_statement_lifetime=300, max_cacheable_statement_size=15360, command_timeout=None, ssl=None, direct_tls=None, connection_class=<class 'asyncpg.connection.Connection'>, record_class=<class 'asyncpg.protocol.record.Record'>, server_settings=None, target_session_attrs=None, krbsrvname=None, gsslib=None)",
+    "capability": "Local callablemetadata only, no connect/query, no credentials read"
+  },
+  "baselineRuns": [
+    {
+      "name": "p1d-baseline",
+      "cwd": "D:\\Repos\\ccm-worktrees\\cortex-p1d",
+      "testCount": 79,
+      "exitCode": 0,
+      "seconds": 1.902,
+      "argv": [
+        "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "pytest",
+        "-p",
+        "pytest_asyncio.plugin",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--basetemp=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1d-20261021-01\\p1d-baseline-temp",
+        "--junitxml=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1d-20261021-01\\p1d-baseline.xml",
+        "tests/test_ingress_models.py",
+        "tests/test_evidence_envelope.py"
+      ],
+      "outputSha256": "1de51dcfefa6f2994dfc71336dbbe75b229b2be3d566e6a05a69609bc9b30fb4"
+    },
+    {
+      "name": "p1a-python-conformance",
+      "cwd": "D:\\Repos\\ccm-worktrees\\cortex-p1a",
+      "testCount": 161,
+      "exitCode": 0,
+      "seconds": 1.691,
+      "argv": [
+        "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "pytest",
+        "-p",
+        "pytest_asyncio.plugin",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--basetemp=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1d-20261021-01\\p1a-python-conformance-temp",
+        "--junitxml=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1d-20261021-01\\p1a-python-conformance.xml",
+        "tests/test_ccm_contracts_v2.py"
+      ],
+      "outputSha256": "87538a3bcc347a6b4bc138acc2f0f243748ae0a2a3209e6f91868ef28b4e6812"
+    }
+  ],
+  "flagDispositions": [
+    "Missing historicalForemanP1Aworkorderpath inCortex isnotdependencygap; actualacceptedCortexdoc/fixtureatcc3a6 binding supplied, workorder archivedinForeman donefolder.",
+    "Userdirect AGENTS saysordinaryshellcommandsdirect; no need installrtk or routeordinarycommands throughcompression.",
+    "Draft statusresolvedbythismetadata-only activecommit; realDBgate remainsopen, no mockclaim."
+  ],
+  "externalReviewEnvelope": {
+    "P1DCredits": 500,
+    "sharedNYOct21Credits": 4000,
+    "initialReviewMax": 250,
+    "initialReviewCalls": 1,
+    "possibleFocusedRepairClosureMax": 250,
+    "automaticRetries": 0,
+    "accountFloor": 1000,
+    "effortCap": 9000,
+    "paidDispatch": "Only afterhostcandidatechecksandmeasuredexacttokenprofile; none yet"
+  },
+  "nativeUsage": "Separateunknown Codexaccountusage, noexternalbuilderAPI",
+  "capture": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1d-20261021-01",
+  "accepted": false
+}

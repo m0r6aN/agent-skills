@@ -1,0 +1,31 @@
+{
+  "run": {
+    "name": "p1a-python-conformance",
+    "cwd": "D:\\Repos\\ccm-worktrees\\cortex-p1a",
+    "testCount": 161,
+    "exitCode": 0,
+    "seconds": 1.691,
+    "argv": [
+      "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+      "-X",
+      "utf8",
+      "-B",
+      "-m",
+      "pytest",
+      "-p",
+      "pytest_asyncio.plugin",
+      "-p",
+      "no:cacheprovider",
+      "-q",
+      "--basetemp=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1d-20261021-01\\p1a-python-conformance-temp",
+      "--junitxml=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1d-20261021-01\\p1a-python-conformance.xml",
+      "tests/test_ccm_contracts_v2.py"
+    ],
+    "outputSha256": "87538a3bcc347a6b4bc138acc2f0f243748ae0a2a3209e6f91868ef28b4e6812"
+  },
+  "acceptedCortexSourceCommit": "d0d550526a46c8bb29c994ef33ff324a7c270fe0",
+  "acceptedMerge": "cc3a6defa78849b8df8795c58ac65866f31179d5",
+  "fixtureSha256": "c419250a4a9e232aca9a168ffeb7bb20b3acaf9746e6b7bc06babad8c1de9e90",
+  "sourceReadOnly": true,
+  "doesNotProveCSharpYet": true
+}
