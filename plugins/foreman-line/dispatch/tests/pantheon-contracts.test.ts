@@ -770,7 +770,10 @@ test('Pantheon: invalid string escapes in values and keys are malformed JSON', (
 })
 
 test('Pantheon: shared 102-case wire contract', () => {
-  const fixturePath = process.env.PANTHEON_WIRE_FIXTURES
+  const fixturePath =
+    process.env.PANTHEON_WIRE_FIXTURES === undefined
+      ? new URL('./fixtures/pantheon-wire-contract-v1.json', import.meta.url)
+      : process.env.PANTHEON_WIRE_FIXTURES
   assert.ok(fixturePath, 'PANTHEON_WIRE_FIXTURES must name the shared read-only bundle')
   const bundle = JSON.parse(readFileSync(fixturePath, 'utf8')) as {
     schema: string
