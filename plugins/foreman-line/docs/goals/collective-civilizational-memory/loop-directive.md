@@ -1,3 +1,42 @@
+# CCM current loop — foundation accepted; next bounded scrubber parcel
+
+Updated 2026-10-22T03:48:10.320071+00:00
+All four P1 parcels are StageF closed and source/main CI green. Accepted source:
+P1A Cortexcc3a6defa78849b8df8795c58ac65866f31179d5 (PR80);
+P1B Cortex241358c664fbbceb140a45c0da40c48f6c1135c0 (PR83);
+P1C Collective3d44cf5b8b3fb38a857dd1607159a665c1c3b310 (PR300);
+P1D Cortex6139ddd8802540829eebce07215106e4b16ca360 (PR84).
+See foundation-acceptance-20261021.md and actual stage-f-closure receipts.
+Custodian remains ccm-coordinator-20261020-fresh-01; authorized operator and
+oversight unchanged. Owner blanket authority persists, no routine reapproval.
+No duplicate coordinator, revived automation or overall/bulk-ready claim.
+
+NEXT: finish one explicit draft CCM-P2A in-memory scrubber, actual frozen
+advisory self-check and schema-valid ShapingResult, coordinator ratify proposed
+interfaces/detection/resource profile under delegated authority, bounded worktree
+build + TWO architecture/security reviews +one formal focused repair ifneeded.
+Newcanonical scrubber/** was explicitly planned in v4; don't modify unrelated
+legacy outcome_ingest/extraction/api or invent an existing durable queue. P3 owns
+mechanical scrub-before-durable-enqueue integration and its actual proof.
+The fresh small shaper authored a draft but did not emit while local Ajv runtime
+was unavailable. Operator prepared exact frozen package copies and pinned public
+runtime dependencies PRIVATELY with Node24.19, no repo package/schema changes.
+Draft is not dispatched/approved merely because it exists; lint exact contracts.
+
+All foundation paid calls complete; no pending continuation or automatic retry.
+GenSpark foundation conservative2626.729 including unknown94.6+350, API$1.08227
+including unknown$0.17192. Native Codex usage separateunknown. Fresh snapshot in
+evidence/foundation-credit-reconciliation-20261021.json. SharedNYOct21 ceiling4800
+expires04UTC, floor1000/effort9000; preserve allholds across dates, no silent reset.
+Future paid phases require finite exact admission; direct owner grant permits
+bounded increases, not unbounded default. Foreignledger remains read-only.
+
+The later targetprofile/keycoverage/producerqualification and P2-P8 full exits
+remain open as explicitly listed in foundation acceptance. Historical checkpoint
+text below is retained as history and is superseded by this current section.
+
+---
+
 # CCM coordinator loop — P1A/P1B merged; P1C review and P1D build
 
 Custodian remains `ccm-coordinator-20261020-fresh-01`; authorized operator
