@@ -1,0 +1,36 @@
+{
+  "atUtc": "2026-10-22T03:04:27.291264+00:00",
+  "sourceBase": "70aabfc4b8e550d83fac4478dbf9d3d230898438",
+  "allPassed": true,
+  "testIdentities": 322,
+  "retainedBaseline": 314,
+  "unchangedPinnedFiles": 259,
+  "candidatePins": {
+    "src/Keon.Collective.Abstractions/Society/AgentIdentityContracts.cs": "66215f8c78f2e80de54d3616719112a49049dcf8240f1579c0fa883cfefc27cd",
+    "src/Keon.Collective.Abstractions/Society/CivicMemoryContracts.cs": "c16a59e157d42f1e38d0607a433d0920fb6993b12136f9f45c77a91e5be43938",
+    "src/Keon.Collective.Abstractions/Society/CivilizationalMemoryContracts.cs": "1a2b5bed1e840acd3112b33b0252db7c4c7fb85dec700a5f2938f7219e02dff4",
+    "tests/Keon.Collective.Abstractions.Tests/Society/CivilizationalMemoryContractTests.cs": "cd9e7eb1aa336fddb220c0a1f133f1bea6300629aa3583c4b8983789993c30bf",
+    "tests/Keon.Collective.Abstractions.Tests/Society/ccm-contracts-v2.json": "c419250a4a9e232aca9a168ffeb7bb20b3acaf9746e6b7bc06babad8c1de9e90"
+  },
+  "command": [
+    "dotnet",
+    "test",
+    "tests/Keon.Collective.Abstractions.Tests/Keon.Collective.Abstractions.Tests.csproj",
+    "--no-restore",
+    "--configuration",
+    "Release",
+    "--logger",
+    "trx;LogFileName=host.trx",
+    "--results-directory",
+    "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1c-20261021-01\\host-validation"
+  ],
+  "exitCode": 0,
+  "seconds": 8.697,
+  "capture": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1c-20261021-01\\host-validation",
+  "fixtureVersion": "ccm-contracts/2.0.1",
+  "fixtureSourceMerge": "cc3a6defa78849b8df8795c58ac65866f31179d5",
+  "pythonConformanceEvidence": "p1c-python-source-conformance-20261021.json",
+  "independentReviews": "pending",
+  "accepted": false,
+  "compatibilityCaveat": "Original primary constructors/deconstruct preserved; new public record properties affect reflection/equality/ToString"
+}
