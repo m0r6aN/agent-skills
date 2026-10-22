@@ -7,8 +7,9 @@ created: 2026-10-19
 updated: 2026-10-22
 risk: critical
 routing_class: architecture/risk
+verification_class: judgment-required
 surfaces: [plugins/foreman-line/docs/, plugins/foreman-line/dispatch/src/pantheon-runtime/contracts/]
-permission_profile: om-pan-001-native-bootstrap
+permission_profile: builder-architecture
 data_classification: internal
 ---
 
@@ -65,9 +66,17 @@ Each original P01/P02 builder has2700dispatched seconds/at most3segments/one ind
 
 Dispatch binds full identity/session/slot/host/epoch, branch/head/spec/files/profile/tools/network/hashes/deadline. Exact Step0 is an automatic coordinator comparison in the same turn. Builder edits only its subset and artifact directory; no spec edits, commit/push/PR/merge, credentials/provider/network/package access, authority/acceptance receipt or agent dispatch. Coordinator commits this specification alone before implementation. Higher-cap actual Runtime root validates protected original and delegated evidence before initial creation and on reopen, preserving original root/plan identities; no operational deletion/reinitialization/upgrade.
 
-Two fresh independent substantive whole-unit reviews of identical final45source/spec files and complete trusted lossless test evidence precede eligible merge, after independently accepted source, never-started obsolete-seat retirement, fresh admission and snapshot readback. Serialized request<=1MiB, retaining49,152combined output; no source truncation, omitted authority/cases or hidden coverage loss. Any changed final subject invalidates both seats. Current exact-head CI/repository rules govern merge without bypass. Source tests, packet fit or transport success are not a review/admission/Runtime cycle. Final accepted P03–P05 composition precedes permanent native closure and the sole Runtime validation-only handoff. Supported package loading must prove actual loaded hashes; never edit cache and claim reload.
+Two fresh independent substantive whole-unit reviews of identical final45source/spec files and complete trusted lossless test evidence precede eligible merge, after independently accepted source, never-started obsolete-seat retirement, fresh admission and snapshot readback. Serialized request<=1MiB, retaining49,152combined output; no source truncation, omitted authority/cases or hidden coverage loss. Any changed final subject invalidates both seats, except for the exact PAN-CI1 nonbehavioral maintenance applicability amendment below; that exception does not convert either original seat into a review of a new subject. Current exact-head CI/repository rules govern merge without bypass. Source tests, packet fit or transport success are not a review/admission/Runtime cycle. Final accepted P03–P05 composition precedes permanent native closure and the sole Runtime validation-only handoff. Supported package loading must prove actual loaded hashes; never edit cache and claim reload.
 
 Broader non-destructive owner-delegated decisions require a concrete finite record, independent verification and enforcement; no new Human routine-start gate. Destructive effects and nondelegable external requirements remain outside. Continue independent authorized work during precise automatic holds; preserve causal evidence, custody/fencing, Cortex memory separation and accounting responsibility.
+
+## D015 PAN-CI1 maintenance applicability — 2026-10-22
+
+Actual owner grant DA001 and independently assessed finite coordinator decision D015 c9e2bd56dfcecf612b626581e13d603aebdbf992894f6932c3eb68d5d7597254 authorize ONLY the exact maintenance delta in [PAN-CI1](PAN-CI1-portable-contract-verification.md): unchanged1938959byte102case bundle SHA15a449cac6c1fcf5a210ee6f7c3b4cb586e522850b132136ebc1a90976476023, undefined-only module-relative fixture default preserving explicit empty/wrong-override refusal and every assertion/outcome, and committed identity-only pin/specification metadata. The original two whole-unit seats remain evidence ONLY for original frozen subject9278e44e5d2739efff4fdb2da994b097319532bc54365451c0cbbd403953bef3. They are not reviews of a successor subject.
+
+This explicit exception permits fresh independent frontier review of the COMPLETE mechanical maintenance delta plus actual normal green CI to accept that composed successor. It does not require a newly paid review for this exact nonbehavioral scope. Any changed production/authority/contract behavior, assertion, expected outcome, case count, Unicode control, fixture byte or broader edit immediately exits the exception and returns affected work to the ordinary substantive-review gate before any paid request. Every other changed-subject rule and other goal remains unchanged. Failed evidence cannot be approved into a pass.
+
+Coordinator commits the three named specification amendments alone before code. Original P01session may use at most one900second implementation segment and one checker-requested900second correction,1800seconds cumulative, counting actual P01ordinals3/4 under the SAME6start/global40caps. No revision6, old772second balance transfer, new native session, P00edit, paid attempt or spending/access/expiry increase. Preserve the frozen revision5 workspace/spec/paid records; its prior byte-identical-test requirement describes that original acceptance. ONLY the exact PAN-CI1 test-path setup may change under this maintenance exception. Current accepted production contracts/index.ts remains immutable. Actual independent maintenance/source/CI evidence is required; this decision is not a Human ratification or Runtime grant.
 
 ## Shared wire requirements
 
