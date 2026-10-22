@@ -50,6 +50,12 @@ advisory/schema/emitter/readback passed, Gate2 commit5e9d0b06 before fresh worke
 
 ## Actual credential-handling incident — OPEN
 
+Targeted fresh-child gateway authentication now PASS: missing/invalid401,
+replacement initialize200, owned empty-loopback process stopped/no listener.
+See gateway-isolated-refresh-result-20261022.md. Shared parent remains stale;
+no affected-route release, worker admission or broader incident closure. Pending
+isolated-check wording below is superseded only for this fixed child path.
+
 Latest gateway disposition supersedes the unresolved mapping notes below:
 oversight traced MCP_GATEWAY_AUTH_TOKEN to the saved local Pi Docker client,
 Authorization Bearer header and local setup/start scripts. Current endpoint is
@@ -154,6 +160,11 @@ before any next paid parcel. Use compact <=500word complete verdicts and suffici
 output allowance; no automatic retry/provider hunt or partial-PASS acceptance.
 
 ## Remaining goal / next capability
+
+AST boundary decision: use a separately qualified bounded subprocess for hostile
+input, not in-process byte/token guards alone. See
+ast-parser-execution-boundary-20261022.md. This is planning only; platform resource
+controls, restricted filesystem/registry access and cleanup need actual evidence.
 
 Next small source capabilities: deterministic AST/git extraction, civic-contract
 mapping, extractor engine; these and remaining P2 are NOT claimed complete.

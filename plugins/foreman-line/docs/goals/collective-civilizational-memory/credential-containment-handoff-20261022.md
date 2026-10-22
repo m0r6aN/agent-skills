@@ -50,6 +50,15 @@ evidence of rotation, revocation or expiry.
 
 ### Current local gateway mapping supersedes the earlier unresolved mapping
 
+Subsequent targeted check: fixed fresh child client/gateway authentication PASS
+at2026-10-22T13:52:08.5516623Z (missing/invalid401, replacement initialize200).
+See gateway-isolated-refresh-result-20261022.md and
+evidence/gateway-isolated-auth-refresh-passed-20261022.json. The owned empty
+loopback gateway was stopped and no listener remains. This completes isolated
+child refresh/auth verification only; the shared parent remains stale, affected
+routes/workers stay held, and provider cleanup is not closed. The earlier pending
+check wording below is superseded to that extent; no global parent restart done.
+
 Oversight located the saved Pi Docker client
 C:/Users/clint/Documents/Codex/2026-09-23/pl/.mcp.json using
 ${PI_MCP_GATEWAY_URL}/mcp with Authorization: Bearer ${MCP_GATEWAY_AUTH_TOKEN}.

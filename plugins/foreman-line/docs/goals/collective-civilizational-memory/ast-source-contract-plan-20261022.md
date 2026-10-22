@@ -60,6 +60,11 @@ to differing parser entry points. Never report a parsed name/path as scrubbed.
 
 ## Grammar and resource admission
 
+The subsequent planning decision in ast-parser-execution-boundary-20261022.md
+selects a separately qualified bounded subprocess for hostile-source admission.
+The alternative of admitting hostile input in-process is no longer the selected
+plan. Numeric ceilings and actual host isolation/resource proof remain open.
+
 Target Python 3.10 source grammar, requested explicitly through the supported AST
 feature-version interface. Preserve the repository's Python 3.10 compatibility.
 Actual matching fixtures on every claimed host runtime are prerequisites for a
