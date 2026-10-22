@@ -769,7 +769,7 @@ test('Pantheon: invalid string escapes in values and keys are malformed JSON', (
   refused(parseNdjsonFrame(`${' '.repeat(LIMITS.frameBytes)}"\\q"\n`), 'LIMIT_EXCEEDED')
 })
 
-test('Pantheon: shared 71-case wire contract', () => {
+test('Pantheon: shared 102-case wire contract', () => {
   const fixturePath = process.env.PANTHEON_WIRE_FIXTURES
   assert.ok(fixturePath, 'PANTHEON_WIRE_FIXTURES must name the shared read-only bundle')
   const bundle = JSON.parse(readFileSync(fixturePath, 'utf8')) as {
@@ -782,10 +782,16 @@ test('Pantheon: shared 71-case wire contract', () => {
     }[]
   }
   assert.equal(bundle.schema, 'pantheon.p01-wire-fixture-bundle.v1')
-  assert.equal(bundle.examples.length, 71)
-  assert.equal(new Set(bundle.examples.map((example) => example.id)).size, 71)
+  assert.equal(bundle.examples.length, 102)
+  assert.equal(new Set(bundle.examples.map((example) => example.id)).size, 102)
   for (const example of bundle.examples) {
     assert.equal(Buffer.byteLength(example.inputUtf8, 'utf8'), example.byteLength, example.id)
+    if (example.id.startsWith('r4-')) {
+      const recipe = unicodeWireCases.find((item) => item.id === example.id)
+      assert.ok(recipe, example.id)
+      assert.equal(recipe.input, example.inputUtf8, example.id)
+      assert.equal(recipe.code, example.expected.code, example.id)
+    }
     const actual = parseNdjsonFrame(example.inputUtf8)
     assert.equal(actual.status, example.expected.status, example.id)
     if (actual.status === 'structurally-valid') {
@@ -1059,5 +1065,41 @@ for (const order of [0, 1, 2]) {
       ),
       'LIMIT_EXCEEDED',
     )
+  })
+}
+
+// These readable recipes reproduce the exact shared bytes, including literal JSON escapes.
+const unicodeWireCases: { id: string; input: string; code: string }[] = []
+for (const count of [33886, 33887, 33888, 34000]) {
+  for (const suffix of ['\\ud800', '\\udc00', '\\ud800\\udc00', 'y']) {
+    unicodeWireCases.push({
+      id: `r4-value-${count}-${suffix}`,
+      input: `[[${'0,'.repeat(8188)}0],"${'x'.repeat(count)}${suffix}"]\n`,
+      code:
+        count >= 33888 || (count === 33887 && suffix === '\\ud800\\udc00')
+          ? 'LIMIT_EXCEEDED'
+          : 'INVALID_SHAPE',
+    })
+  }
+}
+for (const count of [33890, 33891, 33892, 34000]) {
+  for (const key of ['\\ud800', '\\udc00', 'y']) {
+    unicodeWireCases.push({
+      id: `r4-key-${count}-${key}`,
+      input: `[[${'0,'.repeat(8187)}0],{"${key}":"${'x'.repeat(count)}"}]\n`,
+      code: count >= 33892 ? 'LIMIT_EXCEEDED' : 'INVALID_SHAPE',
+    })
+  }
+}
+unicodeWireCases.push(
+  { id: 'r4-plain-lone-value', input: '["\\ud800"]\n', code: 'INVALID_SHAPE' },
+  { id: 'r4-plain-lone-key', input: '{"\\ud800":0}\n', code: 'INVALID_SHAPE' },
+  { id: 'r4-valid-pair-control', input: '["\\ud800\\udc00"]\n', code: 'INVALID_SHAPE' },
+)
+assert.equal(unicodeWireCases.length, 31)
+for (const example of unicodeWireCases) {
+  test(`Pantheon: exact UTF16 capture ${example.id}`, () => {
+    assert.ok(Buffer.byteLength(example.input, 'utf8') < LIMITS.frameBytes)
+    refused(parseNdjsonFrame(example.input), example.code)
   })
 }

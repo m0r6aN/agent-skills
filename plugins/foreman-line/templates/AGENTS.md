@@ -1,5 +1,7 @@
 # AGENTS.md — canon entry point
 
+> **Pantheon current authority:** Read the complete [OM-PAN-001 current mandate](../docs/standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) before applying this document. Actual EX14 and DA001 supersede only Pantheon's obsolete owner-only amendment gates, revision limits and native-response meter. The authentic initial owner grant remains distinct; non-destructive coordinator decisions need no new human prompt but must be bounded, recorded, independently verified and enforced before effect. Exact Step0 comparison is automatic; source/review/security/repository gates still hold on missing evidence. No fake Human/Runtime receipts, worker scope expansion or destructive authority. The generic gates below apply to other goals; Pantheon uses the linked current mandate for every affected step.
+
 **The Foreman Line** is the pipeline this repo runs its own development
 through: it turns a raw idea into a reviewed, merged change by passing it
 through a fixed sequence of agent sessions and human gates (see "The stage
@@ -76,7 +78,7 @@ meant to stand alone for a reader who has never seen this pipeline before.
   by one coordinator (below) from initial idea through every one of its
   parcels to completion.
 - **Coordinator.** The role that carries a goal end to end. It is a
-  session operating within the owner's ratified authority. OM-PAN-001 delegates routine coordination and reserves material authority decisions to the owner. Outside that exception this template retains the human-driven session directed at each gate.
+  session operating within the owner's ratified authority. OM-PAN-001 delegates routine coordination and uses actual DA001 for bounded non-destructive decisions and reserves destructive or genuinely undelegated decisions to the owner. Outside that exception this template retains the human-driven session directed at each gate.
   "Coordinator lint" (used elsewhere in this kit as a gating step) is that
   same session's own automated check of a draft artifact against this kit's
   conventions before promoting it — a tool invocation the coordinator session

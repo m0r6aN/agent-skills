@@ -1,5 +1,7 @@
 # Shaping Session Kickstarter — TEMPLATE
 
+> **Pantheon current authority:** Read the complete [OM-PAN-001 current mandate](../../docs/standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) before applying this document. Actual EX14 and DA001 supersede only Pantheon's obsolete owner-only amendment gates, revision limits and native-response meter. The authentic initial owner grant remains distinct; non-destructive coordinator decisions need no new human prompt but must be bounded, recorded, independently verified and enforced before effect. Exact Step0 comparison is automatic; source/review/security/repository gates still hold on missing evidence. No fake Human/Runtime receipts, worker scope expansion or destructive authority. The generic gates below apply to other goals; Pantheon uses the linked current mandate for every affected step.
+
 > Reusable dispatch shell for a Foreman Line **shaping session** (the pipeline's
 > first stage, turning a raw idea into linted parcel spec drafts). Copy this
 > file, fill every `<PLACEHOLDER>`, and dispatch. This template describes the
@@ -100,9 +102,10 @@ dispatch carries, a session's traps are inherently session-specific.>`
   from their own environment; do not carry another repo's environment forward
   as a default.>`
 
-For Pantheon under a verified, active OM-PAN-001 grant, apply `docs/standing-mandates/OM-PAN-001.md`; this exception does not apply to other goals or create Runtime authority. Step 0 waits for the coordinator's evidence comparison; an exact match requires no human confirmation. Any later rework uses the same rule. The native bootstrap grant is explicitly separate from a Runtime/resolver receipt; do not fabricate one.
 
 ## Step 0 — restate and STOP (mandatory gate)
+
+For Pantheon, STOP only for automatic coordinator comparison and resolution of concrete flags; an exact match proceeds without a new human answer. The developer-answer instructions below retain their original meaning for other goals.
 
 Before writing any draft:
 
@@ -134,4 +137,4 @@ loop-stop — STOP and report.
 ## Completion
 
 End by reporting the draft paths and the shaping-result path, and the open
-questions (if any) still awaiting a human decision.
+questions (if any) still awaiting a decision under the applicable authority; Pantheon non-destructive questions go to its delegated coordinator.

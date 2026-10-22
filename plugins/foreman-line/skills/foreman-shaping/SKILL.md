@@ -3,6 +3,8 @@ name: foreman-shaping
 description: Run a Foreman Line Stage A shaping session - turn a raw idea into linted parcel spec drafts plus a schema-valid ShapingResult handed forward to W1-P2. Use when a developer brings an idea that needs to be shaped into one or more dispatchable parcel specs before any build. Not for building a parcel (that is a builder session) and not for filling the Epic/Story tree (that is W1-P2).
 ---
 
+> **Pantheon current authority:** Read the complete [OM-PAN-001 current mandate](../../docs/standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) before applying this document. Actual EX14 and DA001 supersede only Pantheon's obsolete owner-only amendment gates, revision limits and native-response meter. The authentic initial owner grant remains distinct; non-destructive coordinator decisions need no new human prompt but must be bounded, recorded, independently verified and enforced before effect. Exact Step0 comparison is automatic; source/review/security/repository gates still hold on missing evidence. No fake Human/Runtime receipts, worker scope expansion or destructive authority. The generic gates below apply to other goals; Pantheon uses the linked current mandate for every affected step.
+
 # /foreman-shaping — Stage A shaping session
 
 You run the **interactive-shaping role**: turn a raw idea into one or more parcel
@@ -11,7 +13,6 @@ artifact; you do not promote it, register it, or mint a receipt. The determinist
 machinery you call lives in `plugins/foreman-line/shaping/` — this skill is the
 interaction guidance around it.
 
-For Pantheon under a verified, active OM-PAN-001 grant, apply `docs/standing-mandates/OM-PAN-001.md`; this exception does not apply to other goals or create Runtime authority. Shaping returns drafts; the coordinator may then invoke verified lint/promotion separately without a human turn.
 
 ## Inputs
 
@@ -27,7 +28,7 @@ For Pantheon under a verified, active OM-PAN-001 grant, apply `docs/standing-man
 2. **Surface constraints and propose a decomposition** into one or more parcels,
    in dependency order, each with a risk level and routing class.
 3. **Ask clarifying questions in small batches** — numbered, each with a
-   **recommended default** attached. For verified OM-PAN-001, record routine resolutions within ratified intent and escalate material authority deltas only. Otherwise propose, let the developer dispose; never silently resolve a design question.
+   **recommended default** attached. For verified OM-PAN-001/DA001, record routine resolutions and report non-destructive material deltas to the coordinator for a bounded verified decision without another human prompt; destructive actions remain excluded. Otherwise propose, let the developer dispose; never silently resolve a design question.
 4. **Write the drafts.** Author each parcel spec under
    `plugins/foreman-line/docs/specs/active/` at **`status: draft`** (draft is not
    dispatchable — SPEC-CONVENTION §3). Run the package's two-layer advisory

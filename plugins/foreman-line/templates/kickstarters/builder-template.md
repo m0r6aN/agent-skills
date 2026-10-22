@@ -1,5 +1,7 @@
 # Builder Kickstarter — TEMPLATE
 
+> **Pantheon current authority:** Read the complete [OM-PAN-001 current mandate](../../docs/standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) before applying this document. Actual EX14 and DA001 supersede only Pantheon's obsolete owner-only amendment gates, revision limits and native-response meter. The authentic initial owner grant remains distinct; non-destructive coordinator decisions need no new human prompt but must be bounded, recorded, independently verified and enforced before effect. Exact Step0 comparison is automatic; source/review/security/repository gates still hold on missing evidence. No fake Human/Runtime receipts, worker scope expansion or destructive authority. The generic gates below apply to other goals; Pantheon uses the linked current mandate for every affected step.
+
 > Reusable dispatch shell for a Foreman Line **builder session**. Copy this
 > file, fill every `<PLACEHOLDER>`, and dispatch. This template describes the
 > builder **role**, not any one parcel.
@@ -107,7 +109,6 @@ A genuine spec *gap* is a flag to raise at Step 0 or the moment you hit it; the
 coordinator rules and, if needed, ratifies an amendment before further work.
 Silently designing around a gap is the failure this gate exists to prevent.
 
-For Pantheon under a verified, active OM-PAN-001 grant, apply `docs/standing-mandates/OM-PAN-001.md`; this exception does not apply to other goals or create Runtime authority. Step 0 waits for the coordinator's evidence comparison; an exact match requires no human confirmation. Any later rework uses the same rule. The native bootstrap grant is explicitly separate from a Runtime/resolver receipt; do not fabricate one.
 
 ## Step 0 — restate and STOP (mandatory gate)
 
@@ -176,7 +177,7 @@ concrete command or inspection that catches it, not just the risk.>`
 
 ## STOP boundary
 
-Commit to `<BRANCH-NAME>`. **Do not open a PR. Do not merge.** Gate 3 belongs to the coordinator only where verified standing authority delegates it; otherwise it remains human. The builder receives no merge authority. Report back with your evidence; the coordinator then
+For Pantheon native bootstrap, freeze and report without committing. For other goals, commit to `<BRANCH-NAME>`. **Do not open a PR. Do not merge.** Gate 3 belongs to the coordinator only where verified standing authority delegates it; otherwise it remains human. The builder receives no merge authority. Report back with your evidence; the coordinator then
 dispatches adversarial review.
 
 ## Completion report
@@ -186,11 +187,3 @@ anything you could not complete and why, any flag you raised, and the
 judgement calls a reviewer should look at hardest. An adversarial review
 follows — it will re-run your checks and probe with hostile input, so do not
 overstate.
-
-For Pantheon only, actual EX11 in the [standing mandate](../../docs/standing-mandates/OM-PAN-001.md) governs all current obligations; other goals retain their gates. Keep $75 total/$65 bootstrap/$20.25 P00/$25 each P01–P05/B1–B3/$6/request; 29 inclusive bootstrap/120 goal claims. Retain both holds: older $5 counts once against total outside bootstrap/unit sums; $5.34 stays in bootstrap. Preserve mandatory unfinished claim/money floors, including $6 sole validation until a narrower exact profile is independently verified. Billed cost remains null until genuine reconciliation; allowances promise neither every recovery nor exact invoices.
-
-B1 review revision3 is final: no revision4; B2/B3 retain0–2. Inherited timeRevision2 balances are P01 2111/P02 1786 seconds, each at most two remaining segments against the same2700-second/three-segment parent and original135-minute cap; actual ledgers govern later balances. Only two inherited independent source-check windows remain across B1, at most60 minutes each. Retain EX9 operational counters (three60-minute windows per purpose plus actual attempt/source-revision/proposal identity), original12-model-call/eight-session limits (four sessions consumed), two semantic attempts per seat/subject, one paid request globally, one worker per host/two globally, existing accounts/hosts/access and expiry2026-11-02T13:38:02.935Z. No label/head/chat resets counters; failures count.
-
-Pin each segment's original identity, head/spec/allowlist, host/profile/tools/network, immutable start/deadline; exact Step0 matching proceeds automatically. Charge ceil dispatch-through-pinned-effect-free-freeze/explicit-release time, including setup/waiting/checks/reporting. No pause/backdate; missing/disputed/late freeze spends the allocation and holds. Further dispatch requires verified release, checker release, a concrete same-scope correction and remaining balance. Each segment counts; full timeout+cleanup must fit before preparation and launch. Initial windows stay closed; builders cannot amend committed specs or perform forbidden effects listed in the mandate.
-
-Correction requires two conclusive predecessor results including substantive changes_required, or one such material-source result plus qualified independent checker retirement of the never-started stale other seat. The mandate's complete history/subject/heads/result/disposition/identity/successor pins, create-only record and permanently fenced attempt ID under exclusive admission, and pre-effect recheck are mandatory. No coordinator self-retirement, started/unknown retirement, fake pass/claim/refund or new successor. Every changed final subject needs two fresh independent substantive passing whole-unit reviews on identical complete source; changes invalidate both. Tests/retirement grant no admission. All45 B1 files, current specs and complete operative EX11 must fit1MiB; preserve exact lossless fixtures and exclude prior reviewer narrative/triage from fresh context while retaining local evidence. Preserve EX7/EX8 history, separate cycle11 acceptance and closed old P00 cycles; no plan/qualification rerun. Human-required policies, Runtime admission, protected merge, supported package loading and permanent native cutover retain their separate gates.

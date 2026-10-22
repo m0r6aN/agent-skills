@@ -1,5 +1,7 @@
 # Shaping Session Kickstarter — TEMPLATE
 
+> **Pantheon current authority:** Read the complete [OM-PAN-001 current mandate](../standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) before applying this document. Actual EX14 and DA001 supersede only Pantheon's obsolete owner-only amendment gates, revision limits and native-response meter. The authentic initial owner grant remains distinct; non-destructive coordinator decisions need no new human prompt but must be bounded, recorded, independently verified and enforced before effect. Exact Step0 comparison is automatic; source/review/security/repository gates still hold on missing evidence. No fake Human/Runtime receipts, worker scope expansion or destructive authority. The generic gates below apply to other goals; Pantheon uses the linked current mandate for every affected step.
+
 > Reusable dispatch shell for a Foreman Line **Stage A shaping session**. Copy this
 > file, fill every `<PLACEHOLDER>`, and dispatch. This template describes the
 > shaping **role**, not any one session.
@@ -55,9 +57,10 @@ Anthropic models use dots (e.g. `openrouter/anthropic/claude-opus-5.5`).
 - Environment: Windows. Node toolchain commands run in **PowerShell only**; run
   `node -v` first (must satisfy `>=24.11.1`).
 
-For Pantheon under a verified, active OM-PAN-001 grant, apply `docs/standing-mandates/OM-PAN-001.md`; this exception does not apply to other goals or create Runtime authority. Step 0 waits for the coordinator's evidence comparison; an exact match requires no human confirmation. Any later rework uses the same rule. The native bootstrap grant is explicitly separate from a Runtime/resolver receipt; do not fabricate one.
 
 ## Step 0 — restate and STOP (mandatory gate)
+
+For Pantheon, STOP only for automatic coordinator comparison and resolution of concrete flags; an exact match proceeds without a new human answer. The developer-answer instructions below retain their original meaning for other goals.
 
 Before writing any draft: restate the idea in your own words; enumerate the
 parcels you propose (in dependency order, each with a risk level and routing
@@ -85,4 +88,4 @@ tier below Epic/Story) is a loop-stop — STOP and report.
 ## Completion
 
 End by reporting the draft paths and the `ShapingResult` path, and the open
-questions (if any) still awaiting a human decision.
+questions (if any) still awaiting a decision under the applicable authority; Pantheon non-destructive questions go to its delegated coordinator.

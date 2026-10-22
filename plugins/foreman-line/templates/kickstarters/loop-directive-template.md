@@ -1,5 +1,7 @@
 # Loop Directive — TEMPLATE
 
+> **Pantheon current authority:** Read the complete [OM-PAN-001 current mandate](../../docs/standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) before applying this document. Actual EX14 and DA001 supersede only Pantheon's obsolete owner-only amendment gates, revision limits and native-response meter. The authentic initial owner grant remains distinct; non-destructive coordinator decisions need no new human prompt but must be bounded, recorded, independently verified and enforced before effect. Exact Step0 comparison is automatic; source/review/security/repository gates still hold on missing evidence. No fake Human/Runtime receipts, worker scope expansion or destructive authority. The generic gates below apply to other goals; Pantheon uses the linked current mandate for every affected step.
+
 > Reusable shell for a goal's loop directive. Never copy over an existing loop
 > directive. Copy this file to `docs/goals/<GOAL-SLUG>/loop-directive.md` and
 > fill every `<PLACEHOLDER>`. The `/goal` skill says when to write it,
@@ -40,7 +42,7 @@ see registry §3 and §8.
 Granted by `<GRANTOR, THE HUMAN DEVELOPER>` on `<GRANT-DATE>`, as it applies
 to this goal. Each is the grant's verbatim prose with its scope and
 contingencies. Where nothing was granted, the slot says `none` and that gate
-stays with the human. Gate 1 is never delegable and never appears here.
+stays with the human. Outside Pantheon, Gate 1 is never delegable and never appears here. Pantheon records its already authentic initial grant separately and subsequent DA001 decisions as delegated decisions, never new Human ratifications.
 Quick flags are not standing authorizations: none is written here; none widens,
 reinterprets or revokes one (registry §3).
 
@@ -50,7 +52,7 @@ reinterprets or revokes one (registry §3).
 
 ## Queue (strict order)
 
-In the charter's dependency order. Under OM-PAN-001, the coordinator may split/refine within-scope parcels without widening authority; material changes stop dependent work for one exception. Other new parcel ideas are stop-and-report.
+In the charter's dependency order. Under OM-PAN-001, the coordinator may split/refine parcels and decide non-destructive amendments through DA001; dependent effects hold until the exact decision, specification and enforcement are independently verified. Other new parcel ideas are stop-and-report.
 
 1. `<PARCEL-1-ID>`: `<ONE-LINER, RISK, ROUTING CLASS>`
 2. `<PARCEL-2-ID>`: `<ONE-LINER, RISK, ROUTING CLASS>`
@@ -67,8 +69,7 @@ In the charter's dependency order. Under OM-PAN-001, the coordinator may split/r
 ## Active restrictions and decision log
 
 The entry's line format, writer, reading, lifting and lifetime, and the
-decision-log entry format, are defined only in registry §9. Nothing in the
-entry can grant authority or loosen a restriction (registry §4). When this
+decision-log entry format, are defined only in registry §9. Generic entries cannot grant authority or loosen a restriction (registry §4). Pantheon bounded DA001 decisions derive authority from the separately verified actual owner grant, not from a stored entry; record and independently verify changed enforcement before effect. When this
 file is first written, the owner carries the lines of every earlier entry
 directly under the `Active restrictions:` label below: the draft charter's
 (written before Gate 1) and `docs/goals/<GOAL-SLUG>/restrictions.md`'s
@@ -101,7 +102,7 @@ quick flags; the Coordinator writes no quick-flag token into one (registry §4).
 
 ## Crash recovery
 
-For OM-PAN-001, apply the actual EX6 succession and session-floor rules in `docs/standing-mandates/OM-PAN-001.md` before any recovery dispatch. No generic fresh session bypasses the eight-session ceiling, single reserved checker successor, author exclusions or builder deadline. After permanent cutover, native recovery never reopens automatically; persist the deduplicated post-cutover repair exception and continue read-only reconstruction.
+For OM-PAN-001, apply the current EX14/DA001 succession, native-start and session-floor rules in `docs/standing-mandates/OM-PAN-001.md` before any recovery dispatch. No generic fresh session bypasses the eight-session ceiling, single reserved checker successor, author exclusions or builder deadline. After permanent cutover, native recovery never reopens automatically; persist the deduplicated post-cutover repair exception and continue read-only reconstruction.
 
 On any wake (scheduled, a completion notice, or a human nudge) while expecting
 a builder or reviewer result, first check whether that session is still
@@ -110,11 +111,3 @@ death, not completion: its work is unclaimed even if it survives on disk, and
 unclaimed disk state is never accepted as done. Where the applicable mandate permits it, recover with a fresh session
 whose Step 0 restates the original directive, inventories what exists on disk
 against it, and stops for your ruling; then continue the loop.
-
-For Pantheon only, actual EX11 in the [standing mandate](../../docs/standing-mandates/OM-PAN-001.md) governs all current obligations; other goals retain their gates. Keep $75 total/$65 bootstrap/$20.25 P00/$25 each P01–P05/B1–B3/$6/request; 29 inclusive bootstrap/120 goal claims. Retain both holds: older $5 counts once against total outside bootstrap/unit sums; $5.34 stays in bootstrap. Preserve mandatory unfinished claim/money floors, including $6 sole validation until a narrower exact profile is independently verified. Billed cost remains null until genuine reconciliation; allowances promise neither every recovery nor exact invoices.
-
-B1 review revision3 is final: no revision4; B2/B3 retain0–2. Inherited timeRevision2 balances are P01 2111/P02 1786 seconds, each at most two remaining segments against the same2700-second/three-segment parent and original135-minute cap; actual ledgers govern later balances. Only two inherited independent source-check windows remain across B1, at most60 minutes each. Retain EX9 operational counters (three60-minute windows per purpose plus actual attempt/source-revision/proposal identity), original12-model-call/eight-session limits (four sessions consumed), two semantic attempts per seat/subject, one paid request globally, one worker per host/two globally, existing accounts/hosts/access and expiry2026-11-02T13:38:02.935Z. No label/head/chat resets counters; failures count.
-
-Pin each segment's original identity, head/spec/allowlist, host/profile/tools/network, immutable start/deadline; exact Step0 matching proceeds automatically. Charge ceil dispatch-through-pinned-effect-free-freeze/explicit-release time, including setup/waiting/checks/reporting. No pause/backdate; missing/disputed/late freeze spends the allocation and holds. Further dispatch requires verified release, checker release, a concrete same-scope correction and remaining balance. Each segment counts; full timeout+cleanup must fit before preparation and launch. Initial windows stay closed; builders cannot amend committed specs or perform forbidden effects listed in the mandate.
-
-Correction requires two conclusive predecessor results including substantive changes_required, or one such material-source result plus qualified independent checker retirement of the never-started stale other seat. The mandate's complete history/subject/heads/result/disposition/identity/successor pins, create-only record and permanently fenced attempt ID under exclusive admission, and pre-effect recheck are mandatory. No coordinator self-retirement, started/unknown retirement, fake pass/claim/refund or new successor. Every changed final subject needs two fresh independent substantive passing whole-unit reviews on identical complete source; changes invalidate both. Tests/retirement grant no admission. All45 B1 files, current specs and complete operative EX11 must fit1MiB; preserve exact lossless fixtures and exclude prior reviewer narrative/triage from fresh context while retaining local evidence. Preserve EX7/EX8 history, separate cycle11 acceptance and closed old P00 cycles; no plan/qualification rerun. Human-required policies, Runtime admission, protected merge, supported package loading and permanent native cutover retain their separate gates.
