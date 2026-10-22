@@ -1,0 +1,23 @@
+{
+  "baseRefOid": "b6a97327298582da352e84d48117ae8539fbe8c0",
+  "headRefOid": "54658187d74e43acf28cad83461b9778f0dce347",
+  "mergeStateStatus": "CLEAN",
+  "mergeable": "MERGEABLE",
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-22T03:36:35Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/Keon-Systems/Keon.Collective/actions/runs/39717490851/job/119622999774",
+      "name": "build",
+      "startedAt": "2026-10-22T03:33:31Z",
+      "status": "COMPLETED",
+      "workflowName": ".NET"
+    }
+  ],
+  "url": "https://github.com/Keon-Systems/Keon.Collective/pull/300",
+  "atUtc": "2026-10-22T03:36:53.567653+00:00",
+  "gate3": "Approved under direct owner blanket non-destructive decision/approval authority; full independent source/local chain and current exact-head checks green, no admin bypass",
+  "sourceAccepted": false
+}
