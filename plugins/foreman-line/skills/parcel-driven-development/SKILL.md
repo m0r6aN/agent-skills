@@ -3,39 +3,24 @@ name: parcel-driven-development
 description: Reusable methodology for coordinating multi-agent, multi-session, and multi-project development through contract-first parcels, initiative-level coordination, persisted state, integration readiness, and release gate discipline. Use when a feature or initiative is too large for one agent to ship end-to-end, when work spans multiple sessions or repositories, when integration boundaries matter, or when external stakeholders, security review, UAT, or release readiness require consistent evidence.
 ---
 
+> **Pantheon:** Apply the complete [current OM-PAN-001 mandate](../../docs/standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) (EX14/DA001/D007) to every affected step. Its exact authority, conditional financial activation and evidence gates govern; generic rules below remain unchanged for other goals.
+
 # Parcel-Driven Development Skill
 
 A methodology for shipping large features and multi-project initiatives by composing small, isolated, agent-built parts against stable contracts, with coordinator-owned sequencing, persistent state, integration readiness, and release gate discipline.
+
 
 ## Core Principle
 
 > Prefer contract-first, parcel-sized development. Agents produce isolated, testable parts against stable interfaces. Coordination happens through contracts, initiative state, dependency graphs, integration surfaces, verification evidence, and merge discipline, not through agents negotiating with each other.
 
-The assembly-line analogy still applies: agents are workers building specific, scoped, well-defined parts. The **coordinator** owns the contracts, dependency graph, scope enforcement, integration sequencing, state persistence, release gates, and escalation of product decisions.
+The coordinator (also called parcel owner, tech lead, feature owner or initiative owner) owns contracts, dependencies, scope, integration sequencing, persistent state, release gates and product-decision escalation across repositories, services, environments and evidence. Agents master their assigned contract, verify only permitted work and hand it off. **Read and enforce [The Hard Rules](#the-hard-rules), all applicable phases and [Review Workflow](#review-workflow) before dispatch or implementation.**
 
-Agents do not need to understand the whole product. They need to understand their assigned part deeply, build only against the approved contract, verify their work, and produce a clean handoff.
-
-For multi-project initiatives, the coordinator is not merely sequencing branches. The coordinator is managing the initiative from end to end across repositories, services, deployment environments, integration boundaries, evidence artifacts, and release readiness.
-
-> **A note on roles:** This skill uses "coordinator" deliberately. The role is operational, not purely architectural. The coordinator owns contracts, the dependency graph, scope enforcement, integration surfaces, persistent state, release gates, and escalation. Teams may substitute their own term such as "parcel owner," "tech lead," "feature owner," or "initiative owner," as long as the responsibilities stay intact.
 
 ## Mental Model
 
-```text
-Initiative Coordination = commander map
-Parcel-Driven Development = squad-level execution
-Security Review = hostile boundary inspection
-Persistence Layer = operational memory
-Integration Scenarios = truth serum
-```
+Unit tests prove parts; integration scenarios prove boundaries; release gates prove readiness; evidence artifacts prove claims. **Apply the complete [Integration Scenario Matrix](#integration-scenario-matrix), [Security Gate Orchestration](#security-gate-orchestration), [Release Gates](#release-gates) and [Persistence Layer](#persistence-layer).**
 
-Unit tests prove parts.
-
-Integration scenarios prove boundaries.
-
-Release gates prove readiness.
-
-Evidence artifacts prove claims.
 
 ## When to Use This Skill
 
@@ -60,42 +45,10 @@ Do NOT use this skill when:
 
 ## Modes
 
-This skill has two modes.
+**Repo-Local Parcel Mode** applies to one repository or tightly bounded project. **Multi-Project Initiative Mode** applies across repositories, services, applications, environments or integration boundaries (including Keon public surfaces, gateway, Runtime, memory/receipts, control planes and proof artifacts).
 
-### Repo-Local Parcel Mode
+In either mode, **read and perform [Phase -1](#phase--1-repo-and-project-discovery) through [Phase 5](#phase-5-hardening-and-release-readiness)**: discovery, contracts PR, vertical spike, parcel specs/worktrees/branches/reviews/merges and verification. Multi-Project mode additionally requires the complete [Multi-Project Initiative Artifacts](#multi-project-initiative-artifacts), [Persistence Layer](#persistence-layer), integration/environment/security/release sections and [Session Handoff](#session-handoff). These are coordinator responsibilities, not optional references.
 
-Use this when the effort is contained inside one repository or one tightly bounded project surface.
-
-The coordinator manages:
-
-- Repo discovery
-- Contract PR
-- Thin vertical spike
-- Parcel specs
-- Worktrees and branches
-- Parcel review
-- Merge sequencing
-- Repo-local verification
-
-### Multi-Project Initiative Mode
-
-Use this when the effort spans multiple repositories, services, applications, deployment environments, or integration boundaries.
-
-The coordinator manages everything in Repo-Local Parcel Mode, plus:
-
-- Initiative brief
-- Project track map
-- Cross-project dependency graph
-- Integration surface map
-- Environment readiness matrix
-- Integration scenario matrix
-- Security gate map
-- Release gate checklist
-- Persistent coordinator state
-- Session handoff log
-- Evidence index
-
-Use Multi-Project Initiative Mode for platforms like Keon where public surfaces, gateway services, runtime services, memory/receipt systems, control planes, deployment environments, and proof artifacts must function together.
 
 ## Vocabulary
 
@@ -342,32 +295,10 @@ The cost after is five PRs plus a contract amendment and rebase mess. That is ho
 
 ## Phase 3: Parallel Parcel Dispatch
 
-Parcels run in parallel waves.
+Dispatch parallel waves in dependency order. **Read and enforce [The Hard Rules](#the-hard-rules), [Branch and Worktree Hygiene](#branch-and-worktree-hygiene), [Parcel Spec Template](#parcel-spec-template) and [Session Handoff](#session-handoff)** for each parcel: these complete canonical sections govern its worktree, branch/current base/rebase, spec, exact allowed files, verification and handoff.
 
-Each parcel:
+Maintain the [Parcel Index Document](#parcel-index-document), including status, dependencies, collision risk, assigned worktree/branch, PR, agent/session owner, verification and handoff state.
 
-- Has its own worktree
-- Has its own branch
-- Has its own spec file
-- Forks from current base branch
-- Rebases onto the base branch immediately before PR
-- Touches only allowed files
-- Completes required verification
-- Produces a session handoff
-
-The coordinator dispatches parcels in dependency order.
-
-The index tracks:
-
-- Status
-- Dependencies
-- Collision risk
-- Assigned worktree
-- Branch
-- PR link
-- Agent/session owner
-- Verification state
-- Handoff state
 
 ## Phase 4: Assembly and Integration
 
@@ -444,26 +375,7 @@ Markdown is reviewable state, not durable operational state.
 
 For multi-session or multi-project work, maintain a local coordinator database. SQLite is the default unless the initiative requires shared multi-user access.
 
-Recommended local structure:
-
-```text
-.coordinator/
-  coordinator.db
-  initiative.config.json
-  generated/
-    STRATEGY.md
-    TRACKS.md
-    INTEGRATION-SURFACES.md
-    SCENARIOS.md
-    ENVIRONMENTS.md
-    SECURITY-GATES.md
-    RELEASE-GATES.md
-    EVIDENCE.md
-    DECISIONS.md
-    RISKS.md
-    SESSION-HANDOFFS.md
-    PARCELS.md
-```
+Recommended local structure: `.coordinator/coordinator.db`, `.coordinator/initiative.config.json`, and `.coordinator/generated/` containing **all filenames in [Multi-Project Initiative Artifacts](#multi-project-initiative-artifacts)**. Read that complete list when creating or regenerating these views.
 
 The database tracks initiatives, projects, repositories, tracks, integration surfaces, contracts, parcels, parcel dependencies, worktrees, branches, pull requests, verification runs, integration scenarios, scenario runs, decisions, risks, blockers, security findings, release gates, evidence artifacts, agent sessions, and session handoffs.
 
@@ -571,8 +483,7 @@ These are features, not parcels:
 
 ### Sizing
 
-- Agent implementation target: 20 to 90 minutes of focused execution
-- Full parcel lifecycle: 2 to 4 hours wall-clock
+- Apply the complete implementation/lifecycle targets in [Time, Calendars, and the Two Clocks](#time-calendars-and-the-two-clocks); read them before sizing.
 - If implementation alone would take longer than 90 minutes, decompose it
 - If a parcel is easy but touches many files, it is still too big
 - If a parcel crosses a security boundary, make the boundary explicit
@@ -861,45 +772,14 @@ A parcel that passes gets merged quickly so downstream parcels can rebase.
 
 ## Dispatch Patterns
 
-### Pattern: Wave 1 foundation dispatch
+**Read and follow the complete corresponding phase before dispatch:**
 
-After contracts and thin vertical spike merge:
+- Wave1 foundation: after contracts and vertical spike merge, [Phase3](#phase-3-parallel-parcel-dispatch) governs parallel-safe primitive parcels with separate sessions/worktrees/branches. Review and merge as they complete; the rebase queue orders collision-risk work.
+- Wave2 assembly: [Phase4](#phase-4-assembly-and-integration) governs one wiring parcel per integration/app surface, consuming Wave1 outputs and serializing shared integration files.
+- Integration: after relevant implementation merges, apply [Phase4](#phase-4-assembly-and-integration) and [Environment Readiness Matrix](#environment-readiness-matrix); run boundary scenarios, capture evidence and track environment-specific results. Local success is not staging success.
+- Wave3 hardening: [Phase5](#phase-5-hardening-and-release-readiness) governs error/denial states, telemetry, accessibility, tenant boundaries and supportability; use lower parallelism and higher care, often with direct coordinator involvement.
+- Release gate pass: freeze feature expansion; verify release/security gates, integration scenarios, evidence artifacts and public claims; produce the release candidate summary.
 
-- Dispatch all parallel-safe primitive parcels
-- Each gets its own worktree, branch, and agent session
-- Review and merge as they complete
-- Rebase queue maintains ordering for collision-risk parcels
-
-### Pattern: Wave 2 assembly dispatch
-
-- Dispatch one wiring parcel per integration surface or app surface
-- Serialize parcels that touch the same integration file
-- Each consumes Wave 1 outputs
-
-### Pattern: Integration dispatch
-
-- Dispatch integration parcels after relevant implementation parcels merge
-- Run boundary scenarios
-- Capture evidence
-- Track results by environment
-- Do not treat local success as staging success
-
-### Pattern: Wave 3 hardening dispatch
-
-- Lower parallelism
-- Higher care
-- Focus on error states, denial states, telemetry, accessibility, tenant boundaries, and supportability
-- Often involves the coordinator directly
-
-### Pattern: Release gate pass
-
-- Freeze feature expansion
-- Verify release gates
-- Verify security gates
-- Verify integration scenarios
-- Verify evidence artifacts
-- Verify public claims
-- Produce release candidate summary
 
 ## When Things Go Wrong
 
@@ -954,16 +834,8 @@ After contracts and thin vertical spike merge:
 
 ## Anti-Patterns to Avoid
 
-- **The "while you're in there" expansion.** Agents fix related code that was not in scope.
-- **The silent contract change.** Adding a prop, field, enum value, endpoint behavior, or fixture shape without amendment.
-- **The fake integration pass.** Unit tests pass, but no boundary scenario was run.
-- **The everything-is-ready PR.** A PR merged and everyone pretends the initiative is complete.
-- **The invisible security dependency.** Security review is assumed instead of tracked.
-- **The chat-history coordinator.** State lives in conversation memory instead of a durable store.
-- **The staging surprise.** Local passes, staging fails because config, secrets, ingress, tenant, or deployment assumptions were never modeled.
-- **The proof claim without evidence.** Public copy claims something no artifact proves.
-- **The integration branch swamp.** A temporary branch becomes a second main.
-- **The agent democracy problem.** Multiple agents negotiate architecture independently instead of following coordinator-owned contracts.
+**Read and enforce [The Hard Rules](#the-hard-rules), [When Things Go Wrong](#when-things-go-wrong), [Branch and Worktree Hygiene](#branch-and-worktree-hygiene), [Persistence Layer](#persistence-layer) and [Environment Readiness Matrix](#environment-readiness-matrix).** Together they prohibit scope expansion, silent contracts, fake integration passes, treating merged PRs as initiative completion, invisible security dependencies, chat-only state, unmodeled staging configuration/secrets/ingress/tenant/deployment assumptions, unsupported public claims, permanent integration branches and independent agent architecture negotiation.
+
 
 ## Output Artifacts From This Skill
 
@@ -1059,14 +931,4 @@ Public proof page does not claim live verification when static fixture is used
 
 ## Final Notes
 
-This skill is about five things:
-
-- **Replacing negotiation with contracts.** Agents should not infer what other agents meant.
-- **Replacing creativity with constraint.** Agents should not make product decisions while being helpful.
-- **Replacing memory with persistence.** Multi-session coordination should survive chat resets.
-- **Replacing unit-test confidence with integration evidence.** Parts passing does not prove boundaries work.
-- **Replacing launch vibes with release gates.** Readiness is a checklist backed by evidence.
-
-If parcel boundaries are enforced, contracts are crisp, initiative state is durable, and integration scenarios are real, the system can be assembled safely even when no single agent holds the whole product in its head.
-
-This is the way.
+Before declaring completion, **apply [The Hard Rules](#the-hard-rules) and [Review Workflow](#review-workflow)**: contracts/constraints, durable state, actual integration evidence and evidence-backed release gates remain mandatory.

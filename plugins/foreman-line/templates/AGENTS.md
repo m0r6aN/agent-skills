@@ -1,5 +1,7 @@
 # AGENTS.md — canon entry point
 
+> **Pantheon:** Apply the complete [current OM-PAN-001 mandate](../docs/standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) (EX14/DA001/D007) to every affected step. Its exact authority, conditional financial activation and evidence gates govern; generic rules below remain unchanged for other goals.
+
 **The Foreman Line** is the pipeline this repo runs its own development
 through: it turns a raw idea into a reviewed, merged change by passing it
 through a fixed sequence of agent sessions and human gates (see "The stage
@@ -68,9 +70,7 @@ meant to stand alone for a reader who has never seen this pipeline before.
   ratifying a plan before build work starts; **Gate 2** — approving a
   build's scope once shaped into concrete units of work; **Gate 3** —
   approving the final merge of finished work into the shared codebase.
-  **Gate 3 is never delegated to an agent, under any circumstance** — an
-  agent may prepare a change completely and still must stop and wait for a
-  human to merge it.
+  For a verified OM-PAN-001 grant, Gates 2 and 3 are delegated subject to exact-scope admission, independent verification and effective repository rules. Outside that exception, this template retains its original human-only Gate 3: an agent prepares the change and waits for the human to merge. No document can grant itself authority.
 - **Parcel.** The unit of work this Line moves through its stage sequence:
   one spec, one builder session, one round of adversarial review, one merge.
   A goal (below) decomposes into one or more parcels.
@@ -78,9 +78,7 @@ meant to stand alone for a reader who has never seen this pipeline before.
   by one coordinator (below) from initial idea through every one of its
   parcels to completion.
 - **Coordinator.** The role that carries a goal end to end. It is a
-  **human-driven agent session** — an agent session, but one a human directs
-  at each gate and whose rulings it waits for; it is not an autonomous agent
-  deciding on its own, and not a human acting alone without an agent session.
+  session operating within the owner's ratified authority. OM-PAN-001 delegates routine coordination and uses actual DA001 for bounded non-destructive decisions and reserves destructive or genuinely undelegated decisions to the owner. Outside that exception this template retains the human-driven session directed at each gate.
   "Coordinator lint" (used elsewhere in this kit as a gating step) is that
   same session's own automated check of a draft artifact against this kit's
   conventions before promoting it — a tool invocation the coordinator session

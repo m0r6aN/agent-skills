@@ -1,5 +1,7 @@
 # Spec-Driven Development Convention
 
+> **Pantheon:** Apply the complete [current OM-PAN-001 mandate](standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) (EX14/DA001/D007) to every affected step. Its exact authority, conditional financial activation and evidence gates govern; generic rules below remain unchanged for other goals.
+
 **Version:** 0.1 (Draft for review)
 **Author:** Clinton Morgan — Principal Agentic AI Platform Architect, KaseyaOne
 **Status:** Proposed
@@ -55,7 +57,7 @@ A spec is a **point-in-time work order**, not a living document. Stale specs loa
 
 | State | Location | Agent behavior |
 |---|---|---|
-| `draft` | `active/` | Not dispatchable. Human still authoring. |
+| `draft` | `active/` | Not dispatchable. Authoring/lint/promotion outstanding; an authorized coordinator may shape drafts. |
 | `active` | `active/` | Loadable and dispatchable. This is the contract for the work. |
 | `done` | `done/` | Never auto-loaded. Historical/archaeological reference only. |
 | `superseded` | `done/` | As `done`, plus frontmatter points to the replacing spec. |
@@ -64,8 +66,8 @@ A spec is a **point-in-time work order**, not a living document. Stale specs loa
 
 1. State lives in frontmatter (`status:`) **and** folder location. They must agree; the folder is authoritative for agent tooling.
 2. When work merges, the spec moves to `done/` **in the same PR** or an immediate follow-up. This is a merge-checklist item, not an honor-system chore.
-3. Material changes to an `active` spec require a comment on the linked Jira ticket (see §5).
-4. Agents load only: (a) the spec for their assigned ticket, and (b) `core/`. Nothing else, ever, without explicit human instruction. "Load the specs folder" is not a thing.
+3. Material changes to an `active` spec require a comment on the linked Jira ticket (see §5). For OM-PAN-001, the versioned goal/parcel decision record and Git evidence carry this change; unavailable tracker fields are explicitly not applicable.
+4. Agents load only: (a) the spec for their assigned ticket, and (b) `core/`. Under verified OM-PAN-001, a coordinator-issued bounded context manifest may add read-only sources within scope. Otherwise additional context needs explicit human instruction. "Load the specs folder" is not a thing.
 
 ---
 
@@ -100,7 +102,7 @@ thinking_level: low               # Optional: off | minimal | low | medium | hig
 
 Four fields extend the required schema beyond the original eight. All four are machine-validated by `plugins/foreman-line/spec-linter/`.
 
-- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, human-approved (not agent-inferred). Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md` §6.
+- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, approved under the applicable authority: OM-PAN-001 uses its ratified rubric and independent review floor; other goals require human approval. Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md` §6.
 - **`surfaces:`** — **Required, non-empty array of strings.** Repo-relative paths or glob patterns describing the filesystem surfaces the parcel touches. Consumed by audit-trigger CI rules and skill-injection matrix evaluation. At least one entry is required — an empty array fails schema validation. See §4.7 for the canonical vocabulary of known prefixes and the advisory-warning behavior for entries outside it.
 - **`routing_class:`** — **Required.** One of `boilerplate | standard-feature | architecture/risk | implementation/standard`. Task-class key used by routing-policy evaluation at dispatch. This enum is identical to the `classes` map keys in `plugins/foreman-line/routing-policy/routing-policy.yaml`; this convention is the authoritative definition, the routing-policy file is the corroborating instantiation.
 - **`permission_profile:`** — **Optional until the permission-profile registry ships.** A name referencing a profile in a reviewed permission-profile registry (a separate, deferred parcel). Never inline permission rules directly in a spec — a self-describing document must not be its own security authority. Lint behavior: if present, the value must be a non-empty, non-whitespace-only string (rejected otherwise); if absent, the spec-linter emits a non-blocking advisory warning to stderr (exit code remains `0`). The linter CLI exposes a `--no-permission-profile-warning` flag to suppress this advisory. When the registry ships, it will add enum validation as a non-breaking additive change to this field's contract.
@@ -216,7 +218,7 @@ Two systems of record will drift unless the contract is explicit. This is the co
 1. Every spec carries the Jira key in frontmatter (`ticket:`) and filename.
 2. Every linked Jira ticket carries a link to the spec **path at a specific commit SHA** (permalink), not a branch-relative link. Branch links rot; SHA links are receipts.
 3. When a spec's `updated:` date bumps for a material change, the ticket gets a comment: *"Spec updated: <permalink> — <one-line summary>."*
-4. Conflicts resolve as follows: Jira wins on delivery state (priority, schedule, assignment); the spec wins on implementation detail. If they disagree on scope, work **stops** until a human reconciles them. Agents do not adjudicate scope conflicts.
+4. Conflicts resolve as follows: Jira wins on delivery state (priority, schedule, assignment); the spec wins on implementation detail. Under OM-PAN-001, versioned goal/parcel IDs and Git/PR evidence are canonical; unavailable Jira/Linear fields are explicitly not applicable. The coordinator reconciles stale projections; conflicting material authority is an exception. Other scope conflicts stop for human reconciliation.
 
 ### Scoped CCM foundation tracking exception — coordinator-ratified 2026-10-21
 
@@ -277,9 +279,9 @@ Specs are repo content: cloned to every workstation, shipped to inference endpoi
 This convention pairs with the dispatch discipline already validated under PDD:
 
 1. **One spec → one agent → one isolated branch/worktree.** No shared working state between concurrent agents.
-2. **Scope pinning at dispatch (Step 0):** the agent's first act is to restate the spec's scope and its exact `Allowed Files` mutation authority. The human confirms before work begins. `surfaces:` informs routing but never grants permission to edit a path.
+2. **Scope pinning at dispatch (Step 0):** the agent's first act is to restate the spec's scope and its exact `Allowed Files` mutation authority. For verified OM-PAN-001, the coordinator compares the spec hash, source head, worktree/branch, allowed paths, role, tools, host, route and flags to the admitted descriptor; exact matches proceed automatically. Other goals retain human confirmation. `surfaces:` informs routing but never grants permission to edit a path.
 3. **Agents claim completion against Acceptance Criteria; verification is external.** No agent verifies its own claim — validation is a separate deterministic check or separate reviewer.
-4. **Gate 3 is human-owned unless delegation is proven at merge time.** Delegation is valid only when the target repository's effective branch rules name the agent's distinct identity as a bypass actor. The coordinator must query that rule at merge time and stop before any merge call when it cannot be proven. Missing configuration, an empty bypass list, a human-authenticated agent session, or an unavailable ruleset query all fail closed to human ownership.
+4. **Gate 3 requires current authority and exact-head evidence.** Under OM-PAN-001, the coordinator may merge with the authenticated actor's ordinary permission after current effective repository rules, accepted source/base and all required evidence/checks pass. This mandate grants no bypass or protection change. A missing rule/permission fact holds the merge. Outside OM-PAN-001, retain the original rule: Gate 3 is human-owned unless delegation is proven at merge time by effective branch rules naming the agent's distinct identity as a bypass actor; missing configuration, an empty bypass list, a human-authenticated agent session or unavailable ruleset query fails closed to human ownership.
 
 ---
 

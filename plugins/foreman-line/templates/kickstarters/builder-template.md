@@ -1,11 +1,19 @@
 # Builder Kickstarter — TEMPLATE
 
+> **Pantheon:** Apply the complete [current OM-PAN-001 mandate](../../docs/standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) (EX14/DA001/D007) to every affected step. Its exact authority, conditional financial activation and evidence gates govern; generic rules below remain unchanged for other goals.
+
 > Reusable dispatch shell for a Foreman Line **builder session**. Copy this
 > file, fill every `<PLACEHOLDER>`, and dispatch. This template describes the
 > builder **role**, not any one parcel.
 
 **Goal:** `<GOAL-SLUG>` · **Parcel:** `<PARCEL-ID>`
 **Dispatched:** `<DATE>` · **risk:** `<risk-level>` · **routing_class:** `<routing-class>`
+
+## Shared Pi launch requirements
+
+These complete requirements apply to builder, reviewer and shaping roles that require this section. Read and enforce them before launch and Step0; a copied standalone directive must carry these exact sections or resolve them from the same verified installed plugin package. Missing/unavailable canonical text holds dispatch. This shared section grants no builder permissions to reviewers or shapers; their own role restrictions remain. Pantheon uses its scoped mandate where explicitly applicable.
+
+### Route admission
 
 **Dispatched Pi session** — approved route receipt `<PATH-TO-ROUTE-RECEIPT>`
 (not asserted — **minted** by the resolver): route `<PROVIDER/MODEL-ROUTE>` →
@@ -24,6 +32,8 @@ convenience outside Foreman work and is never a Foreman-dispatched route.
 Automatic routing is an execution convenience, not a new approval or
 coordination authority.
 
+### Fallback eligibility
+
 **Fallback and model IDs:** Every execution candidate declares **exactly one approved fallback of comparable or higher suitability**, carried as explicit
 fallback metadata in the `provider-neutral-fallback-contract` representation
 (`lane_routes` each carry exactly one typed fallback). A fallback is used only
@@ -37,6 +47,8 @@ unavailable primary routes only to its declared fallback; if both fail, the
 parcel stops and reports. Fallbacks are declared in the approved route and
 recorded in the route receipt — never invented in a template, never silently
 substituted, never credential-bearing.
+
+### Model identifiers
 
 **Model IDs and how the session is launched.** A dispatched session is started
 by the Pi CLI, naming the approved route's identity:
@@ -74,6 +86,8 @@ An internal or restricted parcel never routes there. `opencode-go` is a declared
 provider with no bindings until its catalogue is captured
 (`OPENCODE_GO_CATALOGUE_UNFETCHED`) — it is never aliased to `opencode`.
 
+## Builder standing constraints
+
 Standing constraints apply — `docs/kickstarters/STANDING-CONSTRAINTS.md`.
 `<NAME ANY RULES THIS PARCEL BOTH OBEYS AND SPECIFICALLY EXERCISES, IF ANY.>`
 
@@ -107,13 +121,13 @@ A genuine spec *gap* is a flag to raise at Step 0 or the moment you hit it; the
 coordinator rules and, if needed, ratifies an amendment before further work.
 Silently designing around a gap is the failure this gate exists to prevent.
 
+
 ## Step 0 — restate and STOP (mandatory gate)
 
 Before writing any code or artifact:
 
 1. **State the approved route you are running on and confirm it matches the
-   approved route receipt; a mismatch is a launch-boundary failure — say so and
-   STOP.**
+   approved route receipt, or the exact actual OM-PAN-001 bounded native dispatch when operating before cutover. Native dispatch is not a Runtime receipt. A mismatch holds this worker.**
 2. Restate the deliverables in your own words, and state what is explicitly
    **out of scope** per the spec.
 3. **Inventory the current state on disk against the spec** — what exists,
@@ -175,8 +189,7 @@ concrete command or inspection that catches it, not just the risk.>`
 
 ## STOP boundary
 
-Commit to `<BRANCH-NAME>`. **Do not open a PR. Do not merge.** Gate 3 is human
-and never delegated. Report back with your evidence; the coordinator then
+For Pantheon native bootstrap, freeze and report without committing. For other goals, commit to `<BRANCH-NAME>`. **Do not open a PR. Do not merge.** Gate 3 belongs to the coordinator only where verified standing authority delegates it; otherwise it remains human. The builder receives no merge authority. Report back with your evidence; the coordinator then
 dispatches adversarial review.
 
 ## Completion report

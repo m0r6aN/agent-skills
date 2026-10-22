@@ -1,5 +1,7 @@
 # The Foreman Line
 
+> **Pantheon:** Apply the complete [current OM-PAN-001 mandate](docs/standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) (EX14/DA001/D007) to every affected step. Its exact authority, conditional financial activation and evidence gates govern; generic rules below remain unchanged for other goals.
+
 Foreman Line is an installable, contract-first coordination plugin for carrying a
 development goal through shaping, parcel dispatch, external verification,
 integration, and closure.
@@ -12,7 +14,11 @@ but does not yet authenticate that metadata against the source-control host.
 
 Full design and rationale: [docs/FOREMAN-LINE-PLAN.md](docs/FOREMAN-LINE-PLAN.md). Coordinator role charter (Stage Zero ideation, human gates, dispatch table, long-running loop): [docs/COORDINATOR-PATTERN.md](docs/COORDINATOR-PATTERN.md).
 
-## Human gates
+## Authority gates
+
+
+
+The pure [Pantheon boundary contracts](dispatch/src/pantheon-runtime/contracts/README.md) carry structural data only; tests do not establish Runtime admission.
 
 1. Goal-charter ratification.
 2. Parcel dispatch.

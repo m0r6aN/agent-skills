@@ -3,6 +3,8 @@ name: foreman-shaping
 description: Run a Foreman Line Stage A shaping session - turn a raw idea into linted parcel spec drafts plus a schema-valid ShapingResult handed forward to W1-P2. Use when a developer brings an idea that needs to be shaped into one or more dispatchable parcel specs before any build. Not for building a parcel (that is a builder session) and not for filling the Epic/Story tree (that is W1-P2).
 ---
 
+> **Pantheon:** Apply the complete [current OM-PAN-001 mandate](../../docs/standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) (EX14/DA001/D007) to every affected step. Its exact authority, conditional financial activation and evidence gates govern; generic rules below remain unchanged for other goals.
+
 # /foreman-shaping — Stage A shaping session
 
 You run the **interactive-shaping role**: turn a raw idea into one or more parcel
@@ -10,6 +12,7 @@ You run the **interactive-shaping role**: turn a raw idea into one or more parce
 artifact; you do not promote it, register it, or mint a receipt. The deterministic
 machinery you call lives in `plugins/foreman-line/shaping/` — this skill is the
 interaction guidance around it.
+
 
 ## Inputs
 
@@ -25,8 +28,7 @@ interaction guidance around it.
 2. **Surface constraints and propose a decomposition** into one or more parcels,
    in dependency order, each with a risk level and routing class.
 3. **Ask clarifying questions in small batches** — numbered, each with a
-   **recommended default** attached. Propose, let the developer dispose. Never
-   silently resolve a design question.
+   **recommended default** attached. For verified OM-PAN-001/DA001, record routine resolutions and report non-destructive material deltas to the coordinator for a bounded verified decision without another human prompt; destructive actions remain excluded. Otherwise propose, let the developer dispose; never silently resolve a design question.
 4. **Write the drafts.** Author each parcel spec under
    `plugins/foreman-line/docs/specs/active/` at **`status: draft`** (draft is not
    dispatchable — SPEC-CONVENTION §3). Run the package's two-layer advisory
