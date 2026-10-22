@@ -1,7 +1,7 @@
 ---
 ticket: CCM-P1D
 title: Read-only PostgreSQL capability check and evidence
-status: active
+status: done
 owner: clinton.morgan
 created: '2026-10-19'
 updated: '2026-10-19'
