@@ -19,6 +19,18 @@ at D:/Repos/keon-omega/keon-mcp-gateway. Oversight owns the bounded source/templ
 investigation of supported authentication and cutover mechanics; do not duplicate
 it. Administrative custody and supported invalidation/reissue remain to be
 established from evidence. No live gateway call, deployment or key read is implied.
+
+Oversight's subsequent read-only source/Azure metadata investigation is saved in
+evidence/credential-issuer-locators-20261022.json and the runbook. The located
+gateway validates bearer JWT signature, issuer, audience and expiry; no per-token
+revocation was found in that inspected path. Its alternative X-Api-Key path checks
+active key status through the Keon control plane. No static
+MCP_GATEWAY_AUTH_TOKEN app setting was found. Metadata-only inspection classified
+the current local variable as neither a parsed JWT nor the inspected keon_* key
+grammar, with no Bearer wrapper; exact child material remains unknown. Its actual
+local consumer/header and issuer record are still unresolved. Do not mint a JWT,
+rotate signing trust, infer broader service-secret exposure or test the old value
+as a blind remedy. No gateway request, secret query or mutation was performed.
 See evidence/credential-owner-clarification-20261022.json. The consolidated
 ownership question is answered; do not repeat it. Ownership confirmation is not
 evidence of rotation, revocation or expiry.

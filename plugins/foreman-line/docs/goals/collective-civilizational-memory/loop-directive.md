@@ -83,6 +83,16 @@ code was not located. Exact child material remains unknown, and no separate bear
 or invalidation is claimed. See evidence/credential-ownership-trace-20261022.json
 and credential-rotation-runbook-20261022.md. No global credential mutation done.
 
+Oversight saved gateway source/Azure metadata findings in
+evidence/credential-issuer-locators-20261022.json. Inspected bearer JWT validation
+has no located per-token revocation path; alternative X-Api-Key checks active
+status in the Keon control plane. No static MCP_GATEWAY_AUTH_TOKEN app setting
+was found. Current local variable format matches neither parsed JWT nor inspected
+keon_* key grammar and has no Bearer wrapper; child identity remains unknown.
+Actual local consumer/header/issuer record is unresolved. Do not blindly mint JWTs,
+rotate signing trust or test old values. Oversight retains investigation custody;
+no duplicate live investigation. No gateway request, secret query or mutation done.
+
 Parent completed P2B verification using the known working OS-only allowlist,
 retaining SystemRoot and excluding provider/DB/key variables;19 focused/full
 checks and397 pins pass. Parent in-memory matching found no known named parent
