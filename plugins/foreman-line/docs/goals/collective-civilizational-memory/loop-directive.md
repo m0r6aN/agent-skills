@@ -50,6 +50,14 @@ advisory/schema/emitter/readback passed, Gate2 commit5e9d0b06 before fresh worke
 
 ## Actual credential-handling incident — OPEN
 
+Saved normal project URL/header templates now freshly resolved against Windows
+User state and verified401/401/200 initialize in the empty loopback fixture.
+See gateway-parent-client-reconciliation-20261022.md and
+evidence/gateway-normal-config-refresh-20261022.json. Native Pi not launched,
+normal profile not admitted. Shared parent ancestry is ChatGPT/Codex with other
+live sessions: owner-coordinated quiet app relaunch remains required, followed by
+boolean-only fresh-parent equality check. No restart or hold release performed.
+
 Targeted fresh-child gateway authentication now PASS: missing/invalid401,
 replacement initialize200, owned empty-loopback process stopped/no listener.
 See gateway-isolated-refresh-result-20261022.md. Shared parent remains stale;

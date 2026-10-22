@@ -6,6 +6,29 @@ bounded parser subprocess as the target production boundary. This is a design
 decision, not an implemented adapter, approved runtime or resource-safety proof.
 
 Keep the pure declaration contract in ast-source-contract-plan-20261022.md.
+
+## Minimal pipe protocol planning
+
+Select one source item per child lifetime. Request framing is a four-byte unsigned
+big-endian byte count followed by exactly that many original source bytes and
+EOF. No path, command, module name, parser option or shell expression is supplied
+by the caller. Reject trailing bytes, premature EOF and oversized length before
+source decoding/allocation. Exact byte limits remain provisional pending evidence.
+
+Response framing uses the same length-prefix scheme around strict UTF-8 JSON.
+Use a closed version1 envelope: either success with content_sha256 and symbols
+matching the pure contract, or failure with one closed code and no message/detail
+field. Reject unknown envelope fields, mixed success/error, duplicate JSON keys,
+wrong scalar types, invalid digest/ranges/order and trailing frames. Bound response
+bytes before JSON decoding and validate every returned range against input length.
+Never consume a result if the process times out, exits unsuccessfully, or fails
+cleanup even when a partial or apparently valid response arrived first.
+
+No raw content or diagnostics on stderr; no source in arguments, environment or
+temporary files. This is the selected protocol for later shaping, not implemented
+serialization, a frozen numeric resource profile or an authenticity attestation.
+
+## Qualification remains required
 The AST library and runtime adapter are separate reviewable slices; do not expand
 the proposed three-file library scope silently. Neither slice may claim untrusted
 production admission until their composition is verified.
