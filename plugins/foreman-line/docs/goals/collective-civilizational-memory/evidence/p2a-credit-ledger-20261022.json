@@ -1,0 +1,36 @@
+{
+  "atUtc": "2026-10-22T04:28:55.885736+00:00",
+  "parcel": "CCM-P2A",
+  "status": "Formal repair pending; two initial CHANGES_REQUIRED",
+  "unit": "GenSpark prepaid credits, operational estimates not proof of incremental billing",
+  "reportedSpent": 224.4,
+  "knownCompletedConservativeCredits": 225.02425,
+  "unresolvedReservations": 0,
+  "bookedTotal": 225.02425,
+  "parcelCeiling": 1400,
+  "futureClosureCapacity": 700,
+  "datedSharedNY20261022Ceiling": 3200,
+  "expiresAtUtc": "2026-10-23T04:00:00Z",
+  "foundationConservativeCarried": 2626.729,
+  "foundationPlusP2AConservative": 2851.7532499999998,
+  "oldUnknowns": "Original94.6,failedP1B350,APIunknown$0.17192 preserved; foreign700 excesshold independently retained",
+  "nativeCodexUsage": "unknown/separate",
+  "apiKnownAndReservedUSD": 1.08227,
+  "newOpenAIAPICalls": 0,
+  "phases": [
+    {
+      "phase": "review-A",
+      "requestId": "chatcmpl-5512b23e-f6ed-45a1-b0ec-e62d17fa1925",
+      "status": "completed_json_offline_fence_recovered_pending_host_validation",
+      "reported": 103.4,
+      "booked": 103.6695
+    },
+    {
+      "phase": "review-B",
+      "requestId": "chatcmpl-c26a4908-0d31-4d24-92dd-856388d2bd62",
+      "status": "completed_json_pending_host_validation",
+      "reported": 121.0,
+      "booked": 121.35475
+    }
+  ]
+}

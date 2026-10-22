@@ -1,0 +1,26 @@
+{
+  "v": {
+    "valid": true,
+    "frontmatter": {
+      "valid": true,
+      "errors": [],
+      "warnings": [
+        "advisory: surfaces entry 'src/keon/cortex/scrubber/__init__.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4",
+        "advisory: surfaces entry 'src/keon/cortex/scrubber/models.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4",
+        "advisory: surfaces entry 'src/keon/cortex/scrubber/service.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4",
+        "advisory: surfaces entry 'tests/test_ccm_scrubber.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4"
+      ]
+    },
+    "body": {
+      "valid": true,
+      "errors": []
+    },
+    "errors": []
+  },
+  "p": {
+    "parcelSpecRefs": [
+      "plugins/foreman-line/docs/specs/active/CCM-P2A-deterministic-memory-scrubber.md"
+    ],
+    "epics": []
+  }
+}

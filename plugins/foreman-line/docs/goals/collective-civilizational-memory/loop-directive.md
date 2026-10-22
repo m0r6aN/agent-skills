@@ -24,7 +24,8 @@ profiles, ownedsyntheticcontainercleaned. No target/Neon/SLO/import claim.
 ## Current parcel and exact next action
 
 P2A active spec:docs/specs/active/CCM-P2A-deterministic-memory-scrubber.md,
-SHA4a55bcbc3552f4a97ba9083b59e1ade2ad6bb3a0740c9a0b52e180cb01482efe.
+InitialSHA4a55bcbc3552f4a97ba9083b59e1ade2ad6bb3a0740c9a0b52e180cb01482efe;
+C02-R1 repairSHAf6de7120cffe91932f7c3f4fa1b5c8c5e1e36149d7cf1a6d7709ec73f9a2274f.
 Scope:exact5NEWscrubberlibrary/model/test/docpaths, no legacy/API/DB/queue effects.
 Real frozen advisory+schema/emitter/readbackPASS; genuine StageA artifact:
 ccm-p2a-scrubber-2026-10-21-operator.shaping-result.json, epics[]. Scoped local
@@ -38,7 +39,14 @@ Gate2/role admission committed2ddd0a85 before dispatch. Isolatedworktree:
 D:/Repos/ccm-worktrees/cortex-p2a, feat/foreman-line-ccm-p2a,
 acceptedbase6139ddd8802540829eebce07215106e4b16ca360.
 Freshnativegpt-6-luna/medium /root/p2a_builder Step0PASS and ONE initialbuild
-authorized/running. Do not dispatch duplicateworker or change its model/context.
+initialbuild complete:3013cases/2876PASS/137existingSKIP;267originalpinsunchanged.
+32independentHMACvectors match, detachedtree/closederrorchecksPASS.
+Two initialindependentOpuslowreviewsCHANGES_REQUIRED. Source-reproduced URLemptyuser
+leak, epochsubstringmetadata leak, depth32scalarrejection, denseoverlap and plain
+longrun/repeatedassignment timeouts. C02-R1 finitecandidate/int/rawlimits and
+exactboundarysemantics ratified915bbe97 BEFORE oneformalrepair; amendedadvisoryPASS.
+/root/p2a_builder asked Step0ONLY for thatrepair; awaitrestate thenissueGO.
+Do not dispatch duplicateworker or change its model/context.
 One later formal focusedrepair only, with freshStep0; normaldebugiterations within
 eachlane allowed. No builderprovider/key/network/DB/dependency/commit authority.
 
@@ -49,19 +57,24 @@ blindrerun. Preserve267oldpins, all2855passingidentities/137existingdispositions
 any otherfailure/newskip needsconcretetriage. Completecandidatesuiterunretained,
 focused/format/types and exactheadCI mustPASS. See timingdisposition and baseline.
 
-NEXT consume actualbuilderhandoff, validate5paths/267pins/newtests/fullbaseline,
-Python3.10compatibility and32independentstdlibHMACvectors withheldfrombuilder.
-Then2freshindependentfrontierarchitecture/securityreviews, reproduce/triage
-findings, onefocusedrepairifneeded, closureverdicts, greenexactheadmerge/StageF.
+NEXT completeoneformalLunarepair afterStep0, preserve3013baselineidentities/137skips
+and267pins, focused/full/format/types andparentHMAC/hostileproofs. Then2fresh
+independentclosureverdicts, greenexactheadmerge/StageF. Initialreviews/triage
+are actualcaptured finals; firstJSONfence parsedoffline fromsamecomplete response,
+no providerretry. JWTno-dotquadratic allegationnotestablished; lookbehind matters.
 Security-reviewskill applied locally; reviewers no tools/edits/effects, material
 locators/confidence/impact/remediation/coverage gaps, calibratedseverity.
 
 ## Budget and date boundary
 
 Current NYday is2026-10-22. Oct21shared4800EXPIRED at04UTC; NOT extended/reused.
-P2Abuild nativeaccountusage unknown/separate; rootP2AGenSpark/APIcalls0 sofar.
-Planned finite entireP2Areviewcapacity1400 (2initial<=350/2closure<=350), NOT
-spend/currentreservation; exactpackets/day/accountadmission before paidlaunch.
+P2Abuild nativeaccountusage unknown/separate; rootP2AGenSparkcalls2/APIcalls0.
+NYOct22finite shared3200/entireP2A1400/seat350, expires2026-10-23T04UTC,
+actualexactpacket/day/accountadmission84d872ca BEFOREcalls. Initialreviews224.4
+reported/225.02425conservative; futuretwo closurecapacity700, no unknownP2Acall.
+Conservativeforeignguard1600 explicitlyretainsold700excess/350unknown/localholds;
+actualfreshaccount7390.8 beforefirst and7287.4 beforesecond, notbillingattribution.
+Requeryactualaccount/foreignledger before eachclosure; neverreuseOct21envelope.
 Reuse qualified Opuslow profile, no newqualification/providerhunt/launcherwork.
 Floor1000/effort9000 and allunknownholds persist; no automaticretry/fallback.
 
