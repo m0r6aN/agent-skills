@@ -1,4 +1,4 @@
-# CCM current coordinator loop — P2A accepted / P2B readiness
+# CCM current coordinator loop — P2A accepted / P2B build admission
 
 Custodian ccm-coordinator-20261020-fresh-01; originating authorized operator
 01a155be-72a6-7b02-ac33-84dc64bbf102. Oversight01a158b8-93f8-7423-b5b6-aaca46092870
@@ -39,11 +39,12 @@ timingvariance are NOTfixed; no threshold/skip/source changes or stabilityclaim.
 ## P2B current action
 
 FreshLunashaper producedONEdraft; parent ratifiedC02-B1 exact API/bounds/errors,
-not another full plan. Draftdocs/specs/drafts/CCM-P2B-bounded-text-chunker.md
-SHAb8b1d57696a56794cd0035d38636fddcd62e16bdd11a2f5415f01045580d38a0.
+not another full plan. Activedocs/specs/active/CCM-P2B-bounded-text-chunker.md
+SHAc1237c89c708a130bce2e00b84b89548472640adeec2ac89a3422de914a7a50b.
 Frozen two-layer draftadvisoryPASS, only generic Cortex-prefixwarnings disposed
 as soleimplementation paths. No schema/linter/package changes; existing private
-exact-byte Node24 runtime reused, no install. StageAemission stillnext.
+exact-byte Node24 runtime reused, no install. Actualfrozen StageAemission/schema/readbackPASS, epics[], active exactrefs.
+Gate2/role admitted5e9d0b06 BEFOREfresh /root/p2b_builder Luna/low Step0ONLY.
 Parent verified planned pipeline directoryABSENT on acceptedbase, correcting
 unsupportedshaper existing-init/api claim. FOUR NEWpaths only:
 src/keon/cortex/pipeline/__init__.py;pipeline/ccm_text.py;
@@ -56,12 +57,14 @@ actual source/scope/checkpoint/idempotency. Formatdeclared only, no sniff/auth.
 
 CleanP2Bworktree D:/Repos/ccm-worktrees/cortex-p2b,
 feat/foreman-line-ccm-p2b, exactbase76fa7c6eda6a4859e7d3a64815c760a77d4c07f0.
-Completebefore-source baselineRUNNING in private p2b-20261022-01; pin all regular
-trackedfiles and Gitlinkrepositoryentries separately. First localpreparation
+Completebefore-source baselinePASS in private p2b-20261022-01:
+3028cases=2891PASS137SKIP0FAIL;397regularfilepins plus11Gitlinkentries. First localpreparation
 stoppedbeforetests when it triedreading Gitlinkdirectory as file; corrected
 pinsemantics, emptycapturedir reused, no sourcechange/inference. No blindrerun.
-NEXT actualbaseline ->promote exactworkorder/emitter+schema/readback ->commit
-real Gate2/roleadmission ->freshsmallnativeLunabuilder Step0/restatestop thenGO.
+AcceptedbaseincludesPR85/PR88 twoadditivereceipttenantfilter tests beyond P2A
+local3026. Collector originallyexpected3027 andassertedafteractualpytestexit0;
+offline identities/Gitdelta reconcile3028, no suite rerun, no newsourcefail.
+NEXT consume freshLunabuilder Step0/restate thenGO for oneinitialbuild.
 Oneimplementation+oneformalrepair, no buildercommits/providers/network/DB.
 Require retainedbaselineidentities/137skips, allacceptedpins,focused/full/format/
 types, twoindependent completedcompactreviews, exacthead/mainCI beforeStageF.
