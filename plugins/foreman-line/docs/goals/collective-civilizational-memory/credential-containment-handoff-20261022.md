@@ -3,8 +3,11 @@
 Recorded October22 following the direct owner instruction relayed by the
 authorized oversight session: resolve the incident, provide exact names and
 rotation steps, keep affected routes held, and continue safe work under existing
-authority. The oversight session owns the names-only rotation runbook; this
-originating coordinator retains Context source custody.
+authority. The oversight session owns the saved names-only
+[rotation runbook](credential-rotation-runbook-20261022.md); this originating
+coordinator retains Context source custody. Issuers for MUSE, LIQUID, NACE and
+TYPESAFE are not established and must not be guessed. The existing single
+ownership question remains pending; do not ask it again.
 
 ## Scope remains open
 
