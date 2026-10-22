@@ -92,6 +92,11 @@ keon_* key grammar and has no Bearer wrapper; child identity remains unknown.
 Actual local consumer/header/issuer record is unresolved. Do not blindly mint JWTs,
 rotate signing trust or test old values. Oversight retains investigation custody;
 no duplicate live investigation. No gateway request, secret query or mutation done.
+The subsequently located control API-key revoke route is restricted to
+INTERNAL_LEARNING_TENANT_ID; it is not established general-tenant revocation.
+See evidence/gateway-control-revocation-scope-20261022.json. MCP_GATEWAY_TOKENS
+is distinct from the incident MCP_GATEWAY_AUTH_TOKEN, whose consumer/header/issuer
+record is still unmapped. No hold release or unrelated signing-trust change.
 
 Parent completed P2B verification using the known working OS-only allowlist,
 retaining SystemRoot and excluding provider/DB/key variables;19 focused/full

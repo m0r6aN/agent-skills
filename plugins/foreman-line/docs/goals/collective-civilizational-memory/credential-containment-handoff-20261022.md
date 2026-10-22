@@ -31,6 +31,17 @@ grammar, with no Bearer wrapper; exact child material remains unknown. Its actua
 local consumer/header and issuer record are still unresolved. Do not mint a JWT,
 rotate signing trust, infer broader service-secret exposure or test the old value
 as a blind remedy. No gateway request, secret query or mutation was performed.
+
+Further static control-plane findings are recorded in
+evidence/gateway-control-revocation-scope-20261022.json. The located
+POST /api/internal/control/api-keys issuance route uses x-admin-signature with
+KEON_INTERNAL_CONTROL_SECRET. The located POST
+/api/internal/control/api-keys/[prefix]/revoke calls revokeInternalLearningApiKey
+with INTERNAL_LEARNING_TENANT_ID plus prefix/active restrictions. This does not
+establish general-tenant revocation or disposition of the incident token.
+Owner-mentioned MCP_GATEWAY_TOKENS is a distinct name; do not equate it to
+MCP_GATEWAY_AUTH_TOKEN. Its incident consumer/header/issuer record remains
+unmapped. No live request, mutation or secret read followed from these findings.
 See evidence/credential-owner-clarification-20261022.json. The consolidated
 ownership question is answered; do not repeat it. Ownership confirmation is not
 evidence of rotation, revocation or expiry.
