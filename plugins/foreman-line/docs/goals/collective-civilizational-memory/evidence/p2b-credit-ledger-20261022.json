@@ -1,7 +1,7 @@
 {
-  "atUtc": "2026-10-22T05:18:10.801487+00:00",
+  "atUtc": "2026-10-22T05:24:34.319586+00:00",
   "parcel": "CCM-P2B",
-  "status": "TwoindependentPASS, PR89 exact-headCI gate pending",
+  "status": "Accepted mergedStageFclosed; actualexacthead andbothmainworkflowsgreen; nofurtherP2Bpaidcalls",
   "sourceHead": "50c704050c18b218f1913d51ee9ed39a330993c5",
   "pr": "https://github.com/Keon-Systems/keon-cortex/pull/89",
   "reportedCredits": 97.9,
@@ -17,5 +17,6 @@
   "foreign700ExcessRetained": true,
   "nativeAccountUsage": "Unknown/separate",
   "newDirectOpenAIAPICalls": 0,
-  "foundationAndP2Conservative": 3876.5035
+  "foundationAndP2Conservative": 3876.5035,
+  "acceptedCommit": "3a7c30b5cab7198b3ad6e7ff3b881bead8af823d"
 }
