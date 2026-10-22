@@ -1,7 +1,7 @@
 ---
 ticket: CCM-P1A
 title: Cortex memory and temporal graph v2 contracts
-status: active
+status: done
 owner: clinton.morgan
 created: '2026-10-19'
 updated: '2026-10-20'

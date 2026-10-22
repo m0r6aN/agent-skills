@@ -20,7 +20,35 @@ actual verification. No data/key destruction or credential disclosure.
 Gate1/S01–S12/C02-D1, accepted plan review, real foundation approval9431a864
 and active P1A work ordere11b0da8 remain settled. No fake registrations/receipts.
 
-## Current source and next action
+## Current accepted P1A and in-flight P1B
+
+P1A PR80 MERGED at `cc3a6defa78849b8df8795c58ac65866f31179d5`; source commit d0d550526a46c8bb29c994ef33ff324a7c270fe0.
+All16 exact-head push/PR checks PASS before merge; both merge/main workflows PASS.
+AC1–AC7 accepted as contract-only with the explicit open later dependencies.
+[StageF closure and accepted pins](evidence/p1a-stage-f-closure-20261021.json).
+Work order status-only archived to done/CCM-P1A-memory-graph-contracts.md. No
+source branch/worktree deletion while downstream consumers use accepted pins.
+
+P1B Gate2 is admitted under the owner grant; active metadata-only spec derivative
+SHAe21ab50f241cbf20f307fb3aaa2fce965c96fa2b2cfaab760552726709826cf2 committed
+fddfe886 before source dispatch. Small native Codex gpt-6-luna/low builder
+`/root/p1b_builder` completed Step0, no flags; one build now authorized in
+`D:/Repos/ccm-worktrees/cortex-p1b`, branchfeat/foreman-line-ccm-p1b, baseP1Amerge.
+Baseline200PASS retained; exactly five allowed paths, no external API/provider,
+credentials/network/DB/dependency or worker changes. Native account usage unknown/
+separate, not converted to prepaid credits. Independent30pair Decimal70 numeric
+reference frozen before seeing builder outputs, withheld from builder. TWO
+independent risk reviews remain required. P1B external review envelope<=700,
+<=300each/2calls, existing sharedNYOct21 2400/floor1000/effort9000, no retry.
+[P1B admission/baseline](evidence/p1b-gate2-and-baseline-20261021.json).
+NEXT consume builder report, independently compare all30pairs, validate full
+scope/200baseline/params/replay and route2frontier reviews. Do not start a second
+builder or mistake partial code for accepted work. P1C/D remain draft and bounded
+later work; no full-goal or bulk-import readiness claim.
+
+## Previous source integration record (history)
+
+### P1A integration history
 
 [Cortex PR80](https://github.com/Keon-Systems/keon-cortex/pull/80) is open, source HEAD `d0d550526a46c8bb29c994ef33ff324a7c270fe0`,
 branch `feat/foreman-line-ccm-p1a`, worktree `D:/Repos/ccm-worktrees/cortex-p1a`.

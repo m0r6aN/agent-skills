@@ -1,0 +1,66 @@
+{
+  "atUtc": "2026-10-22T02:05:49.812937+00:00",
+  "parcel": "CCM-P1A",
+  "disposition": "AC1-AC7 accepted as contract-only; merged, exact source and merge CI green",
+  "sourceCommit": "d0d550526a46c8bb29c994ef33ff324a7c270fe0",
+  "acceptedCommit": "cc3a6defa78849b8df8795c58ac65866f31179d5",
+  "pr": {
+    "mergeCommit": {
+      "oid": "cc3a6defa78849b8df8795c58ac65866f31179d5"
+    },
+    "mergedAt": "2026-10-22T02:00:22Z",
+    "state": "MERGED",
+    "url": "https://github.com/Keon-Systems/keon-cortex/pull/80"
+  },
+  "mergeChecks": [
+    {
+      "conclusion": "success",
+      "databaseId": 39708936377,
+      "headSha": "cc3a6defa78849b8df8795c58ac65866f31179d5",
+      "status": "completed",
+      "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39708936377"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 39708936331,
+      "headSha": "cc3a6defa78849b8df8795c58ac65866f31179d5",
+      "status": "completed",
+      "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39708936331"
+    }
+  ],
+  "fixtureVersion": "ccm-contracts/2.0.1",
+  "candidatePins": {
+    "src/keon/cortex/envelope/taxonomy.py": "08abe50559cb3a01a634fb319982a8304ee424dfef29d0660bc969ef06af38be",
+    "src/keon/cortex/ingress/models_v2.py": "ecf7ea3a50f08435f1f07204f3e2828cf146200515f87707063cfc2756032dcf",
+    "tests/fixtures/ccm/contracts-v2.json": "c419250a4a9e232aca9a168ffeb7bb20b3acaf9746e6b7bc06babad8c1de9e90",
+    "tests/test_ccm_contracts_v2.py": "b6714d9f28556e9f238eda38ca0f50a5a520c71b0910fb2cbbb877ecfb1c38a2",
+    "docs/specs/ccm-memory-graph-v2.md": "0fb819cf5f96cf05fe1e6ec6bec3b831fb379173bf9e089acffe0458eb6059a2"
+  },
+  "originalPreP1ABaseline": "evidence/p1a-worktree-baseline-20261021-01/manifest.json",
+  "oldTestIdentitiesRetained": 238,
+  "targetedPostRepairPass": 399,
+  "independentReviews": "Two initial completed CHANGES_REQUIRED, then two closures PASS; all original findings closed and low documentary nits corrected",
+  "closureEvidence": "p1a-independent-closure-20261021.md",
+  "perAc": {
+    "AC1": "Additive enums, strict v2 closed matrix/state validation; v1 unchanged",
+    "AC2": "Complete 2.0.1 fixture and exact civic/UTC/receipt/replay schema contract",
+    "AC3": "Independent resolved-input Decimal vectors and separate fail-closed parent-admission negatives; no live resolver",
+    "AC4": "All archival-loss/time/terminal input-result vectors bound by assertions; no worker claim",
+    "AC5": "Normative graph/routing/cursor/deletion/key interfaces and dependencies, no DDL application",
+    "AC6": "Amended contract-only delivery; positive qualified producers zero, authenticated allowlist prerequisite carried open",
+    "AC7": "Existing law visibility checks, external literals/preimages, 238old baseline retention, coverage limitations explicit"
+  },
+  "workOrderArchive": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\done\\CCM-P1A-memory-graph-contracts.md",
+  "activeWorkOrderSha256": "e11b0da82f80b4dd1a993ae3993951782360f1a5adb791a14f438a12c6ce55e1",
+  "doneWorkOrderSha256": "073e38946a9aa1202b61f1641b7119c1f1eca1738e6f816e72201814a6dfc0df",
+  "archiveChange": "status-only, body unchanged; downstream historical active-folder links resolve via this archive record",
+  "cleanup": "Source branch/worktree retained without destructive deletion while downstream consumers use exact pins",
+  "openGoalExits": [
+    "P1B scoring/30-event independent recomputation",
+    "P1C exact cross-language fixture conformance",
+    "P1D actual authorized database capability evidence",
+    "P2-P8 full charter exits, authenticated legacy producers, existing key-management/backup qualification, Gateway enforcement and serialized api.py owner"
+  ],
+  "wholeGoalComplete": false,
+  "bulkIngestionReady": false
+}
