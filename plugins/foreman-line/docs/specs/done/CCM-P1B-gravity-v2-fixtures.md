@@ -1,7 +1,7 @@
 ---
 ticket: CCM-P1B
 title: Frozen gravity v2 scorer and retention simulations
-status: active
+status: done
 owner: clinton.morgan
 created: '2026-10-19'
 updated: '2026-10-19'
