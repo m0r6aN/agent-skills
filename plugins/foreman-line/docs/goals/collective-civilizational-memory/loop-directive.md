@@ -1,142 +1,77 @@
-# CCM coordinator loop — current handoff, October21 22:06UTC
+# CCM coordinator loop — October21 NY, source PR in exact-head CI
 
-## Current deterministic checks PASS; paid reviews remain HELD
+Updated 2026-10-22T01:59:18.824337+00:00. This current section supersedes historical execution holds;
+prior approvals, failed captures and unknown reservations remain preserved.
 
-Direct human approval relayed from oversight authorized exact mechanicalpatch
-SHAfa8cdab381ff2bff4529e2bb032e0b042d125ab10249b484ccdca1b03dac3ef2,
-onlymodels_v2.py andtest_ccm_contracts_v2.py, retaining paidreview hold.
-[Approval](evidence/p1a-mechanical-approval-20261021.json). Verified original5pins,
-patchpaths/hash andbase beforegitapply. Original2files preserved privately.
-Other3candidatehashes unchanged. No other sourcepaths, modelrequests or spend.
+## Ownership and direct authority
 
-Actual isolated worktree Black/isort/mypy and required328tests PASS, all238old
-identities retained+90new. Oldv1/baselinefiles unchanged; gitdiffcheckPASS.
-[Actual results/newpins](evidence/p1a-mechanical-result-20261021.json) supersede
-older CI-failure/frozen-four wording. models_v2 SHA
-b0b48d4bd1ee87bbed053ad2fa614195f05035c68729a6879ebd20726d173c4a;
-newtestsSHA5d5e1fd95ca8d25d74bf5f878125838a2bc3112b5903f486306d1b7857f5b420.
-Candidate remains unaccepted/uncommitted inD:/Repos/ccm-worktrees/cortex-p1a,
-branchfeat/foreman-line-ccm-p1a, baseefb5f4bc, exactly5allowedpaths.
+Custodian remains `ccm-coordinator-20261020-fresh-01`. Authorized originating
+operator `01a155be-72a6-7b02-ac33-84dc64bbf102` is carrying this continuation.
+Oversight `01a158b8-93f8-7423-b5b6-aaca46092870` receives progress. No duplicate
+coordinator/worker/session or revived monitor. Prior monitor stays PAUSED.
 
-PAID REVIEWS HELD by direct owner instruction until preventive input/cost and
-visible-output controls qualified. ReviewA priorfailure/allthinking/127.6credits
-and37320input is preserved, not accepted or retried. Bnever sent. Both successful
-fresh independent reviews remain required. Historical prepared reviewB input is
-stale aftermechanicalpatch; do not send it. No blindretry/capraise/alternatepaid
-reviewer/providerhunt/newcontrolproject/extra source repair/schedule authorized.
+Clinton's direct grant:
+> I approve next steps. Move forward with blanket authority to make any decisions or approvals on my behalf, for anything non-destuctive. Including genspark credit usage increases - where some of this work may be routed if you so choose.
 
-Accounting unchanged: GenSpark223.3reported +94.6originaluncertainty +0.4catalog
-roundup =318.3of700booked; remaining2reviews198capacityplanned gives516.3total.
-APIconservativeknown/reserved$0.5204425 includingoldsourceuncertainty$0.17192.
-No cross-unit conversion, no unknown reserve release. No merge/deploy/import/
-laterparcel orfull-goalacceptance. Existing settledscope/key/approval gates are
-not reopened. Next legitimate step is concrete reviewercontrol qualification
-within actual authority, before any further paiddispatch.
+[Exact grant](evidence/owner-autonomous-next-steps-20261021.json) permits routine
+non-destructive decisions, bounded spend and repairs/integration approvals.
+Do not request those again. Preserve independent reviews, source trust and
+actual verification. No data/key destruction or credential disclosure.
+Gate1/S01–S12/C02-D1, accepted plan review, real foundation approval9431a864
+and active P1A work ordere11b0da8 remain settled. No fake registrations/receipts.
 
-## Earlier package/reviewer result and settled authority (history)
+## Current source and next action
 
-## Previous native and settled authority (history)
+[Cortex PR80](https://github.com/Keon-Systems/keon-cortex/pull/80) is open, source HEAD `d0d550526a46c8bb29c994ef33ff324a7c270fe0`,
+branch `feat/foreman-line-ccm-p1a`, worktree `D:/Repos/ccm-worktrees/cortex-p1a`.
+Rebased onto main `add85b4bede4d319374088413d99a3569dcd00ff`; upstream changes
+only six unrelated test files. No P1A candidate bytes changed in rebase.
+Five allowed paths only, clean worktree. Original pre-P1A baseline stays
+`efb5f4bcead899332f4f35f5e0b3a181eb988d2c`; no baseline substitution.
 
-## Ownership and settled authority
+Focused repair delivered requested-authority/admitted separation, strict
+provenance/receipt handling, actual binding tests for structured contract
+vectors, scoped pointer and replay cases, and concrete document-only graph/
+deletion/key interfaces. Host validation: 399PASS, all238old identities retained,
+Black/isort/mypyPASS; v1/other source/tests and normative appendix unchanged.
+The capped source stream yielded two complete files; remaining fixture was
+mechanically completed, then one missing-document-only completion. No blind
+whole-source retry. See [validation](evidence/p1a-focused-repair-validation-20261021.json).
 
-Custodian remains `ccm-coordinator-20261020-fresh-01`. Originating operator is
-`01a155be-72a6-7b02-ac33-84dc64bbf102`; oversight chat
-`01a158b8-93f8-7423-b5b6-aaca46092870` receives compact progress. No competing
-coordinator. Prior Pi RPC36750 was last observed idle with two connection errors;
-not rechecked in this turn. Overnight monitor remains PAUSED; no new schedule.
+Two independent initial Opus reviews completed CHANGES_REQUIRED. All original
+findings were addressed; two independent closure reviews now PASS. Mechanical
+document nits corrected: fixture2.0.1, actual host result, subtype DDL ordering.
+[Full closure/disposition](p1a-independent-closure-20261021.md).
+No extra paid rerun for those documentation-only corrections.
 
-Gate1/S01–S12/C02-D1 and accepted independent plan review remain settled. Genuine
-human W1-P3 tree approval9431a8649c2c1125da28e3e4a62f3d9cb15d69b8a1f83dd9c7b1291e8a9c2f96
-and receipt7072cdf78e67a322220a6a0e3098a11522d6ff3180b8a373cbc8d2b19fdd442f
-were independently verified. Scoped local-ledger exception replaces corporate
-Jira/StageB only. P1A Gate2 artifact-only dispatch approved; metadata-only active
-spec SHAe11b0da82f80b4dd1a993ae3993951782360f1a5adb791a14f438a12c6ce55e1
-has unchanged approved scope. P1B/C/D remain draft/held pending accepted P1A.
-Do not reopen the settled approvals or fabricate new receipts/producer trust.
+NEXT: consume exact-head push/PR CI, reproduce/route concrete failures, integrate
+only behind green chain. Do not blind rerun a benchmark, waive checks or accept
+unrelated red main. StageF after actual merge: pin accepted commit/fixture and
+close P1A artifacts, then resume P1B/C/D in dependency order. Small builders get
+finite file/scope/math/wire tasks; keep architecture/independent review evidence.
+No source acceptance/merge/overall-ready claim until corresponding evidence exists.
 
-Clinton's latest direct approval, preserved exactly:
-> Approved, brother. Keep the 94.6-credit reservation and proceed with the bounded native-Sol continuation using the existing OAuth allowance. Keep the other limits and independent reviews intact.
+## Finite accounting
 
-[Approval](evidence/p1a-native-sol-owner-approval-20261021.json) admits only the
-[bounded native continuation](p1a-native-sol-continuation-proposal-20261021.md).
-Earlier blanket transferable authority/native Pi permission and October21 credit
-exception remain recorded in transfer/approval records. No unlimited spending,
-API-key/PAYG fallback, login/billing change, additional repair, merge/deploy/import,
-foreign-goal takeover or automatic schedule follows.
+NYOct21 closure envelope: shared2400/P1A1800, <=500 per independent closure;
+floor1000/effort9000 unchanged. This is a ceiling, not a spending target, and
+expires with the dated envelope. Future phases get separate finite reservations
+under the same owner grant, never an unbounded default.
+P1A conservative booked 1047.644 includes
+original unknown94.6 and failed-review128; reported 948.2.
+Live account balance 8648.1, observed 2026-10-22T01:59:18.824337+00:00; shared day conservatively 1567.3.
+API conservative known+reserved $1.08227 includes oldunknown$0.17192; not credit
+conversion or invoice proof. Paid calls only if admission passes; no retries or
+automatic fallback. See [ledger](evidence/p1a-credit-ledger-20261021.json).
 
-## Previous native outcome — technical quota hold
+## Remaining goal boundaries
 
-**Native repair Step0 attempted/unsuccessful.** Exact openai/gpt-6.1-sol via
-existing OAuth, medium, authenticated same-process preflight max1536, compactionoff,
-zero messages/pending. One host prompt submitted at2026-10-21T19:15:58.047607Z;
-one assistant error, agent settled. Exact returned cause: **ChatGPT Subscription
-Sharing usage limit reached**. No reset time returned. Reported usage0tokens;
-actual billing not established, not claimed zero. Do not substitute OpenCode0%
-or ordinary Codex limits as evidence of this sharing bucket's availability.
-
-[Failure receipt](evidence/native-sol-step0-failure-disposition-20261021.json),
-[stop record](evidence/p1a-native-sol-stop-record-20261021.json), and
-[private capture manifest](evidence/native-sol-private-capture-manifest-20261021.json)
-are retained. Raw original events/session are private on both laptop and Windows;
-three files byte/hash matched. Raw credentials/auth files were not copied.
-Only owned tmux holderccm-p1a-sol-step0-b7oamsof was stopped after agent_settled.
-No source phase, independent parcel review, retry/fallback or new model worker.
-No source edits. Native continuation failed its first phase under its approved
-stop rule; do not silently send another scope check or source generation.
-
-## Exact source/environment pins
-
-Windows worktree `D:/Repos/ccm-worktrees/cortex-p1a`, branch
-`feat/foreman-line-ccm-p1a`, baseefb5f4bcead899332f4f35f5e0b3a181eb988d2c.
-Actual emitted-worktree baseline238passed, source unchanged. End-of-turn tracked
-source clean, taxonomy matches original hash, other four allowed files absent.
-No re-run because no source changed. Full packet SHA
-2b7017fc5d7e2ac4c618d7633f14348900375fc941cc3e8c32d91b02919f681d.
-Native scope prompt SHA11aaaa56eff13980116a93c4f5daa0d4528e037db3c5e2213d16a3283100377f.
-
-Omarchy cmorgan76@10.0.0.174, existing dedicated key/strict stored ED25519. Pi1.3.0
-binary at /home/cmorgan76/.local/share/mise/installs/pi/latest/pi/pi. Private task
-root /home/cmorgan76/.ccm-p1a-sol-controls-20261021-b7oamsof remains0700. Task
-profile alone changed: actual native caps1536(scope)/8192(preparation), retries0,
-compactionoff, SSE/cachewarmingoff, CLItools/extensions/MCP/skills/templatesoff.
-Existing auth store referenced privately after explicit approval; no token printed
-or copied. After stopping the owned worker, its private task auth symlink was detached;
-original credential store remains intact. No token read/printed in cleanup.
-No new launcher/provider/router installed. Durable remote capture now
-includes a real native error session; no unsupported remote-cancellation claim.
-
-## Accounting and reviewers
-
-GenSpark reported95.7 + original unusable-request reservation94.6 = **190.3 of700**.
-Reservation remains full despite unattrib86.9 shared debit. Prior request01
-upstream generation/billing attribution remain unknown; owner ACCEPTED delivery-
-unusable/possible unseen generation for this now-attempted native continuation.
-Do not ask again for that same disposition. Current hold is Subscription Sharing.
-October21 shared1000/100percall/9000effort/1000reserve and other initiatives300
-remain. Revert shared cap300 next day; no automatic day extension. Native OAuth
-usage separate/unknown, not converted to GenSpark credits. No new GenSpark call.
-Two fresh separate Opus5.5 reviews remain required, independent from OpenAI
-builder and each other's findings, but NOT RUN because no candidate exists.
-
-## Completed OpenCode follow-through and preferences
-
-[Owner preferences](omarchy-owner-routing-preferences-20261021.md) and OpenCode
-correction retained; no supplied fallback code executed. Exact default
-opencode-go/mimo-v2.6-pro and local credentialready verified. Installed Go base
-/inference/go/v1 differs from current documented /inference/go/openai/v1 path;
-alias compatibility unverified, no config changed/probe. Authenticated Pi workspace
-Goactive; rounded0%rolling/weekly/monthly, selectedrangeMiMo8requests/<$0.01.
-ExtraON, credit21.14, auto-recharge20below5, budget100/39.78left. No settingchanged,
-loginrequest resolved. Exactremaining/key-workspacebinding unverified. No provider
-cash allowance inferred from GenSpark approval. OpenCode is not an automatic
-replacement for this specifically approved frontier Sol repair.
-
-## Superseded OAuth-only resumable boundary (history)
-
-Existing OAuth Sharing allowance must become usable, or the owner must explicitly
-choose a separately bounded alternative. No reset time is known; do not guess,
-probe repeatedly, relogin, consume a Codex reset, add API keys or use OpenCode cash.
-On resume, preserve failed attempts and source pins, follow the failed-phase
-stop/retry disposition, and retain all review/whole-goal exits. Do not restart
-planning, qualification, original review, approval ceremonies or another worker
-merely because time passed. Full Context is not bulk-ingestion-ready.
+P1A is contract-only. Zero authenticated positive legacy producers qualified;
+exact allowlist/authentication remains mandatory before high-trust backfill.
+P1B needs frozen scoring/FSRS plus independent30-event numeric recomputation;
+P1C exact C# fixture/source conformance; P1D real authorized DB capability evidence
+before DB-dependent execution. No new DB/provider is qualified by documentation.
+Full goal still requires P2 scrub/parse, P3 storage/purge, P4 recall/benchmarks,
+P5 briefing/graph, P6 lifecycle/Gateway, P7 inheritance and P8 connectors with
+their full exit evidence. No bulk-import, privacy/crypto-erasure or deployed
+interoperability claim from this foundation. Shared api.py ownership is serialized.

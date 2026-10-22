@@ -1,0 +1,38 @@
+{
+  "startedAtUtc": "2026-10-22T01:34:13.262289+00:00",
+  "requestedModel": "gpt-6.1-sol",
+  "requestCount": 1,
+  "retries": 0,
+  "status": "failed_or_uncertain_no_retry",
+  "inputSha256": "a56cabf5d074449615a5dc46427d9f1d3fa8bb663aac9ab228fc13028352541c",
+  "maxOutput": 16384,
+  "capture": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\api-focused-repair-20261021-01\\source-run",
+  "httpStatus": 200,
+  "requestId": "req_2f59d8acb4e04f32b9cd6f03e0038697",
+  "contentType": "text/event-stream; charset=utf-8",
+  "responseId": "resp_054a8c08165be533016ad96815fff087d28c11286126284dd4",
+  "model": "gpt-6.1-sol",
+  "usage": {
+    "input_tokens": 42007,
+    "input_tokens_details": {
+      "cache_write_tokens": 42004,
+      "cached_tokens": 0
+    },
+    "output_tokens": 16384,
+    "output_tokens_details": {
+      "reasoning_tokens": 2287
+    },
+    "total_tokens": 58391
+  },
+  "incompleteDetails": {
+    "reason": "max_output_tokens"
+  },
+  "completedAtUtc": "2026-10-22T01:38:02.311174+00:00",
+  "events": 14110,
+  "captureBytes": 4035084,
+  "textBytes": 51637,
+  "conservativeTokenPriceUsd": 0.2688575,
+  "failureClass": "AssertionError",
+  "finishedAtUtc": "2026-10-22T01:38:02.316667+00:00",
+  "billing": "unknown"
+}

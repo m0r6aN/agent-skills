@@ -1,0 +1,27 @@
+{
+  "approvedAtRecordedUtc": "2026-10-22T01:42:02.312951+00:00",
+  "ownerApproval": "Broaddelegatednon-destructiveauthority: one document-only completion of scope-passedrepair, no retries or code regeneration",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "serviceTier": "default",
+  "inputSha256": "32b212b8019f42c5da0261d67bd57e89e68b6156bd666c5442f152c28d87095c",
+  "conservativeInputTokens": 47059,
+  "inputTokenCounts": {
+    "cl100k_base": 38927,
+    "o200k_base": 39003
+  },
+  "maxInput": 60000,
+  "maxOutput": 10240,
+  "estimatedTokenCostCapUsd": 0.26,
+  "worstModeledUsd": 0.2524,
+  "maxRequests": 1,
+  "retry": false,
+  "tools": [],
+  "timeSeconds": 600,
+  "store": false,
+  "reservationsRetained": {
+    "originalGenSparkCredits": 94.6,
+    "priorApiSourceUsd": 0.17192
+  },
+  "passedScopeReused": true
+}

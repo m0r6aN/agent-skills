@@ -1,0 +1,39 @@
+{
+  "atUtc": "2026-10-22T01:55:27.893450+00:00",
+  "status": "Two independent Opus closures PASS; all original findings closed; low documentary nits corrected mechanically",
+  "reviews": [
+    "p1a-independent-closure-A-20261021.json",
+    "p1a-independent-closure-B-20261021.json"
+  ],
+  "hostDisposition": [
+    {
+      "ids": [
+        "A.N1",
+        "B.N-01"
+      ],
+      "action": "Align document fixture version to 2.0.1 and record actual 399-test host evidence"
+    },
+    {
+      "ids": [
+        "B.N-02"
+      ],
+      "action": "Move existing unchanged receipt subtype CREATE before graph_edges within normative SQL block"
+    },
+    {
+      "action": "Restore existing taxonomy CRLF convention; byte-format-only, no AST change"
+    }
+  ],
+  "normativeAppendixUnchanged": true,
+  "codeTestsFixtureUnchangedSince399Pass": true,
+  "candidatePinsAfter": {
+    "src/keon/cortex/envelope/taxonomy.py": "08abe50559cb3a01a634fb319982a8304ee424dfef29d0660bc969ef06af38be",
+    "src/keon/cortex/ingress/models_v2.py": "ecf7ea3a50f08435f1f07204f3e2828cf146200515f87707063cfc2756032dcf",
+    "tests/fixtures/ccm/contracts-v2.json": "c419250a4a9e232aca9a168ffeb7bb20b3acaf9746e6b7bc06babad8c1de9e90",
+    "tests/test_ccm_contracts_v2.py": "b6714d9f28556e9f238eda38ca0f50a5a520c71b0910fb2cbbb877ecfb1c38a2",
+    "docs/specs/ccm-memory-graph-v2.md": "0fb819cf5f96cf05fe1e6ec6bec3b831fb379173bf9e089acffe0458eb6059a2"
+  },
+  "testResult": "p1a-focused-repair-validation-20261021.json",
+  "runtimeSqlApplied": false,
+  "sourceAccepted": false,
+  "merged": false
+}
