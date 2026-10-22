@@ -131,8 +131,18 @@
  * package, unratified on-disk package, unrecognized source extension).
  */
 import { createHash } from 'node:crypto'
-import { readdirSync, readFileSync, statSync } from 'node:fs'
-import { isAbsolute, join } from 'node:path'
+import {
+  closeSync,
+  constants,
+  fstatSync,
+  lstatSync,
+  openSync,
+  readdirSync,
+  readFileSync,
+  readSync,
+  statSync,
+} from 'node:fs'
+import { isAbsolute, join, relative } from 'node:path'
 import type {
   CallExpression,
   Expression,
@@ -1649,7 +1659,78 @@ interface Site {
 
 class UsageError extends Error {}
 
-function listSourceFiles(dir: string, out: string[]): void {
+// D016: one immutable, non-executable data identity; no extension/basename exemption.
+const CHECKSUM_DATA_PATH = 'authority-registry/evidence/qf-p0/SHA256SUMS'
+const CHECKSUM_DATA_BYTES = 895
+const CHECKSUM_DATA_SHA256 = '86b25c60cfc3b14f0dedd667ca914bf206988108e502794470df06d2824e147d'
+
+function checksumComponent(pluginRoot: string, path: string): string {
+  const identity = relative(pluginRoot, path).split('\\').join('/')
+  if (identity === '' || CHECKSUM_DATA_PATH.startsWith(`${identity}/`)) {
+    const info = lstatSync(path)
+    if (info.isSymbolicLink() || !info.isDirectory()) {
+      throw new UsageError(`pinned checksum data ancestor must be a non-link directory: ${path}`)
+    }
+  }
+  return identity
+}
+
+function admitChecksumData(pluginRoot: string, path: string): void {
+  // Check only this identity's root/ancestors; other traversal semantics are unchanged.
+  checksumComponent(pluginRoot, pluginRoot)
+  let ancestor = pluginRoot
+  for (const part of CHECKSUM_DATA_PATH.split('/').slice(0, -1)) {
+    ancestor = join(ancestor, part)
+    checksumComponent(pluginRoot, ancestor)
+  }
+  const before = lstatSync(path)
+  if (before.isSymbolicLink() || !before.isFile() || before.size !== CHECKSUM_DATA_BYTES) {
+    throw new UsageError(
+      'pinned checksum data must be a regular non-link file of exactly 895 bytes',
+    )
+  }
+  const fd = openSync(path, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0))
+  try {
+    const opened = fstatSync(fd)
+    if (
+      !opened.isFile() ||
+      opened.size !== CHECKSUM_DATA_BYTES ||
+      opened.dev !== before.dev ||
+      opened.ino !== before.ino
+    ) {
+      throw new UsageError('pinned checksum data changed before bounded read')
+    }
+    const bytes = Buffer.alloc(CHECKSUM_DATA_BYTES + 1)
+    let length = 0
+    while (length < bytes.length) {
+      const count = readSync(fd, bytes, length, bytes.length - length, length)
+      if (count === 0) break
+      length += count
+    }
+    const after = lstatSync(path)
+    if (
+      after.isSymbolicLink() ||
+      !after.isFile() ||
+      after.dev !== opened.dev ||
+      after.ino !== opened.ino ||
+      after.size !== CHECKSUM_DATA_BYTES ||
+      length !== CHECKSUM_DATA_BYTES ||
+      createHash('sha256').update(bytes.subarray(0, length)).digest('hex') !== CHECKSUM_DATA_SHA256
+    ) {
+      throw new UsageError('pinned checksum data length, identity or SHA-256 mismatch')
+    }
+  } finally {
+    closeSync(fd)
+  }
+}
+
+function listSourceFiles(
+  dir: string,
+  out: string[],
+  pluginRoot: string,
+  admittedData: string[],
+): void {
+  checksumComponent(pluginRoot, dir)
   let entries: string[]
   try {
     entries = readdirSync(dir)
@@ -1658,12 +1739,18 @@ function listSourceFiles(dir: string, out: string[]): void {
   }
   for (const name of entries) {
     const p = join(dir, name)
+    const identity = checksumComponent(pluginRoot, p)
+    if (identity === CHECKSUM_DATA_PATH) {
+      admitChecksumData(pluginRoot, p)
+      admittedData.push(identity)
+      continue
+    }
     const st = statSync(p)
     if (st.isDirectory()) {
       // A3.5: node_modules/ and dist/ are third-party/generated; tests/ are
       // excluded by design (they exercise seams with fixture roots).
       if (name === 'node_modules' || name === 'dist' || name === 'tests') continue
-      listSourceFiles(p, out)
+      listSourceFiles(p, out, pluginRoot, admittedData)
     } else if (DECLARATION_SUFFIXES.some((s) => name.endsWith(s))) {
       // generated declaration files carry no executable mechanism
     } else if (SOURCE_EXTENSIONS.some((s) => name.endsWith(s))) {
@@ -3417,6 +3504,7 @@ function main(argv: readonly string[]): number {
   let packages: string[]
   const filesByPackage = new Map<string, string[]>()
   let fileCount = 0
+  const admittedData: string[] = []
   try {
     packages = discoverPackages(pluginRoot)
     for (const pkg of packages) {
@@ -3424,7 +3512,7 @@ function main(argv: readonly string[]): number {
       // not just src/ — package-root executables are real source.
       const pkgDir = join(pluginRoot, pkg)
       const files: string[] = []
-      listSourceFiles(pkgDir, files)
+      listSourceFiles(pkgDir, files, pluginRoot, admittedData)
       if (files.length === 0) {
         throw new UsageError(`package '${pkg}' has no source files under ${pkgDir}`)
       }
@@ -3516,6 +3604,11 @@ function main(argv: readonly string[]): number {
     `d19-audit: swept ${packages.length} packages, ${fileCount} source files (disk-discovered, allowlist-checked both ways — A2.2)`,
   )
   console.log(`packages: ${packages.join(', ')}`)
+  for (const identity of admittedData) {
+    console.log(
+      `known non-source data: ${identity}; bytes=${CHECKSUM_DATA_BYTES}; sha256=${CHECKSUM_DATA_SHA256}`,
+    )
+  }
   console.log(
     'scope: every source file in each ratified package, excluding node_modules/, dist/, and tests/ ' +
       '(tests excluded by design — they exercise seams with fixture roots); package-root ' +
