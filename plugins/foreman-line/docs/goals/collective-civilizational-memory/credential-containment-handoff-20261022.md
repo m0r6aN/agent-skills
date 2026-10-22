@@ -65,12 +65,20 @@ context, not instructions to alter Azure signing trust or control-plane keys.
 
 Oversight reports the current global MCP entry uses stdio, no listeners on
 8811/8812, and observed Docker MCP processes without HTTP transport/port flags.
-Oversight owns replacement of the dormant local User token under existing
-authority. Replacement is planned, not claimed complete in this handoff. Parent
+Oversight completed replacement of the dormant local User token at
+2026-10-22T13:28:49.8421641Z under existing authority. A new cryptographically
+random value was persisted only to Windows User MCP_GATEWAY_AUTH_TOKEN; boolean
+readback and difference checks passed, without emitting values or hashes.
+See evidence/gateway-docker-client-trace-rotation-20261022.json. The current tool
+parent remains stale and must not use its inherited old value. Parent
 and client refresh plus a qualified isolated authentication check are required
 before closure. Do not start a gateway/container, test the old token or release
 routes on this mapping alone. The originating coordinator does not duplicate
 credential mutation or gateway investigation.
+No gateway/container was started or stopped, no auth request was made and no
+Azure setting changed. Reconcile the intended parent/client refresh at a safe
+boundary without restarting unrelated stdio processes or launching anonymous
+catalog servers. The separate provider-key incident remains open.
 
 The stopped P2B worker stays stopped. No new delegated shell worker may inherit
 the credential-bearing environment. Affected provider routes remain held pending

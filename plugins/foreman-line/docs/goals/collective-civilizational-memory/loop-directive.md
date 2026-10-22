@@ -55,8 +55,11 @@ oversight traced MCP_GATEWAY_AUTH_TOKEN to the saved local Pi Docker client,
 Authorization Bearer header and local setup/start scripts. Current endpoint is
 local 127.0.0.1:8811; this is not established Azure Keon credential identity.
 Current global entry is stdio, no 8811/8812 listeners reported, and observed Docker
-MCP processes use default stdio. Oversight owns dormant User-token replacement;
-completion is not yet claimed. Parent/client refresh and a qualified isolated
+MCP processes use default stdio. Oversight completed dormant User-token replacement
+at2026-10-22T13:28:49.8421641Z, persisted only to Windows User with boolean readback
+and difference checks. See evidence/gateway-docker-client-trace-rotation-20261022.json.
+Current tool parent remains stale: do not use its inherited old token or claim
+route readiness. Parent/client refresh and a qualified isolated
 auth check remain required before closure. No server/container start, old-token
 request or route release is authorized by this mapping. Historical Azure source
 observations below remain context only; do not alter unrelated signing trust.
