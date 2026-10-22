@@ -1,0 +1,17 @@
+{
+  "atUtc": "2026-10-22T03:14:54.534266+00:00",
+  "parcel": "CCM-P1C",
+  "unit": "GenSpark prepaid credits",
+  "reportedSpent": 295.9,
+  "knownCompletedConservativeCredits": 297.3575,
+  "unresolvedReservations": 0,
+  "initialCeiling": 900,
+  "sharedNYOct21Ceiling": 4000,
+  "nativeCodexUsage": "unknown/separate",
+  "otherUnknownsRetained": {
+    "P1A_GenSpark": 94.6,
+    "P1B_closureB": 350,
+    "API_USD": 0.17192
+  },
+  "status": "Two initial CHANGES_REQUIRED, source unaccepted, focused repair Step0 next; no closure calls yet"
+}
