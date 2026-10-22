@@ -61,9 +61,14 @@ p2b-credential-origin-metadata-20261022.json. Entire-key rendering/truncation an
 validity are not verified. Most named parent process values equal HKCU User
 values; parent OpenAI process value DIFFERS from current User value. Do not
 blindly revoke the current User key based on that observation or infer child
-material identity. Oversight's consolidated question for five unresolved account
-custodians remains pending; no reply assumed. TypeSafe direct Jev is identified,
-but its account custodian is unknown. Active affected secret keys still need the
+material identity. Clinton directly confirmed custody of MUSE_API_KEY,
+LIQUID_API_KEY, NACE_API_KEY and TYPESAFE_API_KEY, and that the gateway issues
+MCP_GATEWAY_AUTH_TOKEN. The consolidated ownership question is answered; do not
+repeat it. TypeSafe direct Jev is identified; exact MUSE/LIQUID/NACE dashboards
+still need existing account records. Gateway administrative custody and supported
+invalidation/reissue remain unestablished. See
+evidence/credential-owner-clarification-20261022.json. Ownership does not establish
+rotation, revocation or expiry. Active affected secret keys still need the
 appropriate custodian's rotation/refresh or an evidenced disposition. Current
 parent BROWSER_USE_ACCESS_VERIFYING_IDENTITY and
 CODEX_TASK_WORKSPACE_VERIFYING_IDENTITY are Ed25519 PUBLIC SPKI verification

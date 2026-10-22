@@ -6,11 +6,15 @@ rotation steps, keep affected routes held, and continue safe work under existing
 authority. The oversight session owns the saved names-only
 [rotation runbook](credential-rotation-runbook-20261022.md); this originating
 coordinator retains Context source custody. Installed Pi documentation identifies
-TYPESAFE as the TypeSafe direct Jev classifier; its account custodian remains
-unknown. Issuers/accounts for MUSE, LIQUID, NACE and the MCP gateway remain
-unresolved and must not be guessed. Oversight's consolidated question for these
-five account custodians supersedes the broad token questions and remains pending;
-do not ask it again.
+TYPESAFE as the TypeSafe direct Jev classifier. Clinton directly confirmed that
+he created MUSE_API_KEY, LIQUID_API_KEY, NACE_API_KEY and TYPESAFE_API_KEY;
+he is their confirmed custodian. Exact issuing dashboards for MUSE, LIQUID and
+NACE still require his existing account records and must not be guessed.
+He confirmed the gateway issues MCP_GATEWAY_AUTH_TOKEN; its exact administrative
+custodian and supported invalidation/reissue mechanism remain unestablished.
+See evidence/credential-owner-clarification-20261022.json. The consolidated
+ownership question is answered; do not repeat it. Ownership confirmation is not
+evidence of rotation, revocation or expiry.
 
 ## Scope remains open
 
