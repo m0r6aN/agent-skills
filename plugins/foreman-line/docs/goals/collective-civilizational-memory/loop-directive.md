@@ -64,9 +64,14 @@ blindly revoke the current User key based on that observation or infer child
 material identity. Clinton directly confirmed custody of MUSE_API_KEY,
 LIQUID_API_KEY, NACE_API_KEY and TYPESAFE_API_KEY, and that the gateway issues
 MCP_GATEWAY_AUTH_TOKEN. The consolidated ownership question is answered; do not
-repeat it. TypeSafe direct Jev is identified; exact MUSE/LIQUID/NACE dashboards
-still need existing account records. Gateway administrative custody and supported
-invalidation/reissue remain unestablished. See
+repeat it. TypeSafe direct Jev is identified. Owner supplied MUSE
+https://dev.meta.ai/api-keys, LIQUID https://console.liquid.ai/dashboard and NACE
+https://console.nace.ai/dashboard/api-keys. Owner identified the gateway endpoint
+https://keon-mcp-gateway.redrock-24997c6f.eastus2.azurecontainerapps.io and source
+D:/Repos/keon-omega/keon-mcp-gateway. These locators do not prove account access
+or rotation. Oversight alone investigates supported gateway auth/cutover from
+source/templates; no duplicate investigation or ownership question. Gateway
+administrative custody and supported invalidation/reissue remain unestablished. See
 evidence/credential-owner-clarification-20261022.json. Ownership does not establish
 rotation, revocation or expiry. Active affected secret keys still need the
 appropriate custodian's rotation/refresh or an evidenced disposition. Current

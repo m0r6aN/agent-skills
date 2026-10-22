@@ -8,10 +8,17 @@ authority. The oversight session owns the saved names-only
 coordinator retains Context source custody. Installed Pi documentation identifies
 TYPESAFE as the TypeSafe direct Jev classifier. Clinton directly confirmed that
 he created MUSE_API_KEY, LIQUID_API_KEY, NACE_API_KEY and TYPESAFE_API_KEY;
-he is their confirmed custodian. Exact issuing dashboards for MUSE, LIQUID and
-NACE still require his existing account records and must not be guessed.
-He confirmed the gateway issues MCP_GATEWAY_AUTH_TOKEN; its exact administrative
-custodian and supported invalidation/reissue mechanism remain unestablished.
+he is their confirmed custodian. He subsequently supplied these issuing-account
+locators: MUSE https://dev.meta.ai/api-keys ; LIQUID
+https://console.liquid.ai/dashboard ; NACE
+https://console.nace.ai/dashboard/api-keys . These are owner-supplied locators,
+not independently verified account access or rotation evidence.
+He confirmed the gateway issues MCP_GATEWAY_AUTH_TOKEN and identified
+https://keon-mcp-gateway.redrock-24997c6f.eastus2.azurecontainerapps.io with source
+at D:/Repos/keon-omega/keon-mcp-gateway. Oversight owns the bounded source/template
+investigation of supported authentication and cutover mechanics; do not duplicate
+it. Administrative custody and supported invalidation/reissue remain to be
+established from evidence. No live gateway call, deployment or key read is implied.
 See evidence/credential-owner-clarification-20261022.json. The consolidated
 ownership question is answered; do not repeat it. Ownership confirmation is not
 evidence of rotation, revocation or expiry.
