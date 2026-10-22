@@ -3,6 +3,14 @@
 Status: proposal and fixture plan only. No source implementation, parcel approval,
 paid request or worker dispatch. P2A and P2B acceptance remains unchanged.
 
+Follow-through under renewed owner instruction is saved in
+[AST contract/source plan](ast-source-contract-plan-20261022.md): concrete pure
+API, declaration/offset/Unicode/error decisions, proposed three-new-file scope,
+and six independently verified small byte fixtures. Resource limits and parser
+execution-boundary qualification remain open before a formal workorder. The later
+plan supersedes undecided interface alternatives below, without claiming build
+admission or changing credential holds.
+
 The accepted v4 D8/P2 outline requires deterministic AST/git symbol extraction,
 structured civic mapping and an extractor engine. Keep these as small components
 that a cheap builder can implement and a reviewer can assess independently.

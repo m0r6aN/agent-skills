@@ -138,6 +138,12 @@ output allowance; no automatic retry/provider hunt or partial-PASS acceptance.
 
 Next small source capabilities: deterministic AST/git extraction, civic-contract
 mapping, extractor engine; these and remaining P2 are NOT claimed complete.
+Owner renewed safe AST/source-planning instruction while oversight resolves the
+gateway. See ast-source-contract-plan-20261022.md: pure byte-input declaration
+API, three proposed new source files, explicit Unicode/span/error semantics and
+six independent byte-oracle checks complete. Parser host grammar comparison,
+resource-limit qualification and execution boundary remain prerequisites, not
+waived by OS-only environment filtering. No implementation, worker or paid call.
 Then P3 storage/outbox/batch fencing/deletion, P4 scoped retrieval/benchmark,
 P5 composition/graph, P6 lifecycle/caution/Gateway, P7 inheritance, P8 connectors.
 Source/authentication qualification remains ZERO before high-trust legacy backfill.
