@@ -154,3 +154,48 @@ recurs; any other failure or new skip stops for concrete triage. All focused
 scrubber tests, formatting/types and actual exact-head CI must pass before
 acceptance/merge. Same baseline timing variance is not claimed repaired or
 ignored in whole-suite reporting. No P2A work owns BM2 or source issue81.
+
+### C02-R1 — bounded scanner repair clarification (2026-10-22)
+
+Before the single formal repair, the authorized coordinator ratifies these
+additional explicit safety limits and boundary semantics. They narrow the pure
+library envelope; they grant no ingestion, trust, privacy or key-custody waiver.
+
+- At most65,536 detection candidates across the complete call, before materializing
+  another candidate; excess rejects atomically as resource_limit. Include known
+  and catalog candidates. This bound is distinct from nodes and final output size.
+  Merge unions without retaining/copying every member; retain only interval and
+  selected-priority metadata. No quadratic repeated scanning of overlapping PEM
+  markers or repeated assignment starts; a shared linear scanner or precomputed
+  boundaries must preserve the frozen all-overlap union/priority semantics.
+- Integers have at most4,096 decimal digits (sign excluded). Use a cheap bit-length
+  guard before bounded conversion. Aggregate raw string/key UTF-8 bytes plus
+  integer/float canonical scalar bytes must be <=1MiB before whole-tree JSON
+  allocation. Reject resource_limit above either bound. This makes Python3.10+
+  behavior explicit and avoids relying on interpreter global int-conversion limits.
+- Reject known literal codepoint length >1MiB before Unicode validation/NFC;
+  normalized per-literal4,096-byte and aggregate64KiB bounds still bind. Tenant
+  codepoint length <=256 is checked before Unicode/NFC/UTF-8 allocation. Do not
+  normalize an arbitrarily long trusted-context string to discover it is too large.
+- Container depth counts dict/list containers only: root0, nested container+1;
+  scalar children do not add container depth. A container at32 holding a scalar
+  succeeds; a nested container at33 fails. Exact node semantics stay unchanged.
+- For URL detection an authority ends at whitespace, slash, question mark or hash.
+  Its userinfo extends through the last at-sign in that authority and must contain
+  a colon; an empty username is valid. Redact that entire userinfo, preserving
+  scheme/separators/host. A slash in a supposed password terminates authority,
+  rather than extending a URL credential candidate across a path. Scan scheme and
+  authority without retrying a greedy scheme expression at each character.
+- Reject key_epoch containing any normalized known literal, using the same
+  substring semantics as payload detection. It must remain nonsecret metadata.
+- Add meaningful exact boundary tests and bounded hostile regressions for these
+  findings, candidate exhaustion, repeated assignments/PEM, long token-like text,
+  canonical input/output edges and partial closed failure counts. No benchmark
+  threshold changes, new skips or existing-file edits. The original complete
+  baseline3013 identities and137skip dispositions remain the repair tripwire.
+
+Initial reviewer JWT no-dot complexity claims are analytical, not reproduced:
+the existing negative lookbehind rejects interior starts in one long token run.
+The repair must demonstrate bounded long-run behavior; it need not replace a
+correct pattern merely to follow an unverified complexity allegation. URL and
+repeated-assignment scanning require their own independent examination.
