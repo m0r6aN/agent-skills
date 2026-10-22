@@ -1,0 +1,128 @@
+{
+  "observedAtUtc": "2026-10-21T16:56:58.878285+00:00",
+  "worktree": "D:\\Repos\\ccm-worktrees\\cortex-p1a",
+  "branch": "feat/foreman-line-ccm-p1a",
+  "head": "efb5f4bcead899332f4f35f5e0b3a181eb988d2c",
+  "trackedSourceClean": true,
+  "profile": "builder-architecture",
+  "settingsSha256": "5f4ab247fc0aa43d684f99f9baf32491cc142dfbd6a61dfc2fb35d93d3a1718c",
+  "profileLoadClaim": "None: zero-tool remote artifacts have no repository authority; emitted settings are administrative audit metadata",
+  "bootstrapRemoved": true,
+  "sourceRepoCheckout": "Preserved existing root HEAD/dirty state",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "origin/main"
+      ],
+      "cwd": "D:\\Repos\\keon-omega\\keon-cortex",
+      "exitCode": 0,
+      "stdout": "efb5f4bcead899332f4f35f5e0b3a181eb988d2c\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "worktree",
+        "add",
+        "--detach",
+        "D:\\Repos\\ccm-worktrees\\.ccm-p1a-base-efb5-20261021",
+        "efb5f4bcead899332f4f35f5e0b3a181eb988d2c"
+      ],
+      "cwd": "D:\\Repos\\keon-omega\\keon-cortex",
+      "exitCode": 0,
+      "stdout": "HEAD is now at efb5f4b Merge pull request #71 from Keon-Systems/test/memory-idempotency-20261021\n",
+      "stderr": "Preparing worktree (detached HEAD efb5f4b)\nUpdating files:  60% (235/388)\nUpdating files:  61% (237/388)\nUpdating files:  62% (241/388)\nUpdating files:  63% (245/388)\nUpdating files:  64% (249/388)\nUpdating files:  65% (253/388)\nUpdating files:  66% (257/388)\nUpdating files:  67% (260/388)\nUpdating files:  68% (264/388)\nUpdating files:  69% (268/388)\nUpdating files:  70% (272/388)\nUpdating files:  71% (276/388)\nUpdating files:  72% (280/388)\nUpdating files:  73% (284/388)\nUpdating files:  74% (288/388)\nUpdating files:  75% (291/388)\nUpdating files:  76% (295/388)\nUpdating files:  77% (299/388)\nUpdating files:  78% (303/388)\nUpdating files:  79% (307/388)\nUpdating files:  80% (311/388)\nUpdating files:  81% (315/388)\nUpdating files:  82% (319/388)\nUpdating files:  83% (323/388)\nUpdating files:  84% (326/388)\nUpdating files:  85% (330/388)\nUpdating files:  86% (334/388)\nUpdating files:  87% (338/388)\nUpdating files:  88% (342/388)\nUpdating files:  89% (346/388)\nUpdating files:  90% (350/388)\nUpdating files:  91% (354/388)\nUpdating files:  92% (357/388)\nUpdating files:  93% (361/388)\nUpdating files:  94% (365/388)\nUpdating files:  95% (369/388)\nUpdating files:  96% (373/388)\nUpdating files:  97% (377/388)\nUpdating files:  98% (381/388)\nUpdating files:  99% (385/388)\nUpdating files: 100% (388/388)\nUpdating files: 100% (388/388), done.\n"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "D:\\Repos\\ccm-worktrees\\.ccm-p1a-base-efb5-20261021",
+      "exitCode": 0,
+      "stdout": "efb5f4bcead899332f4f35f5e0b3a181eb988d2c\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "D:\\nvm\\v24.19.0\\node.exe",
+        "C:\\Users\\clint\\AppData\\Local\\npm-cache\\_npx\\fd45a72a545557e9\\node_modules\\tsx\\dist\\cli.mjs",
+        "C:\\Users\\clint\\AppData\\Local\\Temp\\ccm-approval-20261021-01\\plugins\\foreman-line\\permission-profiles\\src\\cli.ts",
+        "dispatch-worktree",
+        "--parcel",
+        "ccm-p1a",
+        "--profile",
+        "builder-architecture",
+        "--path",
+        "D:\\Repos\\ccm-worktrees\\cortex-p1a"
+      ],
+      "cwd": "D:\\Repos\\ccm-worktrees\\.ccm-p1a-base-efb5-20261021",
+      "exitCode": 0,
+      "stdout": "profile: builder-architecture\nbranch: feat/foreman-line-ccm-p1a\npath: D:\\Repos\\ccm-worktrees\\cortex-p1a\nsettings: D:\\Repos\\ccm-worktrees\\cortex-p1a\\.claude\\settings.local.json\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "D:\\Repos\\ccm-worktrees\\cortex-p1a",
+      "exitCode": 0,
+      "stdout": "efb5f4bcead899332f4f35f5e0b3a181eb988d2c\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "branch",
+        "--show-current"
+      ],
+      "cwd": "D:\\Repos\\ccm-worktrees\\cortex-p1a",
+      "exitCode": 0,
+      "stdout": "feat/foreman-line-ccm-p1a\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain",
+        "--untracked-files=no"
+      ],
+      "cwd": "D:\\Repos\\ccm-worktrees\\cortex-p1a",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "cwd": "D:\\Repos\\ccm-worktrees\\.ccm-p1a-base-efb5-20261021",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "worktree",
+        "remove",
+        "D:\\Repos\\ccm-worktrees\\.ccm-p1a-base-efb5-20261021"
+      ],
+      "cwd": "D:\\Repos\\keon-omega\\keon-cortex",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "emitterAudit": "profile: builder-architecture\nbranch: feat/foreman-line-ccm-p1a\npath: D:\\Repos\\ccm-worktrees\\cortex-p1a\nsettings: D:\\Repos\\ccm-worktrees\\cortex-p1a\\.claude\\settings.local.json",
+  "step0": "pending",
+  "implementationFilesChanged": 0
+}

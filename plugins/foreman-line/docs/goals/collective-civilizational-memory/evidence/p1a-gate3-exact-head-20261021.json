@@ -1,0 +1,172 @@
+{
+  "baseRefOid": "add85b4bede4d319374088413d99a3569dcd00ff",
+  "headRefOid": "d0d550526a46c8bb29c994ef33ff324a7c270fe0",
+  "mergeStateStatus": "CLEAN",
+  "mergeable": "MERGEABLE",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-22T01:57:25Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39708636981/job/119594452097",
+      "name": "Import Gate (OSS must not reference governed)",
+      "startedAt": "2026-10-22T01:57:20Z",
+      "status": "COMPLETED",
+      "workflowName": "CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-22T01:57:20Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39708630063/job/119594429606",
+      "name": "Import Gate (OSS must not reference governed)",
+      "startedAt": "2026-10-22T01:57:15Z",
+      "status": "COMPLETED",
+      "workflowName": "CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-22T01:58:12Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39708636981/job/119594452169",
+      "name": "Unit Tests (3.10)",
+      "startedAt": "2026-10-22T01:57:20Z",
+      "status": "COMPLETED",
+      "workflowName": "CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-22T01:58:26Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39708630063/job/119594429677",
+      "name": "Unit Tests (3.10)",
+      "startedAt": "2026-10-22T01:57:15Z",
+      "status": "COMPLETED",
+      "workflowName": "CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-22T01:58:33Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39708636981/job/119594451999",
+      "name": "Unit Tests (3.11)",
+      "startedAt": "2026-10-22T01:57:19Z",
+      "status": "COMPLETED",
+      "workflowName": "CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-22T01:58:29Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39708630063/job/119594429570",
+      "name": "Unit Tests (3.11)",
+      "startedAt": "2026-10-22T01:57:15Z",
+      "status": "COMPLETED",
+      "workflowName": "CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-22T01:58:45Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39708636981/job/119594451900",
+      "name": "Unit Tests (3.12)",
+      "startedAt": "2026-10-22T01:57:19Z",
+      "status": "COMPLETED",
+      "workflowName": "CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-22T01:58:04Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39708630063/job/119594429306",
+      "name": "Unit Tests (3.12)",
+      "startedAt": "2026-10-22T01:57:15Z",
+      "status": "COMPLETED",
+      "workflowName": "CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-22T01:57:57Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39708636981/job/119594452026",
+      "name": "Lint + Type Check",
+      "startedAt": "2026-10-22T01:57:19Z",
+      "status": "COMPLETED",
+      "workflowName": "CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-22T01:58:03Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39708630063/job/119594429571",
+      "name": "Lint + Type Check",
+      "startedAt": "2026-10-22T01:57:15Z",
+      "status": "COMPLETED",
+      "workflowName": "CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-22T01:59:21Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39708636981/job/119594881759",
+      "name": "Benchmark (fake provider)",
+      "startedAt": "2026-10-22T01:58:48Z",
+      "status": "COMPLETED",
+      "workflowName": "CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-22T01:58:57Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39708630063/job/119594807670",
+      "name": "Benchmark (fake provider)",
+      "startedAt": "2026-10-22T01:58:32Z",
+      "status": "COMPLETED",
+      "workflowName": "CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-22T01:59:16Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39708636981/job/119594881877",
+      "name": "Proof Summary",
+      "startedAt": "2026-10-22T01:58:48Z",
+      "status": "COMPLETED",
+      "workflowName": "CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-22T01:59:03Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39708630063/job/119594807646",
+      "name": "Proof Summary",
+      "startedAt": "2026-10-22T01:58:32Z",
+      "status": "COMPLETED",
+      "workflowName": "CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-22T01:59:18Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39708636981/job/119594881941",
+      "name": "Tenant Isolation Proof",
+      "startedAt": "2026-10-22T01:58:48Z",
+      "status": "COMPLETED",
+      "workflowName": "CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-22T01:59:10Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39708630063/job/119594807642",
+      "name": "Tenant Isolation Proof",
+      "startedAt": "2026-10-22T01:58:32Z",
+      "status": "COMPLETED",
+      "workflowName": "CI"
+    }
+  ],
+  "atUtc": "2026-10-22T02:00:19.278474+00:00",
+  "gate3": "Approved on behalf of owner under direct blanket non-destructive decisions/approvals; exact-head green chain and independent evidence complete",
+  "reviewEvidence": "p1a-independent-closure-20261021.md",
+  "notDestructiveDataOrDeployment": true
+}

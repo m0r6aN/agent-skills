@@ -1,0 +1,56 @@
+{
+  "recordedAtUtc": "2026-10-21T19:17:35.118400+00:00",
+  "phase": "native repair Step0",
+  "result": "unsuccessful; no source phase sent",
+  "provider": "openai",
+  "model": "gpt-6.1-sol",
+  "api": "openai-responses",
+  "stopReason": "error",
+  "reportedUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "cacheWrite": 0,
+    "totalTokens": 0,
+    "cost": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "total": 0
+    }
+  },
+  "httpStatusInError": null,
+  "categoryMatches": {
+    "authentication": true,
+    "model_not_supported": false,
+    "quota": true,
+    "OAuth": false,
+    "permission": false,
+    "context": false
+  },
+  "sanitizedError": "The ChatGPT user has reached their Subscription Sharing usage limit. Ask the user to try again after their usage limit resets or use an API key instead.",
+  "originalErrorSha256": "a3f2d14c9ef1e3169972af93918373235c6ec289178ac15e9011d7bd8bf9a351",
+  "privateOriginalCaptures": {
+    "/home/cmorgan76/.ccm-p1a-sol-controls-20261021-b7oamsof/delivery/step0.events.jsonl": {
+      "bytes": 402022,
+      "sha256": "26df7ae7f1f642a12d87e2e21efbee410a40622b33c5c1dd731030b1e2296e28"
+    },
+    "/home/cmorgan76/.ccm-p1a-sol-controls-20261021-b7oamsof/delivery/step0.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/cmorgan76/.ccm-p1a-sol-controls-20261021-b7oamsof/sessions/native-repair.jsonl": {
+      "bytes": 134044,
+      "sha256": "857a926fef87f2ee56d450db2ee32d006fc53a54802543aa347af04191ea0b6c"
+    }
+  },
+  "ownedTmuxHolderStoppedAfterAgentSettled": true,
+  "generationRequestsSubmittedByHost": 1,
+  "sourceProposalRequests": 0,
+  "automaticRetry": false,
+  "GenSparkPriorReservation": 94.6,
+  "billing": "Native service reports zero usage, not proof of zero charge; first GenSpark94.6 remains reserved.",
+  "primaryCause": "ChatGPT Subscription Sharing usage limit; no reset time returned",
+  "categoryInterpretation": "Regex authentication match is incidental to provider suggestion of API keys; no credential invalidation or login remedy is established. Do not activate API-key fallback."
+}

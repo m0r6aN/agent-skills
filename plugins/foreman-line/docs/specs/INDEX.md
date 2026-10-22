@@ -1,5 +1,49 @@
 # Spec Index — plugins/foreman-line
 
+## CCM foundation delivery ledger
+
+Scoped local tracking under [SPEC-CONVENTION §5](../SPEC-CONVENTION.md),
+coordinator-ratified 2026-10-21 using Clinton's delegated process authority.
+Sole coordinator: `ccm-coordinator-20261020-fresh-01`; originating oversight chat:
+`01a155be-72a6-7b02-ac33-84dc64bbf102`. This section registers draft work locally;
+it does not approve the tree or authorize implementation. Jira W1-P4/Stage B is
+**NOT APPLICABLE UNDER THE CCM FOUNDATION EXCEPTION**, not passed.
+
+All four spec pins below are in repository `D:/Repos/agent-skills` at commit
+`d6c4adce4bad3b37e496afd3a7db48b525461bb2`; paths are relative to that repository.
+Human W1-P3 approval: **COMPLETE**, Clinton Morgan, 2026-10-21 15:54:57.907 UTC.
+Approved subject hash:
+`9431a8649c2c1125da28e3e4a62f3d9cb15d69b8a1f83dd9c7b1291e8a9c2f96`.
+Actual [approval record](active/collective-civilizational-memory-foundation-2026-10-19-01a155c3.approval.json)
+and [Stage-A genesis receipt](../../../../docs/receipts/34014809-a177-4946-a29c-a71be1f311fe/000000-A-shaping-result.json),
+receipt hash `7072cdf78e67a322220a6a0e3098a11522d6ff3180b8a373cbc8d2b19fdd442f`.
+Current spec bytes, projected tree, subject/receipt binding, canonical receipt
+hash, official schema and genesis-chain validation all pass:
+[verification](../goals/collective-civilizational-memory/evidence/approval-verification-20261021.json).
+P1A now has a separately authorized status-only active derivative; B/C/D remain draft.
+Original approved scope remains pinned; no fabricated current-bytes hash match or new approval.
+Gate2: **P1A artifact-only dispatch APPROVED; formal Step0 PASS; implementation01 HTTP524/unusable; complete5pathcandidate328PASS plusformat/typePASS afterapprovedmechanicalpatch; paidreviewsheld**.
+B/C/D remain HOLD. See [decision/envelope](../goals/collective-civilizational-memory/evidence/p1a-gate2-artifact-mode-20261021.json).
+P1A active SHA256 `e11b0da82f80b4dd1a993ae3993951782360f1a5adb791a14f438a12c6ce55e1`
+is a status-only derivative of the original approved scope below. Base efb5f4bc;
+branch `feat/foreman-line-ccm-p1a`, named worktree unchanged. Remote roles have no
+tools/repository/effect authority; the scoped host performs all file operations.
+
+| Parcel / status | Accountable owner | Dependencies | Exact spec path | Spec SHA-256 | Worktree / branch | Evidence |
+|---|---|---|---|---|---|---|
+| CCM-P1A / active, candidate328PASS+format/typePASS; paidreviewcontrolsheld | fresh-01 coordinator | Approved tree and qualified execution envelope | `plugins/foreman-line/docs/specs/active/CCM-P1A-memory-graph-contracts.md` | `2db53117a6d990355cff5c0cf7f09a058bcf2a78c55b35a659395ae9b45f2dd8` | Created/clean, baseline238 PASS: `D:/Repos/ccm-worktrees/cortex-p1a`, `feat/foreman-line-ccm-p1a` | [Work order](../kickstarters/ccm-p1a-fresh-20261020.md), [baseline manifest](../goals/collective-civilizational-memory/evidence/p1a-baseline-20261021-03/manifest.json) |
+| CCM-P1B / draft | fresh-01 coordinator | Accepted P1A contract/fixture pins; independent numeric acceptance | `plugins/foreman-line/docs/specs/active/CCM-P1B-gravity-v2-fixtures.md` | `4d08fab475d32bdcd3643c5c77f9569f39d2360899fe55049a8dfc778b42d2e1` | Not assigned | [Readiness](../goals/collective-civilizational-memory/p1a-readiness-checklist.md) |
+| CCM-P1C / draft | fresh-01 coordinator | Accepted P1A shared wire/fixture pins | `plugins/foreman-line/docs/specs/active/CCM-P1C-collective-wire-compatibility.md` | `b782e06829119a3993c18155e331882a44a7c82cf6dd05ec8061c7e9f3c26c09` | Not assigned | [Readiness](../goals/collective-civilizational-memory/p1a-readiness-checklist.md) |
+| CCM-P1D / draft | fresh-01 coordinator | Accepted P1A DDL/profile; actual database access separately authorized | `plugins/foreman-line/docs/specs/active/CCM-P1D-postgres-capability-check.md` | `33d2f4d90c57db9c4583328a50442e1fed37e9a2de421742661b7553d6f86603` | Not assigned | [Readiness](../goals/collective-civilizational-memory/p1a-readiness-checklist.md) |
+
+The pre-P1A snapshot baseline is **238 passed**, with unchanged snapshot source.
+It is preparation evidence, not admitted-worktree acceptance, tree approval,
+builder qualification or goal completion. Status updates require actual evidence;
+dispatch must pin this ledger's committed revision and the separately approved
+spec subject. No spec-file bytes were changed to add this ledger.
+
+## General spec inventory
+
 > **Generated 2026-10-08** (ci-fail-fast coordinator). Rows are parsed from each
 > spec's frontmatter — `ticket`, `title`, `status` — with the folder as the lifecycle
 > authority (SPEC-CONVENTION §3 rule 1): a filename present in both `active/` and

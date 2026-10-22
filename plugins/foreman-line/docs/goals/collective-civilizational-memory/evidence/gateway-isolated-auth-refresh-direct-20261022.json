@@ -1,0 +1,40 @@
+{
+  "atUtc": "2026-10-22T13:49:11.4292693Z",
+  "status": "UNSUCCESSFUL",
+  "routeReleased": false,
+  "broaderIncidentClosed": false,
+  "oldTokenRequests": 0,
+  "providerRequests": 0,
+  "toolCalls": 0,
+  "rawLogsRetained": false,
+  "parentStillStale": true,
+  "childCredentialNames": [
+    "MCP_GATEWAY_AUTH_TOKEN"
+  ],
+  "childUsesSavedReplacement": true,
+  "childConfiguration": "Private empty catalog/registry/config/tools/secrets; dynamic tools and OAuth disabled; telemetry disabled; loopback only",
+  "ownedLauncherPid": 74076,
+  "failure": "gateway_not_ready",
+  "ownedProcessExited": true,
+  "processExitCode": 2,
+  "diagnosticFlags": {
+    "Docker Desktop is not running": false,
+    "cannot connect": false,
+    "reading catalog": false,
+    "reading registry": false,
+    "reading config": false,
+    "reading tools": false,
+    "reading secrets": false,
+    "not a docker command": false,
+    "unknown flag": false,
+    "unknown command": false,
+    "failed to": false,
+    "no such file": false,
+    "access is denied": false,
+    "executable file not found": false,
+    "MCP Toolkit is disabled": false
+  },
+  "capturedOutputContainsReplacement": false,
+  "targetListenerAbsentAfter": true,
+  "completedAtUtc": "2026-10-22T13:49:19.4566694Z"
+}

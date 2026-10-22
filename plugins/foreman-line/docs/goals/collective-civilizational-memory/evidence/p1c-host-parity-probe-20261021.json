@@ -1,0 +1,100 @@
+{
+  "atUtc": "2026-10-22T03:11:28.290598+00:00",
+  "kind": "Host isolated private offline probe, no repository source or project changes",
+  "rows": [
+    {
+      "id": "sequence=1.0",
+      "pythonAccepted": false,
+      "csharpAccepted": false,
+      "csharpException": "JsonException",
+      "parity": true
+    },
+    {
+      "id": "sequence=\"1\"",
+      "pythonAccepted": false,
+      "csharpAccepted": false,
+      "csharpException": "JsonException",
+      "parity": true
+    },
+    {
+      "id": "sequence=true",
+      "pythonAccepted": false,
+      "csharpAccepted": false,
+      "csharpException": "JsonException",
+      "parity": true
+    },
+    {
+      "id": "sequence=9223372036854775808",
+      "pythonAccepted": true,
+      "csharpAccepted": false,
+      "csharpException": "JsonException",
+      "parity": false
+    },
+    {
+      "id": "recommended_oversight_floor=1.0",
+      "pythonAccepted": true,
+      "csharpAccepted": false,
+      "csharpException": "JsonException",
+      "parity": false
+    },
+    {
+      "id": "role_id=\"bad:role\"",
+      "pythonAccepted": false,
+      "csharpAccepted": true,
+      "csharpException": null,
+      "parity": false
+    },
+    {
+      "id": "repulsive_boost=1",
+      "pythonAccepted": true,
+      "csharpAccepted": true,
+      "csharpException": null,
+      "parity": true
+    },
+    {
+      "id": "receipt='space receipt'",
+      "pythonAccepted": true,
+      "csharpAccepted": true,
+      "csharpException": null,
+      "parity": true
+    },
+    {
+      "id": "receipt='\\t'",
+      "pythonAccepted": true,
+      "csharpAccepted": false,
+      "csharpException": "JsonException",
+      "parity": false
+    },
+    {
+      "id": "receipt='\\x7f'",
+      "pythonAccepted": true,
+      "csharpAccepted": false,
+      "csharpException": "JsonException",
+      "parity": false
+    },
+    {
+      "id": "receipt='\\x85'",
+      "pythonAccepted": true,
+      "csharpAccepted": false,
+      "csharpException": "JsonException",
+      "parity": false
+    },
+    {
+      "id": "receipt='\\ud800'",
+      "pythonAccepted": false,
+      "csharpAccepted": false,
+      "csharpException": "InvalidOperationException",
+      "parity": true
+    },
+    {
+      "id": "target_entity_invalid",
+      "pythonAccepted": false,
+      "csharpAccepted": true,
+      "csharpException": null,
+      "parity": false
+    }
+  ],
+  "capture": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1c-parity-probe-20261021-01",
+  "network": "None; restore source an empty private local directory",
+  "sourceAccepted": false
+}

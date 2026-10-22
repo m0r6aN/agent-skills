@@ -1,0 +1,25 @@
+{
+  "atUtc": "2026-10-22T03:19:41.031741+00:00",
+  "operation": "P1D-LOCAL01",
+  "authority": "Clinton direct blanket authority for any non-destructive decisions/approvals; operator separately authorizes disposable local test environment, outside source builder scope",
+  "scope": "Exactly one new synthetic local PostgreSQL container, no host data mount, no existing database/credentials/cloud access",
+  "imageRequested": "pgvector/pgvector:0.8.0-pg16",
+  "primarySource": "https://github.com/pgvector/pgvector/blob/v0.8.0/README.md#docker",
+  "containerName": "ccm-p1d-pgvector-20261021-01",
+  "bounds": {
+    "pullTimeoutSeconds": 180,
+    "containerMemory": "512m",
+    "cpus": 1,
+    "dataTmpfs": "256m",
+    "oneContainer": true,
+    "newSyntheticDatabaseOnly": true,
+    "localLoopbackEphemeralPort": true,
+    "autoRemove": true,
+    "closeAfterTests": true,
+    "operationDeadlineUtc": "2026-10-22T03:55:00Z"
+  },
+  "setupAuthority": "Initialize extensions and test-only nondefault schema solely inside newly created synthetic DB; this is fixture setup, checker itself stays read-only. No app tables/data/index benchmarks. Random ephemeral password kept in operator memory, no reuse/disclosure. A dedicated read-only probe role is permitted solely in this test DB.",
+  "checks": "Actual checker on supported and missing-extension profiles; keep sanitized JSON/version/image/source pins; prove no preload and typed GUC check. Subsequent named target/Neon gate stays OPEN.",
+  "negativeSpace": "No Docker MCP server or shared MCP settings; no repository source/config/dependency edits; no paid inference in setup; no existing resources deleted/restarted. Stop only our uniquely named container after exact ID/label ownership check.",
+  "status": "Operational authorization committed before pull; no actual DB yet"
+}

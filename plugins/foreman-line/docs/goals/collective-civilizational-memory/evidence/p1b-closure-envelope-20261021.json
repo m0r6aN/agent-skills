@@ -1,0 +1,23 @@
+{
+  "atUtc": "2026-10-22T02:20:53.981854+00:00",
+  "authority": "Direct owner blanket non-destructive decisions/approvals and GenSpark increases, maintained with finite phase envelopes",
+  "purpose": "Only two post-repair independent P1B closures, after deterministic pass; no call yet",
+  "AmericaNewYorkDay": "2026-10-21",
+  "sharedDayCredits": 2600,
+  "P1BCredits": 1000,
+  "P1BKnownBookedBeforeClosure": 205.94475,
+  "closureCallsMax": 2,
+  "closurePerCallMax": 350,
+  "maxInputUtf8Bytes": 90000,
+  "proxyOverheadAllowance": 4096,
+  "maxOutputTokens": 6144,
+  "effort": "low",
+  "timeoutSeconds": 180,
+  "retries": 0,
+  "accountFloor": 1000,
+  "effortCap": 9000,
+  "keptP1AConservativeBooked": 1047.644,
+  "keptGenSparkUnknown": 94.6,
+  "keptOpenAiUnknownUsd": 0.17192,
+  "scope": "Finite same dated closure cycle, ceilings not targets, no foreign initiative cap changed; no hidden provider token/billing/cancellation guarantee"
+}

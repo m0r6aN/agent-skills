@@ -1,0 +1,5 @@
+{
+  "status": "preparation failed before any project import or test",
+  "reason": "Full git archive contains tracked absolute symlink .pytest_tmp/test_proof_command_output_flagcurrent; safe tar extraction refused.",
+  "action": "Preserve failed preparation; use new source subset archive of src, tests, conftest.py, pyproject.toml. No weakening of extraction filter."
+}

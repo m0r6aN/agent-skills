@@ -1,0 +1,10 @@
+{
+  "submittedAtUtc": "2026-10-21T19:15:58.047607+00:00",
+  "deadlineUnix": 1792610758.0476146,
+  "promptSha256": "11aaaa56eff13980116a93c4f5daa0d4528e037db3c5e2213d16a3283100377f",
+  "nativeGenerationPhase": "repairStep0",
+  "maxOutput": 1536,
+  "nativeAuthType": "oauth",
+  "priorGenSparkReservation": 94.6,
+  "automaticRetries": 0
+}

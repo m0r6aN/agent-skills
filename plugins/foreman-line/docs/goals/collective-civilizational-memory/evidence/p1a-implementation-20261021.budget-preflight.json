@@ -1,0 +1,12 @@
+{
+  "checkedAtUtc": "2026-10-21T17:57:44.5524276Z",
+  "plan": "plus",
+  "balance": 9692.0,
+  "localDay": "2026-10-21",
+  "sharedDayUsed": 228.8,
+  "sharedDayLimit": 1000,
+  "effortUsed": 309.1,
+  "nextReservation": 94.6,
+  "contextSpent": 95.7,
+  "allowed": true
+}

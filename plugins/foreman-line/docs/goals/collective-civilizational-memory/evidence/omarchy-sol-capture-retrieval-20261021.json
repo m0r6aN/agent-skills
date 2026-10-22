@@ -1,0 +1,11 @@
+{
+  "checkedAtUtc": "2026-10-21T18:46:22.267018+00:00",
+  "independentSshConnection": true,
+  "captureFile": "/home/cmorgan76/.ccm-p1a-sol-controls-20261021-b7oamsof/rpc-live-capture.jsonl",
+  "sha256MatchesPriorCapture": true,
+  "captureBytes": 1783,
+  "captureMode": "0o600",
+  "taskRootMode": "0o700",
+  "authFileAbsentInIsolatedProfile": false,
+  "inferenceRequests": 0
+}

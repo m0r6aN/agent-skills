@@ -1,0 +1,726 @@
+BOUNDED SCOPE QUALIFICATION ONLY. No implementation, repository access, tools, authority, delegation or follow-up. Return JSON only, at most 650 words: {"role":"artifact_only_builder_candidate","acceptance_criteria":[{"id":1,"summary":"..."}],"allowed_files":["..."],"non_goals":["..."],"flags":["..."]}. Include exactly seven criterion IDs 1 through 7, the exact five Allowed Files and the major non-goals. Identify any actual missing implementation inputs honestly. Do not produce code or claim approval/tests. The host applies only separately admitted proposals to an isolated worktree; this task itself cannot change files. Human tree approval has completed for the exact spec hash below, but Gate 2 and implementation GO are separate. Approved S01-S12 and amended P1A AC6 override older conflicting v4 language. Historical planning-only grant statements in the decision register are provenance, not a request to infer implementation authority.
+
+=== Exact P1A work order ===
+---
+ticket: CCM-P1A
+title: Cortex memory and temporal graph v2 contracts
+status: draft
+owner: clinton.morgan
+created: '2026-10-19'
+updated: '2026-10-20'
+risk: elevated
+surfaces: [docs/specs/ccm-memory-graph-v2.md, src/keon/cortex/envelope/taxonomy.py, src/keon/cortex/ingress/models_v2.py, tests/test_ccm_contracts_v2.py, tests/fixtures/ccm/contracts-v2.json]
+routing_class: architecture/risk
+verification_class: judgment-required
+expertise: engineering
+inputs: [text]
+permission_profile: builder-architecture
+data_classification: internal
+---
+
+# CCM-P1A — Cortex v2 contract foundation
+
+## Intent
+
+Produce one canonical, executable memory-contract boundary for CCM: additive taxonomy, versioned shard validation, normative temporal graph/state tables and reusable wire fixtures. Downstream builders must consume these contracts rather than choose architecture. This is a local foundation, not an HTTP, database, privacy-worker or deployment implementation.
+
+## Constraints
+
+- Primary repository: `D:/Repos/keon-omega/keon-cortex`. Observed source HEAD: `684785f220c066e8686e160eec2611c727582a00`; this is not a clean-tree or dispatch-base assertion. No implementation dependency. Gate 1/plan review, coordinator lint, Gate 2, process/registration, exact clean base and admitted route/budget remain prerequisites for dispatch.
+- Authority: final v4 plus accepted S01–S12 in the decision register below and the owner-approved C02-D1 scoped AC6/dependency amendment (2026-10-20). Preserve OPMEM D1–D18, Cortex/Postgres authority, Gateway ingress, existing scope/identity law, INV-2/3/5 and Pantheon incarnation law. Memory and caution never grant execution authority.
+- Extend canonical enums in `envelope/taxonomy.py`; do not add parallel enums elsewhere. Preserve existing enum values/ranks and old serialized identities. Add `CAUSAL`, `REPULSIVE`, `BUFFERED` and orthogonal `ValidityStatus(valid, contested, stale_code_dependency)`.
+- Add version-specific v2 validation beside existing ingress models, reusing `CandidateProvenance`, `ReceiptAnchor`, clean-text/identifier and scoped-ID contracts. Do not edit v1 ingress behavior, change old hashes, or wire v2 into `api.py`. Projection labels are not source authentication or cryptographic receipt verification.
+- The normative contract document owns Plane-A DDL, state/routing tables and derivative-cleanup/key-custody interfaces; writing that document does not apply migrations or implement those services. Keep the packet under ~16k supplied tokens; source v4 is selective excerpts, not mandatory full history.
+
+### Frozen v2 validation and trust table
+
+The v2 serialized fixture uses snake_case v4 fields, `schema_version: shards/2.0`, existing ReceiptAnchor aliases inside receipt references, timezone-explicit UTC event times and finite numeric values. Producer input cannot authoritatively set scoped IDs, approval or verification results. Validation errors are non-content-bearing structured field/code diagnostics, never secret-bearing payload echoes.
+
+For all nine canonical MemoryKinds, direct source tiers map as follows: verified_receipt -> RECEIPT; explicit_human_directive and deterministic_code_or_event -> RAW_EVIDENCE; unverified_candidate -> SUMMARY. The source tier requires its own trusted source/proof admission; merely supplying it or a receipt pointer does not establish it. `corroborated_causal` and `uncorroborated_causal` are valid only for Causal and map to CAUSAL_RECORD. `distilled_verified` is valid only for Semantic/Procedural and maps to SEMANTIC_MEMORY/PROCEDURAL_MEMORY respectively. Reject other combinations; enumerate the full cross-product, including rejection rows, in fixtures. Embedding projections remain derivative artifacts, not a new memory kind or evidentiary shard.
+
+Tier numbers are default direct-source weights. Derived effective score is `min(0.70, 0.90 * min(parent effective scores))`; require a nonempty parent set and finite scores in [0,1]. All eligible high-trust parents (>=0.85) permit Semantic/Procedural distilled_verified; other derived candidates retain unverified_candidate. Derivation cannot inherit RECEIPT/RAW_EVIDENCE standing. Promotion is separately receipt-governed and never turns a child into an execution receipt. Inheritance selection uses effective score AND required tier/evidence, never numeric score alone.
+
+Distinguish untrusted producer assertions from authoritative resolved parent inputs. A submitted parent reference, score, tier or verification flag is not proof: effective scores and required evidence derive from parent records resolved under the applicable identity, current-scope and authentication contracts. Specify fail-closed behavior for missing, invisible, unauthenticated or substituted parents and producer-injected scores/tiers. Mathematical positive fixtures represent already-resolved trusted inputs, separately from producer-payload negatives. P1A defines this contract/interface, not a live resolver or a qualified positive producer.
+
+### State, visibility and deletion contract
+
+- Active/buffered accept all three validity states; archived is cold; superseded requires a real non-null replacement; purged retains only the scoped tombstone/proof metadata. Retention is independent of epistemic validity. `derived_decay_state` exists only in response projections at explicit `as_of`.
+- Parent loss: sole/all parents lost -> surviving child archived+contested with invalidation reason; partial loss -> contested, preserving existing archival state (including buffered/archived/superseded). Purged child remains unchanged. Revalidation cannot implicitly restore archived children. Explicit replacement preserves lineage. Symbol changes stale validity; correction/failure contests validity. Signals older than/equal to last_revalidated_at are no-ops; terminal purges never reverse. Test equality, repeated signals and all surviving-parent archival combinations.
+- Buffer evidence contains entered-at plus a success-counter snapshot/event equivalent. At most one archival transition per sweep. A new deduplicated verified success reactivates buffered (preserving validity); archived requires explicit restoration. Preserve strict 0.50/0.25 inequalities and event-time semantics from S07.
+- Plane-A has tenant/profile/role/scope binding using existing visibility law, endpoint integrity and immutable versioned node IDs. Preserve the v4 edge hash recipe with versioned endpoint IDs and temporal intervals [start,end). Retain separate logical artifact identity. Current authorization applies at every historical hop and both endpoints; never infer sharing from common tenant.
+- Recall graph depth <=2. Read APIs default depth2/max3; request budgets 1000 returned nodes/4000 edges/10000 examined visible edges. Specify deterministic cursors bound to query/as_of/authorization, per-page reauthorization, cycle deduplication, explicit truncation and no hidden counts/dangling endpoints. These are API contracts, not implemented traversal here.
+- Document the complete S10 routing table and whole-warning/conflict-group budget protocol; source citations require existence/scope/identity/proof validation, not only post-trim membership.
+- Define deletion milestones (authoritative fence, derivatives, keys, coverage), durable idempotent cleanup/invalidation jobs, batch write fencing, retry/reconciliation and non-content evidence. P3 owns minimal Wave-1 purge propagation; P6 extends other triggers. A SQL transaction cannot atomically delete Qdrant or destroy external keys.
+- Define a key-custody adapter requirement with scoped key reference, authorized idempotent destruction operation, status/evidence and backup/replica coverage. Do not select a provider or claim erasure until separately qualified; plaintext/key-bearing backups keep completion blocked. HMAC scrubber keys are not shard erasure keys.
+- Document S11 civic caution wire semantics and S12 fail-closed scrubber boundary; no live enforcement or scrubber implementation here.
+
+## Acceptance Criteria
+
+1. Additive enums and v2 model validation implement the closed tier/kind/state rules above. Existing v1 ingress models, scoped/handoff ID derivation and receipt-vs-cognition rules retain behavior. Superseded with null replacement and a persisted derived_decay_state fail v2 validation.
+2. A canonical JSON fixture file enumerates accepted/rejected tier-kind combinations, old-version replay inputs, IDs generated by existing canonical/scoped recipes, explicit UTC event times, state transitions, source-kind migration, civic wire cases and error codes. IDs must satisfy actual validators; abbreviated v4 illustration IDs are not executable fixtures.
+
+   P1A's contract document and normative fixture freeze the civic rejection, domain-caution and multi-parent wire schema, consuming accepted v4/S11 rules and P1C's Required wire behavior as contract inputs, without depending on P1C implementation. Enumerate exact fields/casing, canonical enum encoding, absent-versus-null/default semantics, existing ID/receipt aliases and S11 transition/negative cases. P1C must conform to the accepted P1A section and fixture commit/version; divergence requires a scoped P1A contract amendment. Record source/copy comparison at acceptance.
+3. Worked positive: a Procedural child of effective parent scores [0.85,1.0] yields distilled_verified/0.70/ProceduralMemory, not RawEvidence. Boundary: parents [0.20] yield unverified_candidate/0.18/Summary; empty parents, NaN and an inline asserted verification flag cannot promote it.
+
+   These mathematical positive inputs are already authoritatively resolved. Separate negative fixtures cover missing, invisible, unauthenticated and substituted parents, plus producer-injected effective scores/tiers; submitted references or verification flags cannot satisfy resolution or admission.
+4. Worked state cases: single purged parent + buffered child -> archived/contested; partial loss + archived child -> archived/contested; purged child is untouched. Last-revalidated equality is a no-op. An archived record never becomes active due solely to revalidation.
+5. The contract document contains complete accepted S03–S12 tables/interfaces, Plane-A DDL and a named dependency outline P2 scrub/parse -> P3 persistence/purge -> P4 scoped recall -> P5 composer/graph (Wave1); P6 lifecycle/Gateway -> P7 inheritance and P8 connectors (Wave2). Shared api.py edits have one serialized integration owner, not independent redesigns. No downstream packet is silently dispatchable.
+6. Define the versioned legacy provenance-admission contract and fixtures. A high-trust migration requires an exact producer/version/source-kind mapping plus authenticated admission bound to the original record, content identity and authorized scope; source_kind membership, issuedBy and receipt_ref presence alone never confer trust. Record that no concrete high-trust producer is yet qualified from inspected evidence. Missing, unknown or unauthenticated legacy sources remain unverified_candidate; do not invent a positive allowlist or claim positive producer coverage. Concrete producer allowlist freeze and independent authentication evidence are a prerequisite of the later bounded ingestion/migration contract before P3 may run a high-trust legacy backfill. P1A may close its contract-only deliverable with this dependency explicitly open; that is not acceptance of a trusted migration, a live verifier or overall P1/Wave-1 readiness.
+7. Tests assert externally specified results, not regenerate expectations using the implementation under test. Include same-tenant cross-role and historical visibility negative contract fixtures, terminal-state cases and old fixture replay. Document implementation-vs-contract-only coverage honestly.
+
+   Accepted S05–S07 and pinned P1A requirements remain the normative source for P1B's versioned parameters/formula identity. Record exact source/version/hash identities for downstream conformance without making P1A depend on future P1B output or retuning constants. P1B acceptance requires separate independent numeric recomputation as specified in its AC4.
+
+## Out of Scope
+
+No database migration/application, HTTP wiring, storage workers, live receipt authority, key-store implementation, actual shred, score implementation, multi-parent runtime conversion, source imports, cloud/credential work or edits to OPMEM/Gateway. Multi-parent wire expectations are frozen here; actual Cortex InheritanceEvent/validator backward-compatible extension belongs to P7 and may not change old event IDs here.
+
+## Context & References
+
+- [Accepted decisions](D:/Repos/Pantheon/docs/CONTEXT-SHAPING-DECISIONS.md)
+- [Owner-approved C02-D1 amendment and conditional review authorization](../../goals/collective-civilizational-memory/owner-c02-rlp-disposition-2026-10-20.md)
+- [Delegated oversight authority and scoped R06 corrections](../../goals/collective-civilizational-memory/oversight-2026-10-20.md)
+- [v4 source](D:/Repos/Pantheon/docs/CONTEXT-SPEC-V4.txt)
+- [Owner delivery handoff](D:/Repos/Pantheon/docs/CONTEXT-SHAPING-HANDOFF.md)
+- [Taxonomy](D:/Repos/keon-omega/keon-cortex/src/keon/cortex/envelope/taxonomy.py)
+- [Existing ingress](D:/Repos/keon-omega/keon-cortex/src/keon/cortex/ingress/models.py)
+- [OPMEM current recorded state](../../goals/operator-developer-cortex-memory/charter.md)
+- [Pantheon law](D:/Repos/Pantheon/docs/COLLECTIVE-INCARNATION.md)
+
+## Allowed Files
+
+Paths below are exact and relative to the sole primary repository:
+
+- `docs/specs/ccm-memory-graph-v2.md` (new)
+- `src/keon/cortex/envelope/taxonomy.py`
+- `src/keon/cortex/ingress/models_v2.py` (new)
+- `tests/test_ccm_contracts_v2.py` (new)
+- `tests/fixtures/ccm/contracts-v2.json` (new)
+
+No auto-generated snapshots or unrelated package/config edits. An absent additional required path is an amendment blocker, not implied authority.
+
+## Verification Plan
+
+From the exact admitted Cortex worktree with its existing test environment:
+
+```text
+python -m pytest -q tests/test_ccm_contracts_v2.py tests/test_ingress_models.py tests/inheritance/test_inheritance.py
+python -m pytest -q tests/gravity/test_contracts.py tests/gravity/test_projection_fixtures.py
+python -m pytest -q tests/test_evidence_envelope.py tests/test_shards_v1_1.py
+```
+
+Run pre/post named baseline suites, retain test identities and exact command output, and use a read-only diff of v1 models/gravity replay artifacts. Contract fixtures do not prove live SQL scope enforcement, graph traversal, deletion or deployed interoperability. Mandatory reviewer questions: Can a derived record gain evidentiary standing from a label? Is the tier table total without breaking old replay? Can parent loss/reactivation resurrect archived or purged knowledge? Do graph/deletion contracts hide unbounded work or unqualified erasure claims? This elevated architecture boundary needs applicable independent reviews, never builder self-approval.
+
+Identify the pre-P1A gravity/replay baseline by exact base, test and fixture identities and retained outputs. P1B's later evidence chain must reference that baseline alongside the accepted P1A commit and its own pre/post results; it may not substitute only a post-P1A baseline.
+
+## Dispatch Envelope and Completion
+
+Initial packet <=~16k tokens: this spec, accepted decision excerpts, existing taxonomy/ingress interfaces and the named tests; initiative history stays by reference. No blanket context override or model identity in metadata. Coordinator measures actual required capacity, resolves the cheapest qualified exact builder/fallback route and records its data/tool eligibility without changing an existing session. Retain risk-based independent reviewers even with a cheap builder.
+
+One implementation attempt and one focused repair, then a minimal reproducible blocker. Before paid dispatch record approved dollar/time/input/output/tool/review/retry bounds and enforcement limitations; none are authorized here. Record actual usage separately from estimated/unknown billing. Pin the exact base and dependency artifacts before Step0. Completion reports changed files, test commands/results/evidence paths, contract versions, limitations, usage/cost status and unresolved blockers; it is not approval, merge authority or a release claim.
+
+
+=== Accepted decision register, verbatim ===
+# Context shaping decision register
+
+Initiative: `collective-civilizational-memory`.
+
+## Authority and source
+
+This is the bounded Stage A decision register, not a charter, dispatchable spec,
+coordinator appointment, implementation grant, review verdict, or ShapingResult.
+Final v4 (`CONTEXT-SPEC-V4.txt`) remains the proposed technical baseline; the
+owner's stated D1–D15 pre-ratification for charter creation is preserved. Only
+explicit dispositions below amend or clarify that baseline. The original
+attachment and verbatim v4 extract remain unchanged.
+
+Sources: [handoff](CONTEXT-SHAPING-HANDOFF.md), [v4](CONTEXT-SPEC-V4.txt), and
+owner replies in this shaping conversation.
+
+## Accepted decisions
+
+The owner replied **“Accept 1–4”** to the first numbered shaping batch.
+
+| ID | Accepted disposition |
+|---|---|
+| S01 | Initially draft CCM-P1A (Cortex taxonomy/lifecycle/provenance/wire compatibility), CCM-P1B (frozen gravity-v2/scoring/FSRS fixtures and v1 replay), CCM-P1C (Collective contracts and Python/C# compatibility fixtures), and CCM-P1D (database-capability check/evidence). Keep P1–P8 as capability groups; later work receives a dependency outline, not speculative full implementation specs. P1B–P1D depend on relevant P1A contracts. |
+| S02 | Adopt all seven delivery defaults in the handoff: bounded initial packets (~16k tokens, with measured exceptions), cheapest qualified builder route, truthful risk and required independent reviews, one implementation plus one focused repair attempt before reporting a blocker, whole-delivery cost accounting, and mechanical coordination. Omit the blanket 200k context override; derive actual floors without weakening Foreman rules. No numerical budget or paid dispatch is authorized. |
+| S03 | Retain genuine cryptographic erasure. Specify immediate authoritative Postgres tombstoning/read fencing separately from durable derivative cleanup and verifiable key destruction, with separately observable completion states. Key custody and backup/replica coverage must be frozen before implementing an endpoint advertised as cryptographic shred. Ordinary row clearing is insufficient. |
+| S04 | Reserve `superseded` for a real non-null replacement. Sole/all-parent retraction archives surviving derived children as `archived` + `contested`, recording an explicit invalidation reason. Partial parent loss marks a child contested without changing its existing archival state. Purged children stay purged; revalidation does not implicitly reactivate archived records. This explicitly resolves the D1/D5 contradiction. |
+
+Accepted proposed classifications: P1A elevated / architecture/risk; P1B and
+P1C elevated / implementation/standard; P1D standard / implementation/standard.
+These do not waive any applicable independent-review or admission requirement.
+
+## Accepted second batch — S05–S08
+
+The owner replied **“Accept 5–8”** to the second numbered shaping batch.
+The recommendations below are accepted shaping dispositions, not dispatch,
+implementation, promotion, or spend authority.
+
+### S05 — Lexical retrieval and RRF
+
+Recommend built-in PostgreSQL `ts_rank_cd`, not an unqualified BM25 claim.
+For one-based channel ranks and k=60, normalize as:
+
+`rel = sum(1 / (60 + rank_c)) / (3 / 61)`.
+
+An absent channel contributes zero; do not renormalize by the number of present
+channels. Rank 1 in all three channels gives 1; rank 1 in one channel gives 1/3;
+rank 2 in all three gives 61/62. Use up to 200 visible candidates per channel,
+with scope filtering before ranking/limits. Positive relevance requires
+`ts_rank_cd > 0`, positive cosine similarity, or a visible graph match within two hops.
+Native channel ties and final composite ties resolve by shard ID ascending.
+The channel limits and formula belong to pinned v2 parameters; performance
+calibration cannot silently mutate them.
+
+### S06 — Tier classification versus inherited numeric trust
+
+Recommend preserving the exact mixed-parent formula on a separate effective
+`provenance_score`: `min(0.70, 0.90 * min(parent effective scores))`.
+The tier table's numeric values are source/default weights, not a rounding grid
+for descendants. A 0.20 parent produces 0.18, not 0.20; a 0.40 parent produces
+0.36, not a fabricated tier promotion. Tier labels retain their categorical
+meaning and do not rise merely because of a computed score.
+
+Use `distilled_verified` only for Semantic/Procedural children of sources meeting
+its >=0.85 source condition; otherwise derived candidates remain
+`unverified_candidate` unless a specific verified promotion contract applies.
+Non-evidentiary children never acquire Receipt/RawEvidence standing from their
+parents or from the receipt approving their promotion.
+
+The P1A draft must enumerate valid tier/kind combinations and deterministic
+AuthorityClass results, rejecting unsupported combinations rather than guessing.
+Receipt verification remains an independent requirement; neither labels nor
+numeric trust are receipt proofs. This recommendation explicitly clarifies the
+relationship between D3's categorical ordering and numeric retrieval weight.
+
+### S07 — Retention bookkeeping and delayed sweeps
+
+Recommend recording buffer-entry time and a verified-success counter snapshot
+(or equivalent durable events); cumulative lifetime success is not a test of
+success while buffered. A new deduplicated verified success while buffered
+returns the shard to active, updates stability at the receipt's event time, and
+preserves its epistemic validity. Archived shards require explicit restoration.
+
+Apply at most one archival transition per sweep per shard. A late sweep buffers
+an active record first; a later sweep may archive it. Preserve strict threshold
+inequalities: an unreinforced S=3 record is active at day 27 and first buffers
+on the day-28 daily sweep. Freeze reinforcement fixtures at events exactly 7 and
+30 days after the prior verified-use event, using pre-event retrievability.
+`derived_decay_state` is response-only and evaluated at explicit `as_of`.
+
+### S08 — Initial document format envelope
+
+Recommend initial prose support for UTF-8 plain text and Markdown only. PDF,
+Office, OCR and archive expansion are deferred, not silently counted as covered.
+Use bounded readers/chunkers, content-hash/offset checkpoints, backpressure,
+idempotent resume and explicit rejected-item accounting. Freeze concrete file,
+chunk, queue and capacity bounds in the later connector packet before dispatch.
+The >=500 files/min target remains the deterministic scrubber/AST-repo target;
+report document throughput separately under a declared size/profile envelope.
+Actual personal-data imports remain deferred.
+
+## Accepted final batch — S09–S12
+
+The owner replied **“Accept 9–12”** to the final numbered shaping batch.
+These are accepted foundation contract choices. Operational admission, actual
+integration ownership acknowledgments, key-service qualification and downstream
+implementation remain separate gates.
+
+### S09 — Scoped temporal graph and bounded traversal
+
+Recommend using existing trusted tenant/profile/role visibility semantics for
+both nodes and edges at every hop, pushed down before ranking and pagination.
+An edge is usable only if both endpoints are valid and visible. Same tenant is
+not sufficient authorization. Historical `as_of` queries still require current
+caller authorization: past grants do not resurrect revoked access. Superseded
+versions use immutable versioned IDs and half-open validity intervals; stable
+logical artifact identity is separate from its content/version identity.
+
+Recall graph proximity remains limited to two hops. Lineage/neighborhood reads
+default to depth two, permit at most depth three initially, and have per-request
+caps of 1,000 returned nodes, 4,000 returned edges and 10,000 visible examined
+edges. Cycles are deduplicated by versioned node identity. Deterministic ordering
+and continuation cursors bind query, `as_of`, limits and authorized scope; every
+page reauthorizes. Budget exhaustion returns explicit truncation/completeness
+metadata, never a false complete graph or evidence of no further descendants.
+Hidden nodes/edges cannot appear through payloads, counts, dangling references
+or traversal shortcuts. A changed traversal policy requires versioned fixtures.
+
+### S10 — Total briefing routing and budget safety
+
+Recommend a validity-first routing table for Stage-1 eligible records:
+
+| Condition | Section |
+|---|---|
+| Any kind, contested/stale validity | 4: Hypotheses, contested & stale context |
+| Valid Episodic/Semantic/Narrative/Evidentiary/Derived/Reference | 1: Directives, facts & supporting context |
+| Valid Procedural | 2: Procedural playbooks & corroborated causal |
+| Valid Causal with corroborated tier and verified corroborating outcome | 2 |
+| Other valid Causal | 4, explicitly labeled uncorroborated hypothesis |
+| Valid Repulsive | 3: Failure-avoidance warnings |
+
+Section membership never upgrades evidence. Display kind/tier/validity labels;
+unsupported kind/tier pairs fail validation rather than being silently routed.
+Validate cited records and source references against existence, scope and the
+applicable identity/proof contract before composing; derive final citations only
+from surviving whole bullets/groups after token measurement and trimming.
+
+When relevant warnings or unresolved directive conflicts are present, reserve
+room for at least one warning and a whole conflict group (both sides), with
+explicit visible omission counts if others do not fit. Never emit one side of
+a conflict as a complete answer. If the minimum safety groups plus metadata
+cannot fit, return structured `incomplete_budget` rather than an apparently
+complete briefing without its warnings/conflicts. Counts describe authorized
+candidates, not hidden records or an unexamined graph. Token limits stay strict.
+
+### S11 — Caution contracts and explicit enforcement dependency
+
+Recommend `max(policy floor, role baseline oversight, domain caution floor,
+action-required floor)` using existing Collective `AgentOversightLevel` values
+Routine/Elevated/Critical. The numeric oversight baseline belongs to existing
+`AgentOversightProfile`; `AgentConstraintProfile` remains constitutional limits,
+not a second independently invented oversight scale.
+
+A new verified domain failure increases each boost by 0.10 (cap 2.0), raises the
+caution floor one level (cap Critical), and clears the success streak. Ten
+verified successes from ten distinct task keys with no intervening failure
+lower the caution floor one level toward baseline and each boost by 0.10 toward
+1.0, consuming that streak. Operator reset returns the caution additions to
+baseline/1.0 only with current operator authorization and a verified decision
+receipt bound to role/domain/reset effect. Neither path lowers another policy,
+action or role constraint. Missing/unverifiable enforcement state cannot widen
+a previously required floor.
+
+Use an authoritative per-role/domain committed sequence, idempotent receipt
+consumption, and distinct-task accounting. Late failures always tighten; success
+events at/before the latest failure event time cannot count toward recovery.
+Concurrent updates/resets serialize with version checks. Emit audit evidence for
+accepted/rejected transitions. Profile versions are explicit scoring inputs;
+boost application is frozen/versioned, not mutable hidden gravity parameters.
+
+Cortex owns advisory profiles; Collective owns the civic wire contracts;
+a separately bounded Gateway integration packet owns pre-effect enforcement.
+Serialize shared Gateway surfaces with OPMEM P5a and require existing-owner
+acknowledgment before scheduling: this shaping session assigns no foreign
+coordinator. No Wave-2 completion claim without real boundary enforcement
+and receipt replay tests. P1C changes contracts only, not live enforcement.
+
+### S12 — Deletion protocol, key coverage and scrubber boundaries
+
+Recommend a governed Postgres transaction that commits the authorized tombstone,
+clears searchable payloads, fences reads, and writes durable idempotent cleanup
+and descendant-invalidation jobs. A signed Purge event is delivered through the
+durable event path, not falsely described as atomically signed by an external
+service. Workers retry/reconcile configured derivative indexes, outbox/payload
+copies and dependent children; the minimal purge-driven invalidation required
+by Wave 1 belongs to P3, not deferred wholesale to P6. Pending descendants cannot
+be served as unqualified valid knowledge while invalidation is incomplete.
+
+Freeze separate observable milestones: authoritative tombstone/read fence,
+derivative cleanup, key destruction, and verified full-coverage completion.
+Failures retain pending/failed coverage state and retry evidence. Completion
+requires a stable inventory of copies and a governed import-batch fence so a
+concurrent/replayed writer cannot recreate deleted payloads or append unnoticed
+to a retracted batch. Preserve minimal non-content receipt/tombstone evidence;
+do not preserve raw payloads in audit logs as an exception to deletion.
+
+For genuine cryptographic erasure, require per-shard erasure key material under
+external key custody (separate from HMAC scrubber keys), and evidence that no
+recoverable key or plaintext survives in replicas, backups, caches or derivative
+stores. An encrypted database or a backed-up wrapped key alone is insufficient.
+P1A defines the key-custody adapter requirements and coverage state; no key-store
+provider or claim of an existing destruction capability is elected here. P3's
+crypto-effect implementation remains blocked until a qualified existing Keon
+key-management integration and its backup/replica destruction or expiry contract
+are independently accepted. Plaintext historical/derivative backups keep full
+completion blocked until their cleanup/expiry is verified; do not claim instant
+or retrospective cryptographic erasure.
+
+Scrub all persisted textual surfaces (including graph metadata, errors and
+logs) in memory before durable enqueue. A fixture path never exempts a secret:
+only explicit known synthetic values with positive fixture evidence may be
+classified synthetic. Raw credentials never enter Plane-B shards or queues.
+Keep original code parsing in bounded memory where required; sanitized output
+is the only durable payload. HMAC rotation breaks correlation but is not a
+complete forward-secrecy design.
+
+These choices will be expressed as foundation contracts and deterministic
+fixtures, not permission for builders to discover an architecture. Downstream
+integration/key-service gates remain explicit and do not prevent bounded local
+foundation work or justify claiming the overall initiative ready.
+
+## Local source observations and dependency boundary
+
+Read-only `rev-parse HEAD` observations in this shaping session:
+
+- Cortex: `684785f220c066e8686e160eec2611c727582a00`.
+- Collective: `461e2767a046418b098766090723e0cc34d9edc7`.
+- Foreman/agent-skills: `64fb8949bf5134f96fda02df0d4f52ac291a6138`.
+
+These are checkout heads, not clean-tree, deployment or accepted-base claims.
+Pantheon is a source workspace without a Git root at the inspected location.
+
+OPMEM's latest inspected records (`charter.md`, `h1-closure-2026-10-14.md`,
+`p5a-shaping-proposal-and-hold-2026-10-14.md`) record P0–P4b/H1 source acceptance
+and unfinished Gateway P5a integration. Its existing coordinator/authority is not
+transferred. Its budgets, deployment permissions and merge grants do not apply
+to CCM. Live state was not verified.
+
+## Stage A completion and explicit P1→P2 handoff
+
+All twelve numbered shaping decisions have explicit owner acceptance. Four
+foundation specs were authored at `status: draft` in
+`D:/Repos/agent-skills/plugins/foreman-line/docs/specs/active/`:
+
+- `CCM-P1A-memory-graph-contracts.md`
+- `CCM-P1B-gravity-v2-fixtures.md`
+- `CCM-P1C-collective-wire-compatibility.md`
+- `CCM-P1D-postgres-capability-check.md`
+
+Explicit ShapingResult path (the downstream contract):
+
+`D:/Repos/agent-skills/plugins/foreman-line/docs/specs/active/collective-civilizational-memory-foundation-2026-10-19-01a155c3.shaping-result.json`
+
+The official `deriveSessionSlug` and `emitShapingResult` produced the bare
+payload with four POSIX parcel references and `epics: []`; the official
+`readShapingResult` validated the emitted artifact. No hand-authored substitute,
+receipt, hashing, projection or registration was used.
+
+### Advisory verification evidence
+
+- [Machine-readable advisory results](context-shaping-evidence/advisory.json):
+  **4/4** frozen frontmatter + required-section checks passed. All specs also
+  contain exact Allowed Files, Verification Plan and dispatch envelope sections.
+  Non-blocking warnings concern src/tests/scripts surface vocabulary only.
+- [Session-local reproducible harness](context-shaping-evidence/run-stage-a.mts).
+- [Toolkit test output](context-shaping-evidence/toolkit-tests.tap): 45 passed,
+  1 failed because a temporary non-Git mirror cannot run the Git-HEAD root
+  package assertion. The identical assertion was separately run against the
+  original repository and passed. This is not a claim that the full mirrored
+  test command was green.
+- Execution used PowerShell, explicitly selected Node v24.19.0 (the default
+  v24.7.0 is below the package's >=24.11.1 requirement), cached tsx4.23.15 and
+  lockfile-installed runtime dependencies in an isolated temporary mirror.
+  Thirty-nine frozen source files were byte-compared to the original and were
+  identical; no frozen source/lockfile or checkout-local node_modules mutation.
+- Actual Cortex/C# implementation suites, real Postgres/Neon checks, performance
+  measurements and independent reviews were NOT executed during shaping.
+  The commands in drafts are prospective builder/acceptance requirements.
+
+### Downstream holds and ownership
+
+P1A is the first dependency-ready specification for downstream review; P1B–D
+need its accepted pinned contracts. No draft is dispatchable yet. Coordinator
+lint, applicable charter/plan review and human gates, process/registration,
+clean exact bases, route eligibility and authorized enforceable whole-delivery
+budgets remain downstream requirements. Source-kind admission allowlists must
+be evidenced from existing producers, not guessed; missing evidence is a
+specific P1A blocker. P1D real/target database evidence needs separate access.
+Key-service qualification/full erasure coverage and OPMEM/Gateway owner
+acknowledgment remain explicit later integration gates; none is implied by
+this artifact. Exact packet token/time/dollar allocations remain undispatched,
+not invented numerical authorizations.
+
+No draft has been promoted, builder/reviewer launched, model route changed,
+receipt minted, Epic/Story projection filled, Jira/GitHub registration created,
+commit/push/merge performed or production action taken. Stage A stops here.
+
+
+=== v4 architectural decisions and schemas, exact lines 101-396 ===
+   ## 3. Locked Architectural Decisions (`D1–D15`)
+
+   These decisions are pre-ratified by the Owner for Charter creation. Every biological inspiration is paired with its canonical engineering name.
+
+   ### D1 — Two-Plane Topology & Unified `envelope/taxonomy.py` State Machine
+   Separate storage into two linked planes inside Cortex Postgres with zero duplicate enums:
+   - **Plane A (`artifact_nodes` & `graph_edges` — Structural & Artifact Graph):** Stores repositories, commits, files, AST symbols (`function`, `class`,
+ `interface`, `module`), document sections, and conversation episode pointers. Node validity is `[observed_at, superseded_at)` and edge validity is
+ `[valid_from, superseded_at)` for exact `as_of` replay (INV-4). Every edge has a deterministic `edge_id = 'edge_' || sha256_hex(canonical_json({tenant_id,
+ source_id, source_kind, target_id, target_kind, edge_kind, valid_from}))`.
+   - **Plane B (`shards` — Distilled Memory Shards):** Each record carries two persisted orthogonal status axes plus one derived retention projection in
+ `envelope/taxonomy.py`:
+     1. **Persisted Storage/Archival Axis (`ArchivalStatus`):** `{active, buffered, archived, superseded, purged}`.
+     2. **Persisted Epistemic Validity Axis (`ValidityStatus`):** `{valid, contested, stale_code_dependency}` (using `'valid'` so no value collides with
+ `DecayState.FRESH = 'fresh'`).
+     3. **Derived Retention Projection (`DecayState`):** Pure function of $R_{\text{FSRS}}(m, t)$ at query time $t$ (never stored as a mutable column):
+        - `DecayState.FRESH` (`'fresh'`): $R_{\text{FSRS}}(m, t) \ge 0.90$ ($\Delta t \le S_m$)
+        - `DecayState.DECAYING` (`'decaying'`): $0.50 \le R_{\text{FSRS}}(m, t) < 0.90$ ($S_m < \Delta t \le 9 S_m$)
+        - `DecayState.STALE` (`'stale'`): $0.25 \le R_{\text{FSRS}}(m, t) < 0.50$ ($9 S_m < \Delta t \le 27 S_m$)
+        - `DecayState.EXPIRED` (`'expired'`): $R_{\text{FSRS}}(m, t) < 0.25$ ($\Delta t > 27 S_m$)
+   - **Allowed Cross-Product:**
+     - `archival_status IN ('active', 'buffered')`: `validity_status` may be `'valid'`, `'contested'`, or `'stale_code_dependency'`.
+     - `archival_status == 'superseded'`: resolved replacement (`superseded_by` non-null); ineligible for briefings and inspectable via the lineage API.
+     - `archival_status == 'archived'`: cold tier (excluded from standard hot recall; inspectable by ID/audit).
+     - `archival_status == 'purged'`: cryptographically shredded tombstone (excluded from all recall, skipped prior to `verify_record_identity`).
+
+   ### D2 — Memory Kinds & Rejection Reason Gate
+   Extend `envelope/taxonomy.py::MemoryKind` so Plane-B records classify into: `Episodic`, `Semantic`, `Procedural`, `Causal`, and `Repulsive`
+ (**Failure-Avoidance Marker** / *Negative Stigmergy*), while retaining `Narrative`, `Evidentiary`, `Derived`, `Reference` for envelope compatibility.
+   - **Rejection Gate (Preserving Dissent vs. Failure):** A rejected proposal (`ProposalLineageTransition`) or failed outcome mints a `Repulsive` shard
+ **only** when `rejection_reason_class` is in `{'failed_verification', 'violated_invariant', 'runtime_regression', 'security_boundary_breach'}` and is
+ anchored to a receipt or test failure. Proposals rejected for `'out_of_scope'`, `'deferred_timing'`, `'budget_cap'`, or `'policy_preference'` are stored as
+ `Episodic` dissent records and **never** mint `Repulsive` markers.
+
+   ### D3 — Canonical `provenance_tier` Ordering, Derived `AuthorityClass`, & Conflict Resolution
+   `provenance_tier` is the **single canonical trust ordering** on Plane-B shards; `AuthorityClass` in `envelope/taxonomy.py` is derived deterministically
+ from `(provenance_tier, memory_kind)` so the two never drift (while preserving `AuthorityClass.is_evidentiary` for INV-5 verification gates):
+
+   | Canonical `provenance_tier` | `Prov(m)` | Derived `AuthorityClass` | Evidentiary (`INV-5`) | Description |
+   |---|---|---|---|---|
+   | `verified_receipt` | `1.00` | `AuthorityClass.RECEIPT` (100) | `True` | Cryptographically verified execution/approval receipt (`rcpt_`). |
+   | `explicit_human_directive` | `1.00` | `AuthorityClass.RAW_EVIDENCE` (90) | `True` | Authenticated human operator directive. |
+   | `deterministic_code_or_event` | `0.85` | `AuthorityClass.RAW_EVIDENCE` (90) | `True` | Deterministic AST/git extraction or structured
+ `CivicMemoryAnchorSet` event. |
+   | `corroborated_causal` | `0.75` | `AuthorityClass.CAUSAL_RECORD` (70) | `False` | `Causal` shard corroborated by $\ge 1$ subsequent verified `outcome`
+ receipt. |
+   | `distilled_verified` | `0.70` | `SEMANTIC_MEMORY` (50) or `PROCEDURAL_MEMORY` (45) by `memory_kind` | `False` | Distilled from sources with `Prov >=
+ 0.85`. |
+   | `uncorroborated_causal` | `0.40` | `AuthorityClass.CAUSAL_RECORD` (70) | `False` | Agent-inferred causal hypothesis awaiting outcome receipt
+ corroboration. |
+   | `unverified_candidate` | `0.20` | `AuthorityClass.SUMMARY` (20) | `False` | LLM-extracted candidate awaiting corroboration or approval. |
+
+   - **Mixed-Lineage Rule:** For any distilled shard derived from parent set $P$, initial provenance is $\text{Prov}(m) = \min(\,0.70,\; 0.90 \times \min_{p
+ \in P} \text{Prov}(p)\,)$ unless promoted via an explicit human/council approval receipt.
+   - **Same-Tier Conflict Rule (Human-vs-Human `1.00`):** Lower tiers never override `1.00`. When two `1.00` directives conflict: (a) an explicit
+ `SUPERSEDED_BY` / `correction` link resolves the conflict by transitioning the older shard to `archival_status = 'superseded'` (ineligible for briefings,
+ reachable via lineage API); (b) if unlinked/unresolved, both remain `archival_status = 'active'`, while the later explicit `observed_at` has
+ `validity_status = 'valid'` (Section 1) and the earlier directive transitions to `validity_status = 'contested'` (Section 4).
+
+   ### D4 — Two-Stage Retrieval (Preserving INV-2 & INV-3) & FSRS Power-Law Scoring (`gravity/2.0.0`)
+   Preserve **INV-2 ("gravity orders, never gates")**, **INV-3 (canonical parameter hashing)**, and keep `gravity/1.0.0` and `gravity/1.1.0` intact for
+ replay. Under `gravity/2.0.0`:
+   - **Stage 1 — Candidate Eligibility (Gating):**
+     1. If `archival_status == 'purged'`, skip immediately (tombstone; not counted as identity corruption).
+     2. Require `archival_status IN ('active', 'buffered')` and `validity_status IN ('valid', 'contested', 'stale_code_dependency')`. (`superseded` and
+ `archived` records are never eligible for briefings.)
+     3. Require caller scope check (`is_record_visible`) and content-addressed identity verification (`verify_record_identity`).
+     4. Require positive raw relevance $\text{Rel}_{\text{raw}}(m, q) > 0$ (SQL-pushed-down FTS, `pgvector >= 0.8.0` iterative HNSW scan, or $\le 2$-hop
+ Plane-A graph match).
+     *`ValidityStatus` routes eligible records to their designated briefing section in D10; gravity and validity status NEVER gate candidate eligibility on
+ score.*
+   - **Stage 2 — Normalized Composite Ordering (Superseding P3b Ruling 7's lexicographic tie-break for v2 callers):** Within each briefing section, eligible
+ candidates are ordered by `S(m, q, t) DESC, shard_id ASC` at explicit `as_of` epoch $t$:
+     $$S(m, q, t) = w_{\text{rel}} \cdot \widehat{\text{Rel}}(m, q) + w_{\text{prov}} \cdot \text{Prov}(m) + w_{\text{util}} \cdot \text{Util}(m) +
+ w_{\text{temp}} \cdot R_{\text{FSRS}}(m, t)$$
+     All parameters live in frozen `GravityParamsV2` (`gravity-params/2.0.0`) hashed into `GravityFunctionV2.function_hash` (INV-3; any tuning requires a
+ version bump):
+     - $\widehat{\text{Rel}}(m, q) \in [0, 1]$: Reciprocal Rank Fusion ($k_{\text{RRF}} = 60$) of lexical BM25 rank, vector cosine rank, and Plane-A graph
+ proximity rank (shortest undirected hop distance $d \in \{0, 1, 2\}$ between query target nodes and `artifact_node_refs`, ranked by $d\text{ ASC},
+ \text{shard\_id ASC}$; excluded from graph rank if $d > 2$), scaled by $3 / (k_{\text{RRF}} + 1)$.
+     - $R_{\text{FSRS}}(m, t) = \left(1 + \frac{\max(0, t - t_{\text{last}})}{9 \cdot S_m}\right)^{-1} \in (0, 1]$: FSRS v4 power-law retrievability where
+ $\Delta t$ is days since `last_verified_use_at` (or `observed_at`).
+     - $\text{Util}(m) = \tanh(\alpha \cdot u_m) \in [0, 1)$: with $\alpha = 0.35$ and $u_m$ = deduplicated `verified_success_uses` per `(task_key,
+ shard_id)` (OPMEM T-16).
+     - **Volatility Classes & Initial $(S_0, D_0)$:** `volatility_class` sets initial FSRS state in `retention_state` at ingest:
+       - `'ephemeral_status'`: $S_0 = 3.0\text{d}, D_0 = 0.50$ (buffers at $\Delta t > 27\text{d}$, archives at $\Delta t > 81\text{d}$ if unreinforced)
+       - `'standard'`: $S_0 = 14.0\text{d}, D_0 = 0.30$ (buffers at $\Delta t > 126\text{d}$, archives at $\Delta t > 378\text{d}$ if unreinforced)
+       - `'architectural_invariant'`: $S_0 = 45.0\text{d}, D_0 = 0.15$ (buffers at $\Delta t > 405\text{d}$, archives at $\Delta t > 1,215\text{d}$ if
+ unreinforced)
+     - **Stability Growth Curve (Verified by P1 Simulation Test):** On each new verified successful use at time $t$:
+       $$S_m' = S_m \cdot \left(1 + \beta_{\text{gain}} \cdot (1 - D_m) \cdot S_m^{-0.2} \cdot \left(0.25 + 0.75 \cdot (1 - R_{\text{FSRS}}(m,
+ t))\right)\right)$$
+       with $\beta_{\text{gain}} = 1.20$. P1 must include a deterministic simulation test asserting both the 7-day/30-day reinforcement growth curve AND the
+ exact unreinforced day counts on which `ephemeral_status` and `standard` shards cross $\theta_{\text{buffer}} = 0.50$ ($9 S_0$) and
+ $\theta_{\text{archive}} = 0.25$ ($27 S_0$).
+     - **Pinned Default Parameters:** $w_{\text{rel}} = 0.45$, $w_{\text{prov}} = 0.25$, $w_{\text{util}} = 0.15$, $w_{\text{temp}} = 0.15$,
+ $\theta_{\text{buffer}} = 0.50$, $\theta_{\text{archive}} = 0.25$.
+
+   ### D5 — Dependency-DAG Invalidation (*Honeybee Stop Signals*) & Multi-Parent Retraction Rules
+   - **Triggers:** (1) A git commit changing or deleting a Plane-A **symbol node's `content_hash`** (file-level whitespace/unrelated edits do not fire
+ signals), (2) an operator `correction` event, (3) a verified `outcome=failure` receipt contradicting a `Procedural` or `Causal` shard, or (4) a parent
+ shard purge/retraction.
+   - **Reverse-Edge Bounded & Idempotent Traversal:** Traverses **incoming (reverse-direction)** `MENTIONS_SYMBOL` edges (`shard → symbol`, traversed from
+ changed `symbol` back to dependent `shard`) and **incoming (reverse-direction)** `DERIVED_FROM` edges (`child_shard → parent_shard`, traversed from
+ invalidated `parent_shard` to `child_shard`) up to `max_depth = 3`. Each signal carries `signal_occurred_at`. If a target shard has `last_revalidated_at >=
+ signal_occurred_at`, the signal is a no-op. Otherwise:
+     - Code symbol changes transition target shards to `validity_status = 'stale_code_dependency'`.
+     - Corrections and failure receipts transition target shards to `validity_status = 'contested'`.
+     - **Parent Retraction/Purge Rule:** If a derived shard's **only** parent is purged/retracted, the child transitions to `archival_status = 'superseded'`
+ and `validity_status = 'contested'`. If a derived shard has **multiple parents** and at least one parent remains `active`, the child stays `archival_status
+ = 'active'` and transitions to `validity_status = 'contested'`.
+
+   ### D6 — Domain Caution Priors (*Trained Immunity / Epigenetic Role Profiles*) & Receipt-Anchored De-escalation
+   Each role/lineage holds a versioned `EpigeneticRoleProfile` keyed by `domain_tag`:
+   - **Cortex Responsibility (Advisory):** Increments domain caution weights (`repulsive_boost ∈ [1.0, 2.0]`, `causal_boost ∈ [1.0, 2.0]`,
+ `recommended_oversight_floor`) on verified failure receipts in that domain.
+   - **Enforcement Owner:** **Keon Gateway and Keon Collective** consume `recommended_oversight_floor` as an advisory tightening-only floor.
+   - **Receipt-Anchored De-escalation (Preventing Role Ossification):** `recommended_oversight_floor` may step down toward the role's baseline
+ `AgentConstraintProfile` **only** via two receipt-anchored paths:
+     - **D6(a) Explicit Operator Reset:** `POST /v1/roles/{role_id}/epigenetic-reset` carrying a mandatory operator Decision Receipt (`rcpt_`).
+     - **D6(b) Earned Outcome Decay:** $N = 10$ consecutive verified `outcome=success` receipts (`rcpt_`) in that `domain_tag` across **10 distinct
+ `task_key`s** with zero intervening failures (preventing repetition of a single trivial task from laundering caution away).
+
+   ### D7 — In-Memory Pre-Outbox Privacy Scrubber & Code Allowlists
+   - **Scrub Before Outbox:** The deterministic scrubber executes **in-memory prior to writing to any local or server outbox table** so raw secrets never
+ touch disk in pending queues.
+   - **Per-Tenant Salted HMAC & Rotation:** Redaction tokens `[REDACTED:<kind>:<hmac12>]` use a per-tenant high-entropy salted key outside Cortex DB. Key
+ rotation is explicitly documented as breaking cross-epoch token correlation in exchange for forward secrecy.
+   - **Code & Fixture Rules:** Git commit author metadata is preserved in structured provenance columns; files matching test/fixture globs (`**/tests/**`,
+ `**/fixtures/**`, `**/*.example`, `**/*.test.*`) tag dummy credentials as `fixture_synthetic` so AST symbol extraction is uncorrupted while still blocking
+ raw secret emission into Plane-B shards.
+
+   ### D8 — Budgeted Checkpoint Semantic Extraction & CI Determinism
+   - Structured events (decisions, proposals, rejections, git commits, AST symbols) are captured deterministically with **zero LLM calls**.
+   - Unstructured chat transcripts and prose docs invoke semantic extraction only at session close or explicit checkpoints under per-session call/token caps
+ and content-hash deduplication. Exhausted budgets record durable `pending_extraction` work—never silent drop.
+   - **CI vs. Live Extraction:** `ExtractorEngine` provides `DeterministicFixtureExtractor` (used in all automated CI suites for 100% deterministic,
+ zero-mock Postgres testing) and `LiveModelExtractor` (validated in a separate gated smoke suite).
+
+   ### D9 — Governed Batch Retraction & Cascading Cryptographic Shred
+   - Every ingestion run registers an `import_batch_id` and writes through the crash-safe outbox (after D7 in-memory scrubbing).
+   - **Operator Governance Gate:** `POST /v1/imports/{batch_id}/retract` and `POST /v1/shards/{shard_id}/shred` are irreversible governed effects. Both
+ endpoints require **operator role authorization** AND a mandatory `X-Decision-Receipt-Id` (`rcpt_`) header, and emit a signed spine `Purge` event.
+   - **Atomic Cascade on Shred:** Setting a shard to `archival_status = 'purged'` atomically: (1) sets `content = ''` while preserving `shard_id` and
+ `original_content_hash` on the tombstone row, (2) `NULL`s the Postgres `embedding` and `tsvector` columns, (3) purges any payload copies in the
+ outbox/audit payload tables, (4) deletes the point from any configured derivative `VectorIndex` (`QdrantVectorIndex`), and (5) fires a D5 Stop Signal to
+ all child shards in `lineage_graph`.
+
+   ### D10 — Citation-Preserving Briefing Composer & Section Routing
+   Task briefings trim at **whole-bullet / whole-section boundaries** within the token budget (default 1,000 tokens per OPMEM D10) and compute `citations`
+ **strictly from surviving post-trim bullets** (fixing legacy `composer.py:106–119`). Stage-1 eligible shards route by `(memory_kind, validity_status)`:
+   1. *Authoritative Directives & Facts*: `validity_status == 'valid'` and `memory_kind IN ('Episodic', 'Semantic')`.
+   2. *Procedural Playbooks & Corroborated Causal*: `validity_status == 'valid'` and `memory_kind IN ('Procedural', 'Causal')`.
+   3. *Failure-Avoidance Warnings*: `validity_status == 'valid'` and `memory_kind == 'Repulsive'`.
+   4. *Contested & Stale Context*: `validity_status IN ('contested', 'stale_code_dependency')` (including older `1.00` directives in an unresolved D3(b)
+ conflict).
+
+   ### D11 — Multi-Parent Knowledge Merge (*Governed Cross-Generational Inheritance*)
+   Extend `keon.cortex.inheritance` (`InheritanceEvent` and `validator.py`) to `parent_generation_ids` (length $1..N$):
+   1. **Per-Kind Selection Floors:** Eligible parent shards must have `archival_status == 'active'`, `validity_status == 'valid'`, `Util(m) > 0`, and meet
+ kind-specific provenance floors: `Semantic`/`Procedural` $\ge 0.70$, `Causal` $\ge 0.75$ (`corroborated_causal`), `Repulsive` $\ge 0.85$.
+   2. **Contradiction Quarantine (`R11`):** Opposing parent claims on the same Plane-A node/domain are placed in `quarantined_contradictions` (neither
+ promoted to `primary`).
+   3. **Caution-Envelope Non-Loosening (`R12`):** Merged `EpigeneticRoleProfile` takes the element-wise maximum across parents.
+   4. **Governed Incarnation Handoff:** Emits an `inherit_`-prefixed `FoundationGenomePack` bound to a new Collective `EntityId` only after an approval
+ receipt (`rcpt_`) is attached (`R3`).
+
+   ### D12 — Two-Step FSRS Retention Sweep & Source-Kind Legacy Migration
+   - **Two-Step Retention Sweep (Aligned with `DecayState`):** Background sweep at explicit `as_of` evaluates $R_{\text{FSRS}}(m, t)$:
+     1. `active` → `buffered` when $R_{\text{FSRS}}(m, t) < \theta_{\text{buffer}}$ (`0.50`, i.e., $\Delta t > 9 S_m$, entering `DecayState.STALE`).
+     2. `buffered` → `archived` when $R_{\text{FSRS}}(m, t) < \theta_{\text{archive}}$ (`0.25`, i.e., $\Delta t > 27 S_m$, entering `DecayState.EXPIRED`)
+ and `verified_success_uses == 0` while buffered.
+   - **Legacy Shard Migration (`shards/1.0` & `1.1` → `2.0`):** Backfill existing Cortex rows with `memory_kind = 'Episodic'`, `archival_status = 'active'`,
+ `validity_status = 'valid'`, `volatility_class = 'standard'` ($S_0 = 14.0\text{d}, D_0 = 0.30$), and `provenance_tier` derived from
+ **`CandidateProvenance.source_kind`** (`'deterministic_code_or_event'` `0.85` for deterministic governance/system sources; `'unverified_candidate'` `0.20`
+ for extractor/untyped sources—never inferred merely from `receipt_ref` presence).
+
+   ### D13 — Unified Lineage & Visualization Graph API
+   - **Extend `GET /v1/shards/{shard_id}/lineage` (`api.py:1950`):** Replace the empty `"ancestor_ids": []` stub with real recursive Plane-B + Plane-A
+ lineage traversal supporting optional `as_of` and `max_depth` query parameters (including `superseded` history).
+   - **Add `GET /v1/graph/neighborhood`:** Tenant- and scope-filtered endpoint returning Plane-A/Plane-B nodes and edges valid at `as_of` in
+ Cytoscape/Force-Graph JSON format.
+
+   ### D14 — Storage Authority & `pgvector >= 0.8.0` Verification
+   Neon/Postgres is the single authoritative transactional store. P1 must verify `pgvector >= 0.8.0` (required for `hnsw.iterative_scan` under tenant/scope
+ `WHERE` predicates) and `pg_trgm`/`tsvector` on the target Postgres profile. `QdrantVectorIndex` remains an optional non-authoritative benchmark/derivative
+ adapter (OPMEM D17).
+
+   ### D15 — Performance SLOs & Measurement Boundary
+   - **Server-Side Scoped Recall SLO:** `POST /v1/recall` p95 latency $\le 150\text{ms}$ measured inside Cortex given a pre-computed query embedding (or
+ lexical/graph query) at $100\text{k}$ Plane-B shards and $500\text{k}$ Plane-A graph nodes per tenant (validated via a dedicated synthetic scale benchmark
+ in P4). End-to-end briefing assembly including query embedding has a separate $\le 300\text{ms}$ p95 target.
+   - **Ingestion SLO:** Deterministic in-memory scrubber + AST/repo ingestion throughput $\ge 500\text{ files/min}$.
+
+   ---
+
+   ## 4. Core Technical Schemas
+
+   ### 4.1 Plane-A Structural Graph Node & Temporal Edge Schema (Postgres `keon_cortex`)
+
+   ```sql
+   CREATE TABLE keon_cortex.artifact_nodes (
+       tenant_id       TEXT NOT NULL,
+       node_id         TEXT NOT NULL CHECK (node_id ~ '^art_[a-z_]+_[0-9a-f]{64}$'),
+       node_kind       TEXT NOT NULL CHECK (node_kind IN (
+                           'repo', 'commit', 'file', 'symbol',
+                           'doc_section', 'chat_thread', 'chat_episode'
+                       )),
+       uri             TEXT NOT NULL,
+       title           TEXT NOT NULL,
+       repo_id         TEXT,
+       commit_sha      TEXT,
+       file_path       TEXT,
+       span_start_line INT,
+       span_end_line   INT,
+       content_hash    TEXT NOT NULL,
+       import_batch_id TEXT NOT NULL,
+       metadata_json   JSONB NOT NULL DEFAULT '{}'::jsonb,
+       -- [observed_at, superseded_at) defines the node's temporal validity interval at as_of
+       observed_at     TIMESTAMPTZ NOT NULL,
+       superseded_at   TIMESTAMPTZ,
+       superseded_by   TEXT,
+       PRIMARY KEY (tenant_id, node_id)
+   );
+
+   CREATE TABLE keon_cortex.graph_edges (
+       tenant_id       TEXT NOT NULL,
+       -- edge_id = 'edge_' || sha256_hex(canonical_json({tenant_id, source_id, source_kind, target_id, target_kind, edge_kind, valid_from}))
+       edge_id         TEXT NOT NULL CHECK (edge_id ~ '^edge_[0-9a-f]{64}$'),
+       source_id       TEXT NOT NULL,
+       source_kind     TEXT NOT NULL CHECK (source_kind IN ('artifact_node', 'shard', 'receipt', 'role_generation')),
+       target_id       TEXT NOT NULL,
+       target_kind     TEXT NOT NULL CHECK (target_kind IN ('artifact_node', 'shard', 'receipt', 'role_generation')),
+       edge_kind       TEXT NOT NULL CHECK (edge_kind IN (
+                           'DEFINES', 'IMPORTS', 'CALLS', 'DOCUMENTS',
+                           'MENTIONS_SYMBOL', 'DERIVED_FROM', 'JUSTIFIED_BY',
+                           'SUPERSEDED_BY', 'STOP_SIGNALED_BY', 'REPELLED_BY',
+                           'INHERITED_FROM'
+                       )),
+       weight          DOUBLE PRECISION NOT NULL DEFAULT 1.0,
+       receipt_ref     TEXT,
+       import_batch_id TEXT NOT NULL,
+       -- [valid_from, superseded_at) defines the edge's temporal validity interval at as_of
+       valid_from      TIMESTAMPTZ NOT NULL,
+       superseded_at   TIMESTAMPTZ,
+       PRIMARY KEY (tenant_id, edge_id)
+   );
+ ```
+
+ ### 4.2 Plane-B Extended Memory Shard Record (shards/2.0)
+
+ ```json
+   {
+     "shard_id": "scoped_sha256_hex",
+     "original_content_hash": "sha256_hex",
+     "tenant_id": "keon-collective",
+     "role_id": "role:systems-architect",
+     "profile_id": "profile:pantheon-core",
+     "scope_class": "role_private",
+     "memory_kind": "Procedural",
+     "archival_status": "active",
+     "validity_status": "valid",
+     "import_batch_id": "batch_20261019_001",
+     "content": "When modifying recall_service.py, push tenant_id and scope predicates into SQL before vector/BM25 ranking.",
+     "provenance": {
+       "source": "chat_episode_extractor",
+       "source_kind": "chat_episode",
+       "source_uri": "urn:keon:episode:ep_99281a",
+       "provenance_tier": "distilled_verified",
+       "provenance_score": 0.70,
+       "authority_class": "ProceduralMemory",
+       "receipt_ref": {
+         "receiptId": "rcpt_01928374",
+         "integrityHash": "sha256_hex"
+       }
+     },
+     "lineage_graph": ["shard_parent_01", "shard_parent_02"],
+     "artifact_node_refs": ["art_file_88a12f", "art_symbol_77c01b"],
+     "retention_state": {
+       "volatility_class": "architectural_invariant",
+       "stability_days": 45.0,
+       "difficulty": 0.15,
+       "last_verified_use_at": "2026-10-19T12:00:00Z",
+       "verified_success_uses": 3,
+       "derived_decay_state": "fresh"
+     },
+     "last_revalidated_at": "2026-10-19T12:00:00Z",
+     "stop_signal_ref": null,
+     "purge_receipt_ref": null
+   }
+ ```
+
+ ────────────────────────────────────────────────────────────────────────────────
+
+ 5. Two-Wave Pre-Shaped Parcel Queue
+

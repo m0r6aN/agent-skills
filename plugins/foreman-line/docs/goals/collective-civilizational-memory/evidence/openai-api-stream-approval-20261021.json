@@ -1,0 +1,27 @@
+{
+  "approvedAtRecordedUtc": "2026-10-21T20:27:23.888298+00:00",
+  "ownerApproval": "Approved, brother. Make the one streamed Sol source attempt, capped at $0.18 additional estimated token cost. Keep both reservations, accept possible unseen output from the failed request, and retain the other limits and reviews.",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "serviceTier": "default",
+  "inputSha256": "5a95eae47d3013e742781c96bf40700e608aff3c07353bcd66fd1dc1cf0df88a",
+  "conservativeInputTokens": 35777,
+  "inputTokenCounts": {
+    "cl100k_base": 29568,
+    "o200k_base": 29601
+  },
+  "maxInput": 36000,
+  "maxOutput": 8192,
+  "estimatedTokenCostCapUsd": 0.18,
+  "worstModeledUsd": 0.17192,
+  "maxRequests": 1,
+  "retry": false,
+  "tools": [],
+  "timeSeconds": 600,
+  "store": false,
+  "reservationsRetained": {
+    "originalGenSparkCredits": 94.6,
+    "priorApiSourceUsd": 0.17192
+  },
+  "passedScopeReused": true
+}

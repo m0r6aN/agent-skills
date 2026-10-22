@@ -1,0 +1,15 @@
+{
+  "atUtc": "2026-10-22T01:59:18.824337+00:00",
+  "sourceCommit": "d0d550526a46c8bb29c994ef33ff324a7c270fe0",
+  "integrationBase": "add85b4bede4d319374088413d99a3569dcd00ff",
+  "originalPreP1ABase": "efb5f4bcead899332f4f35f5e0b3a181eb988d2c",
+  "rebase": "Only six unrelated test files advanced upstream; five P1A candidate bytes unchanged by rebase. Original baseline remains normative.",
+  "sourcePr": "https://github.com/Keon-Systems/keon-cortex/pull/80",
+  "branch": "feat/foreman-line-ccm-p1a",
+  "reviewClosures": "Both PASS; documentary corrections and CRLF-only taxonomy formatting disposition retained",
+  "verification": "399PASS/all238original; Black/isort/mypyPASS; source/fixture/tests semantics unchanged by final documentation edits/rebase",
+  "diffWhitespace": "Default diffcheck flags existing CRLF convention; explicit core.whitespace=cr-at-eol passes for all changed Python/JSON. No config persisted.",
+  "gate3": "Authorized by direct blanket non-destructive decisions/approvals, contingent on complete exact-head green chain; NOT executed",
+  "merge": false,
+  "bulkIngestionReady": false
+}

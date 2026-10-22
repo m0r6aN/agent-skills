@@ -1,0 +1,74 @@
+{
+  "atUtc": "2026-10-22T05:02:56.836785+00:00",
+  "parcel": "CCM-P2B",
+  "gate2": "Approved by delegated operator under owner blanket non-destructive decision/approval authority; concrete ratified workorder, genuine frozen advisory/schema artifact, actual clean accepted-base baseline/pins",
+  "workorder": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P2B-bounded-text-chunker.md",
+  "workorderSha256": "c1237c89c708a130bce2e00b84b89548472640adeec2ac89a3422de914a7a50b",
+  "shapingResult": {
+    "artifactPath": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\ccm-p2b-text-chunker-2026-10-22-operator.shaping-result.json",
+    "artifactRef": "plugins/foreman-line/docs/specs/active/ccm-p2b-text-chunker-2026-10-22-operator.shaping-result.json",
+    "payload": {
+      "parcelSpecRefs": [
+        "plugins/foreman-line/docs/specs/active/CCM-P2B-bounded-text-chunker.md"
+      ],
+      "epics": []
+    }
+  },
+  "actualSchemaReadback": {
+    "parcelSpecRefs": [
+      "plugins/foreman-line/docs/specs/active/CCM-P2B-bounded-text-chunker.md"
+    ],
+    "epics": []
+  },
+  "advisory": {
+    "valid": true,
+    "frontmatter": {
+      "valid": true,
+      "errors": [],
+      "warnings": [
+        "advisory: surfaces entry 'src/keon/cortex/pipeline/__init__.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+        "advisory: surfaces entry 'src/keon/cortex/pipeline/ccm_text.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+        "advisory: surfaces entry 'tests/test_ccm_text.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74"
+      ]
+    },
+    "body": {
+      "valid": true,
+      "errors": []
+    },
+    "errors": []
+  },
+  "warningDisposition": "Generic Foremanprefix warnings advisory only; these exactrelative Corteximplementation paths are the ratified sole repository paths",
+  "process": "Scoped local exacthash workorder/gate/evidence ledger as acceptedP1/P2A; no Jira tree or fake externalpipeline receipt",
+  "base": "76fa7c6eda6a4859e7d3a64815c760a77d4c07f0",
+  "worktree": "D:\\Repos\\ccm-worktrees\\cortex-p2b",
+  "branch": "feat/foreman-line-ccm-p2b",
+  "originalRegularTrackedPins": 397,
+  "gitlinkRepositoryEntriesOnly": 11,
+  "baselineCases": 3028,
+  "baselinePassed": 2891,
+  "baselineSkipped": 137,
+  "sourceFilesUnused": [
+    "src/keon/cortex/pipeline/__init__.py",
+    "src/keon/cortex/pipeline/ccm_text.py",
+    "tests/test_ccm_text.py",
+    "docs/specs/ccm-text-parser-v1.md"
+  ],
+  "builderRole": {
+    "model": "gpt-6-luna",
+    "effort": "low",
+    "fresh": true,
+    "scope": "Fournewfiles only; no existing source/config/deps/API/legacy/pipeline effects",
+    "firstAction": "Step0 read/restate and STOP; parentGO before implementing",
+    "implementationAttempts": 1,
+    "formalFocusedRepairsMax": 1,
+    "nativeAccountUsage": "unknown/separate",
+    "providerCallsAllowed": 0,
+    "credentialsNetworkDatabaseCommitPushAllowed": false
+  },
+  "reviewGate": "Two fresh independent completed architecture/security verdicts; exact paid phaseguard/packet admission separate; actual allCI/head/main green",
+  "frozenRuntime": "Reused existing private exactbyte frozen copies and pinnedruntime; no repository package/schema/linter changes",
+  "newPaidP2ACalls": 0,
+  "newPaidP2BCalls": 0,
+  "wholeGoalComplete": false,
+  "bulkReady": false
+}

@@ -1,0 +1,16 @@
+Task: one synthetic correctness/security review used to qualify a supplied-text reviewer. This is not a live project review or an approval. You have no tools, repository access, authority, or follow-up. Review only the code and requirements below. Return JSON only, <=700 words: {"verdict":"changes_required"|"no_findings", "findings":[{"line":integer,"trigger":string,"consequence":string,"required_property":string}], "coverage_gaps":[string]}.
+
+Requirements for this synthetic function:
+- A derived record is admitted as supported only after independent authentication binds its exact record ID, content hash, tenant and current authorized scope to an approved producer.
+- Caller labels and numeric provenance/utility scores never authenticate a producer or grant supported standing.
+- Every derived record requires at least one currently authoritative parent resolved by the trusted lookup. Parent assertions supplied with a candidate are untrusted data.
+- Missing, out-of-scope, purged or unresolved parents must fail closed.
+- The function must not mutate its inputs.
+
+Code, numbered:
+1 def admit_derived(record, supplied_parents):
+2     label_ok = record.get("source_kind") in {"verified_tool", "human_asserted"}
+3     parents_ok = all(p.get("score", 0) >= 0.8 for p in supplied_parents)
+4     return label_ok and parents_ok
+
+Identify concrete acceptance paths that violate these requirements. Distinguish observed defects from things omitted from this small example. Do not claim execution, account guarantees or approval. Do not propose new infrastructure or a replacement implementation.

@@ -1,0 +1,36 @@
+{
+  "atUtc": "2026-10-22T03:07:37.367849+00:00",
+  "parcel": "CCM-P1C",
+  "authority": "Owner blanket non-destructive decision/approval/spending grant; existing Gate2",
+  "localDay": "2026-10-21",
+  "sharedDayCeiling": 4000,
+  "parcelInitialCeiling": 900,
+  "initialCallsMax": 2,
+  "perCallReservation": 400,
+  "model": "claude-opus-5-5",
+  "effort": "low",
+  "outputMax": 6144,
+  "inputUtf8ByteMax": 110000,
+  "proxyOverheadAllowance": 4096,
+  "timeoutSeconds": 180,
+  "retries": 0,
+  "floor": 1000,
+  "effortCeiling": 9000,
+  "packets": {
+    "A": {
+      "bytes": 108057,
+      "sha256": "3f23f4e82167fa10d7ab4a2372a6939144d44ce223ce479f67ab05903ae18c4c"
+    },
+    "B": {
+      "bytes": 108081,
+      "sha256": "aeb28e1bcd9b58d9c219129a58a2fac8d2543bdc84b10259d130d31578e42c0e"
+    }
+  },
+  "limits": "Operational conservative UTF8+proxy input estimate, not hard remote token/billing/cancellation/completion guarantees; no automatic retry or fallback. Existing successful low Opus qualification reused.",
+  "unknownsRetained": {
+    "P1A_GenSpark": 94.6,
+    "P1B_closureB": 350,
+    "API_USD": 0.17192
+  },
+  "sharedGuard": "Only replace exact foreign shared_external_pending_p1b_reservation with own completed closures241.4995+unknown350+current phase reservations; preserve every other hold. Native Codex usage unknown/separate."
+}

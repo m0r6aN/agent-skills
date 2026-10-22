@@ -1,0 +1,75 @@
+{
+  "startedAtUtc": "2026-10-22T04:43:54.183417+00:00",
+  "phase": "closure2-A",
+  "status": "completed_json_pending_host_validation",
+  "modelRequested": "claude-opus-5-5",
+  "effortRequested": "low",
+  "inputBytes": 75273,
+  "inputSha256": "4de263d3ca9076119853a1fa32e27688724ada07837e2c1ba34393091ea8d8fa",
+  "inputOperationalBound": 79529,
+  "maxOutputTokens": 8192,
+  "creditReservation": 350,
+  "bookedCredits": 101.508,
+  "operationalEstimatedBoundCredits": 308.81675,
+  "creditGuard": {
+    "atUtc": "2026-10-22T04:43:54.178197+00:00",
+    "balance": 6870.5,
+    "plan": "plus",
+    "foreignStateSha256": "e3cd5b0b9ac524bf80ddd87788386f2d9e60b759da474c781f6aef8526ffe4a9",
+    "foreignActualPriorAndPhaseGuard": 1452.5,
+    "foreignReservedConservativeGuard": 1600,
+    "foreignOld700Retained": true,
+    "nyDay": "2026-10-22",
+    "preMidnightBalance": 7406.2,
+    "observedDayDelta": 535.6999999999998,
+    "p2aBooked": 925.0242499999999,
+    "p2aRemainingCapacity": 700,
+    "p2aTotalGuard": 1625.02425,
+    "sharedDayGuard": 3760.7242499999998,
+    "effortGuard": 6438.724249999999,
+    "accountAfterAllGuards": 3645.47575,
+    "limits": {
+      "p2a": 2000,
+      "sharedDay": 4000,
+      "effort": 9000,
+      "accountFloor": 1000
+    }
+  },
+  "postsMax": 1,
+  "automaticRetries": 0,
+  "timeoutSeconds": 180,
+  "modelReturned": "claude-opus-5-5",
+  "requestId": "chatcmpl-638a928b-d2bd-4cf9-9837-922c7a7ec0d2",
+  "finishReason": "stop",
+  "usage": {
+    "completion_tokens": 1906,
+    "prompt_tokens": 29288,
+    "total_tokens": 31194,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 1072,
+      "rejected_prediction_tokens": null,
+      "text_tokens": 834
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "cache_write_tokens": 29284,
+      "text_tokens": 0,
+      "cache_creation_tokens": 29284,
+      "cache_creation_token_details": {
+        "ephemeral_5m_input_tokens": 29284,
+        "ephemeral_1h_input_tokens": 0
+      }
+    },
+    "cache_creation_input_tokens": 29284,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "global",
+    "speed": "standard"
+  },
+  "reportedCredits": 101.2,
+  "finishedAtUtc": "2026-10-22T04:44:17.187568+00:00",
+  "jsonFenceRemovedOffline": true,
+  "conservativeCatalogCredits": 101.508
+}

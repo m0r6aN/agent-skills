@@ -1,0 +1,332 @@
+{
+  "mirror": "C:\\Users\\clint\\AppData\\Local\\Temp\\ccm-approval-20261021-01",
+  "cli": "C:\\Users\\clint\\AppData\\Local\\Temp\\ccm-approval-20261021-01\\plugins\\foreman-line\\approval\\src\\cli.ts",
+  "node": "D:\\nvm\\v24.19.0\\node.exe",
+  "tsx": "C:\\Users\\clint\\AppData\\Local\\npm-cache\\_npx\\fd45a72a545557e9\\node_modules\\tsx\\dist\\cli.mjs",
+  "showCommand": [
+    "D:\\nvm\\v24.19.0\\node.exe",
+    "C:\\Users\\clint\\AppData\\Local\\npm-cache\\_npx\\fd45a72a545557e9\\node_modules\\tsx\\dist\\cli.mjs",
+    "C:\\Users\\clint\\AppData\\Local\\Temp\\ccm-approval-20261021-01\\plugins\\foreman-line\\approval\\src\\cli.ts",
+    "show",
+    "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\collective-civilizational-memory-foundation-2026-10-19-01a155c3.shaping-result.json",
+    "--repo-root",
+    "D:\\Repos\\agent-skills",
+    "--epic-title",
+    "Context: collective civilizational memory foundation"
+  ],
+  "showExit": 0,
+  "sourceFilesCompared": 76,
+  "sourceManifest": [
+    {
+      "path": "plugins/foreman-line/approval/src/approval-record.ts",
+      "sha256": "013e753d9f06611326962da47a88b5a7c2271855415f4a804afb493ce0bcef37"
+    },
+    {
+      "path": "plugins/foreman-line/approval/src/approve-flow.ts",
+      "sha256": "3bbe83c305db60834fc8955ff2553d0f5acd70424402447a301fda628fbeed7e"
+    },
+    {
+      "path": "plugins/foreman-line/approval/src/canonical.ts",
+      "sha256": "b2d6edb944a2804e8e7c83db4f8224cd68f3b7dd0cd4a96fe5d49e13f043e34a"
+    },
+    {
+      "path": "plugins/foreman-line/approval/src/cli.ts",
+      "sha256": "9a64dbe07e77042fa54cc0cd50be77917a01abb7e5664ce2875a3a03e4512f8f"
+    },
+    {
+      "path": "plugins/foreman-line/approval/src/confirm.ts",
+      "sha256": "cfcdb7e9869903a0626e632be9ca805c2ae4d29a04855b2dd45813a36b4a1fe9"
+    },
+    {
+      "path": "plugins/foreman-line/approval/src/correlation.ts",
+      "sha256": "c81714d39c3923bc38fec2a5948c8bfd03afaa7e9122ed8db25c295b6fc92329"
+    },
+    {
+      "path": "plugins/foreman-line/approval/src/errors.ts",
+      "sha256": "0c71f0a6a88d7260eb7160e9187e17b058f5096c78f41cd05e70dba93698d524"
+    },
+    {
+      "path": "plugins/foreman-line/approval/src/hash.ts",
+      "sha256": "3b7048c7b0f938346deb81f51bfee0440558b6129f351357ecb5590f60517891"
+    },
+    {
+      "path": "plugins/foreman-line/approval/src/index.ts",
+      "sha256": "73f059c0a8bf3c0ccd16700f4e2e11cf132d6fb481cb9adbb2240174db4a4a07"
+    },
+    {
+      "path": "plugins/foreman-line/approval/src/paths.ts",
+      "sha256": "f0dce4d635d92f1ee316a270e1ce352c8e5da6e185ba25a84293d648118033ca"
+    },
+    {
+      "path": "plugins/foreman-line/approval/src/receipt-writer.ts",
+      "sha256": "749af21a6927aa8858fbb9c4e1ab9e8ab70a395306448f2a0339a67cbf19aec6"
+    },
+    {
+      "path": "plugins/foreman-line/approval/src/receipt.ts",
+      "sha256": "42592fdd5eb46896779fb1582c4e0e32f802bfb370a25c7c6af97e4cabac3a30"
+    },
+    {
+      "path": "plugins/foreman-line/approval/src/rejection-record.ts",
+      "sha256": "d76e7024cf93e7327f405db2b9977d6476039cd9e984c28052d8abab06b1bd30"
+    },
+    {
+      "path": "plugins/foreman-line/approval/src/render.ts",
+      "sha256": "5feac772543b389511a5ee43e2e97ebca611f85df5f7c06c90092356b37c21fa"
+    },
+    {
+      "path": "plugins/foreman-line/approval/src/resolve-input.ts",
+      "sha256": "90cb36efa630c7ff3d8e77838df4908bb3cc10603c20bf214e7caeaf64f500a5"
+    },
+    {
+      "path": "plugins/foreman-line/approval/src/slug-guard.ts",
+      "sha256": "4e0f68358c54e0ccdf2a4a45eb45064b12677c1be68e764c24bf6a60d978a17f"
+    },
+    {
+      "path": "plugins/foreman-line/approval/src/subject.ts",
+      "sha256": "17eb38a96ffc5bddf943a855d921715584a20a0efdbcd57f84fd00a66e332027"
+    },
+    {
+      "path": "plugins/foreman-line/projection/src/api.ts",
+      "sha256": "cce6c76cc130b808dd0a664520dd6a06aa5cac3214ee6e6fe94d82c6465bece7"
+    },
+    {
+      "path": "plugins/foreman-line/projection/src/discover.ts",
+      "sha256": "edf8ca2f592e5768c34667e1fbdc3db5afe5c21cdeeb8600a8265a6b27d3033e"
+    },
+    {
+      "path": "plugins/foreman-line/projection/src/errors.ts",
+      "sha256": "5f49f2901bc2bab499f7d4210bb73ff306e9084b90644edb239b9e46893b8d19"
+    },
+    {
+      "path": "plugins/foreman-line/projection/src/guards.ts",
+      "sha256": "20acaa1f2da1d056d3e35f3312ca75409ac6a55c8fabb0c9636f6fc42ef7d254"
+    },
+    {
+      "path": "plugins/foreman-line/projection/src/index.ts",
+      "sha256": "4a5a66f340f722b59cd0f40d6e38e607a866b0854ef0008adccd4f857329ad86"
+    },
+    {
+      "path": "plugins/foreman-line/projection/src/keys.ts",
+      "sha256": "5b51f0d746f044b640f0a40d5ecbf88a34c9a126bdbcd4b34d6d755808aa038b"
+    },
+    {
+      "path": "plugins/foreman-line/projection/src/path-guard.ts",
+      "sha256": "4a2d6a2aed318e704c076d4b249c057bfe0f34653c0f5714d84f897e265d5af4"
+    },
+    {
+      "path": "plugins/foreman-line/projection/src/paths.ts",
+      "sha256": "026ed3b1bd45b61e933e82d6386fa734ca5ba2449f7af1379084247d53bf0a74"
+    },
+    {
+      "path": "plugins/foreman-line/projection/src/project.ts",
+      "sha256": "cd58f3dcbd8bbd237e2e3a326189ecdb05a6b910e3e24db973a520933f5a772e"
+    },
+    {
+      "path": "plugins/foreman-line/projection/src/title.ts",
+      "sha256": "f58ec284d12149cfa9b7b3fd504b7f010664ed0599758b4facbf79a508fa574a"
+    },
+    {
+      "path": "plugins/foreman-line/projection/src/write.ts",
+      "sha256": "c99cef3578ec0f98e8312ba1390578af4ae9d70e2dcc31f6eaea189b2c365dd5"
+    },
+    {
+      "path": "plugins/foreman-line/receipts/src/cli.ts",
+      "sha256": "738515bfbbcfbb8be4ebc2cf146ce6d90112d5d5004648f5fb0f38706b268eb6"
+    },
+    {
+      "path": "plugins/foreman-line/receipts/src/generate.ts",
+      "sha256": "1e56d5adfd726b0583e7d95751cb94cb94a555a9a0518cb1c58b633e24c84398"
+    },
+    {
+      "path": "plugins/foreman-line/receipts/src/index.ts",
+      "sha256": "a40d2e136a7c49f303db722c51782cb98438e829daad19cd92945a47e56179fd"
+    },
+    {
+      "path": "plugins/foreman-line/receipts/src/measured-workflow-internal.ts",
+      "sha256": "1b47f6358b91822e82588d4f912616717b60d37924b59169b2b28bb447b2f8c7"
+    },
+    {
+      "path": "plugins/foreman-line/receipts/src/paths.ts",
+      "sha256": "f4719b1125f4668c9ef5dc082a11a2db5fbabd2ceab8824a498af3bc837f2cb6"
+    },
+    {
+      "path": "plugins/foreman-line/receipts/src/registry.ts",
+      "sha256": "731cbecdeb61bbbfe92407039530e76f2b3231e8ce66ea91fa8a3038726b5650"
+    },
+    {
+      "path": "plugins/foreman-line/receipts/src/schemas.ts",
+      "sha256": "5fcd06ba2dbfa390d423726de4a6ce6c2d26b19566228c8055d089132d12f200"
+    },
+    {
+      "path": "plugins/foreman-line/receipts/src/types.ts",
+      "sha256": "16bcdc5443a80d9e30ba21215ed846240df0e825e3c5e76a44cded45995c1e37"
+    },
+    {
+      "path": "plugins/foreman-line/receipts/src/validator.ts",
+      "sha256": "a85af3303132771ed7e4376a62ae37dd9e5d34f4a3ecc10a087ba4bfad0d1b15"
+    },
+    {
+      "path": "plugins/foreman-line/contracts/src/correlation.ts",
+      "sha256": "eb5c9e91307f093503c74d39ae51b8193e33f9f8469dda04e031d70262d7386b"
+    },
+    {
+      "path": "plugins/foreman-line/contracts/src/envelope.ts",
+      "sha256": "8ea10133970bc6e86ead6755e8351578a9d6f0630be71a8f4f8dbfa15411d6d1"
+    },
+    {
+      "path": "plugins/foreman-line/contracts/src/generate.ts",
+      "sha256": "1e56d5adfd726b0583e7d95751cb94cb94a555a9a0518cb1c58b633e24c84398"
+    },
+    {
+      "path": "plugins/foreman-line/contracts/src/index.ts",
+      "sha256": "e369becb7390038a9be30779ad02894e9b87b75682cd7ef36ed7cc0ffc660bef"
+    },
+    {
+      "path": "plugins/foreman-line/contracts/src/registry.ts",
+      "sha256": "f538b038ae10c13cb3f640bf5939314194c736fa57fef8f3dbf2e8ff44bbbe8e"
+    },
+    {
+      "path": "plugins/foreman-line/contracts/src/testing.ts",
+      "sha256": "0e3082e2e22bbc4fd27d5eb253aa2c1d6269c1f142a10729e37cc48f52a936d0"
+    },
+    {
+      "path": "plugins/foreman-line/contracts/src/stages/a-intake.ts",
+      "sha256": "b029ca981bb4392096a08e1fb48587d6de17970605241f3be18ef2e965b4ba04"
+    },
+    {
+      "path": "plugins/foreman-line/contracts/src/stages/b-registration.ts",
+      "sha256": "ede291410bd6cf6fe2d812b61a9652c500a7ce801b1ea4bf9184787d8fca15f3"
+    },
+    {
+      "path": "plugins/foreman-line/contracts/src/stages/c-dispatch.ts",
+      "sha256": "b6efeba225d5af378a150f93dbdc56d12125997472729dae0368bf7fd4d86516"
+    },
+    {
+      "path": "plugins/foreman-line/contracts/src/stages/d-verification.ts",
+      "sha256": "1ca866ea666d0e6bfed6d4ec9f0acf34b396d355f2db868289faa773570a8561"
+    },
+    {
+      "path": "plugins/foreman-line/contracts/src/stages/e-integration.ts",
+      "sha256": "bf39ff88d46c3d1c868c8d18d306c965d83f74617a1fde426bf0682f4d204a97"
+    },
+    {
+      "path": "plugins/foreman-line/contracts/src/stages/f-closure.ts",
+      "sha256": "93111ceb0749508eb4e8ccf995fc4e89f7c76c5b024de2f6f78256e635789fe8"
+    },
+    {
+      "path": "plugins/foreman-line/shaping/src/emit.ts",
+      "sha256": "433dbde8c5fe4c276d5edee943a6878ac99aea12ac08ad49d1c165fb55fe6128"
+    },
+    {
+      "path": "plugins/foreman-line/shaping/src/errors.ts",
+      "sha256": "b416926496881714a8193c5af51c90948f0771ea556d96095ffeba1f196b55fd"
+    },
+    {
+      "path": "plugins/foreman-line/shaping/src/index.ts",
+      "sha256": "168895cdd9a65b7b8b7ad484d05bbfec390275d23d16d77c729547cf61f4b7a6"
+    },
+    {
+      "path": "plugins/foreman-line/shaping/src/read.ts",
+      "sha256": "116fb627ff0b203cfd96ee3cdb68ec0bc124b9ffb1a13a9df738846a92a53dd1"
+    },
+    {
+      "path": "plugins/foreman-line/shaping/src/self-check.ts",
+      "sha256": "d1ddd9e87f0066b534e550fed44bc349344ab22b1ea20ad4359985416f67c45a"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/src/cli.ts",
+      "sha256": "68da3e36e67ab6a0784439bfd3e8887cce7310035743e5aa422782f65f8d9ae4"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/src/generate.ts",
+      "sha256": "1e56d5adfd726b0583e7d95751cb94cb94a555a9a0518cb1c58b633e24c84398"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/src/grandfather.ts",
+      "sha256": "13942fbb525125409245eb2dd2f73c5114e32950ef5345f70ef4bc286302edbc"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/src/index.ts",
+      "sha256": "65c915d70d26086bdc907342642082f8225354d94f5033f0c197632c96321a99"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/src/registry.ts",
+      "sha256": "624a820c6d1123e9336d5375756e1448242eb5da49f93270de8c368a2bc52dfc"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/src/schemas.ts",
+      "sha256": "c79baef53aac46da72a111393c21b7bfc99bb1bc2f09293b7c0666ed662c52ad"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/src/testing.ts",
+      "sha256": "d4b9ccc5fb5bb92b21d4b9b919fb752016c2ebe8c987e56816c55516fbbb8f87"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/src/types.ts",
+      "sha256": "0ab8134e7412282376498d3d94184aeec00e05038fbe5ac1a257a50cd852667b"
+    },
+    {
+      "path": "plugins/foreman-line/spec-linter/src/validate.ts",
+      "sha256": "559541cd4a83f4fd7794232ec5e1f5f86b0d5bb0a1278d76f3d6418490385c54"
+    },
+    {
+      "path": "plugins/foreman-line/permission-profiles/src/cli.ts",
+      "sha256": "af5a4a70901a52107080c824bee99333ffef45c003180f8e9af49703082f79d6"
+    },
+    {
+      "path": "plugins/foreman-line/permission-profiles/src/emitter.ts",
+      "sha256": "a3cd674a5ffa8093efe86d8d7be04d6e67eedea3aa452ea2bbd9f14da6153b85"
+    },
+    {
+      "path": "plugins/foreman-line/permission-profiles/src/generate.ts",
+      "sha256": "1e56d5adfd726b0583e7d95751cb94cb94a555a9a0518cb1c58b633e24c84398"
+    },
+    {
+      "path": "plugins/foreman-line/permission-profiles/src/index.ts",
+      "sha256": "405813fda286cea4f2033397224ee708f2e30c497e20249f5a813c762ba439b1"
+    },
+    {
+      "path": "plugins/foreman-line/permission-profiles/src/registry.ts",
+      "sha256": "46357e355ea5eb104418949f46b07810d9cf958f5d58c1b640d6aa00f8bd4894"
+    },
+    {
+      "path": "plugins/foreman-line/permission-profiles/src/schemas.ts",
+      "sha256": "20f07a32b8937dc46b0f99817c10ac01fe67266f772bf11554e1425d666798d2"
+    },
+    {
+      "path": "plugins/foreman-line/permission-profiles/src/testing.ts",
+      "sha256": "13c6154d76d261a339b8f824afacc614cb2977c3369d463b51969f940762aa7c"
+    },
+    {
+      "path": "plugins/foreman-line/permission-profiles/src/types.ts",
+      "sha256": "90c3284e1f59916d807d2859c8262615c7b7e52aa17a989b733ed13eb3612016"
+    },
+    {
+      "path": "plugins/foreman-line/permission-profiles/src/validator.ts",
+      "sha256": "1f12fe53f75b089d25dd27e995af024c52269b0db6b8c4e22c616702749a7d23"
+    },
+    {
+      "path": "plugins/foreman-line/schema-scaffold/src/generate.ts",
+      "sha256": "64a7f62c044a2d6aa36f0dd2563866cd27af9105a5b866f6e1123c9902847f1a"
+    },
+    {
+      "path": "plugins/foreman-line/schema-scaffold/src/index.ts",
+      "sha256": "61512ba2cf3b1010a3b584ba8be9111efce8cb639b9b372c979286e67ebddcbb"
+    },
+    {
+      "path": "plugins/foreman-line/schema-scaffold/src/registry.ts",
+      "sha256": "412d3771a6c7e0fe3cf317ed6070f69eafad51d06014b83a32d6869c0bc19ec1"
+    },
+    {
+      "path": "plugins/foreman-line/schema-scaffold/src/test-scaffold.ts",
+      "sha256": "ff9d9d7228065c8f47a214fef62f7d42d56a587c7a76781e93a8fcfe5002db67"
+    }
+  ],
+  "dependencies": "Existing Ajv dependency mirror, no install, no checkout node_modules changes",
+  "approval": "not invoked; human interactive confirmation required",
+  "firstShowExit": 1,
+  "firstShowFailure": "Missing yaml package in shared Ajv-only dependency path; corrected by linking existing per-package dependency mirrors. No installs.",
+  "perPackageExistingDependencies": true,
+  "projectedArtifact": "D:\\Repos\\agent-skills\\docs\\specs\\active\\collective-civilizational-memory-foundation-2026-10-19-01a155c3.projected.shaping-result.json",
+  "projectedSha256": "fe4db66753c23db2d958651c73cbc517e93453cb7e9f5e602c51f694f90c13d9"
+}

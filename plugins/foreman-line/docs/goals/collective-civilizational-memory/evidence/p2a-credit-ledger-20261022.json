@@ -1,0 +1,69 @@
+{
+  "atUtc": "2026-10-22T04:55:07.296797+00:00",
+  "parcel": "CCM-P2A",
+  "status": "Accepted merged StageFclosed; all exact-head and merged-main workflows green; no further P2A paid calls",
+  "unit": "GenSpark prepaid credits, operational estimates not proof of incremental billing",
+  "reportedSpent": 743.6,
+  "knownCompletedReviewConservativeCredits": 450.49399999999997,
+  "unsuccessfulCompleteResponseReservations": 700,
+  "unsuccessfulReportedCredits": 294.8,
+  "unresolvedGenerationReservations": 0,
+  "bookedTotal": 1150.4940000000001,
+  "parcelCeiling": 2000,
+  "futureClosureCapacity": 0,
+  "datedSharedNY20261022Ceiling": 4000,
+  "expiresAtUtc": "2026-10-23T04:00:00Z",
+  "foundationConservativeCarried": 2626.729,
+  "foundationPlusP2AConservative": 3777.223,
+  "oldUnknowns": "Original94.6,failedP1B350,APIunknown$0.17192 preserved; foreign700 excesshold independently retained",
+  "nativeCodexUsage": "unknown/separate",
+  "apiKnownAndReservedUSD": 1.08227,
+  "newOpenAIAPICalls": 0,
+  "phases": [
+    {
+      "phase": "closure-A",
+      "requestId": "chatcmpl-4bc7ec66-6ab1-4f77-ba99-8bc37f57057a",
+      "status": "failed_no_retry",
+      "reported": 147.4,
+      "booked": 350
+    },
+    {
+      "phase": "closure-B",
+      "requestId": "chatcmpl-5912432f-52b9-4adb-a03d-f3eccf06902e",
+      "status": "failed_no_retry",
+      "reported": 147.4,
+      "booked": 350
+    },
+    {
+      "phase": "closure2-A",
+      "requestId": "chatcmpl-638a928b-d2bd-4cf9-9837-922c7a7ec0d2",
+      "status": "completed_json_pending_host_validation",
+      "reported": 101.2,
+      "booked": 101.508
+    },
+    {
+      "phase": "closure2-B",
+      "requestId": "chatcmpl-c53ce02d-5b11-43e5-a556-496ecc1fec41",
+      "status": "completed_json_pending_host_validation",
+      "reported": 123.2,
+      "booked": 123.96175
+    },
+    {
+      "phase": "review-A",
+      "requestId": "chatcmpl-5512b23e-f6ed-45a1-b0ec-e62d17fa1925",
+      "status": "completed_json_offline_fence_recovered_pending_host_validation",
+      "reported": 103.4,
+      "booked": 103.6695
+    },
+    {
+      "phase": "review-B",
+      "requestId": "chatcmpl-c26a4908-0d31-4d24-92dd-856388d2bd62",
+      "status": "completed_json_pending_host_validation",
+      "reported": 121.0,
+      "booked": 121.35475
+    }
+  ],
+  "acceptedCommit": "76fa7c6eda6a4859e7d3a64815c760a77d4c07f0",
+  "sourceHead": "cb794ba7c51dd3508c90832a892aaa2490894993",
+  "pr": "https://github.com/Keon-Systems/keon-cortex/pull/87"
+}

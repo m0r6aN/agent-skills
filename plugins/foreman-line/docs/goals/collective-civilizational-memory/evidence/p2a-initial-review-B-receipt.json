@@ -1,0 +1,75 @@
+{
+  "startedAtUtc": "2026-10-22T04:24:35.791582+00:00",
+  "phase": "review-B",
+  "status": "completed_json_pending_host_validation",
+  "modelRequested": "claude-opus-5-5",
+  "effortRequested": "low",
+  "inputBytes": 53006,
+  "inputSha256": "c4f8d535fb8d3caa5c592adf8dafd9cf67e1cfa460ecb8b2cb10d3defd1af710",
+  "inputOperationalBound": 57262,
+  "maxOutputTokens": 6144,
+  "creditReservation": 350,
+  "bookedCredits": 121.35475,
+  "operationalEstimatedBoundCredits": 225.0545,
+  "creditGuard": {
+    "atUtc": "2026-10-22T04:24:35.789679+00:00",
+    "balance": 7287.4,
+    "plan": "plus",
+    "foreignStateSha256": "d1fa7f1e4e805030972f4623fad014633d2cf45098db59054711d8230db5a33c",
+    "foreignActualPriorAndPhaseGuard": 1452.5,
+    "foreignReservedConservativeGuard": 1600,
+    "foreignOld700Retained": true,
+    "nyDay": "2026-10-22",
+    "preMidnightBalance": 7406.2,
+    "observedDayDelta": 118.80000000000018,
+    "p2aBooked": 103.6695,
+    "p2aRemainingCapacity": 1050,
+    "p2aTotalGuard": 1153.6695,
+    "sharedDayGuard": 2872.4695,
+    "effortGuard": 5550.4695,
+    "accountAfterAllGuards": 4533.7305,
+    "limits": {
+      "p2a": 1400,
+      "sharedDay": 3200,
+      "effort": 9000,
+      "accountFloor": 1000
+    }
+  },
+  "postsMax": 1,
+  "automaticRetries": 0,
+  "timeoutSeconds": 180,
+  "modelReturned": "claude-opus-5-5",
+  "requestId": "chatcmpl-c26a4908-0d31-4d24-92dd-856388d2bd62",
+  "finishReason": "stop",
+  "usage": {
+    "completion_tokens": 5680,
+    "prompt_tokens": 21409,
+    "total_tokens": 27089,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 2235,
+      "rejected_prediction_tokens": null,
+      "text_tokens": 3445
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "cache_write_tokens": 21405,
+      "text_tokens": 0,
+      "cache_creation_tokens": 21405,
+      "cache_creation_token_details": {
+        "ephemeral_5m_input_tokens": 21405,
+        "ephemeral_1h_input_tokens": 0
+      }
+    },
+    "cache_creation_input_tokens": 21405,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "global",
+    "speed": "standard"
+  },
+  "reportedCredits": 121.0,
+  "finishedAtUtc": "2026-10-22T04:25:36.852838+00:00",
+  "jsonFenceRemovedOffline": true,
+  "conservativeCatalogCredits": 121.35475
+}

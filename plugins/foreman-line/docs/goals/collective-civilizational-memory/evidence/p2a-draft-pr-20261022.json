@@ -1,0 +1,8 @@
+{
+  "atUtc": "2026-10-22T04:41:49.099129+00:00",
+  "sourceHead": "cb794ba7c51dd3508c90832a892aaa2490894993",
+  "base": "6139ddd8802540829eebce07215106e4b16ca360",
+  "pr": "https://github.com/Keon-Systems/keon-cortex/pull/87",
+  "status": "Draft; independent closures and exact-head CI required",
+  "fiveGitBlobsMatchReviewedSourceHashes": true
+}

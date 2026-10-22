@@ -1,0 +1,55 @@
+{
+  "atUtc": "2026-10-22T05:24:34.319586+00:00",
+  "parcel": "CCM-P2B",
+  "disposition": "Pure UTF8byte chunker acceptance criteria met; separate credential-handling incident NOT closed",
+  "sourceHead": "50c704050c18b218f1913d51ee9ed39a330993c5",
+  "acceptedCommit": "3a7c30b5cab7198b3ad6e7ff3b881bead8af823d",
+  "pr": {
+    "mergeCommit": {
+      "oid": "3a7c30b5cab7198b3ad6e7ff3b881bead8af823d"
+    },
+    "mergedAt": "2026-10-22T05:21:03Z",
+    "state": "MERGED",
+    "url": "https://github.com/Keon-Systems/keon-cortex/pull/89"
+  },
+  "mainChecks": [
+    {
+      "conclusion": "success",
+      "headSha": "3a7c30b5cab7198b3ad6e7ff3b881bead8af823d",
+      "name": "CI",
+      "status": "completed",
+      "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39727519920"
+    },
+    {
+      "conclusion": "success",
+      "headSha": "3a7c30b5cab7198b3ad6e7ff3b881bead8af823d",
+      "name": "Trigger auto deployment for keon-cortex",
+      "status": "completed",
+      "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39727519890"
+    }
+  ],
+  "all16ExactHeadChecks": "SUCCESS;sourcepush firstBM2timingfailure retained,ONEsameheadfailed/cancelleddiagnosticrerun2SUCCESS;combinedPRfirstSUCCESS",
+  "fileHashesMatchMergedGitBlobs": {
+    "src/keon/cortex/pipeline/__init__.py": "4c372bf8394770080ffc7826e71eb2c30a349a31997bd085e724f1923eb6f937",
+    "src/keon/cortex/pipeline/ccm_text.py": "ebd6117e0a99a7f8361dfd83274ab60d938dc6403e9d25041b675ea210888757",
+    "tests/test_ccm_text.py": "2096e241756e9aeab275fcbd215e833e2f151e2ff9c5964f3044a8d2437764ab",
+    "docs/specs/ccm-text-parser-v1.md": "c6c7361e84660a1ea7fa2b039bb69518cfc4f2c9142621bcf7c046f1055c6b13"
+  },
+  "independentReviews": "Twofresh independentOpuslow initialPASS/PASS,findingsnone,no formalrepair/closurecalls",
+  "focusedPass": 19,
+  "fullPass": 2910,
+  "fullSkipped": 137,
+  "fullFailure": 0,
+  "baseline3028IdentitiesRetained": true,
+  "all397RegularTrackedPinsAnd11GitlinkEntriesRetained": true,
+  "hostVectors": "10independentlyfrozenfixtures x2formats plus4invalidUTF8exceptionchecksPASS;sourcebyteoffsets/digests/reconstruction/max65chunks",
+  "workorderArchive": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\done\\CCM-P2B-bounded-text-chunker.md",
+  "archiveChange": "statusonly;bodyunchanged",
+  "activeSha256": "c1237c89c708a130bce2e00b84b89548472640adeec2ac89a3422de914a7a50b",
+  "doneSha256": "d426e039bc14d6db7c442e0e7a657057bff9596c5ce09f448ea1eae4affff6e9",
+  "cleanup": "Retain sourceworktree/branchforacceptedpins;no destructivecleanup",
+  "incident": "Workerprintedcredential-valuedprocessenvironment totooltranscript,stopped. ParentcompletedexactOS-onlyvalidation. Names-onlyincident/originmetadata recorded, no keyvaluesinreviewpackets. No keyrotation/transcriptremovalclaimed. Holdnewdelegatedshellworkers and exposed-keyproviderAPIroutes pending ownership/rotation/isolationdisposition.",
+  "laterGates": "Transientrawchunks are notsanitized/trusted; P3strictdecode+P2Aimmediatelybeforeenqueue, P8source/scope/checkpoint/idempotency. AST/git/civicmapper/extractors/P3-P8/Waveproofs/producer/key/target/import gatesremain.",
+  "wholeGoalComplete": false,
+  "bulkIngestionReady": false
+}

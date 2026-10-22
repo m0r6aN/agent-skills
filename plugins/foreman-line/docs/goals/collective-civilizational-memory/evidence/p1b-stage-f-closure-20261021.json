@@ -1,0 +1,52 @@
+{
+  "atUtc": "2026-10-22T03:04:21.495781+00:00",
+  "parcel": "CCM-P1B",
+  "disposition": "AC1-AC6 accepted as pure scoring/FSRS/retention contracts, source and merge CI green",
+  "sourceCommit": "7f081ad886caedfae7b38d61c1616ec326143898",
+  "acceptedCommit": "241358c664fbbceb140a45c0da40c48f6c1135c0",
+  "pr": {
+    "mergeCommit": {
+      "oid": "241358c664fbbceb140a45c0da40c48f6c1135c0"
+    },
+    "mergedAt": "2026-10-22T02:48:34Z",
+    "state": "MERGED",
+    "url": "https://github.com/Keon-Systems/keon-cortex/pull/83"
+  },
+  "mergeChecks": [
+    {
+      "conclusion": "success",
+      "headSha": "241358c664fbbceb140a45c0da40c48f6c1135c0",
+      "status": "completed",
+      "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39713405183"
+    },
+    {
+      "conclusion": "success",
+      "headSha": "241358c664fbbceb140a45c0da40c48f6c1135c0",
+      "status": "completed",
+      "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39713405178"
+    }
+  ],
+  "candidatePins": {
+    "src/keon/cortex/gravity/params.py": "bff1cfea6a7f998eaf231c4ac1e31bb5b302944403180259898a548504211894",
+    "src/keon/cortex/gravity/function_v2.py": "514a1f10ef415e1728a4d400a31893ffd43910bc66f7ea4ecc63c77388df6884",
+    "src/keon/cortex/gravity/retention_v2.py": "5e55aae1db47659406c255ea430d8181d56e80f59fae4a1c2e61dda44ff37a23",
+    "tests/gravity/test_ccm_v2.py": "fd95c6b47deeca7c448981dd1f442ef0058f759020a98d514e16a474ec3a2e56",
+    "tests/fixtures/ccm/gravity-v2.json": "1ed3a9fd2889cd852900bc272127e8fe3835701291de3d558d77e2d03d9146be"
+  },
+  "targetedPostRepairPass": 266,
+  "oldTestIdentitiesRetained": 200,
+  "independentNumericPairs": 30,
+  "numericTolerance": "absolute AND relative <=1e-10 against independently frozen Decimal70 equations",
+  "oldReplay": "11824 bytes SHA256 903b2460fb4514cce054d38f91fceae63684d4653db812aa2ec5f81c7dd1867e, identical before P1A/accepted P1A/P1B",
+  "independentReviews": "Two initial CHANGES_REQUIRED, one focused repair, two completed independent closure PASS",
+  "closureEvidence": "p1b-independent-closure-20261021.md",
+  "ciTimingFailure": "One documented BM2 3.771x >3.0 failure; one same-head failed/cancelled job rerun passed. No benchmark/source/threshold weakening, no stability/SLO repair claim. Initial failure preserved.",
+  "workOrderArchive": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\done\\CCM-P1B-gravity-v2-fixtures.md",
+  "activeWorkOrderSha256": "e21ab50f241cbf20f307fb3aaa2fce965c96fa2b2cfaab760552726709826cf2",
+  "doneWorkOrderSha256": "f8dd32789d3648a56d81a5f27a55d8d12806374b4f6f44e7ed79b4a864241613",
+  "archiveChange": "status-only; body unchanged",
+  "cleanup": "Source branch and worktree retained for dependent consumers, no destructive cleanup",
+  "unresolvedClosureBReservation": 350,
+  "wholeGoalComplete": false,
+  "bulkIngestionReady": false
+}

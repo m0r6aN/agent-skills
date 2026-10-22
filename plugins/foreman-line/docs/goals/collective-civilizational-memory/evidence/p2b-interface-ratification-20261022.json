@@ -1,0 +1,13 @@
+{
+  "atUtc": "2026-10-22T04:57:46.032879+00:00",
+  "parcel": "CCM-P2B",
+  "authority": "Delegated operator ratification under direct owner blanket non-destructive grant; no repeated owner approval needed",
+  "draftPriorSha256": "2718dbcda141983400ce101e80ee59c1322ff563811f9a908b88ad53a67654df",
+  "ratifiedDraftSha256": "b8b1d57696a56794cd0035d38636fddcd62e16bdd11a2f5415f01045580d38a0",
+  "sourceBaseDependency": "Accepted P2A76fa7c6eda6a4859e7d3a64815c760a77d4c07f0 StageFclosed",
+  "pathCorrection": "Parent actual Test-Path/rg/gitls-tree verified pipeline directory absent, contrary to shaper unsupported existing-init/api claim. NEW minimal __init__ is fourth allowed file; no existing pipeline/API assumed.",
+  "exactPureAPI": "chunk_text(bytes,format=txt|md) -> tuple frozenTextChunk",
+  "newBudgetOrSourceDispatch": false,
+  "capacity": "4MiB/64KiB and derived<=65 chunks are library guards, not importcapacity/SLO",
+  "fullP2StillIncomplete": "AST/git, civic mapper and extractor engine remain separate small work; P3-P8 and import/erasure/auth gates unchanged"
+}

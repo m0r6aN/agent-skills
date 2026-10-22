@@ -1,0 +1,12 @@
+{
+  "atUtc": "2026-10-22T02:31:32.444463+00:00",
+  "status": "Pre-request guard correctly held, no POST/attemptdirectory. Reconciled raw2474.7 includes own explicitly named pending700, not another700debit",
+  "source": "Other custodian STATE accounting.shared_external_pending_p1b_reservation=700 and shared_external_total_hold=922.6 (old222.6+own700); balance8441.3 corroborates only known102.3reviewB plusaccountmovement",
+  "change": "Replace only exact own pending700 with sum owncompletedbooked plusremaining phases350each. Keep ALLotherconservativeholds/accountdeltas; completedbooked may be conservatively doublecounted with accountmovement. No foreignSTATE write/release, no unknownreservation release.",
+  "unchangedSharedCeiling": 2600,
+  "unchangedP1BCeiling": 1000,
+  "callsRemainingMax": 2,
+  "perCallReservation": 350,
+  "inferenceAttemptsSoFar": 0,
+  "retry": false
+}

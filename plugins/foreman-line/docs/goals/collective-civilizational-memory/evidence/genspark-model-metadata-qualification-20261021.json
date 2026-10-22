@@ -1,0 +1,40 @@
+{
+  "checkedAtUtc": "2026-10-21T16:26:12.0595036Z",
+  "source": "Official GenSpark tool_cli/opencode-config; only selected model metadata persisted",
+  "models": [
+    {
+      "id": "claude-opus-5-5",
+      "name": "Claude Opus 5.5",
+      "cost": {
+        "input": 2200.0,
+        "output": 11000.0,
+        "cache_read": 110.0,
+        "cache_write": 2750.0
+      },
+      "limit": {
+        "context": 1000000,
+        "input": 980000,
+        "output": 128000
+      },
+      "contextWindow": null,
+      "maxTokens": null
+    },
+    {
+      "id": "gpt-6.1-sol",
+      "name": "GPT-6.1 Sol",
+      "cost": {
+        "input": 1100.0,
+        "output": 5500.0,
+        "cache_read": 55.0,
+        "cache_write": 1375.0
+      },
+      "limit": {
+        "context": 1000000,
+        "input": 872000,
+        "output": 128000
+      },
+      "contextWindow": null,
+      "maxTokens": null
+    }
+  ]
+}

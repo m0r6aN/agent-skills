@@ -1,0 +1,35 @@
+{
+  "recordedAtUtc": "2026-10-22T01:24:29.200275+00:00",
+  "ownerExact": "I approve next steps. Move forward with blanket authority to make any decisions or approvals on my behalf, for anything non-destuctive. Including genspark credit usage increases - where some of this work may be routed if you so choose.",
+  "authority": "Direct human in originating operator chat; transferable coordinator/operator authority for non-destructive work and bounded spending decisions",
+  "interpretation": "Proceed autonomously through reviewer qualification, independent review, triage and bounded non-destructive repair/integration decisions; preserve source trust, independent evidence and unknown reservations. No deletion/data/key destruction, credential disclosure or authority bypass.",
+  "operatorSelectedFiniteLimits": {
+    "AmericaNewYorkDay": "2026-10-21",
+    "sharedDayCredits": 2000,
+    "P1ACredits": 1400,
+    "qualificationCallsMax": 1,
+    "qualificationCreditsMax": 30,
+    "reviewCallsMax": 2,
+    "reviewPerCallCreditsMax": 500,
+    "reviewOutputMax": 8192,
+    "reviewInputUtf8BytesMax": 144000,
+    "operationalProxyOverheadTokensAllowance": 4096,
+    "qualificationInputUtf8BytesMax": 2000,
+    "qualificationOutputMax": 1024,
+    "thinkingEffort": "low",
+    "singleRequestTimeoutSeconds": 180,
+    "retryCount": 0,
+    "accountFloorCredits": 1000,
+    "effortCredits": 9000
+  },
+  "costHandling": "Use actual published cache-write/output rates; bytes+4096 operational input admission is conservative, NOT a guaranteed provider-token/billing ceiling. Explicitly accept proxy hidden-token/pricing/cancellation limitations under delegated authority; stop on violations. No max-output setting can guarantee a completed answer.",
+  "scopeOfIncrease": "This finite CCM qualification/review cycle only. Shared ceiling includes other initiative usage; do not reset spent units or alter foreign initiative state. Reconcile each call.",
+  "preservedReservations": {
+    "GenSparkOriginalUnknown": 94.6,
+    "OpenAIOriginalUnknownUsd": 0.17192,
+    "GenSparkFailedReviewABooked": 128
+  },
+  "reviews": "Two fresh blind Opus5.5 sessions remain mandatory; no builder selfapproval",
+  "noModelCallYet": true,
+  "inputEnvelopeNote": "Fullcandidate/source preserved; bytecap144000 plus system160 and4096 allowance yields497.816credits worstmodeled below500cap. Smaller130000preparationlimit stopped BEFORE anyreviewPOST; no modelattempt. Qualification remained unchanged."
+}

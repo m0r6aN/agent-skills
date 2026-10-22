@@ -1,0 +1,57 @@
+{
+  "verdict": "CHANGES_REQUIRED",
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "high",
+      "locator": "src/keon/cortex/scrubber/service.py: _JWT pattern (module constants); _candidates() known-secret loop (`start += 1`); _redact() union merge (`members + [candidate]`); visit() int branch (`integer.bit_length() > MAX_INPUT_BYTES * 4`)",
+      "trigger": "Four inputs reach unbounded work before any limit applies. (1) A string of about 1 MiB of `[A-Za-z0-9_-]` characters with sparse or no dots. `_JWT` tries up to 4096 greedy lengths for the first segment at each start, then backtracks, so the cost is roughly 1e6\u00d74096 steps. (2) The bundled test shape, `'a'*N` with 128 overlapping literals, scaled to N\u22481e6. Overlapping `find` with `start += 1` emits up to about 1.28e8 candidates. (3) `_redact` then folds those candidates into one union by copying the member list on every append, which is O(k\u00b2). (4) The int guard admits integers up to about 33.5M bits, and those are not counted in the raw-byte budget. `canonical_json` then calls `str(int)`, which is quadratic and runs to millions of digits on Python 3.10, or raises ValueError at 3.11+ only after the CPU is spent. The host `boundedDenseOverlapProbe` was killed at 4 s.",
+      "impact": "The workorder requires delimiter scanning without catastrophic backtracking, and resource-bound tests covering long token-like strings and dense overlaps. A P3 caller that scrubs untrusted text immediately before enqueue can be held for seconds to minutes per 1 MiB item, with memory proportional to the candidate count. This is a denial-of-service prerequisite defect, not a disclosure.",
+      "remediation": "Replace the JWT regex with a linear segment scanner, or with possessive or atomic bounded matching followed by length checks. Generate known-secret matches with a non-overlapping coverage approach, such as Aho-Corasick or per-position longest-match interval coverage, and cap candidates per string. Merge unions with an in-place list or a running selected candidate. Bound int digit length to the input budget before serialization, for example via `bit_length` \u2192 \u22641 MiB of digits, and count those digits toward the raw budget. Add timed hostile tests at the 1 MiB ceiling.",
+      "confidence": "high"
+    },
+    {
+      "id": "F2",
+      "severity": "high",
+      "locator": "src/keon/cortex/scrubber/service.py: _URL_USER = `[A-Za-z][A-Za-z0-9+.-]*://([^\\s/@:]+:[^\\s/@]*)@`",
+      "trigger": "Several frozen-grammar inputs (`scheme://userinfo@` where userinfo contains a colon) are missed. `https://:hunter2pw@db.example/x` has an empty user, and the host probe `empty_username_url` confirms `credentialStillPresent: true`. A password containing `/` or `@`, for example `postgres://u:p/ss@h`, is also missed or truncated. A password containing `@` matches only the portion up to the first `@`, which leaves the suffix exposed.",
+      "impact": "Raw credential text is returned in the sanitized payload. This violates the core invariant that catalog credentials are never returned and that no exposed suffix is left behind. Database DSNs in error text and paths are a realistic P3 input.",
+      "remediation": "Allow an empty user (`[^\\s/@:]*:`). Define userinfo as the span up to the last `@` before the authority terminator (whitespace, `/`, `?`, `#`), using a linear scan. Add tests for empty-user, `@`-in-password and `/`-in-password cases.",
+      "confidence": "high"
+    },
+    {
+      "id": "F3",
+      "severity": "medium",
+      "locator": "src/keon/cortex/scrubber/service.py: _valid_secrets(), the check `if epoch in by_value or _has_catalog(epoch)`",
+      "trigger": "Pass `key_epoch='preFAKEpost'` with `KnownSecret('FAKE', 'k')`. The epoch passes validation and `ScrubResult.key_epoch` returns the known secret unredacted, as the host probe `epoch_known_substring` shows. The check tests exact dict membership, while known-secret matching is defined as substring matching.",
+      "impact": "A secret literal is emitted verbatim in result metadata, which is non-content by contract and likely persisted by P3 alongside the payload. The refinement requires rejecting an epoch that matches a known secret.",
+      "remediation": "Reject with `invalid_key_epoch` when any normalized known literal is a substring of the epoch. Add a test for that case.",
+      "confidence": "high"
+    },
+    {
+      "id": "F4",
+      "severity": "low",
+      "locator": "src/keon/cortex/scrubber/service.py: visit(), the check `if depth > MAX_DEPTH or nodes >= MAX_NODES`; tests/test_ccm_scrubber.py: test_depth_node_and_raw_byte_limits",
+      "trigger": "Pass a payload where a container at depth 32 holds a scalar. The leaf is rejected because it is checked at depth 33, as the host probe `depth32_container_leaf` shows. Whether that leaf is in bounds under 'each nested object/list increments depth' is not pinned anywhere. The tests use only depth 34 and do not cover the exact 32/33 boundary. They also do not cover the canonical 1,048,576/1,048,577 byte edges or the 4 MiB output edge.",
+      "impact": "Without a pinned boundary, P3 and other callers can disagree about accepted envelopes. The acceptance criterion requiring documented bounds to match tested behavior is unmet. Fail-closed behavior limits any security harm.",
+      "remediation": "State the leaf-depth semantics in the spec. Add exact at-limit and over-limit tests for depth, canonical input bytes and output bytes.",
+      "confidence": "medium"
+    }
+  ],
+  "coverage": [
+    "Public API, frozen and repr-safe models, closed error set, and args/cause/context suppression (`_safe_raise` uses `from None` outside the except block)",
+    "Context validation for tenant NFC, controls, byte length, epoch regex, key length, and repeated-byte keys",
+    "Exact built-in type checks without invoking subclass methods; cycle detection; NFC key collision before and after redaction",
+    "Raw byte and codepoint bounds checked before NFC; node, depth and canonical input/output checks; atomic failure",
+    "Catalog grammar for PEM matching and unmatched END, auth header, AWS, GitHub, LLM, JWT boundaries, and assignment with escaped and unterminated quotes",
+    "Union merging, priority and tie selection, known versus catalog accounting, and HMAC preimage via canonical_json with NFC secret",
+    "Synthetic evidence validated but inert",
+    "Spec wording makes no queue, storage, custody, erasure or universal-detection claims"
+  ],
+  "gaps": [
+    "No execution; complexity estimates come from source reading plus the host 4 s probe",
+    "The NFC-expansion interaction between the raw budget and final normalized size was reviewed only analytically",
+    "Not verified: whether `canonical_json` behavior across Python 3.10 and 3.13 int-to-str limits changes error codes",
+    "The 32 HMAC vectors were not inspected"
+  ]
+}

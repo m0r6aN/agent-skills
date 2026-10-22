@@ -1,0 +1,108 @@
+{
+  "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\collective-civilizational-memory\\evidence\\p1a-source-packet-20261021.txt",
+  "sha256": "2b7017fc5d7e2ac4c618d7633f14348900375fc941cc3e8c32d91b02919f681d",
+  "bytes": 125058,
+  "estimatedTokensCl100k": 28863,
+  "conservativeInputWith20PercentReserve": 34785,
+  "inputCeiling": 36000,
+  "sourceBase": "efb5f4bcead899332f4f35f5e0b3a181eb988d2c",
+  "sources": [
+    {
+      "title": "Exact human-approved P1A scope at commit d6c4adce",
+      "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1A-memory-graph-contracts.md",
+      "sha256": "2db53117a6d990355cff5c0cf7f09a058bcf2a78c55b35a659395ae9b45f2dd8",
+      "range": null
+    },
+    {
+      "title": "Accepted S01-S12, verbatim",
+      "path": "D:\\Repos\\Pantheon\\docs\\CONTEXT-SHAPING-DECISIONS.md",
+      "sha256": "06deef13d081f2173c98c241a09478a7a4f91091e5d5aa1e3818ed02280ef9c5",
+      "range": null
+    },
+    {
+      "title": "v4 architecture/schema normative excerpts",
+      "path": "D:\\Repos\\Pantheon\\docs\\CONTEXT-SPEC-V4.txt",
+      "sha256": "299fbe78ab0d34609715e49b88987070ab586a5c9d2b76d43d8a948fb4ceb1ec",
+      "range": [
+        101,
+        396
+      ]
+    },
+    {
+      "title": "Existing taxonomy",
+      "path": "C:\\Users\\clint\\AppData\\Local\\Temp\\ccm-base-efb5-fnx1nbld\\source\\src\\keon\\cortex\\envelope\\taxonomy.py",
+      "sha256": "4b5293da0efd226c73204f9f8828f7488160d8d8d83737e32943dafea4690867",
+      "range": null
+    },
+    {
+      "title": "Existing v1 ingress models/scoped hash recipes",
+      "path": "C:\\Users\\clint\\AppData\\Local\\Temp\\ccm-base-efb5-fnx1nbld\\source\\src\\keon\\cortex\\ingress\\models.py",
+      "sha256": "cfb33fe44ee6789281b36456918e68db0943486c83f74c61792c5943e13ec911",
+      "range": null
+    },
+    {
+      "title": "Canonical IDs",
+      "path": "C:\\Users\\clint\\AppData\\Local\\Temp\\ccm-base-efb5-fnx1nbld\\source\\src\\keon\\cortex\\core\\ids.py",
+      "sha256": "da02b354146820a0ffc6eb1f22ab68025b210f599dc6c926888e0ad3ce3a0ea8",
+      "range": null
+    },
+    {
+      "title": "Canonical serializer/hash",
+      "path": "C:\\Users\\clint\\AppData\\Local\\Temp\\ccm-base-efb5-fnx1nbld\\source\\src\\keon\\cortex\\core\\canonical.py",
+      "sha256": "1ee4ef0481a6877cc1ee751727ea3bd2c951ad9fa719b57163feff8d19de3f4c",
+      "range": null
+    },
+    {
+      "title": "Receipt/provenance dataclasses",
+      "path": "C:\\Users\\clint\\AppData\\Local\\Temp\\ccm-base-efb5-fnx1nbld\\source\\src\\keon\\cortex\\core\\models.py",
+      "sha256": "9b4adfe8f96b3a146ee3cfd8d5154ea9d66897d24754c872b2cdfb6d651dc742",
+      "range": [
+        1,
+        120
+      ]
+    },
+    {
+      "title": "P1C wire requirements (consumer input, no P1C implementation dependency)",
+      "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1C-collective-wire-compatibility.md",
+      "sha256": "b782e06829119a3993c18155e331882a44a7c82cf6dd05ec8061c7e9f3c26c09",
+      "range": [
+        1,
+        64
+      ]
+    },
+    {
+      "title": "Existing Collective identity/oversight types",
+      "path": "D:\\Repos\\keon-omega\\keon.collective\\src\\Keon.Collective.Abstractions\\Society\\AgentIdentityContracts.cs",
+      "sha256": "cb1fc694b1a69a567b3b9d31ed57f9684d3151cf9f358ec13cb46747a8a37c6a",
+      "range": null
+    },
+    {
+      "title": "Existing Collective civic lineage types/aliases",
+      "path": "D:\\Repos\\keon-omega\\keon.collective\\src\\Keon.Collective.Abstractions\\Society\\CivicMemoryContracts.cs",
+      "sha256": "40d86df75600dd3b80b2871000cd45ee5e5258c5cd3345ae9f7e878603c0e19d",
+      "range": [
+        1,
+        150
+      ]
+    },
+    {
+      "title": "Existing ingress examples",
+      "path": "C:\\Users\\clint\\AppData\\Local\\Temp\\ccm-base-efb5-fnx1nbld\\source\\tests\\test_ingress_models.py",
+      "sha256": "823299ef4b3b8eb0de0da568aa2ec6254fb6e8bd0511c9f448cc2d208c005a67",
+      "range": [
+        1,
+        90
+      ]
+    },
+    {
+      "title": "Existing envelope examples",
+      "path": "C:\\Users\\clint\\AppData\\Local\\Temp\\ccm-base-efb5-fnx1nbld\\source\\tests\\test_evidence_envelope.py",
+      "sha256": "ef0c7b369b109ae29a519a93cacd18d5de84f2fc63ed6041e51274f6829de2e7",
+      "range": [
+        1,
+        95
+      ]
+    }
+  ],
+  "targetException": "Measured exception to ~16k supplied-token target: exact approved normative text and actual v1/P1C interfaces are necessary in a tool-free artifact mode; no blanket context override or history replay."
+}

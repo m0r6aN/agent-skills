@@ -1,0 +1,73 @@
+{
+  "startedAtUtc": "2026-10-22T05:13:50.805207+00:00",
+  "phase": "review-A",
+  "status": "completed_json_pending_host_validation",
+  "modelRequested": "claude-opus-5-5",
+  "effort": "low",
+  "maxOutputTokens": 8192,
+  "creditReservation": 250,
+  "bookedCredits": 51.19125,
+  "inputBytes": 30226,
+  "inputSha256": "05d6b2b4ca1da23c05b828597a56d7abdadcca2e6443ec17cf90902b4c92c01e",
+  "inputOperationalBound": 34468,
+  "estimatedByteBoundCredits": 184.899,
+  "guard": {
+    "atUtc": "2026-10-22T05:13:50.802149+00:00",
+    "balance": 6645.0,
+    "plan": "plus",
+    "foreignStateSha256": "99ae576f398fd12c893f8fdc4771482836949bdfba78b0ea2d525b4ba147cd41",
+    "foreignKnownPriorAndPhase": 1452.5,
+    "foreignGuard": 1600,
+    "foreign700ExcessRetained": true,
+    "p2aConservativeAllCallsAndFailed700": 1150.4940000000001,
+    "p2bBooked": 0,
+    "p2bFutureReserved": 1000,
+    "observedNYOct22Delta": 761.1999999999998,
+    "sharedDayGuard": 4511.6939999999995,
+    "effortGuard": 7189.6939999999995,
+    "accountAfterGuards": 2894.506,
+    "limits": {
+      "p2b": 1000,
+      "day20261022": 4800,
+      "effort": 9000,
+      "floor": 1000,
+      "expiresUtc": "2026-10-23T04:00:00Z"
+    }
+  },
+  "automaticRetries": 0,
+  "postsMax": 1,
+  "configuredSocketTimeout": 180,
+  "modelReturned": "claude-opus-5-5",
+  "requestId": "chatcmpl-b8dc25c1-d00d-44c3-b66e-78f216a20af2",
+  "finishReason": "stop",
+  "usage": {
+    "completion_tokens": 1550,
+    "prompt_tokens": 12415,
+    "total_tokens": 13965,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 612,
+      "rejected_prediction_tokens": null,
+      "text_tokens": 938
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "cache_write_tokens": 12411,
+      "text_tokens": 0,
+      "cache_creation_tokens": 12411,
+      "cache_creation_token_details": {
+        "ephemeral_5m_input_tokens": 12411,
+        "ephemeral_1h_input_tokens": 0
+      }
+    },
+    "cache_creation_input_tokens": 12411,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "global",
+    "speed": "standard"
+  },
+  "reportedCredits": 50.6,
+  "finishedAtUtc": "2026-10-22T05:14:09.047301+00:00",
+  "catalogEstimate": 51.19125
+}

@@ -1,0 +1,195 @@
+{
+  "scope": "Pi coordinator resumed pass only; excludes originating Codex chat, deterministic commands and any unreported charges",
+  "responses": [
+    {
+      "timestamp": "2026-10-21T15:28:31.001Z",
+      "stopReason": "toolUse",
+      "error": null,
+      "usage": {
+        "input": 3,
+        "output": 31,
+        "cacheRead": 0,
+        "cacheWrite": 80981,
+        "reasoning": 0,
+        "totalTokens": 81015,
+        "cost": {
+          "input": 6e-06,
+          "output": 0.00031,
+          "cacheRead": 0,
+          "cacheWrite": 0.2024525,
+          "total": 0.20276850000000002
+        }
+      }
+    },
+    {
+      "timestamp": "2026-10-21T15:28:37.589Z",
+      "stopReason": "toolUse",
+      "error": null,
+      "usage": {
+        "input": 3,
+        "output": 272,
+        "cacheRead": 80981,
+        "cacheWrite": 1810,
+        "reasoning": 0,
+        "totalTokens": 83066,
+        "cost": {
+          "input": 6e-06,
+          "output": 0.00272,
+          "cacheRead": 0.0080981,
+          "cacheWrite": 0.004525,
+          "total": 0.015349100000000001
+        }
+      }
+    },
+    {
+      "timestamp": "2026-10-21T15:28:47.977Z",
+      "stopReason": "toolUse",
+      "error": null,
+      "usage": {
+        "input": 3,
+        "output": 407,
+        "cacheRead": 82791,
+        "cacheWrite": 6623,
+        "reasoning": 17,
+        "totalTokens": 89824,
+        "cost": {
+          "input": 6e-06,
+          "output": 0.004070000000000001,
+          "cacheRead": 0.008279100000000001,
+          "cacheWrite": 0.0165575,
+          "total": 0.0289126
+        }
+      }
+    },
+    {
+      "timestamp": "2026-10-21T15:28:53.517Z",
+      "stopReason": "toolUse",
+      "error": null,
+      "usage": {
+        "input": 3,
+        "output": 64,
+        "cacheRead": 89414,
+        "cacheWrite": 7307,
+        "reasoning": 23,
+        "totalTokens": 96788,
+        "cost": {
+          "input": 6e-06,
+          "output": 0.00064,
+          "cacheRead": 0.0089414,
+          "cacheWrite": 0.0182675,
+          "total": 0.027854900000000002
+        }
+      }
+    },
+    {
+      "timestamp": "2026-10-21T15:29:03.760Z",
+      "stopReason": "toolUse",
+      "error": null,
+      "usage": {
+        "input": 3,
+        "output": 459,
+        "cacheRead": 96721,
+        "cacheWrite": 162,
+        "reasoning": 80,
+        "totalTokens": 97345,
+        "cost": {
+          "input": 6e-06,
+          "output": 0.00459,
+          "cacheRead": 0.009672100000000001,
+          "cacheWrite": 0.000405,
+          "total": 0.014673100000000001
+        }
+      }
+    },
+    {
+      "timestamp": "2026-10-21T15:29:27.136Z",
+      "stopReason": "toolUse",
+      "error": null,
+      "usage": {
+        "input": 3,
+        "output": 917,
+        "cacheRead": 96883,
+        "cacheWrite": 4275,
+        "reasoning": 516,
+        "totalTokens": 102078,
+        "cost": {
+          "input": 6e-06,
+          "output": 0.009170000000000001,
+          "cacheRead": 0.0096883,
+          "cacheWrite": 0.0106875,
+          "total": 0.029551800000000003
+        }
+      }
+    },
+    {
+      "timestamp": "2026-10-21T15:30:45.733Z",
+      "stopReason": "toolUse",
+      "error": null,
+      "usage": {
+        "input": 3,
+        "output": 3685,
+        "cacheRead": 101158,
+        "cacheWrite": 3534,
+        "reasoning": 353,
+        "totalTokens": 108380,
+        "cost": {
+          "input": 6e-06,
+          "output": 0.03685,
+          "cacheRead": 0.010115800000000001,
+          "cacheWrite": 0.008835,
+          "total": 0.055806800000000004
+        }
+      }
+    },
+    {
+      "timestamp": "2026-10-21T15:30:46.242Z",
+      "stopReason": "error",
+      "error": "Connection error.",
+      "usage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0,
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0
+        }
+      }
+    },
+    {
+      "timestamp": "2026-10-21T15:30:46.758Z",
+      "stopReason": "error",
+      "error": "Connection error.",
+      "usage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0,
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0
+        }
+      }
+    }
+  ],
+  "aggregateReported": {
+    "input": 21,
+    "output": 5835,
+    "cacheRead": 547948,
+    "cacheWrite": 104692,
+    "totalTokens": 658496,
+    "reportedCostEstimate": 0.37491680000000005
+  },
+  "actualBilling": "UNKNOWN",
+  "failedTurnsZeroReportedUsage": "Not proof of zero upstream charge",
+  "noAutomaticRetry": true,
+  "noDownstreamDispatch": true
+}

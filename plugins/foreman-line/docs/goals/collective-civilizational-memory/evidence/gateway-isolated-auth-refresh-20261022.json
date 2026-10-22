@@ -1,0 +1,21 @@
+{
+  "atUtc": "2026-10-22T13:47:29.3821550Z",
+  "status": "UNSUCCESSFUL",
+  "routeReleased": false,
+  "broaderIncidentClosed": false,
+  "oldTokenRequests": 0,
+  "providerRequests": 0,
+  "toolCalls": 0,
+  "rawLogsRetained": false,
+  "parentStillStale": true,
+  "childCredentialNames": [
+    "MCP_GATEWAY_AUTH_TOKEN"
+  ],
+  "childUsesSavedReplacement": true,
+  "childConfiguration": "Private empty catalog/registry/config/tools/secrets; dynamic tools and OAuth disabled; telemetry disabled; loopback only",
+  "ownedLauncherPid": 16420,
+  "failure": "gateway_not_ready",
+  "ownedProcessExited": true,
+  "targetListenerAbsentAfter": true,
+  "completedAtUtc": "2026-10-22T13:47:39.4100808Z"
+}

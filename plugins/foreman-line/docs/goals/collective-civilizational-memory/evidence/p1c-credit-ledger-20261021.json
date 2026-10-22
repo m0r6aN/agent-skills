@@ -1,0 +1,22 @@
+{
+  "atUtc": "2026-10-22T03:42:02.136073+00:00",
+  "parcel": "CCM-P1C",
+  "unit": "GenSpark prepaid credits",
+  "reportedSpent": 625.9,
+  "knownCompletedConservativeCredits": 628.408,
+  "unresolvedReservations": 0,
+  "initialCeiling": 900,
+  "sharedNYOct21Ceiling": 4800,
+  "nativeCodexUsage": "unknown/separate",
+  "otherUnknownsRetained": {
+    "P1A_GenSpark": 94.6,
+    "P1B_closureB": 350,
+    "API_USD": 0.17192
+  },
+  "status": "Merged accepted, exact-head and all required merge-main workflows green; no further paid calls",
+  "parcelTotalCeiling": 1200,
+  "futureClosureReservation": 0,
+  "sourceHead": "54658187d74e43acf28cad83461b9778f0dce347",
+  "pr": "https://github.com/Keon-Systems/Keon.Collective/pull/300",
+  "acceptedCommit": "3d44cf5b8b3fb38a857dd1607159a665c1c3b310"
+}

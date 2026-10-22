@@ -1,0 +1,26 @@
+{
+  "atUtc": "2026-10-22T02:48:29.917319+00:00",
+  "status": "Two independent closuresPASS/no findings; all originalfindingsclosed; CI exacthead16/16SUCCESS after1documentedtimingrerun",
+  "candidatePins": {
+    "src/keon/cortex/gravity/params.py": "bff1cfea6a7f998eaf231c4ac1e31bb5b302944403180259898a548504211894",
+    "src/keon/cortex/gravity/function_v2.py": "514a1f10ef415e1728a4d400a31893ffd43910bc66f7ea4ecc63c77388df6884",
+    "src/keon/cortex/gravity/retention_v2.py": "5e55aae1db47659406c255ea430d8181d56e80f59fae4a1c2e61dda44ff37a23",
+    "tests/gravity/test_ccm_v2.py": "fd95c6b47deeca7c448981dd1f442ef0058f759020a98d514e16a474ec3a2e56",
+    "tests/fixtures/ccm/gravity-v2.json": "1ed3a9fd2889cd852900bc272127e8fe3835701291de3d558d77e2d03d9146be"
+  },
+  "sourceHead": "7f081ad886caedfae7b38d61c1616ec326143898",
+  "sourcePr": "https://github.com/Keon-Systems/keon-cortex/pull/83",
+  "sourceOriginalBase": "cc3a6defa78849b8df8795c58ac65866f31179d5",
+  "integrationBase": "9d67fc6c23208576436ea0bd7fe96e6020972f6f",
+  "rebase": "Upstream only tests/benchmark/test_quality_gate.py advanced, no fivecandidatebyteschanged",
+  "proofs": [
+    "p1b-repair-host-validation-20261021.json",
+    "p1b-repair-independent-numeric-comparison-20261021.json",
+    "p1b-old-replay-and-source-proof-20261021.json",
+    "p1b-independent-default-identity-20261021.json"
+  ],
+  "sourceAccepted": false,
+  "gate3": "Approved under owner blanket non-destructive decisions/approvals; independentchain and latestexactheadgreen16checks validated, no adminbypass",
+  "ciTimingFailure": "Preserved initial3.77>3.0 benchmark failure, sameheadpushgreen, onefailed/cancelledrerun nowall8SUCCESS; no source/threshold/skip changes and no stability/SLOrepair claim",
+  "unknownClosureBReservation": 350
+}

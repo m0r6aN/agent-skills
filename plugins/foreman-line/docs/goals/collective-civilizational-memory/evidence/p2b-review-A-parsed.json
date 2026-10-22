@@ -1,0 +1,19 @@
+{
+  "verdict": "PASS",
+  "findings": [],
+  "coverage": [
+    "API matches C02-B1: keyword-only exact signature; TextChunkError exported from the module; __init__.py has only a docstring, with no imports, effects or registration.",
+    "Validation order matches the contract: exact bytes, exact str format in {txt,md}, length <=4,194,304 before decode or hash, strict decode, then empty input returns (). Subclass checks use type() is, so subclass hooks are not invoked.",
+    "Boundary loop: greedy min(start+65536,len). The continuation-byte retreat is bounded to <=3 bytes because the input is pre-validated. Chunks are non-empty, contiguous and half-open from 0, and non-final chunks are >=65,533 bytes. The 65-chunk vector checks out: 1,398,101 x 3-byte + 'z' = 4,194,304; 64x65,535 + 64.",
+    "Digests are full lowercase-hex SHA-256 over the exact input and each payload, computed once per call and independent of format. BOM, CRLF, NFD and NUL bytes are preserved without normalization.",
+    "Errors: BaseException.__new__ is called without args, so args==(). The UTF-8 error is raised after the except block, so there is no cause or context. str and repr contain only the code, the code set is closed, and no partial tuple is returned.",
+    "TextChunk is a frozen slots dataclass, valid on Python 3.10. Its repr excludes the payload. The docs disclaim attestation, uniqueness, trust and scrubbing, assign P2A to P3 before enqueue and checkpointing to P8, and make no I/O, logging or parsing claim.",
+    "Validation evidence: 397 pins and 3,028 identities with 137 skips retained; 2,910 pass, 137 skip, 0 fail. Black, isort and mypy pass, as do the Python 3.10 AST check, 20 independent oracle comparisons and 4 malformed-input checks. No path outside the four authorized files is changed."
+  ],
+  "gaps": [
+    "Non-blocking test-strength gaps: no in-suite multi-chunk vector asserts that equal repeated chunks have equal chunk_sha256 (e.g. 2x65,536 'a'). No test asserts that NFC and NFD inputs yield distinct digests. No test asserts per-chunk payload==content[start:end] beyond concatenation. The independent oracle reportedly covers these.",
+    "TextChunk is publicly constructible without field validation. This is acceptable per the contract, which says it is not an attestation; downstream code must not treat constructed instances as chunker-produced.",
+    "An exception context attached by a caller's own enclosing except block is outside this module's control, as the contract acknowledges.",
+    "Exact-head and merged-main CI and the second independent review are not evidenced in this packet."
+  ]
+}

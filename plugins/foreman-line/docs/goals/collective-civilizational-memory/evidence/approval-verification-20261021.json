@@ -1,0 +1,29 @@
+{
+  "checkedAtUtc": "2026-10-21T15:58:39.190Z",
+  "approvalPath": "D:/Repos/agent-skills/plugins/foreman-line/docs/specs/active/collective-civilizational-memory-foundation-2026-10-19-01a155c3.approval.json",
+  "receiptPath": "D:\\Repos\\agent-skills\\docs\\receipts\\34014809-a177-4946-a29c-a71be1f311fe\\000000-A-shaping-result.json",
+  "decision": "approved",
+  "approver": "Clinton Morgan",
+  "approvedAtUtc": "2026-10-21T15:54:57.907Z",
+  "approvedHash": "9431a8649c2c1125da28e3e4a62f3d9cb15d69b8a1f83dd9c7b1291e8a9c2f96",
+  "workflowId": "34014809-a177-4946-a29c-a71be1f311fe",
+  "receiptHash": "7072cdf78e67a322220a6a0e3098a11522d6ff3180b8a373cbc8d2b19fdd442f",
+  "specCount": 4,
+  "epicCount": 1,
+  "storyCount": 4,
+  "currentBytesMatchApproval": true,
+  "subjectMatchesReceipt": true,
+  "receiptHashRecomputed": true,
+  "receiptSchema": {
+    "valid": true,
+    "errors": []
+  },
+  "genesisChain": {
+    "valid": true,
+    "errors": []
+  },
+  "signature": null,
+  "fullLifecycleSealed": false,
+  "sourceFilesByteCompared": 76,
+  "gateDisposition": "R07 complete under scoped local-ledger exception; not Gate 2, Step 0 or implementation acceptance"
+}

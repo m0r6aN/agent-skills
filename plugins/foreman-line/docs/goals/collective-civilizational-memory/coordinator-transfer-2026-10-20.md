@@ -1,0 +1,220 @@
+> CURRENT October21 22:06UTC: Exact owner-approved mechanicalpatch applied to
+>2files; actualworktree Black/isort/mypy and328testsPASS/all238oldretained. Other3
+>candidatehashes unchanged; originals preserved. No modelrequests/spend. Paid
+>reviews remain HELD by owner until preventiveinput/cost/visibleoutput controls
+>qualified; priorAfailed, Bunsent. No acceptance/merge/deploy. Currentresult:
+>evidence/p1a-mechanical-result-20261021.json; currentloop supersedes oldCIholds.
+
+> CURRENT October21 20:53UTC: Document completed within$0.14; five-path candidate
+> in isolated worktree328PASS/all238old retained. Four source hashes still frozen.
+> CIformat/type checks fail; private mechanicalfix passesall but NOT APPLIED.
+> ReviewerA unsuccessful/allthinking, input37320>26500 and127.6credits>100percall;
+> reviewerB NOT SENT. No further paidcall under failedcontrols. GenSpark318.3/700
+> conservative incl94.6; API$0.5204425known/reserved inclold$0.17192. Currentloop
+> and evidence/p1a-document-and-review-stop-20261021.json supersede older holds.
+
+> CURRENT October21 20:29UTC: Approved one streamed Sol source attempt returned
+> known incomplete/max_output_tokens8192. Four complete fields retained privately;
+> only normative document truncated. Diagnostic snapshot328passed includes all238
+> original identities; admitted worktree unchanged, P1A unaccepted, reviews NOT RUN.
+> Stream conservative$0.1559375 within$0.18; API known/reserved$0.4094275, original
+> GenSpark94.6 reserve unchanged. One document-only <=$0.14 completion proposed,
+> exact packet prepared but NOT SENT; current loop/result supersede older holds.
+
+> CURRENT October21 20:01UTC: Owner-funded OpenAI API key authenticated; exact
+> Sol API scope PASS (7AC/5paths), then one source request HTTP520/no candidate or
+> usage. Stopped without retry. Source unchanged/baseline238 retained; reviews
+> NOT RUN. API$0.08157 modeled +$0.17192 uncertainty reserve; GenSpark190.3/700
+> including94.6 remains separate. Current loop/API receipts supersede older
+> OAuth-only hold wording. Reuse passed scope; any further source generation
+> requires disposition of this NEW uncertain API result. No keys copied/exported.
+
+> CURRENT October21: Native continuation APPROVED and attempted once at repair
+> Step0; unsuccessful because ChatGPT Subscription Sharing usage limit reached.
+> No reset time returned. No source stage/code/reviews/retry/fallback. Current
+> loop and evidence/p1a-native-sol-stop-record-20261021.json supersede older
+> pending-approval/account-login/uncertain-call-hold wording. Original94.6 kept;
+> GenSpark95.7reported+94.6reserved=190.3. Existing source baseline238unchanged.
+
+> October21 Omarchy read-only preflight PASS: found prior successful connection
+> in local MachineB records; strict stored-key SSH to cmorgan76@10.0.0.174 worked.
+> Linux, exact Pi executable path and help verified with three bounded metadata
+> commands. No inference/session/worker or credential/config mutation. SSH-detail
+> request resolved; model/provider/cost/control admission and request01 hold remain.
+> See p1a-omarchy-transport-preflight-20261021.md and two new evidence JSON records.
+
+> Current October21 handoff: owner day exception APPROVED (shared1000/P1A700).
+> First implementation source request returned HTTP524 without candidate/usage;
+> unchanged worktree, no review/repair yet. Known spend95.7 plus unresolved94.6
+> reservation. No automatic retry; uncertainty hold and exact receipts in loop.
+> Omarchy Pi sessions retained as owner-identified option, connection unverified.
+
+# Context coordinator transfer
+
+## Current bounded work unit — artifact mode admitted 2026-10-21
+
+Custody remains fresh-01. Originating oversight adopted the existing GenSpark
+zero-tool source-proposal/review mode under Clinton's explicit continuing authority;
+see current loop and p1a-gate2-artifact-mode-20261021.json. One actual P1A Gate2,
+status-only activation, exact active/source hashes, fresh base efb5f4bc, same named
+worktree and emitter-derived branch are recorded. Actual worktree baseline238
+and formal Step0 PASS; R01-R08 readiness complete for artifact mode. No build sent:
+existing shared-day budget224.4/300 leaves75.6, below next conservative94.6.
+One-day credit proposal awaits owner decision; no cap changed. Native agents/profile bridges are not qualified by this mode;
+no new coordinator, API key, billing change, revived schedule or platform work.
+All budget phases use existing prepaid limits; P1A reported95.7credits includes44 for formal Step0; qualification51.7 includes
+failed first Opus truncation and its one bounded concise repair.
+
+## Verified human approval / current readiness — 2026-10-21
+
+Clinton returned successful personal W1-P3 approval output. The actual record and
+receipt were read and independently verified using 76 byte-matched shipped source
+files. Subject `9431a8649c2c1125da28e3e4a62f3d9cb15d69b8a1f83dd9c7b1291e8a9c2f96`
+matches the preview, projected tree and all four unchanged spec bytes. Stage-A
+workflow `34014809-a177-4946-a29c-a71be1f311fe`; receipt hash
+`7072cdf78e67a322220a6a0e3098a11522d6ff3180b8a373cbc8d2b19fdd442f` recomputes,
+and shipped document/chain validators pass. [Evidence](evidence/approval-verification-20261021.json).
+R06 pre-dispatch preparation and R07 approval/local registration are complete;
+**R08 is the only open readiness item, 7/8 complete**. Emitted-worktree verification
+and actual parcel Gate 2/Step 0 remain required before editing. No implementation
+or new approval was invoked. Older PENDING approval statements below are historical.
+
+Bounded local source inspection located the remaining execution-profile gap in
+`evidence/r08-local-execution-gap-20261021.json`; no broader provider search, new
+inference or infrastructure development. Coordinator ownership remains fresh-01.
+
+## Current control and oversight disposition — 2026-10-21
+
+Clinton's originating chat instructed "Right on. Please proceed" after agreeing
+that this chat is his point of contact and the existing Pi coordinator owns
+execution. Read-only process inspection found no remaining Pi process; the same
+saved `ccm-coordinator-20261020-fresh-01` session was resumed, not forked. Supported
+RPC `get_state` verified exact ID/path, `openai/gpt-6.1-sol`, medium, idle and zero
+pending; `set_auto_retry(false)` succeeded. Current originating-chat process handle
+is **36750**; **26413 is obsolete**. This access succeeded; the earlier policy
+failure is historical and was not represented as permission from stored state.
+
+The coordinator saved a bounded readiness proposal, then its next two turns
+reported `Connection error.` with `willRetry:false`. No automatic retry, provider
+fallback or new model session was started. The existing process is idle with no
+queued messages; no autonomous monitoring is active. The expired heartbeat is
+PAUSED; historical statements below that it is active are superseded.
+
+Originating oversight consumed that proposal and performed independent reversible
+preparation under the continuing delegated authority: **238/238 snapshot baseline
+tests passed, zero failures/errors/skips, source unchanged**; exact evidence is
+`evidence/p1a-baseline-20261021-02/manifest.json`. This is not admitted-worktree
+acceptance. First full-archive preparation was safely refused on a tracked absolute
+symlink before tests; failure retained in `p1a-baseline-20261021-01` and the successful
+snapshot exports only tracked src/tests/config needed for these suites.
+
+Oversight APPROVED the scoped local-ledger process choice as a delegated routine
+process disposition; this is not Clinton's personal tree approval. Exact adopted
+text is in SPEC-CONVENTION §5 and its four-row INDEX ledger, committed alone as
+`d51f5aef14849a4a4e0d17f789a2226fd52a6c66` on the existing CCM docs branch. No
+locked product decision, spec byte, implementation or corporate tracker changed.
+The coordinator's earlier proposal requiring a new owner process choice is
+superseded only for this administrative choice. Genuine W1-P3 tree approval and
+Stage-A evidence, R08 admission, Gate 2, Step 0 and merge requirements still bind.
+
+Shipped `approval show` now succeeds through a **76-file byte-identical source
+mirror using already-installed dependencies**, no installs or checkout-local
+node_modules changes. It prepared one Epic/four Stories. The shipped CLI's
+explicit-root/default-specs path places the projected artifact at
+`D:/Repos/agent-skills/docs/specs/active/collective-civilizational-memory-foundation-2026-10-19-01a155c3.projected.shaping-result.json`;
+the four spec refs remain the canonical Foreman paths. Unapproved subject preview:
+`9431a8649c2c1125da28e3e4a62f3d9cb15d69b8a1f83dd9c7b1291e8a9c2f96`.
+See `evidence/foundation-approval-preparation-20261021.json` and the rendered tree.
+No approve verb, confirmation, genesis receipt or approval sidecar was generated.
+
+Recorded 2026-10-20. Owner: Clinton Morgan. Originating Codex chat: `01a155be-72a6-7b02-ac33-84dc64bbf102`. Oversight chat: `01a158b8-93f8-7423-b5b6-aaca46092870`.
+
+## Owner authority
+
+Clinton granted transferable authority to keep the Pi coordinator on track and moving while he is unavailable. He subsequently authorized a fresh coordinator using GPT-6.1 Sol and the goal resume command. His latest instruction is:
+
+> I authorize a fresh Pi session. You can also use my computer to type directly into the terminal session.
+
+This explicitly authorizes this fresh Pi launch and its work under the transferred Context authority. The intended route `openai/gpt-6.1-sol` resolves the extra hyphen in the earlier owner spelling. Pi's live `get_state` confirms provider `openai`, model `gpt-6.1-sol`, API `openai-responses`, configured endpoint `https://api.openai.com/v1`, and medium thinking. Existing configured authentication is reused; no credential or billing setting was changed. Do not characterize this API route as included subscription usage or claim a verified dollar ceiling.
+
+The earlier no-new-session/no-inference planning restrictions are superseded for this expressly authorized coordinator. This is not unlimited spending authority for unrelated providers, repeated reviews, or speculative work.
+
+## Ownership boundary
+
+- Previous coordinator: `01a15670-07d5-705a-9168-0803b9f394ae`.
+- Its saved last turn remained completed at `2026-10-20T09:46:21.507Z`, stop reason `stop`. A fresh local process inspection found no matching Pi coordinator process.
+- This is a pre-builder boundary: no active parcel builder or coordinator wakeup is recorded in the current checklist/carryover. The oversight heartbeat is separate and remains active.
+- The previous coordinator is superseded for further CCM dispatch. Preserve its history; do not reopen it as a competing owner.
+- New coordinator: `ccm-coordinator-20261020-fresh-01`.
+- Working directory: `D:/Repos/agent-skills/plugins/foreman-line`.
+- New persisted session: `C:/Users/clint/.pi/agent/sessions/--D--Repos-agent-skills-plugins-foreman-line--/2026-10-20T11-09-26-624Z_ccm-coordinator-20261020-fresh-01.jsonl`.
+- Live control: installed Pi RPC over the originating chat's unified execution session `26413`. `get_state` succeeded. `set_auto_retry(false)` succeeded. This handle is usable by oversight only if that chat independently confirms access; do not assume cross-chat handles work.
+- No previous conversation was cloned or replayed. The fresh coordinator must acknowledge this transfer before dispatching a parcel.
+
+## Compact resume
+
+Resume `collective-civilizational-memory` using Foreman goal/PDD conventions. Read this file, `oversight-2026-10-20.md`, the current `p1a-readiness-checklist.md`, then only relevant charter and draft-spec sections.
+
+R01–R05 are complete. Gate 1, S01–S12, C02-D1 and the completed Pi/Claude review disposition are settled. Do not reopen their approvals or repeat the review. The failed native Claude attempt remains preserved and consumed.
+
+R06 corrections are already incorporated and mechanically checked in P1A/B/C: shared civic schema ownership/conformance, authoritative parent resolution and negative cases, normative parameter/hash linkage, independent 30-pair recomputation, existing compatibility suites and pre-P1A replay baseline. Finish the exact work order, immutable base/source/test pins and isolated kickstarter. Then resolve supported R07 registration and R08 qualified economical dispatch/reviewer admission. Never invent a registration receipt or claim that preparing evidence passes a gate.
+
+Clinton's transferred authority permits routine coordination, reversible preparation and applicable delegable Gate 2/Gate 3 decisions within this Context scope when the actual evidence passes. Existing nondelegable substantive requirements remain. Use the oversight chat for concrete decisions when needed; do not repeatedly ask the absent owner for blanket approval.
+
+Keep one coordinator, inexpensive qualified builders, compact packets, one implementation attempt plus one focused repair, truthful risk labels and required independent reviews. No broad councils, provider hunts, unrelated launcher engineering or fabricated budgets. Preserve dirty working trees and private review evidence. Production deployment, account/privacy weakening, destructive data/key actions, actual personal-history import and foreign-goal takeover are outside this handoff.
+
+Oversight heartbeat `context-foreman-oversight-while-clinton-is-away` remains attached to the existing oversight chat. Do not create a duplicate schedule. Maintain a concise durable progress record so oversight can observe completion and blockers without rereading full session history.
+
+
+## October21 exact OpenCode Go follow-through
+
+Owner routing preferences and explicit OpenCode correction are retained in
+[preferences](omarchy-owner-routing-preferences-20261021.md). Configured exact
+provider opencode-go/model mimo-v2.6-pro/defaultselection verified; local no-refresh
+auth check ready/api_key. No substitutions or supplied fallback router executed.
+[Transport/usage check](opencode-go-transport-usage-check-20261021.md) records
+installed legacy base versus current official endpoint (alias unverified),
+public allowance metering versus actual unknown account/quota/Extra state.
+Accessible console is at login; read-only account view requires existing sign-in.
+No service-key creation or inference probe. No new spend decision is requested.
+
+Native Sol ephemeral no-session/no-tool RPC get_state also passed with no prompt:
+exact modelselected,0messages/pending; actual defaults128000output/compactiontrue
+are unsuitable for the8192 bounded request until isolated controls are verified.
+Source supports cap propagation/compaction-disable; no live configuration changed.
+Original request01 full94.6reservation/uncertainoutcome hold and P1A role/reviewer
+requirements remain. No duplicate worker/coordinator or blanket failover.
+
+
+## Native Sol independent control preparation completed October21
+
+[Prepared finite profile](p1a-native-sol-control-preparation-20261021.md) passes
+actual no-generation RPC metadata checks: exactSol8192, compactionoff,
+retryoff/providerretry0, tools/extensions/MCP/skills/templatesoff, SSE/cachewarmingoff.
+Private new task root only; existing settings bytes unchanged, authmetadata
+unchanged. No credentials copied/linked; SDK created empty2-byteauthregistry.
+Direct private event capture verified from a separateSSH connection with matching
+hash. Native empty session file is NOT yetmaterialized; no assistant durability
+or actual provider-request/billing/cancellation proof claimed. Current isolated
+profile unauthenticated; accountadmission and original94.6uncertain-call
+disposition remain before generation. No source/inference/duplicateworker.
+One concrete native continuation is recorded for review, not executed; existing
+OpenCode console access gap does not hold independent reversible preparation.
+
+
+## Authenticated OpenCode check completed; one continuation proposal
+
+Owner confirmed sign-in. ActualGo/Overview readonly observation: Goactive,
+rolling/weekly/monthly display0% (rounded, no exact remaining claim). MiMo8requests
+<$0.01 selectedrange; ExtraON, credits21.14, auto-recharge20below5, workspacebudget
+100/39.78left. No settings/billing change or inference. Loginrequest resolved;
+actualkey-to-workspace binding unverified. Do not repeat login or treat credits
+as GenSpark units. Full accountobservation JSON retained locally.
+
+[One concrete native-Sol continuation](p1a-native-sol-continuation-proposal-20261021.md)
+is PROPOSED/notexecuted: original94.6uncertain reservation retained and explicit
+unseen-generation disposition; nativeexistingOAuthonly, one focusedrepair with
+Step01536/source8192/36kinput/600scombined, preparedcontrols/capture, no APIcash/
+OpenCodespend or extrarepair. Two originalfreshOpus reviews stillrequired within
+GenSpark700 and liveglobalguards. It does not require OpenCode paid-overflow
+changes. No modelprompt has been sent and no sourcechanged.

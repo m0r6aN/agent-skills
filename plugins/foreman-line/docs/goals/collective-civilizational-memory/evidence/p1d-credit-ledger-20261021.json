@@ -1,0 +1,16 @@
+{
+  "atUtc": "2026-10-22T03:40:45.602640+00:00",
+  "parcel": "CCM-P1D",
+  "unit": "GenSpark prepaid credits",
+  "reportedSpent": 152.9,
+  "knownCompletedConservativeCredits": 153.23275,
+  "unresolvedReservations": 0,
+  "parcelCeiling": 500,
+  "focusedClosureReservation": 0,
+  "sharedNYOct21Ceiling": 4000,
+  "nativeCodexUsage": "unknown/separate",
+  "status": "Merged accepted, exact-head and all required merge-main workflows green; no further paid calls",
+  "sourceHead": "76bd08d45b5e3a5e297417fcbdcb29790a846830",
+  "pr": "https://github.com/Keon-Systems/keon-cortex/pull/84",
+  "acceptedCommit": "6139ddd8802540829eebce07215106e4b16ca360"
+}

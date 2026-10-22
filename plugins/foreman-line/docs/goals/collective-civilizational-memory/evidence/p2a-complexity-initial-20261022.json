@@ -1,0 +1,23 @@
+{
+  "stage": "initial",
+  "boundedSyntheticOnly": true,
+  "probes": [
+    {
+      "name": "plain_long_run",
+      "status": "owned_child_killed_at_2s",
+      "seconds": 2.048
+    },
+    {
+      "name": "repeated_assignment",
+      "status": "owned_child_killed_at_2s",
+      "seconds": 2.044
+    },
+    {
+      "name": "repeated_pem",
+      "status": "completed",
+      "exit": 0,
+      "closedResult": "success",
+      "seconds": 0.219
+    }
+  ]
+}

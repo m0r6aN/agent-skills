@@ -1,0 +1,8 @@
+One focused repair of a synthetic reviewer qualification: the prior response was truncated because it was too verbose. Keep this completed JSON answer at most 220 words. No tools, execution, approval or follow-up.
+Requirements: independent authentication must bind producer, exact record/content hash, tenant and current scope; caller labels and scores cannot authenticate. A derived record needs at least one currently authoritative trusted-resolved parent; missing/purged/out-of-scope parents fail closed. Inputs must not mutate.
+Code:
+1 def admit_derived(record, supplied_parents):
+2     label_ok = record.get("source_kind") in {"verified_tool", "human_asserted"}
+3     parents_ok = all(p.get("score", 0) >= 0.8 for p in supplied_parents)
+4     return label_ok and parents_ok
+Return ONLY {"verdict":"changes_required"|"no_findings","findings":[{"line":integer,"trigger":string,"consequence":string}],"coverage_gaps":[string]}. At most THREE concise findings. State concrete failing inputs, not replacement code. This is not a project review and confers no authority.

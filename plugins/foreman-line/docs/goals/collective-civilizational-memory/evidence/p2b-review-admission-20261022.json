@@ -1,0 +1,52 @@
+{
+  "atUtc": "2026-10-22T05:13:17.612759+00:00",
+  "authority": "Direct owner blanket non-destructive decisions/approvals incl GenSpark increases; finite delegated operator decision, no invented human receipt",
+  "parcel": "CCM-P2B",
+  "model": "claude-opus-5-5",
+  "effort": "low",
+  "outputMax": 8192,
+  "configuredSocketTimeoutSeconds": 180,
+  "seatCap": 250,
+  "wholeParcelCap": 1000,
+  "sharedNY20261022Ceiling": 4800,
+  "expiresAtUtc": "2026-10-23T04:00:00Z",
+  "budgetChange": "Explicit newNYOct22 increase4000->4800; NOT reuse of expiredOctober21same-numericcap",
+  "plan": "2independentinitialseats,up to2closuresafterONEformalrepair;no automaticretry",
+  "guard": {
+    "atUtc": "2026-10-22T05:13:17.612392+00:00",
+    "balance": 6645.0,
+    "plan": "plus",
+    "foreignStateSha256": "99ae576f398fd12c893f8fdc4771482836949bdfba78b0ea2d525b4ba147cd41",
+    "foreignKnownPriorAndPhase": 1452.5,
+    "foreignGuard": 1600,
+    "foreign700ExcessRetained": true,
+    "p2aConservativeAllCallsAndFailed700": 1150.4940000000001,
+    "p2bBooked": 0,
+    "p2bFutureReserved": 1000,
+    "observedNYOct22Delta": 761.1999999999998,
+    "sharedDayGuard": 4511.6939999999995,
+    "effortGuard": 7189.6939999999995,
+    "accountAfterGuards": 2894.506,
+    "limits": {
+      "p2b": 1000,
+      "day20261022": 4800,
+      "effort": 9000,
+      "floor": 1000,
+      "expiresUtc": "2026-10-23T04:00:00Z"
+    }
+  },
+  "credentialHandlingDisposition": "Exposed-key APIroutes remain unused. ExistingGenSpark key is separately HKCUUser-loaded, absentparentProcess and notamongreportedchildexposednames. Source/manualinspection+in-memoryknownvaluechecks show no matchedcredentials; NOtooltranscript/envdiagnosticlogs included. Activecredentialrotation/tasktokenrefresh unresolved; not claimed done or erased. This admits only source-only GenSparkreview under independent unexposedcredential, not reuse of named exposedroutes.",
+  "packets": {
+    "review-A-input.txt": {
+      "bytes": 30226,
+      "sha256": "05d6b2b4ca1da23c05b828597a56d7abdadcca2e6443ec17cf90902b4c92c01e"
+    },
+    "review-B-input.txt": {
+      "bytes": 30245,
+      "sha256": "92cdc2f45759b9cda3721b650c1591d0bdf9de8685e500fdb9033b64529f2ba0"
+    }
+  },
+  "hardRemoteBillingCancellationGuarantee": false,
+  "nativeUsage": "Unknown/separate",
+  "oldReservations": "Allold94.6/350/APIunknown and failedP2A700/foreign700excess retained"
+}

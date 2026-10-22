@@ -1,0 +1,23 @@
+{
+  "atUtc": "2026-10-22T04:00:25.995241+00:00",
+  "authority": "Owner direct non-destructive decisions/approvals, existing accepted source CI and before-P2A observation",
+  "base": "6139ddd8802540829eebce07215106e4b16ca360",
+  "baselineIdentities": 2993,
+  "passed": 2855,
+  "skipped": 137,
+  "failure": {
+    "classname": "tests.temporal.test_benchmark.TestBenchReceiptEmitOverhead",
+    "name": "test_receipt_overhead_bounded[50]",
+    "ratio": 9.382897061236323,
+    "limit": 3.0,
+    "resolverMs": 0.4,
+    "receiptMs": 4.1
+  },
+  "causeAttribution": "Observed before any P2A source, source byte-pinned; same known BM2timing case, not proved caused by a particular OSmechanism",
+  "disposition": "Carry observed baseline timing failure explicitly while isolated scrubber work proceeds; no benchmark/source/threshold/skip changes, no blindrerun; require no other new failure/skip, focused+typesgreen and actual exact-head CI green",
+  "mainAcceptedEvidence": [
+    "https://github.com/Keon-Systems/keon-cortex/actions/runs/39717649317",
+    "https://github.com/Keon-Systems/keon-cortex/actions/runs/39717649103"
+  ],
+  "noBenchmarkStabilityOrRepairClaim": true
+}

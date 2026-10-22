@@ -1,0 +1,59 @@
+{
+  "verdict": "CHANGES_REQUIRED",
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "high",
+      "locator": "src/keon/cortex/scrubber/service.py: _candidates (known-literal loop, ~L196-205), _redact (union build `members + [candidate]`, ~L214-219), _catalog_candidates (PEM loop `text.find(end_marker, begin.end())`, ~L160-170), _assignment_end via _ASSIGN_START.finditer (~L135-150, L185-192), _JWT pattern (~L44-46), visit int branch (~L268-271)",
+      "trigger": "Bounded inputs at or under the 1 MiB, 20,000-node and 128-literal limits. (a) Payload {\"x\": \"a\"*1_000_000} with KnownSecret(\"a\",\"k1\"), KnownSecret(\"aa\",\"k2\") and further runs up to 128 literals. `start += 1` creates about 1e6 candidates per literal, about 1.3e8 in total. Each overlapping member is then appended through `members + [candidate]`, which copies the whole list every time. That is O(m^2) time and memory inside one union. (b) A string of about 33k repetitions of `-----BEGIN PRIVATE KEY-----`, with one END marker at the tail. Each BEGIN runs a forward `find` toward the tail, giving O(k·n) work, about 3e10 character steps. (c) `\"token=\"*170000` with no whitespace. Every _ASSIGN_START match calls _assignment_end, which scans the unquoted value to end-of-string, so the work is quadratic. (d) A run of about 1e6 base64url characters with no dots. Under the leading lookbehind, _JWT retries up to 4096 characters of first-segment backtracking at each start position. (e) An int with up to 4,194,304 bits passes the bit_length guard. On Python 3.10, which has no int-str digit limit, canonical_json then performs a quadratic int-to-decimal conversion. The host dense-overlap probe was killed at 4.056 s and did not complete.",
+      "impact": "One in-limit envelope can pin a CPU for minutes. Case (a) can also exhaust memory. A later P3 caller that scrubs before enqueue would stall or crash on adversarial producer text. That is a denial-of-service on the mandated pre-enqueue path. The ratified refinement explicitly requires scanning without catastrophic backtracking, plus hostile-input resource tests. It is not ingestion today, so severity is high rather than critical.",
+      "remediation": "1. Generate known-literal candidates with a single multi-pattern pass, such as Aho-Corasick or a combined alternation sorted longest-first. Alternatively, collapse runs of matches into a maximal interval per literal before building unions. 2. Build unions incrementally, tracking only the start, the end and the best-selected candidate, never member lists. 3. For PEM, find the END marker once per label and reuse it, or scan markers linearly with a stack. 4. Skip overlapping assignment starts that fall inside an already-consumed value, or compute value ends in one linear sweep. 5. Replace the JWT regex with a linear tokenizer over maximal [A-Za-z0-9_-.] runs, then split and validate segment lengths. 6. Cap int digits so they match the canonical byte bound, for example bit_length ≤ ~3.5M with an explicit decimal-length guard. 7. Add timed hostile tests for each shape at near-limit sizes.",
+      "confidence": "high"
+    },
+    {
+      "id": "F2",
+      "severity": "high",
+      "locator": "src/keon/cortex/scrubber/service.py: _URL_USER `[A-Za-z][A-Za-z0-9+.-]*://([^\\s/@:]+:[^\\s/@]*)@` (~L34)",
+      "trigger": "\"https://:s3cr3tpass@db.example.test/\". The username part `[^\\s/@:]+` requires at least one character, so an empty username with a password never matches. The host probe `empty_username_url` confirmed `credentialStillPresent: true`. A related miss: a password containing an unescaped `@`, as in `scheme://u:p@ss@host`, matches only up to the first `@`, leaving `ss` exposed. A colon inside the password, as in `u:pa:ss`, does still match.",
+      "impact": "The raw password is returned in the sanitized payload, which violates 'raw credential text is never returned'. Connection strings in Redis or Postgres style (`redis://:password@host`) are a common real shape. Any caller that persists the result would store the credential.",
+      "remediation": "Match userinfo as `([^\\s/?#]*:[^\\s/?#]*)@` up to the last `@` before the path or host delimiter, allowing an empty username. Then redact the whole userinfo. Add tests for an empty username, an `@` inside the password and multiple colons.",
+      "confidence": "high"
+    },
+    {
+      "id": "F3",
+      "severity": "medium",
+      "locator": "src/keon/cortex/scrubber/service.py: _valid_secrets epoch check `if epoch in by_value or _has_catalog(epoch)` (~L113); ScrubResult.key_epoch returned verbatim (models.py ScrubResult, service.py scrub_payload return)",
+      "trigger": "key_epoch=\"preFAKEpost\" with KnownSecret(\"FAKE\",\"k\"). `epoch in by_value` tests for an exact dict key, not containment, so validation passes. The epoch is then returned unscrubbed in ScrubResult.key_epoch and in its repr. The host probe `epoch_known_substring` observed epochReturned \"preFAKEpost\".",
+      "impact": "Caller-declared secret text appears in result metadata, which the contract defines as non-content. That metadata is likely to be logged or persisted alongside the payload. Exploiting this requires a misconfigured trusted epoch, so severity is medium.",
+      "remediation": "Reject the epoch if any normalized known literal occurs as a substring of it, using the same substring semantics as payload matching. Keep the _has_catalog check. Add a regression test.",
+      "confidence": "high"
+    },
+    {
+      "id": "F4",
+      "severity": "medium",
+      "locator": "tests/test_ccm_scrubber.py: test_dense_overlapping_matches_merge_and_hide_the_entire_union (512-char input only), test_depth_node_and_raw_byte_limits, test_pem_url_auth_cloud_keys_and_jwt_are_covered; docs/specs/ccm-scrubber-v1.md resource paragraph",
+      "trigger": "The workorder requires resource-bound hostile tests for missing delimiters, long token-like strings and dense overlaps. The suite covers dense overlap only at 512 characters. It has no timed near-limit cases, no empty-username or `@`-in-password URL case, no epoch-substring case, and no test of failure-count semantics. No depth-boundary test asserts that exactly 32 nested levels succeed, in addition to 34 failing. There are no boundary tests for 128 or 129 known literals, the 64 KiB aggregate or the 4 MiB output limit. The spec asserts these bounds as enforced.",
+      "impact": "The documented bounds and detection claims are not matched by tested behaviour. The defects in F1, F2 and F3 passed CI unnoticed, which fails acceptance criteria 2 and 3.",
+      "remediation": "Add deterministic near-limit hostile tests, using a time or operation budget in the CI-safe form the project accepts, for each F1 shape. Add the URL and epoch regressions. Add exact depth-32 success and depth-33 failure tests. Add boundary tests for literal count, aggregate size and output size, and for zero or partial error counters.",
+      "confidence": "high"
+    }
+  ],
+  "coverage": [
+    "API signature, closed error set, ScrubError str/repr/args; cause and context are suppressed because the raise happens outside the except block",
+    "Context validation for tenant NFC, controls and byte length; epoch grammar; HMAC key type, length and repeated-byte rejection",
+    "Strict type domain using exact types without invoking subclass methods; cycle detection; NaN/Inf; surrogate and NUL rejection; NFC key collision; collision introduced by redaction",
+    "Raw byte bound applied before NFC; codepoint bound; canonical input of 1 MiB and output of 4 MiB checked after scrubbing; atomic failure",
+    "Catalog regex review: PEM label matching and unmatched markers, URL userinfo, auth header, AWS, GitHub, credential assignment with escaped and unterminated quotes, LLM, JWT boundaries",
+    "Union semantics: touching intervals kept separate, priority and tie selection consistent with frozen order, entire union HMACed",
+    "HMAC preimage built with canonical_json over domain, tenant, epoch, kind and NFC secret; 12-hex token form",
+    "SyntheticEvidence validated, not returned, with no effect on redaction; repr omissions on KnownSecret and SyntheticEvidence",
+    "Accounting: one count per union, strings_redacted per changed occurrence, keys counted as scanned strings",
+    "Resource complexity of the matching pipeline under dense and malformed inputs"
+  ],
+  "gaps": [
+    "No execution; the complexity estimates in F1 come from source analysis plus the host probe stopped at 4 s",
+    "JSON-quoted keys inside strings, such as `\"password\":\"x\"`, fall outside the frozen assignment grammar; noted, not raised as a defect",
+    "Tokens longer than the frozen maxima (GitHub > 255, JWT segment > 4096, sk- > 256) are not redacted by design of the complete-boundary rule; this needs a coordinator decision if considered a risk",
+    "No assessment of P3 integration, key custody or real entropy, which are out of scope"
+  ]
+}

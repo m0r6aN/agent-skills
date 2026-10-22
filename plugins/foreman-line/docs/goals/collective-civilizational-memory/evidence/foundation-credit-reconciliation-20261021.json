@@ -1,0 +1,39 @@
+{
+  "atUtc": "2026-10-22T03:48:10.320071+00:00",
+  "currentBalance": 7406.2,
+  "unit": "GenSpark prepaid credits",
+  "localDay": "2026-10-21",
+  "sharedDatedCeiling": 4800,
+  "expiresAtUtc": "2026-10-22T04:00:00Z",
+  "accountFloor": 1000,
+  "effortCeiling": 9000,
+  "parcelConservativeBooked": {
+    "P1A": 1047.644,
+    "P1B": 797.44425,
+    "P1C": 628.408,
+    "P1D": 153.23275
+  },
+  "foundationConservativeBookedIncludingUnknown": 2626.729,
+  "parcelReported": {
+    "P1A": 948.2,
+    "P1B": 445.5,
+    "P1C": 625.9,
+    "P1D": 152.9
+  },
+  "preservedUnresolvedGenSpark": {
+    "originalSource": 94.6,
+    "failedP1BclosureB": 350
+  },
+  "apiConservativeKnownPlusReservedUsd": 1.08227,
+  "preservedUnresolvedApiUsd": 0.17192,
+  "nativeCodexUsage": "Unknown separate account units, not zero and not converted",
+  "pendingFoundationModelRequests": 0,
+  "pendingFoundationFutureReviewReservations": 0,
+  "foreignLedgerReadOnly": true,
+  "rawSharedDayConservative": 3525.1000000000004,
+  "exactOwnedPendingReplaced": 700,
+  "ownCompletedClosuresAndCAndDPlusUnknown350": 1373.14025,
+  "adjustedSharedDayConservative": 4198.240250000001,
+  "accountDeltaNotExactAttribution": true,
+  "limits": "Reservations/catalog estimates/report credits are not invoices; known/unknown holds are not reset or silently released at day boundary."
+}

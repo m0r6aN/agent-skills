@@ -1,0 +1,189 @@
+{
+  "adoptedAtUtc": "2026-10-21T16:45:11.074005+00:00",
+  "task": "CCM-P1A-artifact-mode-delivery-20261021",
+  "scope": "One P1A implementation plus at most one focused repair, formal Step 0 before each, two fresh independent frontier reviews, any necessary bounded own-finding closure, deterministic acceptance. No P1B/C/D build, import, deployment or merge.",
+  "authority": "Continuing transferable Context authority and direct 2026-10-21 instruction to finish builder/reviewer qualification under existing authorization; existing owner-authorized GenSpark prepaid offload across Cortex/Pantheon/Collective. No new monetary purchase or raised global limit.",
+  "goalCustodian": "ccm-coordinator-20261020-fresh-01",
+  "operator": "Originating oversight, acting under delegated authority; no competing coordinator",
+  "sourceBase": "efb5f4bcead899332f4f35f5e0b3a181eb988d2c",
+  "worktree": "D:/Repos/ccm-worktrees/cortex-p1a",
+  "branch": "feat/foreman-line-ccm-p1a",
+  "approvedSubjectHash": "9431a8649c2c1125da28e3e4a62f3d9cb15d69b8a1f83dd9c7b1291e8a9c2f96",
+  "sourcePacketManifest": "evidence/p1a-source-packet-20261021.manifest.json",
+  "qualifiedModeEvidence": "evidence/r08-artifact-mode-qualification-20261021.json",
+  "sender": {
+    "path": "D:\\Repos\\Pantheon\\.audit\\genspark-offload-2026-10-20\\invoke-genspark.ps1",
+    "sha256": "9fc48f4666dc838a00478c868149b76b8ff34e01fb3871ae91b30d5114d0c2ba",
+    "endpoint": "https://www.genspark.ai/api/llm_proxy/v1/chat/completions",
+    "credentials": "GENSPARK_AI_KEY runtime reference only",
+    "tools": [],
+    "redirection": 0,
+    "requestTimeoutSeconds": 180,
+    "invocations": "Exactly one direct sender invocation per named phase; existing output directory refuses resend"
+  },
+  "roles": {
+    "builder": {
+      "route": "genspark/gpt-6.1-sol",
+      "tier": "frontier",
+      "permissions": "No repository, shell, tool or approval authority; source proposal only"
+    },
+    "reviewA": {
+      "route": "genspark/claude-opus-5-5",
+      "tier": "frontier",
+      "permissions": "Supplied-text findings only; no repository/tools/effects"
+    },
+    "reviewB": {
+      "route": "genspark/claude-opus-5-5",
+      "tier": "frontier",
+      "permissions": "Fresh separate request, no builder history or reviewer A findings; no repository/tools/effects"
+    }
+  },
+  "independence": "Both Anthropic-family reviewers are independent from OpenAI-family builder. Reviewer A/B share a model/family but not a conversation/findings; no cross-family-between-reviewers claim.",
+  "hostEffectGate": "After actual parcel Gate 2, emitted-worktree base/profile/baseline validation and formal Step 0 disposition: parse a complete proposal, inspect code, require exact allowed file set, reject path escapes/reparse targets and executable command payloads, apply only those five paths. No returned commands executed. Verify scope/tests and independent reviews before acceptance.",
+  "allowedFiles": [
+    "docs/specs/ccm-memory-graph-v2.md",
+    "src/keon/cortex/envelope/taxonomy.py",
+    "src/keon/cortex/ingress/models_v2.py",
+    "tests/test_ccm_contracts_v2.py",
+    "tests/fixtures/ccm/contracts-v2.json"
+  ],
+  "phases": [
+    {
+      "phase": "step0",
+      "model": "gpt-6.1-sol",
+      "maximumInputTokensOperational": 36000,
+      "max_tokensSent": 1536,
+      "requestTimeoutSeconds": 180,
+      "modelTools": [],
+      "transportRequestsMaximum": 1,
+      "automaticRetries": 0,
+      "creditEstimateNoCacheAtPublishedRates": 57.948,
+      "conservativeRoundedCredits": 58.3
+    },
+    {
+      "phase": "implementation",
+      "model": "gpt-6.1-sol",
+      "maximumInputTokensOperational": 36000,
+      "max_tokensSent": 8192,
+      "requestTimeoutSeconds": 180,
+      "modelTools": [],
+      "transportRequestsMaximum": 1,
+      "automaticRetries": 0,
+      "creditEstimateNoCacheAtPublishedRates": 94.556,
+      "conservativeRoundedCredits": 94.6
+    },
+    {
+      "phase": "review-A",
+      "model": "claude-opus-5-5",
+      "maximumInputTokensOperational": 26500,
+      "max_tokensSent": 2304,
+      "requestTimeoutSeconds": 180,
+      "modelTools": [],
+      "transportRequestsMaximum": 1,
+      "automaticRetries": 0,
+      "creditEstimateNoCacheAtPublishedRates": 98.219,
+      "conservativeRoundedCredits": 99.0
+    },
+    {
+      "phase": "review-B",
+      "model": "claude-opus-5-5",
+      "maximumInputTokensOperational": 26500,
+      "max_tokensSent": 2304,
+      "requestTimeoutSeconds": 180,
+      "modelTools": [],
+      "transportRequestsMaximum": 1,
+      "automaticRetries": 0,
+      "creditEstimateNoCacheAtPublishedRates": 98.219,
+      "conservativeRoundedCredits": 99.0
+    },
+    {
+      "phase": "repair-step0-if-needed",
+      "model": "gpt-6.1-sol",
+      "maximumInputTokensOperational": 36000,
+      "max_tokensSent": 1536,
+      "requestTimeoutSeconds": 180,
+      "modelTools": [],
+      "transportRequestsMaximum": 1,
+      "automaticRetries": 0,
+      "creditEstimateNoCacheAtPublishedRates": 57.948,
+      "conservativeRoundedCredits": 58.3
+    },
+    {
+      "phase": "focused-repair-if-needed",
+      "model": "gpt-6.1-sol",
+      "maximumInputTokensOperational": 36000,
+      "max_tokensSent": 8192,
+      "requestTimeoutSeconds": 180,
+      "modelTools": [],
+      "transportRequestsMaximum": 1,
+      "automaticRetries": 0,
+      "creditEstimateNoCacheAtPublishedRates": 94.556,
+      "conservativeRoundedCredits": 94.6
+    },
+    {
+      "phase": "review-A-closure-if-needed",
+      "model": "claude-opus-5-5",
+      "maximumInputTokensOperational": 16000,
+      "max_tokensSent": 1536,
+      "requestTimeoutSeconds": 180,
+      "modelTools": [],
+      "transportRequestsMaximum": 1,
+      "automaticRetries": 0,
+      "creditEstimateNoCacheAtPublishedRates": 60.896,
+      "conservativeRoundedCredits": 61.6
+    },
+    {
+      "phase": "review-B-closure-if-needed",
+      "model": "claude-opus-5-5",
+      "maximumInputTokensOperational": 16000,
+      "max_tokensSent": 1536,
+      "requestTimeoutSeconds": 180,
+      "modelTools": [],
+      "transportRequestsMaximum": 1,
+      "automaticRetries": 0,
+      "creditEstimateNoCacheAtPublishedRates": 60.896,
+      "conservativeRoundedCredits": 61.6
+    }
+  ],
+  "globalExistingLimits": {
+    "creditsPerRun": 100,
+    "creditsPerAmericaNewYorkDay": 300,
+    "effortCumulativeCredits": 9000,
+    "minimumAccountReserveCredits": 1000
+  },
+  "adoptedInternalP1ACeilingCredits": 700,
+  "qualificationAlreadyReportedCredits": 51.7,
+  "fullWorstCasePhaseEstimateWithRoundingPlusQualificationCredits": 678.7,
+  "extraCashPurchaseAuthorized": false,
+  "priceUnits": "GenSpark credits per million tokens, not USD",
+  "actualDollarBilling": "Unknown; no invented USD conversion or zero-charge claim. Native failed qualification calls reported no usage, not proof of zero upstream charge. Parent-host chat and prior coordinator estimates remain separately unknown/not included in the prepaid ledger.",
+  "enforcementLimits": [
+    "Sender enforces one client request, no supplied tools, output setting and local timeout; it provides no claim about provider-internal requests or hard remote cancellation.",
+    "Input guard uses measured cl100k count plus 20% reserve and system overhead; this is an operational estimate, not the actual model tokenizer proof. Check returned prompt/output/reasoning usage before any next call.",
+    "Check live account entitlement/balance, shared-day/effort usage, current price metadata and pending uncertain attempts before every phase. Stop if worst-case next call does not fit all limits; no automatic day-limit raise or purchase.",
+    "A timeout, missing/over-limit usage, model mismatch, incomplete/non-JSON result, source drift or true scope gap stops that phase; no automatic resend/fallback.",
+    "Emitted .claude settings are audit metadata for this zero-tool route, not a claimed GenSpark-loaded or Pi-loaded control. Native direct agents remain unqualified."
+  ],
+  "hostAcceptanceTimeAllowanceSeconds": 900,
+  "result": "OriginalGenSpark delivery unusable/unseen-generation disposition owner-approved,94.6 retained. Bounded nativeOAuthSol repairStep0 submitted once and unsuccessful on SubscriptionSharing quota;0tokens reported, billing unknown, no source/code/reviews/retry/fallback. Currenthold is actual native allowance, not pending owner approval.",
+  "ownerApprovedDayException": {
+    "recordedAtUtc": "2026-10-21T17:57:18.469424+00:00",
+    "owner": "Clinton Morgan",
+    "directQuote": "Approved, brother. Raise today's shared ceiling to 1,000 prepaid credits, with P1A capped at 700 total including what's already spent. Keep the other limits and proceed through the build, reviews, and bounded repair.",
+    "localDay": "2026-10-21",
+    "timezone": "America/New_York",
+    "sharedDayCeiling": 1000,
+    "P1ATotalCeiling": 700,
+    "P1AAlreadyReportedSpent": 95.7,
+    "otherLimits": {
+      "perRequest": 100,
+      "effort": 9000,
+      "minimumReserve": 1000,
+      "otherInitiativesDailyAllowance": 300
+    },
+    "scope": "Existing approved proposal, one build, two independent reviews, at most one focused repair with Step0 and bounded closures/local verification",
+    "noPurchaseMergeDeployImportsLaterParcels": true
+  },
+  "nativeContinuationApproval": "p1a-native-sol-owner-approval-20261021.json",
+  "nativeContinuationStopRecord": "p1a-native-sol-stop-record-20261021.json"
+}

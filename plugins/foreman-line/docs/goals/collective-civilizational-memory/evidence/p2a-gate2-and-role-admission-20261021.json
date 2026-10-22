@@ -1,0 +1,58 @@
+{
+  "atUtc": "2026-10-22T04:00:32.743486+00:00",
+  "parcel": "CCM-P2A",
+  "gate2": "Approved by delegated coordinator under owner blanket non-destructive decisions/approvals and explicit P2Afullcycle direction",
+  "worktree": "D:\\Repos\\ccm-worktrees\\cortex-p2a",
+  "branch": "feat/foreman-line-ccm-p2a",
+  "base": "6139ddd8802540829eebce07215106e4b16ca360",
+  "draftSha256": "c38b25fcb95ece25e744d2ea7ee23e32cec3f8cbbd7ce80d424b2c80b3e5c4a6",
+  "activeSha256": "4a55bcbc3552f4a97ba9083b59e1ade2ad6bb3a0740c9a0b52e180cb01482efe",
+  "promotion": "status-only derivative of amendedadvisorychecked draft, committed before builderStep0GO",
+  "shapingResult": "ccm-p2a-scrubber-2026-10-21-operator.shaping-result.json",
+  "sourceAllowedFiles": [
+    "src/keon/cortex/scrubber/__init__.py",
+    "src/keon/cortex/scrubber/models.py",
+    "src/keon/cortex/scrubber/service.py",
+    "tests/test_ccm_scrubber.py",
+    "docs/specs/ccm-scrubber-v1.md"
+  ],
+  "baselineEvidence": "p2a-worktree-baseline-20261021.json",
+  "baselineTimingDisposition": "p2a-baseline-timing-disposition-20261021.json",
+  "frozenAdvisory": {
+    "valid": true,
+    "frontmatter": {
+      "valid": true,
+      "errors": [],
+      "warnings": [
+        "advisory: surfaces entry 'src/keon/cortex/scrubber/__init__.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+        "advisory: surfaces entry 'src/keon/cortex/scrubber/models.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+        "advisory: surfaces entry 'src/keon/cortex/scrubber/service.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+        "advisory: surfaces entry 'tests/test_ccm_scrubber.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74"
+      ]
+    },
+    "body": {
+      "valid": true,
+      "errors": []
+    },
+    "errors": []
+  },
+  "builderSelected": "Fresh native Codex gpt-6-luna/medium, leastcontext fixed5file task; Step0restate-and-stop before source",
+  "nativeUsage": "Unknown accountunits separate, not zero or converted toGenSpark/API",
+  "buildLane": "One initial implementation+one separatelygated formal focusedrepair, ordinary debugging inside lanes allowed",
+  "sourceProviderRequests": 0,
+  "externalReviewPlannedEnvelope": {
+    "wholeParcelGenSparkMax": 1400,
+    "initialCallsMax": 2,
+    "initialPerCallMax": 350,
+    "closureCallsMax": 2,
+    "closurePerCallMax": 350,
+    "requiredModel": "Independent qualified frontierOpuslow profile, no newqualificationprobe",
+    "deadlinePerCallSeconds": 180,
+    "autoRetries": 0,
+    "floor": 1000,
+    "effortCap": 9000,
+    "dayRule": "No next paidcall until exactpacket/limits and freshactualNYday/account/sharedreservation admission recorded. Oct21cap4800expires04UTC; no automatic extension/reset, preserve allunknowns.",
+    "capacityNotSpendOrCurrentReservation": true
+  },
+  "scopeExclusions": "No legacy/API/DB/network/keydiscovery/provisioning/provider/auth/trustclassification/enqueue/crypto-effects. P3actualscrub-before-durableboundary remainsopen. No sourceaccepted/fullgoalready claim."
+}

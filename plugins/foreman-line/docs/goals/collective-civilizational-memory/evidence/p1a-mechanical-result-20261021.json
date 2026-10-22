@@ -1,0 +1,122 @@
+{
+  "atUtc": "2026-10-21T22:06:54.047397+00:00",
+  "status": "Exact approved patch applied and deterministic checks PASS; independent reviews HELD",
+  "patchSha256": "fa8cdab381ff2bff4529e2bb032e0b042d125ab10249b484ccdca1b03dac3ef2",
+  "sourceWorktree": "D:\\Repos\\ccm-worktrees\\cortex-p1a",
+  "sourceBase": "efb5f4bcead899332f4f35f5e0b3a181eb988d2c",
+  "changedByPatch": [
+    "src/keon/cortex/ingress/models_v2.py",
+    "tests/test_ccm_contracts_v2.py"
+  ],
+  "originalCandidatePins": {
+    "src/keon/cortex/envelope/taxonomy.py": "1f2cacaefe3b5086ea4a556c50677ba9e1e3719d51b2944f74caf1712712424d",
+    "src/keon/cortex/ingress/models_v2.py": "86fc439b5a22f1b0625c64ce0dab494bd73c035d0350c9b59859bcb7d87173f6",
+    "tests/fixtures/ccm/contracts-v2.json": "de4bde4dfee3299dabc5d87cf53566266d3d798391417bbfa7ae40f1335c2dd8",
+    "tests/test_ccm_contracts_v2.py": "7814925b144a129bef7b64da5b120e63cbfae67f0c3815b9ccdbd48d19fda77e",
+    "docs/specs/ccm-memory-graph-v2.md": "3481152e93b611ebfe3ea53450ed629a733fd32139d0fa926f812c301cdbed4e"
+  },
+  "candidatePinsAfter": {
+    "src/keon/cortex/envelope/taxonomy.py": "1f2cacaefe3b5086ea4a556c50677ba9e1e3719d51b2944f74caf1712712424d",
+    "src/keon/cortex/ingress/models_v2.py": "b0b48d4bd1ee87bbed053ad2fa614195f05035c68729a6879ebd20726d173c4a",
+    "tests/fixtures/ccm/contracts-v2.json": "de4bde4dfee3299dabc5d87cf53566266d3d798391417bbfa7ae40f1335c2dd8",
+    "tests/test_ccm_contracts_v2.py": "5d5e1fd95ca8d25d74bf5f878125838a2bc3112b5903f486306d1b7857f5b420",
+    "docs/specs/ccm-memory-graph-v2.md": "3481152e93b611ebfe3ea53450ed629a733fd32139d0fa926f812c301cdbed4e"
+  },
+  "otherThreeCandidateHashesUnchanged": true,
+  "oldV1AndBaselineFilesUnchanged": true,
+  "runs": [
+    {
+      "name": "black",
+      "exitCode": 0,
+      "seconds": 1.988,
+      "argv": [
+        "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "black",
+        "--check",
+        "src/keon/cortex/envelope/taxonomy.py",
+        "src/keon/cortex/ingress/models_v2.py",
+        "tests/test_ccm_contracts_v2.py"
+      ],
+      "outputSha256": "ab81d49758ee3d83e73f7d022b92772c8d7969bfd4d6680c5baf6a23890a301f"
+    },
+    {
+      "name": "isort",
+      "exitCode": 0,
+      "seconds": 0.312,
+      "argv": [
+        "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "isort",
+        "--check-only",
+        "src/keon/cortex/envelope/taxonomy.py",
+        "src/keon/cortex/ingress/models_v2.py",
+        "tests/test_ccm_contracts_v2.py"
+      ],
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "mypy",
+      "exitCode": 0,
+      "seconds": 14.905,
+      "argv": [
+        "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "mypy",
+        "src/keon/cortex/ingress/models_v2.py",
+        "--ignore-missing-imports",
+        "--namespace-packages",
+        "--cache-dir=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\openai-api-document-20261021-01\\mechanical-applied-20261021-01\\mypy-cache"
+      ],
+      "outputSha256": "8e63ae22e8213e327a5e9cbd584067681681bd8ef7f25c869877887ccdcfc4ff"
+    },
+    {
+      "name": "pytest",
+      "exitCode": 0,
+      "seconds": 7.792,
+      "argv": [
+        "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "pytest",
+        "-p",
+        "pytest_asyncio.plugin",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--basetemp=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\openai-api-document-20261021-01\\mechanical-applied-20261021-01\\pytest-tmp",
+        "--junitxml=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\openai-api-document-20261021-01\\mechanical-applied-20261021-01\\tests.xml",
+        "tests/test_ccm_contracts_v2.py",
+        "tests/test_ingress_models.py",
+        "tests/inheritance/test_inheritance.py",
+        "tests/gravity/test_contracts.py",
+        "tests/gravity/test_projection_fixtures.py",
+        "tests/test_evidence_envelope.py",
+        "tests/test_shards_v1_1.py"
+      ],
+      "outputSha256": "3e7595b63f51f344436dbd42330fa309966dc611d7dbb1914ca8216f55edb788"
+    }
+  ],
+  "tests": {
+    "passed": 328,
+    "originalIdentitiesRetained": 238,
+    "new": 90
+  },
+  "privateCapture": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\openai-api-document-20261021-01\\mechanical-applied-20261021-01",
+  "modelRequests": 0,
+  "incrementalModelSpend": 0,
+  "paidReviews": "HELD pending preventive input/cost/visible-output qualification",
+  "accepted": false,
+  "mergeDeployImport": false
+}

@@ -1,0 +1,27 @@
+{
+  "approvedAtRecordedUtc": "2026-10-22T01:34:13.214531+00:00",
+  "ownerApproval": "Broad direct owner non-destructive authority; one coordinator-approved focusedrepair against bothreviewfindings; combined<= $0.50 modeled, no retries",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "serviceTier": "default",
+  "inputSha256": "a56cabf5d074449615a5dc46427d9f1d3fa8bb663aac9ab228fc13028352541c",
+  "conservativeInputTokens": 50657,
+  "inputTokenCounts": {
+    "cl100k_base": 41894,
+    "o200k_base": 42001
+  },
+  "maxInput": 60000,
+  "maxOutput": 16384,
+  "estimatedTokenCostCapUsd": 0.32,
+  "worstModeledUsd": 0.31384,
+  "maxRequests": 1,
+  "retry": false,
+  "tools": [],
+  "timeSeconds": 600,
+  "store": false,
+  "reservationsRetained": {
+    "originalGenSparkCredits": 94.6,
+    "priorApiSourceUsd": 0.17192
+  },
+  "passedScopeReused": true
+}

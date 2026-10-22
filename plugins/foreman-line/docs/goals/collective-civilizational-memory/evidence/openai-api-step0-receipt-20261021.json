@@ -1,0 +1,26 @@
+{
+  "phase": "step0",
+  "httpStatus": 200,
+  "requestId": "req_1ab0891b020b421abc74f185aaee6c45",
+  "responseId": "resp_0171167f24ace978016ad9198a973887d280669d843e302de8",
+  "model": "gpt-6.1-sol",
+  "status": "completed",
+  "incompleteDetails": null,
+  "usage": {
+    "input_tokens": 29400,
+    "input_tokens_details": {
+      "cache_write_tokens": 29397,
+      "cached_tokens": 0
+    },
+    "output_tokens": 807,
+    "output_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "total_tokens": 30207
+  },
+  "serviceTier": "default",
+  "completedAtUtc": "2026-10-21T19:59:21.462602+00:00",
+  "hostGenerationRequestsThisPhase": 1,
+  "textBytes": 3361,
+  "conservativeListPriceUsd": 0.08157
+}

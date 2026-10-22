@@ -1,0 +1,71 @@
+{
+  "installationDirectory": "/home/cmorgan76/.local/share/mise/installs/pi/latest/pi",
+  "entries": [
+    {
+      "name": "examples",
+      "directory": true,
+      "bytes": null,
+      "symlink": false
+    },
+    {
+      "name": "CHANGELOG.md",
+      "directory": false,
+      "bytes": 644403,
+      "symlink": false
+    },
+    {
+      "name": "theme",
+      "directory": true,
+      "bytes": null,
+      "symlink": false
+    },
+    {
+      "name": "pi",
+      "directory": false,
+      "bytes": 107174016,
+      "symlink": false
+    },
+    {
+      "name": "assets",
+      "directory": true,
+      "bytes": null,
+      "symlink": false
+    },
+    {
+      "name": "native",
+      "directory": true,
+      "bytes": null,
+      "symlink": false
+    },
+    {
+      "name": "photon_rs_bg.wasm",
+      "directory": false,
+      "bytes": 1881634,
+      "symlink": false
+    },
+    {
+      "name": "export-html",
+      "directory": true,
+      "bytes": null,
+      "symlink": false
+    },
+    {
+      "name": "README.md",
+      "directory": false,
+      "bytes": 4080,
+      "symlink": false
+    },
+    {
+      "name": "package.json",
+      "directory": false,
+      "bytes": 3762,
+      "symlink": false
+    },
+    {
+      "name": "docs",
+      "directory": true,
+      "bytes": null,
+      "symlink": false
+    }
+  ]
+}

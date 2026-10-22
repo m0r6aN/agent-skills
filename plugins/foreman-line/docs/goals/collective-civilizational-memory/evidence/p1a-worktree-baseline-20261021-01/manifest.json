@@ -1,0 +1,92 @@
+{
+  "observedAtUtc": "2026-10-21T16:59:45.341520+00:00",
+  "base": "efb5f4bcead899332f4f35f5e0b3a181eb988d2c",
+  "worktree": "D:\\Repos\\ccm-worktrees\\cortex-p1a",
+  "branch": "feat/foreman-line-ccm-p1a",
+  "python": "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+  "sourceHashesBefore": {
+    "src/keon/cortex/envelope/taxonomy.py": "4b5293da0efd226c73204f9f8828f7488160d8d8d83737e32943dafea4690867",
+    "src/keon/cortex/ingress/models.py": "cfb33fe44ee6789281b36456918e68db0943486c83f74c61792c5943e13ec911",
+    "tests/test_ingress_models.py": "823299ef4b3b8eb0de0da568aa2ec6254fb6e8bd0511c9f448cc2d208c005a67",
+    "tests/inheritance/test_inheritance.py": "26c131c5c377a7e2cfa40062754db5b6561eedd3b25229fee37936f2e5d41d75",
+    "tests/gravity/test_contracts.py": "8dd7e25e84cf6427f355d47d9aa9f87afb6c6cb4753c758201d88ccb715395f7",
+    "tests/gravity/test_projection_fixtures.py": "753457f9adc4187174a3af6676005783a4fd2c49fa9d7bcbbc6eccde1dcb0736",
+    "tests/test_evidence_envelope.py": "ef0c7b369b109ae29a519a93cacd18d5de84f2fc63ed6041e51274f6829de2e7",
+    "tests/test_shards_v1_1.py": "3169cea6e0f1914c1b219b843732a0b99ed4f4f63ff738af647ba43c2922e891"
+  },
+  "runs": [
+    {
+      "name": "source-path",
+      "argv": [
+        "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-B",
+        "-c",
+        "import keon.cortex.ingress.models; print(keon.cortex.ingress.models.__file__)"
+      ],
+      "exitCode": 0,
+      "seconds": 0.467,
+      "outputSha256": "a13a17ecf2d36f404c3f8f8cb63bd00559e689a4db3cee4468e09809c7f693a8"
+    },
+    {
+      "name": "collection",
+      "argv": [
+        "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-B",
+        "-m",
+        "pytest",
+        "-p",
+        "pytest_asyncio.plugin",
+        "-p",
+        "no:cacheprovider",
+        "--collect-only",
+        "-q",
+        "tests/test_ingress_models.py",
+        "tests/inheritance/test_inheritance.py",
+        "tests/gravity/test_contracts.py",
+        "tests/gravity/test_projection_fixtures.py",
+        "tests/test_evidence_envelope.py",
+        "tests/test_shards_v1_1.py"
+      ],
+      "exitCode": 0,
+      "seconds": 3.078,
+      "outputSha256": "bc10e3b497acf91a975eef6e85b26b65d964be3a1a6c92923221ed0b04517cce"
+    },
+    {
+      "name": "baseline",
+      "argv": [
+        "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-B",
+        "-m",
+        "pytest",
+        "-p",
+        "pytest_asyncio.plugin",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--basetemp=D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\collective-civilizational-memory\\evidence\\p1a-worktree-baseline-20261021-01\\tmp",
+        "--junitxml=D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\collective-civilizational-memory\\evidence\\p1a-worktree-baseline-20261021-01\\baseline.xml",
+        "tests/test_ingress_models.py",
+        "tests/inheritance/test_inheritance.py",
+        "tests/gravity/test_contracts.py",
+        "tests/gravity/test_projection_fixtures.py",
+        "tests/test_evidence_envelope.py",
+        "tests/test_shards_v1_1.py"
+      ],
+      "exitCode": 0,
+      "seconds": 4.286,
+      "outputSha256": "e06127632e7b247d2862cfc6cf8323e67f2c6ccc3b01b6f829c338bbb05e0800"
+    }
+  ],
+  "sourceHashesAfter": {
+    "src/keon/cortex/envelope/taxonomy.py": "4b5293da0efd226c73204f9f8828f7488160d8d8d83737e32943dafea4690867",
+    "src/keon/cortex/ingress/models.py": "cfb33fe44ee6789281b36456918e68db0943486c83f74c61792c5943e13ec911",
+    "tests/test_ingress_models.py": "823299ef4b3b8eb0de0da568aa2ec6254fb6e8bd0511c9f448cc2d208c005a67",
+    "tests/inheritance/test_inheritance.py": "26c131c5c377a7e2cfa40062754db5b6561eedd3b25229fee37936f2e5d41d75",
+    "tests/gravity/test_contracts.py": "8dd7e25e84cf6427f355d47d9aa9f87afb6c6cb4753c758201d88ccb715395f7",
+    "tests/gravity/test_projection_fixtures.py": "753457f9adc4187174a3af6676005783a4fd2c49fa9d7bcbbc6eccde1dcb0736",
+    "tests/test_evidence_envelope.py": "ef0c7b369b109ae29a519a93cacd18d5de84f2fc63ed6041e51274f6829de2e7",
+    "tests/test_shards_v1_1.py": "3169cea6e0f1914c1b219b843732a0b99ed4f4f63ff738af647ba43c2922e891"
+  },
+  "sourceUnchanged": true,
+  "trackedSourceCleanAfter": true
+}

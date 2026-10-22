@@ -1,0 +1,58 @@
+{
+  "providerCalls": 0,
+  "sourceExecution": false,
+  "atUtc": "2026-10-22T13:20:16.0469733Z",
+  "resourceSafetyQualification": false,
+  "grammarQualification": false,
+  "cases": [
+    {
+      "start": null,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "id": "empty",
+      "end": null,
+      "bytes": 0,
+      "pass": true
+    },
+    {
+      "start": 0,
+      "sha256": "16797664978a811647328d92f3a3ca9a3b3a4712db9abc1bd63416b30aca4fe0",
+      "id": "function-lf",
+      "end": 17,
+      "bytes": 18,
+      "pass": true
+    },
+    {
+      "start": 0,
+      "sha256": "0b6c5f31e4dfab0fa29b0c624b1c8f12d806369920fe2c02a04f1292981e3ba6",
+      "id": "async-lf",
+      "end": 23,
+      "bytes": 24,
+      "pass": true
+    },
+    {
+      "start": 3,
+      "sha256": "c5dbb252122d7fb339918eaa8f6d5742d0b93bfd40b9e795d49d1552fe39e905",
+      "id": "bom",
+      "end": 20,
+      "bytes": 21,
+      "pass": true
+    },
+    {
+      "start": 0,
+      "sha256": "7e157538366e2f9cb5bc4954c32cb08830cfad1c53c8115a70b35cdda6993f2d",
+      "id": "crlf",
+      "end": 18,
+      "bytes": 20,
+      "pass": true
+    },
+    {
+      "start": 3,
+      "sha256": "be5e1010e8e6804f599877dfc41dd4d45d594e7acc0b295035b1b34f63ff0a82",
+      "id": "decorated",
+      "end": 20,
+      "bytes": 21,
+      "pass": true
+    }
+  ],
+  "method": "Fixed synthetic byte computation in parent PowerShell/.NET; keyword and pass positions independent of AST implementation"
+}

@@ -1,0 +1,12 @@
+{
+  "checkedAtUtc": "2026-10-21T18:10:35.056855+00:00",
+  "destination": "cmorgan76@10.0.0.174",
+  "source": "docs/goals/pantheon-incarnation-v0/machine-b-preflight.md and gate-record.md ACCESS-001",
+  "sourceRecordedSuccess": "2026-10-18T21:58:19Z",
+  "expectedStoredEd25519": "SHA256:DYARjdrGe5f7RoL1lLGC6u102NYdFWiIAxNwLdSsv1A",
+  "localStoredHostMatches": true,
+  "dedicatedIdentityPathExists": true,
+  "privateKeyContentsInspected": false,
+  "hostTrustChanged": false,
+  "inferenceRequests": 0
+}
