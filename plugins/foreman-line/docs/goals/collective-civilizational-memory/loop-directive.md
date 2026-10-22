@@ -1,104 +1,91 @@
-# CCM current coordinator loop — P2A build
+# CCM current coordinator loop — P2A accepted / P2B readiness
 
-Custodian:ccm-coordinator-20261020-fresh-01. Authorized originating operator:
-01a155be-72a6-7b02-ac33-84dc64bbf102; oversight01a158b8-93f8-7423-b5b6-aaca46092870.
-Clinton's direct blanket transferable non-destructive decisions/approvals/spend
-authority persists. Latest explicit P2A full-cycle direction is covered by that
-grant. No routine reapproval, duplicate coordinator or revived dormant monitor.
-Exact grant:evidence/owner-autonomous-next-steps-20261021.json.
+Custodian ccm-coordinator-20261020-fresh-01; originating authorized operator
+01a155be-72a6-7b02-ac33-84dc64bbf102. Oversight01a158b8-93f8-7423-b5b6-aaca46092870
+may receive compact facts. Owner blanket transferable non-destructive decisions,
+approvals and GenSpark increases persists; no routine reapproval. No duplicate
+coordinator, revived monitor, new schedule, fake Jira or pipeline receipts.
 
-## Accepted foundation
+## Accepted source
 
-ALL4P1parcels accepted, merged, exact source/main CI green, StageFclosed:
-- P1A PR80 Cortexcc3a6defa78849b8df8795c58ac65866f31179d5.
-- P1B PR83 Cortex241358c664fbbceb140a45c0da40c48f6c1135c0.
-- P1C PR300 Collective3d44cf5b8b3fb38a857dd1607159a665c1c3b310.
-- P1D PR84 Cortex6139ddd8802540829eebce07215106e4b16ca360.
-See foundation-acceptance-20261021.md and actual per-parcel stage-f-closure JSON.
-All4specs archived status-only to done/. Sourceworktrees retained for proof/pins.
-P1C324PASS/314original,13actualparityprobes,2independentclosurePASS; C01 clarified
-existingproducersemantics before repair. P1D110PASS/79original, independentclosure
-PASS and actualPG16.10/vector0.8.0 real-local positive/nondefaultschema/negative
-profiles, ownedsyntheticcontainercleaned. No target/Neon/SLO/import claim.
+All4P1foundation parcels remain accepted/merged/StageFclosed:
+P1A CortexPR80 cc3a6def;P1BPR83 241358c6;P1CCollectivePR300 3d44cf5b;
+P1DCortexPR84 6139ddd8. Full source evidence in foundation acceptance/per-parcel
+StageF records. Authenticated high-trust legacy producer coverage is stillZERO;
+target/Neon profile beforeP4 and key/backup qualification before real crypto
+effects remainOPEN. No plan/Gate1/S01-S12/C02-D1 reapproval.
 
-## Current parcel and exact next action
+P2A accepted/StageFclosed: CortexPR87 source
+cb794ba7c51dd3508c90832a892aaa2490894993, merge
+76fa7c6eda6a4859e7d3a64815c760a77d4c07f0. All16exact-headchecks green; both
+actual main runs39724637602/39724637630SUCCESS. Five mergedblobs match reviewed
+pins. Workorder archivedstatus-only to done/CCM-P2A-deterministic-memory-scrubber.md.
+33focused/2889fullPASS/137existingSKIP/0FAIL;267oldpins/3013initialidentities
+retained; Black/isort/mypy/Python3.10ASTPASS. Independent32HMACvectors plus
+parent exactboundaries/overlap/candidate/numeric/URL/epoch/depth checksPASS.
+TwoinitialCHANGES_REQUIRED ->ONE formalLunarepair ->twoincompleteclosures
+(notaccepted/full350eachretained) ->explicit fresh concise pairPASS/PASS.
+Two low catalog/PEM limitations accepted; pure library only, no universal secret
+coverage. P3 MUST scrub itself immediately before its actual durable enqueue;
+mutable result/flag/type is not an attestation. Compound names outside frozen
+catalog need known literals/otherdetector; nested/strayPEM rejectswholeitem.
 
-P2A active spec:docs/specs/active/CCM-P2A-deterministic-memory-scrubber.md,
-InitialSHA4a55bcbc3552f4a97ba9083b59e1ade2ad6bb3a0740c9a0b52e180cb01482efe;
-C02-R1 repairSHAf6de7120cffe91932f7c3f4fa1b5c8c5e1e36149d7cf1a6d7709ec73f9a2274f.
-Scope:exact5NEWscrubberlibrary/model/test/docpaths, no legacy/API/DB/queue effects.
-Real frozen advisory+schema/emitter/readbackPASS; genuine StageA artifact:
-ccm-p2a-scrubber-2026-10-21-operator.shaping-result.json, epics[]. Scoped local
-workorder/gate ledger disposition recorded, no Jira/tree/receipt invented.
-Private Node24.19/Ajv8.20/yaml2.9/tsx4.23 runtime uses164byteidenticalfrozenfiles,
-repo originals matchHEAD; no package/schema/linter changes. Genericsurface-prefix
-warnings disposed as valid soleCortexpaths. Explicit profile/API/refinements
-ratified; sourceis canonicalplanned scrubber/**, not an invented parallel service.
+OriginalcombinedPRclocktie failure retained: actual private same-second/cross-
+second control reproduced mechanism WITHOUT importing scrubber; unfrozen ingests
+can differ in recency, so no IDtie exists. ActualoriginalCIclocktrace unavailable.
+One exactsamehead failed/cancelled diagnostic rerun2PASS. That old test and BM2
+timingvariance are NOTfixed; no threshold/skip/source changes or stabilityclaim.
 
-Gate2/role admission committed2ddd0a85 before dispatch. Isolatedworktree:
-D:/Repos/ccm-worktrees/cortex-p2a, feat/foreman-line-ccm-p2a,
-acceptedbase6139ddd8802540829eebce07215106e4b16ca360.
-Freshnativegpt-6-luna/medium /root/p2a_builder Step0PASS and ONE initialbuild
-initialbuild complete:3013cases/2876PASS/137existingSKIP;267originalpinsunchanged.
-32independentHMACvectors match, detachedtree/closederrorchecksPASS.
-Two initialindependentOpuslowreviewsCHANGES_REQUIRED. Source-reproduced URLemptyuser
-leak, epochsubstringmetadata leak, depth32scalarrejection, denseoverlap and plain
-longrun/repeatedassignment timeouts. C02-R1 finitecandidate/int/rawlimits and
-exactboundarysemantics ratified915bbe97 BEFORE oneformalrepair; amendedadvisoryPASS.
-/root/p2a_builder asked Step0ONLY for thatrepair; awaitrestate thenissueGO.
-Do not dispatch duplicateworker or change its model/context.
-One later formal focusedrepair only, with freshStep0; normaldebugiterations within
-eachlane allowed. No builderprovider/key/network/DB/dependency/commit authority.
+## P2B current action
 
-Completebefore-sourceWindowsbaseline2993cases:2855PASS/137opt-inSKIP/oneknown
-BM2receipt_overhead_bounded[50] timingfailure9.38x>3.0 (0.4ms vs4.1ms). Accepted
-basebothmainCIgreen. Carryfailureexplicitly, no source/threshold/skipchanges or
-blindrerun. Preserve267oldpins, all2855passingidentities/137existingdispositions;
-any otherfailure/newskip needsconcretetriage. Completecandidatesuiterunretained,
-focused/format/types and exactheadCI mustPASS. See timingdisposition and baseline.
+FreshLunashaper producedONEdraft; parent ratifiedC02-B1 exact API/bounds/errors,
+not another full plan. Draftdocs/specs/drafts/CCM-P2B-bounded-text-chunker.md
+SHAb8b1d57696a56794cd0035d38636fddcd62e16bdd11a2f5415f01045580d38a0.
+Frozen two-layer draftadvisoryPASS, only generic Cortex-prefixwarnings disposed
+as soleimplementation paths. No schema/linter/package changes; existing private
+exact-byte Node24 runtime reused, no install. StageAemission stillnext.
+Parent verified planned pipeline directoryABSENT on acceptedbase, correcting
+unsupportedshaper existing-init/api claim. FOUR NEWpaths only:
+src/keon/cortex/pipeline/__init__.py;pipeline/ccm_text.py;
+tests/test_ccm_text.py;docs/specs/ccm-text-parser-v1.md. No existing API/init edits.
+Pure caller-suppliedbytes txt/md, strictUTF8, exactoffset/hash/lineending/BOM/NFC
+preservation;4MiBinput/64KiBchunk/derived<=65chunks, frozenrepr-safe wrappers,
+closederrors; no fileI/O/rendering/AST/Git/mapper/extractor/trust/queue/storage.
+Rawchunks are transient UNSANITIZED. P3 strictlydecodes andcallsP2A; P8 owns
+actual source/scope/checkpoint/idempotency. Formatdeclared only, no sniff/auth.
 
-NEXT completeoneformalLunarepair afterStep0, preserve3013baselineidentities/137skips
-and267pins, focused/full/format/types andparentHMAC/hostileproofs. Then2fresh
-independentclosureverdicts, greenexactheadmerge/StageF. Initialreviews/triage
-are actualcaptured finals; firstJSONfence parsedoffline fromsamecomplete response,
-no providerretry. JWTno-dotquadratic allegationnotestablished; lookbehind matters.
-Security-reviewskill applied locally; reviewers no tools/edits/effects, material
-locators/confidence/impact/remediation/coverage gaps, calibratedseverity.
+CleanP2Bworktree D:/Repos/ccm-worktrees/cortex-p2b,
+feat/foreman-line-ccm-p2b, exactbase76fa7c6eda6a4859e7d3a64815c760a77d4c07f0.
+Completebefore-source baselineRUNNING in private p2b-20261022-01; pin all regular
+trackedfiles and Gitlinkrepositoryentries separately. First localpreparation
+stoppedbeforetests when it triedreading Gitlinkdirectory as file; corrected
+pinsemantics, emptycapturedir reused, no sourcechange/inference. No blindrerun.
+NEXT actualbaseline ->promote exactworkorder/emitter+schema/readback ->commit
+real Gate2/roleadmission ->freshsmallnativeLunabuilder Step0/restatestop thenGO.
+Oneimplementation+oneformalrepair, no buildercommits/providers/network/DB.
+Require retainedbaselineidentities/137skips, allacceptedpins,focused/full/format/
+types, twoindependent completedcompactreviews, exacthead/mainCI beforeStageF.
 
-## Budget and date boundary
+## Budget boundary
 
-Current NYday is2026-10-22. Oct21shared4800EXPIRED at04UTC; NOT extended/reused.
-P2Abuild nativeaccountusage unknown/separate; rootP2AGenSparkcalls2/APIcalls0.
-NYOct22finite shared3200/entireP2A1400/seat350, expires2026-10-23T04UTC,
-actualexactpacket/day/accountadmission84d872ca BEFOREcalls. Initialreviews224.4
-reported/225.02425conservative; futuretwo closurecapacity700, no unknownP2Acall.
-Conservativeforeignguard1600 explicitlyretainsold700excess/350unknown/localholds;
-actualfreshaccount7390.8 beforefirst and7287.4 beforesecond, notbillingattribution.
-Requeryactualaccount/foreignledger before eachclosure; neverreuseOct21envelope.
-Reuse qualified Opuslow profile, no newqualification/providerhunt/launcherwork.
-Floor1000/effort9000 and allunknownholds persist; no automaticretry/fallback.
+Current NYday2026-10-22. Explicit finite shared4000/P2A2000 expires
+2026-10-23T04UTC; Oct21expired policy is NOTreused. Floor1000/effort9000 persist.
+P2A6POSTs (2initial,2incomplete,2explicitfreshclosures):743.6reported,
+1150.494conservative incl700failed-closureholds, futurecapacity0, no further
+P2Acalls. Foundation2626.729conservative; together3777.223; historical original
+94.6/failedP1B350 and APIunknown$0.17192 stillretained. APIknown+reserved$1.08227,
+no newAPIcalls. Nativeaccount usage UNKNOWN/separate, neverzero/conversion.
+Foreignledger READONLY; its700excess/350unknown/localholds retained, conservative
+foreignguard1600. Latest freshbalance6769.3 beforelastclosure, not a current
+balance/billingclaim. Fresh account/NYday/foreign guard before EVERY paidphase.
+No P2Bpaidbudget/packets/requestadmitted yet; choose finite exactenvelope under
+grant AFTER actualsource/packet known. Use existingqualifiedOpuslow route,
+compact<=500wordcompletedverdict and sufficientoutput allowance, no auto-retries.
 
-Foundationconservative2626.729 incloriginalGenSpark94.6+failedB350unknown;
-APIknown+reserved$1.08227inclunknown$0.17192. Nativeusage separateunknown.
-Current primaryfoundation receipts have no pendingproviderrequest/futurereview.
-Foreignledger remains READONLY. IMPORTANTnewdayforeignpolicy explicitly RETAINS
-old700 as its OWNexcesshold plusournewunknown350; allpriorholds1361.6 (historical
-external222.6+700excess+350unknown+local89). Do NOTreuse Oct21subtract700guard:
-the excessisnowforeign-retained, not our futurecapacity to release. Fresh foreign
-sqlite-native-20261022-0400phase75 also needs conservativefreshguarddisposition.
-UsefreshactualNYday/account/deltas/holds before every paidcall, preservecumulative
-history and lastpremidnightbalance7406.2 (foreignfresh03:59:24 corroboratesown).
-Select a finite newdateddayenvelope underexistinggrant whenactualpaidphaseknown;
-do not attributebalanceshiftstoaspecificcall orclaimbillingproof.
+## Remaining goal
 
-## Remaining boundaries
-
-P2A is purelibrary only; returnedmutabledata/type/flag is NOTproof of scrubbing.
-P3must callit immediatelybeforeactualdurableenqueue andprove no rawcopies.
-Synthetic hints never qualify/exempt; no universal detector/entropy/erasure claim.
-Authenticatedhightrustproducerallowlist stillzero, requiredbeforebackfill.
-TargetprofilebeforeP4, existingkey/backupqualificationbeforecryptoeffects,
-P2Bparsers/extractors and P3-P8/fullWave1/Wave2/benchmark/import/live-smoke gates
-remainopen. No personaldata imported, no bulk/fullgoalready claim.
-Historical approvals/failures stay in exact evidence/docsGit history;
-don't reopen settled Gate1/S01-S12/C02-D1/P1receipts or stale execution holds.
+P2Bchunker does not completeP2. AST/git/civicmapper/extractor remain small
+separatework; P3-P8/realWave1/Wave2/100kshard500knode benchmark, live-modelsmoke,
+producerqualification, key/backup/target/operational capacity/privacy/recovery/
+import gates remainOPEN. No personaldata import or bulk/fullContextready claim.
+All destructive effects still outside blanket NONDESTRUCTIVE authority.
