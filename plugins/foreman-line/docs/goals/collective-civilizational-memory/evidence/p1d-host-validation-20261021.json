@@ -1,0 +1,124 @@
+{
+  "atUtc": "2026-10-22T03:13:32.905278+00:00",
+  "sourceBase": "cc3a6defa78849b8df8795c58ac65866f31179d5",
+  "allPassed": true,
+  "testIdentities": 94,
+  "retainedBaseline": 79,
+  "candidatePins": {
+    "scripts/ccm_check_postgres.py": "ca09829fefc8006e31b6d6d150efcb925ea3baf4d752ed2408b1bde55b77d8f5",
+    "tests/test_ccm_postgres_capabilities.py": "d020581081437cd64eb9e148ff009be899dd2c33f00d1048ded038a81f6021c5",
+    "docs/specs/ccm-postgres-profile.md": "0bd85481ff6e13b2ebf4815bea816a9b6f21dc1d81e5333188334ce8fae7989a"
+  },
+  "builderHandoffPinsBeforeMechanicalFormat": {
+    "scripts/ccm_check_postgres.py": "ca09829fefc8006e31b6d6d150efcb925ea3baf4d752ed2408b1bde55b77d8f5",
+    "tests/test_ccm_postgres_capabilities.py": "d020581081437cd64eb9e148ff009be899dd2c33f00d1048ded038a81f6021c5",
+    "docs/specs/ccm-postgres-profile.md": "0bd85481ff6e13b2ebf4815bea816a9b6f21dc1d81e5333188334ce8fae7989a"
+  },
+  "mechanicalFormattingOnly": "isort/Black on two allowed new Python files before initial independent review; argparse error override return annotation corrected None to Never to match its actual unconditional exit; no semantic changes. Prior first host run94PASS with this single mypy override error is preserved in sibling host-validation.",
+  "runs": [
+    {
+      "name": "isort-format",
+      "exitCode": 0,
+      "seconds": 0.298,
+      "argv": [
+        "isort",
+        "scripts/ccm_check_postgres.py",
+        "tests/test_ccm_postgres_capabilities.py"
+      ],
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "black-format",
+      "exitCode": 0,
+      "seconds": 0.894,
+      "argv": [
+        "black",
+        "scripts/ccm_check_postgres.py",
+        "tests/test_ccm_postgres_capabilities.py"
+      ],
+      "outputSha256": "494439d71153e3d9433dddc06bdcb361a3f52884c8656aa6d5473036e0bb5730"
+    },
+    {
+      "name": "black",
+      "exitCode": 0,
+      "seconds": 0.519,
+      "argv": [
+        "black",
+        "--check",
+        "scripts/ccm_check_postgres.py",
+        "tests/test_ccm_postgres_capabilities.py"
+      ],
+      "outputSha256": "42952929f98ff284b84ffc33f5fca4e517620f9b2ceb3fca1375e504affa8195"
+    },
+    {
+      "name": "isort",
+      "exitCode": 0,
+      "seconds": 0.291,
+      "argv": [
+        "isort",
+        "--check-only",
+        "scripts/ccm_check_postgres.py",
+        "tests/test_ccm_postgres_capabilities.py"
+      ],
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "mypy",
+      "exitCode": 0,
+      "seconds": 1.378,
+      "argv": [
+        "mypy",
+        "scripts/ccm_check_postgres.py",
+        "--ignore-missing-imports",
+        "--namespace-packages",
+        "--cache-dir=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1d-20261021-01\\host-validation-noreturn\\mypy-cache"
+      ],
+      "outputSha256": "8e63ae22e8213e327a5e9cbd584067681681bd8ef7f25c869877887ccdcfc4ff"
+    },
+    {
+      "name": "pytest",
+      "exitCode": 0,
+      "seconds": 1.187,
+      "argv": [
+        "pytest",
+        "-p",
+        "pytest_asyncio.plugin",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--basetemp=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1d-20261021-01\\host-validation-noreturn\\pytest-tmp",
+        "--junitxml=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1d-20261021-01\\host-validation-noreturn\\tests.xml",
+        "tests/test_ccm_postgres_capabilities.py",
+        "tests/test_ingress_models.py",
+        "tests/test_evidence_envelope.py"
+      ],
+      "outputSha256": "716ec35e8f34ce48c92f8e8a6cf54d23173cfe5a785fbbe1ad0e810a1d74e472"
+    }
+  ],
+  "missingConfig": {
+    "contract_version": "ccm-contracts/2.0.1",
+    "error_codes": [
+      "config_missing"
+    ],
+    "extensions": {
+      "pg_trgm": null,
+      "vector": null
+    },
+    "features": {
+      "iterative_hnsw": false,
+      "pg_trgm": false,
+      "pgvector": false,
+      "tsvector_ts_rank_cd": false
+    },
+    "observed_at": "2026-10-22T03:13:32Z",
+    "postgres_version": "unknown",
+    "schema_version": "ccm-postgres-capabilities/1.0",
+    "status": "unavailable"
+  },
+  "missingConfigExit": 3,
+  "capture": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1d-20261021-01\\host-validation-noreturn",
+  "realDatabaseEvidence": false,
+  "realDisposableDatabaseGate": "OPEN; mock tests do not satisfy AC4",
+  "namedTargetGate": "OPEN before P4 pgvector use",
+  "accepted": false
+}
