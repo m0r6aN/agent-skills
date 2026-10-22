@@ -61,14 +61,22 @@ p2b-credential-origin-metadata-20261022.json. Entire-key rendering/truncation an
 validity are not verified. Most named parent process values equal HKCU User
 values; parent OpenAI process value DIFFERS from current User value. Do not
 blindly revoke the current User key based on that observation or infer child
-token identity. Ownership clarification was requested asynchronously; no reply
-assumed. Active affected keys/task tokens still need the appropriate custodian's
-rotation/refresh or an evidenced disposition. No global credential mutation done.
+material identity. Oversight's consolidated question for five unresolved account
+custodians remains pending; no reply assumed. TypeSafe direct Jev is identified,
+but its account custodian is unknown. Active affected secret keys still need the
+appropriate custodian's rotation/refresh or an evidenced disposition. Current
+parent BROWSER_USE_ACCESS_VERIFYING_IDENTITY and
+CODEX_TASK_WORKSPACE_VERIFYING_IDENTITY are Ed25519 PUBLIC SPKI verification
+material, not established bearer secrets; display alone does not require secret
+rotation. The browser consumer is OpenAI bundled browser-access; workspace issuer
+code was not located. Exact child material remains unknown, and no separate bearer
+or invalidation is claimed. See evidence/credential-ownership-trace-20261022.json
+and credential-rotation-runbook-20261022.md. No global credential mutation done.
 
 Parent completed P2B verification using the known working OS-only allowlist,
 retaining SystemRoot and excluding provider/DB/key variables;19 focused/full
 checks and397 pins pass. Parent in-memory matching found no known named parent
-credential values in10 candidate/saved-log files; per-task token coverage is
+credential values in10 candidate/saved-log files; child runtime material coverage is
 incomplete. Source manually inspected. NO environment/transcript diagnostic logs
 entered independent review packets. Exposed-key API routes remain unused.
 Existing GenSpark key is separately HKCU User loaded, absent parent Process and

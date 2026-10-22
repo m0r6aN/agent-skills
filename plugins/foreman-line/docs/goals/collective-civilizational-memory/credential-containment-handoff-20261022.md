@@ -5,9 +5,12 @@ authorized oversight session: resolve the incident, provide exact names and
 rotation steps, keep affected routes held, and continue safe work under existing
 authority. The oversight session owns the saved names-only
 [rotation runbook](credential-rotation-runbook-20261022.md); this originating
-coordinator retains Context source custody. Issuers for MUSE, LIQUID, NACE and
-TYPESAFE are not established and must not be guessed. The existing single
-ownership question remains pending; do not ask it again.
+coordinator retains Context source custody. Installed Pi documentation identifies
+TYPESAFE as the TypeSafe direct Jev classifier; its account custodian remains
+unknown. Issuers/accounts for MUSE, LIQUID, NACE and the MCP gateway remain
+unresolved and must not be guessed. Oversight's consolidated question for these
+five account custodians supersedes the broad token questions and remains pending;
+do not ask it again.
 
 ## Scope remains open
 
@@ -16,11 +19,18 @@ the credential-bearing environment. Affected provider routes remain held pending
 the appropriate custodian's rotation, refresh or evidenced disposition. No
 credential value, prefix, length or hash belongs in a handoff or review packet.
 
-The oversight session resolved current variable-name families to
+The oversight session classified the current parent's
 `BROWSER_USE_ACCESS_VERIFYING_IDENTITY` and
-`CODEX_TASK_WORKSPACE_VERIFYING_IDENTITY` by names-only inspection. This does not
-prove the stopped child's token identity. The original names-only incident record
-retains its historically truncated observations.
+`CODEX_TASK_WORKSPACE_VERIFYING_IDENTITY` as Ed25519 public SPKI verification
+material using in-memory ASN.1 metadata parsing, without retaining values,
+prefixes, lengths or hashes. Static installed code identifies the browser consumer
+as OpenAI's bundled browser-access service; the workspace issuer implementation
+was not located. These current parent values are not established bearer secrets
+and do not require secret rotation merely for display. The child transcript was
+not reopened, and its exact material remains unknown; do not invent a separate
+bearer token or claim invalidation. See
+`evidence/credential-ownership-trace-20261022.json` and the updated runbook.
+The original incident record retains its historically truncated observations.
 
 Nine provider variable names are recorded: `OPENAI_API_KEY`, `OPENROUTER_API_KEY`,
 `OPENCODE_API_KEY`, `XAI_API_KEY`, `MUSE_API_KEY`, `CEREBRAS_API_KEY`,
