@@ -1,0 +1,74 @@
+{
+  "startedAtUtc": "2026-10-22T04:40:43.718101+00:00",
+  "phase": "closure-A",
+  "status": "failed_no_retry",
+  "modelRequested": "claude-opus-5-5",
+  "effortRequested": "low",
+  "inputBytes": 73102,
+  "inputSha256": "a0c2679887cd145c58812ece3a55a3c75b587bf9d5e5ae22744daddd8f6efbc9",
+  "inputOperationalBound": 77358,
+  "maxOutputTokens": 6144,
+  "creditReservation": 350,
+  "bookedCredits": 350,
+  "operationalEstimatedBoundCredits": 280.3185,
+  "creditGuard": {
+    "atUtc": "2026-10-22T04:40:43.715680+00:00",
+    "balance": 7166.4,
+    "plan": "plus",
+    "foreignStateSha256": "5901fdf3787a62c63a7dbda9a8860c81bd42a86b1152654c8765a2f5fae1a8e0",
+    "foreignActualPriorAndPhaseGuard": 1452.5,
+    "foreignReservedConservativeGuard": 1600,
+    "foreignOld700Retained": true,
+    "nyDay": "2026-10-22",
+    "preMidnightBalance": 7406.2,
+    "observedDayDelta": 239.80000000000018,
+    "p2aBooked": 575.0242499999999,
+    "p2aRemainingCapacity": 700,
+    "p2aTotalGuard": 1275.02425,
+    "sharedDayGuard": 3114.82425,
+    "effortGuard": 5792.82425,
+    "accountAfterAllGuards": 4291.375749999999,
+    "limits": {
+      "p2a": 1400,
+      "sharedDay": 3200,
+      "effort": 9000,
+      "accountFloor": 1000
+    }
+  },
+  "postsMax": 1,
+  "automaticRetries": 0,
+  "timeoutSeconds": 180,
+  "modelReturned": "claude-opus-5-5",
+  "requestId": "chatcmpl-4bc7ec66-6ab1-4f77-ba99-8bc37f57057a",
+  "finishReason": "length",
+  "usage": {
+    "completion_tokens": 6144,
+    "prompt_tokens": 29087,
+    "total_tokens": 35231,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 4660,
+      "rejected_prediction_tokens": null,
+      "text_tokens": 1484
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "cache_write_tokens": 29083,
+      "text_tokens": 0,
+      "cache_creation_tokens": 29083,
+      "cache_creation_token_details": {
+        "ephemeral_5m_input_tokens": 29083,
+        "ephemeral_1h_input_tokens": 0
+      }
+    },
+    "cache_creation_input_tokens": 29083,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "global",
+    "speed": "standard"
+  },
+  "reportedCredits": 147.4,
+  "finishedAtUtc": "2026-10-22T04:41:50.430364+00:00",
+  "failureClass": "AssertionError"
+}
