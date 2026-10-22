@@ -1,6 +1,6 @@
 # Shaping Session Kickstarter — TEMPLATE
 
-> **Pantheon current authority:** Read the complete [OM-PAN-001 current mandate](../standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) before applying this document. Actual EX14 and DA001 supersede only Pantheon's obsolete owner-only amendment gates, revision limits and native-response meter. The authentic initial owner grant remains distinct; non-destructive coordinator decisions need no new human prompt but must be bounded, recorded, independently verified and enforced before effect. Exact Step0 comparison is automatic; source/review/security/repository gates still hold on missing evidence. No fake Human/Runtime receipts, worker scope expansion or destructive authority. The generic gates below apply to other goals; Pantheon uses the linked current mandate for every affected step.
+> **Pantheon:** Apply the complete [current OM-PAN-001 mandate](../standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) (EX14/DA001/D007) to every affected step. Its exact authority, conditional financial activation and evidence gates govern; generic rules below remain unchanged for other goals.
 
 > Reusable dispatch shell for a Foreman Line **Stage A shaping session**. Copy this
 > file, fill every `<PLACEHOLDER>`, and dispatch. This template describes the
@@ -9,36 +9,9 @@
 You are the Shaping Agent for `<SESSION-SLUG>`. Run the `/foreman-shaping` skill
 (`plugins/foreman-line/skills/foreman-shaping/SKILL.md`) and follow it exactly.
 
-**Dispatched Pi session** — approved route receipt `<PATH-TO-ROUTE-RECEIPT>`
-(not asserted — **minted** by the resolver): route `<PROVIDER/MODEL-ROUTE>` →
-declared fallback `<FALLBACK-ROUTE>`, thinking level `<LEVEL>`, role `<ROLE>`,
-routing class `<CLASS>`, data class `<DATA-CLASS>`, budget `<BUDGET>`, task
-envelope `<PATH>`, evidence requirements `<LIST>`. A Step 0 restatement that
-does not name the approved route (provider/model route and its declared
-fallback), with its version, is a dispatch failure — say so and STOP. The
-dispatch is authorized only by that approved route receipt: the launch boundary
-verifies it before any inference and fails closed when it is missing, stale,
-mismatched against the requested lane, or unsigned by the resolver, and the
-route, fallback chain, thinking level, role, routing class, data class, budget,
-task envelope, and evidence requirements are fixed before inference begins. Pi's
-interactive `defaultProvider`/`defaultModel` default is a recovery-friendly
-convenience outside Foreman work and is never a Foreman-dispatched route.
-Automatic routing is an execution convenience, not a new approval or
-coordination authority.
+Before launch and Step0, **read and enforce [Route admission](../../templates/kickstarters/builder-template.md#route-admission) and [Fallback eligibility](../../templates/kickstarters/builder-template.md#fallback-eligibility)** from the same verified installed plugin package. Fill every canonical route/receipt/version/fallback/thinking/role/class/data/budget/task/evidence field. A standalone directive must include those full sections if the links will not resolve; missing text holds dispatch. These shared launch rules grant no builder permissions.
 
-**Fallback and model IDs:** Every execution candidate declares **exactly one approved fallback of comparable or higher suitability**, carried as explicit
-fallback metadata in the `provider-neutral-fallback-contract` representation
-(`lane_routes` each carry exactly one typed fallback). A fallback is used only
-after preflight establishes that it is enabled, available, eligible for the data
-class, compatible with required tools/structured output, and within the
-remaining budget. In-provider OpenRouter failover may use Pi's per-model
-`openRouterRouting` controls; cross-provider failover is a new, recorded attempt
-started from a durable handoff — it never silently continues a coordinator,
-review, approval, merge, release, or security decision mid-turn. A degraded or
-unavailable primary routes only to its declared fallback; if both fail, the
-parcel stops and reports. Fallbacks are declared in the approved route and
-recorded in the route receipt — never invented in a template, never silently
-substituted, never credential-bearing. Model IDs are first-class in both Pi
+Model IDs are first-class in both Pi
 spellings — `opencode/<id>` and `openrouter/<vendor>/<id>` — while
 provider-neutral task/result envelopes are preserved; an OpenRouter slug is one
 spelling of a model ID, not the model vocabulary, and within OpenRouter slugs

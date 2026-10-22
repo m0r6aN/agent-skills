@@ -1,6 +1,6 @@
 # Shaping Session Kickstarter — TEMPLATE
 
-> **Pantheon current authority:** Read the complete [OM-PAN-001 current mandate](../../docs/standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) before applying this document. Actual EX14 and DA001 supersede only Pantheon's obsolete owner-only amendment gates, revision limits and native-response meter. The authentic initial owner grant remains distinct; non-destructive coordinator decisions need no new human prompt but must be bounded, recorded, independently verified and enforced before effect. Exact Step0 comparison is automatic; source/review/security/repository gates still hold on missing evidence. No fake Human/Runtime receipts, worker scope expansion or destructive authority. The generic gates below apply to other goals; Pantheon uses the linked current mandate for every affected step.
+> **Pantheon:** Apply the complete [current OM-PAN-001 mandate](../../docs/standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) (EX14/DA001/D007) to every affected step. Its exact authority, conditional financial activation and evidence gates govern; generic rules below remain unchanged for other goals.
 
 > Reusable dispatch shell for a Foreman Line **shaping session** (the pipeline's
 > first stage, turning a raw idea into linted parcel spec drafts). Copy this
@@ -12,72 +12,7 @@ your **installed Foreman Line plugin** (its skill directory named for shaping,
 `SKILL.md`), resolved from the plugin root, not from any path in this repo's
 own working tree — and follow it exactly.
 
-**Dispatched Pi session** — approved route receipt `<PATH-TO-ROUTE-RECEIPT>`
-(not asserted — **minted** by the resolver): route `<PROVIDER/MODEL-ROUTE>` →
-declared fallback `<FALLBACK-ROUTE>`, thinking level `<LEVEL>`, role `<ROLE>`,
-routing class `<CLASS>`, data class `<DATA-CLASS>`, budget `<BUDGET>`, task
-envelope `<PATH>`, evidence requirements `<LIST>`. A Step 0 restatement that
-does not name the approved route (provider/model route and its declared
-fallback), with its version, is a dispatch failure — say so and STOP rather than
-proceeding. The dispatch is authorized only by that approved route receipt: the
-launch boundary verifies it before any inference and fails closed when it is
-missing, stale, mismatched against the requested lane, or unsigned by the
-resolver, and the route, fallback chain, thinking level, role, routing class,
-data class, budget, task envelope, and evidence requirements are fixed before
-inference begins. Pi's interactive `defaultProvider`/`defaultModel` default is a
-recovery-friendly convenience outside Foreman work and is never a
-Foreman-dispatched route. Automatic routing is an execution convenience, not a
-new approval or coordination authority.
-
-**Fallback and model IDs:** Every execution candidate declares **exactly one approved fallback of comparable or higher suitability**, carried as explicit
-fallback metadata in the `provider-neutral-fallback-contract` representation
-(`lane_routes` each carry exactly one typed fallback). A fallback is used only
-after preflight establishes that it is enabled, available, eligible for the data
-class, compatible with required tools/structured output, and within the
-remaining budget. In-provider OpenRouter failover may use Pi's per-model
-`openRouterRouting` controls; cross-provider failover is a new, recorded attempt
-started from a durable handoff — it never silently continues a coordinator,
-review, approval, merge, release, or security decision mid-turn. A degraded or
-unavailable primary routes only to its declared fallback; if both fail, the
-parcel stops and reports. Fallbacks are declared in the approved route and
-recorded in the route receipt — never invented in a template, never silently
-substituted, never credential-bearing.
-
-**Model IDs and how the session is launched.** A dispatched session is started
-by the Pi CLI, naming the approved route's identity:
-
-```
-pi --model <provider>/<model-id>        # e.g. pi --model anthropic/claude-opus-5-5
-```
-
-`--model` carries the *identity*; it confers no authority. The approved route
-receipt remains the authorizing artifact, and the launch boundary still verifies
-it before inference. A bare `pi` with no approved route is a direct invocation
-and is not a Foreman execution path.
-
-Model IDs are first-class in **four** provider spellings, each recorded verbatim
-and never normalized toward another — exact string equality within one namespace
-only (Amendment 06 N1/N3):
-
-| Provider | Spelling | Example |
-|---|---|---|
-| `anthropic` (first-party) | **dashes** | `anthropic/claude-opus-5-5` |
-| `opencode` / `opencode-go` | dashes, no vendor | `opencode/<id>` |
-| `openrouter` | **dots**, vendor-prefixed | `openrouter/anthropic/claude-opus-5.5` |
-| `fireworks` (open-weight) | full path, `p` for a dot | `fireworks/accounts/fireworks/models/glm-5p3` |
-
-An OpenRouter slug is one spelling of a model ID, not the model vocabulary.
-`anthropic/claude-opus-5-5` and `openrouter/anthropic/claude-opus-5.5` are two
-namespaces describing two routes, not one id with two spellings — never derive
-or alias one from the other. Provider-neutral task/result envelopes are
-preserved throughout.
-
-**Open-weight lane.** `fireworks` models are eligible for **`public` data only**
-(residual `FIREWORKS_TRANSPORT_UNVERIFIED`): the invariant-(g) transport
-guarantees are unmeasured for an inference host that is not the model's author.
-An internal or restricted parcel never routes there. `opencode-go` is a declared
-provider with no bindings until its catalogue is captured
-(`OPENCODE_GO_CATALOGUE_UNFETCHED`) — it is never aliased to `opencode`.
+Before launch and Step0, **read and enforce all [Shared Pi launch requirements](builder-template.md#shared-pi-launch-requirements)** from the same verified installed plugin package. The dispatcher must fill its route-receipt/route/fallback/version/thinking/role/class/data/budget/task/evidence fields for this role. Copy those complete canonical sections with any standalone directive if the package reference will not resolve; otherwise hold dispatch. This reference does not grant builder mutation/commit permissions.
 
 Standing constraints apply — `docs/kickstarters/STANDING-CONSTRAINTS.md`.
 

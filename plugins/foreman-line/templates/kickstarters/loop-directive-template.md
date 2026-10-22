@@ -1,6 +1,6 @@
 # Loop Directive — TEMPLATE
 
-> **Pantheon current authority:** Read the complete [OM-PAN-001 current mandate](../../docs/standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) before applying this document. Actual EX14 and DA001 supersede only Pantheon's obsolete owner-only amendment gates, revision limits and native-response meter. The authentic initial owner grant remains distinct; non-destructive coordinator decisions need no new human prompt but must be bounded, recorded, independently verified and enforced before effect. Exact Step0 comparison is automatic; source/review/security/repository gates still hold on missing evidence. No fake Human/Runtime receipts, worker scope expansion or destructive authority. The generic gates below apply to other goals; Pantheon uses the linked current mandate for every affected step.
+> **Pantheon:** Apply the complete [current OM-PAN-001 mandate](../../docs/standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) (EX14/DA001/D007) to every affected step. Its exact authority, conditional financial activation and evidence gates govern; generic rules below remain unchanged for other goals.
 
 > Reusable shell for a goal's loop directive. Never copy over an existing loop
 > directive. Copy this file to `docs/goals/<GOAL-SLUG>/loop-directive.md` and
@@ -102,7 +102,7 @@ quick flags; the Coordinator writes no quick-flag token into one (registry §4).
 
 ## Crash recovery
 
-For OM-PAN-001, apply the current EX14/DA001 succession, native-start and session-floor rules in `docs/standing-mandates/OM-PAN-001.md` before any recovery dispatch. No generic fresh session bypasses the eight-session ceiling, single reserved checker successor, author exclusions or builder deadline. After permanent cutover, native recovery never reopens automatically; persist the deduplicated post-cutover repair exception and continue read-only reconstruction.
+For OM-PAN-001, apply the current EX14/DA001/D007 succession, native-start and session-floor rules in `docs/standing-mandates/OM-PAN-001.md` before any recovery dispatch. No generic fresh session bypasses the eight-session ceiling, single reserved checker successor, author exclusions or builder deadline. After permanent cutover, native recovery never reopens automatically; persist the deduplicated post-cutover repair exception and continue read-only reconstruction.
 
 On any wake (scheduled, a completion notice, or a human nudge) while expecting
 a builder or reviewer result, first check whether that session is still

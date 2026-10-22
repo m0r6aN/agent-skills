@@ -1,6 +1,6 @@
 # AGENTS.md — canon entry point
 
-> **Pantheon current authority:** Read the complete [OM-PAN-001 current mandate](../docs/standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) before applying this document. Actual EX14 and DA001 supersede only Pantheon's obsolete owner-only amendment gates, revision limits and native-response meter. The authentic initial owner grant remains distinct; non-destructive coordinator decisions need no new human prompt but must be bounded, recorded, independently verified and enforced before effect. Exact Step0 comparison is automatic; source/review/security/repository gates still hold on missing evidence. No fake Human/Runtime receipts, worker scope expansion or destructive authority. The generic gates below apply to other goals; Pantheon uses the linked current mandate for every affected step.
+> **Pantheon:** Apply the complete [current OM-PAN-001 mandate](../docs/standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) (EX14/DA001/D007) to every affected step. Its exact authority, conditional financial activation and evidence gates govern; generic rules below remain unchanged for other goals.
 
 **The Foreman Line** is the pipeline this repo runs its own development
 through: it turns a raw idea into a reviewed, merged change by passing it

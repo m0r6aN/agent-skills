@@ -1,6 +1,6 @@
 # Builder Kickstarter — TEMPLATE
 
-> **Pantheon current authority:** Read the complete [OM-PAN-001 current mandate](../../docs/standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) before applying this document. Actual EX14 and DA001 supersede only Pantheon's obsolete owner-only amendment gates, revision limits and native-response meter. The authentic initial owner grant remains distinct; non-destructive coordinator decisions need no new human prompt but must be bounded, recorded, independently verified and enforced before effect. Exact Step0 comparison is automatic; source/review/security/repository gates still hold on missing evidence. No fake Human/Runtime receipts, worker scope expansion or destructive authority. The generic gates below apply to other goals; Pantheon uses the linked current mandate for every affected step.
+> **Pantheon:** Apply the complete [current OM-PAN-001 mandate](../../docs/standing-mandates/OM-PAN-001.md#current-authority-and-delegated-decisions) (EX14/DA001/D007) to every affected step. Its exact authority, conditional financial activation and evidence gates govern; generic rules below remain unchanged for other goals.
 
 > Reusable dispatch shell for a Foreman Line **builder session**. Copy this
 > file, fill every `<PLACEHOLDER>`, and dispatch. This template describes the
@@ -8,6 +8,12 @@
 
 **Goal:** `<GOAL-SLUG>` · **Parcel:** `<PARCEL-ID>`
 **Dispatched:** `<DATE>` · **risk:** `<risk-level>` · **routing_class:** `<routing-class>`
+
+## Shared Pi launch requirements
+
+These complete requirements apply to builder, reviewer and shaping roles that require this section. Read and enforce them before launch and Step0; a copied standalone directive must carry these exact sections or resolve them from the same verified installed plugin package. Missing/unavailable canonical text holds dispatch. This shared section grants no builder permissions to reviewers or shapers; their own role restrictions remain. Pantheon uses its scoped mandate where explicitly applicable.
+
+### Route admission
 
 **Dispatched Pi session** — approved route receipt `<PATH-TO-ROUTE-RECEIPT>`
 (not asserted — **minted** by the resolver): route `<PROVIDER/MODEL-ROUTE>` →
@@ -26,6 +32,8 @@ convenience outside Foreman work and is never a Foreman-dispatched route.
 Automatic routing is an execution convenience, not a new approval or
 coordination authority.
 
+### Fallback eligibility
+
 **Fallback and model IDs:** Every execution candidate declares **exactly one approved fallback of comparable or higher suitability**, carried as explicit
 fallback metadata in the `provider-neutral-fallback-contract` representation
 (`lane_routes` each carry exactly one typed fallback). A fallback is used only
@@ -39,6 +47,8 @@ unavailable primary routes only to its declared fallback; if both fail, the
 parcel stops and reports. Fallbacks are declared in the approved route and
 recorded in the route receipt — never invented in a template, never silently
 substituted, never credential-bearing.
+
+### Model identifiers
 
 **Model IDs and how the session is launched.** A dispatched session is started
 by the Pi CLI, naming the approved route's identity:
@@ -75,6 +85,8 @@ guarantees are unmeasured for an inference host that is not the model's author.
 An internal or restricted parcel never routes there. `opencode-go` is a declared
 provider with no bindings until its catalogue is captured
 (`OPENCODE_GO_CATALOGUE_UNFETCHED`) — it is never aliased to `opencode`.
+
+## Builder standing constraints
 
 Standing constraints apply — `docs/kickstarters/STANDING-CONSTRAINTS.md`.
 `<NAME ANY RULES THIS PARCEL BOTH OBEYS AND SPECIFICALLY EXERCISES, IF ANY.>`
