@@ -1,7 +1,7 @@
 ---
 ticket: CCM-P2A
 title: Deterministic in-memory CCM scrubber
-status: draft
+status: active
 owner: clinton.morgan
 created: '2026-10-21'
 updated: '2026-10-21'
