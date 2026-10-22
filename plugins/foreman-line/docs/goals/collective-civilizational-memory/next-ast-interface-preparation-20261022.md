@@ -84,3 +84,19 @@ account, date, foreign-hold and finite-budget checks; no budget is inferred here
 Until then, bounded parent validation may use the verified OS-only subprocess
 environment. That boundary does not admit a native worker whose tool process
 still inherits credentials or prevent same-user registry/file access.
+
+## Bounded local observations
+
+Eight synthetic cases passed in a fixed OS-only parent subprocess on Python
+3.13.7, with zero provider requests and no execution of supplied source. Cases
+cover plain declarations, BOM/CRLF, Unicode and decomposed identifiers, decorators
+and nested async declarations, an encoding-cookie conflict, syntax outside the
+requested grammar, and a parsed top-level raise canary that was never executed.
+Evidence: `evidence/ast-preparation-observations-20261022.json`.
+
+The observations make two contract decisions concrete: Python's parsed names can
+differ from original identifier spelling (Kelvin-sign identifier becomes K;
+decomposed spelling becomes the composed name), and a BOM needs explicit handling
+when mapping first-line parser positions to original bytes. These are current
+runtime observations, not a ratified cross-version parser or safety profile.
+Supported CI runtime comparison and adversarial resource bounds remain open.
