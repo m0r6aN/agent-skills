@@ -50,6 +50,17 @@ advisory/schema/emitter/readback passed, Gate2 commit5e9d0b06 before fresh worke
 
 ## Actual credential-handling incident — OPEN
 
+Latest gateway disposition supersedes the unresolved mapping notes below:
+oversight traced MCP_GATEWAY_AUTH_TOKEN to the saved local Pi Docker client,
+Authorization Bearer header and local setup/start scripts. Current endpoint is
+local 127.0.0.1:8811; this is not established Azure Keon credential identity.
+Current global entry is stdio, no 8811/8812 listeners reported, and observed Docker
+MCP processes use default stdio. Oversight owns dormant User-token replacement;
+completion is not yet claimed. Parent/client refresh and a qualified isolated
+auth check remain required before closure. No server/container start, old-token
+request or route release is authorized by this mapping. Historical Azure source
+observations below remain context only; do not alter unrelated signing trust.
+
 The P2B worker ran Get-ChildItem Env: | Sort-Object Name while diagnosing Windows
 asyncio startup. Credential-valued variables appeared in its native tool
 transcript. Parent stopped that worker; it remains idle and no further commands

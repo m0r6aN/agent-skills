@@ -48,6 +48,30 @@ evidence of rotation, revocation or expiry.
 
 ## Scope remains open
 
+### Current local gateway mapping supersedes the earlier unresolved mapping
+
+Oversight located the saved Pi Docker client
+C:/Users/clint/Documents/Codex/2026-09-23/pl/.mcp.json using
+${PI_MCP_GATEWAY_URL}/mcp with Authorization: Bearer ${MCP_GATEWAY_AUTH_TOKEN}.
+Its work/pi-docker-mcp/setup.ps1 generates and persists a local User token when
+absent; start-gateway.ps1 loads that token for Docker MCP streaming on port 8811.
+Names-only/boolean evidence links the current process/User endpoint to local
+127.0.0.1:8811 and confirms process/User token equality and generator conformity.
+No token value is retained here. Installed Docker help and official security
+documentation identify this environment variable as Docker MCP HTTP bearer auth.
+This establishes the local Docker binding; the earlier Azure Keon source findings
+do not establish an Azure credential identity and are historical investigation
+context, not instructions to alter Azure signing trust or control-plane keys.
+
+Oversight reports the current global MCP entry uses stdio, no listeners on
+8811/8812, and observed Docker MCP processes without HTTP transport/port flags.
+Oversight owns replacement of the dormant local User token under existing
+authority. Replacement is planned, not claimed complete in this handoff. Parent
+and client refresh plus a qualified isolated authentication check are required
+before closure. Do not start a gateway/container, test the old token or release
+routes on this mapping alone. The originating coordinator does not duplicate
+credential mutation or gateway investigation.
+
 The stopped P2B worker stays stopped. No new delegated shell worker may inherit
 the credential-bearing environment. Affected provider routes remain held pending
 the appropriate custodian's rotation, refresh or evidenced disposition. No
