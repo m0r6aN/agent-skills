@@ -1,0 +1,13 @@
+{
+  "atUtc": "2026-10-22T03:18:14.555881+00:00",
+  "parcel": "CCM-P1D",
+  "unit": "GenSpark prepaid credits",
+  "reportedSpent": 68.2,
+  "knownCompletedConservativeCredits": 68.475,
+  "unresolvedReservations": 0,
+  "parcelCeiling": 500,
+  "focusedClosureReservation": 250,
+  "sharedNYOct21Ceiling": 4000,
+  "nativeCodexUsage": "unknown/separate",
+  "status": "Independent CHANGES_REQUIRED; focused repair Step0 pending; real DBgateOPEN"
+}

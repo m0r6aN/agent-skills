@@ -1,0 +1,61 @@
+{
+  "startedAtUtc": "2026-10-22T03:15:56.139400+00:00",
+  "phase": "review-A",
+  "modelRequested": "claude-opus-5-5",
+  "effortRequested": "low",
+  "outputMax": 6144,
+  "inputBytes": 36877,
+  "inputSha256": "149d7b8332db751c816b49e66ddf9b341518d9ef121c169f625879d61169f434",
+  "inputOperationalBound": 41133,
+  "creditReservation": 250,
+  "modeledAtByteBoundCredits": 180.69975,
+  "status": "completed_json_pending_host_validation",
+  "retries": 0,
+  "requestsMax": 1,
+  "creditGuard": {
+    "balance": 7890.2,
+    "rawSharedDay": 3041.1000000000004,
+    "ownedPendingReplaced": 700,
+    "ownClosureKnownAndUnknown": 888.857,
+    "cycleBooked": 0,
+    "futureOtherSeatReserved": 0,
+    "sharedDayIncludingAllPhaseReservations": 3479.9570000000003,
+    "effortIncludingAllPhaseReservations": 3560.2570000000005
+  },
+  "httpStatus": 200,
+  "modelReturned": "claude-opus-5-5",
+  "requestId": "chatcmpl-387ab198-a53b-4443-be85-9de0fa96fd5b",
+  "finishReason": "stop",
+  "usage": {
+    "completion_tokens": 2743,
+    "prompt_tokens": 13928,
+    "total_tokens": 16671,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": null,
+      "text_tokens": 2743
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "cache_write_tokens": 13924,
+      "text_tokens": 0,
+      "cache_creation_tokens": 13924,
+      "cache_creation_token_details": {
+        "ephemeral_5m_input_tokens": 13924,
+        "ephemeral_1h_input_tokens": 0
+      }
+    },
+    "cache_creation_input_tokens": 13924,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "global",
+    "speed": "standard"
+  },
+  "reportedCredits": 68.2,
+  "conservativeCatalogCredits": 68.475,
+  "bookedCredits": 68.475,
+  "visibleBytes": 7778,
+  "finishedAtUtc": "2026-10-22T03:16:24.937536+00:00"
+}
