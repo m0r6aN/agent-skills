@@ -1,0 +1,77 @@
+{
+  "stage": "initial_candidate",
+  "originalPins": 267,
+  "originalPinsUnchanged": true,
+  "python310Ast": true,
+  "baselineCases": 2993,
+  "candidateCases": 3013,
+  "candidatePassed": 2876,
+  "candidateSkipped": 137,
+  "baselineFailureNowPassed": "existing BM2 timing variance; no repair claim",
+  "independentHmacCases": 32,
+  "independentHmacPassed": 32,
+  "referenceSha256": "f9f2a0c7cd9100988bc4d1df6c9a66dfd4698820e5d66376001df9467a502de4",
+  "detachedTreeProbe": "pass",
+  "probes": [
+    {
+      "name": "invalid_unicode_closed",
+      "observed": "closed_error",
+      "code": "invalid_unicode",
+      "safeException": true
+    },
+    {
+      "name": "empty_username_url",
+      "observed": {
+        "credentialStillPresent": true
+      }
+    },
+    {
+      "name": "depth32_container_leaf",
+      "observed": "closed_error",
+      "code": "resource_limit",
+      "safeException": true
+    },
+    {
+      "name": "redaction_key_collision",
+      "observed": "closed_error",
+      "code": "key_collision",
+      "safeException": true
+    },
+    {
+      "name": "malformed_pem",
+      "observed": "closed_error",
+      "code": "invalid_payload",
+      "safeException": true
+    },
+    {
+      "name": "malformed_quote",
+      "observed": "closed_error",
+      "code": "invalid_payload",
+      "safeException": true
+    },
+    {
+      "name": "epoch_known_substring",
+      "observed": {
+        "epochReturned": "preFAKEpost"
+      }
+    },
+    {
+      "name": "subclass_no_coercion",
+      "observed": "closed_error",
+      "code": "unsupported_value",
+      "safeException": true
+    }
+  ],
+  "boundedDenseOverlapProbe": {
+    "status": "local_child_stopped_at_4_seconds",
+    "seconds": 4.056
+  },
+  "fileHashes": {
+    "src/keon/cortex/scrubber/__init__.py": "3be2e23bab4f17b393b5de8a25a22782f6fa3a3a6da88917d58f8b116efdbc7a",
+    "src/keon/cortex/scrubber/models.py": "c57a6b725224d6f405e4ffd4d09b2c0a649f03094411f80121de5714b7d456b2",
+    "src/keon/cortex/scrubber/service.py": "66a0522a4f63e4fbfc6b738f9f1ecdbbd27fd5929dc7b91fb990b753ed8c95fb",
+    "tests/test_ccm_scrubber.py": "1beab4683ac3cb7f1d2ee39a3d10cf20f2a9df872c5719ba67a260dc245b1d38",
+    "docs/specs/ccm-scrubber-v1.md": "fee39437e045c4b0bdc6fa4dd7c696a1fb9dfae72798a60e5e06736396f39864"
+  },
+  "limits": "Local synthetic source probes only; no DB/network/credential use; dense child killed locally on bound"
+}

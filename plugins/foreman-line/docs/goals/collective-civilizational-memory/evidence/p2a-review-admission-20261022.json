@@ -1,0 +1,49 @@
+{
+  "atUtc": "2026-10-22T04:23:10.166722+00:00",
+  "authority": "Direct owner blanket non-destructive decisions/approvals and GenSpark increase authority; operator finite decision, not human/pipeline receipt",
+  "dayExpiresAtUtc": "2026-10-23T04:00:00Z",
+  "phaseCapacity": 350,
+  "wholeP2ACapacity": 1400,
+  "reviewPlan": "2 independent initial seats, up to2 closure seats after one formal repair; no automatic retries",
+  "model": "claude-opus-5-5",
+  "effort": "low",
+  "maxOutputTokens": 6144,
+  "configuredSocketTimeoutSeconds": 180,
+  "hardRemoteTokenRequestCancellationBillingGuarantee": false,
+  "nativeAccountUsage": "Unknown/separate, not converted",
+  "oldUnknownReservations": "94.6 original +350 failed P1B +all API unknowns retained; foreign explicitly owns retained700 excess and its own local holds; no release",
+  "guard": {
+    "atUtc": "2026-10-22T04:23:10.166632+00:00",
+    "balance": 7390.8,
+    "plan": "plus",
+    "foreignStateSha256": "de39204a802214202c2f838e75b9573a876ec78dce979c9fb969f95371d28edf",
+    "foreignActualPriorAndPhaseGuard": 1452.5,
+    "foreignReservedConservativeGuard": 1600,
+    "foreignOld700Retained": true,
+    "nyDay": "2026-10-22",
+    "preMidnightBalance": 7406.2,
+    "observedDayDelta": 15.399999999999636,
+    "p2aBooked": 0,
+    "p2aRemainingCapacity": 1400,
+    "p2aTotalGuard": 1400,
+    "sharedDayGuard": 3015.3999999999996,
+    "effortGuard": 5693.4,
+    "accountAfterAllGuards": 4390.8,
+    "limits": {
+      "p2a": 1400,
+      "sharedDay": 3200,
+      "effort": 9000,
+      "accountFloor": 1000
+    }
+  },
+  "packets": {
+    "review-A-input": {
+      "bytes": 52976,
+      "sha256": "21d7eaff47621b6477ae2fecdd5f00268e769c7208438d88462cb89cf2a2ce3c"
+    },
+    "review-B-input": {
+      "bytes": 53006,
+      "sha256": "c4f8d535fb8d3caa5c592adf8dafd9cf67e1cfa460ecb8b2cb10d3defd1af710"
+    }
+  }
+}
