@@ -1,4 +1,4 @@
-# CCM coordinator loop — October21 NY, source PR in exact-head CI
+# CCM coordinator loop — October21 NY, P1A merged / P1B focused repair
 
 Updated 2026-10-22T01:59:18.824337+00:00. This current section supersedes historical execution holds;
 prior approvals, failed captures and unknown reservations remain preserved.
@@ -45,6 +45,31 @@ NEXT consume builder report, independently compare all30pairs, validate full
 scope/200baseline/params/replay and route2frontier reviews. Do not start a second
 builder or mistake partial code for accepted work. P1C/D remain draft and bounded
 later work; no full-goal or bulk-import readiness claim.
+
+## P1B current repair checkpoint
+
+Native Luna build delivered five paths. Host231PASS/all200baseline retained;
+Black/isort/mypyPASS after annotation-only correction. Operator independently
+recomputed ALL30 fixture and production pairs with Decimal70, <=1e-10 absolute
+AND relative; default hashes independently reproduced with stdlib JSON/SHA256.
+Old served v1/1.1 replay payload11824bytes is byte-identical across preP1A,
+acceptedP1Amerge and P1Bcurrent:903b2460fb4514cce054d38f91fceae63684d4653db812aa2ec5f81c7dd1867e.
+Two independent Opus initial reviews CHANGES_REQUIRED. Main findings: frozen
+params allow tuning, unconsumed negative labels, undefined underflow behavior;
+host reproduced badparams/falsyfallback/lifecycle/order raw exception cases.
+Consolidated same5path triage recorded; Luna repairStep0 PASS and ONE focused
+repair now authorized/in flight. No extra source attempt/worker/new key/provider.
+[Findings](p1b-independent-review-findings-20261021.md),
+[triage](evidence/p1b-independent-review-triage-20261021.json).
+NEXT consume repair, rerun meaningful host checks/numeric comparisons, then2
+independent closure reviews. Reuse qualified low-effort Opus profile. Chosen
+finite closure envelope under owner's grant: P1B1000/sharedNYOct21 2600,
+2calls<=350each,90000UTF8bytes+4096proxyallowance,6144output,180seconds,no retries,
+floor1000/effort9000. P1B initial booked205.94475; P1A1047.644 and original94.6
+unknown/API$0.17192 preserved. NativeCodexusage separateunknown; no APIbuildercall.
+No P1B acceptance/merge or bulk readiness claimed. Do not send stale first-build
+packet or reopen settled approvals. Full per-call model limits remain operational
+estimates, not remote guarantees. See p1b-closure-envelope-20261021.json.
 
 ## Previous source integration record (history)
 

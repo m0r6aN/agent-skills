@@ -1,0 +1,112 @@
+{
+  "atUtc": "2026-10-22T02:10:35.336499+00:00",
+  "allPassed": true,
+  "runs": [
+    {
+      "name": "isort-format",
+      "exitCode": 0,
+      "seconds": 0.795,
+      "argv": [
+        "isort",
+        "src/keon/cortex/gravity/params.py",
+        "src/keon/cortex/gravity/function_v2.py",
+        "src/keon/cortex/gravity/retention_v2.py",
+        "tests/gravity/test_ccm_v2.py"
+      ],
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "black-format",
+      "exitCode": 0,
+      "seconds": 1.872,
+      "argv": [
+        "black",
+        "src/keon/cortex/gravity/params.py",
+        "src/keon/cortex/gravity/function_v2.py",
+        "src/keon/cortex/gravity/retention_v2.py",
+        "tests/gravity/test_ccm_v2.py"
+      ],
+      "outputSha256": "ae9f6f257f754458eca85281dbe26aca533a6fe4332c1a893ee50c4480180c1e"
+    },
+    {
+      "name": "black",
+      "exitCode": 0,
+      "seconds": 0.68,
+      "argv": [
+        "black",
+        "--check",
+        "src/keon/cortex/gravity/params.py",
+        "src/keon/cortex/gravity/function_v2.py",
+        "src/keon/cortex/gravity/retention_v2.py",
+        "tests/gravity/test_ccm_v2.py"
+      ],
+      "outputSha256": "ce29a48ef7d7d961badb0f7aec2eb4c319c19c85fc5e9b698ba6b9b4bec2d2c7"
+    },
+    {
+      "name": "isort",
+      "exitCode": 0,
+      "seconds": 0.635,
+      "argv": [
+        "isort",
+        "--check-only",
+        "src/keon/cortex/gravity/params.py",
+        "src/keon/cortex/gravity/function_v2.py",
+        "src/keon/cortex/gravity/retention_v2.py",
+        "tests/gravity/test_ccm_v2.py"
+      ],
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "mypy",
+      "exitCode": 1,
+      "seconds": 1.798,
+      "argv": [
+        "mypy",
+        "src/keon/cortex/gravity/params.py",
+        "src/keon/cortex/gravity/function_v2.py",
+        "src/keon/cortex/gravity/retention_v2.py",
+        "--ignore-missing-imports",
+        "--namespace-packages",
+        "--cache-dir=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1b-20261021-01\\host-validation\\mypy-cache"
+      ],
+      "outputSha256": "4b86730b25630a43098db6336980eadc30659ef3926bd62b514425493a8f45bb"
+    },
+    {
+      "name": "pytest",
+      "exitCode": 0,
+      "seconds": 2.242,
+      "argv": [
+        "pytest",
+        "-p",
+        "pytest_asyncio.plugin",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--basetemp=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1b-20261021-01\\host-validation\\pytest-tmp",
+        "--junitxml=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1b-20261021-01\\host-validation\\tests.xml",
+        "tests/gravity",
+        "tests/test_ingress_models.py"
+      ],
+      "outputSha256": "c498e761a908bafea3c278701c35b6811369202a805b3550802cd76d6dbbb367"
+    }
+  ],
+  "testIdentities": 231,
+  "retainedBaseline": 200,
+  "failureCount": 0,
+  "unchangedOriginalPinnedFiles": 21,
+  "paramsAppendOnly": true,
+  "candidatePins": {
+    "src/keon/cortex/gravity/params.py": "a769f1774b35325addea0bd2b4960c7653308ad76c949b78208029b5f06b5649",
+    "src/keon/cortex/gravity/function_v2.py": "0dfeda89175f2247b2240fa39382b5b8b8d175bc094f9165bad05f788da22f2d",
+    "src/keon/cortex/gravity/retention_v2.py": "6f374ade767b45be2ae21f0a58fac529ca9127fecb3c99dcfaaae299e14c460a",
+    "tests/gravity/test_ccm_v2.py": "c58093a5cda6cb105ef4031d51e672422e5fbe91905d71eac321c2b3b3c86bea",
+    "tests/fixtures/ccm/gravity-v2.json": "05495b5d93f95aeb8c0dcb93e23565b481a1a13e1a1f1de686e5c54803bf1359"
+  },
+  "capture": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1b-20261021-01\\host-validation",
+  "accepted": false,
+  "mypyTypeAnnotationRepair": {
+    "change": "Explicit float annotation only; no executable math change",
+    "exitCode": 0,
+    "outputSha256": "281a094c39385b4d7b53e5db635f52158036861433c2a4975b9039e77a627a24"
+  }
+}

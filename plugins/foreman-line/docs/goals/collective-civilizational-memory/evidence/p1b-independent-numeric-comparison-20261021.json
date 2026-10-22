@@ -1,0 +1,658 @@
+{
+  "atUtc": "2026-10-22T02:10:35.336499+00:00",
+  "status": "ALL30 PASS for fixture and production vs independent Decimal70, absolute AND relative errors <=1e-10",
+  "referenceCapturedBeforeBuilderOutput": true,
+  "referenceSha256": "9c41fb7e3048880cf3a5ae629eae95976deb673b829a71d52b1c2d2bd3702299",
+  "method": "Python Decimal70; independently written R=9S/(9S+delta), S update with Decimal fractional power; no production imports/helpers or builder-generated numbers",
+  "calculatorScriptSha256": "c483dc7a6cc8da1480f97dad9f44b6dfc77223d884b992f80412b6dec6ad86e7",
+  "builder": "Native gpt-6-luna, distinct from operator numeric reviewer; reference withheld",
+  "sourceBase": "cc3a6defa78849b8df8795c58ac65866f31179d5",
+  "candidatePins": {
+    "src/keon/cortex/gravity/params.py": "a769f1774b35325addea0bd2b4960c7653308ad76c949b78208029b5f06b5649",
+    "src/keon/cortex/gravity/function_v2.py": "8dfe7c5265196e11e04192e98c00c679fca78cdbcc8f7ba79d1f6cd5ea8e4487",
+    "src/keon/cortex/gravity/retention_v2.py": "6f374ade767b45be2ae21f0a58fac529ca9127fecb3c99dcfaaae299e14c460a",
+    "tests/gravity/test_ccm_v2.py": "c58093a5cda6cb105ef4031d51e672422e5fbe91905d71eac321c2b3b3c86bea",
+    "tests/fixtures/ccm/gravity-v2.json": "05495b5d93f95aeb8c0dcb93e23565b481a1a13e1a1f1de686e5c54803bf1359"
+  },
+  "versions": {
+    "gravity": "gravity/2.0.0",
+    "params": "gravity-params/2.0.0",
+    "formula_id": "ccm-gravity-v2:rrf-60:score-0.45-0.25-0.15-0.15:fsrs-success-1.20",
+    "default_params_hash": "2daacf2518c98d1b8659b4188720d1caf6cc5a49c734bf01df5c4a97d63d28be",
+    "default_function_hash": "548bfff90776346e8bf2e6d8044837ddb9e1a137fcc3303ff51099de017035a7"
+  },
+  "comparisonCount": 30,
+  "comparisons": [
+    {
+      "class": "ephemeral_status",
+      "trajectory": "weekly",
+      "eventDay": 7,
+      "deltaDays": 7,
+      "difficulty": 0.5,
+      "independentR": "0.7941176470588235294117647058823529411764705882352941176470588235294118",
+      "independentS": "3.584348636869579687701630766678735976914057217745740726126793127570104",
+      "values": {
+        "fixtureR": 0.7941176470588235,
+        "fixtureS": 3.58434863686958,
+        "productionR": 0.7941176470588235,
+        "productionS": 3.58434863686958
+      },
+      "absoluteErrors": {
+        "fixtureR": "2.941176470588235294117647059E-17",
+        "fixtureS": "3.122983692333212640230859428E-16",
+        "productionR": "2.941176470588235294117647059E-17",
+        "productionS": "3.122983692333212640230859428E-16"
+      }
+    },
+    {
+      "class": "ephemeral_status",
+      "trajectory": "weekly",
+      "eventDay": 14,
+      "deltaDays": 7,
+      "difficulty": 0.5,
+      "independentR": "0.8216975612705495602464025226134995891549753964359406896774070233164873",
+      "independentS": "4.223644083945657280489503907872982461752076221267189212172326109339369",
+      "values": {
+        "fixtureR": 0.8216975612705496,
+        "fixtureS": 4.223644083945658,
+        "productionR": 0.8216975612705496,
+        "productionS": 4.223644083945658
+      },
+      "absoluteErrors": {
+        "fixtureR": "3.975359747738650041084502460E-17",
+        "fixtureS": "7.195104960921270175382479238E-16",
+        "productionR": "3.975359747738650041084502460E-17",
+        "productionS": "7.195104960921270175382479238E-16"
+      }
+    },
+    {
+      "class": "ephemeral_status",
+      "trajectory": "weekly",
+      "eventDay": 21,
+      "deltaDays": 7,
+      "difficulty": 0.5,
+      "independentR": "0.8444886675666739107057996069798560833409579908927278638481980031949691",
+      "independentS": "4.920163529517929596034539852308484338103726237860877582799111747996256",
+      "values": {
+        "fixtureR": 0.844488667566674,
+        "fixtureS": 4.92016352951793,
+        "productionR": 0.844488667566674,
+        "productionS": 4.92016352951793
+      },
+      "absoluteErrors": {
+        "fixtureR": "8.929420039302014391665904201E-17",
+        "fixtureS": "4.039654601476915156618962738E-16",
+        "productionR": "8.929420039302014391665904201E-17",
+        "productionS": "4.039654601476915156618962738E-16"
+      }
+    },
+    {
+      "class": "ephemeral_status",
+      "trajectory": "weekly",
+      "eventDay": 28,
+      "deltaDays": 7,
+      "difficulty": 0.5,
+      "independentR": "0.8634984574548175027190725820233807188961138017566932091609963233939882",
+      "independentS": "5.676545895150702061099136390652832775761028561108703688233432142831029",
+      "values": {
+        "fixtureR": 0.8634984574548175,
+        "fixtureS": 5.676545895150702,
+        "productionR": 0.8634984574548175,
+        "productionS": 5.676545895150702
+      },
+      "absoluteErrors": {
+        "fixtureR": "2.719072582023380718896113802E-18",
+        "fixtureS": "6.109913639065283277576102856E-17",
+        "productionR": "2.719072582023380718896113802E-18",
+        "productionS": "6.109913639065283277576102856E-17"
+      }
+    },
+    {
+      "class": "ephemeral_status",
+      "trajectory": "weekly",
+      "eventDay": 35,
+      "deltaDays": 7,
+      "difficulty": 0.5,
+      "independentR": "0.8794950769140957041537252452394125810397778532726000348976638335298917",
+      "independentS": "6.495728909403928800674151880932722932529302359858377011980440047893802",
+      "values": {
+        "fixtureR": 0.8794950769140957,
+        "fixtureS": 6.495728909403929,
+        "productionR": 0.8794950769140957,
+        "productionS": 6.495728909403929
+      },
+      "absoluteErrors": {
+        "fixtureR": "4.153725245239412581039777853E-18",
+        "fixtureS": "1.993258481190672770674706976E-16",
+        "productionR": "4.153725245239412581039777853E-18",
+        "productionS": "1.993258481190672770674706976E-16"
+      }
+    },
+    {
+      "class": "ephemeral_status",
+      "trajectory": "monthly",
+      "eventDay": 30,
+      "deltaDays": 30,
+      "difficulty": 0.5,
+      "independentR": "0.4736842105263157894736842105263157894736842105263157894736842105263158",
+      "independentS": "3.931602707200688765273604648121314964151980215085554114571518995724207",
+      "values": {
+        "fixtureR": 0.47368421052631576,
+        "fixtureS": 3.931602707200689,
+        "productionR": 0.47368421052631576,
+        "productionS": 3.931602707200689
+      },
+      "absoluteErrors": {
+        "fixtureR": "2.947368421052631578947368421E-17",
+        "fixtureS": "2.347263953518786850358480198E-16",
+        "productionR": "2.947368421052631578947368421E-17",
+        "productionS": "2.347263953518786850358480198E-16"
+      }
+    },
+    {
+      "class": "ephemeral_status",
+      "trajectory": "monthly",
+      "eventDay": 60,
+      "deltaDays": 30,
+      "difficulty": 0.5,
+      "independentR": "0.5411751301408139150750079314757798206777329346129831368768762068887892",
+      "independentS": "4.997413559572515032123277575168674268130888424638633523488721147773353",
+      "values": {
+        "fixtureR": 0.541175130140814,
+        "fixtureS": 4.997413559572515,
+        "productionR": 0.541175130140814,
+        "productionS": 4.997413559572515
+      },
+      "absoluteErrors": {
+        "fixtureR": "8.492499206852422017932226707E-17",
+        "fixtureS": "3.212327757516867426813088842E-17",
+        "productionR": "8.492499206852422017932226707E-17",
+        "productionS": "3.212327757516867426813088842E-17"
+      }
+    },
+    {
+      "class": "ephemeral_status",
+      "trajectory": "monthly",
+      "eventDay": 90,
+      "deltaDays": 30,
+      "difficulty": 0.5,
+      "independentR": "0.5998758123149948303651790749243417130279389576886473088328107783036177",
+      "independentS": "6.193007520568581230836326762335296945847193029176786698280099835013442",
+      "values": {
+        "fixtureR": 0.5998758123149949,
+        "fixtureS": 6.193007520568581,
+        "productionR": 0.5998758123149949,
+        "productionS": 6.193007520568581
+      },
+      "absoluteErrors": {
+        "fixtureR": "6.963482092507565828697206104E-17",
+        "fixtureS": "2.308363267623352969458471930E-16",
+        "productionR": "6.963482092507565828697206104E-17",
+        "productionS": "2.308363267623352969458471930E-16"
+      }
+    },
+    {
+      "class": "ephemeral_status",
+      "trajectory": "monthly",
+      "eventDay": 120,
+      "deltaDays": 30,
+      "difficulty": 0.5,
+      "independentR": "0.6500930016620152615667261545425738334015593373856980756843500365460067",
+      "independentS": "7.515238397139710309996523361726272791503185386529070832565025843277984",
+      "values": {
+        "fixtureR": 0.6500930016620152,
+        "fixtureS": 7.51523839713971,
+        "productionR": 0.6500930016620152,
+        "productionS": 7.51523839713971
+      },
+      "absoluteErrors": {
+        "fixtureR": "6.156672615454257383340155934E-17",
+        "fixtureS": "3.099965233617262727915031854E-16",
+        "productionR": "6.156672615454257383340155934E-17",
+        "productionS": "3.099965233617262727915031854E-16"
+      }
+    },
+    {
+      "class": "ephemeral_status",
+      "trajectory": "monthly",
+      "eventDay": 150,
+      "deltaDays": 30,
+      "difficulty": 0.5,
+      "independentR": "0.6927398909139179474382915957835643838506670145222973068162597898176312",
+      "independentS": "8.962507237209801014766735134036668109299129583483420124993442393101236",
+      "values": {
+        "fixtureR": 0.692739890913918,
+        "fixtureS": 8.9625072372098,
+        "productionR": 0.692739890913918,
+        "productionS": 8.9625072372098
+      },
+      "absoluteErrors": {
+        "fixtureR": "5.256170840421643561614933299E-17",
+        "fixtureS": "1.014766735134036668109299130E-15",
+        "productionR": "5.256170840421643561614933299E-17",
+        "productionS": "1.014766735134036668109299130E-15"
+      }
+    },
+    {
+      "class": "standard",
+      "trajectory": "weekly",
+      "eventDay": 7,
+      "deltaDays": 7,
+      "difficulty": 0.3,
+      "independentR": "0.9473684210526315789473684210526315789473684210526315789473684210526316",
+      "independentS": "16.00812527859006829701800293169474683422829846830414090033622719645352",
+      "values": {
+        "fixtureR": 0.9473684210526315,
+        "fixtureS": 16.008125278590068,
+        "productionR": 0.9473684210526315,
+        "productionS": 16.008125278590068
+      },
+      "absoluteErrors": {
+        "fixtureR": "7.894736842105263157894736842E-17",
+        "fixtureS": "2.970180029316947468342282985E-16",
+        "productionR": "7.894736842105263157894736842E-17",
+        "productionS": "2.970180029316947468342282985E-16"
+      }
+    },
+    {
+      "class": "standard",
+      "trajectory": "weekly",
+      "eventDay": 14,
+      "deltaDays": 7,
+      "difficulty": 0.3,
+      "independentR": "0.9536648236817546430941248247140386084660199863121647340310252950351262",
+      "independentS": "18.20708617507534293897958278091969417171535821088745560651715895753161",
+      "values": {
+        "fixtureR": 0.9536648236817546,
+        "fixtureS": 18.207086175075343,
+        "productionR": 0.9536648236817546,
+        "productionS": 18.207086175075343
+      },
+      "absoluteErrors": {
+        "fixtureR": "4.309412482471403860846601999E-17",
+        "fixtureS": "6.102041721908030582828464179E-17",
+        "productionR": "4.309412482471403860846601999E-17",
+        "productionS": "6.102041721908030582828464179E-17"
+      }
+    },
+    {
+      "class": "standard",
+      "trajectory": "weekly",
+      "eventDay": 21,
+      "deltaDays": 7,
+      "difficulty": 0.3,
+      "independentR": "0.9590316907348240309152817657456624472592560478501679722444195321656443",
+      "independentS": "20.61009098802428100795896390786709872398777121708028164445881334397224",
+      "values": {
+        "fixtureR": 0.959031690734824,
+        "fixtureS": 20.610090988024282,
+        "productionR": 0.959031690734824,
+        "productionS": 20.610090988024282
+      },
+      "absoluteErrors": {
+        "fixtureR": "3.091528176574566244725925605E-17",
+        "fixtureS": "9.920410360921329012760122288E-16",
+        "productionR": "3.091528176574566244725925605E-17",
+        "productionS": "9.920410360921329012760122288E-16"
+      }
+    },
+    {
+      "class": "standard",
+      "trajectory": "weekly",
+      "eventDay": 28,
+      "deltaDays": 7,
+      "difficulty": 0.3,
+      "independentR": "0.9636346292239552830148349304030179603772259986896866119443305506605408",
+      "independentS": "23.23100278101803412316590347635953723709592462078671216267416075624699",
+      "values": {
+        "fixtureR": 0.9636346292239553,
+        "fixtureS": 23.231002781018034,
+        "productionR": 0.9636346292239553,
+        "productionS": 23.231002781018034
+      },
+      "absoluteErrors": {
+        "fixtureR": "1.698516506959698203962277400E-17",
+        "fixtureS": "1.231659034763595372370959246E-16",
+        "productionR": "1.698516506959698203962277400E-17",
+        "productionS": "1.231659034763595372370959246E-16"
+      }
+    },
+    {
+      "class": "standard",
+      "trajectory": "weekly",
+      "eventDay": 35,
+      "deltaDays": 7,
+      "difficulty": 0.3,
+      "independentR": "0.9676044447208364121968855352006567072200007854462568768673942295256543",
+      "independentS": "26.08434709410457198433245917386700813380882926995061254482281847648444",
+      "values": {
+        "fixtureR": 0.9676044447208365,
+        "fixtureS": 26.084347094104572,
+        "productionR": 0.9676044447208365,
+        "productionS": 26.084347094104572
+      },
+      "absoluteErrors": {
+        "fixtureR": "8.780311446479934329277999921E-17",
+        "fixtureS": "1.566754082613299186619117073E-17",
+        "productionR": "8.780311446479934329277999921E-17",
+        "productionS": "1.566754082613299186619117073E-17"
+      }
+    },
+    {
+      "class": "standard",
+      "trajectory": "monthly",
+      "eventDay": 30,
+      "deltaDays": 30,
+      "difficulty": 0.3,
+      "independentR": "0.8076923076923076923076923076923076923076923076923076923076923076923077",
+      "independentS": "16.73484194409381678912067182480805556619553235456105902336000172384142",
+      "values": {
+        "fixtureR": 0.8076923076923077,
+        "fixtureS": 16.734841944093816,
+        "productionR": 0.8076923076923077,
+        "productionS": 16.734841944093816
+      },
+      "absoluteErrors": {
+        "fixtureR": "7.692307692307692307692307692E-18",
+        "fixtureS": "7.891206718248080555661955324E-16",
+        "productionR": "7.692307692307692307692307692E-18",
+        "productionS": "7.891206718248080555661955324E-16"
+      }
+    },
+    {
+      "class": "standard",
+      "trajectory": "monthly",
+      "eventDay": 60,
+      "deltaDays": 30,
+      "difficulty": 0.3,
+      "independentR": "0.8338995306123973167899518584595947947759927798803809930328802785738612",
+      "independentS": "19.73204229214079774296952189886955752916690871783608662160640593779793",
+      "values": {
+        "fixtureR": 0.8338995306123973,
+        "fixtureS": 19.732042292140793,
+        "productionR": 0.8338995306123973,
+        "productionS": 19.732042292140793
+      },
+      "absoluteErrors": {
+        "fixtureR": "1.678995185845959479477599278E-17",
+        "fixtureS": "4.742969521898869557529166909E-15",
+        "productionR": "1.678995185845959479477599278E-17",
+        "productionS": "4.742969521898869557529166909E-15"
+      }
+    },
+    {
+      "class": "standard",
+      "trajectory": "monthly",
+      "eventDay": 90,
+      "deltaDays": 30,
+      "difficulty": 0.3,
+      "independentR": "0.8554832408776428306362407372966695749666883113396178302232484994413160",
+      "independentS": "23.00371502092770334892176176432239092104394503299984741292127588127740",
+      "values": {
+        "fixtureR": 0.8554832408776427,
+        "fixtureS": 23.003715020927697,
+        "productionR": 0.8554832408776427,
+        "productionS": 23.003715020927697
+      },
+      "absoluteErrors": {
+        "fixtureR": "1.306362407372966695749666883E-16",
+        "fixtureS": "6.348921761764322390921043945E-15",
+        "productionR": "1.306362407372966695749666883E-16",
+        "productionS": "6.348921761764322390921043945E-15"
+      }
+    },
+    {
+      "class": "standard",
+      "trajectory": "monthly",
+      "eventDay": 120,
+      "deltaDays": 30,
+      "difficulty": 0.3,
+      "independentR": "0.8734355768157278078780345819072335437635464426003283228125886452595145",
+      "independentS": "26.56363489805948093162772159198882114578194416174492884939789851591257",
+      "values": {
+        "fixtureR": 0.8734355768157278,
+        "fixtureS": 26.563634898059473,
+        "productionR": 0.8734355768157278,
+        "productionS": 26.563634898059473
+      },
+      "absoluteErrors": {
+        "fixtureR": "7.878034581907233543763546443E-18",
+        "fixtureS": "7.931627721591988821145781944E-15",
+        "productionR": "7.878034581907233543763546443E-18",
+        "productionS": "7.931627721591988821145781944E-15"
+      }
+    },
+    {
+      "class": "standard",
+      "trajectory": "monthly",
+      "eventDay": 150,
+      "deltaDays": 30,
+      "difficulty": 0.3,
+      "independentR": "0.8885059746682534149251645548737051688730605398333455325356049005841310",
+      "independentS": "30.42696698990906964567100839381015673884626905150897599981343914105432",
+      "values": {
+        "fixtureR": 0.8885059746682533,
+        "fixtureS": 30.42696698990906,
+        "productionR": 0.8885059746682533,
+        "productionS": 30.42696698990906
+      },
+      "absoluteErrors": {
+        "fixtureR": "1.149251645548737051688730605E-16",
+        "fixtureS": "9.645671008393810156738846269E-15",
+        "productionR": "1.149251645548737051688730605E-16",
+        "productionS": "9.645671008393810156738846269E-15"
+      }
+    },
+    {
+      "class": "architectural_invariant",
+      "trajectory": "weekly",
+      "eventDay": 7,
+      "deltaDays": 7,
+      "difficulty": 0.15,
+      "independentR": "0.9830097087378640776699029126213592233009708737864077669902912621359223",
+      "independentS": "50.63249573800853005869765333254538136064383183809657877742793717902990",
+      "values": {
+        "fixtureR": 0.9830097087378641,
+        "fixtureS": 50.63249573800853,
+        "productionR": 0.9830097087378641,
+        "productionS": 50.63249573800853
+      },
+      "absoluteErrors": {
+        "fixtureR": "2.233009708737864077669902913E-17",
+        "fixtureS": "5.869765333254538136064383184E-17",
+        "productionR": "2.233009708737864077669902913E-17",
+        "productionS": "5.869765333254538136064383184E-17"
+      }
+    },
+    {
+      "class": "architectural_invariant",
+      "trajectory": "weekly",
+      "eventDay": 14,
+      "deltaDays": 7,
+      "difficulty": 0.15,
+      "independentR": "0.9848711604784800598292396103541788249026544020514539700430984205059034",
+      "independentS": "56.78937367203532282306360051058591130662463922613980065252464228967480",
+      "values": {
+        "fixtureR": 0.98487116047848,
+        "fixtureS": 56.78937367203532,
+        "productionR": 0.98487116047848,
+        "productionS": 56.78937367203532
+      },
+      "absoluteErrors": {
+        "fixtureR": "5.982923961035417882490265440E-17",
+        "fixtureS": "2.823063600510585911306624639E-15",
+        "productionR": "5.982923961035417882490265440E-17",
+        "productionS": "2.823063600510585911306624639E-15"
+      }
+    },
+    {
+      "class": "architectural_invariant",
+      "trajectory": "weekly",
+      "eventDay": 21,
+      "deltaDays": 7,
+      "difficulty": 0.15,
+      "independentR": "0.9864892085470679835664773332587244664832581686359132359901020862992375",
+      "independentS": "63.50690098045815268519757730181269052656825748603361931265012324607521",
+      "values": {
+        "fixtureR": 0.986489208547068,
+        "fixtureS": 63.50690098045815,
+        "productionR": 0.986489208547068,
+        "productionS": 63.50690098045815
+      },
+      "absoluteErrors": {
+        "fixtureR": "1.643352266674127553351674183E-17",
+        "fixtureS": "2.685197577301812690526568257E-15",
+        "productionR": "1.643352266674127553351674183E-17",
+        "productionS": "2.685197577301812690526568257E-15"
+      }
+    },
+    {
+      "class": "architectural_invariant",
+      "trajectory": "weekly",
+      "eventDay": 28,
+      "deltaDays": 7,
+      "difficulty": 0.15,
+      "independentR": "0.9879010396753653905150799340956330971850206296681475597130014716920748",
+      "independentS": "70.82302582585063799113083175867690575625452590139950006322264193062121",
+      "values": {
+        "fixtureR": 0.9879010396753652,
+        "fixtureS": 70.82302582585064,
+        "productionR": 0.9879010396753652,
+        "productionS": 70.82302582585064
+      },
+      "absoluteErrors": {
+        "fixtureR": "1.905150799340956330971850206E-16",
+        "fixtureS": "2.008869168241323094243745474E-15",
+        "productionR": "1.905150799340956330971850206E-16",
+        "productionS": "2.008869168241323094243745474E-15"
+      }
+    },
+    {
+      "class": "architectural_invariant",
+      "trajectory": "weekly",
+      "eventDay": 35,
+      "deltaDays": 7,
+      "difficulty": 0.15,
+      "independentR": "0.9891373037922389547096553278390279516486723200669934188706593114509938",
+      "independentS": "78.77741569710806363427045720619764581684484304226847959461598304918869",
+      "values": {
+        "fixtureR": 0.9891373037922389,
+        "fixtureS": 78.77741569710805,
+        "productionR": 0.9891373037922389,
+        "productionS": 78.77741569710805
+      },
+      "absoluteErrors": {
+        "fixtureR": "5.470965532783902795164867232E-17",
+        "fixtureS": "1.363427045720619764581684484E-14",
+        "productionR": "5.470965532783902795164867232E-17",
+        "productionS": "1.363427045720619764581684484E-14"
+      }
+    },
+    {
+      "class": "architectural_invariant",
+      "trajectory": "monthly",
+      "eventDay": 30,
+      "deltaDays": 30,
+      "difficulty": 0.15,
+      "independentR": "0.9310344827586206896551724137931034482758620689655172413793103448275862",
+      "independentS": "51.46815230883833745691010281558528304694465677354086692446530653194322",
+      "values": {
+        "fixtureR": 0.9310344827586208,
+        "fixtureS": 51.46815230883834,
+        "productionR": 0.9310344827586208,
+        "productionS": 51.46815230883834
+      },
+      "absoluteErrors": {
+        "fixtureR": "1.103448275862068965517241379E-16",
+        "fixtureS": "2.543089897184414716953055343E-15",
+        "productionR": "1.103448275862068965517241379E-16",
+        "productionS": "2.543089897184414716953055343E-15"
+      }
+    },
+    {
+      "class": "architectural_invariant",
+      "trajectory": "monthly",
+      "eventDay": 60,
+      "deltaDays": 30,
+      "difficulty": 0.15,
+      "independentR": "0.9391743983895170884455448590224632519849549359406253213332292117414150",
+      "independentS": "58.52423518195396274964744738590144028137194660401052466429253326449086",
+      "values": {
+        "fixtureR": 0.9391743983895171,
+        "fixtureS": 58.52423518195397,
+        "productionR": 0.9391743983895171,
+        "productionS": 58.52423518195397
+      },
+      "absoluteErrors": {
+        "fixtureR": "1.155445514097753674801504506E-17",
+        "fixtureS": "7.250352552614098559718628053E-15",
+        "productionR": "1.155445514097753674801504506E-17",
+        "productionS": "7.250352552614098559718628053E-15"
+      }
+    },
+    {
+      "class": "architectural_invariant",
+      "trajectory": "monthly",
+      "eventDay": 90,
+      "deltaDays": 30,
+      "difficulty": 0.15,
+      "independentR": "0.9461127649640877297618614447464093700603340265927036305729731665078850",
+      "independentS": "66.20648544077192312962331484162255161896960243313132150148215521632884",
+      "values": {
+        "fixtureR": 0.9461127649640878,
+        "fixtureS": 66.20648544077194,
+        "productionR": 0.9461127649640878,
+        "productionS": 66.20648544077194
+      },
+      "absoluteErrors": {
+        "fixtureR": "7.023813855525359062993966597E-17",
+        "fixtureS": "1.687037668515837744838103040E-14",
+        "productionR": "7.023813855525359062993966597E-17",
+        "productionS": "1.687037668515837744838103040E-14"
+      }
+    },
+    {
+      "class": "architectural_invariant",
+      "trajectory": "monthly",
+      "eventDay": 120,
+      "deltaDays": 30,
+      "difficulty": 0.15,
+      "independentR": "0.9520658323231843636614982469468117950634099037143380020457816086384949",
+      "independentS": "74.55504693132863994972968870514525313587550086667930252655462757068337",
+      "values": {
+        "fixtureR": 0.9520658323231843,
+        "fixtureS": 74.55504693132866,
+        "productionR": 0.9520658323231843,
+        "productionS": 74.55504693132866
+      },
+      "absoluteErrors": {
+        "fixtureR": "6.366149824694681179506340990E-17",
+        "fixtureS": "2.005027031129485474686412450E-14",
+        "productionR": "6.366149824694681179506340990E-17",
+        "productionS": "2.005027031129485474686412450E-14"
+      }
+    },
+    {
+      "class": "architectural_invariant",
+      "trajectory": "monthly",
+      "eventDay": 150,
+      "deltaDays": 30,
+      "difficulty": 0.15,
+      "independentR": "0.9572037148287487292619864050522224699285504464907501319528856793501671",
+      "independentS": "83.61196850295629088073708556452561109483068925371380522093247257033085",
+      "values": {
+        "fixtureR": 0.9572037148287488,
+        "fixtureS": 83.61196850295632,
+        "productionR": 0.9572037148287488,
+        "productionS": 83.61196850295632
+      },
+      "absoluteErrors": {
+        "fixtureR": "7.073801359494777753007144955E-17",
+        "fixtureS": "2.911926291443547438890516931E-14",
+        "productionR": "7.073801359494777753007144955E-17",
+        "productionS": "2.911926291443547438890516931E-14"
+      }
+    }
+  ],
+  "performanceOrEligibilityEvidence": false
+}

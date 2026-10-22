@@ -1,0 +1,52 @@
+{
+  "atUtc": "2026-10-22T02:16:34.024100+00:00",
+  "status": "Two independent reviews CHANGES_REQUIRED; one focused repair admitted under direct blanket authority",
+  "groups": [
+    {
+      "ids": [
+        "A.F1",
+        "B.F1",
+        "A.F2",
+        "B.F2"
+      ],
+      "disposition": "FIX reject every nondefault parameter/formula value under frozen2.0.0, keep exactdefault hashes. Test type-correct mutations through actual constructors (rejection allowed); no runtime retuning. Validate parameter shape and explicitNone only, no falsyfallback."
+    },
+    {
+      "ids": [
+        "A.F3",
+        "B.F3"
+      ],
+      "disposition": "FIX algebraically equivalent stable R evaluation for representable positive extrema; explicit typed retrievability_underflow when true float underflow yieldszero; no arbitrary new S/delta limits or constant tuning. Add extrema cases; normal30event math remainsunchanged."
+    },
+    {
+      "ids": [
+        "A.F4",
+        "B.F4",
+        "B.F5"
+      ],
+      "disposition": "FIX structured input/code negative fixture consumed bytests; missing/None ranks; actual integerUTC API invalidtimes. Mixed retained low-score contested ordering. Explicit weeklyday35/monthlyday150 pre-event horizon. Duplicate sequence with literal unchanged second result and one caller-deduplicated math invocation; label caller protocol, no productiondedup worker."
+    },
+    {
+      "ids": [
+        "A.F5"
+      ],
+      "disposition": "FIX bind lifecycle vocabulary to P1AexistingArchivalStatus and sourcecomparison evidence. Retentionprojection R=0 remainsvalid expired input; scorer trueunderflow istypedrejection. Successreactivation isnot a decay-sweep effect and remainsfuturecaller obligation."
+    },
+    {
+      "ids": [
+        "host.publicBoundary"
+      ],
+      "disposition": "FIX reproduced badparamsstring AttributeError, emptydictsilentdefault, unhashablelifecycleTypeError andbadscoreentryAttributeError with typednoncontenterrors andregressions."
+    },
+    {
+      "ids": [
+        "coverage"
+      ],
+      "disposition": "Supply accepted S05-S07 text/exactsource hashes, baseline/diff outputs/defaultidentity independent recomputation in closurepacket; no new businessscope. Scores alreadycarryversions, captureactualbenchmark-ready sample. No v1source change."
+    }
+  ],
+  "allowedFiles": "Same exact5paths",
+  "Step0Required": true,
+  "repairAttemptsMax": 1,
+  "scope": "No workers/DB/network/creds/dependency/commits. Independent all30recomparison and2closureverdicts after repair."
+}
