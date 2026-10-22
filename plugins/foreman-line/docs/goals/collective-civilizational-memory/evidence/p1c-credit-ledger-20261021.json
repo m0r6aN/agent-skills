@@ -1,17 +1,21 @@
 {
-  "atUtc": "2026-10-22T03:14:54.534266+00:00",
+  "atUtc": "2026-10-22T03:33:25.835637+00:00",
   "parcel": "CCM-P1C",
   "unit": "GenSpark prepaid credits",
-  "reportedSpent": 295.9,
-  "knownCompletedConservativeCredits": 297.3575,
+  "reportedSpent": 625.9,
+  "knownCompletedConservativeCredits": 628.408,
   "unresolvedReservations": 0,
   "initialCeiling": 900,
-  "sharedNYOct21Ceiling": 4000,
+  "sharedNYOct21Ceiling": 4800,
   "nativeCodexUsage": "unknown/separate",
   "otherUnknownsRetained": {
     "P1A_GenSpark": 94.6,
     "P1B_closureB": 350,
     "API_USD": 0.17192
   },
-  "status": "Two initial CHANGES_REQUIRED, source unaccepted, focused repair Step0 next; no closure calls yet"
+  "status": "Two independent closurePASS, PRopen, currentexactheadCIpending; no morepaidP1Ccalls",
+  "parcelTotalCeiling": 1200,
+  "futureClosureReservation": 0,
+  "sourceHead": "54658187d74e43acf28cad83461b9778f0dce347",
+  "pr": "https://github.com/Keon-Systems/Keon.Collective/pull/300"
 }
