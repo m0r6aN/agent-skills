@@ -1,0 +1,47 @@
+{
+  "atUtc": "2026-10-22T03:42:02.136073+00:00",
+  "parcel": "CCM-P1C",
+  "disposition": "All source acceptance criteria met with explicit later operational gates; exact source and merge CI green",
+  "sourceCommit": "54658187d74e43acf28cad83461b9778f0dce347",
+  "acceptedCommit": "3d44cf5b8b3fb38a857dd1607159a665c1c3b310",
+  "pr": {
+    "mergeCommit": {
+      "oid": "3d44cf5b8b3fb38a857dd1607159a665c1c3b310"
+    },
+    "mergedAt": "2026-10-22T03:37:09Z",
+    "state": "MERGED",
+    "url": "https://github.com/Keon-Systems/Keon.Collective/pull/300"
+  },
+  "mergeChecks": [
+    {
+      "conclusion": "success",
+      "headSha": "3d44cf5b8b3fb38a857dd1607159a665c1c3b310",
+      "status": "completed",
+      "url": "https://github.com/Keon-Systems/Keon.Collective/actions/runs/39717833206"
+    }
+  ],
+  "candidatePins": {
+    "src/Keon.Collective.Abstractions/Society/AgentIdentityContracts.cs": "3793cbfff4052faed48243a52f94390da4b75196eb04dd172711226a88f52ebf",
+    "src/Keon.Collective.Abstractions/Society/CivicMemoryContracts.cs": "eaadc38621e02b758fb7e7dd88becd347936ef9c9a2f372b98972cd6effa3215",
+    "src/Keon.Collective.Abstractions/Society/CivilizationalMemoryContracts.cs": "c421087cd841b2a856136ad9fa5e9c9634e5bb6f177c27cacceb204b5b1f31d5",
+    "tests/Keon.Collective.Abstractions.Tests/Society/CivilizationalMemoryContractTests.cs": "949b117da834126a60d71f2d7e3fd8cf750783037befcb12f3a780acf6c39fdb",
+    "tests/Keon.Collective.Abstractions.Tests/Society/ccm-contracts-v2.json": "c419250a4a9e232aca9a168ffeb7bb20b3acaf9746e6b7bc06babad8c1de9e90"
+  },
+  "independentReviews": "Two independent initial CHANGES_REQUIRED, one focused repair, two closures PASS",
+  "targetedPostRepairPass": 324,
+  "oldTestIdentitiesRetained": 314,
+  "preRepairIdentitiesRetained": 322,
+  "additionalEvidence": [
+    "p1c-repair-host-parity-probe-20261021.json",
+    "p1c-python-source-conformance-20261021.json",
+    "p1c-c01-consumer-parity-clarification-20261021.md"
+  ],
+  "workOrderArchive": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\done\\CCM-P1C-collective-wire-compatibility.md",
+  "activeWorkOrderSha256": "b5481f0f013fe79eec96d40534f3117f01d29a0c1a610b97797da13a0a6d0387",
+  "doneWorkOrderSha256": "fa22e8477a0d181e63e1ef204d01a79876f492ac1f1805e0b49fa10e79f7791b",
+  "archiveChange": "status-only; body unchanged",
+  "cleanup": "Source worktree and branch retained for dependent accepted pins; no destructive cleanup",
+  "laterGates": "C# contract-only: no S11 worker, proof/admission, persistence, Gateway or deployed interoperability",
+  "wholeGoalComplete": false,
+  "bulkIngestionReady": false
+}
