@@ -1,94 +1,114 @@
-# CCM current coordinator loop — P2A accepted / P2B build admission
+# CCM current loop — P2A and P2B accepted; credential disposition open
 
-Custodian ccm-coordinator-20261020-fresh-01; originating authorized operator
-01a155be-72a6-7b02-ac33-84dc64bbf102. Oversight01a158b8-93f8-7423-b5b6-aaca46092870
-may receive compact facts. Owner blanket transferable non-destructive decisions,
-approvals and GenSpark increases persists; no routine reapproval. No duplicate
-coordinator, revived monitor, new schedule, fake Jira or pipeline receipts.
+Custodian: ccm-coordinator-20261020-fresh-01. Originating authorized operator:
+01a155be-72a6-7b02-ac33-84dc64bbf102; factual oversight:
+01a158b8-93f8-7423-b5b6-aaca46092870. Clinton's direct blanket transferable
+non-destructive decisions, approvals and GenSpark increases persists. Do not ask
+for routine approval again. No duplicate coordinator, revived monitor or new
+schedule. No destructive real data/key operations or invented Jira/pipeline
+receipts. This is a source milestone; the full goal remains incomplete.
 
 ## Accepted source
 
-All4P1foundation parcels remain accepted/merged/StageFclosed:
-P1A CortexPR80 cc3a6def;P1BPR83 241358c6;P1CCollectivePR300 3d44cf5b;
-P1DCortexPR84 6139ddd8. Full source evidence in foundation acceptance/per-parcel
-StageF records. Authenticated high-trust legacy producer coverage is stillZERO;
-target/Neon profile beforeP4 and key/backup qualification before real crypto
-effects remainOPEN. No plan/Gate1/S01-S12/C02-D1 reapproval.
+All P1 foundation parcels remain accepted/merged/Stage F closed:
+P1A Cortex PR80 cc3a6def; P1B PR83 241358c6;
+P1C Collective PR300 3d44cf5b; P1D Cortex PR84 6139ddd8.
+See foundation-acceptance-20261021.md and the actual per-parcel closure records.
+No reopening Gate1, S01-S12, C02-D1 or accepted foundation approvals.
 
-P2A accepted/StageFclosed: CortexPR87 source
-cb794ba7c51dd3508c90832a892aaa2490894993, merge
-76fa7c6eda6a4859e7d3a64815c760a77d4c07f0. All16exact-headchecks green; both
-actual main runs39724637602/39724637630SUCCESS. Five mergedblobs match reviewed
-pins. Workorder archivedstatus-only to done/CCM-P2A-deterministic-memory-scrubber.md.
-33focused/2889fullPASS/137existingSKIP/0FAIL;267oldpins/3013initialidentities
-retained; Black/isort/mypy/Python3.10ASTPASS. Independent32HMACvectors plus
-parent exactboundaries/overlap/candidate/numeric/URL/epoch/depth checksPASS.
-TwoinitialCHANGES_REQUIRED ->ONE formalLunarepair ->twoincompleteclosures
-(notaccepted/full350eachretained) ->explicit fresh concise pairPASS/PASS.
-Two low catalog/PEM limitations accepted; pure library only, no universal secret
-coverage. P3 MUST scrub itself immediately before its actual durable enqueue;
-mutable result/flag/type is not an attestation. Compound names outside frozen
-catalog need known literals/otherdetector; nested/strayPEM rejectswholeitem.
+P2A scrubber: PR87 source cb794ba7c51dd3508c90832a892aaa2490894993,
+merge 76fa7c6eda6a4859e7d3a64815c760a77d4c07f0. All16 exact-head checks and
+main workflows39724637602/39724637630 passed; five merged blobs match reviewed
+hashes. 33 focused /2889 full PASS,137 existing SKIP,0 FAIL;267 old pins and
+3013 initial identities retained. Black/isort/mypy/Python3.10 AST pass.
+Parent32 independently frozen HMAC vectors plus exact-boundary/hostile checks pass.
+Two initial CHANGES_REQUIRED ->one Luna repair ->two incomplete closure responses
+(NOT accepted; full350 each retained) ->explicit finite concise fresh pair PASS/PASS.
+Catalog/PEM limitations remain explicit. P3 must scrub immediately before its
+own durable enqueue; result types/flags/mutable payloads are not attestations.
+Original clock-sensitive gravity tie CI failure is retained, mechanism reproduced
+with private same-second/cross-second control without scrubber import; original
+CI clock trace unavailable. One same-head diagnostic rerun passed, no fix claimed.
+See p2a-acceptance-20261022.md and p2a-stage-f-closure-20261022.json.
 
-OriginalcombinedPRclocktie failure retained: actual private same-second/cross-
-second control reproduced mechanism WITHOUT importing scrubber; unfrozen ingests
-can differ in recency, so no IDtie exists. ActualoriginalCIclocktrace unavailable.
-One exactsamehead failed/cancelled diagnostic rerun2PASS. That old test and BM2
-timingvariance are NOTfixed; no threshold/skip/source changes or stabilityclaim.
+P2B byte chunker: PR89 source50c704050c18b218f1913d51ee9ed39a330993c5,
+merge3a7c30b5cab7198b3ad6e7ff3b881bead8af823d. All16 exact-head checks and
+main workflows39727519920/39727519890 passed; four merged blobs match reviewed
+hashes. 19 focused /2910 full PASS,137 old SKIP,0 FAIL; all3028 baseline identities,
+397 regular tracked-file pins and11 Gitlink entries retained. Formatting/types/
+Python3.10 AST pass. Frozen independent10 fixtures x2formats plus4 invalid UTF8
+exception checks pass. Both fresh independent initial reviews PASS with no
+findings; no formal repair or closure calls. Source-push BM2[50] failed3.42x>3.0;
+combined PR passed. One same-head diagnostic rerun passed, original failure
+preserved, no benchmark/threshold/skip or stability fix. See p2b acceptance/StageF.
 
-## P2B current action
+Both workorders archived status-only to docs/specs/done. Source worktrees and
+branches remain for accepted pin/dependency evidence; no destructive cleanup.
+P2B's proposed pipeline existed only in the plan: parent corrected unsupported
+shaper existing-init/API claim and ratified four NEW files. Actual frozen
+advisory/schema/emitter/readback passed, Gate2 commit5e9d0b06 before fresh worker.
 
-FreshLunashaper producedONEdraft; parent ratifiedC02-B1 exact API/bounds/errors,
-not another full plan. Activedocs/specs/active/CCM-P2B-bounded-text-chunker.md
-SHAc1237c89c708a130bce2e00b84b89548472640adeec2ac89a3422de914a7a50b.
-Frozen two-layer draftadvisoryPASS, only generic Cortex-prefixwarnings disposed
-as soleimplementation paths. No schema/linter/package changes; existing private
-exact-byte Node24 runtime reused, no install. Actualfrozen StageAemission/schema/readbackPASS, epics[], active exactrefs.
-Gate2/role admitted5e9d0b06 BEFOREfresh /root/p2b_builder Luna/low Step0ONLY.
-Parent verified planned pipeline directoryABSENT on acceptedbase, correcting
-unsupportedshaper existing-init/api claim. FOUR NEWpaths only:
-src/keon/cortex/pipeline/__init__.py;pipeline/ccm_text.py;
-tests/test_ccm_text.py;docs/specs/ccm-text-parser-v1.md. No existing API/init edits.
-Pure caller-suppliedbytes txt/md, strictUTF8, exactoffset/hash/lineending/BOM/NFC
-preservation;4MiBinput/64KiBchunk/derived<=65chunks, frozenrepr-safe wrappers,
-closederrors; no fileI/O/rendering/AST/Git/mapper/extractor/trust/queue/storage.
-Rawchunks are transient UNSANITIZED. P3 strictlydecodes andcallsP2A; P8 owns
-actual source/scope/checkpoint/idempotency. Formatdeclared only, no sniff/auth.
+## Actual credential-handling incident — OPEN
 
-CleanP2Bworktree D:/Repos/ccm-worktrees/cortex-p2b,
-feat/foreman-line-ccm-p2b, exactbase76fa7c6eda6a4859e7d3a64815c760a77d4c07f0.
-Completebefore-source baselinePASS in private p2b-20261022-01:
-3028cases=2891PASS137SKIP0FAIL;397regularfilepins plus11Gitlinkentries. First localpreparation
-stoppedbeforetests when it triedreading Gitlinkdirectory as file; corrected
-pinsemantics, emptycapturedir reused, no sourcechange/inference. No blindrerun.
-AcceptedbaseincludesPR85/PR88 twoadditivereceipttenantfilter tests beyond P2A
-local3026. Collector originallyexpected3027 andassertedafteractualpytestexit0;
-offline identities/Gitdelta reconcile3028, no suite rerun, no newsourcefail.
-NEXT consume freshLunabuilder Step0/restate thenGO for oneinitialbuild.
-Oneimplementation+oneformalrepair, no buildercommits/providers/network/DB.
-Require retainedbaselineidentities/137skips, allacceptedpins,focused/full/format/
-types, twoindependent completedcompactreviews, exacthead/mainCI beforeStageF.
+The P2B worker ran Get-ChildItem Env: | Sort-Object Name while diagnosing Windows
+asyncio startup. Credential-valued variables appeared in its native tool
+transcript. Parent stopped that worker; it remains idle and no further commands
+or edits are authorized there. It reports no saved environment file. Tool output
+enters model context: do not claim no transmission, erased transcript or rotated
+keys. Do not read/copy raw values into new prompts, files, messages or reviewers.
+Names-only evidence: p2b-credential-handling-incident-20261022.json and
+p2b-credential-origin-metadata-20261022.json. Entire-key rendering/truncation and
+validity are not verified. Most named parent process values equal HKCU User
+values; parent OpenAI process value DIFFERS from current User value. Do not
+blindly revoke the current User key based on that observation or infer child
+token identity. Ownership clarification was requested asynchronously; no reply
+assumed. Active affected keys/task tokens still need the appropriate custodian's
+rotation/refresh or an evidenced disposition. No global credential mutation done.
 
-## Budget boundary
+Parent completed P2B verification using the known working OS-only allowlist,
+retaining SystemRoot and excluding provider/DB/key variables;19 focused/full
+checks and397 pins pass. Parent in-memory matching found no known named parent
+credential values in10 candidate/saved-log files; per-task token coverage is
+incomplete. Source manually inspected. NO environment/transcript diagnostic logs
+entered independent review packets. Exposed-key API routes remain unused.
+Existing GenSpark key is separately HKCU User loaded, absent parent Process and
+not among reported child-exposed names; explicitly admitted source-only review
+continued on that route. This does NOT close the handling incident.
 
-Current NYday2026-10-22. Explicit finite shared4000/P2A2000 expires
-2026-10-23T04UTC; Oct21expired policy is NOTreused. Floor1000/effort9000 persist.
-P2A6POSTs (2initial,2incomplete,2explicitfreshclosures):743.6reported,
-1150.494conservative incl700failed-closureholds, futurecapacity0, no further
-P2Acalls. Foundation2626.729conservative; together3777.223; historical original
-94.6/failedP1B350 and APIunknown$0.17192 stillretained. APIknown+reserved$1.08227,
-no newAPIcalls. Nativeaccount usage UNKNOWN/separate, neverzero/conversion.
-Foreignledger READONLY; its700excess/350unknown/localholds retained, conservative
-foreignguard1600. Latest freshbalance6769.3 beforelastclosure, not a current
-balance/billingclaim. Fresh account/NYday/foreign guard before EVERY paidphase.
-No P2Bpaidbudget/packets/requestadmitted yet; choose finite exactenvelope under
-grant AFTER actualsource/packet known. Use existingqualifiedOpuslow route,
-compact<=500wordcompletedverdict and sufficientoutput allowance, no auto-retries.
+HOLD new delegated shell workers until credential ownership/rotation/isolation
+disposition. Future role prompts must forbid all environment dumps and credential
+store inspection; use parent-owned OS-only test runners. This is procedural,
+not a hard sandbox claim. Do not create an unbounded launcher/security project.
+Read-only source shaping can be prepared under existing authority; do not send
+more exposed-key API requests or pretend the actual incident is resolved.
 
-## Remaining goal
+## Budget and date boundary
 
-P2Bchunker does not completeP2. AST/git/civicmapper/extractor remain small
-separatework; P3-P8/realWave1/Wave2/100kshard500knode benchmark, live-modelsmoke,
-producerqualification, key/backup/target/operational capacity/privacy/recovery/
-import gates remainOPEN. No personaldata import or bulk/fullContextready claim.
-All destructive effects still outside blanket NONDESTRUCTIVE authority.
+NYday2026-10-22 finite shared ceiling4800 expires2026-10-23T04UTC. This is an
+explicit new dated decision; October21 policy is expired, not reused. Floor1000
+and effort9000 persist. P2A cap2000,743.6 reported /1150.494 conservative including
+full700 incomplete-review holds. P2B cap1000,97.9 reported /99.2805 conservative;
+no uncertain P2B call. Both parcels have ZERO future paid phase, no further calls.
+Together841.5 reported /1249.7745 conservative; foundation plus these parcels
+3876.5035 conservative. Native account usage UNKNOWN/separate, not zero or converted.
+All old94.6 original/350 failed P1B/APIunknown$0.17192 and foreign700 excess remain.
+API known+reserved$1.08227, no new direct OpenAI API calls. Foreign ledger READONLY;
+1600 conservative foreign guard retained. Actual account at05:25:27UTC6546.0;
+conservative shared-day guard3709.9745 /effort6387.9745 /after-guards3696.2255.
+Balance movements are NOT attributed entirely to our calls or proof of billing.
+Fresh actual account/NYday/foreign holds and exact finite packet admission required
+before any next paid parcel. Use compact <=500word complete verdicts and sufficient
+output allowance; no automatic retry/provider hunt or partial-PASS acceptance.
+
+## Remaining goal / next capability
+
+Next small source capabilities: deterministic AST/git extraction, civic-contract
+mapping, extractor engine; these and remaining P2 are NOT claimed complete.
+Then P3 storage/outbox/batch fencing/deletion, P4 scoped retrieval/benchmark,
+P5 composition/graph, P6 lifecycle/caution/Gateway, P7 inheritance, P8 connectors.
+Source/authentication qualification remains ZERO before high-trust legacy backfill.
+Actual local P1D DB proof does not qualify named target/Neon beforeP4. Key/backup
+coverage before real crypto effects, Wave1/Wave2/benchmark/live-model-smoke,
+capacity/privacy/recovery and bulk-import evidence remain OPEN. Raw P2B chunks
+must strict-decode into a P3 envelope and pass P2A at the real durable boundary.
+No personal data imported; full Context and bulk ingestion are not ready.
