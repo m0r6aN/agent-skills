@@ -1,0 +1,76 @@
+{
+  "atUtc": "2026-10-22T03:30:52.922800+00:00",
+  "parcel": "CCM-P1D",
+  "sourceOriginalBase": "cc3a6defa78849b8df8795c58ac65866f31179d5",
+  "preRebaseCommit": "f8bf1e0635ac239cee6cd74167b4663bffdd1ecb",
+  "integrationBase": "241358c664fbbceb140a45c0da40c48f6c1135c0",
+  "upstreamChanges": [
+    "src/keon/cortex/gravity/function_v2.py",
+    "src/keon/cortex/gravity/params.py",
+    "src/keon/cortex/gravity/retention_v2.py",
+    "tests/benchmark/test_quality_gate.py",
+    "tests/fixtures/ccm/gravity-v2.json",
+    "tests/gravity/test_ccm_v2.py"
+  ],
+  "sourceHead": "76bd08d45b5e3a5e297417fcbdcb29790a846830",
+  "pr": "https://github.com/Keon-Systems/keon-cortex/pull/84",
+  "candidatePins": {
+    "scripts/ccm_check_postgres.py": "53383e904c128271b52f13dec1c620c0cdc195c1bc704bd0c0d92f427688956d",
+    "tests/test_ccm_postgres_capabilities.py": "3cdcfcb849353ee9090be81743d7031d8984e3667d55bc6f188ca35022cf8d7c",
+    "docs/specs/ccm-postgres-profile.md": "ed151ce8e5f85329cebbd6e0edeb81b26e5df46b3b482ce6ef8e2c7c993c8283"
+  },
+  "independentClosure": {
+    "verdict": "PASS",
+    "findings": [
+      {
+        "id": "N1",
+        "severity": "low",
+        "path": "docs/specs/ccm-postgres-profile.md",
+        "location": "Evidence boundary, paragraph 2",
+        "trigger": "A reader consults the profile after the authorized AC4 local run.",
+        "actual_behavior": "The profile still says load behavior 'has not yet been proven against a real disposable database without preload configuration'. The supplied P1D-LOCAL01 evidence covers exactly that case: pgvector 0.8.0 on PG16, empty shared_preload_libraries, and fresh sessions in both public and non-search_path schemas, each ending pass/0. The statement is now stale. It is conservative, though, and not a false claim.",
+        "violated_requirement": "AC4/AC6 call for honest documentation of evidence state. This does not block source acceptance.",
+        "required_change": "Optionally reference the retained P1D-LOCAL01 evidence label and keep the Neon/target gate open. No code change is required."
+      },
+      {
+        "id": "N2",
+        "severity": "low",
+        "path": "scripts/ccm_check_postgres.py",
+        "location": "_check_with_driver vector cast probe",
+        "trigger": "The probe result is falsy, or the vector type is not found when the schema row is missing.",
+        "actual_behavior": "The fetchval result of the cast is discarded. Only an exception from the cast affects the outcome. A pass still requires the typed pg_settings enum row containing relaxed_order and a valid current value. This cannot manufacture a pass, so it is acceptable.",
+        "violated_requirement": "None. This is an informational note on fail-closed behavior.",
+        "required_change": "None required. Optionally assert that the cast result is True before reading pg_settings."
+      }
+    ],
+    "original_findings_closure": {
+      "F1": "CLOSED. The repair schema-qualifies the vector type from the pg_extension and pg_namespace catalogs, with identifier quoting tested on a hostile embedded quote. Iterative support now requires a pg_settings row with vartype=enum, enumvals including relaxed_order, and a setting within the known set. An absent, string-typed, incomplete, or unknown row yields unsupported/iterative_scan_unproved, and each case is tested. Cast or query errors deliberately remain unavailable/query_failed. This follows the exact contract that query failure maps to unavailable; the savepoint suggestion was optional and not required by the contract. Real fresh-session evidence without preload, in both a public and a non-search_path schema, proves GUC registration and that the cast resolves.",
+      "F2": "CLOSED. Timeout classification now takes the failure phase into account. Connect-phase timeouts report connect_timeout and query-phase timeouts report query_timeout. TimeoutError and a class named QueryCanceledError are both tested, each with a planted secret that is not echoed.",
+      "F3": "CLOSED. A test now shows that a source-tree --output path is rejected as unavailable/3 with output_write_failed and no file created. The write-failure test asserts that the planted password is absent from both stdout and stderr. The redundant branch and the f-string were removed. Using a shared code for rejection and write failure is acceptable under AC1.",
+      "F4": "CLOSED. The fake now tracks per-query transaction state, and the tests assert that every query runs inside the readonly transaction and that SET LOCAL comes first. The denylist covers ALTER, GRANT, TRUNCATE, COPY, and non-LOCAL SET. Tests cover close-on-error, CancelledError propagation including during close, and close timeout bounds. The Postgres version now derives from server_version_num and is tested with 9.6.3, 16.4, and unknown."
+    },
+    "ac_coverage": {
+      "AC1": "MET. The status and exit mapping (0/2/3) is exact, and the report has closed fields. The command uses asyncpg, the existing driver. Version parsing is a numeric regex, and the Postgres version comes from the numeric server_version_num. Queries are bounded: SET LOCAL statement_timeout of 5000ms, a 3s connect timeout, a 5s command timeout, and a 5s close timeout. Exception text is never read. Output write failures and source-tree targets return unavailable with output_write_failed on stdout, and the default destination is stdout.",
+      "AC2": "MET. Unit tests cover the positive profile (pass/0) and 0.7.4 (unsupported/2). Version 0.10.0 passes. Missing configuration returns unavailable without loading the driver; the CLI absent-config run returned 3. A missing vector extension or a prerelease/unknown version cannot pass. Real-run evidence corroborates the positive and missing-extension cases.",
+      "AC3": "MET. Deterministic tests cover each status, numeric comparison, planted DSN/password sanitization across query, connect, timeout, argparse, and output paths, and read-only/timeout/no-DDL query construction. These tests are correctly labeled as non-database evidence.",
+      "AC4": "MET for local only. A separately authorized disposable pgvector 0.8.0/PG16 Docker run used a generated read-only role, no preload, and pinned hashes, base, and tool versions. It retained the sanitized JSON for three profiles, application table counts of zero, and a cleanup record.",
+      "AC5": "MET as a source requirement. The documentation and evidence state that the Neon/target gate remains OPEN for P4. No remote access occurred, and live Neon is correctly not demanded here.",
+      "AC6": "MET. The profile documents unsupported behavior, the full benchmark envelope, the 150ms, 300ms, and 500 files/min targets as unmeasured, separate prose throughput, and the import-readiness prerequisites."
+    },
+    "coverage_gaps": [
+      "The original legacy test bodies and the asyncpg driver implementation were not supplied. Driver behavior (readonly transaction semantics, close timeout, exception class names) is inferred and partly corroborated by the real run.",
+      "The real evidence covers only the pgvector 0.8.0 image. There is no real 0.7.x or 0.10.x server, no timeout or privilege-failure profile, and no real output-file failure.",
+      "There is no unit test for a relative --output path or a symlinked path escaping the source guard, or for a different worktree copy. The guard protects only the script's own repository root.",
+      "The P1A contract document was not supplied, so the value ccm-contracts/2.0.1 is unverified against it.",
+      "Neon/target-profile, performance, storage, and import readiness remain open by design. This review grants no acceptance or merge."
+    ]
+  },
+  "nonblockingDisposition": {
+    "N1": "Corrected documentation to actualP1D-LOCAL01 realpgvector0.8.0/PG16.10 no-preload proof. Code/tests byteidentical to reviewed and realtested pins. No paid rereview for this factual documentation note.",
+    "N2": "Informational/nochange. Typedpg_settings row withenumvals required independently; constant validvectorliteral raises onfailedcast, actualrealprofiles pass."
+  },
+  "gate3": "Pending exact-head CI and current mergeability; no bypass",
+  "realLocalEvidence": "p1d-real-local-capability-20261021.json",
+  "namedTargetGate": "OPEN beforeP4",
+  "sourceAccepted": false
+}

@@ -1,13 +1,15 @@
 {
-  "atUtc": "2026-10-22T03:18:14.555881+00:00",
+  "atUtc": "2026-10-22T03:30:52.922800+00:00",
   "parcel": "CCM-P1D",
   "unit": "GenSpark prepaid credits",
-  "reportedSpent": 68.2,
-  "knownCompletedConservativeCredits": 68.475,
+  "reportedSpent": 152.9,
+  "knownCompletedConservativeCredits": 153.23275,
   "unresolvedReservations": 0,
   "parcelCeiling": 500,
-  "focusedClosureReservation": 250,
+  "focusedClosureReservation": 0,
   "sharedNYOct21Ceiling": 4000,
   "nativeCodexUsage": "unknown/separate",
-  "status": "Independent CHANGES_REQUIRED; focused repair Step0 pending; real DBgateOPEN"
+  "status": "Independent closurePASS, actualreal-localPASS, PRopenexactheadCIpending",
+  "sourceHead": "76bd08d45b5e3a5e297417fcbdcb29790a846830",
+  "pr": "https://github.com/Keon-Systems/keon-cortex/pull/84"
 }
