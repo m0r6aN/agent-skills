@@ -2,7 +2,7 @@
 
 ## Current execution addendum — October21 NY
 
-All CCM-P1A–D foundation artifacts are accepted and merged with independent reviews, actual local evidence and green source/main CI. [Foundation acceptance](foundation-acceptance-20261021.md) and [current loop](loop-directive.md) supersede ALL historical planning/readiness/permission state below. Direct owner blanket non-destructive decisions/approvals/spend authority is recorded in evidence/owner-autonomous-next-steps-20261021.json. Design decisions and full-goal exits are unchanged. CCM-P2A is being shaped; full Context and bulk import are not ready. No dormant monitor revived.
+All CCM-P1A–D foundation artifacts are accepted and merged with independent reviews, actual local evidence and green source/main CI. [Foundation acceptance](foundation-acceptance-20261021.md) and [current loop](loop-directive.md) supersede ALL historical planning/readiness/permission state below. Direct owner blanket non-destructive decisions/approvals/spend authority is recorded in evidence/owner-autonomous-next-steps-20261021.json. Design decisions and full-goal exits are unchanged. CCM-P2A passed genuine shaping/advisory/schema and Gate2; its fresh small builder is implementing the isolated scrubber library. Full Context and bulk import are not ready. No dormant monitor revived.
 
 
 Current authority/readiness addendum (2026-10-20):

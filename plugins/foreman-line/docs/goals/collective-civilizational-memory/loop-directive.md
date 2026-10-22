@@ -1,106 +1,91 @@
-# CCM current loop — foundation accepted; next bounded scrubber parcel
+# CCM current coordinator loop — P2A build
 
-Updated 2026-10-22T03:48:10.320071+00:00
-All four P1 parcels are StageF closed and source/main CI green. Accepted source:
-P1A Cortexcc3a6defa78849b8df8795c58ac65866f31179d5 (PR80);
-P1B Cortex241358c664fbbceb140a45c0da40c48f6c1135c0 (PR83);
-P1C Collective3d44cf5b8b3fb38a857dd1607159a665c1c3b310 (PR300);
-P1D Cortex6139ddd8802540829eebce07215106e4b16ca360 (PR84).
-See foundation-acceptance-20261021.md and actual stage-f-closure receipts.
-Custodian remains ccm-coordinator-20261020-fresh-01; authorized operator and
-oversight unchanged. Owner blanket authority persists, no routine reapproval.
-No duplicate coordinator, revived automation or overall/bulk-ready claim.
+Custodian:ccm-coordinator-20261020-fresh-01. Authorized originating operator:
+01a155be-72a6-7b02-ac33-84dc64bbf102; oversight01a158b8-93f8-7423-b5b6-aaca46092870.
+Clinton's direct blanket transferable non-destructive decisions/approvals/spend
+authority persists. Latest explicit P2A full-cycle direction is covered by that
+grant. No routine reapproval, duplicate coordinator or revived dormant monitor.
+Exact grant:evidence/owner-autonomous-next-steps-20261021.json.
 
-NEXT: finish one explicit draft CCM-P2A in-memory scrubber, actual frozen
-advisory self-check and schema-valid ShapingResult, coordinator ratify proposed
-interfaces/detection/resource profile under delegated authority, bounded worktree
-build + TWO architecture/security reviews +one formal focused repair ifneeded.
-Newcanonical scrubber/** was explicitly planned in v4; don't modify unrelated
-legacy outcome_ingest/extraction/api or invent an existing durable queue. P3 owns
-mechanical scrub-before-durable-enqueue integration and its actual proof.
-The fresh small shaper authored a draft but did not emit while local Ajv runtime
-was unavailable. Operator prepared exact frozen package copies and pinned public
-runtime dependencies PRIVATELY with Node24.19, no repo package/schema changes.
-Draft is not dispatched/approved merely because it exists; lint exact contracts.
+## Accepted foundation
 
-All foundation paid calls complete; no pending continuation or automatic retry.
-GenSpark foundation conservative2626.729 including unknown94.6+350, API$1.08227
-including unknown$0.17192. Native Codex usage separateunknown. Fresh snapshot in
-evidence/foundation-credit-reconciliation-20261021.json. SharedNYOct21 ceiling4800
-expires04UTC, floor1000/effort9000; preserve allholds across dates, no silent reset.
-Future paid phases require finite exact admission; direct owner grant permits
-bounded increases, not unbounded default. Foreignledger remains read-only.
+ALL4P1parcels accepted, merged, exact source/main CI green, StageFclosed:
+- P1A PR80 Cortexcc3a6defa78849b8df8795c58ac65866f31179d5.
+- P1B PR83 Cortex241358c664fbbceb140a45c0da40c48f6c1135c0.
+- P1C PR300 Collective3d44cf5b8b3fb38a857dd1607159a665c1c3b310.
+- P1D PR84 Cortex6139ddd8802540829eebce07215106e4b16ca360.
+See foundation-acceptance-20261021.md and actual per-parcel stage-f-closure JSON.
+All4specs archived status-only to done/. Sourceworktrees retained for proof/pins.
+P1C324PASS/314original,13actualparityprobes,2independentclosurePASS; C01 clarified
+existingproducersemantics before repair. P1D110PASS/79original, independentclosure
+PASS and actualPG16.10/vector0.8.0 real-local positive/nondefaultschema/negative
+profiles, ownedsyntheticcontainercleaned. No target/Neon/SLO/import claim.
 
-The later targetprofile/keycoverage/producerqualification and P2-P8 full exits
-remain open as explicitly listed in foundation acceptance. Historical checkpoint
-text below is retained as history and is superseded by this current section.
+## Current parcel and exact next action
 
----
+P2A active spec:docs/specs/active/CCM-P2A-deterministic-memory-scrubber.md,
+SHA4a55bcbc3552f4a97ba9083b59e1ade2ad6bb3a0740c9a0b52e180cb01482efe.
+Scope:exact5NEWscrubberlibrary/model/test/docpaths, no legacy/API/DB/queue effects.
+Real frozen advisory+schema/emitter/readbackPASS; genuine StageA artifact:
+ccm-p2a-scrubber-2026-10-21-operator.shaping-result.json, epics[]. Scoped local
+workorder/gate ledger disposition recorded, no Jira/tree/receipt invented.
+Private Node24.19/Ajv8.20/yaml2.9/tsx4.23 runtime uses164byteidenticalfrozenfiles,
+repo originals matchHEAD; no package/schema/linter changes. Genericsurface-prefix
+warnings disposed as valid soleCortexpaths. Explicit profile/API/refinements
+ratified; sourceis canonicalplanned scrubber/**, not an invented parallel service.
 
-# CCM coordinator loop — P1A/P1B merged; P1C review and P1D build
+Gate2/role admission committed2ddd0a85 before dispatch. Isolatedworktree:
+D:/Repos/ccm-worktrees/cortex-p2a, feat/foreman-line-ccm-p2a,
+acceptedbase6139ddd8802540829eebce07215106e4b16ca360.
+Freshnativegpt-6-luna/medium /root/p2a_builder Step0PASS and ONE initialbuild
+authorized/running. Do not dispatch duplicateworker or change its model/context.
+One later formal focusedrepair only, with freshStep0; normaldebugiterations within
+eachlane allowed. No builderprovider/key/network/DB/dependency/commit authority.
 
-Custodian remains `ccm-coordinator-20261020-fresh-01`; authorized operator
-`01a155be-72a6-7b02-ac33-84dc64bbf102`, oversight
-`01a158b8-93f8-7423-b5b6-aaca46092870`. No duplicate coordinator or revived monitor.
-Owner's blanket non-destructive authority in evidence/owner-autonomous-next-steps-20261021.json
-covers bounded decisions, approvals, repair, integration and GenSpark ceiling changes.
-Do not repeat routine approval requests. Gate1, S01-S12, C02-D1, accepted independent
-plan review and foundation approval9431a864 remain settled; preserve source trust,
-independent reviews and actual evidence. No destructive data/key actions or secrets disclosure.
+Completebefore-sourceWindowsbaseline2993cases:2855PASS/137opt-inSKIP/oneknown
+BM2receipt_overhead_bounded[50] timingfailure9.38x>3.0 (0.4ms vs4.1ms). Accepted
+basebothmainCIgreen. Carryfailureexplicitly, no source/threshold/skipchanges or
+blindrerun. Preserve267oldpins, all2855passingidentities/137existingdispositions;
+any otherfailure/newskip needsconcretetriage. Completecandidatesuiterunretained,
+focused/format/types and exactheadCI mustPASS. See timingdisposition and baseline.
 
-## Current accepted source
+NEXT consume actualbuilderhandoff, validate5paths/267pins/newtests/fullbaseline,
+Python3.10compatibility and32independentstdlibHMACvectors withheldfrombuilder.
+Then2freshindependentfrontierarchitecture/securityreviews, reproduce/triage
+findings, onefocusedrepairifneeded, closureverdicts, greenexactheadmerge/StageF.
+Security-reviewskill applied locally; reviewers no tools/edits/effects, material
+locators/confidence/impact/remediation/coverage gaps, calibratedseverity.
 
-P1A Cortex PR80 merged cc3a6defa78849b8df8795c58ac65866f31179d5.
-P1B Cortex PR83 merged 241358c664fbbceb140a45c0da40c48f6c1135c0.
-Both parcels have two independent post-repair PASS verdicts, exact-head green chains
-and both merge-main workflows green. Status-only work orders archived in done/;
-source worktrees retained. P1A399PASS/all238baseline, P1B266PASS/all200baseline;
-P1B all30 numeric pairs independently recomputed and v1 replay unchanged.
-P1B's initial timing failure and single same-head CI rerun remain disclosed,
-not evidence of benchmark stability or a performance fix.
-See evidence/p1a-stage-f-closure-20261021.json and evidence/p1b-stage-f-closure-20261021.json.
+## Budget and date boundary
 
-## In flight
+Current NYday is2026-10-22. Oct21shared4800EXPIRED at04UTC; NOT extended/reused.
+P2Abuild nativeaccountusage unknown/separate; rootP2AGenSpark/APIcalls0 sofar.
+Planned finite entireP2Areviewcapacity1400 (2initial<=350/2closure<=350), NOT
+spend/currentreservation; exactpackets/day/accountadmission before paidlaunch.
+Reuse qualified Opuslow profile, no newqualification/providerhunt/launcherwork.
+Floor1000/effort9000 and allunknownholds persist; no automaticretry/fallback.
 
-P1C isolated Collective base70aabfc4b8e550d83fac4478dbf9d3d230898438.
-Small native gpt-6-luna/low builder handed off five allowed paths,322PASS,
-all314baseline identities retained; parent validation and TWO fresh independent
-frontier architecture reviews next. Exact fixture copy c419250a... from accepted
-P1A ccm-contracts/2.0.1; Python conformance161PASS read-only. Local wire receipt
-envelope may retain canonical ReceiptRef plus unverified integrity hash;
-no alternate authority, global converter or enforcement worker. Record equality/
-reflection additions explicitly disclosed, old constructors/deconstruction retained.
+Foundationconservative2626.729 incloriginalGenSpark94.6+failedB350unknown;
+APIknown+reserved$1.08227inclunknown$0.17192. Nativeusage separateunknown.
+Current primaryfoundation receipts have no pendingproviderrequest/futurereview.
+Foreignledger remains READONLY. IMPORTANTnewdayforeignpolicy explicitly RETAINS
+old700 as its OWNexcesshold plusournewunknown350; allpriorholds1361.6 (historical
+external222.6+700excess+350unknown+local89). Do NOTreuse Oct21subtract700guard:
+the excessisnowforeign-retained, not our futurecapacity to release. Fresh foreign
+sqlite-native-20261022-0400phase75 also needs conservativefreshguarddisposition.
+UsefreshactualNYday/account/deltas/holds before every paidcall, preservecumulative
+history and lastpremidnightbalance7406.2 (foreignfresh03:59:24 corroboratesown).
+Select a finite newdateddayenvelope underexistinggrant whenactualpaidphaseknown;
+do not attributebalanceshiftstoaspecificcall orclaimbillingproof.
 
-P1D isolated Cortex basecc3a6defa78849b8df8795c58ac65866f31179d5.
-Status-only active work order committed67ee1c88 before dispatch. Step0 approved,
-baseline79PASS and asyncpg0.31.0 available. Small native Luna now authorized to
-implement exactly three paths with fake-driver and absent-config CLI checks.
-No real DB/credential discovery/provisioning/network. Real disposable database
-capability evidence is an OPEN later execution gate; mock results cannot close it.
-One initial implementation plus one formal focused review repair each.
+## Remaining boundaries
 
-## Finite spending and unknowns
-
-NYOctober21 shared ceiling4000 selected for P1C/D bounded review phases;
-P1C initial review capacity900, <=400 each/two initial calls; P1D500, initial<=250
-plus bounded focused closure<=250. Account floor1000 and effort ceiling9000.
-Fresh account/shared-state reconciliation and exact token-profile admission
-before each call, no automatic retries/fallback. Dated envelope cannot silently
-reset or extend on midnight; old unknown holds survive any new day.
-Native Codex usage unknown/separate, never reported as zero or converted.
-P1A conservative booked1047.644 includes original GenSpark unknown94.6.
-P1B conservative known447.44425 plus unresolved original closureB350=797.44425.
-API conservative known+reserved$1.08227 includes unknown$0.17192. No release.
-Foreign shared ledger includes our old pending700: replace ONLY that exact owned
-pending component with actual own closure completions +unknown350 +new reservations;
-do not double count it as a new external debit or erase unrelated holds.
-Receipts, list-price/operational estimates and actual billing remain distinct.
-
-## Full-goal boundaries
-
-Foundation is not bulk-ingestion readiness. Authenticated positive legacy producers
-remain zero; concrete source/revision/authentication qualification is mandatory
-before high-trust backfill. P1D real database proof, existing crypto/backup posture,
-P2 scrub/parse, P3 storage/purge, P4 recall/benchmarks, P5 briefing/graph,
-P6 lifecycle/Gateway, P7 inheritance and P8 connectors all require their own
-gates and actual exit evidence. Serialize shared api.py ownership.
+P2A is purelibrary only; returnedmutabledata/type/flag is NOTproof of scrubbing.
+P3must callit immediatelybeforeactualdurableenqueue andprove no rawcopies.
+Synthetic hints never qualify/exempt; no universal detector/entropy/erasure claim.
+Authenticatedhightrustproducerallowlist stillzero, requiredbeforebackfill.
+TargetprofilebeforeP4, existingkey/backupqualificationbeforecryptoeffects,
+P2Bparsers/extractors and P3-P8/fullWave1/Wave2/benchmark/import/live-smoke gates
+remainopen. No personaldata imported, no bulk/fullgoalready claim.
+Historical approvals/failures stay in exact evidence/docsGit history;
+don't reopen settled Gate1/S01-S12/C02-D1/P1receipts or stale execution holds.

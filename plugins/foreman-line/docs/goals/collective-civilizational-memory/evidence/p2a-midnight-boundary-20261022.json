@@ -1,0 +1,17 @@
+{
+  "atUtc": "2026-10-22T04:14:53.714775+00:00",
+  "currentAmericaNewYorkDay": "2026-10-22",
+  "previousSharedOct21Ceiling4800ExpiredAtUtc": "2026-10-22T04:00:00Z",
+  "newPaidDayCeilingSelected": false,
+  "rootP2AGenerationRequests": 0,
+  "plannedParcelReviewCapacity": 1400,
+  "nativeBuilderUsage": "unknown/separate",
+  "foreignPriorHolds1361_6": "Preserve:222.6historical+700foreignretainedexcess+350failedBunknown+89local; do not subtract700 using oldownerfield assumption",
+  "foreignCurrentPhase75": "Conservatively retain unless freshdisposition showsactualcharge/remainingstate, no attribution invented",
+  "boundaryBaseline": "Lastfreshpremidnight7406.2 at03:59:24 foreigncorroborated own7406.2; count any gap decrease conservatively in nextday, cumulativehistory preserved",
+  "rootUnknownGenSpark": {
+    "source94_6": 94.6,
+    "closure350": 350
+  },
+  "rootApiUnknownUsd": 0.17192
+}
