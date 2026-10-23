@@ -1,5 +1,17 @@
 # Normal configuration verification and shared-parent reconciliation
 
+## Completed owner restart follow-through
+
+Owner reported restarting the goal/process. At2026-10-23T01:42:54.5741231Z
+(October22 New York), current tool Process and saved Windows User token presence
+and equality passed using booleans only. Ports8811/8812 had no listeners.
+Evidence: evidence/gateway-parent-postrestart-check-20261022.json. No credential
+value was emitted and no old/new-token authentication request was needed.
+The prior parent-inheritance mismatch is resolved for this process. Restart
+guidance below is historical; do not request another restart for this same check.
+Native Pi/development-profile admission and provider cleanup are still open;
+routeReleased=false and broaderIncidentClosed=false remain explicit.
+
 Direct owner authorization: reconcile the normal client and stale shared parent
 at a safe boundary, verify the replacement, keep affected routes held, and continue
 safe AST work. The originating operator retains sole execution custody; oversight

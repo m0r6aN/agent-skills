@@ -50,6 +50,14 @@ advisory/schema/emitter/readback passed, Gate2 commit5e9d0b06 before fresh worke
 
 ## Actual credential-handling incident — OPEN
 
+Owner restart follow-through PASS at2026-10-23T01:42:54.5741231Z (Oct22NY):
+current tool Process/User gateway token both present/equal, no8811/8812 listener,
+no credential values/auth request. See evidence/gateway-parent-postrestart-check-20261022.json.
+Stale-parent mismatch is resolved for THIS process; restart-pending text below is
+historical. Preserve earlier401/401/200 checks without unnecessary rerun. Native
+Pi/profile and provider cleanup remain held; no blanket route/worker release.
+Oversight chat is archived; persist evidence here without reviving a monitor.
+
 Saved normal project URL/header templates now freshly resolved against Windows
 User state and verified401/401/200 initialize in the empty loopback fixture.
 See gateway-parent-client-reconciliation-20261022.md and
