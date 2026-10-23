@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { parse } from 'yaml'
 import { serialize } from '../../schema-scaffold/src/generate.js'
 import AjvModule, { type Ajv as AjvType } from '../node_modules/ajv/dist/ajv.js'
+import { R34_AUDIT_MIGRATIONS } from '../src/r34-migrations.js'
 import { allSchemaFiles } from '../src/registry.js'
 import type { AuthorityEnforcementRegistry } from '../src/types.js'
 import { ok } from './support/assert-ok.js'
@@ -63,5 +64,8 @@ test('R13 typed canonical sample carries the normative Markdown audit contract',
   // 202 - 2 = 200 rows. Derivation and predecessor rows are pinned in semantic-invariants.test.ts
   // ("R13 every excluded audit candidate...") via R32_ITEM_MIGRATIONS.
   // R33 appends the six explicitly published Quick flags paragraph candidacies: 200 + 6 = 206.
-  assert.equal(sample.normativeMarkdownAudit?.length, 206)
+  assert.equal(
+    sample.normativeMarkdownAudit?.length,
+    R34_AUDIT_MIGRATIONS.filter((row) => row.current !== null).length,
+  )
 })

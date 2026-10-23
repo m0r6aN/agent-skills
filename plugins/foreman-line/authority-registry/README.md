@@ -591,3 +591,53 @@ those files but excludes itself and the own-goal amendment record. Parcel-time s
 are checked in the deterministic pass, not against a moving Git base in the shipped suite.
 Two fresh independent architecture/risk reviews, coordinator triage and the human gates remain
 handoff obligations outside this package.
+## R34 current Pantheon source correspondence
+
+PAN-CI4 adds the current source subject without rewriting the R33 account above. The authentic
+R33 generated registry is committed at `7396cef4301906a58e88aedbf2b2669747326a05`; its governed
+source snapshot remains `da6d73103027d49e35f654101b7f8b1778643800`. The R34 source snapshot is
+`fcc6096de5d55c1ae6b549680ed66e67791106e2`, an immutable committed source basis that predates
+these generated artifacts. Generation therefore has no moving final-HEAD dependency.
+
+`src/r34-migrations.ts` explicitly maps all eighteen source identities and every old/current
+item, locator, normalized value, rule and audit candidacy. It distinguishes unchanged, changed,
+new and retired units. Retired prose slots that carried generic obligations name their exact
+consolidated replacement; the original generic rule IDs and semantic fields remain. The complete
+23-record predecessor history is retained canonically and the new R34 record appends to it.
+The current denominator is 1,691 inventory items, 595 rules, 606 audit candidacies and 24
+reconciliations. Derivation from R33: 1,774 items minus 101 retirements plus 18 additions; 552
+rules plus 43 narrative records; 206 audit rows minus 13 retirements plus 413 candidacies.
+Changed entries retain separate before/after values rather than being counted as additions.
+
+Pantheon-specific prose is **non-operative narrative** in this package. `AuthorityQuery.goal`
+still supports only `foreman-kernel`; `all-foreman-goals` remains an applicability scope, not a
+new query goal. New narrative rules cannot control a grant, become Runtime admission, issue
+Human ratification or expand the existing protected-operation matrix. Actual Pantheon authority
+continues to come from separately verified OM-PAN-001 inputs and its admitted execution path.
+Adding active Pantheon resolution requires separately scoped type/schema/resolver work.
+
+The validator checks the complete current R34 mapping before projecting explicitly mapped units
+onto their original R33 curation subject. It then restores the actual current subject for chain,
+source-reference and protected-operation checks. Repository-aware validation independently reads
+both historical and current committed blobs and the actual predecessor YAML. The corpus sweep
+always checks the current worktree against current locators and values; benign wrapping/comments
+retain their existing treatment. A predecessor projection is not a fallback for unknown, missing,
+forged or modified current data. `validateHistoricalR33Registry` and `sweepHistoricalR33Sources`
+are diagnostic entry points for authentic historical subjects; `resolveAuthority` never uses
+them. Historical validity cannot admit an old registry as the current resolver document.
+
+Normal package maintenance commands remain `npm run generate`, `npm run typecheck`, `npm run
+lint` and `npm test` in this package. `generateRegistryArtifacts()` is the narrower source-authoring
+entry point for the two YAML files only; the normal generator also maintains existing schema
+scaffolding. Both YAML files are complete, identical artifacts. Generation reads authentic Git
+objects, so an offline checkout must carry the explicitly referenced history and blobs. Missing
+history fails closed; generation does not fetch it. Run normal verification package checks and
+exact-head Windows CI separately: Linux execution alone cannot qualify Windows file-URL behavior.
+
+The CI4 builder dispatch permits source authoring but zero test/checker/container jobs. Its local
+formatting and deterministic artifact generation are not test passes or acceptance. Independent
+complete registry/typecheck/lint/verification/D19/18-pin checks, two whole-unit reviews, eligible
+normal CI and coordinator closure remain required. The existing D19 classifier and its protected
+scope are unchanged; a real finding on the literal migration data requires a separately bounded
+refinement, not an audit exemption or disguised string. This source change proves no Runtime
+admission, provider completion, Cortex operation, crash recovery or dogfooding exit.

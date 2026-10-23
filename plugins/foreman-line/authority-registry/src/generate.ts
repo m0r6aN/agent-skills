@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process'
-import { readFileSync, writeFileSync } from 'node:fs'
+import { writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parse, stringify } from 'yaml'
@@ -22,6 +22,20 @@ import {
   R33_RECORD_DIGEST,
   R33_SOURCE_SNAPSHOT,
 } from './r33-migrations.js'
+import {
+  R34_AUDIT_MIGRATIONS,
+  R34_BINDING_MANIFEST,
+  R34_ITEM_MIGRATIONS,
+  R34_MAPPING_DIGEST,
+  R34_PRIOR_HISTORY_DIGEST,
+  R34_PRIOR_MANIFEST,
+  R34_PRIOR_REGISTRY_COMMIT,
+  R34_RECONCILIATION,
+  R34_RULE_MIGRATIONS,
+  R34_RULE_ORDER,
+  R34_SOURCE_MIGRATIONS,
+  R34_SOURCE_SNAPSHOT,
+} from './r34-migrations.js'
 import {
   allSchemaFiles,
   NORMATIVE_MARKDOWN_AUDIT_KEYS,
@@ -779,7 +793,10 @@ function frozenMarkdownItemIds(): Map<string, string> {
   )) {
     const content = maskVolatileMarkdown(
       source.sourceId,
-      readFileSync(join(repoRoot, ...source.path.split('/')), 'utf8'),
+      execFileSync('git', ['cat-file', 'blob', `${CURRENT_SNAPSHOT}:${source.path}`], {
+        cwd: repoRoot,
+        encoding: 'utf8',
+      }),
     )
     for (const block of markdownBindingBlocks(markdownDocumentMap(content))) {
       const frozenKey = `${source.sourceId}\u0000${block.locator.anchor}`
@@ -11993,18 +12010,13 @@ function buildSource(definition: SourceDefinition): {
   source: CanonSource
   rules: AuthorityRule[]
 } {
-  const absolutePath = join(repoRoot, ...definition.path.split('/'))
-  const bytes = readFileSync(absolutePath)
   const snapshotBytes = execFileSync(
     'git',
     ['cat-file', '-p', `${CURRENT_SNAPSHOT}:${definition.path}`],
     { cwd: repoRoot },
   )
-  if (
-    (definition.sourceId === 'goal-skill' || definition.sourceId === 'coordinator-pattern') &&
-    !bytes.equals(snapshotBytes)
-  )
-    throw new Error(`R33 target source differs from its adopted committed blob: ${definition.path}`)
+  // Historical generation reads its original committed subject, never relabelled R34 bytes.
+  const bytes = snapshotBytes
   // Snapshot evidence attests the pinned commit, never mutable worktree bytes. `content` is masked,
   // so every locator, ordinal, and digest below is derived from the governed surface only.
   const content = definition.path.endsWith('.md')
@@ -13211,7 +13223,7 @@ function _requiredReconciliations(
   ]
 }
 
-function buildRegistry(): AuthorityEnforcementRegistry {
+export function buildHistoricalR33Registry(): AuthorityEnforcementRegistry {
   const built = SOURCE_DEFINITIONS.map(buildSource)
   // Corroborating references remain reciprocal inventory links. They never replace the basis.
   const sources = built.map((entry) => ({
@@ -13500,9 +13512,146 @@ function writeFixtures(full: AuthorityEnforcementRegistry): void {
   // bulk and leaves no second copy to drift.
 }
 
+/** Build the current subject from authentic committed history and finite literal correspondence. */
+export function buildR34Registry(): AuthorityEnforcementRegistry {
+  const prior = registryAtCommit(R34_PRIOR_REGISTRY_COMMIT)
+  if (
+    registryBindingManifestDigest(prior) !== R34_PRIOR_MANIFEST ||
+    sha256(canonicalJson(prior.reconciliations)) !== R34_PRIOR_HISTORY_DIGEST
+  )
+    throw new Error('R34 authentic predecessor manifest/history mismatch')
+  const mapping = {
+    sources: R34_SOURCE_MIGRATIONS,
+    items: R34_ITEM_MIGRATIONS,
+    rules: R34_RULE_MIGRATIONS,
+    audits: R34_AUDIT_MIGRATIONS,
+  }
+  if (sha256(canonicalJson(mapping)) !== R34_MAPPING_DIGEST)
+    throw new Error('R34 literal correspondence digest mismatch')
+  const itemDigest = (item: CanonSource['inventoryItems'][number]) => {
+    const { lineHint: _hint, ...locator } = item.locator
+    return sha256(canonicalJson({ ...item, locator }))
+  }
+  const sources = R34_SOURCE_MIGRATIONS.map((entry) => {
+    const old = prior.sources.find((source) => source.sourceId === entry.sourceId)
+    if (old === undefined) throw new Error(`R34 predecessor source missing: ${entry.sourceId}`)
+    const { inventoryItems: oldItems, ...oldHeader } = old
+    if (
+      canonicalJson(oldHeader) !== canonicalJson(entry.prior) ||
+      canonicalJson(oldItems.map((item) => item.itemId)) !== canonicalJson(entry.priorItemOrder)
+    )
+      throw new Error(`R34 predecessor source identity changed: ${entry.sourceId}`)
+    const bytes = execFileSync(
+      'git',
+      ['cat-file', 'blob', `${R34_SOURCE_SNAPSHOT}:${entry.current.path}`],
+      { cwd: repoRoot },
+    )
+    if (sha256(bytes) !== entry.current.snapshotEvidence.fullFileSha256)
+      throw new Error(`R34 committed whole-file subject changed: ${entry.sourceId}`)
+    const inventoryItems = entry.currentItemOrder.map((itemId) => {
+      const row = R34_ITEM_MIGRATIONS.find(
+        (candidate) => candidate.sourceId === entry.sourceId && candidate.itemId === itemId,
+      )
+      if (row === undefined) throw new Error(`R34 current mapping missing: ${itemId}`)
+      const oldItem = oldItems.find((candidate) => candidate.itemId === itemId)
+      if (row.priorDigest !== (oldItem === undefined ? null : itemDigest(oldItem)))
+        throw new Error(`R34 predecessor item changed: ${itemId}`)
+      const item = row.disposition === 'unchanged' ? oldItem : row.current
+      if (item === undefined || item === null || itemDigest(item) !== row.currentDigest)
+        throw new Error(`R34 current item correspondence changed: ${itemId}`)
+      return structuredClone(item)
+    })
+    // Parse the current changed source with the same structural rules as the corpus sweep.
+    // Literal correspondence supplies identities, never live inference of a new grant.
+    if (entry.disposition === 'changed') {
+      const markdown = markdownDocumentMap(bytes.toString('utf8'))
+      const located = [...headingLocators(markdown), ...markdownBindingBlocks(markdown)]
+      if (located.length !== inventoryItems.length)
+        throw new Error(`R34 source inventory is incomplete: ${entry.sourceId}`)
+      for (const item of inventoryItems) {
+        const matches = located.filter(
+          (unit) =>
+            unit.locator.kind === item.locator.kind && unit.locator.anchor === item.locator.anchor,
+        )
+        if (
+          matches.length !== 1 ||
+          sha256(normalizeRuleText(matches[0]?.text ?? '')) !== item.valueDigest
+        )
+          throw new Error(
+            `R34 current source value/locator mismatch: ${entry.sourceId}:${item.itemId}`,
+          )
+        Object.assign(item, { locator: matches[0]?.locator })
+      }
+    }
+    return { ...structuredClone(entry.current), inventoryItems }
+  })
+  for (const row of R34_ITEM_MIGRATIONS.filter((row) => row.disposition === 'retired')) {
+    const old = prior.sources
+      .find((source) => source.sourceId === row.sourceId)
+      ?.inventoryItems.find((item) => item.itemId === row.itemId)
+    if (old === undefined || itemDigest(old) !== row.priorDigest)
+      throw new Error(`R34 retired predecessor item mismatch: ${row.itemId}`)
+  }
+  const rules = R34_RULE_ORDER.map((ruleId) => {
+    const row = R34_RULE_MIGRATIONS.find((candidate) => candidate.ruleId === ruleId)
+    if (row === undefined) throw new Error(`R34 rule mapping absent: ${ruleId}`)
+    const old = prior.rules.find((rule) => rule.ruleId === ruleId)
+    if (row.priorDigest !== (old === undefined ? null : sha256(canonicalJson(old))))
+      throw new Error(`R34 predecessor rule mismatch: ${ruleId}`)
+    const rule = row.disposition === 'unchanged' ? old : row.current
+    if (rule === undefined || rule === null || sha256(canonicalJson(rule)) !== row.currentDigest)
+      throw new Error(`R34 current rule mismatch: ${ruleId}`)
+    return structuredClone(rule)
+  })
+  const normativeMarkdownAudit = R34_AUDIT_MIGRATIONS.flatMap((row) => {
+    const old =
+      prior.normativeMarkdownAudit.find(
+        (candidate) => candidate.sourceId === row.sourceId && candidate.itemId === row.itemId,
+      ) ?? null
+    if (canonicalJson(old) !== canonicalJson(row.prior))
+      throw new Error(`R34 predecessor audit mismatch: ${row.sourceId}:${row.itemId}`)
+    return row.current === null ? [] : [structuredClone(row.current)]
+  })
+  const operationAuthority = prior.operationAuthority.map((operation) => ({
+    ...structuredClone(operation),
+    requiredGitEvidence: operation.requiredGitEvidence.map((ref) =>
+      refFor(sources, ref.sourceId, ref.itemId),
+    ),
+  }))
+  const current: AuthorityEnforcementRegistry = {
+    ...structuredClone(prior),
+    sourceSnapshotCommit: R34_SOURCE_SNAPSHOT,
+    sources,
+    rules,
+    normativeMarkdownAudit,
+    operationAuthority,
+    reconciliations: [
+      ...structuredClone(prior.reconciliations),
+      structuredClone(R34_RECONCILIATION),
+    ],
+  }
+  if (registryBindingManifestDigest(current) !== R34_BINDING_MANIFEST)
+    throw new Error('R34 current binding manifest mismatch')
+  for (const evidence of R34_RECONCILIATION.observedEvidence)
+    if (
+      evidence.kind === 'git-commit' &&
+      sha256(execFileSync('git', ['cat-file', '-p', evidence.reference], { cwd: repoRoot })) !==
+        evidence.digest
+    )
+      throw new Error('R34 actual Git object custody mismatch')
+  return current
+}
+
+/** Source-only generation; schema scaffolding remains a separate normal maintenance entry. */
+export function generateRegistryArtifacts(): void {
+  const registry = buildR34Registry()
+  writeYaml(join(packageRoot, 'authority-enforcement-registry.yaml'), registry)
+  writeFixtures(registry)
+}
+
 function main(): void {
   generate(allSchemaFiles, join(packageRoot, 'schemas'))
-  const registry = buildRegistry()
+  const registry = buildR34Registry()
   writeYaml(join(packageRoot, 'authority-enforcement-registry.yaml'), registry)
   writeFixtures(registry)
   process.stdout.write(

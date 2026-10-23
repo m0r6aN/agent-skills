@@ -17,7 +17,7 @@ import {
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { test } from 'node:test'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { RATIFIED_PACKAGES } from '../src/ratified-packages.js'
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -63,7 +63,7 @@ test('PAN-CI2: pinned checksum admission and hostile source controls', async (t)
   const run = (rootArg = root, observeReads = false) => {
     measure()
     const args = ['--import', import.meta.resolve('tsx')]
-    if (observeReads) args.push('--import', join(scratch, 'observe.mjs'))
+    if (observeReads) args.push('--import', pathToFileURL(join(scratch, 'observe.mjs')).href)
     args.push(join(packageRoot, 'src', 'd19-audit.ts'), '--plugin-root', rootArg)
     const result = spawnSync(process.execPath, args, {
       cwd: packageRoot,
