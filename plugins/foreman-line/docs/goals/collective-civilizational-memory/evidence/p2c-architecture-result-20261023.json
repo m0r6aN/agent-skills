@@ -1,0 +1,44 @@
+{
+  "verdict": "CHANGES_REQUIRED",
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "high",
+      "locator": "src/keon/cortex/pipeline/ccm_python.py:extract_python_symbols final raise; docs/specs/ccm-python-symbols-v1.md confidentiality section",
+      "trigger": "Call extract_python_symbols(b'def f(:') inside an except block handling ValueError('UNIQUE_SENTINEL'). The final raise automatically acquires that ambient exception as __context__.",
+      "impact": "The public error can retain a raw exception and sentinel diagnostic despite the unconditional workorder requirement for no cause/context retention. Leaving the extractor's own handler prevents internal chaining but does not prevent ambient chaining. The documentation introduces an exception to the contract that the workorder does not authorize.",
+      "remediation": "Ensure public failures have no retained cause/context even when invoked under an active caller exception, preserving empty args and closed-code str/repr. Add ambient-context regression tests for invalid type, syntax and resource failures; align documentation with the actual contract.",
+      "confidence": "high"
+    },
+    {
+      "id": "F2",
+      "severity": "medium",
+      "locator": "src/keon/cortex/pipeline/ccm_python.py:_extract symbols/stack/scope declarations; both Python files",
+      "trigger": "Supplied initial checks report three mypy errors, Black changes required in both Python files, and isort changes required in tests/test_ccm_python.py.",
+      "impact": "Acceptance criterion 6 is not met. Inferred empty-tuple ancestry and Module-only stack types do not describe the iterative traversal's actual AST and lexical-name values.",
+      "remediation": "Explicitly annotate symbols as a list of PythonSymbol and traversal entries as AST nodes paired with tuples of strings, ensuring scope inference remains compatible. Apply the repository's configured Black/isort formatting and rerun all three checks on the resulting exact head.",
+      "confidence": "high"
+    },
+    {
+      "id": "F3",
+      "severity": "medium",
+      "locator": "ACTUAL_INITIAL_CHECKS: baselineIdentitiesRetained and TestBenchReceiptEmitOverhead.test_receipt_overhead_bounded[20]",
+      "trigger": "The supplied full-suite report has one failure, baselineIdentitiesRetained=false, and receipt overhead of 16.23x against the existing 3.0x bound.",
+      "impact": "The required green full suite and preservation of accepted baseline identities are not established. The supplied results do not demonstrate whether the benchmark failure is unrelated variability or a regression, nor explain the identity discrepancy.",
+      "remediation": "Reconcile the complete accepted identity inventory and provide evidence-based benchmark triage using unchanged thresholds and pins. Obtain required exact-head and merged-main green CI after repair; do not attribute the failure to this library without supporting evidence.",
+      "confidence": "high"
+    }
+  ],
+  "coverage": [
+    "Reviewed all three supplied files without tools or execution.",
+    "Exact-bytes admission precedes callbacks; standard-library-only implementation has no supplied-source execution or external I/O.",
+    "Frozen slotted results, payload-free reprs, original-byte hashing, BOM/CRLF mapping, NFKC names, overlapping ranges, duplicate ordering and iterative lexical traversal are structurally consistent.",
+    "Validation order, cookie policy, explicit best-effort feature_version, scalar limits and internal exception sanitation reviewed.",
+    "Frozen fixtures and reported three-runtime restricted vectors support core extraction behavior; canonical runtime remains Python 3.13.15."
+  ],
+  "gaps": [
+    "Restricted-vector summaries were supplied, not independently executed or audited here.",
+    "Repository-wide diff, baseline inventory, exact-head and merged-main CI evidence are unavailable.",
+    "Production adapter composition and hostile-input admission remain outside scope and held."
+  ]
+}

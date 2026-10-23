@@ -1,0 +1,46 @@
+{
+  "atUtc": "2026-10-23T20:55:26.495129+00:00",
+  "status": "completed_pending_parent_validation",
+  "modelRequested": "gpt-6.1-sol",
+  "effort": "low",
+  "reservedCredits": 250,
+  "bookedCredits": 43.05675,
+  "packetSha256": "e77bfdc936fe4f78f052a7a9333a2d95589200badbaa626f13fb52625e305ad3",
+  "inputByteBound": 35791,
+  "outputConfigured": 24000,
+  "estimateCeiling": 181.212625,
+  "guard": {
+    "atUtc": "2026-10-23T20:55:26.495013+00:00",
+    "balance": 6231.4,
+    "foreignLedgerSha256": "6c931ccc348e9df89e7c4bb016d62fd3172ae673feb8bdf3f9df617b6f138c13",
+    "carriedReservations": 3394.3745,
+    "completedPriorPhaseConservative": 210.94425,
+    "newPhaseReservation": 300,
+    "accountDeltaConservative": 221.10000000000036,
+    "dayConservative": 4126.418750000001,
+    "effortConservative": 7240.71875,
+    "accountAfterHolds": 2326.0812499999997,
+    "dayCeiling": 4500,
+    "effortCeiling": 9000,
+    "floor": 1000,
+    "expiresUtc": "2026-10-24T04:00:00Z",
+    "oldUnknownReservationsRetained": true
+  },
+  "postMaximum": 1,
+  "retries": 0,
+  "tools": [],
+  "returnedModel": "gpt-6.1-sol",
+  "finishReason": "stop",
+  "usage": {
+    "prompt_tokens": 7346,
+    "completion_tokens": 5992,
+    "total_tokens": 13338,
+    "prompt_tokens_details": {
+      "cache_write_tokens": 7343
+    },
+    "reasoning_tokens": 300
+  },
+  "reportedCredits": 42.9,
+  "catalogEstimate": 43.05675,
+  "completedAtUtc": "2026-10-23T20:56:59.848880+00:00"
+}

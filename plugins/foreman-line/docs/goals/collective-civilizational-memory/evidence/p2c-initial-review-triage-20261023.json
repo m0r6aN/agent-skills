@@ -1,0 +1,28 @@
+{
+  "atUtc": "2026-10-23T21:03:36.242843+00:00",
+  "ambientContextReproduced": [
+    {
+      "code": "invalid_syntax",
+      "ambientContextRetained": true,
+      "contextType": "ValueError"
+    },
+    {
+      "code": "invalid_content_type",
+      "ambientContextRetained": true,
+      "contextType": "ValueError"
+    }
+  ],
+  "contextFinding": "Confirmed; fix and regressions required. Security reviewer claim context universally absent is disproved by bounded reproduction.",
+  "identityInventoryRetained": 3112,
+  "sameSourceDiagnosticCounts": {
+    "pass": 2984,
+    "skipped": 137,
+    "failure": 0,
+    "error": 0
+  },
+  "BM2Disposition": "Initial16.23x timing failure preserved. One unchanged source/image diagnostic all2984PASS137SKIP. Existing baseline2975PASS137SKIP same host supports variability; no rootcause fix or threshold change claimed. Closure/head/main checks still required.",
+  "typingFormatting": "Confirmed repair",
+  "fStringBracketFinding": "Canonical3.13 token model applies; earlier runtime f-string token differences need explicit docs and fixed small canonical-only guard fixture. No exact grammar or cross-runtime bound claim.",
+  "testCoverage": "Add fixed CR/Unicode/BOMcookie/NUL and ambient exception regressions",
+  "independentOracleCorrection": "Original standalone vector handcount34/47 incorrect; independent byte length/index gives36/49. Runner corrected, candidate unchanged;29checks nowPASS each3runtime. Prior failure retained."
+}

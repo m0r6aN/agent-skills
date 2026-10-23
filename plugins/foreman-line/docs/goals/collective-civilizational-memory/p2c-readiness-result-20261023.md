@@ -83,3 +83,12 @@ the one-implementation/one-repair and two independent source-review/main-CI gate
 The production adapter and assembled hostile-input admission follow the library
 under p2c-noncircular-admission-sequence-20261023.md. No repeat owner blanket
 approval is required; the remaining limits are technical route/qualification facts.
+
+
+## Superseding build disposition
+
+See p2c-build-state-20261023.md. Tools-free private Sol qualified and Gate2
+opened; initial source remains unaccepted. One formal repair source call failed
+with unknown upstream outcome,120credits retained, no retry/fallback. Affected
+private-Pi/shell/provider routes remain held. Do not use this historical readiness
+record to dispatch another build or repeat the prebuild baseline.

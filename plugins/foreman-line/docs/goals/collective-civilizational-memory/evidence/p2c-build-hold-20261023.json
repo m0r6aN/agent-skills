@@ -1,0 +1,56 @@
+{
+  "atUtc": "2026-10-23T21:08:29.222742+00:00",
+  "status": "HELD_AFTER_ONE_FORMAL_REPAIR_TRANSPORT_FAILURE",
+  "workerQualification": "Controlled GenSpark gpt-6.1-sol/low private supplied-artifact/no-tools envelope qualified by exact metadata, admitted Step0 and complete initial source proposal; not native Pi/shell clearance",
+  "Kimi": "Public-only profile remains ineligible for private code; prior failed task not retried",
+  "sourceBranch": "feat/foreman-line-ccm-p2c",
+  "base": "91c57778804a4f1097b07049176c1af533c840e2",
+  "sourceFiles": {
+    "src/keon/cortex/pipeline/ccm_python.py": "e7b40c4c1108cb14938ead72c6948e0d04184f740f93475bebfd77dacc504c04",
+    "tests/test_ccm_python.py": "490b6a923a52fdcbf25753dd8ef11c7578b38cb2db8e5a0e6757b73ac016941b",
+    "docs/specs/ccm-python-symbols-v1.md": "9b2859f915746f1405df2d8670bb05081fa294642f644425efe487a640820847"
+  },
+  "sourceFilesStillInitialProposal": true,
+  "focusedTests": {
+    "pass": 9,
+    "fail": 0
+  },
+  "initialFullCounts": {
+    "pass": 2983,
+    "skipped": 137,
+    "failure": 1,
+    "error": 0
+  },
+  "sameSourceDiagnosticCounts": {
+    "pass": 2984,
+    "skipped": 137,
+    "failure": 0,
+    "error": 0
+  },
+  "boundaryChecks": "29each on3.10.22/3.12.15/3.13.15; all owned containers removed",
+  "initialReviews": {
+    "architecture": "CHANGES_REQUIRED",
+    "security": "CHANGES_REQUIRED"
+  },
+  "confirmedDefects": [
+    "Ambient caller exception context retained on public failures",
+    "Three mypy typing errors",
+    "Black/isort failures"
+  ],
+  "formalRepair": {
+    "attempts": 1,
+    "step0Accepted": true,
+    "sourcePostAttempts": 1,
+    "status": "HTTPError before usable response; HTTP status/body were not retained by helper, do not infer524",
+    "fullUnknownCreditHold": 120,
+    "remoteGenerationOrBillingUnknown": true,
+    "sourceResultApplied": false,
+    "retryFallbackOrSecondRepair": false
+  },
+  "acceptance": false,
+  "gate3Merge": "HELD",
+  "PRCreated": false,
+  "affectedAndNativeRoutes": "HELD",
+  "productionOrBulkImportReady": false,
+  "next": "Reconcile this exact uncertain failed request before considering any further bounded repair/worker decision. Preserve original artifacts and all uncertain holds; no blind replay or substitute builder. No new owner permission question is inferred from unknown transport details."
+}
