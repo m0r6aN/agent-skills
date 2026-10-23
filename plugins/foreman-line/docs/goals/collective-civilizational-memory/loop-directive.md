@@ -177,6 +177,17 @@ output allowance; no automatic retry/provider hunt or partial-PASS acceptance.
 
 ## Remaining goal / next capability
 
+October23 host/source prerequisites advanced: clean recovered Cortex checkout
+D:/Repos/ccm-cortex-readiness-20261023 at91c57778804a4f1097b07049176c1af533c840e2,
+both actual main workflows green, four accepted P2B blobs match, three P2C paths
+absent. See cortex-checkout-recovery evidence. No source edit or full baseline yet.
+Linux-container mechanism canaries PASS on3.10.22/3.12.15/3.13.15; all owned
+containers removed. Select pinned3.13.15 with3.10 grammar;3.10 is end-of-life and
+Unicode token counts differ across runtimes. See parser-host-profile-20261023.md.
+Numeric profile selected for adapter implementation/review, not production admit.
+User exact preferred Pi model opencode-go/kimi-k3.1-pro is requested only, not
+invoked/verified. Affected routes/credential workers remain held; no paid phase.
+
 October23 safe preparation produced draft CCM-P2C-python-declarations.md plus
 ccm-p2c-python-declarations-2026-10-23-operator.shaping-result.json in active specs.
 Frozen advisory/schema/emitter/readback PASS;164 source byte pins matched.

@@ -1,5 +1,12 @@
 # AST extraction: coordinator contract and source plan
 
+October23 update: parser-host-profile-20261023.md supersedes provisional numeric
+and host choices below. A fresh usable Cortex checkout and actual3.10.22/3.12.15/
+3.13.15 bounded host observations now exist. Production parsing selects pinned
+3.13.15 with3.10 grammar; token guards are runtime-specific. Production adapter,
+independent review and prebuild baseline/admission remain open. Exact owner Pi
+preference is opencode-go/kimi-k3.1-pro when cleared; no paid dispatch occurred.
+
 Status: planning decisions under the owner's existing non-destructive authority.
 Not a dispatchable parcel, Gate 2, parser safety qualification or implementation.
 The affected secret-key routes and new credential-bearing worker hold remain.

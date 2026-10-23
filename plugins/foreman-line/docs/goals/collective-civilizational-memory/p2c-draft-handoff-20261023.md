@@ -1,5 +1,15 @@
 # P2C Python declaration library: draft shaping handoff
 
+Later same-day follow-through: a clean current Cortex checkout is recovered;
+four accepted P2B blob pins match and the three P2C paths are absent. Three actual
+Python runtimes passed bounded host mechanism/fixture checks. The selected
+implementation/review profile is now fixed in parser-host-profile-20261023.md;
+production host3.13.15 is pinned with3.10 grammar. Numeric guards are selected,
+while production adapter implementation/independent review, full prebuild baseline
+and worker admission remain open. The draft amendment passed the frozen advisory
+and schema readback again. Use exactly opencode-go/kimi-k3.1-pro in Pi when cleared;
+no model was invoked. Earlier prerequisite wording below is historical to that extent.
+
 Under the owner's instruction to press on, authored one narrow library draft:
 ../../specs/active/CCM-P2C-python-declarations.md.
 The parser-host/pipe protocol remains separately planned; no large combined

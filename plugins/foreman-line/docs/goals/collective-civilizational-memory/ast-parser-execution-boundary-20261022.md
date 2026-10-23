@@ -1,5 +1,13 @@
 # AST execution-boundary planning decision
 
+October23 follow-through: selected Linux-container profile and numeric ceilings
+are now documented in parser-host-profile-20261023.md with actual3.10/3.12/3.13
+mechanism and fixture observations. Python3.13.15 is the canonical host with3.10
+grammar, following lifecycle verification and observed token-count differences.
+This supersedes unchosen numeric/host alternatives below. The production adapter,
+protocol enforcement and independent review are still open; Windows-native Job
+Object isolation is not claimed. No worker or route admission follows from tests.
+
 Coordinator decision under existing owner authority: do not admit hostile source
 to an in-process parser on byte/token guards alone. Select a separately qualified
 bounded parser subprocess as the target production boundary. This is a design

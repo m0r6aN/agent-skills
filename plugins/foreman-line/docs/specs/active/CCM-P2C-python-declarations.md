@@ -54,16 +54,19 @@ reviews. This draft does not authorize dispatch or change credential holds.
   for digest/ranges. Follow tokenizer first/two-line effective coding-cookie
   recognition, but accept only case-insensitive utf-8 or utf8 spellings. Other
   effective cookie declarations fail closed, including ASCII latin-1 sources.
-- Request Python3.10 grammar explicitly. Preserve Python3.10 source compatibility;
-  compare retained fixtures on actual supported CI hosts before claiming runtime
-  compatibility. Current3.13.7 observations alone do not qualify a3.10 host.
-- Proposed draft limits:262144 input bytes,20000 emitted tokenize.tokenize tokens
+- Request Python3.10 grammar explicitly and preserve Python3.10 library source
+  compatibility. Select the pinned Python3.13.15 Linux image in
+  parser-host-profile-20261023.md for production parsing. Actual3.10.22,3.12.15
+  and3.13.15 observations now exist; tests of this future library remain required.
+  Token counts are canonical-runtime-specific, not invariant across interpreters.
+- Coordinator-selected implementation/review limits:262144 input bytes,20000 emitted tokenize.tokenize tokens
   (including ENCODING/ENDMARKER),64 bracket nesting levels,64 lexical declaration
   ancestors and2048 declarations. Count brackets only as operator tokens outside
   strings/comments. Validate byte size before decode; strict decode and cookie
   policy before tokenization; tokenize before AST parse; check declaration limits
-  before returning. These are draft numeric choices, requiring qualification and
-  coordinator freeze before Gate2. They are not time/memory sandbox guarantees.
+  before returning. Selected host mechanisms now pass bounded canaries; adapter
+  implementation and independent review remain required before Gate2. Scalar
+  guards are not time/memory sandbox guarantees.
 - Use iterative AST traversal. SyntaxError/tokenizer failures become invalid_syntax;
   resource guard, MemoryError or RecursionError becomes resource_limit. Closed
   PythonExtractionError codes: invalid_content_type, resource_limit, invalid_utf8,
@@ -124,9 +127,10 @@ Exactly these NEW paths in the sole Cortex implementation repository:
 - tests/test_ccm_python.py
 - docs/specs/ccm-python-symbols-v1.md
 
-No existing file edits. Recheck absence and accepted dependency pins on a clean
-current worktree before freezing the workorder. The prior retained worktree path
-is presently unusable; no current-base verification is claimed from its history.
+No existing file edits. Fresh clean checkout D:/Repos/ccm-cortex-readiness-20261023
+at91c57778804a4f1097b07049176c1af533c840e2 has matching accepted P2B blobs and no
+proposed P2C paths. Recheck before dispatch and establish the actual complete
+prebuild baseline/pins. Historical broken worktrees are untouched.
 
 ## Context & References
 
@@ -139,16 +143,18 @@ is presently unusable; no current-base verification is claimed from its history.
 
 ## Verification Plan
 
-Before Gate2: recover a usable current Cortex checkout without resetting existing
-work; verify base/path/pins, freeze numeric guards, qualify the separate restricted
-parser host and reconcile actual supported-runtime coverage. Credential-bearing
+Before Gate2: retain/recheck the recovered checkout, establish the actual prebuild
+baseline/pins, implement and independently review the separately scoped restricted
+adapter, then compare this library on actual supported runtimes. Mechanism/profile
+evidence is in parser-host-profile-20261023.md. Credential-bearing
 workers remain held; no implicit route release follows from refreshed gateway
 state. Fresh dated cost/account/foreign-hold admission precedes any paid phase;
 October22 allowances are not rolled into October23.
 
 The future compact builder packet contains this draft, exact accepted package
-interfaces, fixed fixture oracles and relevant test commands only. Prefer a fresh
-eligible Luna-class builder; no automatic frontier escalation, retry/provider hunt
+interfaces, fixed fixture oracles and relevant test commands only. Prefer exactly
+opencode-go/kimi-k3.1-pro in an eligible isolated Pi session per owner direction;
+no automatic frontier escalation, retry/provider hunt
 or incident transcripts. Reviews independently assess Unicode byte mapping,
 resource/error behavior, non-execution, trust boundaries and scope preservation.
 No budget, paid dispatch, receipt, Jira registration or active status is created.

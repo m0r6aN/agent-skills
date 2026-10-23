@@ -1,0 +1,43 @@
+{
+  "atUtc": "2026-10-23T19:48:23.806475+00:00",
+  "checkout": "D:\\Repos\\ccm-cortex-readiness-20261023",
+  "head": "91c57778804a4f1097b07049176c1af533c840e2",
+  "origin": "https://github.com/Keon-Systems/keon-cortex.git",
+  "cleanDetachedCheckout": true,
+  "historicalWorktreesUntouched": true,
+  "newCheckoutRecovered": true,
+  "acceptedP2BBlobHashesMatch": {
+    "src/keon/cortex/pipeline/__init__.py": true,
+    "src/keon/cortex/pipeline/ccm_text.py": true,
+    "tests/test_ccm_text.py": true,
+    "docs/specs/ccm-text-parser-v1.md": true
+  },
+  "proposedP2CPathsAbsent": {
+    "src/keon/cortex/pipeline/ccm_python.py": true,
+    "tests/test_ccm_python.py": true,
+    "docs/specs/ccm-python-symbols-v1.md": true
+  },
+  "mainCIRuns": [
+    {
+      "id": 39818888827,
+      "name": "CI",
+      "conclusion": "success"
+    },
+    {
+      "id": 39818888799,
+      "name": "Trigger auto deployment for keon-cortex",
+      "conclusion": "success"
+    }
+  ],
+  "canonicalInstructions": {
+    "root": "AGENTS.md",
+    "missingLocalReference": "D:/Repos/keon-omega/keon-systems-web/AGENTS.md",
+    "retrievedUsing": "Authenticated GitHub contents API, Keon-Systems/keon-systems-web/AGENTS.md",
+    "blob": "1acbb5722166d8bb2850d6b2064c6d9320cf5197",
+    "read": true,
+    "scope": "Web rules apply to web surfaces; general scoped work/origin-main branching retained; direct owner ordinary-shell instructions override inherited RTK preference"
+  },
+  "sourceEdits": 0,
+  "implementationAdmitted": false,
+  "remaining": "Actual prebuild focused/full baseline and immutable complete pins, independent adapter qualification, worker/route/cost admission"
+}
