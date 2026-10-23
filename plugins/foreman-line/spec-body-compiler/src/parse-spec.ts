@@ -26,9 +26,9 @@ export const GRAMMAR_PIN = {
   convention: 'SPEC-CONVENTION',
   schemaRevision: 'v0.4',
   revisionDate: '2026-09-27',
-  sectionBytes: 10199,
-  sectionDigest: 'sha256:96113a55c6ddf2a7bad93c90d7004f1e51550aa2b1164ae06093992ee824398d',
-  fileDigest: 'sha256:70508684d2c929d1331ed0cd9a147fcc2206593a04fbf210314e22fb80cba0a8',
+  sectionBytes: 10305,
+  sectionDigest: 'sha256:61fc23d24ea700176f588b2330acfa0d778d3db7083e9edd71bf0be1a0d9c737',
+  fileDigest: 'sha256:81ec8bb81aa090a0488b589509af757cad14de281202961691a36eb864d7ad7e',
 } as const
 
 /**

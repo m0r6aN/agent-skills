@@ -157,3 +157,30 @@ named I/O seams are `verifyCompiledPaths` and the pin test's file read, whose
 failures surface as the package's own typed errors. There is deliberately no
 generate script (the JSON Schema and fixture tables are source-authored; the
 compiler emits artifacts at runtime).
+
+## 2026-10-23 document identity maintenance (PAN-CI3)
+
+[PAN-CI3](../docs/specs/active/PAN-CI3-grammar-identity-maintenance.md)
+explicitly amends FK-P2's pin/version/review applicability only for the exact
+approved governance-prose identity refresh. Parsing grammar, authority
+interpretation, canonicalization and artifact shape remain unchanged, so
+artifactVersion `0.1.0`, schemaRevision `v0.4` and semantic grammar revisionDate
+`2026-09-27` remain. This date identifies the semantic grammar revision, not
+the latest publication of the convention document.
+
+The current full convention is 25318 UTF-8 bytes, SHA256
+`81ec8bb81aa090a0488b589509af757cad14de281202961691a36eb864d7ad7e`;
+section 4 is 10305 bytes, SHA256
+`61fc23d24ea700176f588b2330acfa0d778d3db7083e9edd71bf0be1a0d9c737`.
+Emitted grammar metadata and `compiledScopeDigest` change with this identity.
+Historical `KNOWN_BASE` and its refusal behavior remain unchanged. Current
+schema consts reject stale or mixed tuples; source and digest bindings still
+must be checked by their consumers. `compileScope` does not automatically call
+`assertGrammarPin`, and `assertDispatchable` checks nonempty mutation authority;
+neither constitutes universal stale-artifact admission enforcement.
+
+The ordinary version/migration contract above still applies to real grammar,
+authority-interpretation, shape or assertion changes. The historical FK-P2
+specification and assurance pins are preserved. This exact maintenance requires
+fresh independent source verification and full normal CI, with no automatic
+refresh or new accepted predecessor.

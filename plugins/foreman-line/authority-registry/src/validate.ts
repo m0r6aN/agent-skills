@@ -20,6 +20,21 @@ import {
   R33_SOURCE_SNAPSHOT,
 } from './r33-migrations.js'
 import {
+  R34_AUDIT_MIGRATIONS,
+  R34_ITEM_MIGRATIONS,
+  R34_MAPPING_DIGEST,
+  R34_PRIOR_HISTORY_DIGEST,
+  R34_PRIOR_MANIFEST,
+  R34_PRIOR_REGISTRY_COMMIT,
+  R34_PRIOR_RULE_ORDER,
+  R34_RECONCILIATION,
+  R34_RECORD_DIGEST,
+  R34_RULE_MIGRATIONS,
+  R34_RULE_ORDER,
+  R34_SOURCE_MIGRATIONS,
+  R34_SOURCE_SNAPSHOT,
+} from './r34-migrations.js'
+import {
   NORMATIVE_MARKDOWN_AUDIT_KEYS,
   R12_LEGACY_MARKDOWN_RULE_TARGETS,
   R12_PRIOR_REGISTRY_COMMIT,
@@ -126,14 +141,14 @@ const REQUIRED_REWORK_MIGRATIONS = [
  * invalidate the shipped registry. Measured: it does exactly that, AND still admits the
  * delete-and-substitute attack, because a pin binds only a record that is still present.
  */
-const SHIPPED_CHAIN_HEAD_ID = R33_RECONCILIATION.reconciliationId
+const SHIPPED_CHAIN_HEAD_ID = R34_RECONCILIATION.reconciliationId
 /**
  * The canonical record digest of the shipped head, consulted ONLY once the record is no longer the
  * head. While it IS the head it stays bound to the live manifest, so appending a legitimately
  * amended registry does not require regenerating or re-pinning anything; once a successor demotes
  * it, it becomes a historical record and is bound exactly like the records before it.
  */
-const SHIPPED_CHAIN_HEAD_RECORD_DIGEST = R33_RECORD_DIGEST
+const SHIPPED_CHAIN_HEAD_RECORD_DIGEST = R34_RECORD_DIGEST
 const REQUIRED_OPERATIONS = [
   'gate1.ratify',
   'gate2.dispatch',
@@ -806,6 +821,7 @@ const RECONCILIATION_PROSE: Readonly<Record<string, readonly [string, string]>> 
 }
 
 const RECONCILIATION_RECORD_DIGESTS: Readonly<Record<string, string>> = {
+  [R33_RECONCILIATION.reconciliationId]: R33_RECORD_DIGEST,
   // R33 pins the demoted R32 head at its original canonical digest, never a re-anchor.
   'registry-rework-521214e': R32_RECORD_DIGEST,
   'registry-rework-66a514d': '6d39f17f70b25ce44030e729c62d975b45a8597b99af8c22f19c6a3cbfba92d7',
@@ -1076,13 +1092,17 @@ function recordDigestPinFor(reconciliationId: string): string | undefined {
 function headFloorViolations(
   record: ReconciliationRecord,
   document: AuthorityEnforcementRegistry,
+  historicalR33 = false,
 ): ValidationViolation[] {
   const violations: ValidationViolation[] = []
   // Obligation 2: a pinned record is never the head, so head position is not selectable by
   // deletion. Keyed on ID PRESENCE in the pin table, never on byte-match against it - byte-match
   // would let a tamperer mutate a pinned record first, breaking its own match, and only then
   // delete the head to promote it, which is one step past where the obvious implementation stops.
-  if (RECONCILIATION_RECORD_DIGESTS[record.reconciliationId] !== undefined) {
+  if (
+    RECONCILIATION_RECORD_DIGESTS[record.reconciliationId] !== undefined &&
+    !(historicalR33 && record.reconciliationId === R33_RECONCILIATION.reconciliationId)
+  ) {
     violations.push(
       violation(
         'MIGRATION_EVIDENCE_INVALID',
@@ -1289,7 +1309,10 @@ export interface MigrationChain {
  * manifest of a tampered registry. The registry is a contract, not a trust root; real anti-tamper
  * is Git history plus human review.
  */
-function verifyMigrationChain(document: AuthorityEnforcementRegistry): MigrationChain {
+function verifyMigrationChain(
+  document: AuthorityEnforcementRegistry,
+  historicalR33 = false,
+): MigrationChain {
   const violations: ValidationViolation[] = []
   const chainRecords = document.reconciliations.filter((record) =>
     record.reconciliationId.startsWith(MIGRATION_CHAIN_PREFIX),
@@ -1388,7 +1411,7 @@ function verifyMigrationChain(document: AuthorityEnforcementRegistry): Migration
   // The head is bound to the manifest recomputed live from the document it sits in - a stricter
   // assertion than equality with a constant, not an exemption from binding.
   const head = path[path.length - 1] as ChainLink
-  violations.push(...headFloorViolations(head.record, document))
+  violations.push(...headFloorViolations(head.record, document, historicalR33))
   const liveManifest = registryBindingManifestDigest(document)
   if (head.nextDigest !== liveManifest) {
     violations.push(
@@ -1903,8 +1926,38 @@ function checkOperationAuthority(document: AuthorityEnforcementRegistry): Valida
   return violations
 }
 
-function semanticViolations(document: AuthorityEnforcementRegistry): ValidationViolation[] {
-  const violations: ValidationViolation[] = []
+function semanticViolations(
+  document: AuthorityEnforcementRegistry,
+  historicalR33 = false,
+): ValidationViolation[] {
+  const currentSubject = document
+  const currentMigrationChain = historicalR33 ? null : verifyMigrationChain(document)
+  const violations: ValidationViolation[] = historicalR33
+    ? []
+    : r34CorrespondenceViolations(document, currentMigrationChain)
+  if (!historicalR33) {
+    const currentRuleIds = new Set<string>()
+    for (const rule of document.rules) {
+      if (currentRuleIds.has(rule.ruleId))
+        violations.push(
+          violation('RULE_DUPLICATE', "duplicate ruleId '" + rule.ruleId + "'", {
+            ruleId: rule.ruleId,
+          }),
+        )
+      currentRuleIds.add(rule.ruleId)
+    }
+    const expectedAudit = R34_AUDIT_MIGRATIONS.flatMap((entry) =>
+      entry.current === null ? [] : [entry.current],
+    )
+    if (canonicalJson(document.normativeMarkdownAudit) !== canonicalJson(expectedAudit))
+      violations.push(
+        violation(
+          'RULE_SEMANTICS_UNCURATED',
+          'current normative Markdown audit must equal its exact item-specific source-authored dispositions',
+        ),
+      )
+    document = r34PredecessorProjection(document)
+  }
   const sourcesById = new Map<string, CanonSource>()
   const itemsByRef = new Map<string, CanonSource['inventoryItems'][number]>()
   const normalizedPaths = new Set<string>()
@@ -2991,6 +3044,18 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
     }
   }
 
+  if (!historicalR33) {
+    document = currentSubject
+    sourcesById.clear()
+    itemsByRef.clear()
+    rulesById.clear()
+    for (const source of document.sources) {
+      sourcesById.set(source.sourceId, source)
+      for (const item of source.inventoryItems)
+        itemsByRef.set(referenceKey(source.sourceId, item.itemId), item)
+    }
+    for (const rule of document.rules) rulesById.set(rule.ruleId, rule)
+  }
   const reconciliationIds = new Set<string>()
   for (const reconciliationId of REQUIRED_RECONCILIATIONS) {
     if (!document.reconciliations.some((record) => record.reconciliationId === reconciliationId)) {
@@ -3004,7 +3069,11 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
   }
   // R22 obligation 6: the shipped head is REQUIRED to be present, so deleting it - with or without
   // a substitute under another id - invalidates the document instead of vacating a free slot.
-  for (const migrationId of [...REQUIRED_REWORK_MIGRATIONS, SHIPPED_CHAIN_HEAD_ID]) {
+  for (const migrationId of [
+    ...REQUIRED_REWORK_MIGRATIONS,
+    R33_RECONCILIATION.reconciliationId,
+    ...(historicalR33 ? [] : [SHIPPED_CHAIN_HEAD_ID]),
+  ]) {
     if (!document.reconciliations.some((record) => record.reconciliationId === migrationId)) {
       violations.push(
         violation(
@@ -3016,7 +3085,7 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
   }
   // Walked once and reused: `migrationChain.headId` decides which record is bound to the live
   // manifest instead of to a pinned constant, and its violations are collected below.
-  const migrationChain = verifyMigrationChain(document)
+  const migrationChain = currentMigrationChain ?? verifyMigrationChain(document, historicalR33)
   for (const record of document.reconciliations) {
     if (reconciliationIds.has(record.reconciliationId)) {
       violations.push(
@@ -3655,6 +3724,422 @@ function semanticViolations(document: AuthorityEnforcementRegistry): ValidationV
   return violations
 }
 
+/** Hash complete inventory meaning while preserving benign source line movement. */
+function r34ItemDigest(item: InventoryItem): string {
+  const { lineHint: _hint, ...locator } = item.locator
+  return sha256(canonicalJson({ ...item, locator }))
+}
+
+/**
+ * Project only explicitly mapped current units onto their immutable R33 subjects for the
+ * historical curation checks below. This is not validation or authority: callers must also
+ * validate every current mapping and the current chain, and the sweep always reads current bytes.
+ */
+export function r34PredecessorProjection(
+  document: AuthorityEnforcementRegistry,
+): AuthorityEnforcementRegistry {
+  const itemMappings = new Map(
+    R34_ITEM_MIGRATIONS.map((entry) => [referenceKey(entry.sourceId, entry.itemId), entry]),
+  )
+  const ruleMappings = new Map(R34_RULE_MIGRATIONS.map((entry) => [entry.ruleId, entry]))
+  const currentRules = new Map(document.rules.map((entry) => [entry.ruleId, entry]))
+  const currentAudit = new Map(
+    document.normativeMarkdownAudit.map((entry) => [
+      referenceKey(entry.sourceId, entry.itemId),
+      entry,
+    ]),
+  )
+  const sources = document.sources.map((source) => {
+    const mapping = R34_SOURCE_MIGRATIONS.find((entry) => entry.sourceId === source.sourceId)
+    if (mapping === undefined) return source
+    const current = new Map(source.inventoryItems.map((item) => [item.itemId, item]))
+    const inventoryItems = mapping.priorItemOrder.flatMap((itemId) => {
+      const entry = itemMappings.get(referenceKey(source.sourceId, itemId))
+      const item = entry?.disposition === 'unchanged' ? current.get(itemId) : entry?.prior
+      return item === undefined || item === null ? [] : [item]
+    })
+    // Unknown current units remain visible to the original structural/overlap diagnostics.
+    inventoryItems.push(
+      ...source.inventoryItems.filter(
+        (item) => !itemMappings.has(referenceKey(source.sourceId, item.itemId)),
+      ),
+    )
+    return { ...source, snapshotEvidence: mapping.prior.snapshotEvidence, inventoryItems }
+  })
+  const rules = R34_PRIOR_RULE_ORDER.flatMap((ruleId) => {
+    const mapping = ruleMappings.get(ruleId)
+    const candidate = currentRules.get(ruleId)
+    const rule = mapping?.disposition === 'unchanged' ? candidate : mapping?.prior
+    if (rule === undefined || rule === null) return []
+    if (candidate === undefined || mapping?.disposition === 'unchanged') return [rule]
+    if (candidate.bindingDigest === mapping?.current?.bindingDigest) return [rule]
+    // Restore only the explicitly mapped historical text/reference subject. Current generic
+    // policy fields still reach the inherited curation, retirement and conflict checks.
+    const projected = {
+      ...candidate,
+      normalizedStatement: rule.normalizedStatement,
+      sourceRefs: rule.sourceRefs,
+      authorityBasisRef: rule.authorityBasisRef,
+      bindingDigest: '',
+    }
+    return [{ ...projected, bindingDigest: bindingDigestFor(projected) }]
+  })
+  rules.push(...document.rules.filter((rule) => !ruleMappings.has(rule.ruleId)))
+  const normativeMarkdownAudit = R34_AUDIT_MIGRATIONS.flatMap((entry) => {
+    if (entry.prior === null) return []
+    if (entry.disposition !== 'unchanged') return [entry.prior]
+    const current = currentAudit.get(referenceKey(entry.sourceId, entry.itemId))
+    return current === undefined ? [] : [current]
+  })
+  return {
+    ...document,
+    sourceSnapshotCommit: R33_SOURCE_SNAPSHOT,
+    sources,
+    rules,
+    normativeMarkdownAudit,
+  }
+}
+
+/** One bounded batch per validation; no object result survives its invocation. */
+function r34ReadObjects(
+  root: string,
+  document: AuthorityEnforcementRegistry,
+): Map<string, { type: string; bytes: Buffer }> {
+  const names = [
+    ...new Set([
+      ...R34_SOURCE_MIGRATIONS.flatMap((source) =>
+        [source.prior, source.current].flatMap((subject) => [
+          subject.snapshotEvidence.commit,
+          subject.snapshotEvidence.commit + ':' + subject.path,
+        ]),
+      ),
+      ...document.reconciliations.flatMap((record) =>
+        record.observedEvidence
+          .filter((entry) => entry.kind === 'git-commit')
+          .map((entry) => entry.reference),
+      ),
+    ]),
+  ]
+  if (names.length > 128 || names.some((name) => name.includes('\n') || name.includes('\r')))
+    throw new Error('invalid bounded object request')
+  const output = execFileSync('git', ['cat-file', '--batch'], {
+    cwd: root,
+    input: names.join('\n') + '\n',
+    stdio: ['pipe', 'pipe', 'ignore'],
+    maxBuffer: 64 * 1024 * 1024,
+  })
+  const objects = new Map<string, { type: string; bytes: Buffer }>()
+  let offset = 0
+  for (const name of names) {
+    const end = output.indexOf(10, offset)
+    if (end < 0) throw new Error('truncated object header')
+    const fields = output.subarray(offset, end).toString('utf8').split(' ')
+    const size = Number(fields[2])
+    if (
+      fields.length !== 3 ||
+      !/^[0-9a-f]{40,64}$/.test(fields[0] ?? '') ||
+      !Number.isSafeInteger(size) ||
+      size < 0 ||
+      end + size + 1 >= output.length
+    )
+      throw new Error('missing or malformed object')
+    offset = end + 1
+    const bytes = output.subarray(offset, offset + size)
+    offset += size
+    if (output[offset++] !== 10) throw new Error('malformed object framing')
+    const type = fields[1] as string
+    objects.set(name, { type, bytes })
+    // Fresh batch bytes, never a previous invocation's trust. Existing evidence checks still compare types/digests.
+    gitResultCache?.set(JSON.stringify([root, 'cat-file', '-t', name]), {
+      ok: true,
+      value: Buffer.from(type + '\n'),
+    })
+    gitResultCache?.set(JSON.stringify([root, 'cat-file', '-p', name]), { ok: true, value: bytes })
+    if (type === 'blob')
+      gitResultCache?.set(JSON.stringify([root, 'cat-file', 'blob', name]), {
+        ok: true,
+        value: bytes,
+      })
+  }
+  if (offset !== output.length) throw new Error('unexpected object output')
+  return objects
+}
+
+/** Independently corroborate both whole-file subjects and predecessor units against real Git. */
+function r34RepositoryCorrespondenceViolations(
+  root: string,
+  document: AuthorityEnforcementRegistry,
+): ValidationViolation[] {
+  const violations: ValidationViolation[] = []
+  try {
+    const prior = parse(
+      runGitText(root, [
+        'cat-file',
+        'blob',
+        `${R34_PRIOR_REGISTRY_COMMIT}:plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml`,
+      ]),
+    ) as AuthorityEnforcementRegistry
+    if (
+      registryBindingManifestDigest(prior) !== R34_PRIOR_MANIFEST ||
+      sha256(canonicalJson(prior.reconciliations)) !== R34_PRIOR_HISTORY_DIGEST
+    )
+      throw new Error('authentic predecessor registry manifest/history differs')
+    const objects = r34ReadObjects(root, document)
+    const priorSources = new Map(prior.sources.map((entry) => [entry.sourceId, entry]))
+    const priorItems = new Map(
+      prior.sources.flatMap((source) =>
+        source.inventoryItems.map(
+          (item) => [referenceKey(source.sourceId, item.itemId), item] as const,
+        ),
+      ),
+    )
+    const priorRules = new Map(prior.rules.map((entry) => [entry.ruleId, entry]))
+    const priorAudit = new Map(
+      prior.normativeMarkdownAudit.map((entry) => [
+        referenceKey(entry.sourceId, entry.itemId),
+        entry,
+      ]),
+    )
+    for (const source of R34_SOURCE_MIGRATIONS) {
+      const actual = priorSources.get(source.sourceId)
+      if (actual === undefined) throw new Error(`predecessor source missing: ${source.sourceId}`)
+      const { inventoryItems, ...header } = actual
+      if (
+        canonicalJson(header) !== canonicalJson(source.prior) ||
+        canonicalJson(inventoryItems.map((item) => item.itemId)) !==
+          canonicalJson(source.priorItemOrder)
+      )
+        throw new Error(`predecessor source identity changed: ${source.sourceId}`)
+      for (const subject of [source.prior, source.current]) {
+        const commit = objects.get(subject.snapshotEvidence.commit)
+        if (commit?.type !== 'commit') throw new Error('source snapshot is not a commit')
+        const blob = objects.get(subject.snapshotEvidence.commit + ':' + subject.path)
+        if (blob?.type !== 'blob' || sha256(blob.bytes) !== subject.snapshotEvidence.fullFileSha256)
+          throw new Error(`historical/current whole-file subject changed: ${subject.sourceId}`)
+      }
+    }
+    for (const entry of R34_ITEM_MIGRATIONS) {
+      const item = priorItems.get(referenceKey(entry.sourceId, entry.itemId))
+      if ((item === undefined ? null : r34ItemDigest(item)) !== entry.priorDigest)
+        throw new Error(
+          `predecessor item correspondence changed: ${entry.sourceId}:${entry.itemId}`,
+        )
+    }
+    for (const entry of R34_RULE_MIGRATIONS) {
+      const rule = priorRules.get(entry.ruleId)
+      if ((rule === undefined ? null : sha256(canonicalJson(rule))) !== entry.priorDigest)
+        throw new Error(`predecessor rule correspondence changed: ${entry.ruleId}`)
+    }
+    for (const entry of R34_AUDIT_MIGRATIONS) {
+      const row = priorAudit.get(referenceKey(entry.sourceId, entry.itemId)) ?? null
+      if (canonicalJson(row) !== canonicalJson(entry.prior))
+        throw new Error(
+          `predecessor audit correspondence changed: ${entry.sourceId}:${entry.itemId}`,
+        )
+    }
+  } catch (error) {
+    violations.push(
+      violation(
+        'MIGRATION_EVIDENCE_INVALID',
+        `R34 actual predecessor/current Git correspondence failed: ${(error as Error).message}`,
+      ),
+    )
+  }
+  return violations
+}
+
+function r34CorrespondenceViolations(
+  document: AuthorityEnforcementRegistry,
+  currentChain: ReturnType<typeof verifyMigrationChain> | null,
+): ValidationViolation[] {
+  const violations: ValidationViolation[] = []
+  const origin = document.reconciliations.find(
+    (entry) => entry.reconciliationId === R34_RECONCILIATION.reconciliationId,
+  )
+  // Missing origin is a required-record failure, never a newly admissible current subject.
+  // Preserve that established diagnostic instead of piling migration symptoms onto absence.
+  if (origin === undefined)
+    return [
+      violation(
+        'RECONCILIATION_MISSING',
+        "required rework migration '" + R34_RECONCILIATION.reconciliationId + "' is missing",
+      ),
+    ]
+  const chain = currentChain ?? verifyMigrationChain(document)
+  const genericSuccessor =
+    document.reconciliations.length === 25 &&
+    canonicalJson(document.reconciliations[23]) === canonicalJson(R34_RECONCILIATION) &&
+    sha256(canonicalJson(document.reconciliations.slice(0, 23))) === R34_PRIOR_HISTORY_DIGEST &&
+    chain.headId !== null &&
+    chain.headId !== R34_RECONCILIATION.reconciliationId &&
+    chain.violations.length === 0
+  const fail = (message: string, ruleId?: string) =>
+    violations.push(
+      violation('MIGRATION_EVIDENCE_INVALID', message, ruleId === undefined ? {} : { ruleId }),
+    )
+  // The literal mapping is not a substitute for universal current binding invariants.
+  const items = new Map(
+    document.sources.flatMap((source) =>
+      source.inventoryItems.map(
+        (item) => [referenceKey(source.sourceId, item.itemId), item] as const,
+      ),
+    ),
+  )
+  const itemGroups = new Map<string, InventoryItem[]>()
+  for (const source of document.sources)
+    for (const item of source.inventoryItems) {
+      const key = referenceKey(source.sourceId, item.itemId)
+      const group = itemGroups.get(key) ?? []
+      group.push(item)
+      itemGroups.set(key, group)
+    }
+  const ruleGroups = new Map<string, AuthorityRule[]>()
+  for (const rule of document.rules) {
+    const group = ruleGroups.get(rule.ruleId) ?? []
+    group.push(rule)
+    ruleGroups.set(rule.ruleId, group)
+  }
+  const ruleIds = new Set(document.rules.map((rule) => rule.ruleId))
+  for (const source of document.sources)
+    for (const item of source.inventoryItems) {
+      if (
+        (item.ruleIds.length === 0) === (item.exclusionDisposition === null) ||
+        sha256(normalizeRuleText(item.normalizedExcerpt)) !== item.valueDigest ||
+        item.ruleIds.some((ruleId) => !ruleIds.has(ruleId))
+      )
+        fail(
+          `R34 current item has an invalid value/disposition/rule binding: ${source.sourceId}:${item.itemId}`,
+          item.itemId,
+        )
+    }
+  for (const rule of document.rules) {
+    if (bindingDigestFor(rule) !== rule.bindingDigest)
+      fail(`R34 current rule binding digest changed: ${rule.ruleId}`, rule.ruleId)
+    for (const ref of [...rule.sourceRefs, rule.authorityBasisRef]) {
+      const item = items.get(referenceKey(ref.sourceId, ref.itemId))
+      if (
+        item === undefined ||
+        item.valueDigest !== ref.valueDigest ||
+        locatorDigestFor(item.locator) !== ref.locatorDigest ||
+        !item.ruleIds.includes(rule.ruleId)
+      )
+        fail(`R34 current rule reference is not reciprocal: ${rule.ruleId}`, rule.ruleId)
+    }
+  }
+  for (const row of document.normativeMarkdownAudit) {
+    const item = items.get(referenceKey(row.sourceId, row.itemId))
+    if (
+      item === undefined ||
+      item.valueDigest !== row.valueDigest ||
+      canonicalJson(item.ruleIds) !== canonicalJson(row.ruleIds)
+    )
+      fail(
+        `R34 current audit is not bound to its current item: ${row.sourceId}:${row.itemId}`,
+        row.itemId,
+      )
+  }
+  if (document.sourceSnapshotCommit !== R34_SOURCE_SNAPSHOT)
+    fail('R34 adopted committed source snapshot changed')
+  const mapping = {
+    sources: R34_SOURCE_MIGRATIONS,
+    items: R34_ITEM_MIGRATIONS,
+    rules: R34_RULE_MIGRATIONS,
+    audits: R34_AUDIT_MIGRATIONS,
+  }
+  if (sha256(canonicalJson(mapping)) !== R34_MAPPING_DIGEST)
+    fail('R34 complete typed correspondence changed')
+  if (sha256(canonicalJson(document.reconciliations.slice(0, 23))) !== R34_PRIOR_HISTORY_DIGEST)
+    fail('R34 predecessor history differs from all twenty-three canonical records')
+  const record = document.reconciliations.find(
+    (entry) => entry.reconciliationId === R34_RECONCILIATION.reconciliationId,
+  )
+  if (canonicalJson(record) !== canonicalJson(R34_RECONCILIATION))
+    fail('R34 exact source/history correspondence record changed')
+  if (
+    record !== undefined &&
+    (record.topic !== R34_RECONCILIATION.topic ||
+      record.migrationStatus !== R34_RECONCILIATION.migrationStatus ||
+      record.scopedDisposition !== R34_RECONCILIATION.scopedDisposition ||
+      record.unresolvedConsequence !== R34_RECONCILIATION.unresolvedConsequence)
+  )
+    fail("reconciliation '" + record.reconciliationId + "' topic/status contract changed")
+  if (
+    canonicalJson(document.sources.map((source) => source.sourceId)) !==
+    canonicalJson(R34_SOURCE_MIGRATIONS.map((source) => source.sourceId))
+  )
+    fail('R34 source identity/order correspondence changed')
+  for (const entry of R34_SOURCE_MIGRATIONS) {
+    const source = document.sources.find((source) => source.sourceId === entry.sourceId)
+    if (source === undefined) {
+      fail(`R34 source ${entry.sourceId} is missing`)
+      continue
+    }
+    const { inventoryItems, ...header } = source
+    if (canonicalJson(header) !== canonicalJson(entry.current))
+      fail(`R34 source ${entry.sourceId} header or committed whole-file subject changed`)
+    if (
+      canonicalJson(inventoryItems.map((item) => item.itemId)) !==
+      canonicalJson(entry.currentItemOrder)
+    )
+      fail(`R34 source ${entry.sourceId} item identity/order correspondence changed`)
+  }
+  for (const entry of R34_ITEM_MIGRATIONS) {
+    const matches = itemGroups.get(referenceKey(entry.sourceId, entry.itemId)) ?? []
+    if (
+      entry.currentDigest === null
+        ? matches.length !== 0
+        : matches.length !== 1 ||
+          r34ItemDigest(matches[0] as InventoryItem) !== entry.currentDigest ||
+          locatorDigestFor((matches[0] as InventoryItem).locator) !== entry.currentLocatorDigest
+    )
+      fail(
+        `R34 item ${entry.sourceId}:${entry.itemId} complete correspondence changed`,
+        entry.itemId,
+      )
+  }
+  if (canonicalJson(document.rules.map((rule) => rule.ruleId)) !== canonicalJson(R34_RULE_ORDER))
+    fail('R34 rule identity/order correspondence changed')
+  for (const entry of R34_RULE_MIGRATIONS) {
+    const matches = ruleGroups.get(entry.ruleId) ?? []
+    if (entry.current !== undefined && entry.current !== null && matches.length === 1) {
+      const candidate = matches[0] as AuthorityRule
+      // A generic successor may change policy only under the inherited chain/curation contract.
+      // It cannot rewrite the source text or its typed current reference transformation.
+      if (
+        candidate.normalizedStatement !== entry.current.normalizedStatement ||
+        canonicalJson(candidate.sourceRefs) !== canonicalJson(entry.current.sourceRefs) ||
+        canonicalJson(candidate.authorityBasisRef) !==
+          canonicalJson(entry.current.authorityBasisRef)
+      )
+        fail('R34 current source-bound rule origin changed: ' + entry.ruleId, entry.ruleId)
+    }
+    if (
+      entry.currentDigest === null
+        ? matches.length !== 0
+        : matches.length !== 1 ||
+          (!(genericSuccessor && entry.priorDigest !== null) &&
+            sha256(canonicalJson(matches[0])) !== entry.currentDigest)
+    )
+      fail(`R34 rule ${entry.ruleId} complete shape changed`, entry.ruleId)
+  }
+  if (
+    canonicalJson(document.normativeMarkdownAudit) !==
+    canonicalJson(
+      R34_AUDIT_MIGRATIONS.flatMap((entry) => (entry.current === null ? [] : [entry.current])),
+    )
+  )
+    fail('R34 complete current audit candidacy/order correspondence changed')
+  return violations
+}
+
+/** Historical diagnostics only. resolveAuthority never calls this entry point. */
+export function validateHistoricalR33Registry(
+  document: unknown,
+  options: ValidateOptions = {},
+): ValidationResult {
+  return withGitInvocation(() => validateRegistrySubject(document, options, true))
+}
+
 export interface ValidateOptions {
   /**
    * Repository root used to digest-verify D11 retirement evidence. Optional and additive.
@@ -3667,6 +4152,14 @@ export interface ValidateOptions {
 export function validateRegistry(
   document: unknown,
   options: ValidateOptions = {},
+): ValidationResult {
+  return withGitInvocation(() => validateRegistrySubject(document, options, false))
+}
+
+function validateRegistrySubject(
+  document: unknown,
+  options: ValidateOptions,
+  historicalR33: boolean,
 ): ValidationResult {
   const violations: ValidationViolation[] = []
   // Single structural pass. `validateStructure.errors` reflects the most recent call, so the
@@ -3687,7 +4180,7 @@ export function validateRegistry(
     return { valid: false, violations: sorted, summary: null }
   }
   const registry = document as AuthorityEnforcementRegistry
-  violations.push(...semanticViolations(registry))
+  violations.push(...semanticViolations(registry, historicalR33))
   // An unusable `repoRoot` is reported as the operator error it is, and retirement evidence is then
   // reported UNVERIFIED - exactly as it is when no root was supplied at all - rather than
   // INCOMPLETE. Reporting a digest check as failed when the directory holding the artifacts does
@@ -3696,6 +4189,10 @@ export function validateRegistry(
   const repoRootStatus = options.repoRoot === undefined ? null : repoRootCheck(options.repoRoot)
   if (repoRootStatus !== null) violations.push(...repoRootStatus.violations)
   if (repoRootStatus?.gitReady === true) {
+    if (!historicalR33)
+      violations.push(
+        ...r34RepositoryCorrespondenceViolations(options.repoRoot as string, registry),
+      )
     try {
       const blob = execFileSync(
         'git',
@@ -4501,31 +4998,30 @@ function extractLocator(
 }
 
 /**
- * Memoised `git` invocation, keyed by repository root and exact argument vector.
- *
- * `sweepRegistrySources` spawns roughly 87 git subprocesses per call - two per source snapshot
- * commit, two per reconciliation git-commit evidence ref, plus the worktree probe - and on Windows
- * each spawn costs on the order of 100 ms. Measured: one sweep took 10.5 s, and a CPU profile
- * attributed 98.6% of it to idle time blocked on `spawn`, not to parsing or validation. The shipped
- * suite performs 62 sweeps, which accounted for essentially all of `corpus-sweep.test.ts`'s
- * ~13 minutes.
- *
- * Caching is sound because the answers are immutable: a Git object's type and content are fixed by
- * its sha, and the worktree root of a given directory does not change within a process. Failures
- * are cached too, since a missing object stays missing for that root. The key includes the root, so
- * the copied-corpus and missing-metadata tests - which sweep DIFFERENT roots - are unaffected.
- *
- * This changes no result. It is not a general performance optimisation of the decision path, which
- * remains out of scope and owned by FK-P1.
+ * D028: read deduplication is limited to one synchronous validation or sweep.
+ * A fresh invocation rechecks the repository and actual Git objects, including replacements.
+ * No result, absence or authorization decision survives a completed invocation.
  */
-const gitResultCache = new Map<
-  string,
-  { readonly ok: true; readonly value: Buffer } | { readonly ok: false; readonly error: Error }
->()
+let gitResultCache:
+  | Map<
+      string,
+      { readonly ok: true; readonly value: Buffer } | { readonly ok: false; readonly error: Error }
+    >
+  | undefined
+
+function withGitInvocation<T>(operation: () => T): T {
+  const previous = gitResultCache
+  gitResultCache = new Map()
+  try {
+    return operation()
+  } finally {
+    gitResultCache = previous
+  }
+}
 
 function runGit(root: string, args: readonly string[]): Buffer {
   const key = JSON.stringify([root, ...args])
-  const cached = gitResultCache.get(key)
+  const cached = gitResultCache?.get(key)
   if (cached !== undefined) {
     if (cached.ok) return cached.value
     throw cached.error
@@ -4536,10 +5032,10 @@ function runGit(root: string, args: readonly string[]): Buffer {
       stdio: ['ignore', 'pipe', 'ignore'],
       maxBuffer: 64 * 1024 * 1024,
     })
-    gitResultCache.set(key, { ok: true, value })
+    gitResultCache?.set(key, { ok: true, value })
     return value
   } catch (error) {
-    gitResultCache.set(key, { ok: false, error: error as Error })
+    gitResultCache?.set(key, { ok: false, error: error as Error })
     throw error
   }
 }
@@ -4696,11 +5192,23 @@ function repoRootCheck(repoRoot: string): {
   }
 }
 
+export function sweepHistoricalR33Sources(document: unknown, repoRoot: string): ValidationResult {
+  return withGitInvocation(() => sweepRegistrySubject(document, repoRoot, true))
+}
+
 export function sweepRegistrySources(document: unknown, repoRoot: string): ValidationResult {
+  return withGitInvocation(() => sweepRegistrySubject(document, repoRoot, false))
+}
+
+function sweepRegistrySubject(
+  document: unknown,
+  repoRoot: string,
+  historicalR33: boolean,
+): ValidationResult {
   // The sweep has a repo root, so retirement evidence is digest-verified rather than reported
   // unverified. The verification itself now lives in `validateRegistry`, so the sweep no longer
   // carries its own copy and the two cannot drift apart.
-  const base = validateRegistry(document, { repoRoot })
+  const base = validateRegistrySubject(document, { repoRoot }, historicalR33)
   if (!validateStructure(document)) return base
   const registry = document as AuthorityEnforcementRegistry
   const violations = [...base.violations]

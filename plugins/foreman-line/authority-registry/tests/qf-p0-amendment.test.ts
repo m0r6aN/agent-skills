@@ -17,6 +17,7 @@ import {
   R33_RECORD_DIGEST,
   R33_SOURCE_SNAPSHOT,
 } from '../src/r33-migrations.js'
+import { R34_PRIOR_REGISTRY_COMMIT } from '../src/r34-migrations.js'
 import { R32_BINDING_MANIFEST, R32_RECORD_DIGEST } from '../src/registry.js'
 import type { AuthorityEnforcementRegistry, AuthorityRule, InventoryItem } from '../src/types.js'
 import {
@@ -26,17 +27,20 @@ import {
   normalizeRuleText,
   registryBindingManifestDigest,
   sha256,
-  sweepRegistrySources,
-  validateRegistry,
+  sweepHistoricalR33Sources as sweepRegistrySources,
+  validateHistoricalR33Registry as validateRegistry,
 } from '../src/validate.js'
 
 const packageRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
 const repoRoot = join(packageRoot, '..', '..', '..')
 const git = (...args: string[]) =>
   execFileSync('git', args, { cwd: repoRoot, maxBuffer: 32 * 1024 * 1024 })
-const full = parse(
-  readFileSync(join(packageRoot, 'authority-enforcement-registry.yaml'), 'utf8'),
-) as AuthorityEnforcementRegistry
+// R33 remains an exact historical subject; current R34 controls are in r34-pantheon-succession.
+const fullBytes = git(
+  'show',
+  `${R34_PRIOR_REGISTRY_COMMIT}:plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml`,
+)
+const full = parse(fullBytes.toString()) as AuthorityEnforcementRegistry
 const priorBytes = git(
   'show',
   `${R33_PRIOR_REGISTRY_COMMIT}:plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml`,
@@ -104,9 +108,24 @@ test('QF-P0 admits the committed R33 successor, not the R32 snapshot', () => {
   const result = validateRegistry(full, { repoRoot })
   assert.equal(result.valid, true, JSON.stringify(result.violations))
   assert.deepEqual(result.violations, [])
-  const sweep = sweepRegistrySources(full, repoRoot)
-  assert.equal(sweep.valid, true, JSON.stringify(sweep.violations))
-  assert.deepEqual(sweep.violations, [])
+  const historicalRoot = mkdtempSync(join(tmpdir(), 'qf-p0-historical-'))
+  try {
+    execFileSync(
+      'git',
+      ['clone', '--quiet', '--no-checkout', '--shared', repoRoot, historicalRoot],
+      { stdio: 'ignore' },
+    )
+    for (const source of full.sources) {
+      const destination = join(historicalRoot, source.path)
+      mkdirSync(dirname(destination), { recursive: true })
+      writeFileSync(destination, git('cat-file', 'blob', `${R33_SOURCE_SNAPSHOT}:${source.path}`))
+    }
+    const sweep = sweepRegistrySources(full, historicalRoot)
+    assert.equal(sweep.valid, true, JSON.stringify(sweep.violations))
+    assert.deepEqual(sweep.violations, [])
+  } finally {
+    rmSync(historicalRoot, { recursive: true, force: true })
+  }
   assert.deepEqual(full.reconciliations.at(-1), R33_RECONCILIATION)
 })
 
@@ -494,7 +513,7 @@ test('R33 hostile filesystem value and location probes use an isolated temporary
     for (const s of full.sources) {
       const destination = join(root, s.path)
       mkdirSync(dirname(destination), { recursive: true })
-      writeFileSync(destination, readFileSync(join(repoRoot, s.path)))
+      writeFileSync(destination, git('cat-file', 'blob', `${R33_SOURCE_SNAPSHOT}:${s.path}`))
     }
     for (const e of R33_ITEM_MIGRATIONS.filter((e) => e.newRules.length)) {
       const source = full.sources.find((s) => s.sourceId === e.sourceId)
@@ -572,10 +591,7 @@ test('R33 evidence independently derives immutable before, committed provenance,
   assert.deepEqual(a.violations, [])
   assert.equal(p.after.exitCode, 0)
   assert.deepEqual(p.after.command, p.before.command)
-  assert.equal(
-    p.after.registrySha256,
-    sha256(readFileSync(join(packageRoot, 'authority-enforcement-registry.yaml'))),
-  )
+  assert.equal(p.after.registrySha256, sha256(fullBytes))
   assert.equal(p.after.manifest, registryBindingManifestDigest(full))
   assert.equal(p.before.headRecordDigest, sha256(canonicalJson(prior.reconciliations.at(-1))))
   assert.equal(p.after.headRecordDigest, sha256(canonicalJson(full.reconciliations.at(-1))))
