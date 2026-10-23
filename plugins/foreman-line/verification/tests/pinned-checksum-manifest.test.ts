@@ -897,8 +897,8 @@ process.on('exit', () => console.log('CI2_READ_BOUND_PROBE ' + JSON.stringify({ 
       {
         declaration: 'R34_RULE_MIGRATIONS',
         slot: '[557].current.normalizedStatement',
-        start: 1459903,
-        end: 1460303,
+        start: 1459995,
+        end: 1460395,
         raw: "'- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, approved under the applicable authority: OM-PAN-001 uses its ratified rubric and independent review floor; other goals require human approval. Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md` §6.'",
         value:
           '- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, approved under the applicable authority: OM-PAN-001 uses its ratified rubric and independent review floor; other goals require human approval. Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md` §6.',
@@ -906,8 +906,8 @@ process.on('exit', () => console.log('CI2_READ_BOUND_PROBE ' + JSON.stringify({ 
       {
         declaration: 'R34_RULE_MIGRATIONS',
         slot: '[564].current.normalizedStatement',
-        start: 1476333,
-        end: 1476925,
+        start: 1476546,
+        end: 1477138,
         raw: '\'Extracted 2026-07-15 from five shipped Foreman Line parcels (W0-P1, PCC-P0, W0-P3, W0-P4, SEC-1) and ratified by Clint. This is the generalized charter for the role the carryover docs call "the Coordinator (D4)." The parcel-mechanics half of the pattern is documented in `plugins/foreman-line/skills/parcel-driven-development/`; this charter adds the pieces that methodology never formalized: the upstream ideation stage, the plan-level review, the human-gate model, and the long-running loop that holds it all together. Entry point: the `/goal` skill (`plugins/foreman-line/skills/goal/`).\'',
         value:
           'Extracted 2026-07-15 from five shipped Foreman Line parcels (W0-P1, PCC-P0, W0-P3, W0-P4, SEC-1) and ratified by Clint. This is the generalized charter for the role the carryover docs call "the Coordinator (D4)." The parcel-mechanics half of the pattern is documented in `plugins/foreman-line/skills/parcel-driven-development/`; this charter adds the pieces that methodology never formalized: the upstream ideation stage, the plan-level review, the human-gate model, and the long-running loop that holds it all together. Entry point: the `/goal` skill (`plugins/foreman-line/skills/goal/`).',
@@ -915,8 +915,8 @@ process.on('exit', () => console.log('CI2_READ_BOUND_PROBE ' + JSON.stringify({ 
       {
         declaration: 'R34_RULE_MIGRATIONS',
         slot: '[569].current.normalizedStatement',
-        start: 1487658,
-        end: 1488672,
+        start: 1487954,
+        end: 1488968,
         raw: '\'Three dispatch mechanics rules, all earned: every dispatch - including rework - opens with a Step 0 scope check; under OM-PAN-001 an exact admitted match proceeds on coordinator validation without a human prompt, and outside it the restate-and-stop gate remains; the branch/worktree is named in the directive, never ambient; and rework directives mandate "every X," never "the listed X" - the findings are a floor, not a ceiling, and no role is exempt from the sweep, including the coordinator (lesson #16). Every builder/reviewer kickstarter includes the standing constraints by reference (`plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`). For architecture/risk parcels, run **two independent adversarial reviews** (lesson #12: two frontier reviews of W0-P4 agreed on every focus question and only one found the blocker). Where reviews disagree, the coordinator reproduces the disputed finding before triaging - the reproduction is the tie-breaker at triage and the closure proof at acceptance.\'',
         value:
           'Three dispatch mechanics rules, all earned: every dispatch - including rework - opens with a Step 0 scope check; under OM-PAN-001 an exact admitted match proceeds on coordinator validation without a human prompt, and outside it the restate-and-stop gate remains; the branch/worktree is named in the directive, never ambient; and rework directives mandate "every X," never "the listed X" - the findings are a floor, not a ceiling, and no role is exempt from the sweep, including the coordinator (lesson #16). Every builder/reviewer kickstarter includes the standing constraints by reference (`plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`). For architecture/risk parcels, run **two independent adversarial reviews** (lesson #12: two frontier reviews of W0-P4 agreed on every focus question and only one found the blocker). Where reviews disagree, the coordinator reproduces the disputed finding before triaging - the reproduction is the tie-breaker at triage and the closure proof at acceptance.',
@@ -1096,6 +1096,30 @@ process.on('exit', () => console.log('CI2_READ_BOUND_PROBE ' + JSON.stringify({ 
       'root defaulted input',
       validatorSource.slice(0, sweepStart) +
         validatorSource.slice(sweepStart).replace('repoRoot: string,', 'repoRoot: string = ".",'),
+      /class-5|\[class 5\]/,
+    )
+    await t.test('D031 shorthand property reads do not create root or predecessor bindings', () => {
+      const content = changeRoot(
+        rootCall + '\n void { repoRoot, R34_PRIOR_REGISTRY_COMMIT, runGitText }',
+      )
+      assert.notEqual(content, validatorSource)
+      writeFileSync(validatorPath, content)
+      try {
+        const result = run()
+        assert.equal(result.status, 0, result.output)
+      } finally {
+        writeFileSync(validatorPath, validatorSource)
+      }
+    })
+    await replaceValidator(
+      'root optional input',
+      validatorSource.slice(0, sweepStart) +
+        validatorSource.slice(sweepStart).replace('repoRoot: string,', 'repoRoot?: string,'),
+      /class-5|\[class 5\]/,
+    )
+    await replaceValidator(
+      'root destructuring shadow',
+      changeRoot('const { repoRoot } = otherInput\n' + rootCall),
       /class-5|\[class 5\]/,
     )
     await t.test('D028 restored 49 data leaves and both mechanisms pass', () => {

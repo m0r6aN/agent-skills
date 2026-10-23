@@ -22,6 +22,7 @@ import {
 import {
   R34_AUDIT_MIGRATIONS,
   R34_BINDING_MANIFEST,
+  R34_ITEM_MIGRATIONS,
   R34_PRIOR_REGISTRY_COMMIT,
   R34_RECONCILIATION,
   R34_RULE_MIGRATIONS,
@@ -1785,7 +1786,8 @@ test('R5 standing rules have thirteen distinct operative semantic subjects', () 
 test('R5 every authority basis is substantive source text rather than a heading', () => {
   const baseline = r30Baseline()
   const legacyIds = new Set(baseline.rules.map((rule) => rule.ruleId))
-  for (const document of [baseline, full]) {
+  const historical = r33HistoricalSubject()
+  for (const document of [baseline, historical, full]) {
     for (const rule of document.rules) {
       const source = document.sources.find(
         (candidate) => candidate.sourceId === rule.authorityBasisRef.sourceId,
@@ -1798,6 +1800,24 @@ test('R5 every authority basis is substantive source text rather than a heading'
       // Preserve literal correspondence for all historical rules, on baseline and current data.
       // The 72 reviewed R30 paraphrases have their own full-shape oracle and mutation controls.
       if (!legacyIds.has(rule.ruleId)) continue
+      const migration = R34_RULE_MIGRATIONS.find((entry) => entry.ruleId === rule.ruleId)
+      if (document === full && migration?.disposition === 'changed') {
+        const prior = historical.rules.find((entry) => entry.ruleId === rule.ruleId)
+        ok(prior)
+        assertTypedCurrentRule(prior, rule)
+        const priorSource = historical.sources.find(
+          (entry) => entry.sourceId === prior.authorityBasisRef.sourceId,
+        )
+        const priorItem = priorSource?.inventoryItems.find(
+          (entry) => entry.itemId === prior.authorityBasisRef.itemId,
+        )
+        ok(priorItem)
+        const priorBasis = normalizeRuleText(priorItem.normalizedExcerpt)
+        const priorStatement = normalizeRuleText(prior.normalizedStatement)
+        if (priorItem.ruleIds.length > 1) ok(priorBasis.includes(priorStatement), rule.ruleId)
+        else assert.equal(priorBasis, priorStatement)
+        continue
+      }
       const basis = normalizeRuleText(item.normalizedExcerpt)
       const statement = normalizeRuleText(rule.normalizedStatement)
       if (item.ruleIds.length > 1) ok(basis.includes(statement), rule.ruleId)
@@ -2724,16 +2744,50 @@ for (const [name, mutate] of r13EvidenceMutations) {
   })
 }
 
+/** The literal oracle remains historical; its exact typed successor is the current query subject. */
 function publishedRuleContaining(sourceId: string, fragment: string) {
-  const source = full.sources.find((candidate) => candidate.sourceId === sourceId)
+  const historical = r33HistoricalSubject()
+  const source = historical.sources.find((candidate) => candidate.sourceId === sourceId)
   ok(source)
   const matches = source.inventoryItems.filter(
     (item) => item.normalizedExcerpt.includes(fragment) && item.ruleIds.length === 1,
   )
-  assert.equal(matches.length, 1, `${sourceId}:${fragment}`)
-  const rule = full.rules.find((candidate) => candidate.ruleId === matches[0]?.ruleIds[0])
+  assert.equal(matches.length, 1, sourceId + ':' + fragment)
+  const prior = historical.rules.find((candidate) => candidate.ruleId === matches[0]?.ruleIds[0])
+  ok(prior)
+  const rule = full.rules.find((candidate) => candidate.ruleId === prior.ruleId)
   ok(rule)
+  assertTypedCurrentRule(prior, rule)
   return rule
+}
+
+function assertTypedCurrentRule(prior: AuthorityRule, rule: AuthorityRule): void {
+  const rows = R34_RULE_MIGRATIONS.filter((entry) => entry.ruleId === prior.ruleId)
+  assert.equal(rows.length, 1)
+  const row = rows[0]
+  ok(row)
+  assert.equal(row.priorDigest, sha256(canonicalJson(prior)))
+  assert.equal(row.currentDigest, sha256(canonicalJson(rule)))
+  assert.equal(rule.ruleId, prior.ruleId)
+  for (const ref of [...rule.sourceRefs, rule.authorityBasisRef]) {
+    const source = full.sources.find((entry) => entry.sourceId === ref.sourceId)
+    const items = source?.inventoryItems.filter((entry) => entry.itemId === ref.itemId)
+    assert.equal(items?.length, 1)
+    const item = items?.[0]
+    ok(item)
+    const mappings = R34_ITEM_MIGRATIONS.filter(
+      (entry) => entry.sourceId === ref.sourceId && entry.itemId === ref.itemId,
+    )
+    assert.equal(mappings.length, 1)
+    const { lineHint: _lineHint, ...locator } = item.locator
+    assert.equal(mappings[0]?.currentDigest, sha256(canonicalJson({ ...item, locator })))
+    assert.equal(mappings[0]?.currentLocatorDigest, locatorDigestFor(item.locator))
+    assert.equal(ref.locatorDigest, locatorDigestFor(item.locator))
+    assert.equal(ref.valueDigest, item.valueDigest)
+    assert.equal(item.valueDigest, sha256(normalizeRuleText(item.normalizedExcerpt)))
+    assert.notEqual(item.locator.kind, 'heading')
+    ok(item.ruleIds.includes(rule.ruleId))
+  }
 }
 
 function resolveNatural(
@@ -7257,4 +7311,47 @@ test('R31 alias duplication remains refused after repairing links and appending 
         entry.code === 'AUTHORITY_ESCALATION' && /R31 reserved source unit/.test(entry.message),
     ),
   )
+})
+
+// D031: a valid generic successor is not a waiver of current R34 correspondence.
+test('D031 a chained generic successor cannot rewrite mapped current source text', () => {
+  const document = structuredClone(full)
+  const mapping = R34_RULE_MIGRATIONS.find(
+    (row) => row.disposition === 'changed' && row.current !== null,
+  )
+  ok(mapping)
+  const rule = document.rules.find((row) => row.ruleId === mapping.ruleId)
+  ok(rule)
+  ;(rule as { normalizedStatement: string }).normalizedStatement += ' Unratified source change.'
+  ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  const candidate = rechain(document)
+  expectCode(candidate, 'MIGRATION_EVIDENCE_INVALID')
+  expectMessage(candidate, 'current source-bound rule origin changed')
+})
+
+test('D031 a chained generic successor cannot turn a current narrative into authority', () => {
+  const document = structuredClone(full)
+  const mapping = R34_RULE_MIGRATIONS.find((row) => row.disposition === 'new')
+  ok(mapping)
+  const rule = document.rules.find((row) => row.ruleId === mapping.ruleId)
+  ok(rule)
+  ;(rule as { decision: string }).decision = 'ALLOW'
+  ;(rule as { bindingDigest: string }).bindingDigest = bindingDigestFor(rule)
+  const candidate = rechain(document)
+  expectCode(candidate, 'MIGRATION_EVIDENCE_INVALID')
+  const result = resolveAuthority(candidate, {
+    ...d3Query,
+    authoritySubject: rule.authoritySubject,
+  })
+  assert.equal(result.outcome, 'REQUIRE_HUMAN')
+  if (result.outcome === 'REQUIRE_HUMAN') assert.equal(result.reasonCode, 'REGISTRY_INVALID')
+})
+
+test('D031 current audit content retains its curation diagnostic before projection', () => {
+  const document = structuredClone(full)
+  const row = document.normativeMarkdownAudit[0]
+  ok(row)
+  ;(row as { rationale: string }).rationale += ' Unreviewed replacement.'
+  expectCode(document, 'RULE_SEMANTICS_UNCURATED')
+  expectCode(document, 'MIGRATION_EVIDENCE_INVALID')
 })

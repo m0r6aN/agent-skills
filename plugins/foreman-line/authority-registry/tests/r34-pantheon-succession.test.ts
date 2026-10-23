@@ -303,7 +303,8 @@ for (const row of R34_RULE_MIGRATIONS.filter((row) => row.disposition === 'new')
       } as AuthorityQuery)
       if (result.outcome === 'RESOLVED') assert.notEqual(result.decision, 'ALLOW')
       else assert.ok(['INVALID_QUERY_SCOPE', 'NO_APPLICABLE_AUTHORITY'].includes(result.reasonCode))
-      assert.ok(!result.controllingRuleIds.includes(rule.ruleId))
+      const controllingRuleIds: readonly string[] = result.controllingRuleIds
+      assert.ok(!controllingRuleIds.includes(rule.ruleId))
     }
     const document = clone()
     const forged = document.rules.find((candidate) => candidate.ruleId === row.ruleId)
@@ -439,4 +440,19 @@ test('R34 invocation-local Git reads observe replacement and restoration at the 
   } finally {
     rmSync(root, { recursive: true, force: true })
   }
+})
+
+test('D031 all new narrative subjects are unique descriptive non-grant identities', () => {
+  const rows = R34_RULE_MIGRATIONS.filter((row) => row.disposition === 'new')
+  assert.equal(rows.length, 43)
+  const subjects = rows.map((row) => {
+    assert.ok(row.current)
+    assert.match(row.current.authoritySubject, /^provenance\.pantheon-source\.[a-z]+\.[a-z-]+$/)
+    assert.doesNotMatch(row.current.authoritySubject, /(?:^|\.)[0-9a-f]{12}(?:$|\.)/)
+    assert.equal(row.current.decision, 'ADVISORY')
+    assert.equal(row.current.classification, 'narrative-provenance')
+    assert.equal(row.current.enforcementOwner, 'provenance-only')
+    return row.current.authoritySubject
+  })
+  assert.equal(new Set(subjects).size, 43)
 })

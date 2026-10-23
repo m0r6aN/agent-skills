@@ -665,3 +665,22 @@ remain separately pinned mechanisms; no data ruling covers their execution. New 
 negatives supplement every original65 CI2/D017 assertion under the unchanged64MiB fixture
 budget. No tests/typecheck/lint/checker jobs ran in the zero-job correction builder window;
 independent final suites, both whole-unit reviews and normal exact-head Windows CI remain gates.
+
+### D031 current generic successor contract
+
+The R34 origin, its 23-record predecessor prefix, all18 committed source subjects and complete
+item/audit correspondence remain immutable. A generic amendment may change an existing rule only
+through the established curated rule semantics and a properly chained, manifest-bound single
+successor above the exact R34 origin. The validator walks that chain once and reuses the result;
+merely appending a record creates no exception. Source statements and mapped reference transforms
+remain bound, and all43 new descriptive narrative subjects remain exact ADVISORY provenance.
+The existing second-append, absent/replaced origin, in-place attestation and forged evidence
+refusals remain in force. The hermetic generic-successor Git-digest residual described above
+is unchanged; repository-aware checks additionally read actual objects.
+
+Current audit structure is checked before historical projection, preserving its curation
+refusal. Historical literal tests select their unique typed current rule for current queries;
+they do not replace current resolution with historical validity. D19 counts actual lexical
+bindings, including destructuring shadows, while shorthand property reads create no binding.
+All original test identities and negative assertions remain required. These corrections and
+the descriptive-subject regeneration are source authorship, pending independent complete suites.

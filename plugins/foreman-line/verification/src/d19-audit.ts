@@ -3405,17 +3405,32 @@ const R34_DATA_PINS = [
   },
 ] as const
 
+/** A shorthand property is a read; only lexical names introduce bindings or shadows. */
+function isNamedBinding(node: Node): boolean {
+  const parent = node.parent
+  if (parent === undefined || (parent as Node & { name?: Node }).name !== node) return false
+  return [
+    SyntaxKind.VariableDeclaration,
+    SyntaxKind.Parameter,
+    SyntaxKind.BindingElement,
+    SyntaxKind.FunctionDeclaration,
+    SyntaxKind.FunctionExpression,
+    SyntaxKind.ClassDeclaration,
+    SyntaxKind.ClassExpression,
+    SyntaxKind.ImportSpecifier,
+    SyntaxKind.ImportClause,
+    SyntaxKind.NamespaceImport,
+    SyntaxKind.EnumDeclaration,
+    SyntaxKind.ModuleDeclaration,
+  ].includes(parent.kind)
+}
+
 function r34DataPins(sf: SourceFile, errors: string[]): Map<Expression, string> {
   const pins = new Map<Expression, string>()
   for (const name of new Set(R34_DATA_PINS.map((pin) => pin.declaration))) {
     const declarations: Node[] = []
     const collect = (node: Node): void => {
-      if (
-        isIdentifier(node) &&
-        node.text === name &&
-        node.parent !== undefined &&
-        (node.parent as Node & { name?: Node }).name === node
-      )
+      if (isIdentifier(node) && node.text === name && isNamedBinding(node))
         declarations.push(node.parent)
       node.forEachChild(collect)
     }
@@ -3554,18 +3569,12 @@ function isR34GitPathspec(node: Expression, rel: string, joined: string, sf: Sou
     if (
       isIdentifier(candidate) &&
       candidate.text === 'R34_PRIOR_REGISTRY_COMMIT' &&
-      candidate.parent !== undefined &&
-      (candidate.parent as Node & { name?: Node }).name === candidate &&
-      candidate.parent.kind !== SyntaxKind.ImportSpecifier
+      isNamedBinding(candidate) &&
+      candidate.parent?.kind !== SyntaxKind.ImportSpecifier
     )
       shadows += 1
-    if (
-      isIdentifier(candidate) &&
-      candidate.text === 'runGitText' &&
-      candidate.parent !== undefined &&
-      (candidate.parent as Node & { name?: Node }).name === candidate
-    )
-      readers.push(candidate.parent)
+    if (isIdentifier(candidate) && candidate.text === 'runGitText' && isNamedBinding(candidate))
+      readers.push(candidate.parent as Node)
     candidate.forEachChild(visit)
   }
   visit(sf)
@@ -3620,12 +3629,7 @@ function isR34RequiredRoot(
     return false
   let declarations = 0
   const visit = (candidate: Node): void => {
-    if (
-      isIdentifier(candidate) &&
-      candidate.text === 'repoRoot' &&
-      candidate.parent !== undefined &&
-      (candidate.parent as Node & { name?: Node }).name === candidate
-    )
+    if (isIdentifier(candidate) && candidate.text === 'repoRoot' && isNamedBinding(candidate))
       declarations += 1
     candidate.forEachChild(visit)
   }

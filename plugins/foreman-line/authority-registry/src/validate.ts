@@ -1931,9 +1931,10 @@ function semanticViolations(
   historicalR33 = false,
 ): ValidationViolation[] {
   const currentSubject = document
+  const currentMigrationChain = historicalR33 ? null : verifyMigrationChain(document)
   const violations: ValidationViolation[] = historicalR33
     ? []
-    : r34CorrespondenceViolations(document)
+    : r34CorrespondenceViolations(document, currentMigrationChain)
   if (!historicalR33) {
     const currentRuleIds = new Set<string>()
     for (const rule of document.rules) {
@@ -1945,6 +1946,16 @@ function semanticViolations(
         )
       currentRuleIds.add(rule.ruleId)
     }
+    const expectedAudit = R34_AUDIT_MIGRATIONS.flatMap((entry) =>
+      entry.current === null ? [] : [entry.current],
+    )
+    if (canonicalJson(document.normativeMarkdownAudit) !== canonicalJson(expectedAudit))
+      violations.push(
+        violation(
+          'RULE_SEMANTICS_UNCURATED',
+          'current normative Markdown audit must equal its exact item-specific source-authored dispositions',
+        ),
+      )
     document = r34PredecessorProjection(document)
   }
   const sourcesById = new Map<string, CanonSource>()
@@ -3074,7 +3085,7 @@ function semanticViolations(
   }
   // Walked once and reused: `migrationChain.headId` decides which record is bound to the live
   // manifest instead of to a pinned constant, and its violations are collected below.
-  const migrationChain = verifyMigrationChain(document, historicalR33)
+  const migrationChain = currentMigrationChain ?? verifyMigrationChain(document, historicalR33)
   for (const record of document.reconciliations) {
     if (reconciliationIds.has(record.reconciliationId)) {
       violations.push(
@@ -3757,8 +3768,21 @@ export function r34PredecessorProjection(
   })
   const rules = R34_PRIOR_RULE_ORDER.flatMap((ruleId) => {
     const mapping = ruleMappings.get(ruleId)
-    const rule = mapping?.disposition === 'unchanged' ? currentRules.get(ruleId) : mapping?.prior
-    return rule === undefined || rule === null ? [] : [rule]
+    const candidate = currentRules.get(ruleId)
+    const rule = mapping?.disposition === 'unchanged' ? candidate : mapping?.prior
+    if (rule === undefined || rule === null) return []
+    if (candidate === undefined || mapping?.disposition === 'unchanged') return [rule]
+    if (candidate.bindingDigest === mapping?.current?.bindingDigest) return [rule]
+    // Restore only the explicitly mapped historical text/reference subject. Current generic
+    // policy fields still reach the inherited curation, retirement and conflict checks.
+    const projected = {
+      ...candidate,
+      normalizedStatement: rule.normalizedStatement,
+      sourceRefs: rule.sourceRefs,
+      authorityBasisRef: rule.authorityBasisRef,
+      bindingDigest: '',
+    }
+    return [{ ...projected, bindingDigest: bindingDigestFor(projected) }]
   })
   rules.push(...document.rules.filter((rule) => !ruleMappings.has(rule.ruleId)))
   const normativeMarkdownAudit = R34_AUDIT_MIGRATIONS.flatMap((entry) => {
@@ -3926,8 +3950,29 @@ function r34RepositoryCorrespondenceViolations(
 
 function r34CorrespondenceViolations(
   document: AuthorityEnforcementRegistry,
+  currentChain: ReturnType<typeof verifyMigrationChain> | null,
 ): ValidationViolation[] {
   const violations: ValidationViolation[] = []
+  const origin = document.reconciliations.find(
+    (entry) => entry.reconciliationId === R34_RECONCILIATION.reconciliationId,
+  )
+  // Missing origin is a required-record failure, never a newly admissible current subject.
+  // Preserve that established diagnostic instead of piling migration symptoms onto absence.
+  if (origin === undefined)
+    return [
+      violation(
+        'RECONCILIATION_MISSING',
+        "required rework migration '" + R34_RECONCILIATION.reconciliationId + "' is missing",
+      ),
+    ]
+  const chain = currentChain ?? verifyMigrationChain(document)
+  const genericSuccessor =
+    document.reconciliations.length === 25 &&
+    canonicalJson(document.reconciliations[23]) === canonicalJson(R34_RECONCILIATION) &&
+    sha256(canonicalJson(document.reconciliations.slice(0, 23))) === R34_PRIOR_HISTORY_DIGEST &&
+    chain.headId !== null &&
+    chain.headId !== R34_RECONCILIATION.reconciliationId &&
+    chain.violations.length === 0
   const fail = (message: string, ruleId?: string) =>
     violations.push(
       violation('MIGRATION_EVIDENCE_INVALID', message, ruleId === undefined ? {} : { ruleId }),
@@ -4011,6 +4056,14 @@ function r34CorrespondenceViolations(
   if (canonicalJson(record) !== canonicalJson(R34_RECONCILIATION))
     fail('R34 exact source/history correspondence record changed')
   if (
+    record !== undefined &&
+    (record.topic !== R34_RECONCILIATION.topic ||
+      record.migrationStatus !== R34_RECONCILIATION.migrationStatus ||
+      record.scopedDisposition !== R34_RECONCILIATION.scopedDisposition ||
+      record.unresolvedConsequence !== R34_RECONCILIATION.unresolvedConsequence)
+  )
+    fail("reconciliation '" + record.reconciliationId + "' topic/status contract changed")
+  if (
     canonicalJson(document.sources.map((source) => source.sourceId)) !==
     canonicalJson(R34_SOURCE_MIGRATIONS.map((source) => source.sourceId))
   )
@@ -4048,10 +4101,24 @@ function r34CorrespondenceViolations(
     fail('R34 rule identity/order correspondence changed')
   for (const entry of R34_RULE_MIGRATIONS) {
     const matches = ruleGroups.get(entry.ruleId) ?? []
+    if (entry.current !== undefined && entry.current !== null && matches.length === 1) {
+      const candidate = matches[0] as AuthorityRule
+      // A generic successor may change policy only under the inherited chain/curation contract.
+      // It cannot rewrite the source text or its typed current reference transformation.
+      if (
+        candidate.normalizedStatement !== entry.current.normalizedStatement ||
+        canonicalJson(candidate.sourceRefs) !== canonicalJson(entry.current.sourceRefs) ||
+        canonicalJson(candidate.authorityBasisRef) !==
+          canonicalJson(entry.current.authorityBasisRef)
+      )
+        fail('R34 current source-bound rule origin changed: ' + entry.ruleId, entry.ruleId)
+    }
     if (
       entry.currentDigest === null
         ? matches.length !== 0
-        : matches.length !== 1 || sha256(canonicalJson(matches[0])) !== entry.currentDigest
+        : matches.length !== 1 ||
+          (!(genericSuccessor && entry.priorDigest !== null) &&
+            sha256(canonicalJson(matches[0])) !== entry.currentDigest)
     )
       fail(`R34 rule ${entry.ruleId} complete shape changed`, entry.ruleId)
   }
