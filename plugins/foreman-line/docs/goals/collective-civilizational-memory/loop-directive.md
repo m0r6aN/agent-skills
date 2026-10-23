@@ -260,3 +260,15 @@ All16exact-headchecks and main CI40032237624/deployment40032237623passed.
 StageFclosed; workorder status-only archived. Full120failed-call hold and
 affected/private/native/provider routes remain held. Source production adapter
 and full Context/import gates remain open. No new model phase or monitor.
+
+
+## P2C runtime composition held — October23
+
+Sole coordinator remains this Context session; stopped at finite parcel stop condition,
+no monitor/competing coordinator. See p2c-runtime-held-20261023.md. Candidate6files
+built,59focused/3046fullpassed137skipped, actual7API+5faultcases pass and allowned
+containers absent; mypy remains red and2freshSolreviews CHANGES_REQUIRED for typing
+and missing ownership/cleanup/transport failure tests. One formalrepair used; no
+secondrepair, retry, fallback, sourcePR, merge or acceptance. Exactcandidate/source
+hashes and remaining work preserved. Original120 and newunknown150 held, affected
+routes held. Next scoped disposition required before more source/provider work.

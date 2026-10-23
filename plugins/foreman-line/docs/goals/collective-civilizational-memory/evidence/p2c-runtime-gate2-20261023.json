@@ -58,5 +58,18 @@
   "process": "Scoped local exact-hash workorder/ledger precedent; no Jira/external receipt invented",
   "phaseGuardRefinement": "Wholephase800 unchanged; reserve actual booked/unknown plus nextstage allocations. Conditional review/repair requires fresh residualcapacity before dispatch. Release unusedcompleted allocations only, never old unknown holds.",
   "mergeAllowedNow": false,
-  "productionOrBulkAdmission": false
+  "productionOrBulkAdmission": false,
+  "sourceResponseControl": {
+    "stream": true,
+    "maxWireBytes": 2097152,
+    "configuredSocketReadTimeout": 180,
+    "configuredStreamObservation": 240,
+    "hardTotalOrRemoteCancellationGuaranteed": false,
+    "maxPostPerSlice": 1,
+    "automaticRetry": false,
+    "sourceAMaxOutput": 12200,
+    "sourceACapUnchanged": 110,
+    "oldRequestNotReplayed": true,
+    "offlineBudgetCheck": "Initial110.416625estimate refused beforepost; reducedoutput88tokens,cap110unchanged"
+  }
 }

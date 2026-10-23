@@ -1,0 +1,1674 @@
+{
+  "atUtc": "2026-10-23T23:51:38.625487+00:00",
+  "status": "PASS_ACTUAL_API_AND_PROFILE",
+  "providerRequests": 0,
+  "runId": "b98085a7f5a34645a1986bb9094f6312",
+  "sourceChanged": false,
+  "moduleHashes": {
+    "src/keon/cortex/pipeline/ccm_python.py": "aa4d7d79058a4d4e364ab02519d5e97b3dc8d8ab5074872c61fdb7be1b31f9c3",
+    "src/keon/cortex/pipeline/ccm_python_protocol.py": "ea9de856c1f35146aa2e515195212688e98f03510c08d9df8cf3bdc05e1f7088",
+    "src/keon/cortex/pipeline/ccm_python_worker.py": "47e7600c565a86d81d7b62f38244cbffffebd82cb609fcae90eda6952965648e"
+  },
+  "productionImageId": "sha256:a6a75dbc102b44c309be0fa8315e94e183de21557decb7da63b6f4aed20ba42c",
+  "hostExit": 0,
+  "actualAPI": {
+    "status": "PASS",
+    "fixtures": [
+      {
+        "sha256": "b72f7b517b6f84967daaccbdc5d6523ca5364b9ee1ea1f8ca42bdc4c6b439136",
+        "bytes": 14,
+        "expectedCode": null,
+        "actualCode": null,
+        "equal": true,
+        "seconds": 1.597,
+        "pending": []
+      },
+      {
+        "sha256": "a7182ecc96f419faf824c1612354037e94d411052f0f85f71c64d5952120e1bd",
+        "bytes": 34,
+        "expectedCode": null,
+        "actualCode": null,
+        "equal": true,
+        "seconds": 1.498,
+        "pending": []
+      },
+      {
+        "sha256": "29c41f674076545d8628fdac5ebcbe0fba455fc5cace7df877c86c135b4b2864",
+        "bytes": 34,
+        "expectedCode": null,
+        "actualCode": null,
+        "equal": true,
+        "seconds": 1.587,
+        "pending": []
+      },
+      {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "expectedCode": null,
+        "actualCode": null,
+        "equal": true,
+        "seconds": 1.599,
+        "pending": []
+      },
+      {
+        "sha256": "d5a5d4be0fde3c1dc5c276a6259292d8a31ba3cf99bb41eee99e97624946bea5",
+        "bytes": 5,
+        "expectedCode": "invalid_syntax",
+        "actualCode": "invalid_syntax",
+        "equal": true,
+        "seconds": 1.621,
+        "pending": []
+      },
+      {
+        "sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89",
+        "bytes": 1,
+        "expectedCode": "invalid_utf8",
+        "actualCode": "invalid_utf8",
+        "equal": true,
+        "seconds": 1.642,
+        "pending": []
+      },
+      {
+        "sha256": "e0c6b2446676e3d8a33cfcceceac3c448739f8ad4c43fbc6f7c4adbfa241ca07",
+        "bytes": 131,
+        "expectedCode": "resource_limit",
+        "actualCode": "resource_limit",
+        "equal": true,
+        "seconds": 1.635,
+        "pending": []
+      }
+    ],
+    "audit": [
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "image",
+          "inspect",
+          "sha256:a6a75dbc102b44c309be0fa8315e94e183de21557decb7da63b6f4aed20ba42c"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-bf17fae7bc254f82ab9da1b7824aa703"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "create",
+          "--name",
+          "ccm-python-bf17fae7bc254f82ab9da1b7824aa703",
+          "--pull=never",
+          "--network=none",
+          "--read-only",
+          "--user=65534:65534",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--memory=134217728",
+          "--memory-swap=134217728",
+          "--cpus=0.5",
+          "--pids-limit=16",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=1048576",
+          "--log-driver=none",
+          "--interactive",
+          "--label",
+          "managed-by=local-agent",
+          "--label",
+          "purpose=ccm-python-parser",
+          "--label",
+          "ccm-run=535d6c1abb49420ebc656abf55dc3052",
+          "sha256:a6a75dbc102b44c309be0fa8315e94e183de21557decb7da63b6f4aed20ba42c"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-bf17fae7bc254f82ab9da1b7824aa703"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "start",
+          "--attach",
+          "--interactive",
+          "2ec287e641474255e1ee351de26085f0c0fc3a342e0efd82f7fe82c616b2fbd7"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 18,
+        "limit": 1048580
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-bf17fae7bc254f82ab9da1b7824aa703"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-bf17fae7bc254f82ab9da1b7824aa703"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "rm",
+          "--force",
+          "2ec287e641474255e1ee351de26085f0c0fc3a342e0efd82f7fe82c616b2fbd7"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-bf17fae7bc254f82ab9da1b7824aa703"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "image",
+          "inspect",
+          "sha256:a6a75dbc102b44c309be0fa8315e94e183de21557decb7da63b6f4aed20ba42c"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-6e1c976fb5b24ea48ed8cc8e36ba3af9"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "create",
+          "--name",
+          "ccm-python-6e1c976fb5b24ea48ed8cc8e36ba3af9",
+          "--pull=never",
+          "--network=none",
+          "--read-only",
+          "--user=65534:65534",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--memory=134217728",
+          "--memory-swap=134217728",
+          "--cpus=0.5",
+          "--pids-limit=16",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=1048576",
+          "--log-driver=none",
+          "--interactive",
+          "--label",
+          "managed-by=local-agent",
+          "--label",
+          "purpose=ccm-python-parser",
+          "--label",
+          "ccm-run=3f9d28d7bf944c2a817cdfda24c6a1e2",
+          "sha256:a6a75dbc102b44c309be0fa8315e94e183de21557decb7da63b6f4aed20ba42c"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-6e1c976fb5b24ea48ed8cc8e36ba3af9"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "start",
+          "--attach",
+          "--interactive",
+          "f0669cc0c6392e1f89282e679704d5ed8db6c88665e946adde9531147586ab43"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 38,
+        "limit": 1048580
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-6e1c976fb5b24ea48ed8cc8e36ba3af9"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-6e1c976fb5b24ea48ed8cc8e36ba3af9"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "rm",
+          "--force",
+          "f0669cc0c6392e1f89282e679704d5ed8db6c88665e946adde9531147586ab43"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-6e1c976fb5b24ea48ed8cc8e36ba3af9"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "image",
+          "inspect",
+          "sha256:a6a75dbc102b44c309be0fa8315e94e183de21557decb7da63b6f4aed20ba42c"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-c510e133737b4a1591a81ecb3a21465d"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "create",
+          "--name",
+          "ccm-python-c510e133737b4a1591a81ecb3a21465d",
+          "--pull=never",
+          "--network=none",
+          "--read-only",
+          "--user=65534:65534",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--memory=134217728",
+          "--memory-swap=134217728",
+          "--cpus=0.5",
+          "--pids-limit=16",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=1048576",
+          "--log-driver=none",
+          "--interactive",
+          "--label",
+          "managed-by=local-agent",
+          "--label",
+          "purpose=ccm-python-parser",
+          "--label",
+          "ccm-run=52eff58c91c94bfc9ffe7f83e5fe29b3",
+          "sha256:a6a75dbc102b44c309be0fa8315e94e183de21557decb7da63b6f4aed20ba42c"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-c510e133737b4a1591a81ecb3a21465d"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "start",
+          "--attach",
+          "--interactive",
+          "fa736b213baf92592fc95d71ba07019b592b8e0c20da40ae23bd413f1cd5cd92"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 38,
+        "limit": 1048580
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-c510e133737b4a1591a81ecb3a21465d"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-c510e133737b4a1591a81ecb3a21465d"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "rm",
+          "--force",
+          "fa736b213baf92592fc95d71ba07019b592b8e0c20da40ae23bd413f1cd5cd92"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-c510e133737b4a1591a81ecb3a21465d"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "image",
+          "inspect",
+          "sha256:a6a75dbc102b44c309be0fa8315e94e183de21557decb7da63b6f4aed20ba42c"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-d186fcd2bf5946b584bceb359d1dfa8a"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "create",
+          "--name",
+          "ccm-python-d186fcd2bf5946b584bceb359d1dfa8a",
+          "--pull=never",
+          "--network=none",
+          "--read-only",
+          "--user=65534:65534",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--memory=134217728",
+          "--memory-swap=134217728",
+          "--cpus=0.5",
+          "--pids-limit=16",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=1048576",
+          "--log-driver=none",
+          "--interactive",
+          "--label",
+          "managed-by=local-agent",
+          "--label",
+          "purpose=ccm-python-parser",
+          "--label",
+          "ccm-run=67c502a2c3694747bd6239cede2f0956",
+          "sha256:a6a75dbc102b44c309be0fa8315e94e183de21557decb7da63b6f4aed20ba42c"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-d186fcd2bf5946b584bceb359d1dfa8a"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "start",
+          "--attach",
+          "--interactive",
+          "eef336fb53d14e5278706366f26bcefd74427601f23bc1fc04e4997be224de9f"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 4,
+        "limit": 1048580
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-d186fcd2bf5946b584bceb359d1dfa8a"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-d186fcd2bf5946b584bceb359d1dfa8a"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "rm",
+          "--force",
+          "eef336fb53d14e5278706366f26bcefd74427601f23bc1fc04e4997be224de9f"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-d186fcd2bf5946b584bceb359d1dfa8a"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "image",
+          "inspect",
+          "sha256:a6a75dbc102b44c309be0fa8315e94e183de21557decb7da63b6f4aed20ba42c"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-3a3ec506413b42d4854832599c6c4a27"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "create",
+          "--name",
+          "ccm-python-3a3ec506413b42d4854832599c6c4a27",
+          "--pull=never",
+          "--network=none",
+          "--read-only",
+          "--user=65534:65534",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--memory=134217728",
+          "--memory-swap=134217728",
+          "--cpus=0.5",
+          "--pids-limit=16",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=1048576",
+          "--log-driver=none",
+          "--interactive",
+          "--label",
+          "managed-by=local-agent",
+          "--label",
+          "purpose=ccm-python-parser",
+          "--label",
+          "ccm-run=eb13d8e4d0994faeba34d8f69dffea7f",
+          "sha256:a6a75dbc102b44c309be0fa8315e94e183de21557decb7da63b6f4aed20ba42c"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-3a3ec506413b42d4854832599c6c4a27"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "start",
+          "--attach",
+          "--interactive",
+          "f67ca399f7ed998af25914ec3228aa4e7bfd7b6dc8f6926a51f2c04c8dcd101b"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 9,
+        "limit": 1048580
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-3a3ec506413b42d4854832599c6c4a27"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-3a3ec506413b42d4854832599c6c4a27"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "rm",
+          "--force",
+          "f67ca399f7ed998af25914ec3228aa4e7bfd7b6dc8f6926a51f2c04c8dcd101b"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-3a3ec506413b42d4854832599c6c4a27"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "image",
+          "inspect",
+          "sha256:a6a75dbc102b44c309be0fa8315e94e183de21557decb7da63b6f4aed20ba42c"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-d57ef55b6d734f5f84cbfba83683e1a2"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "create",
+          "--name",
+          "ccm-python-d57ef55b6d734f5f84cbfba83683e1a2",
+          "--pull=never",
+          "--network=none",
+          "--read-only",
+          "--user=65534:65534",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--memory=134217728",
+          "--memory-swap=134217728",
+          "--cpus=0.5",
+          "--pids-limit=16",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=1048576",
+          "--log-driver=none",
+          "--interactive",
+          "--label",
+          "managed-by=local-agent",
+          "--label",
+          "purpose=ccm-python-parser",
+          "--label",
+          "ccm-run=cc8130068eb746c5b6d3b091b98c2ea4",
+          "sha256:a6a75dbc102b44c309be0fa8315e94e183de21557decb7da63b6f4aed20ba42c"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-d57ef55b6d734f5f84cbfba83683e1a2"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "start",
+          "--attach",
+          "--interactive",
+          "a5b8a1440479c60f7d258b2cedc0074970c929af9030b9fafc4c7970cfca018b"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 5,
+        "limit": 1048580
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-d57ef55b6d734f5f84cbfba83683e1a2"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-d57ef55b6d734f5f84cbfba83683e1a2"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "rm",
+          "--force",
+          "a5b8a1440479c60f7d258b2cedc0074970c929af9030b9fafc4c7970cfca018b"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-d57ef55b6d734f5f84cbfba83683e1a2"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "image",
+          "inspect",
+          "sha256:a6a75dbc102b44c309be0fa8315e94e183de21557decb7da63b6f4aed20ba42c"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-9f76f78264414c9d9a7466df2c1fa656"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "create",
+          "--name",
+          "ccm-python-9f76f78264414c9d9a7466df2c1fa656",
+          "--pull=never",
+          "--network=none",
+          "--read-only",
+          "--user=65534:65534",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--memory=134217728",
+          "--memory-swap=134217728",
+          "--cpus=0.5",
+          "--pids-limit=16",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=1048576",
+          "--log-driver=none",
+          "--interactive",
+          "--label",
+          "managed-by=local-agent",
+          "--label",
+          "purpose=ccm-python-parser",
+          "--label",
+          "ccm-run=bb82dc5e639740bea1d306e41a2198ce",
+          "sha256:a6a75dbc102b44c309be0fa8315e94e183de21557decb7da63b6f4aed20ba42c"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-9f76f78264414c9d9a7466df2c1fa656"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "start",
+          "--attach",
+          "--interactive",
+          "a0f85210b8ad4d180f46d9195ee4ee79bf8bbf36434bbf513d942abb3ef8f54d"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 135,
+        "limit": 1048580
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-9f76f78264414c9d9a7466df2c1fa656"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-9f76f78264414c9d9a7466df2c1fa656"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "rm",
+          "--force",
+          "a0f85210b8ad4d180f46d9195ee4ee79bf8bbf36434bbf513d942abb3ef8f54d"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      },
+      {
+        "argv": [
+          "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+          "container",
+          "inspect",
+          "ccm-python-9f76f78264414c9d9a7466df2c1fa656"
+        ],
+        "envKeys": [
+          "COMSPEC",
+          "DOCKER_CONFIG",
+          "DOCKER_HOST",
+          "PATHEXT",
+          "PROGRAMDATA",
+          "SYSTEMDRIVE",
+          "SYSTEMROOT",
+          "TEMP",
+          "TMP",
+          "WINDIR"
+        ],
+        "inputBytes": 0,
+        "limit": 65536
+      }
+    ]
+  },
+  "profileProbe": {
+    "exit": 0,
+    "stderrBytes": 0,
+    "value": {
+      "python": "3.13.15",
+      "cpu": [
+        2,
+        2
+      ],
+      "as": [
+        100663296,
+        100663296
+      ],
+      "nproc": [
+        0,
+        0
+      ],
+      "modules": {
+        "ccm_python": "aa4d7d79058a4d4e364ab02519d5e97b3dc8d8ab5074872c61fdb7be1b31f9c3",
+        "ccm_python_protocol": "ea9de856c1f35146aa2e515195212688e98f03510c08d9df8cf3bdc05e1f7088",
+        "ccm_python_worker": "47e7600c565a86d81d7b62f38244cbffffebd82cb609fcae90eda6952965648e"
+      }
+    }
+  },
+  "ownedProfileContainersAbsent": true,
+  "candidateNamesIndependentlyAbsent": [
+    "ccm-python-bf17fae7bc254f82ab9da1b7824aa703",
+    "ccm-python-6e1c976fb5b24ea48ed8cc8e36ba3af9",
+    "ccm-python-c510e133737b4a1591a81ecb3a21465d",
+    "ccm-python-d186fcd2bf5946b584bceb359d1dfa8a",
+    "ccm-python-3a3ec506413b42d4854832599c6c4a27",
+    "ccm-python-d57ef55b6d734f5f84cbfba83683e1a2",
+    "ccm-python-9f76f78264414c9d9a7466df2c1fa656"
+  ],
+  "allCandidateNamesAbsent": true,
+  "completedAtUtc": "2026-10-23T23:51:53.178465+00:00"
+}

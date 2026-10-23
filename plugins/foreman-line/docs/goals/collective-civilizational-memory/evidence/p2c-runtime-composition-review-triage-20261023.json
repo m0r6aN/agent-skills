@@ -1,0 +1,115 @@
+{
+  "atUtc": "2026-10-23T23:55:48.340209+00:00",
+  "status": "CHANGES_REQUIRED_HELD",
+  "independence": "Two fresh source-only Sol contexts, same-model-family limitation; not a multi-family council",
+  "reviews": {
+    "closure-architecture": {
+      "verdict": "CHANGES_REQUIRED",
+      "findings": [
+        {
+          "id": "F1",
+          "severity": "high",
+          "locator": "src/keon/cortex/pipeline/ccm_python_runtime.py:128",
+          "trigger": "The finally loop reuses a local previously inferred as a nonoptional stream for entries from the optional subprocess pipe tuple.",
+          "impact": "The supplied mypy result remains failing. This is an explicit acceptance blocker even though the runtime None guard is present; successful fixtures and formatting checks do not waive the required green type-check chain.",
+          "remediation": "Resolve the incompatible local inference without weakening checking or changing transport semantics, then obtain parent-owned verification against the exact resulting candidate under the existing disposition process.",
+          "confidence": "high"
+        },
+        {
+          "id": "F2",
+          "severity": "high",
+          "locator": "tests/test_ccm_python_runtime.py: transport fixtures and test_valid_reply_cannot_mask_later_failure",
+          "trigger": "The lifecycle test replaces _owned, _container_profile and _cleanup with mocks. No supplied ordinary test directly exercises real _cleanup or _owned behavior. The transport fake always reports an already-exited CLI and does not exercise deadline expiry, BlockingIOError progress, partial writes, kill/reap failure or cancellation.",
+          "impact": "Critical ownership and cleanup guarantees lack the independent ordinary-test coverage required by the frozen contract. In particular, uncertain create reconciliation, refusal to mutate mismatched containers, known-ID enforcement, kill/remove/absence polling and cancellation-to-pending transitions are not regression-protected. Actual successful cleanup and fixed fault-image results do not substitute for these injected failure-path tests.",
+          "remediation": "Add small deterministic synthetic tests that retain the real ownership and cleanup implementations while injecting bounded command/clock/process seams. Cover uncertain creation with and without a returned ID, mismatched ownership with zero mutation, running-container removal and absence proof, inspect/kill/remove failures, timeout/cancellation and pending retention. Exercise nonblocking transport partial progress, capacity boundaries and teardown failures without live Docker or source execution.",
+          "confidence": "high"
+        }
+      ],
+      "coverage": [
+        "Reviewed all six candidate files against the supplied accepted library and frozen contract; no tools, imports or execution were used.",
+        "Protocol review covered exact framing and EOF, payload limits, strict UTF-8, duplicate keys, depth and integer-token prechecks, closed envelopes, boolean/integer distinctions, digest binding, identifier depth, symbol count, ordering, ranges and frozen result wrappers. No additional material protocol defect was identified.",
+        "API and error review covered exact built-in input types, deterministic type/size precedence, trusted immutable-image configuration, concurrent-call rejection and ambient exception-chain sanitation.",
+        "Lifecycle review covered collision precheck, labels established before create, capture of returned identity, reconciliation on uncertain outcomes, created-profile verification, attached execution, exit-state inspection, failure precedence, mandatory cleanup and opaque pending ownership records.",
+        "Isolation review covered fixed client/endpoint, cleared environment, empty Docker configuration, stdin-only source transport, pinned Dockerfile composition, nonroot/read-only/networkless profile, cgroup-v2 checks, library/interpreter verification and rlimits.",
+        "Resource review covered bounded nonblocking pipe reads/writes, command teardown reservation, normal-work and overall deadlines, serialization overflow, alarm limitations and cleanup overriding otherwise valid replies.",
+        "Supplied parent evidence reports passing focused/full tests, formatting, actual Windows-client/Linux-worker profile and fixed fault fixtures, retained baseline identities and absent owned containers. These are supplied observations, not independently executed results."
+      ],
+      "gaps": [
+        "The required type-check gate is explicitly red; an exact-head/main green acceptance chain is therefore not established.",
+        "Ordinary tests also do not directly exercise worker request truncation/trailing-data handling, worker profile rejection, image-profile predicates or concurrent invocation. These remain coverage omissions under the requirement to exercise boundary invariants independently.",
+        "No actual daemon-outage or cancellation-failure qualification is supplied. Injected cleanup-failure evidence must not be represented as real daemon-failure cleanup proof.",
+        "Actual qualification is limited to the stated Windows host and Docker Desktop Linux worker. Linux-client operation is not qualified.",
+        "Image ownership remains trusted operator configuration; labels and fixed fault images are not authenticity evidence or production-image approval.",
+        "The disclosed same-family independent reviews are not a multi-family council. This assessment grants no deployment, ingestion, credential, native-route or broader host authorization."
+      ]
+    },
+    "closure-security": {
+      "verdict": "CHANGES_REQUIRED",
+      "findings": [
+        {
+          "id": "F1",
+          "severity": "high",
+          "locator": "src/keon/cortex/pipeline/ccm_python_runtime.py:128",
+          "trigger": "The teardown loop reuses a local previously inferred as a nonoptional pipe for entries from the optional pipe tuple.",
+          "impact": "The supplied parent evidence reports a mypy failure. The frozen acceptance contract requires green type checks; passing runtime fixtures do not waive this blocker.",
+          "remediation": "Use a distinct teardown local or otherwise make its optional type explicit without changing transport behavior. Obtain the required green verification evidence before acceptance; this assessment does not authorize another repair.",
+          "confidence": "high"
+        },
+        {
+          "id": "F2",
+          "severity": "high",
+          "locator": "tests/test_ccm_python_runtime.py: lifecycle, ownership, cleanup and transport coverage",
+          "trigger": "The lifecycle failure test replaces _cleanup and _owned with mocks. No supplied ordinary test exercises the real _cleanup implementation or independently verifies _owned rejection. The transport fixture does not exercise would-block retries, partial writes, a live CLI requiring termination, deadline expiration, or reap failure.",
+          "impact": "Critical safety branches lack the independent ordinary coverage required by acceptance criterion 2. In particular, the tests do not establish that uncertain create outcomes reconcile correctly, mismatched labels or known IDs prevent mutation, daemon errors cannot prove absence during cleanup, or CLI teardown failures remain atomic. Actual fixed fault-image successes cover useful integration paths but do not substitute for these injected failure tests.",
+          "remediation": "Within the existing synthetic-only scope, add deterministic tests that invoke real ownership and cleanup logic through mocked command/inspect seams: uncertain create with no returned ID, known-ID and label mismatches, running-container kill/remove/absence sequencing, daemon-error and timeout failures, pending ownership retention, and interruption handling. Add bounded transport tests for partial/would-block I/O, deadline-triggered kill/reap, overflow, and teardown failure. Assert no unrelated mutation and no returned result on every failing path.",
+          "confidence": "high"
+        }
+      ],
+      "coverage": [
+        "Reviewed all six candidate files against the supplied accepted library and frozen contract; no tools, imports, execution or changes performed.",
+        "Hostile-wire review covered exact framing and EOF, payload caps, strict UTF-8, duplicate keys, closed envelopes, boolean/integer separation, integer-token and nesting guards, nonfinite/float rejection, digest binding, identifier depth, symbol count, byte ranges and ordering. No additional material protocol defect identified.",
+        "Reviewed source-type precedence, ambient exception sanitation, closed diagnostic representations, accepted frozen wrappers and rejection of replies after worker exit, stderr or cleanup failure.",
+        "Reviewed fixed local Docker endpoints and executable paths, cleared child environment, stdin-only source transport, empty config artifact, pinned Dockerfile composition, nonroot/read-only/network/capability/resource controls and worker identity/profile checks.",
+        "Reviewed create-attempt tracking, random ownership labels, known-ID reconciliation, pre-start inspection, exit reconciliation, cleanup override, bounded absence polling and opaque pending cleanup retention. These paths are implemented, but their ordinary safety coverage is incomplete as described in F2.",
+        "Treated formatting, suite counts, retained baseline identities, actual Windows-client/Linux-worker profile checks and fixed fault-image results solely as supplied parent evidence. Those observations support the exercised paths, not universal failure-path correctness."
+      ],
+      "gaps": [
+        "The supplied deterministic evidence is not green because mypy fails; exact-head/main acceptance evidence remains outstanding.",
+        "Actual qualification is limited to the stated Windows Python 3.13.7 client and Docker Desktop Linux Python 3.13.15 worker. Linux client operation is not qualified.",
+        "No actual daemon-outage or cancellation-failure cleanup qualification is supplied. Neither successful fixed faults nor injected unit failures prove removal under real daemon failure.",
+        "Python alarm deferral, namespace PID1 signal behavior and OS/daemon scheduling prevent a hard realtime removal guarantee. The additional CPU bound and fail-closed pending ownership semantics do not eliminate that limitation.",
+        "Trusted operator qualification of the exact production image remains necessary; image IDs and labels alone are not authenticity evidence. Fault images are fixtures, not production candidates.",
+        "Same-family independent reviews are not a multi-family council. This assessment grants no deployment, ingestion, credential-bearing execution, native isolation or broader route approval."
+      ]
+    }
+  },
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_python_protocol.py": "ea9de856c1f35146aa2e515195212688e98f03510c08d9df8cf3bdc05e1f7088",
+    "src/keon/cortex/pipeline/ccm_python_worker.py": "47e7600c565a86d81d7b62f38244cbffffebd82cb609fcae90eda6952965648e",
+    "src/keon/cortex/pipeline/ccm_python_runtime.py": "f316c4d310b9ffcc17c7592e3abf75e1bf3bb4349e302018232b94234a2f06d5",
+    "tests/test_ccm_python_runtime.py": "a3e92d3d2f3ec62dde1e9b251f9bda6a2e24eae680d03a0708dbc86e19e407d1",
+    "docker/ccm-python-parser/Dockerfile": "b8c2f008083d2d13194c7ebb76af91795181e594d5df1ffb97f060047cb07480",
+    "docs/specs/ccm-python-runtime-v1.md": "ebcd07eaf71bf4e4579f86edbda1d44ebd3f4fd2ec2644e0fd857d294345b4ad"
+  },
+  "parentDisposition": [
+    {
+      "id": "F1",
+      "decision": "ACCEPT_BLOCKER",
+      "evidence": "Actual mypy exit1 reproduces incompatible type assignment runtime.py:128; no suppression/threshold change",
+      "next": "Distinct teardown local or explicit optional annotation, then exact-source checks; not applied"
+    },
+    {
+      "id": "F2",
+      "decision": "ACCEPT_BLOCKER",
+      "evidence": "Static inspection confirms lifecycle test replaces _owned/_cleanup; no direct real cleanup/ownership tests; fake process already exited and does not exercise would-block, partial-write/deadline/reap failure",
+      "next": "Small deterministic tests of actual cleanup/ownership/transport through bounded command/clock/process seams; no real daemon sabotage; not applied"
+    }
+  ],
+  "formalRepairUsed": 1,
+  "secondRepairAllowedInThisPhase": false,
+  "acceptance": false,
+  "sourceCommitOrPR": false,
+  "gate3": false,
+  "allHoldsIntact": true,
+  "hostQualification": "Actual positive and fixed fault observations only; not admitted for production/import, other-host operation or real daemon-outage guarantee"
+}

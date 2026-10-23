@@ -1,0 +1,35 @@
+{
+  "atUtc": "2026-10-23T23:53:25.571171+00:00",
+  "scope": "Two fresh final architecture/security composition assessments of unchanged failed-mypy candidate, never automatic acceptance",
+  "models": [
+    "gpt-6.1-sol",
+    "gpt-6.1-sol"
+  ],
+  "effort": "low",
+  "independence": "Separate source-only contexts, no prior reviewer text; same-model-family limitation",
+  "caps": {
+    "closure-architecture": 160,
+    "closure-security": 160
+  },
+  "outputTokensEach": 6144,
+  "wholePhaseCap": 800,
+  "maxPosts": 2,
+  "retries": 0,
+  "fallback": false,
+  "tools": [],
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_python_protocol.py": "ea9de856c1f35146aa2e515195212688e98f03510c08d9df8cf3bdc05e1f7088",
+    "src/keon/cortex/pipeline/ccm_python_worker.py": "47e7600c565a86d81d7b62f38244cbffffebd82cb609fcae90eda6952965648e",
+    "src/keon/cortex/pipeline/ccm_python_runtime.py": "f316c4d310b9ffcc17c7592e3abf75e1bf3bb4349e302018232b94234a2f06d5",
+    "tests/test_ccm_python_runtime.py": "a3e92d3d2f3ec62dde1e9b251f9bda6a2e24eae680d03a0708dbc86e19e407d1",
+    "docker/ccm-python-parser/Dockerfile": "b8c2f008083d2d13194c7ebb76af91795181e594d5df1ffb97f060047cb07480",
+    "docs/specs/ccm-python-runtime-v1.md": "ebcd07eaf71bf4e4579f86edbda1d44ebd3f4fd2ec2644e0fd857d294345b4ad"
+  },
+  "failed120Held": true,
+  "newUnknown150Held": true,
+  "mimoFailed10Held": true,
+  "affectedRoutes": "HELD",
+  "formalRepairUsed": 1,
+  "secondRepairAllowed": false,
+  "byteBoundEstimateEach": 153.740125
+}

@@ -30,3 +30,17 @@ retains these fields; no general launcher rewrite or routing release is claimed.
 A bounded local operator repair can avoid another paid full-file generation;
 authorship must be disclosed and independent source review still required.
 This was a scoped owner-authorized disposition, not a new standing role policy.
+
+
+### P2C runtime composition — October23
+
+Validate ordinary ownership/cleanup/transport failure coverage before allocating
+the single formal repair: mocked cleanup cannot establish cleanup correctness.
+Passing actual adapter fixtures complements those tests; it cannot replace them.
+Type-check variable reuse in finally blocks can keep a behaviorally passing
+candidate red; preserve that failure instead of waiving the check. Python signal
+handlers can defer native C work, while namespacePID1 ignores default-action
+signals; retain measured evidence and separate kernelCPU, Dockerwall and unproved
+daemon-cancellation guarantees. Parent stream-wire caps must account for SSE
+metadata overhead, not only normalized answer size; a missing capture stays
+unknown with its full reservation, even after offline client regression passes.
