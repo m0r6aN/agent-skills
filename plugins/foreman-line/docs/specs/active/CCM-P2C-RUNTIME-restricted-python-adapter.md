@@ -1,7 +1,7 @@
 ---
 ticket: CCM-P2C-RUNTIME
 title: Restricted Docker Python parser and library composition
-status: draft
+status: active
 owner: clinton.morgan
 created: '2026-10-23'
 updated: '2026-10-23'
