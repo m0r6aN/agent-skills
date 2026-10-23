@@ -335,7 +335,10 @@ process.on('exit', () => console.log('CI2_READ_BOUND_PROBE ' + JSON.stringify({ 
     )
     await rejectAuthority(
       'wrong declaration name',
-      authoritySource.replace('export const R33_ITEM_MIGRATIONS:', 'export const OTHER_MIGRATIONS:'),
+      authoritySource.replace(
+        'export const R33_ITEM_MIGRATIONS:',
+        'export const OTHER_MIGRATIONS:',
+      ),
     )
     await rejectAuthority(
       'unexported declaration',
@@ -343,7 +346,10 @@ process.on('exit', () => console.log('CI2_READ_BOUND_PROBE ' + JSON.stringify({ 
     )
     await rejectAuthority(
       'mutable declaration',
-      authoritySource.replace('export const R33_ITEM_MIGRATIONS:', 'export let R33_ITEM_MIGRATIONS:'),
+      authoritySource.replace(
+        'export const R33_ITEM_MIGRATIONS:',
+        'export let R33_ITEM_MIGRATIONS:',
+      ),
     )
     await rejectAuthority('nested declaration', `function nested() {\n${authoritySource}\n}\n`)
     await rejectAuthority(
