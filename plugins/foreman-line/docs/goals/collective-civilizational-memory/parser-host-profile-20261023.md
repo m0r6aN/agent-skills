@@ -1,5 +1,17 @@
 # Parser host and recovered Cortex readiness
 
+Independent review follow-through: the single formal harness repair is recorded
+in evidence/parser-host-mechanism-repair-20261023.json. It derives the canonical
+3.13.15 identity from the observed matching image, runs the timeout on that image,
+asserts exact runtime versions, matches hand-derived declaration tuples, tracks
+unique run-labelled container names before mutation, confirms removal within a
+bounded poll, and makes failed cleanup unsuccessful. Root writes must fail EROFS
+in a directory otherwise writable by the nonroot user; root/tmp mount flags are
+read in-container. The memory canary is expressly RLIMIT_AS-only, not an OOM test.
+Earlier results remain historical; closure reviews are separate evidence.
+The selected3.13 parser uses best-effort feature_version=(3,10), not an exact
+3.10 recognizer. Fixed grammar observations do not prove full language equivalence.
+
 Status: bounded synthetic host mechanisms PASS; production adapter and independent
 review pending. No source implementation, affected-route release or model call.
 

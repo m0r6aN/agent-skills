@@ -1,0 +1,63 @@
+{
+  "verdict": "CHANGES_REQUIRED",
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "high",
+      "locator": "report['canonicalProductionCandidate']",
+      "trigger": "Every passing run writes the hardcoded value 'Python3.10.22 pinned first image'.",
+      "impact": "The evidence names an end-of-life runtime as the canonical candidate. The stated candidate is 3.13.15. Token counts already differ: the unicode fixture gives 20 on 3.10 and 19 on 3.12/3.13. Any token guard derived from this record would be calibrated to the wrong runtime.",
+      "remediation": "Derive the candidate from the 3.13 entry by image digest and observed sys.version. Record the token counts for that runtime as canonical.",
+      "confidence": "high"
+    },
+    {
+      "id": "F2",
+      "severity": "medium",
+      "locator": "timeout canary: settings(name,images[0][1])",
+      "trigger": "The timeout and kill canary always runs on the 3.10 image.",
+      "impact": "The kill and removal path is never observed on the pinned 3.13 image.",
+      "remediation": "Run the timeout canary on the 3.13 digest, or on all three images.",
+      "confidence": "high"
+    },
+    {
+      "id": "F3",
+      "severity": "medium",
+      "locator": "call('create',...);owned.append(name) and call('run','--detach',...);owned.append(name)",
+      "trigger": "call raises TimeoutExpired or RuntimeError after the daemon has already created or started the container.",
+      "impact": "The name is never added to owned, so the finally block skips it. The container can leak, and allOwnedContainersAbsent can still report true because it only checks tracked names.",
+      "remediation": "Append the name to owned before create/run. Cleanup already tolerates absent containers via check=False.",
+      "confidence": "high"
+    },
+    {
+      "id": "F4",
+      "severity": "low",
+      "locator": "call('kill',name); assert call('inspect',name,check=False).returncode!=0; and the final allOwnedContainersAbsent check",
+      "trigger": "Removal under --rm is asynchronous, so inspect can run before the daemon finishes removing the container.",
+      "impact": "This can cause flaky false failures, or leave a stale running container reported as present. It does not cause a false pass.",
+      "remediation": "Use a bounded 'wait' with removal confirmation (e.g. poll inspect within a fixed deadline) before asserting absence.",
+      "confidence": "medium"
+    },
+    {
+      "id": "F5",
+      "severity": "low",
+      "locator": "memory canary and root-write canary in code",
+      "trigger": "The memoryCanaryDenied check relies only on a self-set RLIMIT_AS. The write canary accepts EACCES, which a nonroot user receives on '/' even when the root filesystem is writable.",
+      "impact": "The in-container canaries do not demonstrate cgroup memory enforcement or a read-only rootfs. Only the host-side inspect assertions back those claims. The /tmp size and noexec settings are never observed.",
+      "remediation": "Label the memory canary as rlimit-only. Require EROFS for the root-write canary. Add read checks of /proc/mounts for /tmp (noexec, size) and the rootfs read-only flag.",
+      "confidence": "medium"
+    }
+  ],
+  "coverage": [
+    "Docker env and config isolation: allowlisted variables, empty DOCKER_CONFIG, fixed engine pipe.",
+    "Container flags verified via inspect: network none, read-only rootfs, uid, memory, pids, no bind mounts, env-name allowlist.",
+    "In-container cgroup values, RLIMIT_NPROC spawn denial, network denial, fixed literal fixtures parsed without being executed.",
+    "Cross-image declaration digest agreement; three invalid fixtures rejected.",
+    "Cleanup paths, timeout canary, and failure-message withholding."
+  ],
+  "gaps": [
+    "feature_version=(3,10) on 3.13 is best-effort. Grammar parity with 3.10 is shown only by the single except* fixture.",
+    "No CPU-exhaustion or AST-depth canary inside the pinned 3.13 image.",
+    "The 5s per-instance and 15s overall deadlines are not implemented or tested here (out of scope by statement).",
+    "The evidence file is written to an absolute host path with no integrity binding to the harness source."
+  ]
+}

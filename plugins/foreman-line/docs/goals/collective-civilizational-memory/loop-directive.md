@@ -177,6 +177,19 @@ output allowance; no automatic retry/provider hunt or partial-PASS acceptance.
 
 ## Remaining goal / next capability
 
+Latest Oct23 readiness: actual prebuild baseline2975PASS137SKIP0fail/error,
+all3047 accepted identities/dispositions retained plus65new,419tracked pins,
+source clean. One formal test-host repair -> fresh closure PASS/PASS, admitted
+fixed synthetic snapshot only with residuals explicit. See p2c-readiness-result-20261023.md.
+Kimi exact qualified public/no-tools L3 call attempted once: model matched but
+length2048/empty answer, unsuccessful, no retry; retain$0.025702 Go estimate reserve.
+Cortex is PRIVATE; current Kimi qualification does not admit private inputs or
+native Pi tools. Native/private source workers and affected routes stay HELD.
+Two initially started native review tasks were interrupted and not accepted;
+their usage unknown/separate. Controlled tools-free reviews completed instead.
+Review phase closed:207.9reported/210.94425conservative GenSpark credits, no future
+paid calls; dated Oct23 shared ceiling4500 expiresOct24 04UTC, old holds intact.
+
 Use p2c-noncircular-admission-sequence-20261023.md: qualified/reviewed test host,
 actual baseline and worker clearance -> library build/review -> production adapter
 and composition review -> hostile-input admission. No production adapter/library

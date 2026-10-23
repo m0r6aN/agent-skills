@@ -54,11 +54,12 @@ reviews. This draft does not authorize dispatch or change credential holds.
   for digest/ranges. Follow tokenizer first/two-line effective coding-cookie
   recognition, but accept only case-insensitive utf-8 or utf8 spellings. Other
   effective cookie declarations fail closed, including ASCII latin-1 sources.
-- Request Python3.10 grammar explicitly and preserve Python3.10 library source
+- Request best-effort Python3.10 feature parsing explicitly and preserve Python3.10 library source
   compatibility. Select the pinned Python3.13.15 Linux image in
   parser-host-profile-20261023.md for production parsing. Actual3.10.22,3.12.15
   and3.13.15 observations now exist; tests of this future library remain required.
   Token counts are canonical-runtime-specific, not invariant across interpreters.
+  feature_version is best-effort: this is not an exact Python3.10 recognizer.
 - Coordinator-selected implementation/review limits:262144 input bytes,20000 emitted tokenize.tokenize tokens
   (including ENCODING/ENDMARKER),64 bracket nesting levels,64 lexical declaration
   ancestors and2048 declarations. Count brackets only as operator tokens outside
@@ -92,7 +93,8 @@ reviews. This draft does not authorize dispatch or change credential holds.
    Cover nested/repeated declarations, control flow, async/decorators, multiline
    signatures, BOM/CRLF, Kelvin/NFD identifier semantics and exact source bytes.
 3. Tests reject malformed/truncated UTF-8 and syntax, unsupported effective
-   encoding cookies and syntax outside3.10 grammar. Verify empty input and a
+   encoding cookies and the frozen unsupported-syntax fixtures, including except*.
+   Do not claim exact3.10 language recognition. Verify empty input and a
    parse-only side-effect canary without executing it. Cover type subclasses
    whose methods raise if called; no subclass callback may run.
 4. Error str/repr/args/cause/context and result reprs disclose no unique sentinel
@@ -143,6 +145,14 @@ prebuild baseline/pins. Historical broken worktrees are untouched.
 - docs/CONTEXT-SPEC-V4.txt and accepted S01-S12/C02-D1 boundaries.
 
 ## Verification Plan
+
+Oct23 readiness follow-through: fixed test-host snapshot received independent
+PASS/PASS after one repair. Actual baseline2975PASS137SKIP0fail/error retains all
+3047 accepted identities plus65new and419tracked pins. See
+p2c-readiness-result-20261023.md for residuals. This does not clear a source worker:
+Cortex is PRIVATE; current Kimi L3 qualification is public/no-tools only. The
+single Kimi advisory attempt returned length/empty and was not retried. Spec stays
+draft; source/worker admission remains held, not another owner permission request.
 
 Before Gate2: retain/recheck the recovered checkout, establish the actual prebuild
 baseline/pins, independently review the bounded test host and clear worker/route

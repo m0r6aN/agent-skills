@@ -1,0 +1,51 @@
+{
+  "atUtc": "2026-10-23T20:19:59.484187+00:00",
+  "scope": "Fixed synthetic deterministic test-host admission only",
+  "initialReviews": "CHANGES_REQUIRED/CHANGES_REQUIRED",
+  "formalRepairs": 1,
+  "freshClosureReviews": "PASS/PASS",
+  "sourcePacketMatchesReviewedHarness": true,
+  "harnessSha256": "33b622ae158d43a7e02adc6612c335eeedb846aebba45d29d9afb4f8a5565cb0",
+  "canonicalImage": "sha256:b2bb53ac7b6fbe78a48c95b7c15130ea21de1674fc683fbc93158b0c23826823",
+  "decision": "ACCEPT_FIXED_SYNTHETIC_TEST_LANE_ONLY",
+  "sameModelFamilyLimitation": "Two fresh tools-free Opus reviews; not a full multi-family council or final production security approval",
+  "initialFindingsResolved": [
+    "Canonical3.13 evidence derived from actual matching image/runtime",
+    "Observed version asserted for each immutable image ID",
+    "Timeout/kill/removal canary now canonical3.13 image",
+    "Unique run-labelled names tracked before mutation; cleanup verifies ownership",
+    "Bounded removal polling and unsuccessful cleanup disposition",
+    "EROFS canary in otherwise writable directory; actual root/tmp mount options",
+    "Hand-derived declaration tuple oracle before AST output comparison",
+    "Best-effort feature_version semantics explicitly stated"
+  ],
+  "residuals": [
+    {
+      "issue": "Cleanup exceptions can escape before the harness writes its report",
+      "disposition": "Nonblocking for this verified completed snapshot only. Do not reuse as unattended/general runner; outer caller must require successful exit, fresh result and owned cleanup. Production adapter must always write failure evidence."
+    },
+    {
+      "issue": "Initial name-free check treats any inspect failure as absent",
+      "disposition": "Unique run names and label-gated destructive cleanup prevent unrelated removal; future adapter must positively distinguish missing from daemon failure."
+    },
+    {
+      "issue": "Fixture names can imply scalar enforcement",
+      "disposition": "These are boundary-acceptance/parser observations only. Over-limit scalar enforcement remains production-library/adapter work."
+    },
+    {
+      "issue": "Some zero/false fields are design assertions",
+      "disposition": "No image-pull audit or general mount inventory proof is claimed; pinned local images and fixed no-bind recipe used."
+    },
+    {
+      "issue": "Token counts differ across runtimes",
+      "disposition": "Explicitly false in actual evidence and selected3.13-only token budget."
+    }
+  ],
+  "reviewCorrections": [
+    "Timeout case proves client timeout plus explicit owned kill/removal, not an automatic server deadline; source and absence checks establish actual removal.",
+    "Bracket boundary is64 per exact source, not65 mentioned in one review.",
+    "The earlier3.10 canonical narrative was historical and superseded in profile, but harness record itself is now corrected."
+  ],
+  "productionAdmission": false,
+  "workerCredentialClearance": false
+}

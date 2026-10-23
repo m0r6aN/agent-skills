@@ -1,0 +1,67 @@
+{
+  "verdict": "PASS",
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "medium",
+      "locator": "finally: ownership assert, call(...,check=False), wait_absent()/absent() RuntimeError",
+      "trigger": "A label mismatch, daemon error, unrecognized inspect stderr, or docker CLI TimeoutExpired occurs during cleanup",
+      "impact": "The exception leaves the finally block before the evidence file is written. A cleanup failure can then produce no UNSUCCESSFUL_CLEANUP record and no summary line. The recorded run passed, so the PASS evidence is not invalidated.",
+      "remediation": "Wrap each cleanup step in a local try/except and record per-name cleanup status. Always write the evidence report, then exit nonzero.",
+      "confidence": "high"
+    },
+    {
+      "id": "F2",
+      "severity": "low",
+      "locator": "settings(): call('container','inspect',name,check=False).returncode!=0",
+      "trigger": "The daemon or pipe is unavailable, or any other inspect error returns nonzero",
+      "impact": "Any failure is treated as 'name absent', so pre-existence is not positively proven. This is mitigated by unique stamp+uuid names and by label checks before kill/rm.",
+      "remediation": "Reuse absent(), which requires a 'no such' diagnostic, in settings().",
+      "confidence": "high"
+    },
+    {
+      "id": "F3",
+      "severity": "low",
+      "locator": "report keys hostMounts:0, imagesPulled:0, sourceExecuted:False, subprocessDenied/networkDenied literals",
+      "trigger": "Reading the evidence as measured values",
+      "impact": "Some fields are asserted constants rather than observations. Only bind mounts are checked: volume/tmpfs Type entries other than /tmp are not enumerated, and image pulls are not audited. The claims are plausible because the images are referenced by local ID with no pull step, but they are unsupported as measurements.",
+      "remediation": "Assert that inspect Mounts is empty, or contains only the expected tmpfs. Label the hardcoded fields as design assertions.",
+      "confidence": "medium"
+    },
+    {
+      "id": "F4",
+      "severity": "low",
+      "locator": "fixtures byte_limit_comment/declaration_limit/bracket_limit",
+      "trigger": "Fixture names imply limit enforcement",
+      "impact": "These fixtures only parse at-boundary inputs successfully. No over-limit input is rejected and no limit is enforced, so they do not evidence any limit mechanism.",
+      "remediation": "Rename them as boundary-acceptance fixtures, or defer limit-enforcement evidence to the adapter.",
+      "confidence": "high"
+    },
+    {
+      "id": "F5",
+      "severity": "info",
+      "locator": "tokenCountsMatchAcrossHosts; FACTS unicode tokenCount 20 (3.10) vs 19 (3.12/3.13)",
+      "trigger": "Comparing tokenize output across runtimes",
+      "impact": "The field would be False. FACTS omits it, but the canonical 3.13.15 tokens are correctly singled out. Token counts are runtime-specific and are not a cross-host invariant.",
+      "remediation": "Surface the false value in the summary and bind token budgets to 3.13.15 only.",
+      "confidence": "high"
+    }
+  ],
+  "coverage": [
+    "Pinned three-image runs with config inspection",
+    "Cgroup memory/swap/pids/cpu checks",
+    "Read-only root with EROFS canary; /tmp noexec/nosuid/size",
+    "Nonroot uid; network, spawn and RLIMIT_AS denial canaries",
+    "Hand-derived declaration oracle with cross-host digest equality",
+    "Invalid-input rejection under feature_version (3,10)",
+    "Owned-container labeling, kill/remove and absence verification",
+    "Test-only CLI timeout canary"
+  ],
+  "gaps": [
+    "Timeout canary times out the docker CLI client; it does not show the container stops. It does not implement the 5s instance / 15s overall deadlines.",
+    "Cgroup OOM behavior is unexercised; only the RLIMIT_AS canary runs.",
+    "feature_version is best-effort on 3.12/3.13 and is not an exact 3.10 grammar.",
+    "No production adapter, worker, credential or final source clearance is inferred.",
+    "harnessSha256 is not independently verifiable from the supplied text."
+  ]
+}
