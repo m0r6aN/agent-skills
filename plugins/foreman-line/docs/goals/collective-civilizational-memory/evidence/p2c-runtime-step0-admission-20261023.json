@@ -1,0 +1,53 @@
+{
+  "atUtc": "2026-10-23T22:50:22.677628+00:00",
+  "authority": "Current direct owner adapter/composition instruction and existing blanket finite spend decisions",
+  "phaseCap": 800,
+  "newFiniteNYOct23Ceiling": 6000,
+  "previousDayCeiling": 5000,
+  "effortCeiling": 9000,
+  "floor": 1000,
+  "expiresUtc": "2026-10-24T04:00:00Z",
+  "scope": "ONE tools-free read-only Step0 for NEW adapter task while checkout runs; no source application/Gate2 or oldrequest replay",
+  "model": "gpt-6.1-sol",
+  "maxPosts": 1,
+  "cap": 40,
+  "maxOutput": 2048,
+  "retries": 0,
+  "affectedRoutes": "HELD",
+  "failed120Retained": true,
+  "sourceWrites": false,
+  "worktree": "Preparing; not yet claimed clean or pinned",
+  "guard": {
+    "atUtc": "2026-10-23T22:50:23.982467+00:00",
+    "balance": 5899.2,
+    "allOldConservativeIncluding120": 3969.8075,
+    "phaseCap": 800,
+    "phaseBookedBeforeCall": 0,
+    "thisCallCap": 40,
+    "dayConservative": 5323.1075,
+    "dayCeiling": 6000,
+    "effortConservative": 8437.407500000001,
+    "effortCeiling": 9000,
+    "afterAllHolds": 1129.3925,
+    "floor": 1000,
+    "foreignLedgerSha256": "8bc0bf731db734a4b694c616e05ec61f9b7c84c79ec1e3766de401bfa4a333ed",
+    "oldUnknownsReleased": false,
+    "expiresUtc": "2026-10-24T04:00:00Z"
+  },
+  "metadata": [
+    {
+      "name": "GPT-6.1 Sol",
+      "cost": {
+        "input": 1100.0,
+        "output": 5500.0,
+        "cache_read": 55.0,
+        "cache_write": 1375.0
+      },
+      "limit": {
+        "context": 1000000,
+        "input": 872000,
+        "output": 128000
+      }
+    }
+  ]
+}
