@@ -49,14 +49,14 @@ test('grammar pin: three-state classification of the live SPEC-CONVENTION.md', (
 })
 
 test('grammar pin: constants carry the exact measured digests and byte counts', () => {
-  assert.equal(GRAMMAR_PIN.sectionBytes, 10199)
+  assert.equal(GRAMMAR_PIN.sectionBytes, 10305)
   assert.equal(
     GRAMMAR_PIN.sectionDigest,
-    'sha256:96113a55c6ddf2a7bad93c90d7004f1e51550aa2b1164ae06093992ee824398d',
+    'sha256:61fc23d24ea700176f588b2330acfa0d778d3db7083e9edd71bf0be1a0d9c737',
   )
   assert.equal(
     GRAMMAR_PIN.fileDigest,
-    'sha256:70508684d2c929d1331ed0cd9a147fcc2206593a04fbf210314e22fb80cba0a8',
+    'sha256:81ec8bb81aa090a0488b589509af757cad14de281202961691a36eb864d7ad7e',
   )
   assert.equal(KNOWN_BASE_GRAMMAR.totalBytes, 18344)
   assert.equal(KNOWN_BASE_GRAMMAR.sectionBytes, 6610)
