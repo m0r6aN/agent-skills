@@ -1,0 +1,97 @@
+{
+  "atUtc": "2026-10-23T22:53:28.465400+00:00",
+  "authority": "Direct owner production parser adapter/composition review plus existing blanket non-destructive decisions and finite credit increases",
+  "phase": "P2C-RUNTIME one implementation, at most one formal repair, independent composition review",
+  "newFiniteNYOct23Ceiling": 6000,
+  "previousDayCeiling": 5000,
+  "wholePhaseCap": 800,
+  "effortCeiling": 9000,
+  "floor": 1000,
+  "expiresUtc": "2026-10-24T04:00:00Z",
+  "perCall": "Step0max40;3boundedsource slices max110/150/150; each later review/focusedrepair requires remaining-phase/cost check; whole800neverexceeded, no guaranteed worst-case repair headroom",
+  "sourceModel": "gpt-6.1-sol",
+  "sourceEffort": "low",
+  "sourceTransport": "Controlled private-artifact GenSpark HTTPS, tools-free candidate; NEW adapter task, not replay/continuation of failed P2C repair. No affected key or native/private-Pi route release.",
+  "alternativeDisposition": "Kimi public-only ineligible; MiMo metadata alone is not a qualified private elevated-risk builder; Sol has demonstrated private proposal/Step0 and independent architecture capability",
+  "modelsMetadata": {
+    "claude-opus-5-5": {
+      "name": "Claude Opus 5.5",
+      "cost": {
+        "input": 2200.0,
+        "output": 11000.0,
+        "cache_read": 110.0,
+        "cache_write": 2750.0
+      },
+      "limit": {
+        "context": 1000000,
+        "input": 980000,
+        "output": 128000
+      }
+    },
+    "gpt-6.1-sol": {
+      "name": "GPT-6.1 Sol",
+      "cost": {
+        "input": 1100.0,
+        "output": 5500.0,
+        "cache_read": 55.0,
+        "cache_write": 1375.0
+      },
+      "limit": {
+        "context": 1000000,
+        "input": 872000,
+        "output": 128000
+      }
+    },
+    "mimo-v2.6-pro": {
+      "name": "MiMo V2.6 Pro",
+      "cost": {
+        "input": 242.0,
+        "output": 478.5,
+        "cache_read": 5.5,
+        "cache_write": 242.0
+      },
+      "limit": {
+        "context": 1048576,
+        "input": 983040,
+        "output": 65536
+      }
+    },
+    "mimo-v2.6-flash": {
+      "name": "MiMo V2.6 Flash",
+      "cost": {
+        "input": 77.0,
+        "output": 154.0,
+        "cache_read": 5.5,
+        "cache_write": 77.0
+      },
+      "limit": {
+        "context": 1048576,
+        "input": 983040,
+        "output": 65536
+      }
+    }
+  },
+  "failed120Retained": true,
+  "allOldReservationsRetained": true,
+  "knownCarriedConservative": 3969.8075,
+  "accountBalance": 5887.1,
+  "dayConservative": 5335.2074999999995,
+  "effortConservative": 8449.5075,
+  "afterAllHolds": 1117.2925000000005,
+  "foreignLedgerSha256": "8bc0bf731db734a4b694c616e05ec61f9b7c84c79ec1e3766de401bfa4a333ed",
+  "automaticRetries": 0,
+  "fallback": false,
+  "allowedFiles": [
+    "src/keon/cortex/pipeline/ccm_python_protocol.py",
+    "src/keon/cortex/pipeline/ccm_python_worker.py",
+    "src/keon/cortex/pipeline/ccm_python_runtime.py",
+    "tests/test_ccm_python_runtime.py",
+    "docker/ccm-python-parser/Dockerfile",
+    "docs/specs/ccm-python-runtime-v1.md"
+  ],
+  "workerTools": [],
+  "sourceWrites": "Parent applies only exact file proposals; no model filesystem/env/credentials or execution",
+  "hardRemoteAggregateBillingCancellationGuarantee": false,
+  "dispatchNow": "Step0 only; source Gate2 later",
+  "reviewRequirement": "Two fresh frontier architecture/security composition seats; complete actual host/failure evidence; no reviewersfixing"
+}

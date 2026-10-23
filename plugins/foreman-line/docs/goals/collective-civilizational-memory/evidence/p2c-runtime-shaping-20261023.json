@@ -1,0 +1,42 @@
+{
+  "atUtc": "2026-10-23T22:53:28.465400+00:00",
+  "status": "PASS_DRAFT_ADVISORY_SCHEMA_READBACK",
+  "pins": 164,
+  "advisory": {
+    "valid": true,
+    "frontmatter": {
+      "valid": true,
+      "errors": [],
+      "warnings": [
+        "advisory: surfaces entry 'src/keon/cortex/pipeline/ccm_python_protocol.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+        "advisory: surfaces entry 'src/keon/cortex/pipeline/ccm_python_worker.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+        "advisory: surfaces entry 'src/keon/cortex/pipeline/ccm_python_runtime.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+        "advisory: surfaces entry 'tests/test_ccm_python_runtime.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+        "advisory: surfaces entry 'docker/ccm-python-parser/Dockerfile' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74"
+      ]
+    },
+    "body": {
+      "valid": true,
+      "errors": []
+    },
+    "errors": []
+  },
+  "shapingResult": {
+    "artifactPath": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\ccm-p2c-runtime-2026-10-23-operator.shaping-result.json",
+    "artifactRef": "plugins/foreman-line/docs/specs/active/ccm-p2c-runtime-2026-10-23-operator.shaping-result.json",
+    "payload": {
+      "parcelSpecRefs": [
+        "plugins/foreman-line/docs/specs/active/CCM-P2C-RUNTIME-restricted-python-adapter.md"
+      ],
+      "epics": []
+    }
+  },
+  "readback": {
+    "parcelSpecRefs": [
+      "plugins/foreman-line/docs/specs/active/CCM-P2C-RUNTIME-restricted-python-adapter.md"
+    ],
+    "epics": []
+  },
+  "baselineReusedExactSnapshot": true,
+  "sourceDispatched": false
+}
