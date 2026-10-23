@@ -131,8 +131,18 @@
  * package, unratified on-disk package, unrecognized source extension).
  */
 import { createHash } from 'node:crypto'
-import { readdirSync, readFileSync, statSync } from 'node:fs'
-import { isAbsolute, join } from 'node:path'
+import {
+  closeSync,
+  constants,
+  fstatSync,
+  lstatSync,
+  openSync,
+  readdirSync,
+  readFileSync,
+  readSync,
+  statSync,
+} from 'node:fs'
+import { isAbsolute, join, relative } from 'node:path'
 import type {
   CallExpression,
   Expression,
@@ -1649,7 +1659,78 @@ interface Site {
 
 class UsageError extends Error {}
 
-function listSourceFiles(dir: string, out: string[]): void {
+// D016: one immutable, non-executable data identity; no extension/basename exemption.
+const CHECKSUM_DATA_PATH = 'authority-registry/evidence/qf-p0/SHA256SUMS'
+const CHECKSUM_DATA_BYTES = 895
+const CHECKSUM_DATA_SHA256 = '86b25c60cfc3b14f0dedd667ca914bf206988108e502794470df06d2824e147d'
+
+function checksumComponent(pluginRoot: string, path: string): string {
+  const identity = relative(pluginRoot, path).split('\\').join('/')
+  if (identity === '' || CHECKSUM_DATA_PATH.startsWith(`${identity}/`)) {
+    const info = lstatSync(path)
+    if (info.isSymbolicLink() || !info.isDirectory()) {
+      throw new UsageError(`pinned checksum data ancestor must be a non-link directory: ${path}`)
+    }
+  }
+  return identity
+}
+
+function admitChecksumData(pluginRoot: string, path: string): void {
+  // Check only this identity's root/ancestors; other traversal semantics are unchanged.
+  checksumComponent(pluginRoot, pluginRoot)
+  let ancestor = pluginRoot
+  for (const part of CHECKSUM_DATA_PATH.split('/').slice(0, -1)) {
+    ancestor = join(ancestor, part)
+    checksumComponent(pluginRoot, ancestor)
+  }
+  const before = lstatSync(path)
+  if (before.isSymbolicLink() || !before.isFile() || before.size !== CHECKSUM_DATA_BYTES) {
+    throw new UsageError(
+      'pinned checksum data must be a regular non-link file of exactly 895 bytes',
+    )
+  }
+  const fd = openSync(path, constants.O_RDONLY | (constants.O_NOFOLLOW ?? 0))
+  try {
+    const opened = fstatSync(fd)
+    if (
+      !opened.isFile() ||
+      opened.size !== CHECKSUM_DATA_BYTES ||
+      opened.dev !== before.dev ||
+      opened.ino !== before.ino
+    ) {
+      throw new UsageError('pinned checksum data changed before bounded read')
+    }
+    const bytes = Buffer.alloc(CHECKSUM_DATA_BYTES + 1)
+    let length = 0
+    while (length < bytes.length) {
+      const count = readSync(fd, bytes, length, bytes.length - length, length)
+      if (count === 0) break
+      length += count
+    }
+    const after = lstatSync(path)
+    if (
+      after.isSymbolicLink() ||
+      !after.isFile() ||
+      after.dev !== opened.dev ||
+      after.ino !== opened.ino ||
+      after.size !== CHECKSUM_DATA_BYTES ||
+      length !== CHECKSUM_DATA_BYTES ||
+      createHash('sha256').update(bytes.subarray(0, length)).digest('hex') !== CHECKSUM_DATA_SHA256
+    ) {
+      throw new UsageError('pinned checksum data length, identity or SHA-256 mismatch')
+    }
+  } finally {
+    closeSync(fd)
+  }
+}
+
+function listSourceFiles(
+  dir: string,
+  out: string[],
+  pluginRoot: string,
+  admittedData: string[],
+): void {
+  checksumComponent(pluginRoot, dir)
   let entries: string[]
   try {
     entries = readdirSync(dir)
@@ -1658,12 +1739,18 @@ function listSourceFiles(dir: string, out: string[]): void {
   }
   for (const name of entries) {
     const p = join(dir, name)
+    const identity = checksumComponent(pluginRoot, p)
+    if (identity === CHECKSUM_DATA_PATH) {
+      admitChecksumData(pluginRoot, p)
+      admittedData.push(identity)
+      continue
+    }
     const st = statSync(p)
     if (st.isDirectory()) {
       // A3.5: node_modules/ and dist/ are third-party/generated; tests/ are
       // excluded by design (they exercise seams with fixture roots).
       if (name === 'node_modules' || name === 'dist' || name === 'tests') continue
-      listSourceFiles(p, out)
+      listSourceFiles(p, out, pluginRoot, admittedData)
     } else if (DECLARATION_SUFFIXES.some((s) => name.endsWith(s))) {
       // generated declaration files carry no executable mechanism
     } else if (SOURCE_EXTENSIONS.some((s) => name.endsWith(s))) {
@@ -2745,7 +2832,124 @@ function pmcRecoveryPins(sf: SourceFile, errors: string[]): Map<CallExpression, 
 
 // ─── Per-file sweep ──────────────────────────────────────────────────────────
 
+// D017: two immutable authority prose leaves, never a whole-file allowance.
+const AUTHORITY_TEXT_FILE = 'authority-registry/src/r33-migrations.ts'
+const AUTHORITY_TEXT_DECLARATION = 'R33_ITEM_MIGRATIONS'
+const AUTHORITY_TEXT_SHA256 = 'b8346a9b9ac7326eead9ccd8178d5dd48afb47e40c6dff8c0b7dfecdd72e880f'
+const AUTHORITY_TEXT_SLOTS = ['new.normalizedExcerpt', 'newRules[0].normalizedStatement'] as const
+
+function authorityTextProperties(node: Node | undefined): Map<string, Expression> | undefined {
+  if (node === undefined || !isObjectLiteralExpression(node)) return undefined
+  const properties = new Map<string, Expression>()
+  for (const property of node.properties) {
+    if (
+      !isPropertyAssignment(property) ||
+      (!isIdentifier(property.name) && !isStringLiteral(property.name)) ||
+      properties.has(property.name.text)
+    ) {
+      return undefined
+    }
+    properties.set(property.name.text, property.initializer)
+  }
+  return properties
+}
+
+function authorityTextPins(sf: SourceFile, errors: string[]): Map<Expression, string> {
+  const pins = new Map<Expression, string>()
+  const declarations: Node[] = []
+  const collect = (node: Node): void => {
+    if (
+      isIdentifier(node) &&
+      node.text === AUTHORITY_TEXT_DECLARATION &&
+      node.parent !== undefined &&
+      (node.parent as Node & { name?: Node }).name === node
+    ) {
+      declarations.push(node.parent)
+    }
+    node.forEachChild(collect)
+  }
+  collect(sf)
+  const fail = (detail: string): Map<Expression, string> => {
+    errors.push(`D017 authority-text DATA: ${detail}`)
+    return pins
+  }
+  const declaration = declarations[0]
+  if (
+    declarations.length !== 1 ||
+    declaration === undefined ||
+    !isVariableDeclaration(declaration)
+  ) {
+    return fail('expected one unique declaration, including shadow bindings')
+  }
+  const list = declaration.parent
+  const statement = list?.parent
+  const array = declaration.initializer
+  if (
+    list === undefined ||
+    !isVariableDeclarationList(list) ||
+    !list.getText(sf).startsWith('const ') ||
+    statement === undefined ||
+    !isVariableStatement(statement) ||
+    statement.parent !== sf ||
+    statement.modifiers?.some((modifier) => modifier.kind === SyntaxKind.ExportKeyword) !== true ||
+    array === undefined ||
+    !isArrayLiteralExpression(array) ||
+    array.elements.some((element) => !isObjectLiteralExpression(element))
+  ) {
+    return fail('expected direct top-level exported const array of direct records')
+  }
+  const records = array.elements.map(authorityTextProperties).filter((record) => {
+    const unit = record?.get('unit')
+    return unit !== undefined && isStringLiteral(unit) && unit.text === 'adopt-item.36fc26502361'
+  })
+  const record = records[0]
+  if (records.length !== 1 || record === undefined) return fail('expected one unique direct record')
+  for (const [key, value] of [
+    ['sourceId', 'coordinator-pattern'],
+    ['itemId', 'item.36fc26502361'],
+    ['disposition', 'adopted'],
+  ] as const) {
+    const field = record.get(key)
+    if (field === undefined || !isStringLiteral(field) || field.text !== value) {
+      return fail(`wrong record identity ${key}`)
+    }
+  }
+  if (record.get('prior')?.kind !== SyntaxKind.NullKeyword) return fail('prior must be direct null')
+  const current = authorityTextProperties(record.get('new'))
+  const rules = record.get('newRules')
+  if (current === undefined || rules === undefined || !isArrayLiteralExpression(rules)) {
+    return fail('expected direct new object and newRules array')
+  }
+  if (rules.elements.length !== 1) return fail('expected exactly one direct newRules record')
+  const rule = authorityTextProperties(rules.elements[0])
+  const ruleId = rule?.get('ruleId')
+  if (
+    ruleId === undefined ||
+    !isStringLiteral(ruleId) ||
+    ruleId.text !== 'rule.coordinator-pattern.36fc26502361'
+  ) {
+    return fail('wrong direct rule identity')
+  }
+  const leaves = [current.get('normalizedExcerpt'), rule?.get('normalizedStatement')]
+  for (const [index, slot] of AUTHORITY_TEXT_SLOTS.entries()) {
+    const leaf = leaves[index]
+    if (
+      leaf === undefined ||
+      !isStringLiteral(leaf) ||
+      Buffer.byteLength(leaf.text, 'utf8') !== 750 ||
+      createHash('sha256').update(leaf.text, 'utf8').digest('hex') !== AUTHORITY_TEXT_SHA256
+    ) {
+      errors.push(`D017 authority-text DATA: invalid exact value at ${slot}`)
+    } else {
+      pins.set(leaf, slot)
+    }
+  }
+  return pins
+}
+
 interface SweepSink {
+  readonly authorityTextErrors: string[]
+  readonly authorityTextSites: (Site & { slot: string })[]
   readonly pmcIntentErrors: string[]
   readonly pmcIntentSites: (Site & { role: string })[]
   readonly pmcErrors: string[]
@@ -2809,6 +3013,10 @@ function sweepFile(
   sink: SweepSink,
 ): void {
   sink.sweptFiles.add(rel)
+  const authorityPins =
+    rel === AUTHORITY_TEXT_FILE
+      ? authorityTextPins(sf, sink.authorityTextErrors)
+      : new Map<Expression, string>()
   const lines = rawText.split('\n')
   const reported = new Set<number>()
   // A3.3 / A3.4 pre-passes.
@@ -2899,6 +3107,11 @@ function sweepFile(
   }
 
   const adjudicateClass3 = (node: Expression, value: string): void => {
+    const authoritySlot = authorityPins.get(node)
+    if (authoritySlot !== undefined) {
+      sink.authorityTextSites.push({ ...site(node), slot: authoritySlot })
+      return
+    }
     // Ruled non-instances, pinned by identity + location + value (STANDING #13):
     const parent = node.parent
     if (isRcmProvenanceLiteral(node, sf, rel)) {
@@ -3417,6 +3630,7 @@ function main(argv: readonly string[]): number {
   let packages: string[]
   const filesByPackage = new Map<string, string[]>()
   let fileCount = 0
+  const admittedData: string[] = []
   try {
     packages = discoverPackages(pluginRoot)
     for (const pkg of packages) {
@@ -3424,7 +3638,7 @@ function main(argv: readonly string[]): number {
       // not just src/ — package-root executables are real source.
       const pkgDir = join(pluginRoot, pkg)
       const files: string[] = []
-      listSourceFiles(pkgDir, files)
+      listSourceFiles(pkgDir, files, pluginRoot, admittedData)
       if (files.length === 0) {
         throw new UsageError(`package '${pkg}' has no source files under ${pkgDir}`)
       }
@@ -3440,6 +3654,8 @@ function main(argv: readonly string[]): number {
   }
 
   const sink: SweepSink = {
+    authorityTextErrors: [],
+    authorityTextSites: [],
     pmcIntentErrors: [],
     pmcIntentSites: [],
     pmcErrors: [],
@@ -3516,6 +3732,11 @@ function main(argv: readonly string[]): number {
     `d19-audit: swept ${packages.length} packages, ${fileCount} source files (disk-discovered, allowlist-checked both ways — A2.2)`,
   )
   console.log(`packages: ${packages.join(', ')}`)
+  for (const identity of admittedData) {
+    console.log(
+      `known non-source data: ${identity}; bytes=${CHECKSUM_DATA_BYTES}; sha256=${CHECKSUM_DATA_SHA256}`,
+    )
+  }
   console.log(
     'scope: every source file in each ratified package, excluding node_modules/, dist/, and tests/ ' +
       '(tests excluded by design — they exercise seams with fixture roots); package-root ' +
@@ -3553,10 +3774,23 @@ function main(argv: readonly string[]): number {
   // pinned file was actually swept. A pinned file absent from the tree (a
   // synthetic fixture) leaves that pin vacuous, not failed. ──
   const pinMismatches: string[] = [
+    ...sink.authorityTextErrors,
     ...sink.pmcErrors,
     ...sink.pmcIntentErrors,
     ...sink.pmcRecoveryErrors,
   ]
+  if (!sink.sweptFiles.has(AUTHORITY_TEXT_FILE)) {
+    pinMismatches.push(`D017 authority-text DATA: required file ${AUTHORITY_TEXT_FILE} is absent`)
+  }
+  for (const slot of AUTHORITY_TEXT_SLOTS) {
+    const count = sink.authorityTextSites.filter((site) => site.slot === slot).length
+    console.log(
+      `D017 authority-text DATA: ${AUTHORITY_TEXT_FILE}#${slot}; expected=1; observed=${count}`,
+    )
+    if (count !== 1) {
+      pinMismatches.push(`D017 authority-text DATA: ${slot} expected 1, observed ${count}`)
+    }
+  }
   const digestMismatches: string[] = []
   const pmcIntentExpected = sink.sweptFiles.has(PMC_INTENT_FILE) ? PMC_INTENT_CALLS.size : 0
   if (sink.pmcIntentSites.length !== pmcIntentExpected)
