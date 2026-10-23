@@ -177,6 +177,11 @@ output allowance; no automatic retry/provider hunt or partial-PASS acceptance.
 
 ## Remaining goal / next capability
 
+Use p2c-noncircular-admission-sequence-20261023.md: qualified/reviewed test host,
+actual baseline and worker clearance -> library build/review -> production adapter
+and composition review -> hostile-input admission. No production adapter/library
+circular Gate2 dependency; no credential hold is waived by this clarification.
+
 October23 host/source prerequisites advanced: clean recovered Cortex checkout
 D:/Repos/ccm-cortex-readiness-20261023 at91c57778804a4f1097b07049176c1af533c840e2,
 both actual main workflows green, four accepted P2B blobs match, three P2C paths

@@ -92,8 +92,11 @@ worker admission clear. Its status here is owner-requested, not configured,
 entitled, available or invoked. No incident-affected key may be used by implication;
 no provider probe, fallback, new budget or paid dispatch occurred.
 
-Next: separately scope the fixed parser adapter, independently review it, establish
-the actual prebuild baseline, then admit the compact library workorder. Preserve
+Next: review the bounded test host, establish the actual prebuild baseline and
+worker clearance, then build/review the compact library. Complete the production
+adapter and composition review afterward, before hostile production admission.
+See p2c-noncircular-admission-sequence-20261023.md; do not require an adapter that
+imports the unfinished library before allowing the library build. Preserve
 existing credential holds, source/main CI and dated finite cost controls.
 
 Preparation failures remain explicit: initial helper escape syntax failed before

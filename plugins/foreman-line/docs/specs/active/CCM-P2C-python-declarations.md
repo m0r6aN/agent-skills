@@ -64,8 +64,9 @@ reviews. This draft does not authorize dispatch or change credential holds.
   ancestors and2048 declarations. Count brackets only as operator tokens outside
   strings/comments. Validate byte size before decode; strict decode and cookie
   policy before tokenization; tokenize before AST parse; check declaration limits
-  before returning. Selected host mechanisms now pass bounded canaries; adapter
-  implementation and independent review remain required before Gate2. Scalar
+  before returning. Selected host mechanisms now pass bounded canaries; bounded
+  test-host review and worker admission remain required before Gate2. Production
+  adapter implementation/composition review precede hostile production input. Scalar
   guards are not time/memory sandbox guarantees.
 - Use iterative AST traversal. SyntaxError/tokenizer failures become invalid_syntax;
   resource guard, MemoryError or RecursionError becomes resource_limit. Closed
@@ -144,8 +145,11 @@ prebuild baseline/pins. Historical broken worktrees are untouched.
 ## Verification Plan
 
 Before Gate2: retain/recheck the recovered checkout, establish the actual prebuild
-baseline/pins, implement and independently review the separately scoped restricted
-adapter, then compare this library on actual supported runtimes. Mechanism/profile
+baseline/pins, independently review the bounded test host and clear worker/route
+admission. Build this library with fixed fixtures; complete the production adapter
+and combined review afterward, before hostile-input admission. Compare the actual
+library on supported runtimes. See p2c-noncircular-admission-sequence-20261023.md.
+Mechanism/profile
 evidence is in parser-host-profile-20261023.md. Credential-bearing
 workers remain held; no implicit route release follows from refreshed gateway
 state. Fresh dated cost/account/foreign-hold admission precedes any paid phase;
