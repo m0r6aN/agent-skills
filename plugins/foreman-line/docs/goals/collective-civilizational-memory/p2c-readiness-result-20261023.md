@@ -92,3 +92,10 @@ opened; initial source remains unaccepted. One formal repair source call failed
 with unknown upstream outcome,120credits retained, no retry/fallback. Affected
 private-Pi/shell/provider routes remain held. Do not use this historical readiness
 record to dispatch another build or repeat the prebuild baseline.
+
+
+## Final source disposition
+
+P2C is accepted/merged/StageFclosed. PR94 merge5cb07ba47f7f52dc85c228e06dc3d1bfe3ec4d04
+passed actual exact-head and main workflows. See p2c-acceptance-20261023.md.
+The failed120reservation and all affected-route/import/production holds remain.

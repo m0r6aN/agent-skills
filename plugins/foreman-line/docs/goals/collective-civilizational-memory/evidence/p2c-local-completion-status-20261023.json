@@ -1,6 +1,6 @@
 {
-  "atUtc": "2026-10-23T22:11:39.356072+00:00",
-  "status": "REPAIR_AND_INDEPENDENT_REVIEWS_COMPLETE_CI_PENDING",
+  "atUtc": "2026-10-23T22:16:52.638818+00:00",
+  "status": "ACCEPTED_MERGED_STAGE_F_CLOSED",
   "formalRepairCycles": 1,
   "sourceGenerationCallsAfterFailure": 0,
   "originalFailedRequest": "UPSTREAM_OUTCOME_UNKNOWN_120_RETAINED",
@@ -27,8 +27,9 @@
     "tests/test_ccm_python.py": "75af3fe5cb7f3b1e7f5d66d28fd7fee61048e158d0fdbe51dfdce8bda0030b9a",
     "docs/specs/ccm-python-symbols-v1.md": "5474f5aa5986ceec4c2442413fa432d8ed05932194319724cf50583c61f7deb2"
   },
-  "gate3": "HELD_PENDING_EXACT_HEAD_CI",
+  "gate3": "COMPLETE_GREEN_EXACT_HEAD_AND_MAIN",
   "sourceAndCredentialRoutes": "HELD",
   "productionAdapterOrMassImportReady": false,
-  "next": "Observe actual exact-head CI; no model calls or further repair authorized in this phase. Merge only behind green chain under standing authority."
+  "next": "Observe actual exact-head CI; no model calls or further repair authorized in this phase. Merge only behind green chain under standing authority.",
+  "mergeCommit": "5cb07ba47f7f52dc85c228e06dc3d1bfe3ec4d04"
 }

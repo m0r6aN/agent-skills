@@ -1,4 +1,4 @@
-# CCM current loop — P2A and P2B accepted; credential disposition open
+# CCM current loop — P2A/P2B/P2C accepted; credential disposition open
 
 Custodian: ccm-coordinator-20261020-fresh-01. Originating authorized operator:
 01a155be-72a6-7b02-ac33-84dc64bbf102; factual oversight:
@@ -251,3 +251,12 @@ repair completed locally under disclosed operator authorship, then fresh
 Sol/Opus closure PASS/PASS. PR94 exact reviewed heade75da8a86b563a02120a30ecedccaca310e04197
 awaits real CI. No more model calls/repair in this closed phase. All affected
 routes and production/import gates remain held; no monitor was revived.
+
+
+## P2C accepted source milestone
+
+PR94 sourcee75da8a86b563a02120a30ecedccaca310e04197 merged5cb07ba47f7f52dc85c228e06dc3d1bfe3ec4d04.
+All16exact-headchecks and main CI40032237624/deployment40032237623passed.
+StageFclosed; workorder status-only archived. Full120failed-call hold and
+affected/private/native/provider routes remain held. Source production adapter
+and full Context/import gates remain open. No new model phase or monitor.

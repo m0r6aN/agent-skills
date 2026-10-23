@@ -41,3 +41,10 @@ Phase closed, future model requests0. Balance5899.2; after all holds
 7637.407500/9000, expires04UTC Oct24. All old uncertain
 holds and separate OpenAI/Kimi/native accounting remain. Affected source,
 provider and native/private-Pi routes remain held; no incident closure claimed.
+
+
+## Final source disposition
+
+P2C is accepted/merged/StageFclosed. PR94 merge5cb07ba47f7f52dc85c228e06dc3d1bfe3ec4d04
+passed actual exact-head and main workflows. See p2c-acceptance-20261023.md.
+The failed120reservation and all affected-route/import/production holds remain.

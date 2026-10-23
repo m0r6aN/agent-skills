@@ -1,7 +1,7 @@
 ---
 ticket: CCM-P2C
 title: Deterministic Python declaration extraction library
-status: active
+status: done
 owner: clinton.morgan
 created: '2026-10-23'
 updated: '2026-10-23'
