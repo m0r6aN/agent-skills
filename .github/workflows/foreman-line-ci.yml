@@ -133,6 +133,19 @@ jobs:
           node scripts/foreman-line-ci.mjs shard ${{ matrix.shard }} ${{ needs.gate.outputs.shard_count }} "$npmCli" shard-outcomes
           exit $LASTEXITCODE
 
+      # Bounded at producer: 4 MiB JSONL + 256 KiB checkpoint, diagnostics only.
+      # Hard runner cancellation can prevent even this always() upload.
+      - name: Upload incomplete-or-complete shard progress (never verdict evidence)
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: shard-progress-${{ matrix.shard }}
+          path: |
+            shard-progress/events.jsonl
+            shard-progress/checkpoint.json
+          retention-days: 7
+          if-no-files-found: warn
+
       - name: Upload shard outcomes
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

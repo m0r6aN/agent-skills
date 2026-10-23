@@ -23,6 +23,9 @@ import { test } from 'node:test'
 import {
   CHECKS,
   COST_TABLE,
+  PROGRESS_LIMITS,
+  createProgressSink,
+  progressSource,
   EXPECTED_SKIPS,
   ForemanCiError,
   MAX_SHARDS,
@@ -2156,6 +2159,8 @@ test('AC1/AC2 CLI wiring: the shard CLI consumes the D11 seam + the pin and neve
     const out = []
     const calls = []
     const code = await runCli(['shard', '0', '1', npmCli, 'out-dir'], {}, {
+      progress: () => {},
+      progressSource: () => ({}),
       ...seams,
       spawn: (...args) => { calls.push(args); return { status: 0 } },
       mkdir: () => {},
@@ -2312,6 +2317,8 @@ test('AC5(b)/SC31: hostile package/check/layer text cannot forge a command, smug
 test('AC5(a)/(b) CLI: the partial artifact is written BEFORE the non-zero return; annotations reach stdout', async () => {
   const events = []
   const code = await runCli(['shard', '0', '1', npmCli, 'out-dir'], {}, {
+      progress: () => {},
+      progressSource: () => ({}),
     changedPathsFromEvent: () => ({ paths: null, reason: 'event-path-absent' }),
     loadReadGraph: () => ({ doc: null, reason: 'pin-missing' }),
     spawn: (cmd, args, options) => (args[1] === 'run' && args[2] === 'test' && basename(options.cwd) === 'approval' ? { status: 1, stdout: 'x' } : { status: 0 }),
@@ -2676,6 +2683,8 @@ test('CFF-P1-A2.3: a throwing echo/annotate sink is caught and recorded; the loo
 test('CFF-P1-A2.3 CLI: a throwing stdout still writes the partial artifact and returns the non-zero exit', async () => {
   const writes = []
   const code = await runCli(['shard', '0', '1', npmCli, 'out-dir'], {}, {
+      progress: () => {},
+      progressSource: () => ({}),
     changedPathsFromEvent: () => ({ paths: null, reason: 'event-path-absent' }),
     loadReadGraph: () => ({ doc: null, reason: 'pin-missing' }),
     spawn: (cmd, args, options) => (args[1] === 'run' && args[2] === 'test' && basename(options.cwd) === 'approval' ? { status: 1, stdout: 'x' } : { status: 0 }),
@@ -2708,4 +2717,220 @@ test('B-5: odd colon runs never forge a second delimiter; the property section i
       assert.ok(line.slice(end + 2).startsWith(`foreman-line `), 'the message begins right after the single real delimiter')
     }
   }
+})
+
+// PAN-CI5: injected processes only. These controls observe synchronous writes
+// inside spawn, before it returns; no child process is launched by this suite.
+test('PAN-CI5 plan/start are visible before spawn; barrier, argv and ordering stay exact', () => {
+  const events = []
+  const calls = []
+  let tick = 100
+  const names = ['alpha', 'beta']
+  const result = runShard({ root, npmCli, shardIndex: 0, shardCount: 1,
+    discover: () => names, progress: (record) => events.push(record),
+    monotonic: () => tick++, sourceIdentity: { head: 'a'.repeat(40), tree: 'b'.repeat(40), hashes: [] },
+    spawn: (cmd, args, options) => {
+      assert.equal(events[0].type, 'plan')
+      assert.deepEqual(events[0].discovered, names)
+      assert.equal(events[0].source.head, 'a'.repeat(40))
+      assert.equal(events[0].source.tree, 'b'.repeat(40))
+      const start = events.at(-1)
+      assert.equal(start.type, 'start')
+      assert.equal(start.invocation, calls.length + 1)
+      assert.equal(start.package, basename(options.cwd))
+      assert.equal(start.check, args[1] === 'ci' ? 'ci' : args[2])
+      assert.equal(events.some((event) => event.type === 'finish' && event.invocation === start.invocation), false)
+      assert.equal(cmd, process.execPath)
+      assert.deepEqual(options, { cwd: join(root, 'plugins', 'foreman-line', start.package), encoding: 'utf8', shell: false, maxBuffer: 64 * 1024 * 1024 })
+      if (args[1] === 'run') {
+        assert.deepEqual(events.find((event) => event.type === 'phase2').order, names)
+        assert.equal(events.filter((event) => event.type === 'finish' && event.phase === 'install').length, 2)
+      }
+      calls.push(args)
+      return { status: 0 }
+    },
+  })
+  assert.deepEqual(calls, [
+    ...names.map(() => [npmCli, 'ci', '--ignore-scripts', '--no-audit', '--no-fund']),
+    ...names.flatMap(() => CHECKS.map((check) => [npmCli, 'run', check, '--ignore-scripts'])),
+  ])
+  assert.equal(result.exitCode, 0)
+  assert.equal(result.diagnostics.deliveryFailures, 0)
+  assert.deepEqual(events.map((event) => event.sequence), events.map((_, index) => index + 1))
+  for (let i = 1; i < events.length; i++) assert.ok(events[i].elapsedMs >= events[i - 1].elapsedMs)
+  for (const start of events.filter((event) => event.type === 'start')) {
+    const finishes = events.filter((event) => event.type === 'finish' && event.invocation === start.invocation)
+    assert.equal(finishes.length, 1)
+    assert.equal(finishes[0].status, 0)
+    assert.equal(finishes[0].passed, true)
+    assert.equal(finishes[0].phase, start.phase)
+    assert.equal(finishes[0].package, start.package)
+  }
+})
+
+for (const [label, returned, expected] of [
+  ['success', { status: 0 }, { status: 0, signal: null, errorClass: null, kind: 'exit', passed: true }],
+  ['nonzero', { status: 9 }, { status: 9, signal: null, errorClass: null, kind: 'exit', passed: false }],
+  ['signal', { status: null, signal: 'SIGTERM' }, { status: null, signal: 'SIGTERM', errorClass: null, kind: 'signal', passed: false }],
+  ['error', { status: null, error: new Error('DO-NOT-EMIT') }, { status: null, signal: null, errorClass: 'spawn-error', kind: 'error', passed: false }],
+  ['missing', undefined, { status: null, signal: null, errorClass: 'missing-status', kind: 'error', passed: false }],
+  ['missing-status', {}, { status: null, signal: null, errorClass: 'missing-status', kind: 'error', passed: false }],
+  ['throw', null, { status: null, signal: null, errorClass: 'spawn-threw', kind: 'error', passed: false }],
+]) {
+  test(`PAN-CI5 truthful finish: ${label}`, () => {
+    const events = []
+    const result = runShard({ root, npmCli, shardIndex: 0, shardCount: 1,
+      discover: () => ['alpha'], progress: (record) => events.push(record),
+      spawn: () => { if (label === 'throw') throw new Error('DO-NOT-EMIT'); return returned },
+    })
+    const finish = events.find((event) => event.type === 'finish')
+    for (const [key, value] of Object.entries(expected)) assert.equal(finish[key], value)
+    assert.equal(result.exitCode, label === 'success' ? 0 : 1)
+    assert.equal(JSON.stringify(events).includes('DO-NOT-EMIT'), false)
+    if (label !== 'success') assert.equal(events.some((event) => event.phase === 'check'), false)
+  })
+}
+
+test('PAN-CI5 malicious fields are bounded and sanitized; raw output/error never enters progress', () => {
+  const name = 'x\n\u0000\u202e::error::' + 'a'.repeat(1000)
+  const events = []
+  let tick = 9
+  const result = runShard({ root, npmCli, shardIndex: 0, shardCount: 1,
+    discover: () => [name], progress: (record) => events.push(record), monotonic: () => tick--,
+    spawn: () => ({ status: 2, stdout: 'RAW-SECRET', stderr: 'RAW-SECRET' }),
+  })
+  assert.equal(result.exitCode, 1)
+  for (const event of events) {
+    assert.equal(event.diagnosticOnly, true)
+    assert.ok(event.elapsedMs >= 0)
+    if (event.package) {
+      assert.ok(event.package.length <= 120)
+      assert.doesNotMatch(event.package, /[\x00-\x1f\x7f\u202a-\u202e\u2066-\u2069]|::/)
+    }
+  }
+  assert.equal(JSON.stringify(events).includes('RAW-SECRET'), false)
+  assert.ok(events[0].discovered[0].length <= 120)
+})
+
+test('PAN-CI5 disk sink flushes each start before spawn and keeps a separate bounded checkpoint', () => {
+  const calls = []
+  const disk = new Map()
+  const io = {
+    mkdirSync: (path) => calls.push(['mkdir', path]),
+    writeFileSync: (path, text, options) => { calls.push(['write', path, options]); disk.set(path, text) },
+    appendFileSync: (path, text, options) => { calls.push(['append', path, options]); disk.set(path, (disk.get(path) ?? '') + text) },
+  }
+  const directory = join(root, 'diagnostics-fixture')
+  const sink = createProgressSink({ directory, io })
+  const result = runShard({ root, npmCli, shardIndex: 0, shardCount: 1,
+    discover: () => ['alpha'], progress: sink,
+    spawn: () => {
+      const journal = disk.get(join(directory, 'events.jsonl')).trim().split('\n').map(JSON.parse)
+      assert.equal(journal.at(-1).type, 'start')
+      assert.equal(JSON.parse(disk.get(join(directory, 'checkpoint.json'))).type, 'start')
+      assert.equal(calls.at(-1)[2].flush, true)
+      return { status: 0 }
+    },
+  })
+  assert.equal(result.exitCode, 0)
+  assert.ok(calls.filter(([type]) => type !== 'mkdir').every(([, , options]) => options.flush === true))
+  assert.ok([...disk.keys()].every((path) => path.endsWith('events.jsonl') || path.endsWith('checkpoint.json')))
+  assert.throws(() => sink({ text: 'x'.repeat(PROGRESS_LIMITS.recordBytes) }), /capacity/)
+  const tiny = createProgressSink({ directory, io })
+  for (let i = 0; i < PROGRESS_LIMITS.events; i++) tiny({ i })
+  assert.throws(() => tiny({ i: PROGRESS_LIMITS.events }), /capacity/)
+})
+
+test('PAN-CI5 progress delivery failure cannot mask red, stop installs, or create aggregate evidence', () => {
+  let calls = 0
+  const result = runShard({ root, npmCli, shardIndex: 0, shardCount: 1,
+    discover: () => ['alpha', 'beta'], progress: () => { throw new Error('sink') },
+    spawn: () => { calls++; return { status: 7 } },
+  })
+  assert.equal(calls, 2)
+  assert.equal(result.exitCode, 1)
+  assert.ok(result.diagnostics.deliveryFailures > 0)
+  assert.equal(result.diagnostics.complete, false)
+  assert.equal(result.artifact.schema, OUTCOMES_SCHEMA)
+  assert.equal(Object.hasOwn(result.artifact, 'diagnostics'), false)
+  const progress = { schema: 'foreman-ci-progress.v1', diagnosticOnly: true, type: 'finish', passed: true }
+  assert.equal(reconcile({ root, shardCount: 1, discover: () => ['alpha'], artifacts: [progress] }).ok, false)
+})
+
+test('PAN-CI5 source identity uses observed local Git and hashes, never environment claims', () => {
+  const calls = []
+  const source = progressSource('/source', (cmd, args, options) => {
+    calls.push([cmd, args, options])
+    return args.at(-1) === 'HEAD' ? 'a'.repeat(40) + '\n' : 'b'.repeat(40) + '\n'
+  }, () => Buffer.from('source'))
+  assert.equal(source.head, 'a'.repeat(40))
+  assert.equal(source.tree, 'b'.repeat(40))
+  assert.ok(source.hashes.every((entry) => entry.sha256 === createHash('sha256').update('source').digest('hex')))
+  assert.ok(calls.every(([cmd, args, options]) => cmd === 'git' && args[0] === 'rev-parse' && options.shell === false && options.env.GIT_NO_LAZY_FETCH === '1'))
+  const missing = progressSource('/source', () => { throw new Error('secret') }, () => { throw new Error('secret') })
+  assert.equal(missing.head, null)
+  assert.equal(missing.tree, null)
+  assert.ok(missing.hashes.every((entry) => entry.sha256 === null))
+})
+
+test('PAN-CI5 workflow progress upload is separate, always attempted, and preserves every CI limit', () => {
+  const wf = readFileSync(fileURLToPath(new URL('../.github/workflows/foreman-line-ci.yml', import.meta.url)), 'utf8')
+  assert.match(wf, /name: shard-progress-\$\{\{ matrix.shard \}\}/)
+  assert.match(wf, /Upload incomplete-or-complete shard progress[^\n]*\n\s+if: \$\{\{ always\(\) \}\}/)
+  assert.match(wf, /retention-days: 7/)
+  assert.match(wf, /pattern: shard-outcomes-\*/)
+  assert.doesNotMatch(wf, /pattern: shard-progress/)
+  assert.match(wf, /fail-fast: false/)
+  assert.equal(MAX_SHARDS, 4)
+  assert.deepEqual([...wf.matchAll(/timeout-minutes: (\d+)/g)].map((match) => Number(match[1])), [15, 45, 20, 5])
+  assert.equal([...wf.matchAll(/runs-on: windows-latest/g)].length, 4)
+  assert.equal([...wf.matchAll(/node-version: '24.19.0'/g)].length, 3)
+  assert.match(wf, /permissions:\n  contents: read\n  actions: read/)
+  assert.doesNotMatch(wf, /checks: write|statuses: write|cancel-in-progress: true/)
+  assert.match(wf, /path: shard-outcomes\/shard-outcomes.json\n\s+if-no-files-found: error/)
+})
+
+test('PAN-CI5 partial disk failures consume capacity and never turn a start into a finish', () => {
+  const writes = []
+  let appends = 0
+  const sink = createProgressSink({ directory: '/diagnostic-fixture', io: {
+    mkdirSync: () => {},
+    writeFileSync: (path, text) => writes.push([path, text]),
+    appendFileSync: () => { appends++; throw new Error('uncertain partial write') },
+  } })
+  const large = { type: 'start', text: 'x'.repeat(PROGRESS_LIMITS.recordBytes - 100) }
+  // Sixteen conservative reservations fit; the next one would exceed 4 MiB.
+  for (let i = 0; i < 16; i++) assert.throws(() => sink(large), /partial write/)
+  assert.throws(() => sink(large), /capacity/)
+  assert.equal(appends, 16)
+  assert.equal(writes.length, 2, 'only create-only empty files, no fabricated checkpoint finish')
+  assert.ok(writes.every(([, text]) => text === ''))
+})
+
+test('PAN-CI5 CLI emits plan/start before each injected spawn and terminal schema stays separate', async () => {
+  const records = []
+  const lines = []
+  const writes = []
+  const code = await runCli(['shard', '0', '1', npmCli, 'out-dir'], {}, {
+    progress: (record) => records.push(record),
+    progressSource: () => ({ head: 'a'.repeat(40), tree: 'b'.repeat(40), hashes: [] }),
+    changedPathsFromEvent: () => ({ paths: null, reason: 'event-path-absent' }),
+    loadReadGraph: () => ({ doc: null, reason: 'pin-missing' }),
+    spawn: () => {
+      assert.equal(records[0].type, 'plan')
+      assert.equal(records.at(-1).type, 'start')
+      assert.equal(JSON.parse(lines.at(-1).slice('ci-progress '.length)).type, 'start')
+      return { status: 0 }
+    },
+    stdout: (line) => lines.push(line), mkdir: () => {}, appendFile: () => {},
+    writeFile: (path, text) => writes.push([path, JSON.parse(text)]),
+  })
+  assert.equal(code, 0)
+  assert.equal(writes.length, 1)
+  assert.equal(writes[0][1].schema, OUTCOMES_SCHEMA)
+  assert.equal(Object.hasOwn(writes[0][1], 'diagnostics'), false)
+  const plan = records[0]
+  assert.equal(plan.discovered.length, discoverPackages({ root: fileURLToPath(new URL('../', import.meta.url)) }).length)
+  assert.equal(records.filter((record) => record.type === 'finish' && record.phase === 'install').length, plan.discovered.length)
+  assert.equal(records.find((record) => record.type === 'phase2').installsOk, true)
 })
