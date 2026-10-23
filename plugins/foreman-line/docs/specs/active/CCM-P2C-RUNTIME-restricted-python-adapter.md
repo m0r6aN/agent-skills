@@ -145,6 +145,73 @@ Existing 120credit uncertain request and all affected routes remain held.
 
 ## Acceptance Criteria
 
+### Coordinator disposition of prebuild Step0 flags
+
+These decisions are frozen before source GO, under existing owner design authority:
+
+- ERROR_CONTEXT_CONTRADICTION is disproved by accepted P2C code and actual
+  ambient-context tests. Construct outside raw handlers, raise the fresh error
+  in its own try, catch only that fresh error, clear cause/context and bare
+  re-raise. The literal closed diagnostic contract remains; do not weaken it.
+- Supply the complete accepted ccm_python.py to every source slice. Define
+  PythonParserError in protocol and re-export from runtime; encode_request and
+  decode_response are the fixed runtime imports. Worker helpers stay internal.
+- Precedence: constructor validates exact image-ID type/shape and supported
+  platform/fixed executable (runtime_unavailable). extract checks exact bytes
+  then262144size before any Docker activity; invalid_content_type/resource_limit
+  win there. Next operator-image/precreate availability checks; then create,
+  profile, worker execution, exit/stderr, frame and content validation. Once
+  create is attempted, uncertain Docker/control failure is isolation_failure.
+  Cleanup proof runs before exposing ANY result or prior error, overriding with
+  isolation_failure if unproved. Successful cleanup does not turn failure green.
+- Worker exit contract:0means a complete success/library-error frame;65bad input
+  frame means invalid_response;70profile/interpreter/hash failure and71unexpected
+  worker failure mean isolation_failure;124wall alarm means deadline_exceeded;
+  125reply serialization overflow means resource_limit. Other nonzero exits mean
+  isolation_failure. Worker startup/profile failures write neither frame nor
+  diagnostics. A library failure remains a5-code failure frame with exit0.
+  Nonempty stderr at exit0 means invalid_response. Never decode a success frame
+  from any nonzero exit. No raw diagnostic content is emitted publicly.
+- Reserve the final5seconds of the overall15 for cleanup. Normal control/start
+  work must stop by10seconds; attached I/O itself has at most5seconds. Interrupts
+  (KeyboardInterrupt/SystemExit) request the same cleanup and become closed
+  deadline_exceeded only if cleanup is proved. Host/daemon unresponsiveness
+  cannot guarantee removal by a realtime deadline: return isolation_failure,
+  retain an opaque per-instance pending_cleanup tuple of (name,containerID or
+  empty string,runID) for the trusted operator, and make no absence claim.
+  No source, names from input, frames or diagnostics are retained there. No
+  automatic background retry. One active extract per instance; reject concurrent
+  invocation with runtime_unavailable without source effects. No global state.
+- Support cgroupv2 only: /sys/fs/cgroup/memory.max=134217728,
+  memory.swap.max=0,pids.max=16; positive cpu.max quota/period with2*quota=period.
+  /proc/mounts root has ro; /tmp has noexec,nosuid and size1024k/1m/1048576.
+  uid/gid are65534. Missing/unreadable/nonconforming evidence exits70. Worker
+  enforces the specified rlimits after checking the actual host profile.
+- Control state sequence: inspect immutable image; inspect random name and
+  distinguish a genuine no-such-container/object diagnostic from daemon failure;
+  register intended run labels; create; inspect exact created containerID/image
+  and profile; start --attach --interactive; reconcile exit using inspect;
+  kill if still running; remove; bounded absence poll. Capture returned create
+  ID when available. Name/run labels alone are sufficient to reconcile an
+  uncertain create before an ID was returned, but any knownID must also match.
+  Required labels: managed-by=local-agent,purpose=ccm-python-parser,ccm-run=UUID.
+  Never mutate a container with mismatched labels or knownID. Never use --rm to
+  lose exit/profile evidence before validation. Default fallback paths forbidden.
+- Verify image Id and OSlinux, profile/library labels, no declared volumes and
+  only official base environment keys PATH/LANG/GPG_KEY/PYTHON_VERSION/
+  PYTHON_SHA256; the trusted immutable image prerequisite authenticates values,
+  labels do not. Verify container .Image, Config.User/Labels, HostConfig network
+  none/read-only/privilegedfalse/capdropALL/no capadds/no binds/devices,
+  memory and swap134217728,NanoCpus500000000,PidsLimit16, LogConfig.Typenone,
+  no-new-privileges (equivalent explicittrue spelling allowed), /tmp flags/size,
+  no host/volume mounts. Inspect data is bounded before JSON decoding.
+- Payload limits262144/1048576 exclude the4byte prefix; frame maxima are
+  262148/1048580. JSON structure depth8 and integer-token length10 are checked
+  before corresponding conversion/large allocations. Constructor/operator
+  configuration and metadata are distinct from untrusted source/request data.
+- Pending worktree/base/image/advisory evidence belongs to parent verification;
+  the tools-free worker must not invent having run checks or qualified a host.
+
 1. All six new files implement this exact trusted-operator/source-caller boundary,
    wire contract, runtime profile, errors and atomic no-result-on-failure rules.
 2. Small ordinary tests independently exercise request/reply framing; duplicate,

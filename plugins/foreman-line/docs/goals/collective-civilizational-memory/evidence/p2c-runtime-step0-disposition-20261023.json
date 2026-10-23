@@ -1,0 +1,81 @@
+{
+  "atUtc": "2026-10-23T22:58:12.564613+00:00",
+  "flags": [
+    {
+      "id": "ERROR_CONTEXT_CONTRADICTION",
+      "reason": "A normal Python exception raised while the caller is handling another exception acquires that exception as __context__. Raising from None suppresses display but does not remove __context__. The literal requirement of no cause/context even under ambient caller exceptions is not generally implementable by this API.",
+      "recommendedDisposition": "Block GO until the requirement distinguishes sanitized str/repr and suppressed chaining from literal absence of __context__, or specifies an achievable alternative error interface."
+    },
+    {
+      "id": "ACCEPTED_LIBRARY_INTERFACE_MISSING",
+      "reason": "The supplied draft identifies the accepted library by hash but does not include its source, extraction entry point, frozen wrapper constructors, exact symbol kinds, lexical-name representation, or existing cap/error precedence. These are necessary to implement compatible protocol and worker proposals without guessing.",
+      "recommendedDisposition": "Supply the exact accepted library as private read-only reference and freeze the relevant interfaces before GO; do not modify that library."
+    },
+    {
+      "id": "VALIDATION_PRECEDENCE_UNSPECIFIED",
+      "reason": "Deterministic constructor/type/size/order behavior is required, but precedence among unsupported platform, invalid image configuration, invalid source type, oversize source, unavailable runtime, and malformed response checks is not fully specified.",
+      "recommendedDisposition": "Freeze a validation and error-precedence table, including whether over-cap symbol serialization produces resource_limit and how worker environment failures map to public codes."
+    },
+    {
+      "id": "WORKER_FAILURE_CHANNEL",
+      "reason": "Worker failure envelopes permit only five library codes, while worker profile, interpreter, library-hash, and cgroup verification can fail for isolation reasons. An unsuccessful exit alone does not identify which public runtime code applies.",
+      "recommendedDisposition": "Specify a fixed non-diagnostic exit-status contract and parent mapping for worker isolation/startup failures, without expanding envelopes implicitly."
+    },
+    {
+      "id": "DEADLINE_AND_CLEANUP_LIMIT",
+      "reason": "A finite 15-second envelope cannot guarantee container removal or process reaping when the daemon or OS is unresponsive. Reserving cleanup time supports bounded attempts and fail-closed reporting, not unconditional absence proof. Cancellation semantics are also unspecified.",
+      "recommendedDisposition": "Define the cleanup reserve, cancellation model, and precedence between deadline_exceeded and isolation_failure. Explicitly permit isolation_failure with unproven cleanup and retained ownership identifiers; do not claim guaranteed removal under daemon failure."
+    },
+    {
+      "id": "HOST_PROFILE_EVIDENCE",
+      "reason": "Required cgroup and mount evidence depends on cgroup version, namespaces, Docker Desktop behavior, and available mount/controller files. The draft does not freeze accepted evidence paths or representations, including swap and CPU checks.",
+      "recommendedDisposition": "Specify supported cgroup/mount profiles and exact verification predicates. Unsupported or missing evidence must fail closed; qualify actual Linux and Windows-client deployments independently."
+    },
+    {
+      "id": "DOCKER_CONTROL_CONTRACT",
+      "reason": "Container creation/start attachment, image metadata checks, ownership reconciliation, absence detection, and safe bounded inspection need a shared concrete command/state contract. In particular, daemon errors must not be treated as missing containers.",
+      "recommendedDisposition": "Freeze command sequencing, exact required inspect predicates, ownership-label schema, immutable-ID reconciliation rules, and bounded absence-proof strategy before splitting implementation."
+    },
+    {
+      "id": "FRAME_LIMIT_INTERPRETATION",
+      "reason": "The numeric limits above describe request source bytes and reply payload bytes. Wire frames add four bytes, giving maximum request and reply frames of 262148 and 1048580 bytes respectively. Other control output and stderr have separate caps.",
+      "recommendedDisposition": "Confirm these units and enforce framing, JSON depth, integer-lexeme, and byte caps before the corresponding decoding or conversion allocations."
+    },
+    {
+      "id": "PREREQUISITE_EVIDENCE_NOT_ESTABLISHED",
+      "reason": "Repository state, six-path absence, accepted source identity, base-image availability and identity, advisory/readback, Gate2, and qualification evidence cannot be established from this tools-free draft review. No tests or checks have been run here.",
+      "recommendedDisposition": "Keep these as parent-owned preapplication and acceptance gates. Name the branch/worktree and verify exact artifacts independently; treat supplied identities as assertions pending verification."
+    }
+  ],
+  "disposition": "All nine frozen in explicit coordinator Step0 disposition section; context impossibility claim disproved by accepted implementation and tests; missing interfaces supplied complete in source packet; no safety waiver",
+  "amendedSpecSha256": "f4355a8faf65a899fe5da6c46d4cf35d588184655cb50a902b8e227bdcbec8c2",
+  "advisory": {
+    "advisory": {
+      "valid": true,
+      "frontmatter": {
+        "valid": true,
+        "errors": [],
+        "warnings": [
+          "advisory: surfaces entry 'src/keon/cortex/pipeline/ccm_python_protocol.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+          "advisory: surfaces entry 'src/keon/cortex/pipeline/ccm_python_worker.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+          "advisory: surfaces entry 'src/keon/cortex/pipeline/ccm_python_runtime.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+          "advisory: surfaces entry 'tests/test_ccm_python_runtime.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+          "advisory: surfaces entry 'docker/ccm-python-parser/Dockerfile' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74"
+        ]
+      },
+      "body": {
+        "valid": true,
+        "errors": []
+      },
+      "errors": []
+    },
+    "result": {
+      "parcelSpecRefs": [
+        "plugins/foreman-line/docs/specs/active/CCM-P2C-RUNTIME-restricted-python-adapter.md"
+      ],
+      "epics": []
+    }
+  },
+  "frozenPinsMatched": 164,
+  "sourceImplementation": false
+}
