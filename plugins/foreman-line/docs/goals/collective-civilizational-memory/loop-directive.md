@@ -177,6 +177,15 @@ output allowance; no automatic retry/provider hunt or partial-PASS acceptance.
 
 ## Remaining goal / next capability
 
+October23 safe preparation produced draft CCM-P2C-python-declarations.md plus
+ccm-p2c-python-declarations-2026-10-23-operator.shaping-result.json in active specs.
+Frozen advisory/schema/emitter/readback PASS;164 source byte pins matched.
+See p2c-draft-handoff-20261023.md. No source dispatch, promotion or new spend.
+Old Cortex worktree gitdir no longer resolves; current base/path verification is
+pending rather than inferred from historical evidence. Parser-host and credential
+worker admission remain held. October22 daily spend envelope expired and is not
+carried forward; old reservations remain. No new paid phase admitted.
+
 AST boundary decision: use a separately qualified bounded subprocess for hostile
 input, not in-process byte/token guards alone. See
 ast-parser-execution-boundary-20261022.md. This is planning only; platform resource

@@ -1,0 +1,39 @@
+{
+  "atUtc": "2026-10-23T17:00:21.469458+00:00",
+  "status": "PASS_DRAFT_ONLY",
+  "frozenPackageBytePinsMatched": 164,
+  "reusedPrivateRuntime": true,
+  "dependencyInstall": false,
+  "advisory": {
+    "valid": true,
+    "frontmatter": {
+      "valid": true,
+      "errors": [],
+      "warnings": [
+        "advisory: surfaces entry 'src/keon/cortex/pipeline/ccm_python.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+        "advisory: surfaces entry 'tests/test_ccm_python.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74"
+      ]
+    },
+    "body": {
+      "valid": true,
+      "errors": []
+    },
+    "errors": []
+  },
+  "shapingResult": "plugins/foreman-line/docs/specs/active/ccm-p2c-python-declarations-2026-10-23-operator.shaping-result.json",
+  "payload": {
+    "parcelSpecRefs": [
+      "plugins/foreman-line/docs/specs/active/CCM-P2C-python-declarations.md"
+    ],
+    "epics": []
+  },
+  "sourceDispatched": false,
+  "budgetReserved": 0,
+  "holds": [
+    "Credential-bearing workers and affected routes held",
+    "Current Cortex worktree/base/path verification pending",
+    "Parser-host qualification and numeric guard freeze pending",
+    "Fresh October23 spend admission before paid phase"
+  ],
+  "oldWorktreeObservation": "Historical cortex-p2b gitdir target no longer resolves; no current source base claimed"
+}
