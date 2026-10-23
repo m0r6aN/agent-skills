@@ -241,3 +241,13 @@ coverage before real crypto effects, Wave1/Wave2/benchmark/live-model-smoke,
 capacity/privacy/recovery and bulk-import evidence remain OPEN. Raw P2B chunks
 must strict-decode into a P3 envelope and pass P2A at the real durable boundary.
 No personal data imported; full Context and bulk ingestion are not ready.
+
+
+## P2C Oct23 reconciliation and local completion
+
+See p2c-build-state-20261023.md and p2c-local-completion-status evidence.
+The failed repair remains unknown with120held. No source replay: one formal
+repair completed locally under disclosed operator authorship, then fresh
+Sol/Opus closure PASS/PASS. PR94 exact reviewed heade75da8a86b563a02120a30ecedccaca310e04197
+awaits real CI. No more model calls/repair in this closed phase. All affected
+routes and production/import gates remain held; no monitor was revived.

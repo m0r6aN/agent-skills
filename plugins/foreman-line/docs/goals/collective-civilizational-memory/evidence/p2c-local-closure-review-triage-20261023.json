@@ -1,0 +1,22 @@
+{
+  "atUtc": "2026-10-23T22:10:19.289630+00:00",
+  "architecture": "PASS_NO_FINDINGS",
+  "security": "PASS_TWO_LOW_NOTES",
+  "coordinatorAuthoredRepairDisclosed": true,
+  "formalRepairCycles": 1,
+  "newSourceGenerationRequests": 0,
+  "failed120Retained": true,
+  "findings": {
+    "F1": {
+      "disposition": "ACCEPT_AS_NONBLOCKING_INVALID_SYNTAX_HARDENING_NOTE",
+      "evidence": "The counter can go negative in3.12/3.13 too; reviewer claim canonical tokenizer necessarily rejects it is not supported. Fixed tiny malformed prefix+nested fixture always returns invalid_syntax, never symbols, on all3runtimes. No valid-input guard bypass established. Small token/byte guards and restricted host remain required; no scalar sandbox claim. Early unmatched-closer rejection can be considered in later hardening, without weakening current limits.",
+      "newCodeChange": false
+    },
+    "F2": {
+      "disposition": "NO_CONTRACT_DIVERGENCE_REPRODUCED",
+      "evidence": "Actual tokenize.detect_encoding(BytesIO(raw).readline) returnsutf-8 for CR-first/CR-second fixture on all3runtimes. Extractor matches it. CR-comment/CR-cookie and LF controls reportlatin1 and are rejected. The contract explicitly follows tokenizer effective-cookie recognition, not a separately invented physical-line cookie parser.",
+      "newCodeChange": false
+    }
+  },
+  "scope": "Source closure only; actual exact-head/main CI, production adapter, credential cleanup and bulk import gates remain"
+}
