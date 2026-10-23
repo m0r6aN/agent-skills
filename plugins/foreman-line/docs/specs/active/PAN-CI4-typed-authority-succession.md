@@ -1,0 +1,67 @@
+---
+ticket: PAN-CI4
+title: Typed Pantheon authority succession and Windows observer URL
+status: active
+owner: clinton.morgan
+created: 2026-10-23
+updated: 2026-10-23
+risk: critical
+routing_class: architecture/risk
+verification_class: judgment-required
+permission_profile: builder-architecture
+data_classification: internal
+surfaces: [plugins/foreman-line/authority-registry/src/generate.ts, plugins/foreman-line/authority-registry/src/validate.ts, plugins/foreman-line/verification/tests/pinned-checksum-manifest.test.ts]
+---
+
+# PAN-CI4 typed authority succession
+
+Actual delegated decision OM-PAN-001-DA-001-D023 SHA2566f7f100e1b1084685d62b5a5e4826f9984f4cea1bb10f242280ff3104f56bc76 and operative SHA256f028b4be7f7f587a89c6d48672d7c1325db0d6bbe13025fa825d23b5138c3724 authorize this finite scope under the authentic standing Human grant, not a new Human ratification or Runtime receipt. Source base is accepted CI3 fcc6096de5d55c1ae6b549680ed66e67791106e2; PR244 full CI remains failed. Independent pre-effect qualification is required before the coordinator commits this specification alone; implementation starts only after complete qualified preparation and the bounded offline preflight. Original B1 paired review does not cover this unit.
+
+## Allowed Files
+
+- plugins/foreman-line/authority-registry/src/r34-migrations.ts
+- plugins/foreman-line/authority-registry/src/generate.ts
+- plugins/foreman-line/authority-registry/src/validate.ts
+- plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml
+- plugins/foreman-line/authority-registry/tests/fixtures/pass-minimal.yaml
+- plugins/foreman-line/authority-registry/tests/r34-pantheon-succession.test.ts
+- plugins/foreman-line/authority-registry/tests/corpus-sweep.test.ts
+- plugins/foreman-line/authority-registry/tests/parity.test.ts
+- plugins/foreman-line/authority-registry/tests/qf-p0-amendment.test.ts
+- plugins/foreman-line/authority-registry/tests/semantic-invariants.test.ts
+- plugins/foreman-line/authority-registry/README.md
+- plugins/foreman-line/verification/tests/pinned-checksum-manifest.test.ts
+
+No broad formatter or neighboring edit. Existing tests may change only exact current successor expectations, derivation and corresponding historical/current subjects; retain original assertions and hostile coverage. No Runtime, provider adapter, workflow, dependency, lock, registry schema/types or authority-source edits. Preserve r33-migrations.ts byte for byte. The coordinator-owned specification is committed separately; builder handoff belongs in the evidence directory and is not product source.
+
+The two conditional verification/D19 paths in the original proposal are excluded from this initial allowlist. If the exact new non-executable migration-data leaf triggers the actual D19 audit, hold that effect and obtain a bounded delegated refinement before those paths can be changed. Such refinement must specify exact identities, slots, full values, hashes, cardinalities and hostile missing/duplicate/changed/executable look-alike controls. No new generic whole-file/path/basename exemption, audit-classifier weakening, string obfuscation or invented Runtime grant.
+
+## Required behavior
+
+The current registry must corroborate the actual already-ratified source/history while retaining the authentic R33 chain. Implement typed prior-to-successor correspondence using existing ReconciliationRecord, generation and validation seams. AuthorityQuery.goal currently admits only foreman-kernel and GoalScope supports foreman-kernel/all-foreman-goals. This unit does not activate Pantheon authorization in that resolver: preserve Pantheon-specific clauses explicitly as exact reviewed non-operative narrative provenance or unsupported records, with complete correspondence and no silent omission. Add negative tests proving they cannot grant authority through foreman-kernel or all-foreman-goals queries. Do not widen goal enums, query validation, schema/types or resolver behavior. Actual Pantheon execution authority remains the standing mandate enforced through the separately admitted Runtime integration. If active Pantheon registry resolution becomes necessary, hold it for separately scoped schema/type/resolver design before mutation. Do not create a new grant kind or pretend registry data issues human approval or Runtime admission.
+
+Freeze all 18 actual governed source identities and the authentic predecessor R33 YAML/Git snapshot. Preserve every original 23 reconciliation record canonically, including original manifests, source snapshots, decisions and old literal module. Add an explicit R34 record binding authentic immutable committed source, prior and successor manifests, and complete item/rule/locator/value/audit correspondence. Exact changed/new/retired entries require explicit mapping; unchanged sources and policies retain their meaning. Generic rules for other goals remain unchanged. The user's authentic mandate is independently checked operational input, never generated by this registry.
+
+Generator output must be deterministic and byte-identical for both current YAML artifacts. Validation and repository-aware sweep must independently reject omitted, altered or duplicated mapping, wrong snapshot, rewritten/deleted/substituted/reanchored history or head, changed normalized statements, changed locators or changed rule shape. Retain existing benign wrapping/comment contracts. Old R33 whole-file subject checks remain exact historical checks; add corresponding current R34 checks. Do not replace a failing current check with a skip or treat unverified drift as an unrelated baseline.
+
+The Windows test fix is exactly: add pathToFileURL to the existing node:url named import and pass pathToFileURL(join(scratch,'observe.mjs')).href to the existing --import expression. Preserve all 65 CI2 test identities and assertions. No changed process limits or platform skips.
+
+## Finite execution and independent evidence
+
+Subject to the actual unit-specific decision: existing P02 resource seat only, initial 3600 seconds and at most one independently scoped 1800-second correction, maximum 5400 cumulative all inclusive and at most two native source starts. P02 product scope is not changed. Real raw task_started/completion events must update the existing native meter before subsequent paid admission. No seventh P01 start, new session, P00 cycle or synthetic counter receipt. Prospective global starts are 17/18 for this unit and worst-case 21 including three later initial starts.
+
+Before the builder clock: independently qualify complete actual source/lock/cache/Git history/helper/job inputs and run one specifically admitted bounded offline environmental preflight. Cache preparation and helper syntax checks alone do not prove readiness. Registry cache has 15 applicable locked packages; omissions require exact platform justification and SRI/byte/bin/edge validation. Authentic Git subset contains 20,126 required objects, 31 referenced commits, all governed source subjects and the exact historical R31 package; it is intentionally partial history. Capture each actual committed head with authentic delta objects. Never synthesize a Git object or silently fetch during isolated tests.
+
+Profile: existing Node24.19 digest e5a8dee7bc1e6a215d224a7ef8206f7e77271bc3cabd5febf2beafac0674f174, user1000:1000, network none, pull never, root and host mounts read-only, drop ALL capabilities, no-new-privileges, two CPUs, 2GiB memory, 256PIDs, 768MiB tmpfs and 128MiB source bound. Exact owned job names/labels, immutable launch claims, one job at a time, full deadline margin, final cleanup evidence and before/after source/dependency hashes are mandatory. An environmental shortfall holds before an unadmitted larger resource envelope.
+
+Initial builder may consume at most one full registry job2400+5 if specifically admitted and full margin remains. Correction1800 may run only predeclared affected checks600+5, never the full2400 job. Complete final suite is independently verified. No automatic job reruns or clock resets; source changes require new freeze and scoped reviewed evidence.
+
+This new critical maintenance unit requires two separate independent whole-unit reviews using the exact same final source/spec/evidence brief, neither reviewer authoring or repairing source or seeing the other's findings before sealing. Existing-seat prior context is disclosed and must not be called fresh zero-context API review. Actual D023 must explicitly authorize any unit-specific5400-second source-review window above the ordinary3600 ceiling, at most two such windows conditional on the sole scoped correction; separate second review3600 maximum. No paid direct-sender substitution. Original B2/B3 fresh paired API requirements remain.
+
+Acceptance requires all original registry test identities with no loss/new skip, full current regeneration, exact original23 historical records, complete R34 mutation controls and explicit current audit cardinality derivation. Run normal typecheck/lint, complete verification65/spec/D19 controls and all18 assurance pins as applicable, using their actual complete dependency graphs. Preserve every failed job, unrun stage and recovery action. Exit0 or a generated hash is not independent acceptance. Require sealed source verdict and genuine completion within each finite window, then independently reconcile actual starts and artifacts.
+
+## Integration gates and scope of proof
+
+Compose accepted exact files on existing PR244 using normal fast-forward publication. Require complete normal exact-head CI including Windows, all shards/aggregate, current repository rules, conversations and eligible ordinary merge. No force/admin/status/rules bypass or duplicate PR. Linux tests cannot prove Windows semantics. Source acceptance cannot prove Runtime admission, live provider completion, durable crash recovery or Cortex operation. P03 remains held until real Foreman integration closure.
+
+No spending/paid-attempt/account/host/access/expiry increase is created. Native, internal, CI and bot billing remain unmeasured unless supported usage evidence is obtained. Existing uncertainty holds remain unavailable. All actual Runtime dogfood exits remain open. Automatic checks decide ordinary success; finite scope exhaustion is a delegated bounded disposition under standing authority rather than a routine start prompt.
