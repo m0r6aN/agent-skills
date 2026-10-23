@@ -68,3 +68,7 @@ Fresh native`gpt-6-luna`, medium, implements the frozen routine codec/tests unde
 Plan gate: fresh native Sol`rp01_plan_review` reviewed038c368f read-only and returned PASS/no must-fix findings; direct new-path overlap not found. Luna`rp01_builder` verified clean038c368f/branch and completed Step0 with strict capture, bounded scanner reuse, one-shot/unknown/lifecycle and offline mutation plan. Coordinator accepted Step0 and promoted this packet before release. Local install/verification environment is recorded in the review evidence; broad checks remain coordinator-owned.
 
 Stop on source collision, missing product/boundary decision, need to weaken/change an existing contract, unsupported cap semantics being presented as live proof, unexpected credential/network access, or failed required checks. Unknown outcomes are retained, not retried. Source completion does not close RP-02/remote account/Pi/Runtime commissioning.
+
+## Source-review closure and pending gates
+
+Corrected source72e9d711 passed both independent exact-head Sol reviews after accepted wrapper-correlation and lexical-usage fixes. See [review and incident record](../reviews/PAN-RP01-review.md). Final package typecheck/lint and surface pins pass; full dispatch run995tests/993pass/2unchanged child-process timeouts fails. This packet remains active pending actual final-head CI/eligibility; base-main unrelated CI defects are retained, not waived. No merge or remote admission is implied.
