@@ -641,3 +641,27 @@ normal CI and coordinator closure remain required. The existing D19 classifier a
 scope are unchanged; a real finding on the literal migration data requires a separately bounded
 refinement, not an audit exemption or disguised string. This source change proves no Runtime
 admission, provider completion, Cortex operation, crash recovery or dogfooding exit.
+
+
+### D028 correction and current verification boundary
+
+Current duplicate rule identities are diagnosed on the actual R34 input before historical
+projection, preserving RULE_DUPLICATE as well as migration refusal. Original R33 Gate2 and
+stop-custody corpus controls use their authentic committed historical source and registry;
+separate current controls exercise the exact current row and custody correspondence.
+
+R34 object checks batch a bounded set of authentic objects per validation and index mapping
+lookups without discarding current duplicate cardinality. Git read deduplication exists only
+inside one synchronous validation/sweep; neither successful reads, absence nor authorization
+survives to a later invocation. Each invocation still checks its real root, object types and
+whole bytes. Replacement/restoration tests exercise the same root across calls. This is an
+implementation change, not a measured speedup or proof of fitting the2400-second suite limit.
+
+Normal registry Biome coverage explicitly allows3145728bytes without changing its includes,
+checks or formatting. The separate D19 ruling binds49 literal-only R34 leaves to exact
+exported declarations, record identities, structural slots, full decoded values, lengths,
+hashes and one occurrence each. Executable Git pathspec and required-root normalization
+remain separately pinned mechanisms; no data ruling covers their execution. New focused
+negatives supplement every original65 CI2/D017 assertion under the unchanged64MiB fixture
+budget. No tests/typecheck/lint/checker jobs ran in the zero-job correction builder window;
+independent final suites, both whole-unit reviews and normal exact-head Windows CI remain gates.

@@ -1934,7 +1934,19 @@ function semanticViolations(
   const violations: ValidationViolation[] = historicalR33
     ? []
     : r34CorrespondenceViolations(document)
-  if (!historicalR33) document = r34PredecessorProjection(document)
+  if (!historicalR33) {
+    const currentRuleIds = new Set<string>()
+    for (const rule of document.rules) {
+      if (currentRuleIds.has(rule.ruleId))
+        violations.push(
+          violation('RULE_DUPLICATE', "duplicate ruleId '" + rule.ruleId + "'", {
+            ruleId: rule.ruleId,
+          }),
+        )
+      currentRuleIds.add(rule.ruleId)
+    }
+    document = r34PredecessorProjection(document)
+  }
   const sourcesById = new Map<string, CanonSource>()
   const itemsByRef = new Map<string, CanonSource['inventoryItems'][number]>()
   const normalizedPaths = new Set<string>()
@@ -3715,47 +3727,44 @@ function r34ItemDigest(item: InventoryItem): string {
 export function r34PredecessorProjection(
   document: AuthorityEnforcementRegistry,
 ): AuthorityEnforcementRegistry {
+  const itemMappings = new Map(
+    R34_ITEM_MIGRATIONS.map((entry) => [referenceKey(entry.sourceId, entry.itemId), entry]),
+  )
+  const ruleMappings = new Map(R34_RULE_MIGRATIONS.map((entry) => [entry.ruleId, entry]))
+  const currentRules = new Map(document.rules.map((entry) => [entry.ruleId, entry]))
+  const currentAudit = new Map(
+    document.normativeMarkdownAudit.map((entry) => [
+      referenceKey(entry.sourceId, entry.itemId),
+      entry,
+    ]),
+  )
   const sources = document.sources.map((source) => {
     const mapping = R34_SOURCE_MIGRATIONS.find((entry) => entry.sourceId === source.sourceId)
     if (mapping === undefined) return source
     const current = new Map(source.inventoryItems.map((item) => [item.itemId, item]))
     const inventoryItems = mapping.priorItemOrder.flatMap((itemId) => {
-      const entry = R34_ITEM_MIGRATIONS.find(
-        (candidate) => candidate.sourceId === source.sourceId && candidate.itemId === itemId,
-      )
+      const entry = itemMappings.get(referenceKey(source.sourceId, itemId))
       const item = entry?.disposition === 'unchanged' ? current.get(itemId) : entry?.prior
       return item === undefined || item === null ? [] : [item]
     })
     // Unknown current units remain visible to the original structural/overlap diagnostics.
     inventoryItems.push(
       ...source.inventoryItems.filter(
-        (item) =>
-          !R34_ITEM_MIGRATIONS.some(
-            (entry) => entry.sourceId === source.sourceId && entry.itemId === item.itemId,
-          ),
+        (item) => !itemMappings.has(referenceKey(source.sourceId, item.itemId)),
       ),
     )
     return { ...source, snapshotEvidence: mapping.prior.snapshotEvidence, inventoryItems }
   })
   const rules = R34_PRIOR_RULE_ORDER.flatMap((ruleId) => {
-    const mapping = R34_RULE_MIGRATIONS.find((entry) => entry.ruleId === ruleId)
-    const rule =
-      mapping?.disposition === 'unchanged'
-        ? document.rules.find((entry) => entry.ruleId === ruleId)
-        : mapping?.prior
+    const mapping = ruleMappings.get(ruleId)
+    const rule = mapping?.disposition === 'unchanged' ? currentRules.get(ruleId) : mapping?.prior
     return rule === undefined || rule === null ? [] : [rule]
   })
-  rules.push(
-    ...document.rules.filter(
-      (rule) => !R34_RULE_MIGRATIONS.some((entry) => entry.ruleId === rule.ruleId),
-    ),
-  )
+  rules.push(...document.rules.filter((rule) => !ruleMappings.has(rule.ruleId)))
   const normativeMarkdownAudit = R34_AUDIT_MIGRATIONS.flatMap((entry) => {
     if (entry.prior === null) return []
     if (entry.disposition !== 'unchanged') return [entry.prior]
-    const current = document.normativeMarkdownAudit.find(
-      (row) => row.sourceId === entry.sourceId && row.itemId === entry.itemId,
-    )
+    const current = currentAudit.get(referenceKey(entry.sourceId, entry.itemId))
     return current === undefined ? [] : [current]
   })
   return {
@@ -3767,8 +3776,76 @@ export function r34PredecessorProjection(
   }
 }
 
+/** One bounded batch per validation; no object result survives its invocation. */
+function r34ReadObjects(
+  root: string,
+  document: AuthorityEnforcementRegistry,
+): Map<string, { type: string; bytes: Buffer }> {
+  const names = [
+    ...new Set([
+      ...R34_SOURCE_MIGRATIONS.flatMap((source) =>
+        [source.prior, source.current].flatMap((subject) => [
+          subject.snapshotEvidence.commit,
+          subject.snapshotEvidence.commit + ':' + subject.path,
+        ]),
+      ),
+      ...document.reconciliations.flatMap((record) =>
+        record.observedEvidence
+          .filter((entry) => entry.kind === 'git-commit')
+          .map((entry) => entry.reference),
+      ),
+    ]),
+  ]
+  if (names.length > 128 || names.some((name) => name.includes('\n') || name.includes('\r')))
+    throw new Error('invalid bounded object request')
+  const output = execFileSync('git', ['cat-file', '--batch'], {
+    cwd: root,
+    input: names.join('\n') + '\n',
+    stdio: ['pipe', 'pipe', 'ignore'],
+    maxBuffer: 64 * 1024 * 1024,
+  })
+  const objects = new Map<string, { type: string; bytes: Buffer }>()
+  let offset = 0
+  for (const name of names) {
+    const end = output.indexOf(10, offset)
+    if (end < 0) throw new Error('truncated object header')
+    const fields = output.subarray(offset, end).toString('utf8').split(' ')
+    const size = Number(fields[2])
+    if (
+      fields.length !== 3 ||
+      !/^[0-9a-f]{40,64}$/.test(fields[0] ?? '') ||
+      !Number.isSafeInteger(size) ||
+      size < 0 ||
+      end + size + 1 >= output.length
+    )
+      throw new Error('missing or malformed object')
+    offset = end + 1
+    const bytes = output.subarray(offset, offset + size)
+    offset += size
+    if (output[offset++] !== 10) throw new Error('malformed object framing')
+    const type = fields[1] as string
+    objects.set(name, { type, bytes })
+    // Fresh batch bytes, never a previous invocation's trust. Existing evidence checks still compare types/digests.
+    gitResultCache?.set(JSON.stringify([root, 'cat-file', '-t', name]), {
+      ok: true,
+      value: Buffer.from(type + '\n'),
+    })
+    gitResultCache?.set(JSON.stringify([root, 'cat-file', '-p', name]), { ok: true, value: bytes })
+    if (type === 'blob')
+      gitResultCache?.set(JSON.stringify([root, 'cat-file', 'blob', name]), {
+        ok: true,
+        value: bytes,
+      })
+  }
+  if (offset !== output.length) throw new Error('unexpected object output')
+  return objects
+}
+
 /** Independently corroborate both whole-file subjects and predecessor units against real Git. */
-function r34RepositoryCorrespondenceViolations(root: string): ValidationViolation[] {
+function r34RepositoryCorrespondenceViolations(
+  root: string,
+  document: AuthorityEnforcementRegistry,
+): ValidationViolation[] {
   const violations: ValidationViolation[] = []
   try {
     const prior = parse(
@@ -3783,8 +3860,24 @@ function r34RepositoryCorrespondenceViolations(root: string): ValidationViolatio
       sha256(canonicalJson(prior.reconciliations)) !== R34_PRIOR_HISTORY_DIGEST
     )
       throw new Error('authentic predecessor registry manifest/history differs')
+    const objects = r34ReadObjects(root, document)
+    const priorSources = new Map(prior.sources.map((entry) => [entry.sourceId, entry]))
+    const priorItems = new Map(
+      prior.sources.flatMap((source) =>
+        source.inventoryItems.map(
+          (item) => [referenceKey(source.sourceId, item.itemId), item] as const,
+        ),
+      ),
+    )
+    const priorRules = new Map(prior.rules.map((entry) => [entry.ruleId, entry]))
+    const priorAudit = new Map(
+      prior.normativeMarkdownAudit.map((entry) => [
+        referenceKey(entry.sourceId, entry.itemId),
+        entry,
+      ]),
+    )
     for (const source of R34_SOURCE_MIGRATIONS) {
-      const actual = prior.sources.find((entry) => entry.sourceId === source.sourceId)
+      const actual = priorSources.get(source.sourceId)
       if (actual === undefined) throw new Error(`predecessor source missing: ${source.sourceId}`)
       const { inventoryItems, ...header } = actual
       if (
@@ -3794,40 +3887,27 @@ function r34RepositoryCorrespondenceViolations(root: string): ValidationViolatio
       )
         throw new Error(`predecessor source identity changed: ${source.sourceId}`)
       for (const subject of [source.prior, source.current]) {
-        const objectType = runGitText(root, [
-          'cat-file',
-          '-t',
-          subject.snapshotEvidence.commit,
-        ]).trim()
-        if (objectType !== 'commit') throw new Error('source snapshot is not a commit')
-        const blob = runGit(root, [
-          'cat-file',
-          'blob',
-          `${subject.snapshotEvidence.commit}:${subject.path}`,
-        ])
-        if (sha256(blob) !== subject.snapshotEvidence.fullFileSha256)
+        const commit = objects.get(subject.snapshotEvidence.commit)
+        if (commit?.type !== 'commit') throw new Error('source snapshot is not a commit')
+        const blob = objects.get(subject.snapshotEvidence.commit + ':' + subject.path)
+        if (blob?.type !== 'blob' || sha256(blob.bytes) !== subject.snapshotEvidence.fullFileSha256)
           throw new Error(`historical/current whole-file subject changed: ${subject.sourceId}`)
       }
     }
     for (const entry of R34_ITEM_MIGRATIONS) {
-      const item = prior.sources
-        .find((source) => source.sourceId === entry.sourceId)
-        ?.inventoryItems.find((item) => item.itemId === entry.itemId)
+      const item = priorItems.get(referenceKey(entry.sourceId, entry.itemId))
       if ((item === undefined ? null : r34ItemDigest(item)) !== entry.priorDigest)
         throw new Error(
           `predecessor item correspondence changed: ${entry.sourceId}:${entry.itemId}`,
         )
     }
     for (const entry of R34_RULE_MIGRATIONS) {
-      const rule = prior.rules.find((rule) => rule.ruleId === entry.ruleId)
+      const rule = priorRules.get(entry.ruleId)
       if ((rule === undefined ? null : sha256(canonicalJson(rule))) !== entry.priorDigest)
         throw new Error(`predecessor rule correspondence changed: ${entry.ruleId}`)
     }
     for (const entry of R34_AUDIT_MIGRATIONS) {
-      const row =
-        prior.normativeMarkdownAudit.find(
-          (row) => row.sourceId === entry.sourceId && row.itemId === entry.itemId,
-        ) ?? null
+      const row = priorAudit.get(referenceKey(entry.sourceId, entry.itemId)) ?? null
       if (canonicalJson(row) !== canonicalJson(entry.prior))
         throw new Error(
           `predecessor audit correspondence changed: ${entry.sourceId}:${entry.itemId}`,
@@ -3860,6 +3940,20 @@ function r34CorrespondenceViolations(
       ),
     ),
   )
+  const itemGroups = new Map<string, InventoryItem[]>()
+  for (const source of document.sources)
+    for (const item of source.inventoryItems) {
+      const key = referenceKey(source.sourceId, item.itemId)
+      const group = itemGroups.get(key) ?? []
+      group.push(item)
+      itemGroups.set(key, group)
+    }
+  const ruleGroups = new Map<string, AuthorityRule[]>()
+  for (const rule of document.rules) {
+    const group = ruleGroups.get(rule.ruleId) ?? []
+    group.push(rule)
+    ruleGroups.set(rule.ruleId, group)
+  }
   const ruleIds = new Set(document.rules.map((rule) => rule.ruleId))
   for (const source of document.sources)
     for (const item of source.inventoryItems) {
@@ -3937,9 +4031,7 @@ function r34CorrespondenceViolations(
       fail(`R34 source ${entry.sourceId} item identity/order correspondence changed`)
   }
   for (const entry of R34_ITEM_MIGRATIONS) {
-    const matches = document.sources
-      .filter((source) => source.sourceId === entry.sourceId)
-      .flatMap((source) => source.inventoryItems.filter((item) => item.itemId === entry.itemId))
+    const matches = itemGroups.get(referenceKey(entry.sourceId, entry.itemId)) ?? []
     if (
       entry.currentDigest === null
         ? matches.length !== 0
@@ -3955,7 +4047,7 @@ function r34CorrespondenceViolations(
   if (canonicalJson(document.rules.map((rule) => rule.ruleId)) !== canonicalJson(R34_RULE_ORDER))
     fail('R34 rule identity/order correspondence changed')
   for (const entry of R34_RULE_MIGRATIONS) {
-    const matches = document.rules.filter((rule) => rule.ruleId === entry.ruleId)
+    const matches = ruleGroups.get(entry.ruleId) ?? []
     if (
       entry.currentDigest === null
         ? matches.length !== 0
@@ -3978,7 +4070,7 @@ export function validateHistoricalR33Registry(
   document: unknown,
   options: ValidateOptions = {},
 ): ValidationResult {
-  return validateRegistrySubject(document, options, true)
+  return withGitInvocation(() => validateRegistrySubject(document, options, true))
 }
 
 export interface ValidateOptions {
@@ -3994,7 +4086,7 @@ export function validateRegistry(
   document: unknown,
   options: ValidateOptions = {},
 ): ValidationResult {
-  return validateRegistrySubject(document, options, false)
+  return withGitInvocation(() => validateRegistrySubject(document, options, false))
 }
 
 function validateRegistrySubject(
@@ -4031,7 +4123,9 @@ function validateRegistrySubject(
   if (repoRootStatus !== null) violations.push(...repoRootStatus.violations)
   if (repoRootStatus?.gitReady === true) {
     if (!historicalR33)
-      violations.push(...r34RepositoryCorrespondenceViolations(options.repoRoot as string))
+      violations.push(
+        ...r34RepositoryCorrespondenceViolations(options.repoRoot as string, registry),
+      )
     try {
       const blob = execFileSync(
         'git',
@@ -4837,31 +4931,30 @@ function extractLocator(
 }
 
 /**
- * Memoised `git` invocation, keyed by repository root and exact argument vector.
- *
- * `sweepRegistrySources` spawns roughly 87 git subprocesses per call - two per source snapshot
- * commit, two per reconciliation git-commit evidence ref, plus the worktree probe - and on Windows
- * each spawn costs on the order of 100 ms. Measured: one sweep took 10.5 s, and a CPU profile
- * attributed 98.6% of it to idle time blocked on `spawn`, not to parsing or validation. The shipped
- * suite performs 62 sweeps, which accounted for essentially all of `corpus-sweep.test.ts`'s
- * ~13 minutes.
- *
- * Caching is sound because the answers are immutable: a Git object's type and content are fixed by
- * its sha, and the worktree root of a given directory does not change within a process. Failures
- * are cached too, since a missing object stays missing for that root. The key includes the root, so
- * the copied-corpus and missing-metadata tests - which sweep DIFFERENT roots - are unaffected.
- *
- * This changes no result. It is not a general performance optimisation of the decision path, which
- * remains out of scope and owned by FK-P1.
+ * D028: read deduplication is limited to one synchronous validation or sweep.
+ * A fresh invocation rechecks the repository and actual Git objects, including replacements.
+ * No result, absence or authorization decision survives a completed invocation.
  */
-const gitResultCache = new Map<
-  string,
-  { readonly ok: true; readonly value: Buffer } | { readonly ok: false; readonly error: Error }
->()
+let gitResultCache:
+  | Map<
+      string,
+      { readonly ok: true; readonly value: Buffer } | { readonly ok: false; readonly error: Error }
+    >
+  | undefined
+
+function withGitInvocation<T>(operation: () => T): T {
+  const previous = gitResultCache
+  gitResultCache = new Map()
+  try {
+    return operation()
+  } finally {
+    gitResultCache = previous
+  }
+}
 
 function runGit(root: string, args: readonly string[]): Buffer {
   const key = JSON.stringify([root, ...args])
-  const cached = gitResultCache.get(key)
+  const cached = gitResultCache?.get(key)
   if (cached !== undefined) {
     if (cached.ok) return cached.value
     throw cached.error
@@ -4872,10 +4965,10 @@ function runGit(root: string, args: readonly string[]): Buffer {
       stdio: ['ignore', 'pipe', 'ignore'],
       maxBuffer: 64 * 1024 * 1024,
     })
-    gitResultCache.set(key, { ok: true, value })
+    gitResultCache?.set(key, { ok: true, value })
     return value
   } catch (error) {
-    gitResultCache.set(key, { ok: false, error: error as Error })
+    gitResultCache?.set(key, { ok: false, error: error as Error })
     throw error
   }
 }
@@ -5033,11 +5126,11 @@ function repoRootCheck(repoRoot: string): {
 }
 
 export function sweepHistoricalR33Sources(document: unknown, repoRoot: string): ValidationResult {
-  return sweepRegistrySubject(document, repoRoot, true)
+  return withGitInvocation(() => sweepRegistrySubject(document, repoRoot, true))
 }
 
 export function sweepRegistrySources(document: unknown, repoRoot: string): ValidationResult {
-  return sweepRegistrySubject(document, repoRoot, false)
+  return withGitInvocation(() => sweepRegistrySubject(document, repoRoot, false))
 }
 
 function sweepRegistrySubject(

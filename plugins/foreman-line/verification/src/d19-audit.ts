@@ -1001,7 +1001,7 @@ const RULED_CLASS5_NORMALIZATION_SITES: Record<string, Record<string, readonly S
     repoRootCheck: [
       { role: 'root/canonical-worktree-comparison', form: 'resolve(repoRoot)', count: 1 },
     ],
-    sweepRegistrySources: [
+    sweepRegistrySubject: [
       { role: 'root/required-input-normalization', form: 'resolve(repoRoot)', count: 1 },
     ],
     retirementVerificationViolations: [
@@ -2947,7 +2947,696 @@ function authorityTextPins(sf: SourceFile, errors: string[]): Map<Expression, st
   return pins
 }
 
+// D028: exact independently enumerated data leaves; no whole-file/data-shape waiver.
+const R34_DATA_FILE = 'authority-registry/src/r34-migrations.ts'
+const R34_DATA_PINS = [
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[0].prior.path',
+    identity: { sourceId: 'fk-charter', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/docs/goals/foreman-kernel/charter.md',
+    bytes: 57,
+    sha256: 'b9046029659ba8b80d389d7d504e8a3307862fe16e501a7053914467c4dba66d',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[0].current.path',
+    identity: { sourceId: 'fk-charter', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/docs/goals/foreman-kernel/charter.md',
+    bytes: 57,
+    sha256: 'b9046029659ba8b80d389d7d504e8a3307862fe16e501a7053914467c4dba66d',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[1].prior.path',
+    identity: { sourceId: 'fk-plan-review-findings', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/docs/goals/foreman-kernel/plan-review-findings.md',
+    bytes: 70,
+    sha256: 'be203b4e7119d7791bcdcb955debdccb8bde117b95ddb7b5127f0f9182ac9f2b',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[1].current.path',
+    identity: { sourceId: 'fk-plan-review-findings', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/docs/goals/foreman-kernel/plan-review-findings.md',
+    bytes: 70,
+    sha256: 'be203b4e7119d7791bcdcb955debdccb8bde117b95ddb7b5127f0f9182ac9f2b',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[2].prior.path',
+    identity: { sourceId: 'fk-loop-directive', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/docs/goals/foreman-kernel/loop-directive.md',
+    bytes: 64,
+    sha256: '88cdf5d44fe0896193c8f10543192776889a05d031d3adc5ee9a916441a0b11c',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[2].current.path',
+    identity: { sourceId: 'fk-loop-directive', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/docs/goals/foreman-kernel/loop-directive.md',
+    bytes: 64,
+    sha256: '88cdf5d44fe0896193c8f10543192776889a05d031d3adc5ee9a916441a0b11c',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[3].prior.path',
+    identity: { sourceId: 'spec-convention', disposition: 'changed' },
+    value: '' + REPO_LITERAL + '/docs/SPEC-CONVENTION.md',
+    bytes: 44,
+    sha256: 'f06152a75ae4da9b3e206f344a9f7765e94ecaded9160d250b44d8256a01857b',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[3].current.path',
+    identity: { sourceId: 'spec-convention', disposition: 'changed' },
+    value: '' + REPO_LITERAL + '/docs/SPEC-CONVENTION.md',
+    bytes: 44,
+    sha256: 'f06152a75ae4da9b3e206f344a9f7765e94ecaded9160d250b44d8256a01857b',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[4].prior.path',
+    identity: { sourceId: 'coordinator-pattern', disposition: 'changed' },
+    value: '' + REPO_LITERAL + '/docs/COORDINATOR-PATTERN.md',
+    bytes: 48,
+    sha256: 'c157c134847f3090200b2cc175ae6deccb4c8c7b0fca09baf63f0348a055c85e',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[4].current.path',
+    identity: { sourceId: 'coordinator-pattern', disposition: 'changed' },
+    value: '' + REPO_LITERAL + '/docs/COORDINATOR-PATTERN.md',
+    bytes: 48,
+    sha256: 'c157c134847f3090200b2cc175ae6deccb4c8c7b0fca09baf63f0348a055c85e',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[5].prior.path',
+    identity: { sourceId: 'goal-skill', disposition: 'changed' },
+    value: '' + REPO_LITERAL + '/skills/goal/SKILL.md',
+    bytes: 41,
+    sha256: 'f852762d5c9929f5f53c8209968a6729bde83f03c9279b9479da1cda2caadb53',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[5].current.path',
+    identity: { sourceId: 'goal-skill', disposition: 'changed' },
+    value: '' + REPO_LITERAL + '/skills/goal/SKILL.md',
+    bytes: 41,
+    sha256: 'f852762d5c9929f5f53c8209968a6729bde83f03c9279b9479da1cda2caadb53',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[6].prior.path',
+    identity: { sourceId: 'standing-constraints', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/docs/kickstarters/STANDING-CONSTRAINTS.md',
+    bytes: 62,
+    sha256: 'e32a3986b011396dd669130d66f7d7c86331b272d7892141d4cfe60dcdde6066',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[6].current.path',
+    identity: { sourceId: 'standing-constraints', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/docs/kickstarters/STANDING-CONSTRAINTS.md',
+    bytes: 62,
+    sha256: 'e32a3986b011396dd669130d66f7d7c86331b272d7892141d4cfe60dcdde6066',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[7].prior.path',
+    identity: { sourceId: 'parcel-driven-development', disposition: 'changed' },
+    value: '' + REPO_LITERAL + '/skills/parcel-driven-development/SKILL.md',
+    bytes: 62,
+    sha256: '3bdeef4d02763d73bc7cdeb35b057d54aec2ce1bff4559d03816ed064aabe0ed',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[7].current.path',
+    identity: { sourceId: 'parcel-driven-development', disposition: 'changed' },
+    value: '' + REPO_LITERAL + '/skills/parcel-driven-development/SKILL.md',
+    bytes: 62,
+    sha256: '3bdeef4d02763d73bc7cdeb35b057d54aec2ce1bff4559d03816ed064aabe0ed',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[8].prior.path',
+    identity: { sourceId: 'foreman-line-plan', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/docs/FOREMAN-LINE-PLAN.md',
+    bytes: 46,
+    sha256: 'e659611b82320056f3909b5e4384b6a7f26508d2601637a1e0e3241ccf9bf303',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[8].current.path',
+    identity: { sourceId: 'foreman-line-plan', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/docs/FOREMAN-LINE-PLAN.md',
+    bytes: 46,
+    sha256: 'e659611b82320056f3909b5e4384b6a7f26508d2601637a1e0e3241ccf9bf303',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[9].prior.path',
+    identity: { sourceId: 'approval-readme', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/approval/README.md',
+    bytes: 39,
+    sha256: '77b6ce307be651475c8c482ed8b1e97b73627d8a3204a412a46a4d82e043de5c',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[9].current.path',
+    identity: { sourceId: 'approval-readme', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/approval/README.md',
+    bytes: 39,
+    sha256: '77b6ce307be651475c8c482ed8b1e97b73627d8a3204a412a46a4d82e043de5c',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[10].prior.path',
+    identity: { sourceId: 'spec-frontmatter-schema', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/spec-linter/schemas/spec-frontmatter.schema.json',
+    bytes: 69,
+    sha256: '4def32ad8eb93a3cb755e96e92618c810336d4cd7f36460ed7153a23f0c60704',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[10].current.path',
+    identity: { sourceId: 'spec-frontmatter-schema', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/spec-linter/schemas/spec-frontmatter.schema.json',
+    bytes: 69,
+    sha256: '4def32ad8eb93a3cb755e96e92618c810336d4cd7f36460ed7153a23f0c60704',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[11].prior.path',
+    identity: { sourceId: 'spec-linter-validator', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/spec-linter/src/validate.ts',
+    bytes: 48,
+    sha256: '80a37e1220afde6a30d8aec88b00141b1c2e0e8665076738fa424550efc2ae25',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[11].current.path',
+    identity: { sourceId: 'spec-linter-validator', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/spec-linter/src/validate.ts',
+    bytes: 48,
+    sha256: '80a37e1220afde6a30d8aec88b00141b1c2e0e8665076738fa424550efc2ae25',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[12].prior.path',
+    identity: { sourceId: 'spec-linter-cli', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/spec-linter/src/cli.ts',
+    bytes: 43,
+    sha256: '3cabeb1493984aecd844ec85e47d25a36c42f55bbc501b3d8f9eae2716e236f3',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[12].current.path',
+    identity: { sourceId: 'spec-linter-cli', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/spec-linter/src/cli.ts',
+    bytes: 43,
+    sha256: '3cabeb1493984aecd844ec85e47d25a36c42f55bbc501b3d8f9eae2716e236f3',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[13].prior.path',
+    identity: { sourceId: 'spec-linter-readme', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/spec-linter/README.md',
+    bytes: 42,
+    sha256: '18b4767263b56efa5c9764f6d1fa7ce3a16724d5435979f17926b248611d898c',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[13].current.path',
+    identity: { sourceId: 'spec-linter-readme', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/spec-linter/README.md',
+    bytes: 42,
+    sha256: '18b4767263b56efa5c9764f6d1fa7ce3a16724d5435979f17926b248611d898c',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[14].prior.path',
+    identity: { sourceId: 'permission-profiles-registry', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/permission-profiles/permission-profiles.yaml',
+    bytes: 65,
+    sha256: '0ec4eb579914dd70b6953472dd5ee3ad71cd04ae1dcc669fad507dc7a12ae759',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[14].current.path',
+    identity: { sourceId: 'permission-profiles-registry', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/permission-profiles/permission-profiles.yaml',
+    bytes: 65,
+    sha256: '0ec4eb579914dd70b6953472dd5ee3ad71cd04ae1dcc669fad507dc7a12ae759',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[15].prior.path',
+    identity: { sourceId: 'permission-profiles-types', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/permission-profiles/src/types.ts',
+    bytes: 53,
+    sha256: 'fae8b84594fa26bead5a158dc579da59bb1529c786e643ff7dd7104cb669384c',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[15].current.path',
+    identity: { sourceId: 'permission-profiles-types', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/permission-profiles/src/types.ts',
+    bytes: 53,
+    sha256: 'fae8b84594fa26bead5a158dc579da59bb1529c786e643ff7dd7104cb669384c',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[16].prior.path',
+    identity: { sourceId: 'permission-profiles-validator', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/permission-profiles/src/validator.ts',
+    bytes: 57,
+    sha256: 'f501d20407e3842dcb002cd094af3a2a5dc5e28db9a6b14039c2d36fb53f0780',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[16].current.path',
+    identity: { sourceId: 'permission-profiles-validator', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/permission-profiles/src/validator.ts',
+    bytes: 57,
+    sha256: 'f501d20407e3842dcb002cd094af3a2a5dc5e28db9a6b14039c2d36fb53f0780',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[17].prior.path',
+    identity: { sourceId: 'permission-profiles-readme', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/permission-profiles/README.md',
+    bytes: 50,
+    sha256: 'ddc505a102f40b3e1a949fe72d284e97490cc65fdd74596e9a368e960b178e13',
+  },
+  {
+    declaration: 'R34_SOURCE_MIGRATIONS',
+    slot: '[17].current.path',
+    identity: { sourceId: 'permission-profiles-readme', disposition: 'unchanged' },
+    value: '' + REPO_LITERAL + '/permission-profiles/README.md',
+    bytes: 50,
+    sha256: 'ddc505a102f40b3e1a949fe72d284e97490cc65fdd74596e9a368e960b178e13',
+  },
+  {
+    declaration: 'R34_ITEM_MIGRATIONS',
+    slot: '[570].prior.normalizedExcerpt',
+    identity: { sourceId: 'spec-convention', itemId: 'item.7caef7ff784d', disposition: 'changed' },
+    value:
+      '- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, human-approved (not agent-inferred). Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `' +
+      REPO_LITERAL +
+      '/docs/FOREMAN-LINE-PLAN.md` §6.',
+    bytes: 295,
+    sha256: 'da6e8ca20d744f52e60469aeb732b2d5a75c1467ed4c8a56399494384403a9f1',
+  },
+  {
+    declaration: 'R34_ITEM_MIGRATIONS',
+    slot: '[570].current.normalizedExcerpt',
+    identity: { sourceId: 'spec-convention', itemId: 'item.7caef7ff784d', disposition: 'changed' },
+    value:
+      '- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, approved under the applicable authority: OM-PAN-001 uses its ratified rubric and independent review floor; other goals require human approval. Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `' +
+      REPO_LITERAL +
+      '/docs/FOREMAN-LINE-PLAN.md` §6.',
+    bytes: 401,
+    sha256: '0607ae1753b074ef82717cef5201a75e0cf7a6bb5430b920c8693c0a0baba7a7',
+  },
+  {
+    declaration: 'R34_ITEM_MIGRATIONS',
+    slot: '[657].prior.normalizedExcerpt',
+    identity: {
+      sourceId: 'coordinator-pattern',
+      itemId: 'item.d113f7062a62',
+      disposition: 'changed',
+    },
+    value:
+      'Extracted 2026-07-15 from five shipped Foreman Line parcels (W0-P1, PCC-P0, W0-P3, W0-P4, SEC-1) and ratified by Clint. This is the generalized charter for the role the carryover docs call "the Coordinator (D4)." The parcel-mechanics half of the pattern is documented in `' +
+      REPO_LITERAL +
+      '/skills/parcel-driven-development/`; this charter adds the pieces that methodology never formalized: the upstream ideation stage, the plan-level review, the human-gate model, and the long-running loop that holds it all together. Entry point: the `/goal` skill (`' +
+      REPO_LITERAL +
+      '/skills/goal/`).',
+    bytes: 590,
+    sha256: '4c323e4fe82bed75dfb2b095c621ff46c0e4ac6943f9ae9c777f904a98c5f299',
+  },
+  {
+    declaration: 'R34_ITEM_MIGRATIONS',
+    slot: '[657].current.normalizedExcerpt',
+    identity: {
+      sourceId: 'coordinator-pattern',
+      itemId: 'item.d113f7062a62',
+      disposition: 'changed',
+    },
+    value:
+      'Extracted 2026-07-15 from five shipped Foreman Line parcels (W0-P1, PCC-P0, W0-P3, W0-P4, SEC-1) and ratified by Clint. This is the generalized charter for the role the carryover docs call "the Coordinator (D4)." The parcel-mechanics half of the pattern is documented in `' +
+      REPO_LITERAL +
+      '/skills/parcel-driven-development/`; this charter adds the pieces that methodology never formalized: the upstream ideation stage, the plan-level review, the human-gate model, and the long-running loop that holds it all together. Entry point: the `/goal` skill (`' +
+      REPO_LITERAL +
+      '/skills/goal/`).',
+    bytes: 590,
+    sha256: '4c323e4fe82bed75dfb2b095c621ff46c0e4ac6943f9ae9c777f904a98c5f299',
+  },
+  {
+    declaration: 'R34_ITEM_MIGRATIONS',
+    slot: '[684].prior.normalizedExcerpt',
+    identity: {
+      sourceId: 'coordinator-pattern',
+      itemId: 'item.c5bd4203e8bf',
+      disposition: 'changed',
+    },
+    value:
+      'Three dispatch mechanics rules, all earned: every dispatch - including rework - opens with a Step 0 restate-and-stop gate; the branch/worktree is named in the directive, never ambient; and rework directives mandate "every X," never "the listed X" - the findings are a floor, not a ceiling, and no role is exempt from the sweep, including the coordinator (lesson #16). Every builder/reviewer kickstarter includes the standing constraints by reference (`' +
+      REPO_LITERAL +
+      '/docs/kickstarters/STANDING-CONSTRAINTS.md`). For architecture/risk parcels, run **two independent adversarial reviews** (lesson #12: two frontier reviews of W0-P4 agreed on every focus question and only one found the blocker). Where reviews disagree, the coordinator reproduces the disputed finding before triaging - the reproduction is the tie-breaker at triage and the closure proof at acceptance.',
+    bytes: 872,
+    sha256: 'efe5cc31cf65400bf6eb2069e4d9ee3fb32ca4562c5c050db5db401bf2e5f747',
+  },
+  {
+    declaration: 'R34_ITEM_MIGRATIONS',
+    slot: '[684].current.normalizedExcerpt',
+    identity: {
+      sourceId: 'coordinator-pattern',
+      itemId: 'item.c5bd4203e8bf',
+      disposition: 'changed',
+    },
+    value:
+      'Three dispatch mechanics rules, all earned: every dispatch - including rework - opens with a Step 0 scope check; under OM-PAN-001 an exact admitted match proceeds on coordinator validation without a human prompt, and outside it the restate-and-stop gate remains; the branch/worktree is named in the directive, never ambient; and rework directives mandate "every X," never "the listed X" - the findings are a floor, not a ceiling, and no role is exempt from the sweep, including the coordinator (lesson #16). Every builder/reviewer kickstarter includes the standing constraints by reference (`' +
+      REPO_LITERAL +
+      '/docs/kickstarters/STANDING-CONSTRAINTS.md`). For architecture/risk parcels, run **two independent adversarial reviews** (lesson #12: two frontier reviews of W0-P4 agreed on every focus question and only one found the blocker). Where reviews disagree, the coordinator reproduces the disputed finding before triaging - the reproduction is the tie-breaker at triage and the closure proof at acceptance.',
+    bytes: 1012,
+    sha256: '656b5f99a5a38054a7ce932623495f1284c7383f829a40d7a344bf3d54706862',
+  },
+  {
+    declaration: 'R34_RULE_MIGRATIONS',
+    slot: '[265].prior.normalizedStatement',
+    identity: { ruleId: 'rule.spec-convention.7caef7ff784d', disposition: 'changed' },
+    value:
+      '- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, human-approved (not agent-inferred). Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `' +
+      REPO_LITERAL +
+      '/docs/FOREMAN-LINE-PLAN.md` §6.',
+    bytes: 295,
+    sha256: 'da6e8ca20d744f52e60469aeb732b2d5a75c1467ed4c8a56399494384403a9f1',
+  },
+  {
+    declaration: 'R34_RULE_MIGRATIONS',
+    slot: '[265].current.normalizedStatement',
+    identity: { ruleId: 'rule.spec-convention.7caef7ff784d', disposition: 'changed' },
+    value:
+      '- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, human-approved (not agent-inferred). Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `' +
+      REPO_LITERAL +
+      '/docs/FOREMAN-LINE-PLAN.md` §6.',
+    bytes: 295,
+    sha256: 'da6e8ca20d744f52e60469aeb732b2d5a75c1467ed4c8a56399494384403a9f1',
+  },
+  {
+    declaration: 'R34_RULE_MIGRATIONS',
+    slot: '[315].prior.normalizedStatement',
+    identity: { ruleId: 'rule.coordinator-pattern.c5bd4203e8bf', disposition: 'changed' },
+    value:
+      'Three dispatch mechanics rules, all earned: every dispatch - including rework - opens with a Step 0 restate-and-stop gate; the branch/worktree is named in the directive, never ambient; and rework directives mandate "every X," never "the listed X" - the findings are a floor, not a ceiling, and no role is exempt from the sweep, including the coordinator (lesson #16). Every builder/reviewer kickstarter includes the standing constraints by reference (`' +
+      REPO_LITERAL +
+      '/docs/kickstarters/STANDING-CONSTRAINTS.md`). For architecture/risk parcels, run **two independent adversarial reviews** (lesson #12: two frontier reviews of W0-P4 agreed on every focus question and only one found the blocker). Where reviews disagree, the coordinator reproduces the disputed finding before triaging - the reproduction is the tie-breaker at triage and the closure proof at acceptance.',
+    bytes: 872,
+    sha256: 'efe5cc31cf65400bf6eb2069e4d9ee3fb32ca4562c5c050db5db401bf2e5f747',
+  },
+  {
+    declaration: 'R34_RULE_MIGRATIONS',
+    slot: '[315].current.normalizedStatement',
+    identity: { ruleId: 'rule.coordinator-pattern.c5bd4203e8bf', disposition: 'changed' },
+    value:
+      'Three dispatch mechanics rules, all earned: every dispatch - including rework - opens with a Step 0 restate-and-stop gate; the branch/worktree is named in the directive, never ambient; and rework directives mandate "every X," never "the listed X" - the findings are a floor, not a ceiling, and no role is exempt from the sweep, including the coordinator (lesson #16). Every builder/reviewer kickstarter includes the standing constraints by reference (`' +
+      REPO_LITERAL +
+      '/docs/kickstarters/STANDING-CONSTRAINTS.md`). For architecture/risk parcels, run **two independent adversarial reviews** (lesson #12: two frontier reviews of W0-P4 agreed on every focus question and only one found the blocker). Where reviews disagree, the coordinator reproduces the disputed finding before triaging - the reproduction is the tie-breaker at triage and the closure proof at acceptance.',
+    bytes: 872,
+    sha256: 'efe5cc31cf65400bf6eb2069e4d9ee3fb32ca4562c5c050db5db401bf2e5f747',
+  },
+  {
+    declaration: 'R34_RULE_MIGRATIONS',
+    slot: '[557].current.normalizedStatement',
+    identity: { ruleId: 'rule.r34.spec-convention.7caef7ff784d', disposition: 'new' },
+    value:
+      '- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, approved under the applicable authority: OM-PAN-001 uses its ratified rubric and independent review floor; other goals require human approval. Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `' +
+      REPO_LITERAL +
+      '/docs/FOREMAN-LINE-PLAN.md` §6.',
+    bytes: 401,
+    sha256: '0607ae1753b074ef82717cef5201a75e0cf7a6bb5430b920c8693c0a0baba7a7',
+  },
+  {
+    declaration: 'R34_RULE_MIGRATIONS',
+    slot: '[564].current.normalizedStatement',
+    identity: { ruleId: 'rule.r34.coordinator-pattern.d113f7062a62', disposition: 'new' },
+    value:
+      'Extracted 2026-07-15 from five shipped Foreman Line parcels (W0-P1, PCC-P0, W0-P3, W0-P4, SEC-1) and ratified by Clint. This is the generalized charter for the role the carryover docs call "the Coordinator (D4)." The parcel-mechanics half of the pattern is documented in `' +
+      REPO_LITERAL +
+      '/skills/parcel-driven-development/`; this charter adds the pieces that methodology never formalized: the upstream ideation stage, the plan-level review, the human-gate model, and the long-running loop that holds it all together. Entry point: the `/goal` skill (`' +
+      REPO_LITERAL +
+      '/skills/goal/`).',
+    bytes: 590,
+    sha256: '4c323e4fe82bed75dfb2b095c621ff46c0e4ac6943f9ae9c777f904a98c5f299',
+  },
+  {
+    declaration: 'R34_RULE_MIGRATIONS',
+    slot: '[569].current.normalizedStatement',
+    identity: { ruleId: 'rule.r34.coordinator-pattern.c5bd4203e8bf', disposition: 'new' },
+    value:
+      'Three dispatch mechanics rules, all earned: every dispatch - including rework - opens with a Step 0 scope check; under OM-PAN-001 an exact admitted match proceeds on coordinator validation without a human prompt, and outside it the restate-and-stop gate remains; the branch/worktree is named in the directive, never ambient; and rework directives mandate "every X," never "the listed X" - the findings are a floor, not a ceiling, and no role is exempt from the sweep, including the coordinator (lesson #16). Every builder/reviewer kickstarter includes the standing constraints by reference (`' +
+      REPO_LITERAL +
+      '/docs/kickstarters/STANDING-CONSTRAINTS.md`). For architecture/risk parcels, run **two independent adversarial reviews** (lesson #12: two frontier reviews of W0-P4 agreed on every focus question and only one found the blocker). Where reviews disagree, the coordinator reproduces the disputed finding before triaging - the reproduction is the tie-breaker at triage and the closure proof at acceptance.',
+    bytes: 1012,
+    sha256: '656b5f99a5a38054a7ce932623495f1284c7383f829a40d7a344bf3d54706862',
+  },
+] as const
+
+function r34DataPins(sf: SourceFile, errors: string[]): Map<Expression, string> {
+  const pins = new Map<Expression, string>()
+  for (const name of new Set(R34_DATA_PINS.map((pin) => pin.declaration))) {
+    const declarations: Node[] = []
+    const collect = (node: Node): void => {
+      if (
+        isIdentifier(node) &&
+        node.text === name &&
+        node.parent !== undefined &&
+        (node.parent as Node & { name?: Node }).name === node
+      )
+        declarations.push(node.parent)
+      node.forEachChild(collect)
+    }
+    collect(sf)
+    const declaration = declarations[0]
+    if (
+      declarations.length !== 1 ||
+      declaration === undefined ||
+      !isVariableDeclaration(declaration)
+    ) {
+      errors.push('D028 R34 DATA: declaration/shadow mismatch ' + name)
+      continue
+    }
+    const list = declaration.parent,
+      statement = list?.parent,
+      array = declaration.initializer
+    if (
+      list === undefined ||
+      !isVariableDeclarationList(list) ||
+      !list.getText(sf).startsWith('const ') ||
+      statement === undefined ||
+      !isVariableStatement(statement) ||
+      statement.parent !== sf ||
+      statement.modifiers?.some((m) => m.kind === SyntaxKind.ExportKeyword) !== true ||
+      array === undefined ||
+      !isArrayLiteralExpression(array)
+    ) {
+      errors.push('D028 R34 DATA: direct exported const array required ' + name)
+      continue
+    }
+    const leaves = new Map<string, Expression>()
+    const walk = (node: Expression, slot: string): boolean => {
+      if (isStringLiteral(node)) {
+        leaves.set(slot, node)
+        return true
+      }
+      if (
+        [
+          SyntaxKind.NullKeyword,
+          SyntaxKind.TrueKeyword,
+          SyntaxKind.FalseKeyword,
+          SyntaxKind.NumericLiteral,
+        ].includes(node.kind)
+      )
+        return true
+      if (isArrayLiteralExpression(node))
+        return node.elements.every((entry, index) => walk(entry, slot + '[' + index + ']'))
+      const properties = authorityTextProperties(node)
+      return (
+        properties !== undefined &&
+        [...properties].every(([key, entry]) => walk(entry, slot + '.' + key))
+      )
+    }
+    if (!walk(array, '')) {
+      errors.push('D028 R34 DATA: executable/indirect/duplicate-key initializer ' + name)
+      continue
+    }
+    for (const pin of R34_DATA_PINS.filter((entry) => entry.declaration === name)) {
+      const leaf = leaves.get(pin.slot),
+        index = Number(pin.slot.slice(1, pin.slot.indexOf(']')))
+      const record = authorityTextProperties(array.elements[index])
+      const identityMatches =
+        record !== undefined &&
+        Object.entries(pin.identity).every(([key, value]) => {
+          const field = record.get(key)
+          return field !== undefined && isStringLiteral(field) && field.text === value
+        })
+      if (
+        !identityMatches ||
+        leaf === undefined ||
+        !isStringLiteral(leaf) ||
+        leaf.text !== pin.value ||
+        Buffer.byteLength(leaf.text, 'utf8') !== pin.bytes ||
+        createHash('sha256').update(leaf.text, 'utf8').digest('hex') !== pin.sha256
+      )
+        errors.push('D028 R34 DATA: exact leaf mismatch ' + name + pin.slot)
+      else pins.set(leaf, name + pin.slot)
+    }
+  }
+  return pins
+}
+
+function isR34GitPathspec(node: Expression, rel: string, joined: string, sf: SourceFile): boolean {
+  if (
+    rel !== 'authority-registry/src/validate.ts' ||
+    joined !== RULED_GIT_PATHSPEC_VALUE ||
+    enclosingScopeName(node) !== 'r34RepositoryCorrespondenceViolations' ||
+    !isTemplateExpression(node) ||
+    node.head.text !== '' ||
+    node.templateSpans.length !== 1
+  )
+    return false
+  const span = node.templateSpans[0]
+  if (
+    span === undefined ||
+    !isIdentifier(span.expression) ||
+    span.expression.text !== 'R34_PRIOR_REGISTRY_COMMIT' ||
+    span.literal.text !== RULED_GIT_PATHSPEC_VALUE
+  )
+    return false
+  const array = node.parent,
+    call = array?.parent
+  if (
+    array === undefined ||
+    !isArrayLiteralExpression(array) ||
+    array.elements.length !== 3 ||
+    array.elements[2] !== node ||
+    constantString(array.elements[0] as Expression) !== 'cat-file' ||
+    constantString(array.elements[1] as Expression) !== 'blob' ||
+    call === undefined ||
+    !isCallExpression(call) ||
+    calleeName(call) !== 'runGitText' ||
+    call.arguments.length !== 2 ||
+    call.arguments[1] !== array ||
+    call.arguments[0]?.getText(sf) !== 'root'
+  )
+    return false
+  let imports = 0,
+    shadows = 0
+  const readers: Node[] = []
+  const visit = (candidate: Node): void => {
+    if (
+      isImportDeclaration(candidate) &&
+      isStringLiteral(candidate.moduleSpecifier) &&
+      candidate.moduleSpecifier.text === './r34-migrations.js'
+    ) {
+      const bindings = candidate.importClause?.namedBindings
+      if (bindings !== undefined && isNamedImports(bindings))
+        for (const element of bindings.elements)
+          if (
+            element.name.text === 'R34_PRIOR_REGISTRY_COMMIT' &&
+            element.propertyName === undefined
+          )
+            imports += 1
+    }
+    if (
+      isIdentifier(candidate) &&
+      candidate.text === 'R34_PRIOR_REGISTRY_COMMIT' &&
+      candidate.parent !== undefined &&
+      (candidate.parent as Node & { name?: Node }).name === candidate &&
+      candidate.parent.kind !== SyntaxKind.ImportSpecifier
+    )
+      shadows += 1
+    if (
+      isIdentifier(candidate) &&
+      candidate.text === 'runGitText' &&
+      candidate.parent !== undefined &&
+      (candidate.parent as Node & { name?: Node }).name === candidate
+    )
+      readers.push(candidate.parent)
+    candidate.forEachChild(visit)
+  }
+  visit(sf)
+  const reader = readers[0]
+  return (
+    imports === 1 &&
+    shadows === 0 &&
+    readers.length === 1 &&
+    reader !== undefined &&
+    isFunctionDeclaration(reader) &&
+    reader.parent === sf
+  )
+}
+
+function isR34RequiredRoot(
+  node: CallExpression,
+  rel: string,
+  scope: string | null,
+  sf: SourceFile,
+): boolean {
+  if (rel !== 'authority-registry/src/validate.ts' || scope !== 'sweepRegistrySubject') return true
+  const variable = node.parent,
+    list = variable?.parent,
+    statement = list?.parent,
+    body = statement?.parent,
+    fn = body?.parent
+  if (
+    variable === undefined ||
+    !isVariableDeclaration(variable) ||
+    variable.initializer !== node ||
+    !isIdentifier(variable.name) ||
+    variable.name.text !== 'root' ||
+    list === undefined ||
+    !isVariableDeclarationList(list) ||
+    !list.getText(sf).startsWith('const ') ||
+    statement === undefined ||
+    !isVariableStatement(statement) ||
+    fn === undefined ||
+    !isFunctionDeclaration(fn) ||
+    fn.name?.text !== 'sweepRegistrySubject' ||
+    fn.body !== body
+  )
+    return false
+  const parameter = fn.parameters[1]
+  if (
+    parameter === undefined ||
+    !isIdentifier(parameter.name) ||
+    parameter.name.text !== 'repoRoot' ||
+    parameter.initializer !== undefined ||
+    parameter.questionToken !== undefined
+  )
+    return false
+  let declarations = 0
+  const visit = (candidate: Node): void => {
+    if (
+      isIdentifier(candidate) &&
+      candidate.text === 'repoRoot' &&
+      candidate.parent !== undefined &&
+      (candidate.parent as Node & { name?: Node }).name === candidate
+    )
+      declarations += 1
+    candidate.forEachChild(visit)
+  }
+  visit(fn)
+  return declarations === 1
+}
+
 interface SweepSink {
+  readonly r34Errors: string[]
+  readonly r34DataSites: (Site & { slot: string })[]
+  readonly r34GitSites: Site[]
   readonly authorityTextErrors: string[]
   readonly authorityTextSites: (Site & { slot: string })[]
   readonly pmcIntentErrors: string[]
@@ -3013,6 +3702,8 @@ function sweepFile(
   sink: SweepSink,
 ): void {
   sink.sweptFiles.add(rel)
+  const r34Pins =
+    rel === R34_DATA_FILE ? r34DataPins(sf, sink.r34Errors) : new Map<Expression, string>()
   const authorityPins =
     rel === AUTHORITY_TEXT_FILE
       ? authorityTextPins(sf, sink.authorityTextErrors)
@@ -3107,6 +3798,11 @@ function sweepFile(
   }
 
   const adjudicateClass3 = (node: Expression, value: string): void => {
+    const r34Slot = r34Pins.get(node)
+    if (r34Slot !== undefined) {
+      sink.r34DataSites.push({ ...site(node), slot: r34Slot })
+      return
+    }
     const authoritySlot = authorityPins.get(node)
     if (authoritySlot !== undefined) {
       sink.authorityTextSites.push({ ...site(node), slot: authoritySlot })
@@ -3376,6 +4072,8 @@ function sweepFile(
           scopedClass3Seen.set('pathspec', pathspecSeen + 1)
           sink.gitPathspecSites.push(site(node))
           sink.gitPathspecValues.push(joined)
+        } else if (sink.r34GitSites.length < 1 && isR34GitPathspec(node, rel, joined, sf)) {
+          sink.r34GitSites.push(site(node))
         } else {
           violate(3, node)
         }
@@ -3526,7 +4224,7 @@ function sweepFile(
             strippedText(node, sf),
             scopedClass5Seen,
           )
-          if (normPin !== null && scope !== null) {
+          if (normPin !== null && scope !== null && isR34RequiredRoot(node, rel, scope, sf)) {
             sink.ruledClass5NormSites.push({
               ...site(node),
               role: normPin.role,
@@ -3654,6 +4352,9 @@ function main(argv: readonly string[]): number {
   }
 
   const sink: SweepSink = {
+    r34Errors: [],
+    r34DataSites: [],
+    r34GitSites: [],
     authorityTextErrors: [],
     authorityTextSites: [],
     pmcIntentErrors: [],
@@ -3775,6 +4476,7 @@ function main(argv: readonly string[]): number {
   // synthetic fixture) leaves that pin vacuous, not failed. ──
   const pinMismatches: string[] = [
     ...sink.authorityTextErrors,
+    ...sink.r34Errors,
     ...sink.pmcErrors,
     ...sink.pmcIntentErrors,
     ...sink.pmcRecoveryErrors,
@@ -3791,6 +4493,16 @@ function main(argv: readonly string[]): number {
       pinMismatches.push(`D017 authority-text DATA: ${slot} expected 1, observed ${count}`)
     }
   }
+  if (!sink.sweptFiles.has(R34_DATA_FILE))
+    pinMismatches.push('D028 R34 DATA: required exact file is absent')
+  for (const pin of R34_DATA_PINS) {
+    const slot = pin.declaration + pin.slot,
+      count = sink.r34DataSites.filter((site) => site.slot === slot).length
+    console.log('D028 R34 DATA: ' + slot + '; expected=1; observed=' + count)
+    if (count !== 1) pinMismatches.push('D028 R34 DATA: ' + slot + ' expected1 observed' + count)
+  }
+  if (sink.sweptFiles.has('authority-registry/src/validate.ts') && sink.r34GitSites.length !== 1)
+    pinMismatches.push('D028 R34 Git pathspec: expected1 observed' + sink.r34GitSites.length)
   const digestMismatches: string[] = []
   const pmcIntentExpected = sink.sweptFiles.has(PMC_INTENT_FILE) ? PMC_INTENT_CALLS.size : 0
   if (sink.pmcIntentSites.length !== pmcIntentExpected)

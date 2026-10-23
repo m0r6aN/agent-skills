@@ -30,6 +30,7 @@ const requiredSources = [
   'authority-registry/src/generate.ts',
   'authority-registry/src/validate.ts',
   'authority-registry/src/r33-migrations.ts',
+  'authority-registry/src/r34-migrations.ts',
   'spec-linter/src/grandfather.ts',
   'contract-readers/src/registry-data.ts',
   'jev-decisions/src/replay.ts',
@@ -508,6 +509,607 @@ process.on('exit', () => console.log('CI2_READ_BOUND_PROBE ' + JSON.stringify({ 
           result.output,
         )
       }
+    })
+
+    // D028 additions are counted separately; all original CI2/D017 assertions above remain.
+    const r34Identity = 'authority-registry/src/r34-migrations.ts'
+    const r34Path = join(root, r34Identity)
+    const r34Source = readFileSync(r34Path, 'utf8')
+    const r34Leaves = [
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[0].prior.path',
+        start: 51750,
+        end: 51809,
+        raw: "'plugins/foreman-line/docs/goals/foreman-kernel/charter.md'",
+        value: 'plugins/foreman-line/docs/goals/foreman-kernel/charter.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[0].current.path',
+        start: 52200,
+        end: 52259,
+        raw: "'plugins/foreman-line/docs/goals/foreman-kernel/charter.md'",
+        value: 'plugins/foreman-line/docs/goals/foreman-kernel/charter.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[1].prior.path',
+        start: 69685,
+        end: 69757,
+        raw: "'plugins/foreman-line/docs/goals/foreman-kernel/plan-review-findings.md'",
+        value: 'plugins/foreman-line/docs/goals/foreman-kernel/plan-review-findings.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[1].current.path',
+        start: 70170,
+        end: 70242,
+        raw: "'plugins/foreman-line/docs/goals/foreman-kernel/plan-review-findings.md'",
+        value: 'plugins/foreman-line/docs/goals/foreman-kernel/plan-review-findings.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[2].prior.path',
+        start: 76253,
+        end: 76319,
+        raw: "'plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md'",
+        value: 'plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[2].current.path',
+        start: 76717,
+        end: 76783,
+        raw: "'plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md'",
+        value: 'plugins/foreman-line/docs/goals/foreman-kernel/loop-directive.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[3].prior.path',
+        start: 82707,
+        end: 82753,
+        raw: "'plugins/foreman-line/docs/SPEC-CONVENTION.md'",
+        value: 'plugins/foreman-line/docs/SPEC-CONVENTION.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[3].current.path',
+        start: 83161,
+        end: 83207,
+        raw: "'plugins/foreman-line/docs/SPEC-CONVENTION.md'",
+        value: 'plugins/foreman-line/docs/SPEC-CONVENTION.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[4].prior.path',
+        start: 90139,
+        end: 90189,
+        raw: "'plugins/foreman-line/docs/COORDINATOR-PATTERN.md'",
+        value: 'plugins/foreman-line/docs/COORDINATOR-PATTERN.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[4].current.path',
+        start: 90612,
+        end: 90662,
+        raw: "'plugins/foreman-line/docs/COORDINATOR-PATTERN.md'",
+        value: 'plugins/foreman-line/docs/COORDINATOR-PATTERN.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[5].prior.path',
+        start: 93745,
+        end: 93788,
+        raw: "'plugins/foreman-line/skills/goal/SKILL.md'",
+        value: 'plugins/foreman-line/skills/goal/SKILL.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[5].current.path',
+        start: 94202,
+        end: 94245,
+        raw: "'plugins/foreman-line/skills/goal/SKILL.md'",
+        value: 'plugins/foreman-line/skills/goal/SKILL.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[6].prior.path',
+        start: 96220,
+        end: 96284,
+        raw: "'plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md'",
+        value: 'plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[6].current.path',
+        start: 96696,
+        end: 96760,
+        raw: "'plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md'",
+        value: 'plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[7].prior.path',
+        start: 98297,
+        end: 98361,
+        raw: "'plugins/foreman-line/skills/parcel-driven-development/SKILL.md'",
+        value: 'plugins/foreman-line/skills/parcel-driven-development/SKILL.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[7].current.path',
+        start: 98778,
+        end: 98842,
+        raw: "'plugins/foreman-line/skills/parcel-driven-development/SKILL.md'",
+        value: 'plugins/foreman-line/skills/parcel-driven-development/SKILL.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[8].prior.path',
+        start: 123242,
+        end: 123290,
+        raw: "'plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md'",
+        value: 'plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[8].current.path',
+        start: 123697,
+        end: 123745,
+        raw: "'plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md'",
+        value: 'plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[9].prior.path',
+        start: 132602,
+        end: 132643,
+        raw: "'plugins/foreman-line/approval/README.md'",
+        value: 'plugins/foreman-line/approval/README.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[9].current.path',
+        start: 133048,
+        end: 133089,
+        raw: "'plugins/foreman-line/approval/README.md'",
+        value: 'plugins/foreman-line/approval/README.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[10].prior.path',
+        start: 135314,
+        end: 135385,
+        raw: "'plugins/foreman-line/spec-linter/schemas/spec-frontmatter.schema.json'",
+        value: 'plugins/foreman-line/spec-linter/schemas/spec-frontmatter.schema.json',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[10].current.path',
+        start: 135804,
+        end: 135875,
+        raw: "'plugins/foreman-line/spec-linter/schemas/spec-frontmatter.schema.json'",
+        value: 'plugins/foreman-line/spec-linter/schemas/spec-frontmatter.schema.json',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[11].prior.path',
+        start: 138912,
+        end: 138962,
+        raw: "'plugins/foreman-line/spec-linter/src/validate.ts'",
+        value: 'plugins/foreman-line/spec-linter/src/validate.ts',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[11].current.path',
+        start: 139379,
+        end: 139429,
+        raw: "'plugins/foreman-line/spec-linter/src/validate.ts'",
+        value: 'plugins/foreman-line/spec-linter/src/validate.ts',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[12].prior.path',
+        start: 141590,
+        end: 141635,
+        raw: "'plugins/foreman-line/spec-linter/src/cli.ts'",
+        value: 'plugins/foreman-line/spec-linter/src/cli.ts',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[12].current.path',
+        start: 142046,
+        end: 142091,
+        raw: "'plugins/foreman-line/spec-linter/src/cli.ts'",
+        value: 'plugins/foreman-line/spec-linter/src/cli.ts',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[13].prior.path',
+        start: 144204,
+        end: 144248,
+        raw: "'plugins/foreman-line/spec-linter/README.md'",
+        value: 'plugins/foreman-line/spec-linter/README.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[13].current.path',
+        start: 144672,
+        end: 144716,
+        raw: "'plugins/foreman-line/spec-linter/README.md'",
+        value: 'plugins/foreman-line/spec-linter/README.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[14].prior.path',
+        start: 147183,
+        end: 147250,
+        raw: "'plugins/foreman-line/permission-profiles/permission-profiles.yaml'",
+        value: 'plugins/foreman-line/permission-profiles/permission-profiles.yaml',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[14].current.path',
+        start: 147671,
+        end: 147738,
+        raw: "'plugins/foreman-line/permission-profiles/permission-profiles.yaml'",
+        value: 'plugins/foreman-line/permission-profiles/permission-profiles.yaml',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[15].prior.path',
+        start: 156504,
+        end: 156559,
+        raw: "'plugins/foreman-line/permission-profiles/src/types.ts'",
+        value: 'plugins/foreman-line/permission-profiles/src/types.ts',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[15].current.path',
+        start: 156980,
+        end: 157035,
+        raw: "'plugins/foreman-line/permission-profiles/src/types.ts'",
+        value: 'plugins/foreman-line/permission-profiles/src/types.ts',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[16].prior.path',
+        start: 157928,
+        end: 157987,
+        raw: "'plugins/foreman-line/permission-profiles/src/validator.ts'",
+        value: 'plugins/foreman-line/permission-profiles/src/validator.ts',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[16].current.path',
+        start: 158412,
+        end: 158471,
+        raw: "'plugins/foreman-line/permission-profiles/src/validator.ts'",
+        value: 'plugins/foreman-line/permission-profiles/src/validator.ts',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[17].prior.path',
+        start: 160816,
+        end: 160868,
+        raw: "'plugins/foreman-line/permission-profiles/README.md'",
+        value: 'plugins/foreman-line/permission-profiles/README.md',
+      },
+      {
+        declaration: 'R34_SOURCE_MIGRATIONS',
+        slot: '[17].current.path',
+        start: 161300,
+        end: 161352,
+        raw: "'plugins/foreman-line/permission-profiles/README.md'",
+        value: 'plugins/foreman-line/permission-profiles/README.md',
+      },
+      {
+        declaration: 'R34_ITEM_MIGRATIONS',
+        slot: '[570].prior.normalizedExcerpt',
+        start: 434367,
+        end: 434661,
+        raw: "'- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, human-approved (not agent-inferred). Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md` §6.'",
+        value:
+          '- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, human-approved (not agent-inferred). Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md` §6.',
+      },
+      {
+        declaration: 'R34_ITEM_MIGRATIONS',
+        slot: '[570].current.normalizedExcerpt',
+        start: 435298,
+        end: 435698,
+        raw: "'- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, approved under the applicable authority: OM-PAN-001 uses its ratified rubric and independent review floor; other goals require human approval. Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md` §6.'",
+        value:
+          '- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, approved under the applicable authority: OM-PAN-001 uses its ratified rubric and independent review floor; other goals require human approval. Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md` §6.',
+      },
+      {
+        declaration: 'R34_ITEM_MIGRATIONS',
+        slot: '[657].prior.normalizedExcerpt',
+        start: 487910,
+        end: 488502,
+        raw: '\'Extracted 2026-07-15 from five shipped Foreman Line parcels (W0-P1, PCC-P0, W0-P3, W0-P4, SEC-1) and ratified by Clint. This is the generalized charter for the role the carryover docs call "the Coordinator (D4)." The parcel-mechanics half of the pattern is documented in `plugins/foreman-line/skills/parcel-driven-development/`; this charter adds the pieces that methodology never formalized: the upstream ideation stage, the plan-level review, the human-gate model, and the long-running loop that holds it all together. Entry point: the `/goal` skill (`plugins/foreman-line/skills/goal/`).\'',
+        value:
+          'Extracted 2026-07-15 from five shipped Foreman Line parcels (W0-P1, PCC-P0, W0-P3, W0-P4, SEC-1) and ratified by Clint. This is the generalized charter for the role the carryover docs call "the Coordinator (D4)." The parcel-mechanics half of the pattern is documented in `plugins/foreman-line/skills/parcel-driven-development/`; this charter adds the pieces that methodology never formalized: the upstream ideation stage, the plan-level review, the human-gate model, and the long-running loop that holds it all together. Entry point: the `/goal` skill (`plugins/foreman-line/skills/goal/`).',
+      },
+      {
+        declaration: 'R34_ITEM_MIGRATIONS',
+        slot: '[657].current.normalizedExcerpt',
+        start: 489094,
+        end: 489686,
+        raw: '\'Extracted 2026-07-15 from five shipped Foreman Line parcels (W0-P1, PCC-P0, W0-P3, W0-P4, SEC-1) and ratified by Clint. This is the generalized charter for the role the carryover docs call "the Coordinator (D4)." The parcel-mechanics half of the pattern is documented in `plugins/foreman-line/skills/parcel-driven-development/`; this charter adds the pieces that methodology never formalized: the upstream ideation stage, the plan-level review, the human-gate model, and the long-running loop that holds it all together. Entry point: the `/goal` skill (`plugins/foreman-line/skills/goal/`).\'',
+        value:
+          'Extracted 2026-07-15 from five shipped Foreman Line parcels (W0-P1, PCC-P0, W0-P3, W0-P4, SEC-1) and ratified by Clint. This is the generalized charter for the role the carryover docs call "the Coordinator (D4)." The parcel-mechanics half of the pattern is documented in `plugins/foreman-line/skills/parcel-driven-development/`; this charter adds the pieces that methodology never formalized: the upstream ideation stage, the plan-level review, the human-gate model, and the long-running loop that holds it all together. Entry point: the `/goal` skill (`plugins/foreman-line/skills/goal/`).',
+      },
+      {
+        declaration: 'R34_ITEM_MIGRATIONS',
+        slot: '[684].prior.normalizedExcerpt',
+        start: 509665,
+        end: 510539,
+        raw: '\'Three dispatch mechanics rules, all earned: every dispatch - including rework - opens with a Step 0 restate-and-stop gate; the branch/worktree is named in the directive, never ambient; and rework directives mandate "every X," never "the listed X" - the findings are a floor, not a ceiling, and no role is exempt from the sweep, including the coordinator (lesson #16). Every builder/reviewer kickstarter includes the standing constraints by reference (`plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`). For architecture/risk parcels, run **two independent adversarial reviews** (lesson #12: two frontier reviews of W0-P4 agreed on every focus question and only one found the blocker). Where reviews disagree, the coordinator reproduces the disputed finding before triaging - the reproduction is the tie-breaker at triage and the closure proof at acceptance.\'',
+        value:
+          'Three dispatch mechanics rules, all earned: every dispatch - including rework - opens with a Step 0 restate-and-stop gate; the branch/worktree is named in the directive, never ambient; and rework directives mandate "every X," never "the listed X" - the findings are a floor, not a ceiling, and no role is exempt from the sweep, including the coordinator (lesson #16). Every builder/reviewer kickstarter includes the standing constraints by reference (`plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`). For architecture/risk parcels, run **two independent adversarial reviews** (lesson #12: two frontier reviews of W0-P4 agreed on every focus question and only one found the blocker). Where reviews disagree, the coordinator reproduces the disputed finding before triaging - the reproduction is the tie-breaker at triage and the closure proof at acceptance.',
+      },
+      {
+        declaration: 'R34_ITEM_MIGRATIONS',
+        slot: '[684].current.normalizedExcerpt',
+        start: 511084,
+        end: 512098,
+        raw: '\'Three dispatch mechanics rules, all earned: every dispatch - including rework - opens with a Step 0 scope check; under OM-PAN-001 an exact admitted match proceeds on coordinator validation without a human prompt, and outside it the restate-and-stop gate remains; the branch/worktree is named in the directive, never ambient; and rework directives mandate "every X," never "the listed X" - the findings are a floor, not a ceiling, and no role is exempt from the sweep, including the coordinator (lesson #16). Every builder/reviewer kickstarter includes the standing constraints by reference (`plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`). For architecture/risk parcels, run **two independent adversarial reviews** (lesson #12: two frontier reviews of W0-P4 agreed on every focus question and only one found the blocker). Where reviews disagree, the coordinator reproduces the disputed finding before triaging - the reproduction is the tie-breaker at triage and the closure proof at acceptance.\'',
+        value:
+          'Three dispatch mechanics rules, all earned: every dispatch - including rework - opens with a Step 0 scope check; under OM-PAN-001 an exact admitted match proceeds on coordinator validation without a human prompt, and outside it the restate-and-stop gate remains; the branch/worktree is named in the directive, never ambient; and rework directives mandate "every X," never "the listed X" - the findings are a floor, not a ceiling, and no role is exempt from the sweep, including the coordinator (lesson #16). Every builder/reviewer kickstarter includes the standing constraints by reference (`plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`). For architecture/risk parcels, run **two independent adversarial reviews** (lesson #12: two frontier reviews of W0-P4 agreed on every focus question and only one found the blocker). Where reviews disagree, the coordinator reproduces the disputed finding before triaging - the reproduction is the tie-breaker at triage and the closure proof at acceptance.',
+      },
+      {
+        declaration: 'R34_RULE_MIGRATIONS',
+        slot: '[265].prior.normalizedStatement',
+        start: 1231857,
+        end: 1232151,
+        raw: "'- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, human-approved (not agent-inferred). Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md` §6.'",
+        value:
+          '- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, human-approved (not agent-inferred). Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md` §6.',
+      },
+      {
+        declaration: 'R34_RULE_MIGRATIONS',
+        slot: '[265].current.normalizedStatement',
+        start: 1234516,
+        end: 1234810,
+        raw: "'- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, human-approved (not agent-inferred). Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md` §6.'",
+        value:
+          '- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, human-approved (not agent-inferred). Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md` §6.',
+      },
+      {
+        declaration: 'R34_RULE_MIGRATIONS',
+        slot: '[315].prior.normalizedStatement',
+        start: 1282687,
+        end: 1283561,
+        raw: '\'Three dispatch mechanics rules, all earned: every dispatch - including rework - opens with a Step 0 restate-and-stop gate; the branch/worktree is named in the directive, never ambient; and rework directives mandate "every X," never "the listed X" - the findings are a floor, not a ceiling, and no role is exempt from the sweep, including the coordinator (lesson #16). Every builder/reviewer kickstarter includes the standing constraints by reference (`plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`). For architecture/risk parcels, run **two independent adversarial reviews** (lesson #12: two frontier reviews of W0-P4 agreed on every focus question and only one found the blocker). Where reviews disagree, the coordinator reproduces the disputed finding before triaging - the reproduction is the tie-breaker at triage and the closure proof at acceptance.\'',
+        value:
+          'Three dispatch mechanics rules, all earned: every dispatch - including rework - opens with a Step 0 restate-and-stop gate; the branch/worktree is named in the directive, never ambient; and rework directives mandate "every X," never "the listed X" - the findings are a floor, not a ceiling, and no role is exempt from the sweep, including the coordinator (lesson #16). Every builder/reviewer kickstarter includes the standing constraints by reference (`plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`). For architecture/risk parcels, run **two independent adversarial reviews** (lesson #12: two frontier reviews of W0-P4 agreed on every focus question and only one found the blocker). Where reviews disagree, the coordinator reproduces the disputed finding before triaging - the reproduction is the tie-breaker at triage and the closure proof at acceptance.',
+      },
+      {
+        declaration: 'R34_RULE_MIGRATIONS',
+        slot: '[315].current.normalizedStatement',
+        start: 1285232,
+        end: 1286106,
+        raw: '\'Three dispatch mechanics rules, all earned: every dispatch - including rework - opens with a Step 0 restate-and-stop gate; the branch/worktree is named in the directive, never ambient; and rework directives mandate "every X," never "the listed X" - the findings are a floor, not a ceiling, and no role is exempt from the sweep, including the coordinator (lesson #16). Every builder/reviewer kickstarter includes the standing constraints by reference (`plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`). For architecture/risk parcels, run **two independent adversarial reviews** (lesson #12: two frontier reviews of W0-P4 agreed on every focus question and only one found the blocker). Where reviews disagree, the coordinator reproduces the disputed finding before triaging - the reproduction is the tie-breaker at triage and the closure proof at acceptance.\'',
+        value:
+          'Three dispatch mechanics rules, all earned: every dispatch - including rework - opens with a Step 0 restate-and-stop gate; the branch/worktree is named in the directive, never ambient; and rework directives mandate "every X," never "the listed X" - the findings are a floor, not a ceiling, and no role is exempt from the sweep, including the coordinator (lesson #16). Every builder/reviewer kickstarter includes the standing constraints by reference (`plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`). For architecture/risk parcels, run **two independent adversarial reviews** (lesson #12: two frontier reviews of W0-P4 agreed on every focus question and only one found the blocker). Where reviews disagree, the coordinator reproduces the disputed finding before triaging - the reproduction is the tie-breaker at triage and the closure proof at acceptance.',
+      },
+      {
+        declaration: 'R34_RULE_MIGRATIONS',
+        slot: '[557].current.normalizedStatement',
+        start: 1459903,
+        end: 1460303,
+        raw: "'- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, approved under the applicable authority: OM-PAN-001 uses its ratified rubric and independent review floor; other goals require human approval. Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md` §6.'",
+        value:
+          '- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, approved under the applicable authority: OM-PAN-001 uses its ratified rubric and independent review floor; other goals require human approval. Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md` §6.',
+      },
+      {
+        declaration: 'R34_RULE_MIGRATIONS',
+        slot: '[564].current.normalizedStatement',
+        start: 1476333,
+        end: 1476925,
+        raw: '\'Extracted 2026-07-15 from five shipped Foreman Line parcels (W0-P1, PCC-P0, W0-P3, W0-P4, SEC-1) and ratified by Clint. This is the generalized charter for the role the carryover docs call "the Coordinator (D4)." The parcel-mechanics half of the pattern is documented in `plugins/foreman-line/skills/parcel-driven-development/`; this charter adds the pieces that methodology never formalized: the upstream ideation stage, the plan-level review, the human-gate model, and the long-running loop that holds it all together. Entry point: the `/goal` skill (`plugins/foreman-line/skills/goal/`).\'',
+        value:
+          'Extracted 2026-07-15 from five shipped Foreman Line parcels (W0-P1, PCC-P0, W0-P3, W0-P4, SEC-1) and ratified by Clint. This is the generalized charter for the role the carryover docs call "the Coordinator (D4)." The parcel-mechanics half of the pattern is documented in `plugins/foreman-line/skills/parcel-driven-development/`; this charter adds the pieces that methodology never formalized: the upstream ideation stage, the plan-level review, the human-gate model, and the long-running loop that holds it all together. Entry point: the `/goal` skill (`plugins/foreman-line/skills/goal/`).',
+      },
+      {
+        declaration: 'R34_RULE_MIGRATIONS',
+        slot: '[569].current.normalizedStatement',
+        start: 1487658,
+        end: 1488672,
+        raw: '\'Three dispatch mechanics rules, all earned: every dispatch - including rework - opens with a Step 0 scope check; under OM-PAN-001 an exact admitted match proceeds on coordinator validation without a human prompt, and outside it the restate-and-stop gate remains; the branch/worktree is named in the directive, never ambient; and rework directives mandate "every X," never "the listed X" - the findings are a floor, not a ceiling, and no role is exempt from the sweep, including the coordinator (lesson #16). Every builder/reviewer kickstarter includes the standing constraints by reference (`plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`). For architecture/risk parcels, run **two independent adversarial reviews** (lesson #12: two frontier reviews of W0-P4 agreed on every focus question and only one found the blocker). Where reviews disagree, the coordinator reproduces the disputed finding before triaging - the reproduction is the tie-breaker at triage and the closure proof at acceptance.\'',
+        value:
+          'Three dispatch mechanics rules, all earned: every dispatch - including rework - opens with a Step 0 scope check; under OM-PAN-001 an exact admitted match proceeds on coordinator validation without a human prompt, and outside it the restate-and-stop gate remains; the branch/worktree is named in the directive, never ambient; and rework directives mandate "every X," never "the listed X" - the findings are a floor, not a ceiling, and no role is exempt from the sweep, including the coordinator (lesson #16). Every builder/reviewer kickstarter includes the standing constraints by reference (`plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`). For architecture/risk parcels, run **two independent adversarial reviews** (lesson #12: two frontier reviews of W0-P4 agreed on every focus question and only one found the blocker). Where reviews disagree, the coordinator reproduces the disputed finding before triaging - the reproduction is the tie-breaker at triage and the closure proof at acceptance.',
+      },
+    ]
+    const replaceLeaf = (leaf: (typeof r34Leaves)[number], replacement: string) => {
+      assert.equal(r34Source.slice(leaf.start, leaf.end), leaf.raw)
+      return r34Source.slice(0, leaf.start) + replacement + r34Source.slice(leaf.end)
+    }
+    const rejectR34 = async (
+      name: string,
+      content: string,
+      reason: RegExp = /D028 R34 DATA|\[class 3\]/,
+    ) => {
+      await t.test('D028 R34 ' + name, () => {
+        assert.notEqual(content, r34Source)
+        writeFileSync(r34Path, content)
+        try {
+          const result = run()
+          assert.equal(result.status, 1, result.output)
+          assert.match(result.output, reason)
+        } finally {
+          writeFileSync(r34Path, r34Source)
+        }
+      })
+    }
+    for (const leaf of r34Leaves) {
+      const name = leaf.declaration + leaf.slot,
+        property = leaf.slot.slice(leaf.slot.lastIndexOf('.') + 1)
+      await rejectR34(name + ' missing exact leaf', replaceLeaf(leaf, 'null'))
+      await rejectR34(
+        name + ' changed full value',
+        replaceLeaf(leaf, JSON.stringify(leaf.value + ' altered')),
+      )
+      await rejectR34(
+        name + ' duplicate exact property',
+        replaceLeaf(leaf, leaf.raw + ', ' + property + ': ' + leaf.raw),
+      )
+    }
+    for (const declaration of [...new Set(r34Leaves.map((leaf) => leaf.declaration))]) {
+      const leaf = r34Leaves.find((leaf) => leaf.declaration === declaration)
+      assert.ok(leaf)
+      const declarationStart = r34Source.indexOf('export const ' + declaration)
+      const initializer = r34Source.indexOf(' = [', declarationStart)
+      assert.ok(declarationStart >= 0 && initializer > declarationStart)
+      await rejectR34(
+        declaration + ' executable leaf',
+        replaceLeaf(leaf, 'identity(' + leaf.raw + ')'),
+      )
+      await rejectR34(
+        declaration + ' sibling executable use',
+        r34Source + '\nresolve(' + leaf.raw + ')\n',
+        /\[class 3\]/,
+      )
+      await rejectR34(
+        declaration + ' shadow binding',
+        r34Source + '\nfunction shadow() { const ' + declaration + ' = [] }\n',
+      )
+      await rejectR34(
+        declaration + ' indirect initializer',
+        r34Source.slice(0, initializer) +
+          ' = identity([' +
+          r34Source.slice(initializer + 4).replace('\n]\n', '\n])\n'),
+      )
+      await rejectR34(
+        declaration + ' moved owner',
+        r34Source.slice(0, declarationStart) +
+          r34Source
+            .slice(declarationStart)
+            .replace('export const ' + declaration, 'const other' + declaration),
+      )
+    }
+    await t.test('D028 R34 missing exact file refuses', () => {
+      rmSync(r34Path)
+      try {
+        const result = run()
+        assert.equal(result.status, 1, result.output)
+        assert.match(result.output, /D028 R34 DATA: required exact file is absent/)
+      } finally {
+        writeFileSync(r34Path, r34Source)
+      }
+    })
+    const validatorPath = join(root, 'authority-registry/src/validate.ts')
+    const validatorSource = readFileSync(validatorPath, 'utf8')
+    const gitCall =
+      "runGitText(root, [\n        'cat-file',\n        'blob',\n        `${R34_PRIOR_REGISTRY_COMMIT}:plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml`,\n      ])"
+    assert.ok(validatorSource.includes(gitCall))
+    const replaceValidator = async (name: string, content: string, reason: RegExp) => {
+      await t.test('D028 mechanism ' + name, () => {
+        assert.notEqual(content, validatorSource)
+        writeFileSync(validatorPath, content)
+        try {
+          const result = run()
+          assert.equal(result.status, 1, result.output)
+          assert.match(result.output, reason)
+        } finally {
+          writeFileSync(validatorPath, validatorSource)
+        }
+      })
+    }
+    await replaceValidator(
+      'Git argument change',
+      validatorSource.replace(gitCall, gitCall.replace("'blob'", "'tree'")),
+      /D028 R34 Git pathspec|\[class 3\]/,
+    )
+    await replaceValidator(
+      'Git call duplicate',
+      validatorSource.replace(gitCall, gitCall + ', ' + gitCall),
+      /D028 R34 Git pathspec|\[class 3\]/,
+    )
+    await replaceValidator(
+      'Git pathspec missing',
+      validatorSource.replace(gitCall, "'missing'"),
+      /D028 R34 Git pathspec/,
+    )
+    await replaceValidator(
+      'Git predecessor shadow',
+      validatorSource + '\nfunction shadowCommit() { const R34_PRIOR_REGISTRY_COMMIT = "fake" }\n',
+      /D028 R34 Git pathspec|\[class 3\]/,
+    )
+    await replaceValidator(
+      'Git moved owner',
+      validatorSource.replace(
+        'function r34RepositoryCorrespondenceViolations(',
+        'function otherRepositoryCorrespondence(',
+      ),
+      /D028 R34 Git pathspec|\[class 3\]/,
+    )
+    await replaceValidator(
+      'Git sibling call',
+      validatorSource + '\nfunction unrelated(root: string) { return ' + gitCall + ' }\n',
+      /\[class 3\]/,
+    )
+    await replaceValidator(
+      'Git reader shadow',
+      validatorSource.replace(
+        gitCall,
+        '(function() { const runGitText = fake; return ' + gitCall + ' })()',
+      ),
+      /D028 R34 Git pathspec|\[class 3\]/,
+    )
+    const rootCall = 'const root = resolve(repoRoot)'
+    const sweepStart = validatorSource.indexOf('function sweepRegistrySubject(')
+    const rootStart = validatorSource.indexOf(rootCall, sweepStart)
+    assert.ok(sweepStart >= 0 && rootStart > sweepStart)
+    const changeRoot = (replacement: string) =>
+      validatorSource.slice(0, rootStart) +
+      replacement +
+      validatorSource.slice(rootStart + rootCall.length)
+    await replaceValidator(
+      'root argument change',
+      changeRoot('const root = resolve(otherRoot)'),
+      /class-5|\[class 5\]/,
+    )
+    await replaceValidator(
+      'root duplicate',
+      changeRoot(rootCall + '\n const anotherRoot = resolve(repoRoot)'),
+      /class-5|\[class 5\]/,
+    )
+    await replaceValidator('root missing', changeRoot('const root = repoRoot'), /class-5/)
+    await replaceValidator(
+      'root shadow',
+      changeRoot('const repoRoot = "fake"\n' + rootCall),
+      /class-5|\[class 5\]/,
+    )
+    await replaceValidator(
+      'root moved owner',
+      validatorSource.replace('function sweepRegistrySubject(', 'function otherSweepSubject('),
+      /class-5|\[class 5\]/,
+    )
+    await replaceValidator(
+      'root sibling normalization',
+      validatorSource + '\nfunction siblingRoot(repoRoot: string) { return resolve(repoRoot) }\n',
+      /class-5|\[class 5\]/,
+    )
+    await replaceValidator(
+      'root defaulted input',
+      validatorSource.slice(0, sweepStart) +
+        validatorSource.slice(sweepStart).replace('repoRoot: string,', 'repoRoot: string = ".",'),
+      /class-5|\[class 5\]/,
+    )
+    await t.test('D028 restored 49 data leaves and both mechanisms pass', () => {
+      assert.equal(readFileSync(r34Path, 'utf8'), r34Source)
+      assert.equal(readFileSync(validatorPath, 'utf8'), validatorSource)
+      const result = run()
+      assert.equal(result.status, 0, result.output)
+      for (const leaf of r34Leaves)
+        assert.ok(
+          result.output.includes(
+            'D028 R34 DATA: ' + leaf.declaration + leaf.slot + '; expected=1; observed=1',
+          ),
+          result.output,
+        )
     })
   } finally {
     measure()

@@ -371,3 +371,72 @@ test('R34 current sweep retains benign wrapping/comments and rejects copied hist
     rmSync(root, { recursive: true, force: true })
   }
 })
+
+for (const disposition of ['changed', 'new'] as const)
+  test('R34 current mapped ' + disposition + ' duplicate preserves RULE_DUPLICATE', () => {
+    const row = R34_RULE_MIGRATIONS.find((entry) => entry.disposition === disposition)
+    assert.ok(row)
+    const document = clone(),
+      rule = document.rules.find((entry) => entry.ruleId === row.ruleId)
+    assert.ok(rule)
+    document.rules.push(structuredClone(rule))
+    const result = validateRegistry(document)
+    assert.equal(result.valid, false)
+    assert.ok(
+      result.violations.some(
+        (entry) => entry.code === 'RULE_DUPLICATE' && entry.ruleId === row.ruleId,
+      ),
+    )
+    assert.ok(result.violations.some((entry) => entry.code === 'MIGRATION_EVIDENCE_INVALID'))
+  })
+
+test('R34 invocation-local Git reads observe replacement and restoration at the same root', () => {
+  const root = mkdtempSync(join(tmpdir(), 'r34-fresh-objects-'))
+  const localGit = (args: string[], input?: string) =>
+    execFileSync('git', args, {
+      cwd: root,
+      input,
+      encoding: 'utf8',
+      maxBuffer: 64 * 1024 * 1024,
+    }).trim()
+  try {
+    execFileSync('git', ['clone', '--quiet', '--no-checkout', '--shared', repoRoot, root], {
+      stdio: 'ignore',
+    })
+    assert.equal(validateRegistry(current, { repoRoot: root }).valid, true)
+    const source = R34_SOURCE_MIGRATIONS.find((entry) => entry.disposition === 'changed')
+    assert.ok(source)
+    const original = localGit([
+      'rev-parse',
+      source.current.snapshotEvidence.commit + ':' + source.current.path,
+    ])
+    const replacement = localGit(
+      ['hash-object', '-w', '--stdin'],
+      'Changed committed source subject\n',
+    )
+    localGit(['replace', original, replacement])
+    try {
+      const refused = validateRegistry(current, { repoRoot: root })
+      assert.equal(refused.valid, false)
+      assert.ok(
+        refused.violations.some(
+          (entry) =>
+            entry.code === 'MIGRATION_EVIDENCE_INVALID' &&
+            entry.message.includes('whole-file subject changed'),
+        ),
+      )
+    } finally {
+      localGit(['replace', '-d', original])
+    }
+    assert.equal(validateRegistry(current, { repoRoot: root }).valid, true)
+    const changed = clone()
+    const rule = changed.rules[0]
+    assert.ok(rule)
+    rule.normalizedStatement += ' changed between invocations'
+    rule.bindingDigest = bindingDigestFor(rule)
+    assert.equal(validateRegistry(changed, { repoRoot: root }).valid, false)
+    assert.equal(validateRegistry(current, { repoRoot: root }).valid, true)
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})

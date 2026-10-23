@@ -17,12 +17,20 @@ import { test as nodeTest } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { parse } from 'yaml'
 import { markdownIdentityProjectionForTesting } from '../src/generate.js'
+import { R34_ITEM_MIGRATIONS, R34_PRIOR_REGISTRY_COMMIT } from '../src/r34-migrations.js'
 import {
   R12_LEGACY_MARKDOWN_RULE_TARGETS,
   R24_VOLATILE_BASELINE_EXCLUSIONS,
 } from '../src/registry.js'
 import type { AuthorityEnforcementRegistry } from '../src/types.js'
-import { canonicalJson, sha256, sweepRegistrySources, validateRegistry } from '../src/validate.js'
+import {
+  canonicalJson,
+  normalizeRuleText,
+  sha256,
+  sweepHistoricalR33Sources,
+  sweepRegistrySources,
+  validateRegistry,
+} from '../src/validate.js'
 import { ok } from './support/assert-ok.js'
 
 /**
@@ -1727,17 +1735,46 @@ test('R13 actual compound coordinator value mutation preserves all six rule iden
   assert.notEqual(after.valueDigest, before.valueDigest)
 })
 
+const historicalR33 = parse(
+  execFileSync(
+    'git',
+    [
+      'show',
+      R34_PRIOR_REGISTRY_COMMIT +
+        ':plugins/foreman-line/authority-registry/authority-enforcement-registry.yaml',
+    ],
+    { cwd: repoRoot, maxBuffer: 16 * 1024 * 1024 },
+  ).toString(),
+) as AuthorityEnforcementRegistry
+function copyHistoricalR33Corpus(tempRoot: string): void {
+  execFileSync('git', ['clone', '--quiet', '--no-checkout', '--shared', repoRoot, tempRoot], {
+    stdio: 'ignore',
+  })
+  for (const source of historicalR33.sources) {
+    const destination = join(tempRoot, source.path)
+    mkdirSync(dirname(destination), { recursive: true })
+    writeFileSync(
+      destination,
+      execFileSync(
+        'git',
+        ['cat-file', 'blob', source.snapshotEvidence.commit + ':' + source.path],
+        { cwd: repoRoot, maxBuffer: 16 * 1024 * 1024 },
+      ),
+    )
+  }
+}
+
 function duplicateCoordinatorGate2Result() {
   const tempRoot = mkdtempSync(join(tmpdir(), 'fk-p0-r13-duplicate-gate2-'))
   try {
-    copyCorpus(tempRoot)
+    copyHistoricalR33Corpus(tempRoot)
     const path = join(tempRoot, 'plugins/foreman-line/docs/COORDINATOR-PATTERN.md')
     const content = readFileSync(path, 'utf8')
     const row =
       "| 2    | Dispatch approval (parcel-set + kickstarter) | Yes - standing authorization scoped to the charter's named parcels, granted at ratification or later                                |"
     ok(content.includes(row))
     writeFileSync(path, content.replace(row, `${row}\n${row}`))
-    return sweepRegistrySources(registry, tempRoot)
+    return sweepHistoricalR33Sources(historicalR33, tempRoot)
   } finally {
     rmSync(tempRoot, { recursive: true, force: true })
   }
@@ -1824,7 +1861,9 @@ for (const baseline of [
   },
 ] as const) {
   test(`R10 baseline block custody: ${baseline.name}`, () => {
-    const source = registry.sources.find((candidate) => candidate.sourceId === baseline.sourceId)
+    const source = historicalR33.sources.find(
+      (candidate) => candidate.sourceId === baseline.sourceId,
+    )
     ok(source)
     ok(
       source.inventoryItems.some(
@@ -2674,3 +2713,51 @@ test('R31 current fourteen-rule coverage still refuses an unreviewed fifteenth s
     rmSync(root, { recursive: true, force: true })
   }
 })
+
+test('R34 current exact Gate2 duplicate retains deterministic structural refusal', () => {
+  const tempRoot = mkdtempSync(join(tmpdir(), 'r34-current-gate2-'))
+  try {
+    copyCorpus(tempRoot)
+    const target = join(tempRoot, 'plugins/foreman-line/docs/COORDINATOR-PATTERN.md')
+    const content = readFileSync(target, 'utf8')
+    const row =
+      "| 2 | Dispatch approval (parcel-set + kickstarter) | Yes - standing authorization scoped to the charter's named parcels, granted at ratification or later |"
+    assert.ok(content.includes(row))
+    writeFileSync(target, content.replace(row, row + '\n' + row))
+    const result = sweepRegistrySources(registry, tempRoot)
+    assert.equal(result.valid, false)
+    assert.ok(
+      result.violations.some(
+        (entry) =>
+          entry.code === 'SOURCE_ITEM_UNCOVERED' && entry.locator?.endsWith(':table-row:2:2'),
+      ),
+      JSON.stringify(result.violations),
+    )
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true })
+  }
+})
+for (const [sourceId, fragment] of [
+  ['goal-skill', 'No file can create its own authority.'],
+  ['goal-skill', 'If the ownership block names another live coordinator, STOP and report'],
+  [
+    'coordinator-pattern',
+    'OM-PAN-001 evidence failures hold dependent actions with bounded recovery and independent work continuing',
+  ],
+  ['coordinator-pattern', 'Outside that scoped policy, universal stop conditions:'],
+] as const)
+  test('R34 current exact custody and stop correspondence: ' + fragment, () => {
+    const source = registry.sources.find((entry) => entry.sourceId === sourceId)
+    assert.ok(source)
+    const item = source.inventoryItems.find((entry) => entry.normalizedExcerpt.includes(fragment))
+    assert.ok(item)
+    const mapping = R34_ITEM_MIGRATIONS.find(
+      (entry) => entry.sourceId === sourceId && entry.itemId === item.itemId,
+    )
+    assert.ok(mapping)
+    assert.equal(
+      mapping.currentLocatorDigest,
+      sha256(canonicalJson({ kind: item.locator.kind, anchor: item.locator.anchor })),
+    )
+    assert.equal(item.valueDigest, sha256(normalizeRuleText(item.normalizedExcerpt)))
+  })
