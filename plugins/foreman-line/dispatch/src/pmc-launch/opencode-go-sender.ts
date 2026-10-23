@@ -40,13 +40,17 @@ function object(value: unknown): Record<string, unknown> | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null
   return value as Record<string, unknown>
 }
-function preparedCandidate(value: unknown): unknown {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) return value
+type PreparedCandidate = Readonly<{
+  value: unknown
+  correlation?: Readonly<{ requestDigest: string; decisionDigest: string; bodyDigest: string }>
+}>
+function preparedCandidate(value: unknown): PreparedCandidate | null {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return { value }
   try {
     const proto = Object.getPrototypeOf(value)
     if (proto !== Object.prototype && proto !== null) return null
     const keys = Reflect.ownKeys(value)
-    if (!keys.includes('ok')) return value
+    if (!keys.includes('ok')) return { value }
     if (
       keys.length !== 5 ||
       keys.some(
@@ -67,7 +71,8 @@ function preparedCandidate(value: unknown): unknown {
       !('value' in prepared)
     )
       return null
-    for (const key of ['requestDigest', 'decisionDigest', 'bodyDigest']) {
+    const correlation = { requestDigest: '', decisionDigest: '', bodyDigest: '' }
+    for (const key of ['requestDigest', 'decisionDigest', 'bodyDigest'] as const) {
       const descriptor = Object.getOwnPropertyDescriptor(value, key)
       if (
         !descriptor?.enumerable ||
@@ -75,20 +80,40 @@ function preparedCandidate(value: unknown): unknown {
         typeof descriptor.value !== 'string'
       )
         return null
+      correlation[key] = descriptor.value
     }
-    return prepared.value
+    return {
+      value: prepared.value,
+      correlation,
+    }
   } catch {
     return null
   }
 }
-function safeCount(value: unknown): number | null {
-  return typeof value === 'number' && Number.isSafeInteger(value) && value >= 0 ? value : null
+function safeCount(value: unknown, lexeme: string | undefined): number | null {
+  if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < 0 || !lexeme) return null
+  const match = /^(0|[1-9][0-9]*)(?:\.([0-9]+))?(?:[eE]([+-]?[0-9]+))?$/.exec(lexeme)
+  if (!match) return null
+  const exponent = Number(match[3] ?? '0')
+  if (!Number.isSafeInteger(exponent) || Math.abs(exponent) > 64) return null
+  const fraction = match[2] ?? ''
+  let exact = BigInt(`${match[1]}${fraction}`)
+  const shift = exponent - fraction.length
+  if (shift < 0) {
+    const divisor = 10n ** BigInt(-shift)
+    if (exact % divisor !== 0n) return null
+    exact /= divisor
+  } else if (shift > 0) exact *= 10n ** BigInt(shift)
+  if (exact > BigInt(Number.MAX_SAFE_INTEGER)) return null
+  const count = Number(exact)
+  return count === value ? count : null
 }
 function responseValue(raw: string): OpenCodeGoSendResult | null {
   try {
     if (Buffer.byteLength(raw, 'utf8') > MAX_RESPONSE_BYTES) return null
-    const parsed = parseJsonV1(raw, 'event').value
-    const root = object(parsed)
+    const parsed = parseJsonV1(raw, 'event')
+    const numbers = parsed.numbers
+    const root = object(parsed.value)
     if (!root || root.model !== MODEL || !Array.isArray(root.choices) || root.choices.length !== 1)
       return null
     const choice = object(root.choices[0])
@@ -107,16 +132,25 @@ function responseValue(raw: string): OpenCodeGoSendResult | null {
     const usageRaw = object(root.usage)
     let usage: OpenCodeGoSendResult['usage']
     if (usageRaw) {
-      const prompt = safeCount(usageRaw.prompt_tokens)
-      const completion = safeCount(usageRaw.completion_tokens)
-      const total = safeCount(usageRaw.total_tokens)
+      const prompt = safeCount(usageRaw.prompt_tokens, numbers.get('/usage/prompt_tokens'))
+      const completion = safeCount(
+        usageRaw.completion_tokens,
+        numbers.get('/usage/completion_tokens'),
+      )
+      const total = safeCount(usageRaw.total_tokens, numbers.get('/usage/total_tokens'))
       if (
         usageRaw.completion_tokens_details !== undefined &&
         !object(usageRaw.completion_tokens_details)
       )
         return null
       const reasoningRaw = object(usageRaw.completion_tokens_details)?.reasoning_tokens
-      const reasoning = reasoningRaw === undefined ? null : safeCount(reasoningRaw)
+      const reasoning =
+        reasoningRaw === undefined
+          ? null
+          : safeCount(
+              reasoningRaw,
+              numbers.get('/usage/completion_tokens_details/reasoning_tokens'),
+            )
       if (
         prompt === null ||
         completion === null ||
@@ -151,10 +185,18 @@ export function createOpenCodeGoSenderV1(options: OpenCodeGoSenderOptions): Read
       if (used) return noSend('PREPARED_REFUSED')
       used = true
       if (signal?.aborted) return noSend('ABORTED')
-      const candidate = preparedCandidate(prepared)
-      const p = inspectPreparedOpenCodeGoV1(candidate, wire)
+      const selected = preparedCandidate(prepared)
+      if (!selected) return noSend('PREPARED_REFUSED')
+      const p = inspectPreparedOpenCodeGoV1(selected.value, wire)
       // Prepared objects are bound to the factory that produced them; sender accepts an owned prepared value only.
       if (!p) return noSend('PREPARED_REFUSED')
+      if (
+        selected.correlation &&
+        (selected.correlation.requestDigest !== p.requestDigest ||
+          selected.correlation.decisionDigest !== p.decisionDigest ||
+          selected.correlation.bodyDigest !== p.bodyDigest)
+      )
+        return noSend('PREPARED_REFUSED')
       const correlation = Object.freeze({
         requestDigest: p.requestDigest,
         decisionDigest: p.decisionDigest,
