@@ -1,7 +1,7 @@
 ---
 ticket: CCM-P2C
 title: Deterministic Python declaration extraction library
-status: draft
+status: active
 owner: clinton.morgan
 created: '2026-10-23'
 updated: '2026-10-23'
@@ -172,3 +172,15 @@ no automatic frontier escalation, retry/provider hunt
 or incident transcripts. Reviews independently assess Unicode byte mapping,
 resource/error behavior, non-execution, trust boundaries and scope preservation.
 No budget, paid dispatch, receipt, Jira registration or active status is created.
+
+## Delegated Gate 2 — October 23
+
+Owner explicitly authorized private worker qualification and AST build. Controlled
+GenSpark gpt-6.1-sol/low supplied-artifact proposal only; no tools or credential
+access. Step0 accepted; fixed test-host closure PASS/PASS and complete clean
+baseline verified. Parent applies exactly the three new files on
+feat/foreman-line-ccm-p2c at the recorded base. Existing draft-era hold wording
+above is historical readiness context, superseded only for this admitted source
+proposal. Native Pi/private-shell and affected provider routes remain held.
+One implementation, at most one separately admitted formal repair, independent
+architecture/security reviews and exact-head/merged-main CI remain mandatory.
