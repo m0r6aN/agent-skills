@@ -1,0 +1,66 @@
+{
+  "atUtc": "2026-10-23T23:17:21.112112+00:00",
+  "status": "INITIAL_INCOMPLETE_MEASURED_FOR_REVIEW",
+  "sourceComplete": false,
+  "missing": [
+    "tests/test_ccm_python_runtime.py",
+    "docs/specs/ccm-python-runtime-v1.md"
+  ],
+  "providerCalls": 0,
+  "runId": "b5d283b44022",
+  "formatASTPreserved": true,
+  "coreHashes": {
+    "src/keon/cortex/pipeline/ccm_python_protocol.py": "6b68fff7c54befe77ae9f013d06bd82e45cd646443fab7bd33b37f816c35a0a1",
+    "src/keon/cortex/pipeline/ccm_python_worker.py": "7bffc8c12484021dd7885774a4c9ee016c133b159442a507b8bc4636d75968e9",
+    "src/keon/cortex/pipeline/ccm_python_runtime.py": "1819c5efa20f344aa0296afca1b685993077196af46bb49743601a9b78aabcbb"
+  },
+  "testImage": "ccm-p2r-core-check:b5d283b44022",
+  "black": {
+    "exit": 0,
+    "output": "All done! \u2728 \ud83c\udf70 \u2728\n3 files would be left unchanged.\n"
+  },
+  "isort": {
+    "exit": 0,
+    "output": ""
+  },
+  "mypy": {
+    "exit": 1,
+    "output": "src/keon/cortex/pipeline/ccm_python_protocol.py:181: error: Argument 1 to \"PythonSymbol\" has incompatible type \"str\"; expected \"Literal['class', 'function', 'async_function']\"  [arg-type]\nsrc/keon/cortex/pipeline/ccm_python_runtime.py:71: error: \"object\" has no attribute \"read\"  [attr-defined]\nsrc/keon/cortex/pipeline/ccm_python_runtime.py:98: error: \"object\" has no attribute \"close\"  [attr-defined]\nsrc/keon/cortex/pipeline/ccm_python_runtime.py:106: error: Item \"None\" of \"IO[bytes] | None\" has no attribute \"write\"  [union-attr]\nsrc/keon/cortex/pipeline/ccm_python_runtime.py:114: error: Item \"None\" of \"IO[bytes] | None\" has no attribute \"close\"  [union-attr]\nsrc/keon/cortex/pipeline/ccm_python_runtime.py:153: error: Item \"None\" of \"IO[bytes] | None\" has no attribute \"close\"  [union-attr]\nsrc/keon/cortex/pipeline/ccm_python_worker.py:90: error: \"object\" has no attribute \"read\"  [attr-defined]\nFound 7 errors in 3 files (checked 3 source files)\n"
+  },
+  "protocolVectors": {
+    "exit": 0,
+    "output": "{\"status\": \"PASS_SMALL_INDEPENDENT_PROTOCOL_VECTORS\", \"checks\": 8}\n"
+  },
+  "productionBuildExit": 0,
+  "productionImageId": "sha256:3e79c470b494c324da663adb396cdf348e7fcde8f7ff6ceb3717c97cecf6818f",
+  "productionImageEnvKeys": [
+    "PATH",
+    "GPG_KEY",
+    "PYTHON_VERSION",
+    "PYTHON_SHA256"
+  ],
+  "productionImageLabels": {
+    "keon.ccm.library-sha256": "aa4d7d79058a4d4e364ab02519d5e97b3dc8d8ab5074872c61fdb7be1b31f9c3",
+    "keon.ccm.profile": "python-v1"
+  },
+  "failureClass": "NameError",
+  "allOwnedTestContainersAbsent": true,
+  "completedAtUtc": "2026-10-23T23:18:57.232388+00:00",
+  "actualSmokeExit": 0,
+  "actualSmoke": {
+    "status": "FAIL_CLOSED_ACTUAL_ADAPTER_SMOKE",
+    "code": "runtime_unavailable",
+    "argsEmpty": true,
+    "contextAbsent": true,
+    "seconds": 0.37,
+    "pending_cleanup": []
+  },
+  "probeOwnedContainerAbsent": true,
+  "absenceProbe": {
+    "CLIExit": 1,
+    "stdoutIsEmptyJsonArray": true,
+    "stderrIdentifiesMissingContainer": true,
+    "runtimePredicateRequiresEmptyStdout": true
+  },
+  "parentSmokeHarnessFix": "Added missing sys import in independent resume, not a product repair; no checks rerun"
+}

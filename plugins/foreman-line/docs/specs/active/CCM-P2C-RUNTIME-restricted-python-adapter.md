@@ -80,11 +80,17 @@ Existing 120credit uncertain request and all affected routes remain held.
   --log-driver=none. No service port or daemon. Verify actual created container
   config before starting; the worker verifies actual cgroup memory/swap/pids/CPU,
   nonroot identity, root/tmp mount properties and sets RLIMIT_AS96MiB,
-  RLIMIT_NPROC0, CORE0, FSIZE1MiB. If any required evidence is absent, fail closed.
+  RLIMIT_NPROC0, CORE0, FSIZE1MiB and kernel RLIMIT_CPU2seconds (soft=hard).
+  If any required evidence is absent, fail closed.
   Existing fixed synthetic mechanism reviews are precedent, not acceptance of
   this implementation. Source does not execute, import, acquire or spawn code.
-- Worker sets a Linux5second wall alarm that exits without diagnostics, in
-  addition to parent deadlines. One strict request then EOF; no persistent
+- Worker sets a Linux5second Python wall alarm that exits without diagnostics,
+  supplementary to parent deadlines and the kernel2CPU-second bound. Python
+  handlers can defer during native calculations, and SIG_DFL is not a kill
+  guarantee for namespacePID1. The parent's Docker deadline is the operational
+  wall boundary; daemon/OS failure can leave cleanup unproved and must never
+  yield success. Do not claim a hard realtime independent child-wall guarantee.
+  One strict request then EOF; no persistent
   session. Invoke the accepted pure function only after frame validation.
   Worker stderr stays empty on all paths; library/error handler never writes
   source/names/tracebacks. Unexpected failures become one closed failure frame
@@ -211,6 +217,37 @@ These decisions are frozen before source GO, under existing owner design authori
   configuration and metadata are distinct from untrusted source/request data.
 - Pending worktree/base/image/advisory evidence belongs to parent verification;
   the tools-free worker must not invent having run checks or qualified a host.
+
+### Pre-repair composition disposition
+
+Initial two independent fresh Sol reviews both require changes. One formal
+repair covers every measured defect plus the two missing artifacts; it is not
+a replay of the failed sourceC request. Keep that full150hold, original120hold
+and all other uncertain holds. Same-model-family review limitation is explicit;
+these are frontier parcel reviews, not a multi-family council.
+
+Use threadless nonblocking pipe I/O (os.set_blocking/os.read/os.write with
+bufsize0), reserving at least0.25seconds of each command deadline for closing
+all streams, killing if needed and reaping the exact CLI. No reader/writer
+daemon threads or unstarted-thread joins. Windows client requires Python>=3.12;
+current3.13.7 actual empty-pipe/nonblocking write/read probe passes. Linux source
+compatibility remains3.10; unsupported Windows versions fail closed. No new
+dependency, native Job Object or external launcher is authorized.
+
+Recognize genuinely empty stdout OR exact bounded whitespace-wrapped[] for a
+nonzero missing-container inspect. Missing classification requires exactly one
+whitelisted Docker diagnostic line containing the exact queried target; mixed,
+daemon, permission, extra-line or malformed diagnostics never prove absence.
+Control-plane transport failure after create maps isolation_failure; attached
+worker wire failure maps invalid_response; cleanup failure overrides both.
+
+The fixed alarm probe observed a0.1second Python callback only after0.502seconds
+of native work; SIG_DFL at namespacePID1 did not terminate it. Retain the Python
+alarm and exit124 contract, add verified kernelCPU2seconds, and document actual
+wall/cleanup semantics. This tightens native CPU use without increasing any
+selected limit or authorizing forks. Official references: Python3.13 signal
+execution/os.set_blocking and Docker attach PID1 behavior. Actual fixed probe
+evidence is p2c-runtime-alarm-probe-20261023.json; no source program executed.
 
 1. All six new files implement this exact trusted-operator/source-caller boundary,
    wire contract, runtime profile, errors and atomic no-result-on-failure rules.

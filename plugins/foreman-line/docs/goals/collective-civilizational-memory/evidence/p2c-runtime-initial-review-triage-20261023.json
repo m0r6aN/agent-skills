@@ -1,0 +1,164 @@
+{
+  "atUtc": "2026-10-23T23:30:35.222013+00:00",
+  "reviewFindings": {
+    "architecture": {
+      "verdict": "CHANGES_REQUIRED",
+      "findings": [
+        {
+          "id": "F1",
+          "severity": "high",
+          "locator": "ccm_python_runtime.py:DockerPythonParser._inspect",
+          "trigger": "A genuine missing-container inspect returns nonzero status, a recognized missing diagnostic, and stdout containing [] rather than empty bytes, as reported in the supplied absence probe.",
+          "impact": "The random-name precheck rejects ordinary absence as runtime_unavailable. The same predicate prevents cleanup from proving absence after removal, potentially overriding any parse result with isolation_failure. This explains a concrete blocking path consistent with the supplied failed-closed smoke.",
+          "remediation": "Recognize the bounded, exact empty-array missing-object response alongside genuinely empty stdout, only with the appropriate nonzero status and unambiguous missing-object diagnostic. Continue rejecting daemon, permission, malformed-output and mixed-error cases. Exercise both precheck and post-removal proof.",
+          "confidence": "high"
+        },
+        {
+          "id": "F2",
+          "severity": "high",
+          "locator": "ccm_python_runtime.py:_process",
+          "trigger": "A deadline or transport failure leaves a reader/writer alive after killing the CLI; alternatively, thread.start fails after the thread was appended.",
+          "impact": "Live-thread paths deliberately skip closing all subprocess streams and can return while daemon threads retain source/reply buffers and pipe handles. Joining an unstarted thread can itself raise before remaining cleanup. Thus bounded buffering does not establish the required complete pipe closure, thread termination and process-reaping contract.",
+          "remediation": "Track successfully started threads separately and make transport teardown exception-safe. Use a platform-safe cancellation/pipe-closure strategy with teardown time reserved before the deadline; establish completed writer/readers, closed handles and reaped CLI before reporting transport completion. Add deterministic partial-start, blocked-pipe and kill/wait-failure tests.",
+          "confidence": "high"
+        },
+        {
+          "id": "F3",
+          "severity": "medium",
+          "locator": "ccm_python_runtime.py:_process and DockerPythonParser.extract exception classification",
+          "trigger": "During create or control-plane inspect, stdout/stderr overflow or reader/writer failure raises _Failure(\"invalid_response\"); extract preserves that code once attempted is true.",
+          "impact": "Uncertain Docker/control failures after create are exposed as invalid_response instead of the frozen isolation_failure classification when cleanup subsequently succeeds. Worker-response failures and control-plane failures are conflated.",
+          "remediation": "Separate control-command transport classification from attached worker-response validation. Map uncertain create/control failures to isolation_failure, preserve explicitly specified worker exit/deadline classifications, and retain cleanup failure precedence. Test overflow and broken-pipe cases at each lifecycle stage.",
+          "confidence": "high"
+        },
+        {
+          "id": "F4",
+          "severity": "high",
+          "locator": "Missing tests/test_ccm_python_runtime.py; missing docs/specs/ccm-python-runtime-v1.md; supplied mypy evidence",
+          "trigger": "Only four required new files exist, and the supplied type-check report contains seven errors.",
+          "impact": "The implementation lacks ordinary independent lifecycle, deadline, cleanup and atomic-rejection coverage and its required operational contract. Eight supplied protocol checks do not cover these boundaries. The required typing gate is demonstrably unmet.",
+          "remediation": "Complete the two missing files within the existing six-file scope; correct stream/optional-pipe typing and validated symbol-kind narrowing without weakening checks. Include valid-reply-then-timeout/nonzero/stderr/cleanup-failure rejection and the preceding defects. Obtain the pending parent-owned qualification and gate evidence after repair.",
+          "confidence": "high"
+        }
+      ],
+      "coverage": [
+        "Reviewed all supplied protocol, worker, runtime, Dockerfile and accepted-library source against the frozen workorder.",
+        "Protocol statically checks framing, duplicate keys, depth/integer limits, closed envelopes, digest, symbol types/ranges/order and frozen wrappers.",
+        "Reviewed worker profile/hash/rlimits/alarm, image/environment checks, ownership reconciliation, cleanup precedence and result rejection after failure.",
+        "Supplied evidence reports failed-closed smoke, sanitized error and no remaining owned container; no independent execution claimed."
+      ],
+      "gaps": [
+        "Ordinary/full suites, actual successful restricted execution and complete gate chain remain pending.",
+        "Exact image approval is operator responsibility; labels are not authentication.",
+        "Linux client host remains unqualified; no Windows-native process-isolation claim."
+      ]
+    },
+    "security": {
+      "verdict": "CHANGES_REQUIRED",
+      "findings": [
+        {
+          "id": "F1",
+          "severity": "high",
+          "locator": "ccm_python_runtime.py:DockerPythonParser._inspect",
+          "trigger": "A genuine missing-container inspect returns nonzero status, a missing-object diagnostic, and stdout containing an empty JSON array, as reported in the supplied absenceProbe.",
+          "impact": "The `not raw` predicate rejects this observed absence response. Initial collision checking fails with runtime_unavailable; after create, the same response prevents cleanup absence proof and forces isolation_failure even when removal succeeded.",
+          "remediation": "Recognize the observed bounded empty-array response together with the genuine missing-object diagnostic and unsuccessful status. Continue rejecting daemon, permission, malformed-output and ambiguous failures. Add independent precheck and post-removal regression cases.",
+          "confidence": "high"
+        },
+        {
+          "id": "F2",
+          "severity": "high",
+          "locator": "ccm_python_runtime.py:_process finally block",
+          "trigger": "A deadline, cancellation or I/O failure occurs while a pipe thread remains blocked after the Docker CLI is killed, for example when another process retains a pipe handle.",
+          "impact": "When any thread remains alive, the function reports isolation_failure but deliberately skips closing all streams. Daemon threads, pipe handles and writer-held request bytes can survive the call. Killing and reaping the immediate CLI does not prove transport cleanup.",
+          "remediation": "Implement platform-safe cancellable pipe shutdown with explicit handle ownership, bounded thread termination and stream closure on every path. Retain failure reporting when reaping cannot be proved; do not leave live daemon threads as the cleanup mechanism. Exercise stalled readers and writers through bounded injected transport cases.",
+          "confidence": "high"
+        },
+        {
+          "id": "F3",
+          "severity": "medium",
+          "locator": "ccm_python_runtime.py:extract exception mapping after attempted=True",
+          "trigger": "_process raises invalid_response for oversized control output, reader failure or writer failure during create or a subsequent control inspect.",
+          "impact": "The _Failure handler preserves invalid_response after create was attempted. This violates the frozen distinction between uncertain Docker/control failures, which require isolation_failure, and invalid worker replies. Successful subsequent cleanup does not correct the classification.",
+          "remediation": "Classify transport failures by lifecycle operation. Map uncertain create and control-plane failures to isolation_failure, while preserving the specified attached-worker frame, stderr, exit and deadline classifications. Test each independently.",
+          "confidence": "high"
+        },
+        {
+          "id": "F4",
+          "severity": "high",
+          "locator": "tests/test_ccm_python_runtime.py; docs/specs/ccm-python-runtime-v1.md",
+          "trigger": "Both required artifacts are absent; supplied evidence contains only eight small protocol checks and an adapter smoke that failed before worker execution.",
+          "impact": "The required hostile-wire, independent boundary, lifecycle, cancellation, cleanup and valid-reply-then-failure coverage is missing. Actual worker identity/profile enforcement and restricted end-to-end result equivalence remain unqualified.",
+          "remediation": "Complete the two allowed artifacts with ordinary credential-free injected tests and accurate operator/image/host limitations. Obtain the frozen restricted end-to-end evidence through parent verification; do not substitute mock transport results or the failed smoke for that evidence.",
+          "confidence": "high"
+        },
+        {
+          "id": "F5",
+          "severity": "medium",
+          "locator": "protocol.py:181; runtime.py:71,98,106,114,153; worker.py:90",
+          "trigger": "Supplied mypy evidence reports seven errors across all three new Python modules.",
+          "impact": "The required static acceptance gate is failing, including unrefined optional subprocess pipes and incorrectly typed stream interfaces.",
+          "remediation": "Refine pipe availability, use accurate binary stream interfaces, and narrow validated symbol kinds without weakening validation or suppressing the gate.",
+          "confidence": "high"
+        }
+      ],
+      "coverage": [
+        "Inspected all supplied core source, accepted library, Dockerfile, frozen workorder and supplied deterministic evidence; no tools executed.",
+        "Wire checks cover exact framing, duplicate keys, depth/integer bounds, closed envelopes, digest, identifiers, offsets and ordering.",
+        "Reviewed fixed argv/environment, image trust, container/cgroup/rlimit checks, ownership and cleanup.",
+        "Success is withheld until exit/stderr validation, complete response validation and cleanup proof; nonzero worker exits reject preceding replies."
+      ],
+      "gaps": [
+        "Ordinary/full suites, compatibility, head/main CI and successful restricted execution remain pending.",
+        "Selected Windows Docker Desktop composition lacks successful qualification; Linux client host is also unqualified.",
+        "Labels are configuration checks, not authentication; exact-image operator approval remains required."
+      ]
+    }
+  },
+  "dispositions": {
+    "missingInspect": "Confirmed actual CLIstdout[] precheck and postremoval needstrict recognized absence",
+    "pipeLifecycle": "Confirmed staticthreadleak/unstartedjoin paths; replace with nonblockingfdloop,closeall/reapwithinreserveddeadline",
+    "operationErrorMapping": "Confirmed controlinvalid_response leak; controlfailureaftercreateisolation_failure",
+    "typing": "Sevenactualmypyfailures, fixnochecksuppressions",
+    "missingArtifacts": "Complete tests/docs insideONEformalrepair; sourceC requestnotreplayed,new150unknownholdretained",
+    "supplementalNativeCPU": "Pythoncallbackdeferral and defaultPID1alarmbehavior measured; preserveparent5/15walltargets and addhardCPU2secs withoutforks",
+    "ordinaryCoverage": "Literalprotocol/strictmissing/partialpipes/deadline/ownership/exit/stderr/cleanupoverrides; no liveDocker in defaulttests"
+  },
+  "officialSources": [
+    "https://docs.python.org/3.13/library/signal.html#execution-of-python-signal-handlers",
+    "https://docs.python.org/3.13/library/os.html#os.set_blocking",
+    "https://docs.docker.com/reference/cli/docker/container/attach/"
+  ],
+  "nonblockingWindowsProbe": {
+    "python": "3.13.7",
+    "bothNonblocking": true,
+    "emptyReadWouldBlock": true,
+    "oneByteWriteRead": true
+  },
+  "alarmProbe": {
+    "atUtc": "2026-10-23T23:27:20.143546+00:00",
+    "status": "COMPLETED_BOUNDED_SIGNAL_MECHANISM_COMPARISON",
+    "results": [
+      {
+        "mode": "python-handler",
+        "exit": 124,
+        "stdout": "{\"armedSeconds\": 0.1, \"pid\": 1}\n{\"pythonHandlerAfterSeconds\": 0.5021009540068917}\n",
+        "stderrBytes": 0
+      },
+      {
+        "mode": "kernel-default",
+        "exit": 0,
+        "stdout": "{\"armedSeconds\": 0.1, \"pid\": 1}\nreturned\n",
+        "stderrBytes": 0
+      }
+    ],
+    "sourceExecution": false,
+    "scope": "Fixed synthetic1millioniterationC calculation under128MiB/.5CPU/parent5s, no keys or source program; actual observations, not a production SLO",
+    "officialEvidence": "https://docs.python.org/3.13/library/signal.html#execution-of-python-signal-handlers",
+    "initialHarnessFailure": "An earlier assertion assumed default signal exit142; no evidence file was saved. Corrected runner preserves observations before interpretation; no product source changed.",
+    "decision": "Retain Python wallalarm as supplementary. Add kernelCPU2secondlimit for native-code work; parentDocker5s wall/15s envelope remains operational bound with explicit daemon-failure/pending-cleanup behavior. Do not assert SIG_DFL necessarily kills namespacePID1.",
+    "allOwnedContainersAbsent": true
+  },
+  "sourceCFailure": "Unknownexactclientguard; noresponsecapture,no replay,full150held. OfflineactualSSEreaderregressionfixed8MiBcap/namedfailureevidence; output/creditcapsunchanged.",
+  "sameFamilyLimitation": "TwofreshSolreviews,notfullmultifamilycouncil"
+}
