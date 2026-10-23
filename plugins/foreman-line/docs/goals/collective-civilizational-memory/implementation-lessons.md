@@ -16,3 +16,17 @@ Freeze scanner work budgets before repair; bound candidates before allocation an
 ## P2B
 
 A small pure contract plus compact completed independent verdicts shipped with only2paidreviews/97.9reportedcredits. Independently freeze byte/codepoint/hash vectors before consumingbuilderoutput;pinallregulartrackedfiles andGitlinkrepositoryentries separately. Reconciletestidentitycountsagainstactualacceptedmerge, not an assumedtotal; acceptedPR85/PR88added2tests. Never enumerate or print the environment to debug startup. Provide parent-owned OS-only runners preserving SystemRoot, and prohibit all env dumps/credential-store inspection in delegatedroles. This is procedural protection, not a claimed hardOSsandbox. Actualcredentialexposuretotooltranscript mustbe recordedwithoutvalues; stoppingworker/sourceproofdoesnoterasehistoryorrotatekeys. Parentcontrolledverificationandunexposed source-onlyreview cancompleteartifactacceptancewhileincidentstaysopen.
+
+
+## P2C
+
+Leaving an internal exception handler does not prevent a caller ambient context
+from attaching to a new failure. Reproduce under active caller errors; sanitize
+propagated cause/context and retain regression coverage. Disposition installed
+in ccm_python and its tests, not merely narrative. Preserve HTTPstatus/requestID
+when available before diagnosing a transport failure; the lost original status
+cannot be recovered by guessing125s means524. The later local review helper
+retains these fields; no general launcher rewrite or routing release is claimed.
+A bounded local operator repair can avoid another paid full-file generation;
+authorship must be disclosed and independent source review still required.
+This was a scoped owner-authorized disposition, not a new standing role policy.

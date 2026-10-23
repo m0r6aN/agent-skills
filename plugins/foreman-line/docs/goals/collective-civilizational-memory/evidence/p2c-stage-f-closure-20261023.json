@@ -1,0 +1,62 @@
+{
+  "atUtc": "2026-10-23T22:16:52.638818+00:00",
+  "status": "ACCEPTED_MERGED_STAGE_F_CLOSED",
+  "pr": {
+    "headRefOid": "e75da8a86b563a02120a30ecedccaca310e04197",
+    "mergeCommit": {
+      "oid": "5cb07ba47f7f52dc85c228e06dc3d1bfe3ec4d04"
+    },
+    "mergedAt": "2026-10-23T22:13:44Z",
+    "state": "MERGED",
+    "url": "https://github.com/Keon-Systems/keon-cortex/pull/94"
+  },
+  "sourceHead": "e75da8a86b563a02120a30ecedccaca310e04197",
+  "mergeCommit": "5cb07ba47f7f52dc85c228e06dc3d1bfe3ec4d04",
+  "exactHeadChecks": 16,
+  "mainChecks": [
+    {
+      "conclusion": "success",
+      "headSha": "5cb07ba47f7f52dc85c228e06dc3d1bfe3ec4d04",
+      "name": "CI",
+      "status": "completed",
+      "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40032237624"
+    },
+    {
+      "conclusion": "success",
+      "headSha": "5cb07ba47f7f52dc85c228e06dc3d1bfe3ec4d04",
+      "name": "Trigger auto deployment for keon-cortex",
+      "status": "completed",
+      "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40032237623"
+    }
+  ],
+  "reviewedBlobHashesMatchMergedSource": {
+    "src/keon/cortex/pipeline/ccm_python.py": "aa4d7d79058a4d4e364ab02519d5e97b3dc8d8ab5074872c61fdb7be1b31f9c3",
+    "tests/test_ccm_python.py": "75af3fe5cb7f3b1e7f5d66d28fd7fee61048e158d0fdbe51dfdce8bda0030b9a",
+    "docs/specs/ccm-python-symbols-v1.md": "5474f5aa5986ceec4c2442413fa432d8ed05932194319724cf50583c61f7deb2"
+  },
+  "preExistingTreeEntriesRetained": 419,
+  "allowedNewPathsOnly": true,
+  "focusPass": 12,
+  "fullCounts": {
+    "pass": 2987,
+    "skipped": 137,
+    "failure": 0,
+    "error": 0
+  },
+  "baselineIdentitiesRetained": 3112,
+  "independentReviews": "Fresh Sol architecture and Opus security PASS/PASS; two low notes reproduced and triaged",
+  "operatorRepairAuthorshipDisclosed": true,
+  "formalRepairCycles": 1,
+  "subsequentSourceGenerationRequests": 0,
+  "failedRequest": "Locally terminated, upstream outcome remains unknown; full120reservation retained and original receipt byte-identical",
+  "newClosureReportedCredits": 90.2,
+  "newClosureConservativeCredits": 91.2285,
+  "futureModelRequests": 0,
+  "allAffectedRoutes": "HELD",
+  "workorderArchive": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\done\\CCM-P2C-python-declarations.md",
+  "archiveChange": "status-only; body unchanged",
+  "cleanup": "Preserve accepted source checkout/branch and private evidence; no destructive cleanup",
+  "productionAdapter": "Still unimplemented; production adapter+combined review before hostile input",
+  "fullGoalOrMassImportReady": false,
+  "next": "Other P2 capabilities (Git/civic mapping/extractor engine), later P3-P8 and actual target/producer/crypto/import/integration gates; no automatic new paid dispatch in this closed phase"
+}

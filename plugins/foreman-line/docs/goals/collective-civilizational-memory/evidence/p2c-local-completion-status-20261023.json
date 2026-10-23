@@ -1,0 +1,35 @@
+{
+  "atUtc": "2026-10-23T22:16:52.638818+00:00",
+  "status": "ACCEPTED_MERGED_STAGE_F_CLOSED",
+  "formalRepairCycles": 1,
+  "sourceGenerationCallsAfterFailure": 0,
+  "originalFailedRequest": "UPSTREAM_OUTCOME_UNKNOWN_120_RETAINED",
+  "repair": "Local deterministic operator completion of existing repair, authorship disclosed to reviewers; no new source worker or second model source attempt",
+  "checks": {
+    "focus": 12,
+    "full": {
+      "pass": 2987,
+      "skipped": 137,
+      "failure": 0,
+      "error": 0
+    },
+    "baselineIdentitiesRetained": 3112,
+    "oldTreePinsRetained": true,
+    "black": 0,
+    "isort": 0,
+    "mypy": 0
+  },
+  "independentReviews": "PASS/PASS with reproduced/triaged low notes",
+  "pr": "https://github.com/Keon-Systems/keon-cortex/pull/94",
+  "sourceHead": "e75da8a86b563a02120a30ecedccaca310e04197",
+  "reviewedHashes": {
+    "src/keon/cortex/pipeline/ccm_python.py": "aa4d7d79058a4d4e364ab02519d5e97b3dc8d8ab5074872c61fdb7be1b31f9c3",
+    "tests/test_ccm_python.py": "75af3fe5cb7f3b1e7f5d66d28fd7fee61048e158d0fdbe51dfdce8bda0030b9a",
+    "docs/specs/ccm-python-symbols-v1.md": "5474f5aa5986ceec4c2442413fa432d8ed05932194319724cf50583c61f7deb2"
+  },
+  "gate3": "COMPLETE_GREEN_EXACT_HEAD_AND_MAIN",
+  "sourceAndCredentialRoutes": "HELD",
+  "productionAdapterOrMassImportReady": false,
+  "next": "Observe actual exact-head CI; no model calls or further repair authorized in this phase. Merge only behind green chain under standing authority.",
+  "mergeCommit": "5cb07ba47f7f52dc85c228e06dc3d1bfe3ec4d04"
+}

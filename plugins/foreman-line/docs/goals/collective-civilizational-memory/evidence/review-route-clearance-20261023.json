@@ -1,0 +1,15 @@
+{
+  "atUtc": "2026-10-23T20:04:27.204283+00:00",
+  "method": "Targeted in-memory exact equality only, no values/prefixes/lengths/hashes retained",
+  "kimiGoCredentialPresent": true,
+  "kimiGoMatchesKnownCurrentIncidentProcessOrUserValue": false,
+  "gensparkMatchesKnownCurrentIncidentProcessOrUserValue": false,
+  "historicalChildIdentityUnverified": true,
+  "affectedRoutesHeld": true,
+  "nativeShellWorkerCleared": false,
+  "keysMutated": false,
+  "gensparkAccount": {
+    "balance": 6452.5,
+    "plan": "plus"
+  }
+}

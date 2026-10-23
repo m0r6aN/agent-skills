@@ -1,0 +1,58 @@
+{
+  "verdict": "PASS",
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "low",
+      "locator": "report['tokenCountsMatchAcrossHosts'] vs FACTS unicode tokenCount (3.10=20; 3.12/3.13=19)",
+      "trigger": "The harness computes this field, and the facts imply it is false. The FACTS summary omits the field.",
+      "impact": "The cross-runtime token divergence is visible only in the per-run rows. A reader could assume the 3.10 grammar fixture token budgets transfer to the 3.13.15 candidate.",
+      "remediation": "Surface tokenCountsMatchAcrossHosts=false in the evidence summary. Bind any future token budgets to the 3.13.15 canonical counts only.",
+      "confidence": "high"
+    },
+    {
+      "id": "F2",
+      "severity": "low",
+      "locator": "fixtures 'byte_limit_comment','declaration_limit','bracket_limit'",
+      "trigger": "The fixtures are only parsed; no limit is enforced or rejected. The 65-level bracket fixture expects success.",
+      "impact": "The names could be read as evidence that limits are enforced. What the harness actually shows is that inputs at the boundary are accepted.",
+      "remediation": "Rename the fixtures, or annotate them as acceptance-at-boundary only. Defer over-limit rejection to the future adapter.",
+      "confidence": "high"
+    },
+    {
+      "id": "F3",
+      "severity": "low",
+      "locator": "finally: assert info['Config']['Labels'].get('ccm-run')==run_id",
+      "trigger": "An ownership mismatch on any owned name raises inside finally.",
+      "impact": "The evidence file write and remaining cleanup are skipped. The failure stays closed (exception plus no PASS file), but no UNSUCCESSFUL record is produced.",
+      "remediation": "Record the mismatch and continue, so the report is still written with status UNSUCCESSFUL_OWNERSHIP.",
+      "confidence": "medium"
+    },
+    {
+      "id": "F4",
+      "severity": "info",
+      "locator": "timeout canary: call('wait',name,timeout=.5); call('kill',name)",
+      "trigger": "subprocess.run's timeout kills only the docker CLI client. The container is stopped by an explicit kill.",
+      "impact": "This proves a test-harness client timeout plus owned kill and removal. It does not prove the 5s/15s design deadlines.",
+      "remediation": "Keep the label as a test-lane mechanism only. This is already consistent with productionAdmission:false.",
+      "confidence": "high"
+    }
+  ],
+  "coverage": [
+    "Docker config isolation and env allowlist",
+    "Container flags: network none, read-only rootfs, uid 65534, cap-drop, no-new-privileges, memory/cpu/pids, tmpfs noexec",
+    "In-container verification of cgroup values, mount flags, EROFS write denial, network denial, NPROC spawn denial, RLIMIT_AS canary",
+    "Hand-derived declaration oracle and digest agreement across 3.10.22/3.12.15/3.13.15",
+    "Invalid input rejection including except* under feature_version 3.10",
+    "Owned-container labeling, cleanup and absence check",
+    "Canonical candidate pinned to 3.13.15 by image ID"
+  ],
+  "gaps": [
+    "harnessSha256 cannot be independently recomputed from the supplied text",
+    "The spawn canary exercises RLIMIT_NPROC rather than pids.max enforcement; pids.max is read but not exercised",
+    "The memory canary exercises RLIMIT_AS, not cgroup OOM behavior",
+    "The network canary accepts any OSError",
+    "Image provenance is only a local image-ID pin; registry origin is unverified",
+    "The adapter and production deadlines are out of scope and unimplemented"
+  ]
+}

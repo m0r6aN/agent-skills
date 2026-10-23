@@ -1,0 +1,39 @@
+{
+  "atUtc": "2026-10-23T21:04:16.740182+00:00",
+  "status": "completed_pending_parent_validation",
+  "modelRequested": "gpt-6.1-sol",
+  "bookedCredits": 2.244,
+  "packetSha256": "07240174bbde1bd1b9d74b2a976cab7e5f09764fe418c0a4ec940bd88908ebe3",
+  "maxOutputTokens": 2048,
+  "guard": {
+    "atUtc": "2026-10-23T21:04:16.740060+00:00",
+    "balance": 6090.6,
+    "foreignLedgerSha256": "6c931ccc348e9df89e7c4bb016d62fd3172ae673feb8bdf3f9df617b6f138c13",
+    "oldReservations": 3394.3745,
+    "completedHostPhase": 210.94425,
+    "completedSourcePhase": 53.574125,
+    "newReviewRepairConservative": 597.442125,
+    "phaseCeiling": 850,
+    "unusedCompletedAllocationsReleasedOnly": true,
+    "observedDeltaConservative": 361.89999999999964,
+    "dayConservative": 4618.235,
+    "dayCeiling": 5000,
+    "effortConservative": 7732.535,
+    "effortCeiling": 9000,
+    "floorAfterHolds": 1834.2650000000003,
+    "floor": 1000,
+    "expiresUtc": "2026-10-24T04:00:00Z"
+  },
+  "postsMaximum": 1,
+  "retries": 0,
+  "returnedModel": "gpt-6.1-sol",
+  "finishReason": "stop",
+  "usage": {
+    "prompt_tokens": 552,
+    "completion_tokens": 270,
+    "total_tokens": 822
+  },
+  "reportedCredits": 1.1,
+  "catalogEstimate": 2.244,
+  "completedAtUtc": "2026-10-23T21:04:23.749353+00:00"
+}

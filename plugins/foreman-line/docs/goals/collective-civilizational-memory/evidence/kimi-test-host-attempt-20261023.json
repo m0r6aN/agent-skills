@@ -1,0 +1,7 @@
+{
+  "taskId": "ccm-test-host-public-kimi-20261023-01",
+  "reservedAt": "2026-10-23T20:07:47.797Z",
+  "reservationUsd": 0.025702,
+  "requestSha256": "17821e90dc14496753b02094a56c0abf741f19dbe7946690431111774695c5da",
+  "disposition": "reserved-no-automatic-release"
+}

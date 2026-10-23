@@ -1,0 +1,76 @@
+{
+  "atUtc": "2026-10-23T22:06:39.823341+00:00",
+  "authority": "Owner reconcile and safe bounded completion instruction plus existing build/review/spend authority",
+  "phaseCap": 350,
+  "caps": {
+    "architectureSol": 130,
+    "securityOpus": 220
+  },
+  "maximumPosts": 2,
+  "retries": 0,
+  "fallback": false,
+  "newSourceRequests": 0,
+  "formalRepairCycles": 1,
+  "operatorAuthorshipDisclosed": true,
+  "failed120Retained": true,
+  "affectedSourceAndCredentialRoutes": "HELD",
+  "reviewRoute": "Previously successful controlled GenSpark private supplied-source/no-tools, separate nonmatching credential; not a source-worker or native route release",
+  "outputConfigured": 8192,
+  "effort": "low",
+  "socketTimeoutSeconds": 180,
+  "hardAggregateBillingOrRemoteCancellationGuaranteed": false,
+  "metadata": {
+    "claude-opus-5-5": {
+      "name": "Claude Opus 5.5",
+      "cost": {
+        "input": 2200.0,
+        "output": 11000.0,
+        "cache_read": 110.0,
+        "cache_write": 2750.0
+      },
+      "limit": {
+        "context": 1000000,
+        "input": 980000,
+        "output": 128000
+      }
+    },
+    "gpt-6.1-sol": {
+      "name": "GPT-6.1 Sol",
+      "cost": {
+        "input": 1100.0,
+        "output": 5500.0,
+        "cache_read": 55.0,
+        "cache_write": 1375.0
+      },
+      "limit": {
+        "context": 1000000,
+        "input": 872000,
+        "output": 128000
+      }
+    }
+  },
+  "guard": {
+    "atUtc": "2026-10-23T22:06:40.381190+00:00",
+    "balance": 5990.5,
+    "existingAllConservativeIncluding120": 3878.579,
+    "newPhaseConservative": 350,
+    "phaseCap": 350,
+    "dayConservative": 4690.579,
+    "dayCeiling": 5000,
+    "effortConservative": 7804.879,
+    "effortCeiling": 9000,
+    "afterHolds": 1761.9209999999998,
+    "floor": 1000,
+    "oldUnknownsReleased": false,
+    "failed120Retained": true,
+    "accountDeltaNotExactAttribution": true,
+    "foreignLedgerSha256": "6c931ccc348e9df89e7c4bb016d62fd3172ae673feb8bdf3f9df617b6f138c13",
+    "expiresUtc": "2026-10-24T04:00:00Z"
+  },
+  "fileHashes": {
+    "src/keon/cortex/pipeline/ccm_python.py": "aa4d7d79058a4d4e364ab02519d5e97b3dc8d8ab5074872c61fdb7be1b31f9c3",
+    "tests/test_ccm_python.py": "75af3fe5cb7f3b1e7f5d66d28fd7fee61048e158d0fdbe51dfdce8bda0030b9a",
+    "docs/specs/ccm-python-symbols-v1.md": "5474f5aa5986ceec4c2442413fa432d8ed05932194319724cf50583c61f7deb2"
+  },
+  "stop": "No second repair or review retry if either response is unusable or material defects remain"
+}

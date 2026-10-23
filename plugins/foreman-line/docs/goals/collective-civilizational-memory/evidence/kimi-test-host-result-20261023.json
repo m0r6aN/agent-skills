@@ -1,0 +1,20 @@
+{
+  "status": "failed",
+  "taskId": "ccm-test-host-public-kimi-20261023-01",
+  "binding": "opencode-go/kimi-k3.1-pro",
+  "reservationUsd": 0.025702,
+  "estimateNotice": "Conservative list-price estimate, not an enforced provider billing cap. Reservation retained on unknown outcomes.",
+  "elapsedMs": 37177,
+  "responseSha256": "c3e20009fb9867044fdc2a05004df012d04ce92e793197066918b7abdbecc3a0",
+  "responseBytes": 9708,
+  "actualModel": "kimi-k3.1-pro",
+  "usage": {
+    "prompt_tokens": 419,
+    "completion_tokens": 2048,
+    "total_tokens": 2467
+  },
+  "listPriceEstimateUsd": 0.021318,
+  "finishReason": "length",
+  "content": "",
+  "error": "COMPLETION_REFUSED"
+}

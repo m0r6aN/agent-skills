@@ -1,0 +1,275 @@
+{
+  "kind": "pi-route-receipt",
+  "schema_version": 1,
+  "resolver": "@foreman-line/routing-policy/pi-resolver@1",
+  "status": "approved",
+  "attested_state": "static-conformance",
+  "receipt_id": "d3d892e892094550b8c0c955a4c76cfe1135706ad2d98cf138f574bfd7603f97",
+  "issued_at": "2026-10-23T20:07:48.173Z",
+  "lane": "L3",
+  "request": {
+    "lane": "L3",
+    "routing_class": "implementation/complex",
+    "data_class": "public",
+    "require_tool_use": false,
+    "require_structured_output": false,
+    "independence_excluded_families": [],
+    "required_context_tokens": 4659,
+    "required_output_tokens": 2048,
+    "remaining_budget_usd": 0.05,
+    "projected_input_tokens": 2611,
+    "projected_output_tokens": 2048,
+    "required_inputs": [
+      "text"
+    ],
+    "required_thinking_level": "high"
+  },
+  "lane_config": {
+    "lane": "L3",
+    "role_family": "builder",
+    "subroles": [
+      "builder-complex"
+    ],
+    "routing_class": "implementation/complex",
+    "authority_cap": [
+      "execution-within-allowed-files"
+    ],
+    "authority_prohibited": [
+      "approve",
+      "merge",
+      "release",
+      "policy-bypass",
+      "self-review"
+    ],
+    "provider_rule": {
+      "kind": "declared-preference",
+      "preference": {
+        "state": "declared",
+        "value": "opencode-go",
+        "source": "docs/goals/kimi-k31-qualification/ADMISSION.md#authority"
+      }
+    },
+    "quality_tolerance": {
+      "state": "unavailable",
+      "residual": "DELTA_L_UNSET"
+    },
+    "thinking_level": {
+      "state": "declared",
+      "value": "high",
+      "source": "charter.md#initial-pi-provider-and-lane-matrix row 3"
+    },
+    "budget": {
+      "ceiling_usd": 0.1,
+      "remaining_budget_usd": 0.05,
+      "projected_cost_usd": 0.025702
+    },
+    "data_controls": {
+      "data_collection": "allow",
+      "zdr": false
+    }
+  },
+  "evaluations": [
+    {
+      "binding_id": "opencode-go/kimi-k3.1-pro",
+      "candidate": "kimi-k3.1-pro",
+      "role": "primary",
+      "ranking_inputs": [
+        {
+          "input": "R1",
+          "verdict": true,
+          "evidence": "data_classes declared (public) from docs/goals/kimi-k31-qualification/ADMISSION.md#scope",
+          "detail": "serves data class 'public'"
+        },
+        {
+          "input": "R2",
+          "verdict": true,
+          "evidence": "no tool/structured capability required; inputs [text]; thinking_levels [high]",
+          "detail": "required capabilities satisfied (tool/structured, input modality, thinking level)"
+        },
+        {
+          "input": "R3",
+          "verdict": true,
+          "evidence": "declared family 'moonshot'",
+          "detail": "family independent of the excluded set"
+        },
+        {
+          "input": "R4",
+          "verdict": true,
+          "evidence": "context_window=1000000 max_output=4096",
+          "detail": "context and output budget sufficient"
+        },
+        {
+          "input": "R5",
+          "verdict": true,
+          "evidence": "cost {unit: usd_per_mtok} from https://opencode.ai/v2/docs/console/go/ (2026-10-23)",
+          "detail": "projected $0.025702 within remaining $0.05"
+        },
+        {
+          "input": "R6",
+          "verdict": true,
+          "evidence": "attests 'live-availability' from docs/goals/kimi-k31-qualification/evidence/primary/qualification.json",
+          "detail": "live-availability attested"
+        },
+        {
+          "input": "R7",
+          "verdict": true,
+          "evidence": "attests 'model-quality' from docs/goals/kimi-k31-qualification/evidence/primary/qualification.json (L3 public contract-reasoning pilot only; 540 cases, not general coding merit)",
+          "detail": "model-quality recorded for this lane"
+        }
+      ],
+      "refusals": [],
+      "holds": [],
+      "residuals": [],
+      "rankable": true
+    },
+    {
+      "binding_id": "opencode-go/glm-5.3",
+      "candidate": "glm-5.3",
+      "role": "fallback",
+      "ranking_inputs": [
+        {
+          "input": "R1",
+          "verdict": true,
+          "evidence": "data_classes declared (public) from docs/goals/kimi-k31-qualification/ADMISSION.md#scope",
+          "detail": "serves data class 'public'"
+        },
+        {
+          "input": "R2",
+          "verdict": true,
+          "evidence": "no tool/structured capability required; inputs [text]; thinking_levels [high]",
+          "detail": "required capabilities satisfied (tool/structured, input modality, thinking level)"
+        },
+        {
+          "input": "R3",
+          "verdict": true,
+          "evidence": "declared family 'z-ai'",
+          "detail": "family independent of the excluded set"
+        },
+        {
+          "input": "R4",
+          "verdict": true,
+          "evidence": "context_window=1000000 max_output=4096",
+          "detail": "context and output budget sufficient"
+        },
+        {
+          "input": "R5",
+          "verdict": true,
+          "evidence": "cost {unit: usd_per_mtok} from https://opencode.ai/v2/docs/console/go/ (2026-10-23)",
+          "detail": "projected $0.012667 within remaining $0.05"
+        },
+        {
+          "input": "R6",
+          "verdict": true,
+          "evidence": "attests 'live-availability' from docs/goals/kimi-k31-qualification/evidence/fallback/qualification.json",
+          "detail": "live-availability attested"
+        },
+        {
+          "input": "R7",
+          "verdict": true,
+          "evidence": "attests 'model-quality' from docs/goals/kimi-k31-qualification/evidence/fallback/qualification.json (L3 public contract-reasoning pilot only; 540 cases, not general coding merit)",
+          "detail": "model-quality recorded for this lane"
+        }
+      ],
+      "refusals": [],
+      "holds": [],
+      "residuals": [],
+      "rankable": true
+    }
+  ],
+  "selection": {
+    "rule": "declared-preference",
+    "reason": "deterministic ranking (rubric \u00a74): declared-preference ordering over rankable primary candidates; ties by provider then model id (stable order)",
+    "order": [
+      "opencode-go/kimi-k3.1-pro",
+      "opencode-go/glm-5.3"
+    ],
+    "chosen": "opencode-go/kimi-k3.1-pro"
+  },
+  "route": {
+    "provider": "opencode-go",
+    "primary": {
+      "binding_id": "opencode-go/kimi-k3.1-pro",
+      "model": "kimi-k3.1-pro"
+    },
+    "fallback": {
+      "binding_id": "opencode-go/glm-5.3",
+      "model": "glm-5.3",
+      "suitability": {
+        "state": "unproven",
+        "residual": "FALLBACK_SUITABILITY_UNPROVEN"
+      }
+    },
+    "pi_model_contract": {
+      "registry_key": "kimi-k3.1-pro",
+      "opencode_id": "kimi-k3.1-pro",
+      "provider_local_id": "kimi-k3.1-pro",
+      "protocol": "openai-chat-completions",
+      "capabilities": [
+        "prose-generation",
+        "implementation"
+      ],
+      "allowed_lanes": [
+        "builder",
+        "prose-generation",
+        "implementation"
+      ],
+      "prohibited_lanes": [
+        "approval",
+        "merge",
+        "policy-bypass"
+      ],
+      "authority": "execution"
+    },
+    "openrouter_constraints": null
+  },
+  "fallback_handoff": {
+    "primary": "opencode-go/kimi-k3.1-pro",
+    "fallback": "opencode-go/glm-5.3",
+    "fallback_suitability": {
+      "state": "unproven",
+      "residual": "FALLBACK_SUITABILITY_UNPROVEN"
+    },
+    "on_primary_degraded": {
+      "action": "route-to-declared-fallback",
+      "required_preflight": [
+        "enabled",
+        "available",
+        "data-class-eligible",
+        "tool/structured-output-compatible",
+        "within-remaining-budget"
+      ],
+      "rule": "charter D4"
+    },
+    "on_fallback_failure": {
+      "action": "stop-and-report",
+      "rule": "charter D8"
+    },
+    "cross_provider": {
+      "action": "new-recorded-attempt-from-durable-handoff",
+      "silent_continuation": "never",
+      "rule": "charter D3"
+    }
+  },
+  "stops": [],
+  "unproven_claims": [
+    {
+      "claim": "per-lane quality tolerance delta_L (a54 disposition 5)",
+      "state": "unproven",
+      "residual": "DELTA_L_UNSET"
+    },
+    {
+      "claim": "fallback \"comparable or higher\" verdict (rubric \u00a71)",
+      "state": "unproven",
+      "residual": "FALLBACK_SUITABILITY_UNPROVEN"
+    },
+    {
+      "claim": "Pi thinking-level handling semantics on the pinned runtime (H-PI hold, compat memo 0.87.1)",
+      "state": "unproven"
+    },
+    {
+      "claim": "R7 score-ordered refinement (rubric \u00a74 step 2): the representation records R7 presence, not a score",
+      "state": "unproven"
+    }
+  ],
+  "signature": "42ac710a522bcfc1b299f91c748b14aba29c45404c0c1340b41cfcc78fd72bc9"
+}
