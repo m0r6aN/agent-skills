@@ -458,3 +458,13 @@ fullreview claim. See p2l-acceptance-20261024.md. Financialphaseclosed:
 231.0reported/418.670375booked, fullsource/repair andallpriorholds
 retained. Affected/native/privatePiHELD. Same solecoordinator proceeds next
 extractorengine under direct owner request; no nativeworker/monitor, no import.
+
+
+## Extractor engine started — October24
+
+P2Laccepted, same sole coordinator under direct legacy-then-engine request.
+P2F3newfiles,444basepins/3743PASS137skip correspondence. Draft/advisory/readback
+PASS; Step0/Gate2 precede fixed2slice source. Fresh finite550engine phase plus
+closedwrapper418.670375=968.670375<=1000two-parcel cap. Day8500/effort12500/
+floor1000 unchanged; all5851.62525oldholds retained including both wrapper
+failed-envelope reservations. Allaffected/native/privatePi routesHELD.
