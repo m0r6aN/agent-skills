@@ -1,7 +1,7 @@
 ---
 ticket: CCM-P3A
 title: Scrubbed PostgreSQL ingestion storage and transactional outbox
-status: draft
+status: active
 owner: clinton.morgan
 created: '2026-10-24'
 updated: '2026-10-24'
@@ -164,6 +164,53 @@ Live imports, canonical promotion, authorization/receipt issuance, public API,
 governed shred/retract, external key destruction, vector/lexical/graph writes,
 pending extraction resolution and real corpus. These remain explicit P3/P4-P8
 dependencies; this bounded increment does not satisfy full P3 or goal exit.
+
+## Binding Step0 Dispositions
+
+- file-ownership: four source/test slices owned by candidate; fifth documentation
+  file is parent-owned, verbatim this workorder body with status/dispatch records
+  excluded. Five NEW files remains the parcel boundary.
+- accepted-api-pins: supply exact accepted scrubber service/models, core ids and
+  canonical implementation plus PostgreSQL pool convention. scrub_payload returns
+  detached payload; KnownSecret tuple<=128, no synthetic_evidence is passed.
+  ScrubError -> scrub_failed; metadata key collisions fail closed, never dropped.
+- embedded-raw-fingerprints: raw SourceResult.source_sha256 and artifact digest
+  fields are validation-only and omitted. python_symbol payload is strict JSON
+  object with content_sha256 equal to that result fingerprint; remove ONLY this
+  field before scrubbing/canonical text. Do not reinsert it. Other opaque candidate
+  text may contain arbitrary hash-like values; no universal digest-erasure claim.
+  Such text is scrubbed normally. Payload_hash hashes only sanitized envelope.
+- scrubbed-control-fields: reject if scrub changes prescribed envelope/source/
+  artifact key names, routing IDs, status, reason or artifact kind. Never restore
+  raw originals. source key/format remain sanitized descriptive data; metadata keys
+  may be scrubbed subject to accepted collision failure. Revalidate shape after
+  scrubbing. Known-secret evidence cannot promote a candidate or exempt data.
+- bounds-and-identity-definition: sources may be empty; nonnegative SQL source/
+  artifact counts, positive serialized bytes. metadata exactdict orNone, values
+  accepted JSON domain only (exact built-in dict/list/string/int/float/bool/None),
+  accepted scrubber bounds apply. Count source content bytes separately<=1MiB,
+  then scrubber<=1MiB assembled raw envelope (including duplicated artifact text
+  and pending content/metadata) may reject earlier. No pre-serialization of raw
+  object to logs/disk; normalize text bytes strictUTF8 in memory. canonical_json
+  accepted utility = sortedkeys,ASCIIescaped,compact; output<=4MiB. source identity
+  payload uses entity_type='ccm_ingest_source',schema_version='1.0',tenant_id,
+  scope_id,import_batch_id,ordinal,source (entire sanitized per-source dict).
+  source_id is hex v2 identity, identity not receipt. operations can exceed32?
+  No: acceptedengine max32; emptybatch0; validate actual counters exactly.
+- independent-verification-gate: initial ready=false is preserved. Local boundary
+  dispositions only resolve preparation; actual PG16 and all independent reviews/
+  source/main checks remain acceptance prerequisites, not claimed at Gate2.
+
+Exact accepted artifact kinds: text_chunk,python_symbol,civic,fixture_candidate.
+Reasons: union accepted engine _TEXT_CODES/_PYTHON_CODES/_GIT_CODES/_CIVIC_CODES
+plus output_budget_exhausted,processing_budget_exhausted,checkpoint_required,
+fixture_unavailable,checkpoint_budget_exhausted,unsupported_format,runtime_held,
+input_budget_exhausted. This is a closed union, no arbitrary exception text.
+Lease generation exactint>=1, never bool. No service method accepts a caller-
+forged PreparedIngestion for enqueue; enqueue always re-runs prepare_ingestion
+from raw DTOs and transient key material. DTO returned by prepare is for explicit
+inspection/tests only, not a durable-write capability. Cancellation is BaseException
+and propagates; Exception is sanitized only after its handler has exited.
 
 ## Context & References
 

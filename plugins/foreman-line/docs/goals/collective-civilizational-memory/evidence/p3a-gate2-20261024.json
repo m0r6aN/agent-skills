@@ -1,0 +1,20 @@
+{
+  "atUtc": "2026-10-24T22:07:45.655841+00:00",
+  "gate2": "APPROVED_EXISTING_DIRECT_OWNER_AND_BLANKET_AUTHORITY",
+  "base": "6ba606012d338b51a92ee0320995406fae03aafb",
+  "workorderSha256": "e5d7f8ff5c1fbacdfc5d273cb989895a6baf2f20e4a7db072117eee429c8f3bc",
+  "step0FlagsDisposed": [
+    "file-ownership",
+    "accepted-api-pins",
+    "embedded-raw-fingerprints",
+    "scrubbed-control-fields",
+    "bounds-and-identity-definition",
+    "independent-verification-gate"
+  ],
+  "dispositions": "Binding Step0 Dispositions appended before source; no charter design/exit changes",
+  "sourceCalls": 0,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "nativePrivatePi": "HELD",
+  "parentDocSha256": "5a15184f7a3e61c9cbbc704ff7605d32bbb36831fc438eea678e8b63d4e6a487"
+}
