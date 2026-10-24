@@ -1,0 +1,40 @@
+{
+  "atUtc": "2026-10-24T20:59:45.806632+00:00",
+  "scope": "ONE focused source/test repair for all L01-L04; no extra source/repair/retry capacity",
+  "authority": "Existing delegated bounded non-destructive repair",
+  "sourceHashesBefore": {
+    "src/keon/cortex/pipeline/ccm_civic_legacy.py": "5ef4a2c004c18d6c53dcf1b7aecea9af4871ab1f80842e7d234dd7fccf2fb922",
+    "tests/test_ccm_civic_legacy.py": "cae9766ae9989fe75e97b47e1acbf4e687e88ee8f454454b09d5756d64a2c7c0",
+    "docs/specs/ccm-legacy-civic-v1.md": "719432148045f6cf2f2c0d58b6f4246f21e88517051f18b82b4952df5f3ecfdd",
+    "tests/fixtures/ccm/legacy-civic-v1.json": "92d378e594fc7076ba9113b762c6ff22e9e8a198c4ed1697eac73275bfb27476"
+  },
+  "findings": [
+    {
+      "id": "L01",
+      "issue": "Reason set invents four tokens and omits accepted out_of_scope/deferred_timing/budget_cap/policy_preference",
+      "rule": "Accepted converter has precisely failed_verification,violated_invariant,runtime_regression,security_boundary_breach,out_of_scope,deferred_timing,budget_cap,policy_preference. Reject invented policy_disagreement/insufficient_evidence/alternative_preferred/other."
+    },
+    {
+      "id": "L02",
+      "issue": "CorrelationContext.ParentCorrelationId/InteractionId/CausationId are nullable STRING fields, not typed IDs",
+      "rule": "Only CorrelationId uses {Value:...}; validate nonnull optional metadata through clean text, preserve missing/null/string. Reject object-shaped substitutes."
+    },
+    {
+      "id": "L03",
+      "issue": "mypy no-any-return errors _object,_text,_history",
+      "rule": "Use explicit cast after existing exact-type assertions; preserve runtime validation."
+    },
+    {
+      "id": "L04",
+      "issue": "Binding semantic predicate coverage incomplete",
+      "rule": "Sweep every C# Validate predicate with otherwise-valid negative/positive controls. Include each proposal-terminal member including target, submission/amendment/withdrawal branches, status/resolution/response metadata, histories empty and earlier-invalid vs valid terminal, zero refs vs missingcoverage, evidence OR and artifact OR and eachcomputedflag exactbool, all eight reasons/unknowns, correlationmetadata types, bothargumentcanaries with raising methods, 7digitclosure allwrapperfamilies, output expansion at262144/262145 without exceeding any otherguard."
+    }
+  ],
+  "testCountFloor": 9,
+  "baselinePassFloor": 3721,
+  "frozenFixtureUnchanged": "92d378e594fc7076ba9113b762c6ff22e9e8a198c4ed1697eac73275bfb27476",
+  "maxRepairSourcePosts": 1,
+  "freshIndependentReviewsRequired": 2,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD"
+}
