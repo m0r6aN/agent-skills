@@ -326,3 +326,16 @@ only masked bool-version/schema testoracles; runtime correction cleared. Same
 owner-authorized protocolgap scope permits1test-onlycompletion, no runtime/other
 source change, then2fresh exactcandidate reviews. Finitephase350, otherlimits and
 allholds unchanged. See teardown-test-completion-admission. No open repairloop.
+
+
+## P2C runtime accepted — October24
+
+PR95 source9c2a782a3c682f5a61e8de10431203561a91bf28 mergedf05f209fd919d47d1708b99838b2a220976be952.
+All16exact-headchecks and merged-main CI40105624957/deployment40105625003PASS.
+StageFclosed; workorderstatus-onlyarchived. Final202focused/3189fullPASS137skip,
+2freshSolreviewsPASS/PASS, actual7API+5faultcases/allownedcontainersabsent,15oracle
+sensitivitycasesPASS. See p2c-runtime-acceptance-20261024.md. No material findings.
+All120/150/other reservations and affected/native/private-Pi routes stayheld;
+financialphaseclosed. Same solecoordinator, no worker/monitor/newdispatch.
+Next Git/civic/extractor and P3-P8/fullintegration/import gates remainOPEN;
+no bulk/personal import and no high-trust producer coverage claimed.

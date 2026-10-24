@@ -1,0 +1,90 @@
+{
+  "teardown": {
+    "killAttempts": 1,
+    "waitAttempts": 1,
+    "code": "isolation_failure",
+    "allPipesClosed": true
+  },
+  "protocolOracleSensitivity": [
+    {
+      "guard": "duplicate-envelope",
+      "baselinePass": true,
+      "bypassDetected": true
+    },
+    {
+      "guard": "duplicate-symbol",
+      "baselinePass": true,
+      "bypassDetected": true
+    },
+    {
+      "guard": "numeric-rejector",
+      "baselinePass": true,
+      "bypassDetected": true
+    },
+    {
+      "guard": "pre-decoder-depth",
+      "baselinePass": true,
+      "bypassDetected": true
+    },
+    {
+      "guard": "direct-integer-limit",
+      "baselinePass": true,
+      "bypassDetected": true
+    },
+    {
+      "guard": "strict-version-bool-True",
+      "baselinePass": true,
+      "bypassDetected": true
+    },
+    {
+      "guard": "strict-version-bool-False",
+      "baselinePass": true,
+      "bypassDetected": true
+    },
+    {
+      "guard": "strict-offset-start_byte-False",
+      "baselinePass": true,
+      "bypassDetected": true
+    },
+    {
+      "guard": "strict-offset-start_byte-True",
+      "baselinePass": true,
+      "bypassDetected": true
+    },
+    {
+      "guard": "strict-offset-end_byte-True",
+      "baselinePass": true,
+      "bypassDetected": true
+    },
+    {
+      "guard": "strict-ok-True",
+      "baselinePass": true,
+      "bypassDetected": true
+    },
+    {
+      "guard": "strict-ok-False",
+      "baselinePass": true,
+      "bypassDetected": true
+    },
+    {
+      "guard": "unknown-symbol-field",
+      "baselinePass": true,
+      "bypassDetected": true
+    },
+    {
+      "guard": "closed-envelope-True",
+      "baselinePass": true,
+      "bypassDetected": true
+    },
+    {
+      "guard": "closed-envelope-False",
+      "baselinePass": true,
+      "bypassDetected": true
+    }
+  ],
+  "sourceFilesChanged": false,
+  "inferenceRequests": 0,
+  "atUtc": "2026-10-24T14:57:06.072612+00:00",
+  "status": "PASS_INDEPENDENT_FIXED_ORACLE_SENSITIVITY",
+  "allOwnedContainersAbsent": true
+}

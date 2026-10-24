@@ -57,3 +57,18 @@ malformed envelopes can hide removal of duplicate/depth guards. Test counters
 and all-green suites do not substitute for these independent oracles. Both fresh
 reviews caught the operator-authored assertion gap; reproduce and retain rather
 than weakening the requirement or silently adding another repair.
+
+
+### Accepted P2C runtime — October24
+
+Keep poll/kill and bounded wait in independent teardown attempts; an exception
+from one cleanup action must not suppress another, and timeout0 permits an exit-
+race reap without extending the command deadline. Test bool offsets with numeric
+ranges that would otherwise pass, versionTrue in complete valid envelopes, and
+unknown keys in complete valid symbol objects. Include a finite schema-predicate
+inventory before review to avoid repeated masked-oracle findings. Fixed mutation/
+normalization seams can demonstrate sensitivity while leaving production files
+untouched. Distinguish raw API balance updates from user topup confirmation;
+keep preflight before inference and funding-adjusted debit accounting. Final
+source/committed/merged tree equality and actual main CI close source acceptance,
+not full import readiness or held credential-route clearance.

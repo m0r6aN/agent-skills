@@ -1,6 +1,15 @@
 # Goal Charter — Collective civilizational memory
 
-## Current execution addendum — October21 NY
+## Current execution addendum — October24 NY
+
+P2C pure declaration source and restricted runtime adapter are accepted: PR94
+5cb07ba and PR95 f05f209, with exact-source independent reviews and source/main
+CI green. See p2c-runtime-acceptance-20261024.md. This closes only the parser
+capability. Git/civic/extractor and P3-P8/fullintegration/import gates remain
+open. All120/150/other reservations and affected routes held; high-trust producer
+qualification remainsZERO. No full Context/mass-import readiness claim.
+
+## Historical execution addendum — October21 NY
 
 All CCM-P1A–D foundation artifacts are accepted and merged with independent reviews, actual local evidence and green source/main CI. [Foundation acceptance](foundation-acceptance-20261021.md) and [current loop](loop-directive.md) supersede ALL historical planning/readiness/permission state below. Direct owner blanket non-destructive decisions/approvals/spend authority is recorded in evidence/owner-autonomous-next-steps-20261021.json. Design decisions and full-goal exits are unchanged. CCM-P2A scrubber is accepted/merged/StageFclosed (PR87,76fa7c6), with two completed independent closure PASS and actual source/main CI green. See p2a-acceptance-20261022.md. P2B byte chunker is accepted/merged/Stage F closed (PR89,3a7c30b), with two independent PASS and actual source/main CI green; see p2b-acceptance-20261022.md. The separate credential-handling incident remains open and new delegated shell workers are held pending disposition; existing owner approval persists. Full Context and bulk import are not ready. No dormant monitor revived.
 
