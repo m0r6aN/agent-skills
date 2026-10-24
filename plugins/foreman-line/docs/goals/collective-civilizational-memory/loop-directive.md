@@ -410,3 +410,14 @@ routes stayHELD. Cleanpushedworktree/branch retained; private syntheticjunction
 probe retained after policyblockedremoval, no bypass. Same solecoordinator at
 parcelboundary, no worker/monitor. Nextcivicmapping/extractor thenP3-P8 and
 actualintegration/import gates; fullContext/bulkimport notready.
+
+
+## P2E civic mapping started — October24
+
+Same sole coordinator, explicit owner next-parcel authority. Three accepted v2
+civic payloads mapped using existing validators; legacy wrappers remain explicit
+unsupported coverage, no competing schema/trust or engine implementation.
+Base0cdff676,437pins, accepted3676PASS137skip baseline correspondence.
+Finite300 phase/day6500 under existing finite increase authority; effort10500
+and floor1000 unchanged, all5172.575875 old holds retained. Affected/native/Pi
+routesHELD. Step0 and exact Gate2 precede source; independent reviews intact.
