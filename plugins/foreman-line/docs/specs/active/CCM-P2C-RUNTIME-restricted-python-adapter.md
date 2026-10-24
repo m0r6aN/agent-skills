@@ -335,3 +335,16 @@ actual profile/failure evidence and limitations, with no prior reviewer context.
 P2C library pins and all prebuild identities/skips survive. Production admission
 is scoped to an explicitly qualified immutable runtime image; successful fixtures
 do not authorize importing personal data or bypass subsequent P3-P8 gates.
+
+
+## October24 scoped protocol-test completion disposition
+
+The owner-authorized kill/wait and protocol-test repair includes ONE test-only
+completion of remaining otherwise-valid scalar/schema oracles identified by its
+first review pair. Runtime and all other source/image/document files stay pinned.
+This is not authority for a fourth runtime/source capability repair or an open
+repair loop. Preserve first PASS/security and CHANGES_REQUIRED/architecture
+results; rerun exact tests/checks and obtain2fresh final source-only reviews.
+Finite review phase ceiling350 under existing owner spend authority; day6000,
+effort9000, floor1000, all existing reservations/routes and every acceptance
+criterion remain unchanged. Stop on any remaining material finding.

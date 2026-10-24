@@ -317,3 +317,12 @@ zeroinference/newcredits0. Existing4457.868750held; API5569.2 remains unchanged
 after owner topup confirmation. Need displayedbalance/account reconciliation
 before2freshSolreviews under existingguards. No source changes or test reruns
 needed; no fourthrepair, route release or merge. Same solecoordinator, no monitor.
+
+
+## P2C protocol-test completion within authorized repair — October24
+
+Topup visible13069.2. First fresh pair: securityPASS/architectureCHANGES_REQUIRED
+only masked bool-version/schema testoracles; runtime correction cleared. Same
+owner-authorized protocolgap scope permits1test-onlycompletion, no runtime/other
+source change, then2fresh exactcandidate reviews. Finitephase350, otherlimits and
+allholds unchanged. See teardown-test-completion-admission. No open repairloop.

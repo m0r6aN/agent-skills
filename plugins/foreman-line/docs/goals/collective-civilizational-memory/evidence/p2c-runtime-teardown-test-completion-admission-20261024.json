@@ -1,0 +1,85 @@
+{
+  "atUtc": "2026-10-24T14:52:56.143719+00:00",
+  "repairOrdinal": 3,
+  "testOnlyCompletionOrdinal": 1,
+  "authority": "Direct owner bounded repair explicitly includes protocol test gaps; standing blanket non-destructive decisions/approvals and finite GenSpark usage increases. This completes the SAME authorized repair, not a new runtime repair.",
+  "scope": "Ordinary otherwise-valid version/ok/offset scalar and closed-schema protocol oracles, finite predicate inventory plus in-memory sensitivity proof; ONLY test file may change",
+  "runtimeOrOtherFiveFilesMayChange": false,
+  "sourceHashPins": {
+    "src/keon/cortex/pipeline/ccm_python_protocol.py": "ea9de856c1f35146aa2e515195212688e98f03510c08d9df8cf3bdc05e1f7088",
+    "src/keon/cortex/pipeline/ccm_python_worker.py": "47e7600c565a86d81d7b62f38244cbffffebd82cb609fcae90eda6952965648e",
+    "src/keon/cortex/pipeline/ccm_python_runtime.py": "c753c6269464cb5b1fe5b7acccc5843ac46634de7e55de3ba76279c6582b48b7",
+    "tests/test_ccm_python_runtime.py": "c93b413c82e422e82027679688bb5988f8be6e40be0b9586d9d72084a927e054",
+    "docker/ccm-python-parser/Dockerfile": "b8c2f008083d2d13194c7ebb76af91795181e594d5df1ffb97f060047cb07480",
+    "docs/specs/ccm-python-runtime-v1.md": "ebcd07eaf71bf4e4579f86edbda1d44ebd3f4fd2ec2644e0fd857d294345b4ad"
+  },
+  "reviewResultsPreserved": {
+    "architecture": {
+      "verdict": "CHANGES_REQUIRED",
+      "findings": [
+        {
+          "id": "F1",
+          "severity": "medium",
+          "locator": "tests/test_ccm_python_runtime.py::test_bad_json; protocol boundary coverage",
+          "trigger": "The bool-as-version case supplies only {\"version\":true}, rather than an otherwise valid envelope. Removing the exact-int version guard still causes rejection because ok is absent. There are also no otherwise-valid independent cases for bool-as-end_byte, unknown symbol keys, or missing success-envelope keys.",
+          "impact": "The required independent boundary assertions are not complete. In particular, the existing version test cannot detect a regression accepting true as version 1. The supplementary sensitivity evidence covers duplicate keys, numeric rejection, depth and integer limits, but not this masked predicate.",
+          "remediation": "Supply otherwise-valid success and failure envelopes with version=true and assert invalid_response. Add isolated cases for the remaining untested closed-schema/type predicates, including end_byte=true, unknown symbol fields and missing success fields. Demonstrate that each oracle fails when its corresponding guard is bypassed, without changing runtime behavior or expanding repair authority.",
+          "confidence": "high"
+        }
+      ],
+      "coverage": [
+        "Reviewed all six supplied exact files, the accepted library, binding workorder and supplied actual observations as source/evidence only.",
+        "Protocol implementation bounds frames, pre-scans nesting and integer lexemes, rejects duplicate keys and noninteger numeric tokens, validates closed envelopes, complete-input digest, symbol limits, identifiers, ordering and byte ranges, and returns accepted frozen wrappers.",
+        "Public API checks exact configuration/source types and size precedence; error construction clears ambient chaining and retains empty args. Fixed client paths, endpoints, cleared environments and empty Docker configuration preserve the operator/source boundary.",
+        "Lifecycle inspection covers intended ownership registration, collision precheck, returned-ID capture, uncertain-create reconciliation, exact name/label/known-ID matching, profile verification, exit reconciliation and cleanup-before-result publication.",
+        "Cleanup distinguishes bounded whitelisted missing diagnostics from daemon errors, refuses unrelated objects, proves absence before success and retains opaque pending identifiers on unproved removal.",
+        "Transport uses bounded threadless nonblocking reads/writes and independent bounded wait after poll/kill failure. Tests exercise partial writes, would-block progress, overflow, interruption, teardown failure and stream closure rather than replacing those branches wholesale.",
+        "New cleanup tests invoke real reconciliation and cleanup logic through command seams. Some orchestration tests intentionally mock profile checks; separate direct profile tests exercise those predicates.",
+        "Worker and Dockerfile implement pinned base, library/interpreter checks, restricted container profile, cgroup-v2 evidence, rlimits, one request plus EOF, supplementary alarm and closed exit contracts.",
+        "Supplied observations report Windows Python 3.13.7 / Docker Desktop Linux Python 3.13.15 equivalence, fixed fault outcomes, passive API transport observation and owned-container absence. These are parent observations, not reviewer execution."
+      ],
+      "gaps": [
+        "Linux client qualification is absent; this is an unqualified environment, not an established implementation defect.",
+        "No actual daemon-outage recovery proof is supplied. Pending cleanup and isolation_failure appropriately avoid an absence claim; cancellation is not hard realtime.",
+        "Fixed fault images replace main worker behavior and are not production candidates. Labels do not authenticate images; trusted operators must qualify the exact immutable production image.",
+        "Exact-head/main CI, advisory/readback, coordinator lint, base/pins, Step0 and Gate2 remain required parent acceptance evidence; initial local green observations do not waive them.",
+        "Same-family independent contexts are not a multi-family council. This review authorizes neither production admission, imports nor affected routes."
+      ]
+    },
+    "security": {
+      "verdict": "PASS",
+      "findings": [],
+      "coverage": [
+        "Reviewed all six supplied files, the accepted declaration library, binding workorder and supplied actual observations as source/data only. No concrete consequential composition defect identified.",
+        "Hostile-input boundary: exact built-in bytes and request-size checks precede Docker activity; source is transported only through stdin. The accepted library parses declarations without executing or importing source.",
+        "Credential and isolation boundary: fixed client paths/local endpoints, cleared CLI environment and empty adapter-owned Docker configuration exclude inherited Docker/provider configuration. Pinned Dockerfile, nonroot execution, restricted container configuration, worker hash/interpreter verification, cgroup-v2 evidence and verified rlimits implement the specified layered restrictions. Labels are configuration checks, not authentication.",
+        "Lifecycle and ownership: random-name collision precheck, intended run labels before create, returned-ID capture and exact name/label/known-ID reconciliation precede mutation. Cleanup distinguishes narrowly recognized absence from control-plane failure, proves absence before success and retains opaque pending identifiers when cleanup is unproved.",
+        "Cancellation and transport: threadless nonblocking bounded pipe operations reserve teardown time. Independent bounded wait is attempted even after poll/kill failure, including timeout zero. Interruptions request cleanup; cleanup failure overrides results. Attached I/O and overall deadlines are separate from supplementary Python alarm and kernel CPU limits.",
+        "Wire and sanitation: exact framing/EOF, payload limits, UTF-8, pre-decoder depth/integer guards, duplicate-key rejection, closed envelopes, strict scalar types, digest/order/range/name validation and immutable accepted wrappers are enforced. Public errors clear ambient chaining and expose closed codes without raw diagnostics.",
+        "Test branch quality: added cleanup tests exercise real ownership, inspect decoding, mutation decisions and absence logic through injected command transport. Teardown tests exercise real finally logic. Revised duplicate/numeric/scanner oracles assert relevant hooks or pre-decoder rejection rather than relying solely on generic rejection; supplied sensitivity observations support their discrimination. Some result-precedence tests intentionally mock profile/cleanup, supplemented by separate real-branch tests.",
+        "Supplied actual observations report Windows-client API equivalence/error cases, restricted Linux worker profile/hash evidence, fixed fault rejection, cleanup absence and local suite/style/type results. Fault images intentionally replace the worker and are not production candidates; passive API observation does not alter adapter behavior."
+      ],
+      "gaps": [
+        "PASS is a supplied-artifact composition disposition, not production, import or affected-route authorization. Required advisory/readback, coordinator lint, Step0/Gate2 and green exact-head/main chain remain mandatory; PASS_INITIAL_LOCAL is not evidence of that complete chain.",
+        "Actual client qualification is limited to the disclosed Windows Python 3.13.7/Docker Desktop environment with Linux Python 3.13.15 worker. Linux-client source compatibility is not actual Linux-client qualification.",
+        "A trusted operator must qualify the exact immutable image from this reviewed build. An arbitrary matching image ID shape or copied labels do not authenticate reviewed contents.",
+        "No actual daemon-outage recovery or daemon sabotage proof is supplied. Unproved cleanup remains isolation_failure with pending identifiers; no absence or hard realtime cancellation guarantee follows.",
+        "Same-family independent Sol contexts are disclosed, not a multi-family review council. All existing holds and required acceptance gates remain in force."
+      ]
+    }
+  },
+  "additionalSourceModelCalls": 0,
+  "maxAdditionalReviewPosts": 2,
+  "additionalReviewRetryFallback": false,
+  "phaseCapBefore": 250,
+  "phaseCapAfter": 350,
+  "perReviewCapMax": 180,
+  "reviewOutputTokens": 4096,
+  "dayCeiling": 6000,
+  "effortCeiling": 9000,
+  "floor": 1000,
+  "otherLimitsUnchanged": true,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "completionStop": "One test-only completion, then fresh exact-candidate architecture/security contexts; no automatic further source change, runtime change or review fallback."
+}
