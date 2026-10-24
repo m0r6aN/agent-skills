@@ -480,3 +480,13 @@ Legacy wrappers and engine complete. Next P3 durable ingestion/storage/outbox,
 scrub-at-enqueue and pending fences, then remaining P4-P8/integration/import gates.
 Both parcels conservative 623.453250/1000; all reservations
 and affected/native/private-Pi routes HELD. No corpus/hightrust/bulk readiness.
+
+
+## Durable ingestion P3A started — October24
+
+Direct owner request; same sole coordinator. Additive PostgreSQL candidate storage,
+transactional outbox, actual pre-write accepted scrubber and durable pending work.
+No canonical promotion/live API; remaining P3 deletion/crypto/PlaneA gates retained.
+Finite700phase/day9500/effort14000 under standing finiteincrease authority,
+floor1000; all6056.408125 old reservations held. All affected/native/privatePi
+routes HELD. ExactStep0/Gate2 before source.447pins/3905PASS137skip baseline.
