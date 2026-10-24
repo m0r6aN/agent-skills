@@ -1,0 +1,31 @@
+{
+  "atUtc": "2026-10-24T18:23:54.955773+00:00",
+  "authority": "Current owner P2D-B plus existing blanket non-destructive decisions/approvals and finite GenSpark usage increases",
+  "scope": "ONE test-only completion of missing main() entrypoint oracles within same focused repair; all five executable/factory/docs files excepttest pinned",
+  "runtimeBehaviorMayChange": false,
+  "sourceHashesBefore": {
+    "src/keon/cortex/pipeline/ccm_git_protocol.py": "43813d00167aafc065cf66e04808c369a7ac8872244fa185e484a99cf129c463",
+    "src/keon/cortex/pipeline/ccm_git_worker.py": "fe04c0794099b720f83007bfdc7a7b0d3154d1a2f46a23f774d6fb4d9492e59a",
+    "src/keon/cortex/pipeline/ccm_git_runtime.py": "bea56dd96356b3bba9ba72560730fb51710f013ca5525ca0732bbb466beec399",
+    "tests/test_ccm_git_runtime.py": "9b695686d502989a70b8c6fa71e7f8bc651fdd62f9e849d5be521c8bcf7705ce",
+    "docker/ccm-git-source/Dockerfile": "58f8fc57bd97d1628ed0ca46be6cc3003bb667a678c9e79f1a92adafabc3e53a",
+    "docs/specs/ccm-git-runtime-v1.md": "f744555ce1540d0ae574cff6422e64906bae918c9fce4c7f638ba9780871ea28"
+  },
+  "allowedChangedFiles": [
+    "tests/test_ccm_git_runtime.py"
+  ],
+  "findingsDisposition": "R1 accepted, code confirms no main() tests; actual API cases valid requests only and parent fault images do not test production request reader",
+  "initialReviewsPreserved": true,
+  "freshFinalReviews": 2,
+  "additionalProviderSourcePosts": 0,
+  "phaseCapBefore": 450,
+  "phaseCapAfter": 550,
+  "perReviewCapMaximum": 220,
+  "dayCeiling": 6000,
+  "effortCeiling": 10500,
+  "floor": 1000,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "nativePrivatePi": "HELD",
+  "stop": "One tests-onlycompletion plus2fresh final contexts, no automatic further source/behavior correction or retry/fallback"
+}

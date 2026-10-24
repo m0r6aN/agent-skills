@@ -282,3 +282,18 @@ pass, replace ONLY the candidate README sentence claiming the old startup defect
 is stillcurrent and state emptyCmd null/[]equivalence. This narrowly supersedes
 its docs pin for factual status; protocol andDockerfile remainpinned. No runtime
 change or renewed tests for prose alone; exact5functional files remain qualified.
+
+
+## Same focused repair: one main-entrypoint test completion — October24
+
+Initial architectureR1 requests missing productionmain() request/exit/publication
+oracles; securityPASS. Coordinator acceptsR1 after source inspection. Under
+existing owner authority admit ONEtest-onlycompletion within the same focused
+repair, no runtime/worker/protocol/Dockerfile/docs behavior or byte changes.
+Directmain tests mock all signal,stdio,startup,clock/acquisition boundaries;
+positiveexact41byteEOF,short/extra/nonASCII/OID/LF/readdeadline/startuprejection/
+closedacquisitionfailure/writefailure and exactoutput/status/nofetch assertions.
+Then2fresh final reviews. Finitephase550 instead450 funds only this bounded
+closure; day6000/effort10500/floor1000 and all reservations/routes unchanged.
+Initial reviews and original financial admission preserved. No new source model
+request, retry/fallback or automatic further source/behavior repair.
