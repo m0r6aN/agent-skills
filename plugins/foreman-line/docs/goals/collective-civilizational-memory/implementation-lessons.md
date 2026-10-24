@@ -139,3 +139,17 @@ not full import readiness or held credential-route clearance.
 - Never trust generated digest constants: independently hash literal bytes;
   preserve initial failures and source/model receipts. Narrative-only evidence
   lesson; existing prebuild oracle and closure checks enforce identity.
+
+
+## Legacy civic profiles October24
+
+- Typed IDs and nullable correlation strings are different fields; provide exact
+  enum converters and observed profile to builders. Source repair plus parity
+  tests enforce this distinction. Disposition: mapper contract/tests.
+- Do not require behaviorally impossible mutation tests for implied predicates.
+  Prove closed-domain implication with independent cross-language enumeration,
+  retain explicit source guards and reconcile review disagreements independently.
+  Narrative-only: guards/tests unchanged; actual256case proof retained.
+- Dependent external commands require checked subprocess sequencing; PowerShell
+  defaults can advance after a native nonzero exit. Disposition: subsequent
+  coordinator helpers use checked orchestration; recording deviation retained.

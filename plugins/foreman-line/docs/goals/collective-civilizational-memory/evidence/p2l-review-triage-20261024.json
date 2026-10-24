@@ -1,0 +1,124 @@
+{
+  "atUtc": "2026-10-24T21:16:49.912495+00:00",
+  "finding": "CCM-P2L-R1",
+  "decision": "accept-as-documented",
+  "reason": "Resolution/closure tuple laws imply status equality over the closed public enum domain; public single-predicate mutant is behaviorally equivalent. Explicit statusguard retained.",
+  "proof": {
+    "atUtc": "2026-10-24T21:08:15.984415+00:00",
+    "status": "PASS_EXHAUSTIVE_COUPLED_INVARIANT_PROOF",
+    "finiteDomainCases": 256,
+    "accepted": 4,
+    "rejected": 252,
+    "csharpPythonParity": true,
+    "acceptedAndStatusOmittedOutcomesEqual": true,
+    "proof": "For closed statuses, entryresolved iff entryresolutionnonnull; wrapperresolved iff wrapperresolutionnonnull; resolution equality therefore implies status equality. Removing only status equality cannot admit any additional public payload.",
+    "finding": "CCM-P2L-R1",
+    "dispositionRecommendation": "Accept-as-documented unobservable redundant predicate; retain explicit source guard and public coupled negative coverage. No meaningless mirror test or further source mutation.",
+    "binaryProvenanceLimit": "Retained P1C artifact, no reproducible source-to-binary claim",
+    "allOwnedContainersAbsent": true,
+    "productionChanged": false,
+    "sourceHashes": {
+      "src/keon/cortex/pipeline/ccm_civic_legacy.py": "0b905a74748b7002b363ba76c327ef7f4e8123e37cd4253a2324a5464147deb4",
+      "tests/test_ccm_civic_legacy.py": "625fa8f07a85c389d245403b09fbabb8fb9b8469187db5fae82af16e883a3ba5",
+      "docs/specs/ccm-legacy-civic-v1.md": "aca6aa5fea53a3a413b695a7bae4f7a5d77ee89d97b3ac4db6bebeed42b7cad9",
+      "tests/fixtures/ccm/legacy-civic-v1.json": "92d378e594fc7076ba9113b762c6ff22e9e8a198c4ed1697eac73275bfb27476"
+    },
+    "modelRequests": 0,
+    "results": {
+      "accepted": {
+        "cases": 256,
+        "accepted": [
+          "w0-e0-wrNone-erNone-c0-r0",
+          "w1-e1-wr0-er0-c1-r1",
+          "w1-e1-wr1-er1-c1-r1",
+          "w1-e1-wr2-er2-c1-r1"
+        ],
+        "allOutcomesMatch": true
+      },
+      "omitted-status": {
+        "cases": 256,
+        "accepted": [
+          "w0-e0-wrNone-erNone-c0-r0",
+          "w1-e1-wr0-er0-c1-r1",
+          "w1-e1-wr1-er1-c1-r1",
+          "w1-e1-wr2-er2-c1-r1"
+        ],
+        "allOutcomesMatch": true
+      }
+    }
+  },
+  "fullArchitecture": {
+    "verdict": "CHANGES_REQUIRED",
+    "findings": [
+      {
+        "id": "CCM-P2L-R1",
+        "severity": "medium",
+        "path": "tests/test_ccm_civic_legacy.py",
+        "line": 521,
+        "claim": "The challenge terminal-status equality predicate lacks an independent negative control, as required by acceptance criterion 7.",
+        "evidence": "In test_challenge_terminal_and_closure, changing CurrentStatus to 0 leaves TerminalResolutionKind=0 and ClosedUtc populated. Even if the validator's history[-1]['Status'] == r['CurrentStatus'] check were removed, this case would still fail the open-wrapper closure-metadata checks. The later open-wrapper mutations do not isolate a status mismatch either: the TerminalResolutionKind mutation changes the wrapper and terminal disposition together to resolved. Thus the supplied tests do not demonstrate detection of a missing terminal-status equality guard.",
+        "requestedFix": "Add an otherwise-valid status-mismatch control. For example, construct an open wrapper with TerminalResolutionKind and ClosedUtc null, and a valid resolved terminal disposition whose ResolutionKind is nonnull and whose ChallengeResponseId is valid. This necessarily also mismatches terminal resolution, so additionally use a focused predicate-specific control or mutation control demonstrating that removal of the status-equality predicate is detected independently of the resolution-equality predicate. Retain public-API rejection coverage and document any structural coupling that prevents a single otherwise-valid public payload from isolating this predicate."
+      }
+    ],
+    "coverage": [
+      "Compared the supplied Python validation branches against the supplied C# query, anchor, transition, disposition, and three wrapper Validate implementations.",
+      "No implementation mismatch identified in proposal terminal identity/root/state/mutation/target equality, transition mutation tuples, challenge disposition tuples, reference coverage, required closure metadata, or closure comparisons.",
+      "Reviewed exact built-in argument checks, closed numeric enums, fixed reason tokens, optional clean-string versus typed-ID distinctions, exact object field sets, and absence-versus-null preservation.",
+      "Reviewed UTC Gregorian validation and seven-digit fractional comparison without microsecond truncation.",
+      "Reviewed explicit composition of the unchanged admission helpers, iterative array bounds, canonical-output bounds, original/canonical hashing, and sanitized public-error construction outside caught contexts.",
+      "Reviewed immutable unadmitted candidate construction and documentation of unscoped, unauthenticated, UNSCRUBBED output.",
+      "Reviewed supplied tests for fixture preservation, nested predicates, shape/type failures, argument subclasses, parser composition, bounds, and canonical expansion."
+    ],
+    "gaps": [
+      "Source-only review: no tools or execution were used, and no test, formatting, type-checking, CI, container-cleanup, or baseline-retention result is independently asserted here.",
+      "The complete frozen 13-case fixture was not supplied; only representatives and a hash reference were available. Its byte identity and complete case coverage cannot be independently established from this material.",
+      "Parent-reported oracle and runtime results are supplied evidence, not independently reproduced review results.",
+      "The retained P1C binary provides reported observed serialization/Validate parity only; neither that observation nor this source comparison establishes reproducible correspondence between the accepted C# source and the retained binary."
+    ]
+  },
+  "fullSecurity": {
+    "verdict": "PASS",
+    "findings": [],
+    "coverage": [
+      "Reviewed the proposed implementation, tests, and documentation against the binding workorder, supplied accepted Python helpers, C# wrapper validation source, rejection converter, enum/correlation profile, and fixture representatives.",
+      "Exact built-in argument checks precede contract lookup, size checks, decoding, and parsing. Separate subclass tests exercise both argument predicates without short-circuit masking.",
+      "JSON admission explicitly composes the unchanged pinned helpers. Duplicate keys, nonfinite numbers, malformed JSON, invalid UTF-8, surrogates, and resource bounds have composition controls; the iterative array limit runs before schema validation.",
+      "Root and nested schemas enforce closed field sets, exact typed-ID shapes, clean text, exact integer enums, computed authority and boolean flags, and optional-null validation without injecting fields into canonical content.",
+      "Wrapper and nested validation matches the supplied C# invariants within the explicitly narrower profile: query and anchor coverage, evidence/artifact alternatives, proposal mutation rules and terminal equality, challenge resolution metadata, nonempty histories and findings, and required closure timestamps.",
+      "UTC calendar validation retains seven fractional digits for comparisons, preserves submitted spelling, and does not invent history ordering or ancestry requirements.",
+      "Canonicalization preserves submitted fields and list order, independently bounds ASCII-expanded output, and fingerprints original and canonical bytes. Results reuse the accepted immutable candidate type without admission, source trust, scoped identity, or receipt-proof inference.",
+      "Public errors are constructed after leaving caught exception contexts. The supplied tests check closed codes and content-free args, string representations, causes, and contexts.",
+      "Negative controls generally isolate nested predicates using otherwise-valid earlier history entries or independently satisfied coverage. Boundary controls cover input padding, canonical expansion, histories and arrays, and composed parser guards.",
+      "Documentation identifies the private-helper composition dependency, UNSCRUBBED durable-boundary obligation, structural-only scope, and source-to-binary provenance limitation."
+    ],
+    "gaps": [
+      "This was a source-only review; no tests, formatting, typing, hash checks, container checks, or CI were executed. Supplied parent evidence is not an independently verified execution result.",
+      "The complete immutable 13-case fixture body was omitted. Its byte identity, full case coverage, and stated SHA-256 cannot be independently established from the representatives and hash reference alone.",
+      "The retained C# binary and independent oracle were not inspected. Observed serialization and Validate parity do not establish reproducible source-to-binary provenance.",
+      "Existing low-level guard tests were not supplied in full; their continued execution and retention remain parent verification obligations. Their relevant immutable helper implementations and new composition controls were available for review.",
+      "Exact-head and merged-main CI, baseline disposition retention, old tracked-file preservation, and the second fresh review remain external acceptance gates. This review does not establish those gates or independent model-family provenance."
+    ]
+  },
+  "independentFocusedReconciliation": {
+    "verdict": "PASS",
+    "disposition": "accept-as-documented",
+    "findings": [],
+    "coverage": [
+      "Focused reconciliation of CCM-P2L-R1 only; not a new full architecture review.",
+      "Within the stated closed public status domain {0,1}, a valid disposition is resolved exactly when ResolutionKind is nonnull, and a valid wrapper is resolved exactly when TerminalResolutionKind is nonnull. Equality of those resolution values therefore implies equality of terminal and wrapper statuses.",
+      "Consequently, an otherwise-valid public payload cannot violate only terminal-status equality. Removing only that comparison cannot change acceptance while the coupled guards remain intact. An implementation-mirroring predicate test is unnecessary to establish this public behavior.",
+      "The supplied parent evidence reports enumeration of all 256 combinations of two wrapper statuses, two entry statuses, four wrapper resolutions, four entry resolutions, closure presence, and response presence. It reports agreement across C#, current Python, and Python with only status equality omitted: four accepted and 252 rejected.",
+      "The finite enumeration includes every stated status and resolution value. Fixed valid timestamps and response identifiers represent presence classes; omitted versus explicit-null optional metadata is equivalent for the relevant Python checks. Other payload dimensions cannot defeat the implication while the stated validity guards hold.",
+      "The supplied source retains the explicit status guard. Supplied metadata reports no source or test byte changes. The original coupled negative control need not independently kill a behaviorally equivalent single-guard mutant."
+    ],
+    "gaps": [
+      "The reported executions are supplied evidence, not independently executed or verified here.",
+      "C# parity evidence is limited to the retained artifact; reproducible source-to-binary provenance is explicitly not established.",
+      "The conclusion is scoped to the stated closed public enums and retained coupling guards. The C# excerpts alone do not enforce enum membership; arbitrary out-of-domain CLR enum values are not covered by this finite public-profile proof. This does not establish a remaining gap within the stated domain."
+    ],
+    "newFullReview": false
+  },
+  "noNewFullReviewClaim": true,
+  "sourceUnchangedSinceFullReviews": true,
+  "remainingMaterialFindings": []
+}

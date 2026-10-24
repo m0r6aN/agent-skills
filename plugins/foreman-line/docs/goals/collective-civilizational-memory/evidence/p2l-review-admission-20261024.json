@@ -1,0 +1,53 @@
+{
+  "atUtc": "2026-10-24T21:05:17.234923+00:00",
+  "status": "ADMITTED_CONDITIONAL_ON_EACH_FRESH_FINANCIAL_GUARD",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_civic_legacy.py": "0b905a74748b7002b363ba76c327ef7f4e8123e37cd4253a2324a5464147deb4",
+    "tests/test_ccm_civic_legacy.py": "625fa8f07a85c389d245403b09fbabb8fb9b8469187db5fae82af16e883a3ba5",
+    "tests/fixtures/ccm/legacy-civic-v1.json": "92d378e594fc7076ba9113b762c6ff22e9e8a198c4ed1697eac73275bfb27476",
+    "docs/specs/ccm-legacy-civic-v1.md": "aca6aa5fea53a3a413b695a7bae4f7a5d77ee89d97b3ac4db6bebeed42b7cad9"
+  },
+  "workorderSha256": "cb10ae8c8650a6a688f8240f1c1832808d5a7e92898648f053fe6b63de665ea7",
+  "model": "gpt-6.1-sol",
+  "effort": "low",
+  "twoFreshContexts": true,
+  "sameFamilyLimitation": true,
+  "maxPerSeatCredits": 190,
+  "phaseCap": 550,
+  "combinedTwoParcelCap": 1000,
+  "remainingEngineConditionalCap": 450,
+  "inputBytes": {
+    "architecture": 94809,
+    "security": 94763
+  },
+  "contextException": "Focused full3files+acceptedC#20KiB/privateJSONhelpers+actualenum/correlation evidence and3fixture representatives; no fullhistory/corpus. Beyond16k default when needed for contract/composition review; tokenreceipt measured.",
+  "summary": {
+    "focused": 22,
+    "fullCounts": {
+      "pass": 3743,
+      "skipped": 137,
+      "failure": 0,
+      "error": 0
+    },
+    "baselineDispositionsRetained": true,
+    "old440PinsRetained": true,
+    "BlackIsortMypy": "PASS",
+    "fixedPrebuildOracle": {
+      "exit": 0,
+      "fixedPrebuildOracle": "PASS",
+      "vectors": 22,
+      "closedErrorControls": 3
+    },
+    "actualRetainedCSharpPositiveCases": 22,
+    "actualCSharpNegativeReasons": 4,
+    "binaryProvenanceLimit": "Retained P1C offline parity binary; observed serialization/Validate, no reproducible source-to-binary claim",
+    "allOwnedContainersAbsent": true,
+    "authorship": "One no-tools Sol source and one focused no-tools Sol repair; both completed stop/exactmodel but malformed outer JSON recovered losslessly offline, full original reservations retained. Parent AST/import-equivalent formatting only.",
+    "fixtureImmutable": true,
+    "scope": "Structural candidate mapping only, no source authentication/receipt proof/scope/admission/storage",
+    "sameFamilyLimitation": true
+  },
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "nativePrivatePi": "HELD"
+}

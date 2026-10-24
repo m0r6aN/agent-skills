@@ -1,0 +1,11 @@
+{
+  "atUtc": "2026-10-24T20:50:29.462490+00:00",
+  "status": "READ_ONLY_RETAINED_CONTRACT_REFLECTION_PASS",
+  "artifact": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1c-parity-probe-20261021-02\\bin\\Release\\net10.0\\Keon.Collective.Abstractions.dll",
+  "artifactSha256": "3d4c9560c797fd11249e5c19e634c57c52b94402005c8dd32180ab61c7632b10",
+  "sourceAuthority": "Accepted P1C revision3d44cf5b CivicMemoryContracts.cs eaadc386... fetched read-only and pinned",
+  "provenanceLimit": "Retained P1C offline parity artifact; reflection confirms current runtime shape, not a reproducible source-to-binary build claim",
+  "modelCalls": 0,
+  "networkDuringBuildOrProbe": false,
+  "candidateCodeExecuted": false
+}

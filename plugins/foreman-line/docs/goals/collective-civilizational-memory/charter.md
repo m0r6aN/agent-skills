@@ -2,6 +2,11 @@
 
 ## Current execution addendum — October24 NY
 
+Legacy3wrapper coverage accepted PR99 merge01531ec6fa65e42445296135364507d01d6a0642;
+22focused/3743fullPASS137skip; exacthead/mainCI/deployment green.
+See p2l-acceptance-20261024.md. Next extractorengine under same owner request.
+All reservations/routes held; full ingestion notready.
+
 P2E civic v2 mapping accepted: PR98 merged7badb965e7c6842147747f542481e4c07a87e487,
 45focused/3721fullPASS137skip and exacthead/mainCI/deployment green.
 See p2e-acceptance-20261024.md. Three v2 profiles remain unadmitted; legacy
@@ -311,3 +316,15 @@ See p2e-acceptance-20261024.md. Financialphaseclosed:189.2reported/
 reservations and affected/native/privatePi routesHELD. Same solecoordinator
 at parcelboundary; cleanpushedworktree retained, no worker/monitor. Next
 legacy civic coverage/extractor engine, thenP3-P8/fullintegration/import gates.
+
+
+## Legacy civic wrappers accepted — October24
+
+PR99 source97366c5e0ff3a2802ea4b05badb8be53d057d637 merged01531ec6fa65e42445296135364507d01d6a0642;16headchecks/mainCI/deployment
+green.22focused/3743fullPASS137skip;440priorentries and9initialtests retained.
+22actualC#positive/4negative cases;256case coupled-invariant proof. Fullsecurity
+PASS, architectureR1 accepted-as-documented with independent focusedPASS; no new
+fullreview claim. See p2l-acceptance-20261024.md. Financialphaseclosed:
+231.0reported/418.670375booked, fullsource/repair andallpriorholds
+retained. Affected/native/privatePiHELD. Same solecoordinator proceeds next
+extractorengine under direct owner request; no nativeworker/monitor, no import.

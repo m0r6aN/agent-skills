@@ -446,3 +446,15 @@ P2L4newfiles,440basepins/3721PASS137skip correspondence; Step0/Gate2 precede
 source. Finite aggregate1000credits: wrapper450, engine550conditional on accepted
 wrapper and own gates. Day8500/effort12500/floor1000, all5432.954875 oldholds
 retained, no topup assumed. Every affected/native/privatePi route staysHELD.
+
+
+## Legacy civic wrappers accepted — October24
+
+PR99 source97366c5e0ff3a2802ea4b05badb8be53d057d637 merged01531ec6fa65e42445296135364507d01d6a0642;16headchecks/mainCI/deployment
+green.22focused/3743fullPASS137skip;440priorentries and9initialtests retained.
+22actualC#positive/4negative cases;256case coupled-invariant proof. Fullsecurity
+PASS, architectureR1 accepted-as-documented with independent focusedPASS; no new
+fullreview claim. See p2l-acceptance-20261024.md. Financialphaseclosed:
+231.0reported/418.670375booked, fullsource/repair andallpriorholds
+retained. Affected/native/privatePiHELD. Same solecoordinator proceeds next
+extractorengine under direct owner request; no nativeworker/monitor, no import.
