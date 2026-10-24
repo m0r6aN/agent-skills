@@ -2177,6 +2177,68 @@ test('AC1/AC2 CLI wiring: the shard CLI consumes the D11 seam + the pin and neve
   }
 })
 
+// A fixed diagnostic reader is the only permitted local Git use. Account for
+// its complete body and immediate neighbours, not an arbitrary function slice.
+// Changing/moving/duplicating either boundary fails before any exemption.
+const PROGRESS_SOURCE_BEGIN = `/** Actual local Git identity and independently hashed inputs; unavailable is
+ * explicit. GITHUB_SHA is not substituted for an observed head/tree. */
+`
+const PROGRESS_SOURCE_BODY = String.raw`export function progressSource(root, git = execFileSync, read = readFileSync) {
+  const revision = (ref) => {
+    try {
+      const value = git('git', ['rev-parse', '--verify', ref], {
+        cwd: root, encoding: 'utf8', shell: false, timeout: 5000, maxBuffer: 4096,
+        env: { ...process.env, GIT_NO_LAZY_FETCH: '1', GIT_TERMINAL_PROMPT: '0' },
+        stdio: ['ignore', 'pipe', 'pipe'],
+      }).trim()
+      return /^[0-9a-f]{40}$/.test(value) ? value : null
+    } catch { return null }
+  }
+  const files = ['scripts/foreman-line-ci.mjs', '.github/workflows/foreman-line-ci.yml', 'scripts/ci-reuse.mjs', READ_GRAPH_PATH.join('/')]
+  const head = revision('HEAD')
+  const tree = head === null ? null : revision(head + '^{tree}')
+  return { head, tree, hashes: files.map((path) => {
+    try { return { path, sha256: sha256Hex(read(join(root, path))) } }
+    catch { return { path, sha256: null } }
+  }) }
+}`
+const PROGRESS_SOURCE_PREVIOUS = `    io.appendFileSync(join(directory, PROGRESS_FILES[0]), line, { flush: true })
+    io.writeFileSync(join(directory, PROGRESS_FILES[1]), line, { flush: true })
+  }
+}
+
+`
+const PROGRESS_SOURCE_END = `
+
+/**
+ * One shard of the sweep: install dependencies for ALL discovered packages
+ * (per-shard full install), then run exactly {test, typecheck, lint} for this
+ * shard's assigned packages only — every install completing before any check
+ * in the shard (the sibling-import barrier, preserved per shard). A failed
+ * install stops the shard's checks: the failed package records ci: fail and
+ * every check records skipped (AC3 #6 attributes the cause to ci). A failing
+ * check is run-then-waive verified against WAIVED_EXCLUSIONS.
+ */
+export function runShard(`
+
+function assertDiagnosticGitBoundary(source) {
+  for (const [label, boundary] of [
+    ['opening', PROGRESS_SOURCE_BEGIN], ['closing', PROGRESS_SOURCE_END],
+    ['predecessor', PROGRESS_SOURCE_PREVIOUS],
+    ['declaration', 'export function progressSource('],
+  ]) {
+    assert.equal(source.split(boundary).length - 1, 1, `diagnostic ${label} boundary must occur exactly once`)
+  }
+  const begin = source.indexOf(PROGRESS_SOURCE_BEGIN)
+  const end = source.indexOf(PROGRESS_SOURCE_END)
+  assert.ok(begin >= PROGRESS_SOURCE_PREVIOUS.length && end > begin, 'diagnostic boundaries must remain ordered')
+  assert.equal(source.slice(begin - PROGRESS_SOURCE_PREVIOUS.length, begin), PROGRESS_SOURCE_PREVIOUS, 'diagnostic reader must immediately follow the sink')
+  assert.equal(source.slice(begin + PROGRESS_SOURCE_BEGIN.length, end), PROGRESS_SOURCE_BODY, 'only the complete fixed diagnostic reader is accounted for')
+  const outside = source.slice(0, begin) + source.slice(end)
+  assert.doesNotMatch(outside, /['"`]git(?:['"`]|\s)|\bgit\s*\(|\bexecFileSync\s*\(/, 'Git is forbidden outside the exact diagnostic reader')
+  assert.doesNotMatch(source, /['"`]diff['"`]/, 'the runner must never compute its own diff, including inside the diagnostic reader')
+}
+
 test('AC1 grep: the D7 pin is consumed in exactly one validator and never filters `mine` (no exclusion path)', () => {
   const source = readFileSync(fileURLToPath(new URL('./foreman-line-ci.mjs', import.meta.url)), 'utf8')
   const validator = source.slice(source.indexOf('export function validateReadGraph('), source.indexOf('function normalizeProximityPath'))
@@ -2187,8 +2249,46 @@ test('AC1 grep: the D7 pin is consumed in exactly one validator and never filter
   assert.ok(runShardBody.includes('for (const name of ordering.order)'), 'phase 2 iterates the ordering')
   assert.ok(runShardBody.includes('packages.filter((p) => mine.includes(p.name))'), 'the artifact still carries every assigned package')
   assert.ok(!/mine\s*=\s*mine\./.test(source) && !/mine\.splice\(/.test(source), 'no code path reassigns or splices mine')
-  // the runner computes no diff of its own (D11): no git invocation anywhere in it
-  assert.ok(!source.includes("'diff'") && !source.includes('"git"') && !source.includes("'git'"))
+  // D11 remains the sole diff source; only the exact observed-identity reader
+  // may invoke Git, and it cannot run diff or grow any other command surface.
+  assertDiagnosticGitBoundary(source)
+})
+
+test('AC1 diagnostic Git accounting refuses source mutations and missing, duplicate or moved boundaries', () => {
+  const source = readFileSync(fileURLToPath(new URL('./foreman-line-ci.mjs', import.meta.url)), 'utf8')
+  assertDiagnosticGitBoundary(source)
+  const mutations = [
+    ['Git before reader', source.replace(PROGRESS_SOURCE_BEGIN, "execFileSync('git', ['status'])\n" + PROGRESS_SOURCE_BEGIN)],
+    ['Git after reader', source + "\nexecFileSync('git', ['rev-parse', '--verify', 'HEAD'])\n"],
+    ['Git in another function', source + "\nfunction unrelated() { return execFileSync('git', ['show']) }\n"],
+    ['diff inside reader', source.replace("['rev-parse', '--verify', ref]", "['diff', '--verify', ref]")],
+    ['diff outside reader', source + '\nconst forbidden = "diff"\n'],
+    ['missing opening', source.replace(PROGRESS_SOURCE_BEGIN, '')],
+    ['duplicate opening', source.replace(PROGRESS_SOURCE_BEGIN, PROGRESS_SOURCE_BEGIN.repeat(2))],
+    ['moved opening', PROGRESS_SOURCE_BEGIN + source.replace(PROGRESS_SOURCE_BEGIN, '')],
+    ['missing closing', source.replace(PROGRESS_SOURCE_END, '')],
+    ['duplicate closing', source + PROGRESS_SOURCE_END],
+    ['moved closing', PROGRESS_SOURCE_END + source.replace(PROGRESS_SOURCE_END, '')],
+    ['moved whole reader', PROGRESS_SOURCE_BEGIN + PROGRESS_SOURCE_BODY + '\n' + source.replace(PROGRESS_SOURCE_BEGIN + PROGRESS_SOURCE_BODY, '')],
+    ['duplicate declaration', source + '\nexport function progressSource() {}\n'],
+    ['extra diagnostic call', source.replace("  const head = revision('HEAD')", "  git('git', ['status'])\n  const head = revision('HEAD')")],
+    ...['diff', 'rev-list', 'show', 'status'].map((command) => [`changed command ${command}`, source.replace("['rev-parse', '--verify', ref]", `['${command}', '--verify', ref]`)]),
+    ['changed head ref', source.replace("revision('HEAD')", "revision('HEAD~1')")],
+    ['changed tree ref', source.replace("revision(head + '^{tree}')", "revision('HEAD^{tree}')")],
+    ['changed flag', source.replace("['rev-parse', '--verify', ref]", "['rev-parse', '--short', ref]")],
+    ['extra flag', source.replace("['rev-parse', '--verify', ref]", "['rev-parse', '--verify', '--quiet', ref]")],
+    ['changed cwd', source.replace("cwd: root, encoding: 'utf8', shell: false, timeout: 5000", "cwd: '/', encoding: 'utf8', shell: false, timeout: 5000")],
+    ['changed shell', source.replace("shell: false, timeout: 5000", "shell: true, timeout: 5000")],
+    ['changed timeout', source.replace('timeout: 5000', 'timeout: 5001')],
+    ['changed capture bound', source.replace('maxBuffer: 4096', 'maxBuffer: 8192')],
+    ['lazy fetch enabled', source.replace("GIT_NO_LAZY_FETCH: '1'", "GIT_NO_LAZY_FETCH: '0'")],
+    ['prompt enabled', source.replace("GIT_TERMINAL_PROMPT: '0'", "GIT_TERMINAL_PROMPT: '1'")],
+    ['changed hash path', source.replace("'scripts/ci-reuse.mjs', READ_GRAPH_PATH.join('/')", "'scripts/unrelated.mjs', READ_GRAPH_PATH.join('/')")],
+  ]
+  for (const [label, mutant] of mutations) {
+    assert.notEqual(mutant, source, `${label} actually changes the fixture`)
+    assert.throws(() => assertDiagnosticGitBoundary(mutant), assert.AssertionError, label)
+  }
 })
 
 // ─── CFF-P1 AC5/AC8: D8 early-red signal (shard-early-exit + annotations) ───
@@ -2857,20 +2957,173 @@ test('PAN-CI5 progress delivery failure cannot mask red, stop installs, or creat
   assert.equal(reconcile({ root, shardCount: 1, discover: () => ['alpha'], artifacts: [progress] }).ok, false)
 })
 
+const DIAGNOSTIC_HASH_PATHS = [
+  'scripts/foreman-line-ci.mjs', '.github/workflows/foreman-line-ci.yml', 'scripts/ci-reuse.mjs',
+  'plugins/foreman-line/docs/goals/ci-fail-fast/read-graph/read-graph.json',
+]
+
+function assertDiagnosticCalls(calls, sourceRoot, refs, inheritedEnvironment) {
+  // Assertions stay outside progressSource's catch: a wrong injected call must
+  // fail this test rather than be swallowed as an unavailable diagnostic.
+  assert.equal(calls.length, refs.length, 'exact diagnostic Git call cardinality')
+  assert.deepEqual(calls.map(([command, args]) => [command, args]), refs.map((ref) => ['git', ['rev-parse', '--verify', ref]]))
+  for (const [, , options] of calls) {
+    const { env, ...rest } = options
+    assert.deepEqual(rest, {
+      cwd: sourceRoot, encoding: 'utf8', shell: false, timeout: 5000, maxBuffer: 4096,
+      stdio: ['ignore', 'pipe', 'pipe'],
+    })
+    const expectedEnvironment = { ...inheritedEnvironment, GIT_NO_LAZY_FETCH: '1', GIT_TERMINAL_PROMPT: '0' }
+    assert.deepEqual(Object.keys(env).sort(), Object.keys(expectedEnvironment).sort(), 'no extra or missing environment keys')
+    // Compare every value without including environment values in failure output.
+    for (const key of Object.keys(expectedEnvironment)) {
+      assert.ok(env[key] === expectedEnvironment[key], `diagnostic environment differs for ${key}`)
+    }
+  }
+}
+
 test('PAN-CI5 source identity uses observed local Git and hashes, never environment claims', () => {
+  const sourceRoot = join(root, 'diagnostic-source-fixture')
+  const head = 'a'.repeat(40)
+  const tree = 'b'.repeat(40)
+  const inheritedEnvironment = { ...process.env }
   const calls = []
-  const source = progressSource('/source', (cmd, args, options) => {
+  const reads = []
+  const source = progressSource(sourceRoot, (cmd, args, options) => {
     calls.push([cmd, args, options])
-    return args.at(-1) === 'HEAD' ? 'a'.repeat(40) + '\n' : 'b'.repeat(40) + '\n'
-  }, () => Buffer.from('source'))
-  assert.equal(source.head, 'a'.repeat(40))
-  assert.equal(source.tree, 'b'.repeat(40))
-  assert.ok(source.hashes.every((entry) => entry.sha256 === createHash('sha256').update('source').digest('hex')))
-  assert.ok(calls.every(([cmd, args, options]) => cmd === 'git' && args[0] === 'rev-parse' && options.shell === false && options.env.GIT_NO_LAZY_FETCH === '1'))
-  const missing = progressSource('/source', () => { throw new Error('secret') }, () => { throw new Error('secret') })
-  assert.equal(missing.head, null)
-  assert.equal(missing.tree, null)
-  assert.ok(missing.hashes.every((entry) => entry.sha256 === null))
+    return calls.length === 1 ? head + '\n' : tree + '\n'
+  }, (...args) => { reads.push(args); return Buffer.from('source') })
+  assertDiagnosticCalls(calls, sourceRoot, ['HEAD', head + '^{tree}'], inheritedEnvironment)
+  assert.deepEqual(reads, DIAGNOSTIC_HASH_PATHS.map((path) => [join(sourceRoot, path)]), 'exact four hash reads, no extra paths/options')
+  assert.deepEqual(source, {
+    head, tree,
+    hashes: DIAGNOSTIC_HASH_PATHS.map((path) => ({ path, sha256: createHash('sha256').update('source').digest('hex') })),
+  })
+  const failedCalls = []
+  const failedReads = []
+  const missing = progressSource(sourceRoot, (...args) => { failedCalls.push(args); throw new Error('secret') },
+    (...args) => { failedReads.push(args); throw new Error('secret') })
+  assertDiagnosticCalls(failedCalls, sourceRoot, ['HEAD'], inheritedEnvironment)
+  assert.deepEqual(failedReads, DIAGNOSTIC_HASH_PATHS.map((path) => [join(sourceRoot, path)]))
+  assert.deepEqual(missing, { head: null, tree: null, hashes: DIAGNOSTIC_HASH_PATHS.map((path) => ({ path, sha256: null })) })
+  assert.equal(JSON.stringify(missing).includes('secret'), false)
+})
+
+test('PAN-CI5 rejected or failed identity reads cannot add Git commands, refs or hash paths', () => {
+  const sourceRoot = join(root, 'diagnostic-source-fixture')
+  const head = 'a'.repeat(40)
+  const inheritedEnvironment = { ...process.env }
+  for (const [label, answers, expectedHead, expectedRefs] of [
+    ['malicious head', ['HEAD; git diff\n'], null, ['HEAD']],
+    ['wrong head type', [{ head }], null, ['HEAD']],
+    ['failed head', [new Error('DO-NOT-EMIT')], null, ['HEAD']],
+    ['malicious tree', [head, 'b'.repeat(40) + '\n::error::forged'], head, ['HEAD', head + '^{tree}']],
+    ['failed tree', [head, new Error('DO-NOT-EMIT')], head, ['HEAD', head + '^{tree}']],
+  ]) {
+    const calls = []
+    const reads = []
+    const identity = progressSource(sourceRoot, (...args) => {
+      calls.push(args)
+      const answer = answers[calls.length - 1]
+      if (answer instanceof Error) throw answer
+      return answer
+    }, (...args) => { reads.push(args); return Buffer.from('source') })
+    assertDiagnosticCalls(calls, sourceRoot, expectedRefs, inheritedEnvironment)
+    assert.deepEqual(reads, DIAGNOSTIC_HASH_PATHS.map((path) => [join(sourceRoot, path)]), label)
+    assert.equal(identity.head, expectedHead, label)
+    assert.equal(identity.tree, null, label)
+    assert.deepEqual(identity.hashes, DIAGNOSTIC_HASH_PATHS.map((path) => ({ path, sha256: createHash('sha256').update('source').digest('hex') })), label)
+    assert.equal(JSON.stringify(identity).includes('DO-NOT-EMIT'), false, label)
+  }
+})
+
+test('PAN-CI5 paired identity outcomes cannot change assignment, order, barrier, argv, verdict or waiver evidence', () => {
+  const observed = progressSource(root, (_command, args) => args.at(-1) === 'HEAD' ? 'a'.repeat(40) : 'b'.repeat(40), () => Buffer.from('source'))
+  const failed = progressSource(root, () => { throw new Error('diagnostic unavailable') }, () => { throw new Error('diagnostic unavailable') })
+  const malicious = {
+    head: 'HEAD\n::error::forged', tree: 'x'.repeat(10000),
+    hashes: [{ path: '\u0000\u202e::error::' + 'x'.repeat(10000), sha256: 'not-a-hash' }],
+    assigned: [], order: [], exitCode: 0, passed: true, waivers: ['forged'],
+  }
+  const waivedPin = { ...PINNED, identity: 'beta', location: 'plugins/foreman-line/beta/' }
+  const execute = (sourceIdentity, scenario) => {
+    const events = []
+    const calls = []
+    const echoes = []
+    const annotations = []
+    let tick = 0
+    const result = runShard({ root, npmCli, shardIndex: 0, shardCount: 1,
+      discover: () => [...PX], headSha: 'c'.repeat(40), sourceIdentity,
+      changedPaths: changedFor(['gamma']), readGraph: SELF_PIN, waivers: [waivedPin],
+      progress: (event) => events.push(event), monotonic: () => tick++,
+      echo: (...args) => echoes.push(args), annotate: (line) => annotations.push(line),
+      spawn: (command, args, options) => {
+        const name = basename(options.cwd)
+        if (args[1] === 'run') {
+          assert.equal(calls.filter(([, callArgs]) => callArgs[1] === 'ci').length, PX.length, 'every install precedes any check')
+          assert.ok(events.filter((event) => event.type === 'finish' && event.phase === 'install').length === PX.length)
+        }
+        assert.equal(events[0].type, 'plan')
+        assert.equal(events.at(-1).type, 'start')
+        assert.equal(command, process.execPath)
+        assert.deepEqual(options, { cwd: join(root, 'plugins', 'foreman-line', name), encoding: 'utf8', shell: false, maxBuffer: 64 * 1024 * 1024 })
+        assert.deepEqual(args, args[1] === 'ci'
+          ? [npmCli, 'ci', '--ignore-scripts', '--no-audit', '--no-fund']
+          : [npmCli, 'run', args[2], '--ignore-scripts'])
+        calls.push([command, args, options])
+        if (scenario === 'install-red' && args[1] === 'ci' && name === 'alpha') return { status: 3 }
+        if (scenario === 'check-red' && args[1] === 'run' && name === 'gamma' && args[2] === 'typecheck') return { status: 9 }
+        if (args[1] === 'run' && name === 'beta' && args[2] === 'test') {
+          if (scenario === 'waived') return { status: 1, stdout: pinnedOutput(PINNED.checks.test) }
+          if (scenario === 'rejected-waiver') return { status: 1, stdout: '\u2716 different failure (1.0ms)\n\u2139 fail 1' }
+        }
+        return { status: 0 }
+      },
+    })
+    assert.deepEqual(events[0].assigned, PX)
+    assert.deepEqual(events.find((event) => event.type === 'phase2').order, ['gamma', 'alpha', 'beta', 'delta'])
+    assert.deepEqual(result.artifact.packages.map((entry) => entry.name), PX)
+    assert.equal(result.artifact.head_sha, 'c'.repeat(40), 'diagnostic head is not the outcome head')
+    assert.equal(result.exitCode, ['success', 'waived'].includes(scenario) ? 0 : 1)
+    const beta = result.outcomes.find((entry) => entry.name === 'beta')
+    if (scenario === 'waived') {
+      assert.equal(beta.checks.test, 'waived')
+      assert.equal(beta.waivers.length, 1)
+      assert.equal(result.earlyExit, null)
+    }
+    if (scenario === 'rejected-waiver') {
+      assert.equal(beta.checks.test, 'fail')
+      assert.equal(beta.waivers.length, 0)
+      assert.ok(beta.waiver_rejected.test)
+      assert.deepEqual(result.earlyExit, { package: 'beta', check: 'test' })
+    }
+    if (scenario === 'check-red') assert.deepEqual(result.earlyExit, { package: 'gamma', check: 'typecheck' })
+    if (scenario === 'install-red') assert.equal(calls.length, PX.length, 'failed install keeps all installs and prevents checks')
+    return { result, events, calls, echoes, annotations }
+  }
+  for (const scenario of ['success', 'waived', 'rejected-waiver', 'check-red', 'install-red']) {
+    const baseline = execute(null, scenario)
+    for (const [label, identity] of [['success', observed], ['absent', undefined], ['failure', failed], ['malicious', malicious]]) {
+      const actual = execute(identity, scenario)
+      assert.deepEqual(actual.result, baseline.result, `${scenario}/${label}: complete terminal result including waiver/rejection evidence`)
+      assert.deepEqual(actual.calls, baseline.calls, `${scenario}/${label}: identical command sequence and options`)
+      assert.deepEqual(actual.echoes, baseline.echoes, `${scenario}/${label}: identical output attribution`)
+      assert.deepEqual(actual.annotations, baseline.annotations, `${scenario}/${label}: identical verdict annotations`)
+      const withoutSource = (events) => events.map((event) => {
+        const { source, ...rest } = event
+        return rest
+      })
+      assert.deepEqual(withoutSource(actual.events), withoutSource(baseline.events), `${scenario}/${label}: only plan.source may differ`)
+      if (label === 'success') assert.equal(actual.events[0].source.head, observed.head)
+      if (label === 'malicious') {
+        assert.equal(actual.events[0].source.head, null)
+        assert.equal(actual.events[0].source.tree, null)
+        assert.equal(actual.events[0].source.hashes[0].sha256, null)
+        assert.ok(actual.events[0].source.hashes[0].path.length <= 200)
+        assert.doesNotMatch(actual.events[0].source.hashes[0].path, /[\x00-\x1f\x7f\u202a-\u202e\u2066-\u2069]|::/)
+      }
+    }
+  }
 })
 
 test('PAN-CI5 workflow progress upload is separate, always attempted, and preserves every CI limit', () => {
