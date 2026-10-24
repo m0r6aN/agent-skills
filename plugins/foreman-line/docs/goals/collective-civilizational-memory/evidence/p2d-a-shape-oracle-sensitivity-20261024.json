@@ -1,0 +1,10 @@
+{
+  "atUtc": "2026-10-24T16:06:12.841560+00:00",
+  "status": "PASS_NEGATIVE_CONTROL",
+  "oldUnfixedModulePinned": "6f09412558cfdf64139533af1292212feae675caf77574dc2472c02c112777af",
+  "newMissingSlotCasesFailAgainstOldModule": 14,
+  "otherOldCasesPass": 139,
+  "productionSourceMutatedForProbe": false,
+  "providerRequests": 0,
+  "allOwnedContainersAbsent": true
+}

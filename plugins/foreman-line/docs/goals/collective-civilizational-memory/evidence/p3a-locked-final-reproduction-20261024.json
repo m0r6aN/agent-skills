@@ -1,0 +1,32 @@
+{
+  "atUtc": "2026-10-24T22:20:20.235608+00:00",
+  "status": "REPRODUCED_BLOCKING_FINAL_EXPIRY",
+  "network": "isolated internal Docker network, no published port",
+  "syntheticOnly": true,
+  "newProviderCalls": 0,
+  "candidateImage": "ccm-p3a-candidate:fed71c2d6c9e",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_ingestion.py": "7ef2cfa5a9e75a8c1d801c350b84c84ecf0727789c5d7d55e7b01208c8a54597",
+    "src/keon/cortex/providers/postgres/ccm_ingestion.py": "275e1f6a670e879d54b045f5261492edb9c8ea0e58812f877c69f7a7fdc97dc8",
+    "tests/test_ccm_ingestion.py": "69ed9cafce0b0a3344d9e6c15bc123f8d80fe525994be5a4db6f1157a02f11a7",
+    "tests/test_ccm_ingestion_postgres.py": "58159352a441c36b2c31a92e79232c16bff555fbfc32d90b5364605800fa000d",
+    "docs/specs/ccm-durable-ingestion-v1.md": "e8e14c962916360cd84172d1bd2fc57326a1cb43522044b5cec113758154dda5"
+  },
+  "postgresImage": "sha256:275447c94b11b151decd1f29877965301d5a77032037c46de93d990f739f00a9",
+  "existingCanonicalSchemaPreconditionProvisioned": true,
+  "tests": {
+    "exit": 0,
+    "cases": [
+      {
+        "class": "parent_actual_pg",
+        "name": "locked_expired_final_blocks_other_eligible_batch",
+        "status": "pass"
+      }
+    ],
+    "reproduced": true,
+    "blockedWhileUnlockedEligibleBatchExists": true,
+    "cancellationRolledBack": true
+  },
+  "allOwnedContainersAbsent": true,
+  "networkAbsent": true
+}

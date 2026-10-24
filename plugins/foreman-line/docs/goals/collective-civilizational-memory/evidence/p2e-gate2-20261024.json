@@ -1,0 +1,28 @@
+{
+  "atUtc": "2026-10-24T20:00:48.401069+00:00",
+  "gate2": "APPROVED_BY_DELEGATED_OWNER_AUTHORITY",
+  "workorderSha256": "88bace50c18c2ca676ff0fb1d65e1f683f5f3bb836593cc15f7e3121fa77683f",
+  "base": "0cdff676038d76c203f819ee697cda226980d305",
+  "worktree": "D:\\Repos\\ccm-worktrees\\cortex-p2e-civic",
+  "allowedFiles": [
+    "src/keon/cortex/pipeline/ccm_civic.py",
+    "tests/test_ccm_civic.py",
+    "docs/specs/ccm-civic-mapping-v1.md"
+  ],
+  "baselineCounts": {
+    "pass": 3676,
+    "skipped": 137,
+    "failure": 0,
+    "error": 0
+  },
+  "trackedPins": 437,
+  "step0Flags": [],
+  "sourceModel": "gpt-6.1-sol",
+  "effort": "low",
+  "maxImplementations": 1,
+  "maxFocusedRepairs": 1,
+  "reviewsRequired": 2,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "mergeAllowedNow": false
+}

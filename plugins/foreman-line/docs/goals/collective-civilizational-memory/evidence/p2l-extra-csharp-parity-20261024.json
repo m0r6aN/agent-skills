@@ -1,0 +1,77 @@
+{
+  "status": "ACTUAL_CSHARP_PARITY_PASS",
+  "cases": [
+    {
+      "name": "plain-correlation-metadata",
+      "accepted": true,
+      "error": null
+    },
+    {
+      "name": "reason-failed_verification",
+      "accepted": true,
+      "error": null
+    },
+    {
+      "name": "reason-violated_invariant",
+      "accepted": true,
+      "error": null
+    },
+    {
+      "name": "reason-runtime_regression",
+      "accepted": true,
+      "error": null
+    },
+    {
+      "name": "reason-security_boundary_breach",
+      "accepted": true,
+      "error": null
+    },
+    {
+      "name": "reason-out_of_scope",
+      "accepted": true,
+      "error": null
+    },
+    {
+      "name": "reason-deferred_timing",
+      "accepted": true,
+      "error": null
+    },
+    {
+      "name": "reason-budget_cap",
+      "accepted": true,
+      "error": null
+    },
+    {
+      "name": "reason-policy_preference",
+      "accepted": true,
+      "error": null
+    },
+    {
+      "name": "reason-policy_disagreement",
+      "accepted": false,
+      "error": "JsonException"
+    },
+    {
+      "name": "reason-insufficient_evidence",
+      "accepted": false,
+      "error": "JsonException"
+    },
+    {
+      "name": "reason-alternative_preferred",
+      "accepted": false,
+      "error": "JsonException"
+    },
+    {
+      "name": "reason-other",
+      "accepted": false,
+      "error": "JsonException"
+    }
+  ],
+  "positive": 9,
+  "negative": 4,
+  "totalPositiveOracleVectors": 22,
+  "fixtureFileUnchanged": true,
+  "candidateCodeExecuted": false,
+  "newModelCalls": 0,
+  "binaryProvenanceLimit": "Retained P1C offline parity binary; observed serialization/Validate, no reproducible source-to-binary claim"
+}

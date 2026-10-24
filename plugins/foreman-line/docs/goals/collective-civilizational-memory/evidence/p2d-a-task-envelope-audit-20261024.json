@@ -1,0 +1,460 @@
+{
+  "recordedAtUtc": "2026-10-24T16:12:42.235670+00:00",
+  "normalization": "Post-execution schema normalization of original admitted workorders/receipts, not a newly invented pre-dispatch receipt",
+  "originalPreflightReceiptsRetained": true,
+  "schemaValidation": "PASS",
+  "USDUnknown": true,
+  "actualCreditLedger": "p2d-a-final-ledger-20261024.json",
+  "units": [
+    {
+      "id": "CCM-P2D-A-step0",
+      "sdlc_stage": "planning",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Scope assessment",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-a-git-20261024-01\\step0-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped JSON assessment"
+      ],
+      "constraints": [
+        "No tools, effects, credentials, filesystem access or network",
+        "No retry or fallback; all reservations/routes held",
+        "Credit envelope and per-call bound in original preflight receipt; no USD conversion claimed"
+      ],
+      "acceptance_criteria": [
+        "Original workorder, fixed byte oracle and exact source-byte pins remain binding",
+        "Parent independently validates supplied result; merge only after actual exact-head CI"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-a-git-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 3,
+      "context_tokens": 2322,
+      "estimated_output_tokens": 2048,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content review",
+          "restricted deterministic tests",
+          "fresh architecture/security review"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed or uncertain provider request",
+          "out-of-envelope scope",
+          "cap or route unavailable"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-a-git-20261024-01\\step0-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P2D-A-source",
+      "sdlc_stage": "implementation",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Pure Git object snapshot validator",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-a-git-20261024-01\\source-input.txt"
+      ],
+      "expected_outputs": [
+        "Exact three-file source candidate JSON"
+      ],
+      "constraints": [
+        "No tools, effects, credentials, filesystem access or network",
+        "No retry or fallback; all reservations/routes held",
+        "Credit envelope and per-call bound in original preflight receipt; no USD conversion claimed"
+      ],
+      "acceptance_criteria": [
+        "Original workorder, fixed byte oracle and exact source-byte pins remain binding",
+        "Parent independently validates supplied result; merge only after actual exact-head CI"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-a-git-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 3,
+      "context_tokens": 4823,
+      "estimated_output_tokens": 10500,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content review",
+          "restricted deterministic tests",
+          "fresh architecture/security review"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed or uncertain provider request",
+          "out-of-envelope scope",
+          "cap or route unavailable"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-a-git-20261024-01\\source-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P2D-A-architecture",
+      "sdlc_stage": "review",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Fresh independent exact-candidate review",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-a-git-20261024-01\\architecture-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped JSON assessment"
+      ],
+      "constraints": [
+        "No tools, effects, credentials, filesystem access or network",
+        "No retry or fallback; all reservations/routes held",
+        "Credit envelope and per-call bound in original preflight receipt; no USD conversion claimed"
+      ],
+      "acceptance_criteria": [
+        "Original workorder, fixed byte oracle and exact source-byte pins remain binding",
+        "Parent independently validates supplied result; merge only after actual exact-head CI"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-a-git-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 3,
+      "context_tokens": 11837,
+      "estimated_output_tokens": 3072,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content review",
+          "restricted deterministic tests",
+          "fresh architecture/security review"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed or uncertain provider request",
+          "out-of-envelope scope",
+          "cap or route unavailable"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-a-git-20261024-01\\architecture-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P2D-A-security",
+      "sdlc_stage": "security",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Fresh independent exact-candidate review",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-a-git-20261024-01\\security-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped JSON assessment"
+      ],
+      "constraints": [
+        "No tools, effects, credentials, filesystem access or network",
+        "No retry or fallback; all reservations/routes held",
+        "Credit envelope and per-call bound in original preflight receipt; no USD conversion claimed"
+      ],
+      "acceptance_criteria": [
+        "Original workorder, fixed byte oracle and exact source-byte pins remain binding",
+        "Parent independently validates supplied result; merge only after actual exact-head CI"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-a-git-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 3,
+      "context_tokens": 11845,
+      "estimated_output_tokens": 3072,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content review",
+          "restricted deterministic tests",
+          "fresh architecture/security review"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed or uncertain provider request",
+          "out-of-envelope scope",
+          "cap or route unavailable"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-a-git-20261024-01\\security-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P2D-A-final-architecture",
+      "sdlc_stage": "review",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Fresh independent exact-candidate review",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-a-git-20261024-01\\final-architecture-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped JSON assessment"
+      ],
+      "constraints": [
+        "No tools, effects, credentials, filesystem access or network",
+        "No retry or fallback; all reservations/routes held",
+        "Credit envelope and per-call bound in original preflight receipt; no USD conversion claimed"
+      ],
+      "acceptance_criteria": [
+        "Original workorder, fixed byte oracle and exact source-byte pins remain binding",
+        "Parent independently validates supplied result; merge only after actual exact-head CI"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-a-git-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 3,
+      "context_tokens": 12245,
+      "estimated_output_tokens": 3072,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content review",
+          "restricted deterministic tests",
+          "fresh architecture/security review"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed or uncertain provider request",
+          "out-of-envelope scope",
+          "cap or route unavailable"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-a-git-20261024-01\\final-architecture-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P2D-A-final-security",
+      "sdlc_stage": "security",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Fresh independent exact-candidate review",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-a-git-20261024-01\\final-security-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped JSON assessment"
+      ],
+      "constraints": [
+        "No tools, effects, credentials, filesystem access or network",
+        "No retry or fallback; all reservations/routes held",
+        "Credit envelope and per-call bound in original preflight receipt; no USD conversion claimed"
+      ],
+      "acceptance_criteria": [
+        "Original workorder, fixed byte oracle and exact source-byte pins remain binding",
+        "Parent independently validates supplied result; merge only after actual exact-head CI"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-a-git-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 3,
+      "context_tokens": 12253,
+      "estimated_output_tokens": 3072,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content review",
+          "restricted deterministic tests",
+          "fresh architecture/security review"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed or uncertain provider request",
+          "out-of-envelope scope",
+          "cap or route unavailable"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-a-git-20261024-01\\final-security-input.txt"
+        ],
+        "write": []
+      }
+    }
+  ]
+}

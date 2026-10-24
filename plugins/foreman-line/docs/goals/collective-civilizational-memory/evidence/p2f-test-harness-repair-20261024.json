@@ -1,0 +1,28 @@
+{
+  "atUtc": "2026-10-24T21:32:56.931489+00:00",
+  "authority": "Existing delegated bounded non-destructive source/test repair",
+  "scope": "ONE focused repair: prevent pytest automatic parameter IDs from inspecting deliberately hostile Canary objects; independently check all fixed oracle digest literals; preserve runtime behavior and meaningful assertions. Any further observed source/test issues remain in same bounded repair, not open-ended retries.",
+  "sourceHashesBefore": {
+    "src/keon/cortex/pipeline/ccm_engine.py": "b992d36204900bf2ae1290a23db2725094a08cd8a18d0f5c756404b493818110",
+    "tests/test_ccm_engine.py": "5c1043c97655b286c6e8c008abf91dbcab61fb0c72c68633b0586649196adf59",
+    "docs/specs/ccm-extractor-engine-v1.md": "90734573429f61015219ca097c89f7b694a6c0e8aa9be50895c4f044b6049873"
+  },
+  "maxRepairProviderPosts": 1,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "independentReviewsStillRequired": 2,
+  "parameterDecorators": 28,
+  "oldDigestConstants": [
+    "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03",
+    "6d229884c1268bb0ab32d8da315d0fe52f9147228bd830a37bc9fb28a954940d",
+    "e91d9fa991579790ee5059dbbeb22e17115a119b6824102bc23955b58b05ed2f"
+  ],
+  "newDigestConstants": [
+    "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03",
+    "6d229884c1268bb0ab32d8da315d0fe52f9147228bd830a37bc9fb28a954940d",
+    "e91d9fa991579790ee5059dbbeb22e17115a119b6824102bc23955b58b05ed2f"
+  ],
+  "independence": "Hash exact frozen oracle source literals, no candidate imports",
+  "productionUnchanged": true,
+  "providerRequests": 0
+}

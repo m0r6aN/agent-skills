@@ -1,0 +1,294 @@
+{
+  "atUtc": "2026-10-24T14:58:25.559928+00:00",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_python_protocol.py": "ea9de856c1f35146aa2e515195212688e98f03510c08d9df8cf3bdc05e1f7088",
+    "src/keon/cortex/pipeline/ccm_python_worker.py": "47e7600c565a86d81d7b62f38244cbffffebd82cb609fcae90eda6952965648e",
+    "src/keon/cortex/pipeline/ccm_python_runtime.py": "c753c6269464cb5b1fe5b7acccc5843ac46634de7e55de3ba76279c6582b48b7",
+    "tests/test_ccm_python_runtime.py": "5c8da6d8b4d488739edcdc89c46755facfa94e2cf87186d9b5b70d2fc9597cb3",
+    "docker/ccm-python-parser/Dockerfile": "b8c2f008083d2d13194c7ebb76af91795181e594d5df1ffb97f060047cb07480",
+    "docs/specs/ccm-python-runtime-v1.md": "ebcd07eaf71bf4e4579f86edbda1d44ebd3f4fd2ec2644e0fd857d294345b4ad"
+  },
+  "seats": {
+    "final-architecture": {
+      "cap": 180,
+      "outputTokens": 3072,
+      "bytes": 110531,
+      "byteBoundEstimate": 175.063625,
+      "inputSha256": "98807fcbf876ad1d567c8165caf47f36b5d36b433664b461bce6d3c6b994d1a3"
+    },
+    "final-security": {
+      "cap": 180,
+      "outputTokens": 3072,
+      "bytes": 110563,
+      "byteBoundEstimate": 175.107625,
+      "inputSha256": "88afd60bf597105a4c675b9b7b2317b8be09dba2aa8d8a6a88956b0930bb9f1d"
+    }
+  },
+  "models": [
+    "gpt-6.1-sol",
+    "gpt-6.1-sol"
+  ],
+  "sameModelFamilyLimitation": true,
+  "freshIndependentSourceOnlyContexts": true,
+  "phaseCap": 350,
+  "alreadyBookedInitialPair": 77.501875,
+  "maxNewPosts": 2,
+  "retryFallback": false,
+  "sourceModelCalls": 0,
+  "allReservationsAndAffectedRoutesHeld": true,
+  "facts": {
+    "checks": {
+      "status": "PASS_INITIAL_LOCAL",
+      "counts": {
+        "pass": 3189,
+        "skipped": 137,
+        "failure": 0,
+        "error": 0
+      },
+      "black": {
+        "exit": 0,
+        "output": "All done! \u2728 \ud83c\udf70 \u2728\n4 files would be left unchanged.\n",
+        "dockerExit": 0
+      },
+      "isort": {
+        "exit": 0,
+        "output": "",
+        "dockerExit": 0
+      },
+      "mypy": {
+        "exit": 0,
+        "output": "Success: no issues found in 3 source files\n",
+        "dockerExit": 0
+      },
+      "baselineIdentitiesRetained": true,
+      "trackedTreePinsRetained": true,
+      "allOwnedContainersAbsent": true
+    },
+    "focusedCount": 202,
+    "newFocusedCases": 24,
+    "original130FocusedDispositionsRetained": true,
+    "productionImageId": "sha256:a6a75dbc102b44c309be0fa8315e94e183de21557decb7da63b6f4aed20ba42c",
+    "moduleHashes": {
+      "src/keon/cortex/pipeline/ccm_python.py": "aa4d7d79058a4d4e364ab02519d5e97b3dc8d8ab5074872c61fdb7be1b31f9c3",
+      "src/keon/cortex/pipeline/ccm_python_protocol.py": "ea9de856c1f35146aa2e515195212688e98f03510c08d9df8cf3bdc05e1f7088",
+      "src/keon/cortex/pipeline/ccm_python_worker.py": "47e7600c565a86d81d7b62f38244cbffffebd82cb609fcae90eda6952965648e"
+    },
+    "actualProfile": {
+      "exit": 0,
+      "stderrBytes": 0,
+      "value": {
+        "python": "3.13.15",
+        "cpu": [
+          2,
+          2
+        ],
+        "as": [
+          100663296,
+          100663296
+        ],
+        "nproc": [
+          0,
+          0
+        ],
+        "modules": {
+          "ccm_python": "aa4d7d79058a4d4e364ab02519d5e97b3dc8d8ab5074872c61fdb7be1b31f9c3",
+          "ccm_python_protocol": "ea9de856c1f35146aa2e515195212688e98f03510c08d9df8cf3bdc05e1f7088",
+          "ccm_python_worker": "47e7600c565a86d81d7b62f38244cbffffebd82cb609fcae90eda6952965648e"
+        }
+      }
+    },
+    "actualAPICases": [
+      {
+        "bytes": 14,
+        "code": null,
+        "equal": true,
+        "seconds": 1.905
+      },
+      {
+        "bytes": 34,
+        "code": null,
+        "equal": true,
+        "seconds": 1.7
+      },
+      {
+        "bytes": 34,
+        "code": null,
+        "equal": true,
+        "seconds": 1.836
+      },
+      {
+        "bytes": 0,
+        "code": null,
+        "equal": true,
+        "seconds": 2.184
+      },
+      {
+        "bytes": 5,
+        "code": "invalid_syntax",
+        "equal": true,
+        "seconds": 2.031
+      },
+      {
+        "bytes": 1,
+        "code": "invalid_utf8",
+        "equal": true,
+        "seconds": 1.978
+      },
+      {
+        "bytes": 131,
+        "code": "resource_limit",
+        "equal": true,
+        "seconds": 2.548
+      }
+    ],
+    "actualFaults": [
+      {
+        "mode": "exit71",
+        "expectedCode": "isolation_failure",
+        "actualCode": "isolation_failure",
+        "pass": true,
+        "seconds": 1.619,
+        "allOwnedAbsent": true
+      },
+      {
+        "mode": "stderr",
+        "expectedCode": "invalid_response",
+        "actualCode": "invalid_response",
+        "pass": true,
+        "seconds": 1.613,
+        "allOwnedAbsent": true
+      },
+      {
+        "mode": "malformed",
+        "expectedCode": "invalid_response",
+        "actualCode": "invalid_response",
+        "pass": true,
+        "seconds": 1.732,
+        "allOwnedAbsent": true
+      },
+      {
+        "mode": "overflow",
+        "expectedCode": "invalid_response",
+        "actualCode": "invalid_response",
+        "pass": true,
+        "seconds": 1.665,
+        "allOwnedAbsent": true
+      },
+      {
+        "mode": "late",
+        "expectedCode": "deadline_exceeded",
+        "actualCode": "deadline_exceeded",
+        "pass": true,
+        "seconds": 6.009,
+        "allOwnedAbsent": true
+      }
+    ],
+    "allAPIContainersAbsent": true,
+    "allProfileContainersAbsent": true,
+    "allAPIEnvKeys": [
+      "COMSPEC",
+      "DOCKER_CONFIG",
+      "DOCKER_HOST",
+      "PATHEXT",
+      "PROGRAMDATA",
+      "SYSTEMDRIVE",
+      "SYSTEMROOT",
+      "TEMP",
+      "TMP",
+      "WINDIR"
+    ],
+    "authorship": "Operator-authored bounded teardown repair plus one protocol-test-only completion within owner-authorized scope; runtime and other5files unchanged during completion; no source model POST",
+    "old154FocusedDispositionsRetained": true,
+    "newTestOnlyCompletionCases": 48,
+    "oracleSensitivity": {
+      "teardown": {
+        "killAttempts": 1,
+        "waitAttempts": 1,
+        "code": "isolation_failure",
+        "allPipesClosed": true
+      },
+      "protocolOracleSensitivity": [
+        {
+          "guard": "duplicate-envelope",
+          "baselinePass": true,
+          "bypassDetected": true
+        },
+        {
+          "guard": "duplicate-symbol",
+          "baselinePass": true,
+          "bypassDetected": true
+        },
+        {
+          "guard": "numeric-rejector",
+          "baselinePass": true,
+          "bypassDetected": true
+        },
+        {
+          "guard": "pre-decoder-depth",
+          "baselinePass": true,
+          "bypassDetected": true
+        },
+        {
+          "guard": "direct-integer-limit",
+          "baselinePass": true,
+          "bypassDetected": true
+        },
+        {
+          "guard": "strict-version-bool-True",
+          "baselinePass": true,
+          "bypassDetected": true
+        },
+        {
+          "guard": "strict-version-bool-False",
+          "baselinePass": true,
+          "bypassDetected": true
+        },
+        {
+          "guard": "strict-offset-start_byte-False",
+          "baselinePass": true,
+          "bypassDetected": true
+        },
+        {
+          "guard": "strict-offset-start_byte-True",
+          "baselinePass": true,
+          "bypassDetected": true
+        },
+        {
+          "guard": "strict-offset-end_byte-True",
+          "baselinePass": true,
+          "bypassDetected": true
+        },
+        {
+          "guard": "strict-ok-True",
+          "baselinePass": true,
+          "bypassDetected": true
+        },
+        {
+          "guard": "strict-ok-False",
+          "baselinePass": true,
+          "bypassDetected": true
+        },
+        {
+          "guard": "unknown-symbol-field",
+          "baselinePass": true,
+          "bypassDetected": true
+        },
+        {
+          "guard": "closed-envelope-True",
+          "baselinePass": true,
+          "bypassDetected": true
+        },
+        {
+          "guard": "closed-envelope-False",
+          "baselinePass": true,
+          "bypassDetected": true
+        }
+      ],
+      "sourceFilesChanged": false,
+      "inferenceRequests": 0,
+      "atUtc": "2026-10-24T14:57:06.072612+00:00",
+      "status": "PASS_INDEPENDENT_FIXED_ORACLE_SENSITIVITY",
+      "allOwnedContainersAbsent": true
+    }
+  }
+}

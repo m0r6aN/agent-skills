@@ -1,0 +1,177 @@
+{
+  "atUtc": "2026-10-24T14:31:30.202245+00:00",
+  "status": "SOURCE_REPAIR_AND_LOCAL_VERIFICATION_COMPLETE_FRESH_REVIEWS_HELD_ACCOUNT_MISMATCH",
+  "sourceRepairOrdinal": 3,
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_python_protocol.py": "ea9de856c1f35146aa2e515195212688e98f03510c08d9df8cf3bdc05e1f7088",
+    "src/keon/cortex/pipeline/ccm_python_worker.py": "47e7600c565a86d81d7b62f38244cbffffebd82cb609fcae90eda6952965648e",
+    "src/keon/cortex/pipeline/ccm_python_runtime.py": "c753c6269464cb5b1fe5b7acccc5843ac46634de7e55de3ba76279c6582b48b7",
+    "tests/test_ccm_python_runtime.py": "c93b413c82e422e82027679688bb5988f8be6e40be0b9586d9d72084a927e054",
+    "docker/ccm-python-parser/Dockerfile": "b8c2f008083d2d13194c7ebb76af91795181e594d5df1ffb97f060047cb07480",
+    "docs/specs/ccm-python-runtime-v1.md": "ebcd07eaf71bf4e4579f86edbda1d44ebd3f4fd2ec2644e0fd857d294345b4ad"
+  },
+  "runtimeFix": "Independent bounded wait after failed poll/kill; timeout0 allowed when budget elapsed; retain isolation_failure",
+  "operatorAuthorshipDisclosed": true,
+  "otherFourCandidateFilesUnchanged": true,
+  "focusedPass": 154,
+  "old130FocusedDispositionsRetained": true,
+  "newCases": 24,
+  "checks": {
+    "counts": {
+      "pass": 3141,
+      "skipped": 137,
+      "failure": 0,
+      "error": 0
+    },
+    "black": {
+      "exit": 0,
+      "output": "All done! \u2728 \ud83c\udf70 \u2728\n4 files would be left unchanged.\n",
+      "dockerExit": 0
+    },
+    "isort": {
+      "exit": 0,
+      "output": "",
+      "dockerExit": 0
+    },
+    "mypy": {
+      "exit": 0,
+      "output": "Success: no issues found in 3 source files\n",
+      "dockerExit": 0
+    },
+    "baselineIdentitiesRetained": true,
+    "trackedTreePinsRetained": true,
+    "allOwnedContainersAbsent": true
+  },
+  "actualAPICases": 7,
+  "actualFaultCases": 5,
+  "allActualContainersAbsent": true,
+  "oracleProof": {
+    "teardown": {
+      "killAttempts": 1,
+      "waitAttempts": 1,
+      "code": "isolation_failure",
+      "allPipesClosed": true
+    },
+    "protocolOracleSensitivity": [
+      {
+        "guard": "duplicate-envelope",
+        "baselinePass": true,
+        "bypassDetected": true
+      },
+      {
+        "guard": "duplicate-symbol",
+        "baselinePass": true,
+        "bypassDetected": true
+      },
+      {
+        "guard": "numeric-rejector",
+        "baselinePass": true,
+        "bypassDetected": true
+      },
+      {
+        "guard": "pre-decoder-depth",
+        "baselinePass": true,
+        "bypassDetected": true
+      },
+      {
+        "guard": "direct-integer-limit",
+        "baselinePass": true,
+        "bypassDetected": true
+      }
+    ],
+    "sourceFilesChanged": false,
+    "inferenceRequests": 0,
+    "atUtc": "2026-10-24T14:28:09.181645+00:00",
+    "status": "PASS_INDEPENDENT_FIXED_ORACLE_SENSITIVITY",
+    "allOwnedContainersAbsent": true
+  },
+  "reviewPacketsComplete": true,
+  "reviewPackets": {
+    "architecture": {
+      "cap": 180,
+      "outputTokens": 4096,
+      "byteBoundEstimate": 170.044875,
+      "bytes": 102785,
+      "inputSha256": "5aa913180c65f3a78f9ef74ddfd3a1a3a4ed35f844188ba4f2ba12bcba351ad2"
+    },
+    "security": {
+      "cap": 180,
+      "outputTokens": 4096,
+      "byteBoundEstimate": 170.088875,
+      "bytes": 102817,
+      "inputSha256": "0bcf5941868e93a7d17822c0f054955b0c701c45d24b76a998f33363097825cc"
+    }
+  },
+  "reviewModel": "gpt-6.1-sol",
+  "independence": "Two fresh no-tools source-only contexts, same-family limitation disclosed",
+  "inferenceRequests": 0,
+  "newReportedCredits": 0,
+  "newBookedCredits": 0,
+  "perReviewCap": 180,
+  "newPhaseCapConditional": 250,
+  "oldConservativeAllHeld": 4457.86875,
+  "old120Held": true,
+  "oldRuntime150Held": true,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "nativePrivatePi": "HELD",
+  "floor": 1000,
+  "accountObservation": {
+    "atUtc": "2026-10-24T14:30:16.651326+00:00",
+    "credit_balance": 5569.2,
+    "plan": "plus",
+    "responseFieldNames": [
+      "cogen_id",
+      "credit_balance",
+      "email",
+      "name",
+      "org_plan",
+      "org_role",
+      "personal_plan",
+      "plan"
+    ],
+    "otherNumericCreditFields": {
+      "credit_balance": 5569.2
+    },
+    "inferenceRequests": 0,
+    "userTopupConfirmed": true
+  },
+  "preflightHistory": [
+    {
+      "atUtc": "2026-10-24T14:26:48.497380+00:00",
+      "mode": "architecture",
+      "balance": 5569.2,
+      "oldConservative": 4457.86875,
+      "booked": 0,
+      "cap": 180,
+      "phaseCap": 250,
+      "day": 4637.86875,
+      "effort": 8635.46875,
+      "afterAllHolds": 931.3312500000002,
+      "floor": 1000,
+      "admitted": false,
+      "inferenceRequestsThisCheck": 0
+    },
+    {
+      "atUtc": "2026-10-24T14:28:55.022677+00:00",
+      "mode": "architecture",
+      "balance": 5569.2,
+      "oldConservative": 4457.86875,
+      "booked": 0,
+      "cap": 180,
+      "phaseCap": 250,
+      "day": 4637.86875,
+      "effort": 8635.46875,
+      "afterAllHolds": 931.3312500000002,
+      "floor": 1000,
+      "admitted": false,
+      "inferenceRequestsThisCheck": 0
+    }
+  ],
+  "ownerCreditsAddedConfirmed": true,
+  "mismatch": "Owner confirms credit topup; same exact local credential API still reports previous5569.2. No assumption that topup was on a different account or not completed. Further account/balance clarification requested. No provider POST attempted.",
+  "sourcePR": null,
+  "merge": false,
+  "productionImportAdmission": false,
+  "next": "Resolve observed balance mismatch, then same SDK architecture once and security once under fresh individual guards; no rerun of completed local checks, no source change, retry or fallback. Maximum2posts; missing/failing response stays held. No fourth source repair authorized."
+}

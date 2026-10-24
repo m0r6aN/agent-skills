@@ -1,0 +1,111 @@
+{
+  "atUtc": "2026-10-24T15:14:19.142188+00:00",
+  "initialPair": {
+    "architecture": {
+      "verdict": "CHANGES_REQUIRED",
+      "findings": [
+        {
+          "id": "F1",
+          "severity": "medium",
+          "locator": "tests/test_ccm_python_runtime.py::test_bad_json; protocol boundary coverage",
+          "trigger": "The bool-as-version case supplies only {\"version\":true}, rather than an otherwise valid envelope. Removing the exact-int version guard still causes rejection because ok is absent. There are also no otherwise-valid independent cases for bool-as-end_byte, unknown symbol keys, or missing success-envelope keys.",
+          "impact": "The required independent boundary assertions are not complete. In particular, the existing version test cannot detect a regression accepting true as version 1. The supplementary sensitivity evidence covers duplicate keys, numeric rejection, depth and integer limits, but not this masked predicate.",
+          "remediation": "Supply otherwise-valid success and failure envelopes with version=true and assert invalid_response. Add isolated cases for the remaining untested closed-schema/type predicates, including end_byte=true, unknown symbol fields and missing success fields. Demonstrate that each oracle fails when its corresponding guard is bypassed, without changing runtime behavior or expanding repair authority.",
+          "confidence": "high"
+        }
+      ],
+      "coverage": [
+        "Reviewed all six supplied exact files, the accepted library, binding workorder and supplied actual observations as source/evidence only.",
+        "Protocol implementation bounds frames, pre-scans nesting and integer lexemes, rejects duplicate keys and noninteger numeric tokens, validates closed envelopes, complete-input digest, symbol limits, identifiers, ordering and byte ranges, and returns accepted frozen wrappers.",
+        "Public API checks exact configuration/source types and size precedence; error construction clears ambient chaining and retains empty args. Fixed client paths, endpoints, cleared environments and empty Docker configuration preserve the operator/source boundary.",
+        "Lifecycle inspection covers intended ownership registration, collision precheck, returned-ID capture, uncertain-create reconciliation, exact name/label/known-ID matching, profile verification, exit reconciliation and cleanup-before-result publication.",
+        "Cleanup distinguishes bounded whitelisted missing diagnostics from daemon errors, refuses unrelated objects, proves absence before success and retains opaque pending identifiers on unproved removal.",
+        "Transport uses bounded threadless nonblocking reads/writes and independent bounded wait after poll/kill failure. Tests exercise partial writes, would-block progress, overflow, interruption, teardown failure and stream closure rather than replacing those branches wholesale.",
+        "New cleanup tests invoke real reconciliation and cleanup logic through command seams. Some orchestration tests intentionally mock profile checks; separate direct profile tests exercise those predicates.",
+        "Worker and Dockerfile implement pinned base, library/interpreter checks, restricted container profile, cgroup-v2 evidence, rlimits, one request plus EOF, supplementary alarm and closed exit contracts.",
+        "Supplied observations report Windows Python 3.13.7 / Docker Desktop Linux Python 3.13.15 equivalence, fixed fault outcomes, passive API transport observation and owned-container absence. These are parent observations, not reviewer execution."
+      ],
+      "gaps": [
+        "Linux client qualification is absent; this is an unqualified environment, not an established implementation defect.",
+        "No actual daemon-outage recovery proof is supplied. Pending cleanup and isolation_failure appropriately avoid an absence claim; cancellation is not hard realtime.",
+        "Fixed fault images replace main worker behavior and are not production candidates. Labels do not authenticate images; trusted operators must qualify the exact immutable production image.",
+        "Exact-head/main CI, advisory/readback, coordinator lint, base/pins, Step0 and Gate2 remain required parent acceptance evidence; initial local green observations do not waive them.",
+        "Same-family independent contexts are not a multi-family council. This review authorizes neither production admission, imports nor affected routes."
+      ]
+    },
+    "security": {
+      "verdict": "PASS",
+      "findings": [],
+      "coverage": [
+        "Reviewed all six supplied files, the accepted declaration library, binding workorder and supplied actual observations as source/data only. No concrete consequential composition defect identified.",
+        "Hostile-input boundary: exact built-in bytes and request-size checks precede Docker activity; source is transported only through stdin. The accepted library parses declarations without executing or importing source.",
+        "Credential and isolation boundary: fixed client paths/local endpoints, cleared CLI environment and empty adapter-owned Docker configuration exclude inherited Docker/provider configuration. Pinned Dockerfile, nonroot execution, restricted container configuration, worker hash/interpreter verification, cgroup-v2 evidence and verified rlimits implement the specified layered restrictions. Labels are configuration checks, not authentication.",
+        "Lifecycle and ownership: random-name collision precheck, intended run labels before create, returned-ID capture and exact name/label/known-ID reconciliation precede mutation. Cleanup distinguishes narrowly recognized absence from control-plane failure, proves absence before success and retains opaque pending identifiers when cleanup is unproved.",
+        "Cancellation and transport: threadless nonblocking bounded pipe operations reserve teardown time. Independent bounded wait is attempted even after poll/kill failure, including timeout zero. Interruptions request cleanup; cleanup failure overrides results. Attached I/O and overall deadlines are separate from supplementary Python alarm and kernel CPU limits.",
+        "Wire and sanitation: exact framing/EOF, payload limits, UTF-8, pre-decoder depth/integer guards, duplicate-key rejection, closed envelopes, strict scalar types, digest/order/range/name validation and immutable accepted wrappers are enforced. Public errors clear ambient chaining and expose closed codes without raw diagnostics.",
+        "Test branch quality: added cleanup tests exercise real ownership, inspect decoding, mutation decisions and absence logic through injected command transport. Teardown tests exercise real finally logic. Revised duplicate/numeric/scanner oracles assert relevant hooks or pre-decoder rejection rather than relying solely on generic rejection; supplied sensitivity observations support their discrimination. Some result-precedence tests intentionally mock profile/cleanup, supplemented by separate real-branch tests.",
+        "Supplied actual observations report Windows-client API equivalence/error cases, restricted Linux worker profile/hash evidence, fixed fault rejection, cleanup absence and local suite/style/type results. Fault images intentionally replace the worker and are not production candidates; passive API observation does not alter adapter behavior."
+      ],
+      "gaps": [
+        "PASS is a supplied-artifact composition disposition, not production, import or affected-route authorization. Required advisory/readback, coordinator lint, Step0/Gate2 and green exact-head/main chain remain mandatory; PASS_INITIAL_LOCAL is not evidence of that complete chain.",
+        "Actual client qualification is limited to the disclosed Windows Python 3.13.7/Docker Desktop environment with Linux Python 3.13.15 worker. Linux-client source compatibility is not actual Linux-client qualification.",
+        "A trusted operator must qualify the exact immutable image from this reviewed build. An arbitrary matching image ID shape or copied labels do not authenticate reviewed contents.",
+        "No actual daemon-outage recovery or daemon sabotage proof is supplied. Unproved cleanup remains isolation_failure with pending identifiers; no absence or hard realtime cancellation guarantee follows.",
+        "Same-family independent Sol contexts are disclosed, not a multi-family review council. All existing holds and required acceptance gates remain in force."
+      ]
+    }
+  },
+  "initialFindingDisposition": "One remaining otherwise-valid scalar/schema oracle gap completed within direct owner-authorized protocol-test scope, runtime pinned, exact positive/negative pairs plus sensitivity proof",
+  "finalPair": {
+    "final-architecture": {
+      "verdict": "PASS",
+      "findings": [],
+      "coverage": [
+        "Reviewed all six supplied candidate files, the accepted declaration library, binding workorder and supplied parent observations. No material correctness, safety or independent-boundary-test defect identified within this composition scope.",
+        "API and errors: exact built-in image-ID and source-byte checks, deterministic type/size precedence, fixed platform/client selection, single-active-call locking, closed error codes, empty exception args and ambient cause/context sanitation are consistent with the binding contract.",
+        "Protocol: bounded exact framing, strict UTF-8, duplicate-key rejection, pre-decoder nesting/integer limits, closed success/failure schemas, exact scalar types, full-original-input digest, symbol count/name/depth/range/order validation and accepted frozen wrappers are implemented. Missing fields may appropriately reject through either schema checks or required accesses.",
+        "Independent ordinary oracles include otherwise-valid boolean versions, ok values and offsets; unknown envelope/symbol keys; mixed envelopes; duplicate keys; disallowed numeric tokens; exact and excessive framing, depth, integer, symbol-count and lexical-depth boundaries. These discriminate acceptance regressions rather than merely exercising already-invalid fixtures. Supplied fixed-fault sensitivity observations corroborate guard and normalization/unknown-key-dropping seam detection without production-source modification.",
+        "Lifecycle and transport: nonblocking bounded pipe I/O, command teardown reservation, independent bounded wait after poll/kill failure including zero remaining time, closed-stream handling, exit/stderr reconciliation, cleanup-before-result, uncertain-create reconciliation, ownership refusal, absence classification and opaque pending cleanup identifiers are present and meaningfully exercised.",
+        "Isolation and image: digest-pinned Dockerfile copies only the three intended modules and fixes nonroot isolated worker startup. Runtime validates image/container metadata; worker checks interpreter/library bytes, cgroup-v2 limits, mounts, identities and specified rlimits before parsing. Accepted library remains parse-only; request source is not executed or used in command arguments, environment or temporary artifacts.",
+        "Supplied parent evidence reports 3189 passing checks, 137 skips, formatting/type checks, retained baseline/tree identities, actual Windows-client/Linux-worker profile and original-byte-equivalent API cases, restricted fixed-fault exit/stderr/wire/overflow/deadline cases, and owned-container absence. These are supplied observations, not reviewer execution.",
+        "Documentation accurately separates trusted image authentication from labels, Python alarm deferral from kernel CPU and parent wall bounds, and successful cleanup proof from unproved daemon cancellation."
+      ],
+      "gaps": [
+        "Informational qualification limit: current trusted-host evidence is Windows Python 3.13.7 with Docker Desktop Linux Python 3.13.15. Linux client operation remains unqualified despite source compatibility.",
+        "Informational evidence boundary: exact-head/main CI, advisory/readback, coordinator and remaining promotion-chain receipts are separate parent acceptance responsibilities; the supplied initial-local summary does not establish their completion.",
+        "No actual daemon-outage proof or hard realtime cleanup guarantee is established. Unproved cleanup must remain isolation_failure with opaque pending identifiers and no absence claim.",
+        "Reviews are disclosed fresh source-only Sol contexts from the same model family, not a multi-family council. This PASS does not authenticate arbitrary images, authorize mass imports, release held routes or expand the reviewed runtime capability."
+      ]
+    },
+    "final-security": {
+      "verdict": "PASS",
+      "findings": [],
+      "coverage": [
+        "Reviewed all six supplied candidate files, the accepted declaration library, binding workorder and parent-reported observations. No material correctness, isolation or binding defect identified within the supplied composition.",
+        "Protocol: exact-byte request admission, payload/frame caps, strict UTF-8, duplicate-key rejection, pre-decoder depth/integer bounds, closed success/failure schemas, digest binding, symbol limits, exact scalar types, identifier depth, ordering and byte ranges. Errors are closed and ambient exception context is cleared.",
+        "Independent protocol coverage includes otherwise-valid boolean version/ok/offset cases, unknown and mixed envelope fields, unknown symbol fields, numeric decoder seams, duplicate keys, exact size boundaries and early rejection before decoder or wrapper construction. Missing-field rejection through both schema guards and required accesses is valid. Supplied sensitivity evidence explicitly covers guard bypasses and undesired normalization/key-dropping seams.",
+        "Worker: one framed request followed by EOF precedes pure declaration extraction; no execution or import of submitted source. Interpreter/library verification, actual cgroup-v2 and mount evidence, nonroot identity and verified rlimits fail closed. Worker diagnostics are suppressed, output is framed, and exit contracts distinguish wire, isolation, timeout and serialization failures.",
+        "Runtime: fixed local executable/endpoint, trusted exact image-ID configuration, cleared CLI environment, empty adapter-owned Docker configuration, source-only stdin transport, bounded nonblocking pipe reads/writes and independent bounded wait after poll/kill failure. No source-derived Docker arguments, credential inheritance, request files, host mounts or network access are introduced.",
+        "Lifecycle: collision precheck, intended labels before create, known-ID/name/label reconciliation, profile inspection before start, exit/stderr validation before response acceptance, ownership-restricted mutations and bounded absence proof. Cleanup failure overrides results and retains only opaque per-instance pending identifiers.",
+        "Dockerfile pins the specified base digest, copies only the accepted library/protocol/worker, uses the specified nonroot identity and isolated entrypoint, and adds no installation step. Documentation accurately limits image labels, host qualification, operational deadlines and production admission.",
+        "Parent-reported evidence includes passing ordinary/format/type checks, retained baseline identities, actual immutable-image profile and API equivalence checks, bounded fixed fault-image checks, teardown/oracle sensitivity and owned-container absence. These are supplied observations, not checks executed by this review."
+      ],
+      "gaps": [
+        "PASS is a source-composition disposition, not final release or import authorization. Supplied evidence does not establish the complete exact-head/main CI, advisory/readback, Step0 and Gate2 acceptance chain; those remain parent verification responsibilities.",
+        "Current actual qualification is limited to Windows Python 3.13.7 with Docker Desktop Linux Python 3.13.15 and the operator-authenticated reviewed immutable image. Linux-client qualification and arbitrary image/host authenticity are not established.",
+        "Python alarms may defer during native work. Kernel CPU limits, parent Docker wall deadlines and cleanup proof are separate boundaries; actual daemon-outage cancellation and hard realtime cleanup are not demonstrated or claimed.",
+        "Fresh source-only Sol contexts provide independent review contexts within one model family, not a multi-family council. No mass import, broader route release or execution capability is approved."
+      ]
+    }
+  },
+  "finalSourceHashes": {
+    "src/keon/cortex/pipeline/ccm_python_protocol.py": "ea9de856c1f35146aa2e515195212688e98f03510c08d9df8cf3bdc05e1f7088",
+    "src/keon/cortex/pipeline/ccm_python_worker.py": "47e7600c565a86d81d7b62f38244cbffffebd82cb609fcae90eda6952965648e",
+    "src/keon/cortex/pipeline/ccm_python_runtime.py": "c753c6269464cb5b1fe5b7acccc5843ac46634de7e55de3ba76279c6582b48b7",
+    "tests/test_ccm_python_runtime.py": "5c8da6d8b4d488739edcdc89c46755facfa94e2cf87186d9b5b70d2fc9597cb3",
+    "docker/ccm-python-parser/Dockerfile": "b8c2f008083d2d13194c7ebb76af91795181e594d5df1ffb97f060047cb07480",
+    "docs/specs/ccm-python-runtime-v1.md": "ebcd07eaf71bf4e4579f86edbda1d44ebd3f4fd2ec2644e0fd857d294345b4ad"
+  },
+  "sameModelFamilyLimitation": true,
+  "remainingMaterialFindings": []
+}

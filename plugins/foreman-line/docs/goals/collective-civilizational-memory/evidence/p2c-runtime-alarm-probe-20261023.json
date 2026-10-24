@@ -1,0 +1,24 @@
+{
+  "atUtc": "2026-10-23T23:27:20.143546+00:00",
+  "status": "COMPLETED_BOUNDED_SIGNAL_MECHANISM_COMPARISON",
+  "results": [
+    {
+      "mode": "python-handler",
+      "exit": 124,
+      "stdout": "{\"armedSeconds\": 0.1, \"pid\": 1}\n{\"pythonHandlerAfterSeconds\": 0.5021009540068917}\n",
+      "stderrBytes": 0
+    },
+    {
+      "mode": "kernel-default",
+      "exit": 0,
+      "stdout": "{\"armedSeconds\": 0.1, \"pid\": 1}\nreturned\n",
+      "stderrBytes": 0
+    }
+  ],
+  "sourceExecution": false,
+  "scope": "Fixed synthetic1millioniterationC calculation under128MiB/.5CPU/parent5s, no keys or source program; actual observations, not a production SLO",
+  "officialEvidence": "https://docs.python.org/3.13/library/signal.html#execution-of-python-signal-handlers",
+  "initialHarnessFailure": "An earlier assertion assumed default signal exit142; no evidence file was saved. Corrected runner preserves observations before interpretation; no product source changed.",
+  "decision": "Retain Python wallalarm as supplementary. Add kernelCPU2secondlimit for native-code work; parentDocker5s wall/15s envelope remains operational bound with explicit daemon-failure/pending-cleanup behavior. Do not assert SIG_DFL necessarily kills namespacePID1.",
+  "allOwnedContainersAbsent": true
+}

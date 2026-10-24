@@ -1,0 +1,31 @@
+{
+  "atUtc": "2026-10-24T21:45:30.662634+00:00",
+  "status": "PASS_COORDINATOR_CLOSURE_LINT_NOT_MERGE",
+  "head": "839325eb087aeb2abc7ef4122c59af96db89f821",
+  "base": "01531ec6fa65e42445296135364507d01d6a0642",
+  "branch": "feat/foreman-line-ccm-p2f-engine",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_engine.py": "b992d36204900bf2ae1290a23db2725094a08cd8a18d0f5c756404b493818110",
+    "tests/test_ccm_engine.py": "79adc52dd5a52638dcf7ca49ade774f8809655962ee2833d7c1c3123e68de92a",
+    "docs/specs/ccm-extractor-engine-v1.md": "90734573429f61015219ca097c89f7b694a6c0e8aa9be50895c4f044b6049873"
+  },
+  "old444PinsRetained": true,
+  "treeEntries": 447,
+  "focused": 162,
+  "fullCounts": {
+    "pass": 3905,
+    "skipped": 137,
+    "failure": 0,
+    "error": 0
+  },
+  "baselineDispositionsRetained": true,
+  "finalReviews": "PASS/PASS",
+  "sameFamilyLimitation": true,
+  "reviewedStagedCommittedBytesEqual": true,
+  "operatorContributions": "Parent frozen contractdocs; one mechanical accepted civic error-code constant alignment before tests; one focused test-harness repair IDs+3ParameterSet wrappers with hostile Canary behavior unchanged. Exact fixed-path testcontent recovered offline.",
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "CI": "PENDING",
+  "actualComposition": "Bounded synthetic positiveWindowsPython/Git pipeline; initialGit non-success unclassified, subsequentdiagnostic passed, no allattempt/stability claim",
+  "pr": "https://github.com/Keon-Systems/keon-cortex/pull/100"
+}

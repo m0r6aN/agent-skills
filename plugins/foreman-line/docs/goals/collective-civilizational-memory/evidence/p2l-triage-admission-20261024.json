@@ -1,0 +1,10 @@
+{
+  "atUtc": "2026-10-24T21:09:13.814645+00:00",
+  "scope": "ONE independent focused reconciliation of R1 only; no new full review/source/repair",
+  "sourceUnchanged": true,
+  "maxCredits": 60,
+  "maxOutput": 2048,
+  "authority": "Existing delegated review/triage decisions and wrapper550 envelope",
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD"
+}

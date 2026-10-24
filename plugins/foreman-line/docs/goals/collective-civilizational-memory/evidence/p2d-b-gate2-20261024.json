@@ -1,0 +1,49 @@
+{
+  "atUtc": "2026-10-24T17:46:20.456401+00:00",
+  "gate2": "APPROVED_UNDER_DIRECT_OWNER_P2D_B_AND_STANDING_DELEGATED_AUTHORITY",
+  "workorderSha256": "34a70fb9f3c5e25d98d12c5e31cc116f5c1f91a177b7d15b020ff863374226f5",
+  "base": "0aec0e24af450032100c292de0e3e2879708a266",
+  "worktree": "D:\\Repos\\ccm-worktrees\\cortex-p2d-b-git",
+  "allowedFiles": [
+    "src/keon/cortex/pipeline/ccm_git_protocol.py",
+    "src/keon/cortex/pipeline/ccm_git_worker.py",
+    "src/keon/cortex/pipeline/ccm_git_runtime.py",
+    "tests/test_ccm_git_runtime.py",
+    "docker/ccm-git-source/Dockerfile",
+    "docs/specs/ccm-git-runtime-v1.md"
+  ],
+  "dependencyHashes": {
+    "src/keon/cortex/pipeline/ccm_git.py": "49a5d65632638ee2adcce0fabb5a9de19c44127ac99e92db8831bec453582b32",
+    "src/keon/cortex/pipeline/ccm_python_runtime.py": "c753c6269464cb5b1fe5b7acccc5843ac46634de7e55de3ba76279c6582b48b7",
+    "src/keon/cortex/pipeline/ccm_python.py": "aa4d7d79058a4d4e364ab02519d5e97b3dc8d8ab5074872c61fdb7be1b31f9c3",
+    "src/keon/cortex/pipeline/ccm_python_protocol.py": "ea9de856c1f35146aa2e515195212688e98f03510c08d9df8cf3bdc05e1f7088"
+  },
+  "baselineCounts": {
+    "pass": 3342,
+    "skipped": 137,
+    "failure": 0,
+    "error": 0
+  },
+  "step0Flags": [],
+  "implementationSourceSlices": [
+    [
+      "src/keon/cortex/pipeline/ccm_git_protocol.py",
+      "src/keon/cortex/pipeline/ccm_git_worker.py"
+    ],
+    [
+      "src/keon/cortex/pipeline/ccm_git_runtime.py"
+    ],
+    [
+      "tests/test_ccm_git_runtime.py",
+      "docker/ccm-git-source/Dockerfile",
+      "docs/specs/ccm-git-runtime-v1.md"
+    ]
+  ],
+  "oneFocusedRepairMaximum": true,
+  "reviewsRequired": 2,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "nativePrivatePi": "HELD",
+  "realCorpusAcquisitionAuthorized": false,
+  "mergeAllowedNow": false
+}

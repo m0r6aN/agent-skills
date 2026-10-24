@@ -1,0 +1,84 @@
+{
+  "atUtc": "2026-10-24T18:12:08.932424+00:00",
+  "status": "PASS_FIXED_ACTUAL_FAULT_IMAGES",
+  "cases": [
+    {
+      "case": "fault-nonzero",
+      "status": "EXPECTED_CLOSED_FAILURE",
+      "code": "isolation_failure",
+      "pending": [],
+      "files": null,
+      "excluded": null,
+      "providerRequests": 0,
+      "newAuthOrTrustClaim": false,
+      "faultImageId": "sha256:d15678d38d3ca37312e87b3fd13b12cc0a11cec79cd094b4c70ea529c118e332",
+      "imageNotProductionQualified": true
+    },
+    {
+      "case": "fault-stderr",
+      "status": "EXPECTED_CLOSED_FAILURE",
+      "code": "invalid_response",
+      "pending": [],
+      "files": null,
+      "excluded": null,
+      "providerRequests": 0,
+      "newAuthOrTrustClaim": false,
+      "faultImageId": "sha256:398e83de0216762d58e752abfa847581f9675c5510e3f4fb4a2e5a76d046edbf",
+      "imageNotProductionQualified": true
+    },
+    {
+      "case": "fault-malformed",
+      "status": "EXPECTED_CLOSED_FAILURE",
+      "code": "invalid_response",
+      "pending": [],
+      "files": null,
+      "excluded": null,
+      "providerRequests": 0,
+      "newAuthOrTrustClaim": false,
+      "faultImageId": "sha256:b6c952c1037621ac8391e66fa2468d2b67b99f6f66914579b802c4e6e2085c54",
+      "imageNotProductionQualified": true
+    },
+    {
+      "case": "fault-overflow",
+      "status": "EXPECTED_CLOSED_FAILURE",
+      "code": "invalid_response",
+      "pending": [],
+      "files": null,
+      "excluded": null,
+      "providerRequests": 0,
+      "newAuthOrTrustClaim": false,
+      "faultImageId": "sha256:707e1c2b43bbe73d70a13dfa759e4b92f3f317d00d6a207e5d30490db169c93f",
+      "imageNotProductionQualified": true
+    },
+    {
+      "case": "fault-timeout",
+      "status": "EXPECTED_CLOSED_FAILURE",
+      "code": "deadline_exceeded",
+      "pending": [],
+      "files": null,
+      "excluded": null,
+      "providerRequests": 0,
+      "newAuthOrTrustClaim": false,
+      "faultImageId": "sha256:30c272dfa4adb041e56ebe7f12aab2a4e653b1b5f18a32ebe0eae3a792ab7b7b",
+      "imageNotProductionQualified": true
+    },
+    {
+      "case": "fault-environment",
+      "status": "EXPECTED_CLOSED_FAILURE",
+      "code": "runtime_unavailable",
+      "pending": [],
+      "files": null,
+      "excluded": null,
+      "providerRequests": 0,
+      "newAuthOrTrustClaim": false,
+      "faultImageId": "sha256:61f23e81045e9f20e68323aac82eefdc140d37a54930ed4b6e7d38b68cad1e11",
+      "imageNotProductionQualified": true
+    }
+  ],
+  "count": 6,
+  "allOwnedContainersAbsent": true,
+  "faultImagesNeverProductionQualified": true,
+  "runtimeSourceUnchanged": true,
+  "providerRequests": 0,
+  "actualDaemonOutageOrUnprovedCleanupNotClaimed": true
+}

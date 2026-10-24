@@ -1,0 +1,36 @@
+{
+  "atUtc": "2026-10-24T18:01:03.811422+00:00",
+  "authority": "Current explicit owner P2D-B proceed plus standing non-destructive decisions/approvals; one focused repair permitted by Gate2",
+  "repairOrdinal": 1,
+  "maximum": 1,
+  "step0": {
+    "scope": "Normalize only harmless Docker/Python startup environment and null/emptyCmd equivalence, suppress source configuration repr, isolate test mocks, correct fixed closure query order, complete binding boundary/failure tests",
+    "allowedChangedFiles": [
+      "src/keon/cortex/pipeline/ccm_git_worker.py",
+      "src/keon/cortex/pipeline/ccm_git_runtime.py",
+      "tests/test_ccm_git_runtime.py"
+    ],
+    "unchangedPins": [
+      "src/keon/cortex/pipeline/ccm_git_protocol.py",
+      "docker/ccm-git-source/Dockerfile",
+      "docs/specs/ccm-git-runtime-v1.md"
+    ],
+    "flags": []
+  },
+  "operatorSourceContributionDisclosed": true,
+  "providerRepairRequests": 0,
+  "sourceHashesBefore": {
+    "src/keon/cortex/pipeline/ccm_git_protocol.py": "43813d00167aafc065cf66e04808c369a7ac8872244fa185e484a99cf129c463",
+    "src/keon/cortex/pipeline/ccm_git_worker.py": "0074c3bbf1fe31570855acfcee69315db85630540172c623ff15c859c1b51b4f",
+    "src/keon/cortex/pipeline/ccm_git_runtime.py": "d3e8ba88131caf4a24f5ee8a06089a5d51510fb54678015b71766cedbe7665a8",
+    "tests/test_ccm_git_runtime.py": "99ea181100a016bc6c1aed0a9f1bd76760f5f6c2a3a1cdd425fcce2708002792",
+    "docker/ccm-git-source/Dockerfile": "58f8fc57bd97d1628ed0ca46be6cc3003bb667a678c9e79f1a92adafabc3e53a",
+    "docs/specs/ccm-git-runtime-v1.md": "ed5871d1d314d859e1a42ad92b8ac98fce6fdb632a38a7df1cb126f130151cfb"
+  },
+  "initialResultsPreserved": true,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "same450PhaseCap": true,
+  "freshArchitectureSecurityReviewsMandatory": true,
+  "stop": "No automatic second repair or additional capability; any remaining material finding requires separate bounded disposition under owner authority"
+}

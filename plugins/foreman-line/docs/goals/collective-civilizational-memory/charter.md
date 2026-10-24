@@ -1,6 +1,48 @@
 # Goal Charter — Collective civilizational memory
 
-## Current execution addendum — October21 NY
+## Current execution addendum — October24 NY
+
+P3A durable candidate ingestion accepted PR101;46focused/3954fullPASS151skip,
+17actual PostgreSQL/guardPASS; exacthead/mainCI/deployment green.
+See p3a-acceptance-20261024.md. Remaining P3 canonicalwriters/governeddeletion/
+externalkey gates stayopen; all holds retained, fullContext/bulkimport NOTready.
+
+Extractor engine accepted PR100; legacy wrappers PR99 complete.
+162focused/3905fullPASS137skip; exacthead/mainCI/deployment green.
+See p2f-acceptance-20261024.md for bounded scope/initialGit uncertainty.
+Next P3; all holds retained, full Context/bulk import NOTready.
+
+Legacy3wrapper coverage accepted PR99 merge01531ec6fa65e42445296135364507d01d6a0642;
+22focused/3743fullPASS137skip; exacthead/mainCI/deployment green.
+See p2l-acceptance-20261024.md. Next extractorengine under same owner request.
+All reservations/routes held; full ingestion notready.
+
+P2E civic v2 mapping accepted: PR98 merged7badb965e7c6842147747f542481e4c07a87e487,
+45focused/3721fullPASS137skip and exacthead/mainCI/deployment green.
+See p2e-acceptance-20261024.md. Three v2 profiles remain unadmitted; legacy
+wrappers/engine/P3-P8/import gates open. All reservations/routes held.
+
+P2D-B restricted local Git object acquisition is accepted: PR97 merged0cdff676038d76c203f819ee697cda226980d305,
+all16headchecks and exactmainCI/deployment green. See
+p2d-b-acceptance-20261024.md. Only qualifiedWindows/Dockerimage and stable
+operator bare-root custody; no realcorpus, hightrustproducer or bulkreadiness.
+Civicmapping/extractor/P3-P8/fullintegration/import gates remainopen. All
+reservations and affected/native/privatePi routes remainHELD.
+
+P2D-A Git object snapshot validation is now accepted: PR96 merged0aec0e24af450032100c292de0e3e2879708a266,
+all16sourcechecks and exactmainCI/deployment green. See
+p2d-a-acceptance-20261024.md. Actual local repository acquisition remainsP2D-B
+and unqualified; no bulk import/trust admission. No new model spend during
+CIresumption; all reservations and affected routes retained.
+
+P2C pure declaration source and restricted runtime adapter are accepted: PR94
+5cb07ba and PR95 f05f209, with exact-source independent reviews and source/main
+CI green. See p2c-runtime-acceptance-20261024.md. This closes only the parser
+capability. Git/civic/extractor and P3-P8/fullintegration/import gates remain
+open. All120/150/other reservations and affected routes held; high-trust producer
+qualification remainsZERO. No full Context/mass-import readiness claim.
+
+## Historical execution addendum — October21 NY
 
 All CCM-P1A–D foundation artifacts are accepted and merged with independent reviews, actual local evidence and green source/main CI. [Foundation acceptance](foundation-acceptance-20261021.md) and [current loop](loop-directive.md) supersede ALL historical planning/readiness/permission state below. Direct owner blanket non-destructive decisions/approvals/spend authority is recorded in evidence/owner-autonomous-next-steps-20261021.json. Design decisions and full-goal exits are unchanged. CCM-P2A scrubber is accepted/merged/StageFclosed (PR87,76fa7c6), with two completed independent closure PASS and actual source/main CI green. See p2a-acceptance-20261022.md. P2B byte chunker is accepted/merged/Stage F closed (PR89,3a7c30b), with two independent PASS and actual source/main CI green; see p2b-acceptance-20261022.md. The separate credential-handling incident remains open and new delegated shell workers are held pending disposition; existing owner approval persists. Full Context and bulk import are not ready. No dormant monitor revived.
 
@@ -224,3 +266,102 @@ Key-service qualification and backup/replica coverage block P3 crypto effects;
 existing Gateway/OPMEM owner acknowledgment blocks scheduling shared enforcement.
 Do not transfer either foreign coordinator's authority. Holds apply only to
 related work, not to provably orthogonal authorized local preparation.
+
+
+## P2D-A Git source dependency reviewed, CI billing held — October24
+
+PR96 reviewed source9fce7a97e0efedd77ce133274689ef8928774a51:153focused/3342fullPASS137skip,
+428basepins retained,2freshSolreviewsPASS/PASS and14negativecontrolcasesPASS.
+Pure Git object snapshot foundation only; actual local acquisition isP2D-B and
+not yetqualified. See p2d-a-ci-held-20261024.md. Both exactheadCIruns failed
+before jobsteps with GitHubActions billing/payment/spending-limit annotations.
+No merge/acceptance/StageF or bypass; workorderactive, clean sourceworktree kept.
+Financialphaseclosed:146.3reported/198.475750booked of300, full110source
+booking plus alloldholds retained. Native/privatePi/affectedroutes held.
+Same solecoordinator stops at externalCIhold, no worker/monitor. Next:resolve
+GitHubActions accountcondition, rerun both exactheadworkflows, greenGate3/mainCI
+thenStageF; no newsource/providercall needed. FullContext/import notready.
+
+
+## P2D-A Git object snapshot accepted — October24
+
+PR96 source9fce7a97e0efedd77ce133274689ef8928774a51 merged0aec0e24af450032100c292de0e3e2879708a266. All16exact-headchecks on
+both original workflows attempt2 green; exact merged-mainCI/deployment green.
+153focused/3342fullPASS137skip,428priorentries retained,2freshSolreviewsPASS/PASS,
+14negativecontrolcasesPASS. Workorderstatus-onlyarchived, StageFclosed. See
+p2d-a-acceptance-20261024.md. This supersedes prior externalCIhold only; original
+billingfailure evidence preserved. No sourcechange/newmodelcall/newGenSpark
+credits or ledger changes during resumption. Allreservations includingfull110
+source/old120/150 and affected/native/privatePi routes stayHELD. Same sole
+coordinator at parcelboundary; cleanworktree/pushedbranch retained, no monitor.
+NextP2D-B restricted localbare acquisition stillunqualified; no actualrepository
+or personalcorpus imported. Civic/extractor/P3-P8/fullintegration/import open.
+
+
+## P2D-B restricted local Git acquisition accepted — October24
+
+PR97 source3be411d93a4eab3a222c2c5c33af7b1cfd35bcfc merged0cdff676038d76c203f819ee697cda226980d305. All16sourcechecks and
+exactmainCI/deploymentPASS;334focused/3676fullPASS137skip,431priorentries kept.
+2freshSolreviewsPASS/PASS;7actualAPI/6faultimage/7guardsensitivitycasesPASS,
+allcontainersabsent. Workorderstatus-onlyarchived, StageFclosed; see
+p2d-b-acceptance-20261024.md. Trusted localWindows/Dockerimage only, stable
+operatorcustody precondition; no realcorpus/authproducer/hightrust admission.
+Financialphaseclosed:353.1reported/358.105000booked of550, actual
+belowinitial450; allold120/150/source110/otherholds and affected/native/privatePi
+routes stayHELD. Cleanpushedworktree/branch retained; private syntheticjunction
+probe retained after policyblockedremoval, no bypass. Same solecoordinator at
+parcelboundary, no worker/monitor. Nextcivicmapping/extractor thenP3-P8 and
+actualintegration/import gates; fullContext/bulkimport notready.
+
+
+## P2E civic v2 mapping accepted — October24
+
+PR98 source2dbb2b5772e597a605cc3040b0380f7107250e05 merged7badb965e7c6842147747f542481e4c07a87e487;16headchecks/mainCI/deployment
+green.45focused/3721fullPASS137skip;437priorentries/dispositions retained.
+Two fresh final Sol reviewsPASS/PASS, samefamily limitation;3negativecontrols.
+Only rejection/caution/inheritance v2 unscoped candidates; legacy wrappers
+unsupported, no trust/storage/engine/import or hightrustproducer coverage.
+See p2e-acceptance-20261024.md. Financialphaseclosed:189.2reported/
+260.379000booked inclfull120.701source reservation. All prior
+reservations and affected/native/privatePi routesHELD. Same solecoordinator
+at parcelboundary; cleanpushedworktree retained, no worker/monitor. Next
+legacy civic coverage/extractor engine, thenP3-P8/fullintegration/import gates.
+
+
+## Legacy civic wrappers accepted — October24
+
+PR99 source97366c5e0ff3a2802ea4b05badb8be53d057d637 merged01531ec6fa65e42445296135364507d01d6a0642;16headchecks/mainCI/deployment
+green.22focused/3743fullPASS137skip;440priorentries and9initialtests retained.
+22actualC#positive/4negative cases;256case coupled-invariant proof. Fullsecurity
+PASS, architectureR1 accepted-as-documented with independent focusedPASS; no new
+fullreview claim. See p2l-acceptance-20261024.md. Financialphaseclosed:
+231.0reported/418.670375booked, fullsource/repair andallpriorholds
+retained. Affected/native/privatePiHELD. Same solecoordinator proceeds next
+extractorengine under direct owner request; no nativeworker/monitor, no import.
+
+
+## Extractor engine accepted — October24
+
+PR100 source 839325eb087aeb2abc7ef4122c59af96db89f821 merged 6ba606012d338b51a92ee0320995406fae03aafb;16head checks/mainCI/deployment green.
+162focused/3905fullPASS137skip;444priorpins retained. Independent PASS/PASS.
+Actual bounded positive composition only; initial Git non-success remains
+unclassified and retained. See p2f-acceptance-20261024.md.
+Legacy wrappers and engine complete. Next P3 durable ingestion/storage/outbox,
+scrub-at-enqueue and pending fences, then remaining P4-P8/integration/import gates.
+Both parcels conservative 623.453250/1000; all reservations
+and affected/native/private-Pi routes HELD. No corpus/hightrust/bulk readiness.
+
+
+## P3A durable candidate ingestion accepted — October24
+
+PR101 sourceb6a4ebaffa1ef3224dbce82ffedd69efb2d369a9 mergedfd0f478cc3d21d7ef4eb9f518f61487b010e296e;16headchecks and exactmainCI/deploymentgreen.
+46focused/3954fullPASS151skip;447priorpins retained,17actualPG/guardPASS.
+Fresharchitecture/securityPASS/PASS; initial findings/reproductions and coverage
+gaps retained. See p3a-acceptance-20261024.md. Internal candidate service only,
+no live/canonical writer or fullP3 completion. RemainingP3 canonical admission/
+PlaneA/B writers, governed shred/retract/minimal descendant invalidation and
+externalkeyqualification remain, thenP4-P8/integration/privacy/importgates.
+443.3reported/449.695125booked of700, phaseclosed;
+all old reservations and affected/native/privatePi routesHELD. No realcorpus/
+hightrustproducer/fullContext/bulkimport readiness. Same solecoordinator at
+parcelboundary; cleanpushedworktree retained, no worker/monitor.

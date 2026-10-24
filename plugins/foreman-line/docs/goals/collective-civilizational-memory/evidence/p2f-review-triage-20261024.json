@@ -1,0 +1,73 @@
+{
+  "atUtc": "2026-10-24T21:51:12.287741+00:00",
+  "architecture": {
+    "verdict": "PASS",
+    "findings": [],
+    "coverage": [
+      {
+        "area": "Admission and DTO/API behavior",
+        "assessment": "Source inspection found exact-type checks before caller-value operations, whole-batch admission before extraction, bounded limits, duplicate-key rejection, and sanitized global input errors. Frozen slotted repr-disabled DTOs match the clarified unvalidated-carrier contract; returned values maintain outcome/artifact invariants."
+      },
+      {
+        "area": "Deterministic routing and full source coverage",
+        "assessment": "Dispatch uses the accepted text, Python-runtime, civic and legacy ports without in-process Python fallback. Unsupported and deferred sources remain explicit, ordered results with exact source fingerprints. Operation exhaustion preserves all remaining rows rather than truncating them."
+      },
+      {
+        "area": "Atomic budgets, counters and fixture cache",
+        "assessment": "Operations count examined sources; checkpoint attempts count actual lookups, including misses. Publication is atomic per source, exact bounds are allowed, and overflow stops later extraction calls. Cache keys include format and source fingerprint, remain batch-local, distinguish empty hits from misses, and do not let non-checkpoint rows poison later checkpoint work."
+      },
+      {
+        "area": "Runtime failure boundaries",
+        "assessment": "Closed error whitelists match the supplied accepted contracts. Unexpected exceptions and unknown or non-exact-string codes produce isolation_failure and latch the runtime hold. Python and Git post-call cleanup takes precedence over success or typed failure. Wrong Python response type/hash and malformed Git file shapes produce invalid_response with a hold. Accepted-port symbol and snapshot validators remain legitimate dependencies, not missing engine features."
+      },
+      {
+        "area": "Git expansion and provenance",
+        "assessment": "Acquisition occurs once after limit/type admission. File-shape checks precede batch processing. Expanded content above 2 MiB retains the complete acquired snapshot and path map while returning zero-operation input_budget_exhausted rows using accepted fingerprints, without rehashing expanded contents. Normal batches preserve every file disposition, metadata and explicit exclusions; extension routing is case-sensitive."
+      },
+      {
+        "area": "Meaningful test oracles",
+        "assessment": "Tests include literal workflow fingerprints, independently stated UTF-8 byte boundaries, compact Python JSON expectations, otherwise-valid field mutations with raising canaries, malformed-last-row zero-call checks, exact and over-limit cases, atomic overflow, cache/miss behavior, cleanup precedence and cross-port holds. Civic tests compare composition output to accepted canonical mapper output, appropriately testing adapter identity rather than independently reimplementing the accepted mapper."
+      },
+      {
+        "area": "Actual Windows composition evidence",
+        "assessment": "The supplied parent report supports only a bounded positive-composition observation on the stated immutable images and Windows profile. The initial actualGit assertion failure occurred before state capture and remains unclassified; its cause cannot be inferred. One subsequent bounded diagnostic reportedly acquired both files, retained both exclusions and metadata, produced complete/unsupported dispositions, and showed empty cleanup state. That success does not erase the initial failure or establish all-attempt stability. Given the explicitly limited positive-composition claim and absence of a stability requirement, the disclosed sequence is not by itself a demonstrated implementation defect or a blocker to that narrow claim."
+      },
+      {
+        "area": "Scope and effects",
+        "assessment": "The engine introduces no direct filesystem, network, shell, provider or source-execution path. Effects are confined to configured accepted runtime ports. Outputs remain transient unadmitted candidates; no storage, admission, producer-authenticity, held-route release or stability authority is implied."
+      }
+    ],
+    "gaps": [
+      "This was a source-only review. Reported formatting, typing, test counts, image qualification and cleanup observations are parent evidence, not execution performed by this reviewer.",
+      "The initial actualGit non-success remains unexplained because its state metadata was not captured. Preserve that limitation in acceptance records; do not describe the actual composition attempts collectively as uniformly successful.",
+      "Accepted runtime implementations and private validators were not supplied in full here; this review relies on the explicitly accepted port qualification and validation responsibilities.",
+      "Exact-head/main-CI completion, final hash correspondence and the other independent review remain external acceptance gates, not established by this source review."
+    ]
+  },
+  "security": {
+    "verdict": "PASS",
+    "findings": [],
+    "coverage": [
+      "Reviewed the supplied engine, tests, specification, accepted public port contracts and closed error lists as source only. No tools or execution were used; parent verification results are reported evidence, not this reviewer's execution.",
+      "Exact-type admission precedes runtime, parsing and fixture work. Configuration, limits and the entire source tuple are validated before dispatch. Short-circuit checks reject hostile values before equality, hashing, iteration or attribute access. Bad-last-row tests use otherwise-valid earlier Python and fixture rows and assert zero calls.",
+      "Only exact configured accepted Python and Git ports are admitted. Python dispatch calls parser.extract only; there is no in-process parser fallback, source import or execution. Git paths determine hashed keys and case-sensitive format dispatch, never commands or runtime configuration.",
+      "Stable ordering, one outcome per source, exact source fingerprints, operation accounting, checkpoint attempt accounting, format-local batch cache, uncached misses and atomic per-source output publication match the bounded contract. Overflow prevents subsequent parser and fixture calls.",
+      "Cleanup is checked before and after runtime calls. Newly pending cleanup overrides both success and failure before publication. Isolation failures, invalid runtime responses and unknown diagnostics latch the instance hold; subsequent runtime effects are blocked while pure work remains available within budgets.",
+      "Closed dependency code sets match the supplied accepted lists. Unexpected exceptions are translated to isolation_failure without publishing raw exception details. Fixture UTF-8 admission errors are raised outside the decoder exception handler.",
+      "Git composition preserves the acquired snapshot and complete ordered path mapping. Shape failures publish no partial snapshot. Expanded inputs above 2 MiB receive a zero-work batch covering every file, using accepted file fingerprints rather than rehashing expanded content. Accepted ports remain responsible for object closure, metadata and symbol validation.",
+      "Tests include independent literal source fingerprints, exact text bytes and UTF-8 spans, compact Python JSON expectations, accepted civic adapter identity, meaningful individual boundary predicates, malformed whole-batch atomicity, budget boundaries, checkpoint distinctions, runtime fault controls and permanent cleanup holds. They exercise engine call flow rather than relying solely on private helpers.",
+      "Artifacts remain opaque unadmitted candidates. Snapshot identities and hashes are preserved as metadata, not promoted to authenticity or scope. No storage, provider readiness, cleanup-proof, route-clearance or durable deduplication claim is introduced.",
+      "Explicitly assessed the disclosed actualGit sequence: the first attempt failed the acquired/snapshot/batch assertion before state capture, with its exact reason unknown; one subsequent bounded diagnostic reportedly succeeded without source changes. This supports only the stated existence of successful bounded synthetic composition on the qualified pinned Windows runtime. It does not establish that every attempt passed, runtime stability, an SLO, or the cause or safety disposition of the first failure. The limited claim and disclosure do not themselves demonstrate a material engine implementation defect."
+    ],
+    "gaps": [
+      "The first actualGit non-success remains unclassified. The supplied packet identifies retained stderr but does not provide its contents or first-attempt state metadata; no specific failure reason or cleanup outcome can be inferred from the later success.",
+      "Accepted dependency private validators and runtime implementations were not supplied in full. This review respects their explicitly accepted qualification and validation responsibilities rather than demanding redundant engine validation.",
+      "Parent-reported formatting, typing, focused/full tests, baseline pins and actual composition were not independently executed or verified here. Exact-head/main CI and remaining acceptance gates remain parent responsibilities.",
+      "Actual composition evidence is limited to synthetic sources, the specified immutable images and the qualified Windows environment. It provides no arbitrary-image, Linux-client, real-corpus, storage/admission or all-attempt stability qualification; the disclosed same-family review limitation remains."
+    ]
+  },
+  "remainingMaterialFindings": [],
+  "initialGitFailurePreservedAndAssessed": true,
+  "noStabilityClaim": true,
+  "sameModelFamilyLimitation": true
+}

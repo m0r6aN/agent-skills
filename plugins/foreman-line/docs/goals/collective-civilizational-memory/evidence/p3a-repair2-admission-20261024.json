@@ -1,0 +1,20 @@
+{
+  "atUtc": "2026-10-24T22:26:14.436320+00:00",
+  "authority": "Standing owner non-destructive decisions and bounded repair authority",
+  "scope": "One further narrow representation correction plus NFC collision fixture; same700phase, no financial ceiling increase",
+  "step0Ready": true,
+  "failedNewRegressions": 6,
+  "all3948PriorPass145SkipRetained": true,
+  "sourceHashesBefore": {
+    "src/keon/cortex/pipeline/ccm_ingestion.py": "c331a60b0493379eb57f9cfcb9abc8b02b4bb26a28581b46d8a46efa29464b37",
+    "src/keon/cortex/providers/postgres/ccm_ingestion.py": "961a51e32dac098d115c52406eaab0dfc1844978ea305c796d58cd20b93de961",
+    "tests/test_ccm_ingestion.py": "ce84102621ecbfaf9e080232b80777559e0c33f93239a0da4c62e29009c2c993",
+    "tests/test_ccm_ingestion_postgres.py": "1a26e5d284c468a547dea3b969610625d9b08fd13e9bf7012ce52f0dba8806fe",
+    "docs/specs/ccm-durable-ingestion-v1.md": "0342e26c96eda210d613f7b5425c9c6be85740a199d1330f2d41049f1fde332d"
+  },
+  "maxAdditionalProviderPosts": 1,
+  "freshIndependentReviewsStillRequired": 2,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "nativePrivatePi": "HELD"
+}

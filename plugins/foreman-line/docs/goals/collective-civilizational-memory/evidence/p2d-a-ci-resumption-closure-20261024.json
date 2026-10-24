@@ -1,0 +1,13 @@
+{
+  "atUtc": "2026-10-24T16:58:08.765559+00:00",
+  "ownerMessage": "Brother, the GitHub issue should now be resolved.",
+  "result": "Exact-head reruns2 green, Gate3 merge, main CI/deployment green, StageF closed",
+  "newProviderRequests": 0,
+  "newGenSparkCredits": 0,
+  "originalLedgerUnchangedSha256": "81d38b9d2b0323e68862da87b03457a6968a1d12ed24599bd36a862a50f5fe19",
+  "allReservationsRetained": true,
+  "full110SourceBookingHeld": true,
+  "affectedRoutes": "HELD",
+  "nativePrivatePi": "HELD",
+  "newFundingOrBudgetIncrease": false
+}

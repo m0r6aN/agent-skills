@@ -1,0 +1,110 @@
+{
+  "atUtc": "2026-10-24T22:28:28.982154+00:00",
+  "status": "PASS_ACTUAL_DISPOSABLE_POSTGRES_16",
+  "network": "isolated internal Docker network, no published port",
+  "syntheticOnly": true,
+  "newProviderCalls": 0,
+  "candidateImage": "ccm-p3a-candidate:6f53b7f95601",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_ingestion.py": "fc7955c1cc1e1beba85f2c68461dedc8c12d7cef6b52078d9d7f76b57de56d0f",
+    "src/keon/cortex/providers/postgres/ccm_ingestion.py": "961a51e32dac098d115c52406eaab0dfc1844978ea305c796d58cd20b93de961",
+    "tests/test_ccm_ingestion.py": "ccb72797ca992742db8480e9f731fc6cb10330b97e832537723f3f54ba55fc14",
+    "tests/test_ccm_ingestion_postgres.py": "1a26e5d284c468a547dea3b969610625d9b08fd13e9bf7012ce52f0dba8806fe",
+    "docs/specs/ccm-durable-ingestion-v1.md": "0342e26c96eda210d613f7b5425c9c6be85740a199d1330f2d41049f1fde332d"
+  },
+  "postgresImage": "sha256:275447c94b11b151decd1f29877965301d5a77032037c46de93d990f739f00a9",
+  "existingCanonicalSchemaPreconditionProvisioned": true,
+  "tests": {
+    "exit": 0,
+    "cases": [
+      {
+        "class": "tests.test_ccm_ingestion_postgres",
+        "name": "test_restart_pending_duplicate_conflict_and_privacy",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_ingestion_postgres",
+        "name": "test_transaction_faults_are_atomic[second-source-rollback]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_ingestion_postgres",
+        "name": "test_transaction_faults_are_atomic[publication-rollback]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_ingestion_postgres",
+        "name": "test_concurrent_capacity_and_retained_accounting",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_ingestion_postgres",
+        "name": "test_exclusive_leases_skip_locked_and_stale_tokens",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_ingestion_postgres",
+        "name": "test_final_attempt_dead_retains_pending[fifth-failure]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_ingestion_postgres",
+        "name": "test_final_attempt_dead_retains_pending[expired-fifth-grant]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_ingestion_postgres",
+        "name": "test_scope_isolation_and_fence_races",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_ingestion_postgres",
+        "name": "test_hostile_values_never_reach_pool[hostile-metadata]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_ingestion_postgres",
+        "name": "test_hostile_values_never_reach_pool[nested-hostile-metadata]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_ingestion_postgres",
+        "name": "test_scrubber_failure_never_acquires_pool",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_ingestion_postgres",
+        "name": "test_controlled_open_batch_fence_orders[complete]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_ingestion_postgres",
+        "name": "test_controlled_open_batch_fence_orders[fence]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_ingestion_postgres",
+        "name": "test_controlled_open_batch_fence_orders[enqueue]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_ingestion_postgres",
+        "name": "test_publication_rollback_all_rows_and_lease_metadata",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_ingestion_postgres",
+        "name": "test_locked_expired_fifth_does_not_block_other_batch",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_ingestion_postgres",
+        "name": "test_concurrent_byte_capacity_boundary",
+        "status": "pass"
+      }
+    ],
+    "output": ".................                                                        [100%]\n----------------------- generated xml file: /tmp/pg.xml ------------------------\n17 passed in 1.10s\n"
+  },
+  "allOwnedContainersAbsent": true,
+  "networkAbsent": true
+}

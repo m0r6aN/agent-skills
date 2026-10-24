@@ -1,0 +1,11 @@
+{
+  "status": "OFFLINE_EXACT_FIXED_PATH_CONTENT_RECOVERY",
+  "rawCandidateSha256": "8e5cba396aa338be0ca4d0a50747eb16fb65f306e8f0c2f43dff47df74abbee9",
+  "fileSha256": "0aa290f5f3fd5cb45b59d0d282bdc791397e3130b286f62d018b8f5c7570cc06",
+  "issue": "Model supplied valid {path,content} despite raw-code request; JSON dict is also syntactically valid Python expression. Parent semantic-shape inspection caught this before any test execution. Exact approved path/content extracted, no code edits.",
+  "normalizerLimit": "AST syntax alone does not establish module/test content; final parent shape validation is mandatory",
+  "originalReceiptUntouched": true,
+  "newRequests": 0,
+  "sourceStringChanged": false,
+  "testFunctions": 38
+}

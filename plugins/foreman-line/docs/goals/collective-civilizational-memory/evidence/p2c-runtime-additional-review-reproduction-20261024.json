@@ -1,0 +1,21 @@
+{
+  "killFailure": {
+    "publicInternalCode": "isolation_failure",
+    "killAttempts": 1,
+    "waitAttempts": 0,
+    "allPipesClosed": true,
+    "fixedExitRaceWaitWouldReturn": 0
+  },
+  "testBlindSpot": {
+    "existingDuplicateFixtureRejectsWithGuardBypassed": true,
+    "OtherwiseValidDuplicateEnvelopeAcceptedWithGuardBypassed": true,
+    "depthFixtureRejectsWithScanBypassed": true,
+    "decoderCallsNormally": 0,
+    "decoderCallsWithScanBypassed": 1
+  },
+  "sourceFilesChanged": false,
+  "providerRequests": 0,
+  "atUtc": "2026-10-24T12:04:16.475965+00:00",
+  "status": "FINDINGS_REPRODUCED",
+  "allOwnedContainersAbsent": true
+}

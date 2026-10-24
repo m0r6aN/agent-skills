@@ -1,0 +1,32 @@
+{
+  "atUtc": "2026-10-24T21:10:39.185096+00:00",
+  "status": "PASS_COORDINATOR_CLOSURE_LINT_NOT_MERGE",
+  "head": "97366c5e0ff3a2802ea4b05badb8be53d057d637",
+  "base": "7badb965e7c6842147747f542481e4c07a87e487",
+  "branch": "feat/foreman-line-ccm-p2l-legacy",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_civic_legacy.py": "0b905a74748b7002b363ba76c327ef7f4e8123e37cd4253a2324a5464147deb4",
+    "tests/test_ccm_civic_legacy.py": "625fa8f07a85c389d245403b09fbabb8fb9b8469187db5fae82af16e883a3ba5",
+    "tests/fixtures/ccm/legacy-civic-v1.json": "92d378e594fc7076ba9113b762c6ff22e9e8a198c4ed1697eac73275bfb27476",
+    "docs/specs/ccm-legacy-civic-v1.md": "aca6aa5fea53a3a413b695a7bae4f7a5d77ee89d97b3ac4db6bebeed42b7cad9"
+  },
+  "old440PinsRetained": true,
+  "treeEntries": 444,
+  "focused": 22,
+  "fullCounts": {
+    "pass": 3743,
+    "skipped": 137,
+    "failure": 0,
+    "error": 0
+  },
+  "baselineDispositionsRetained": true,
+  "initial9FocusIdentitiesRetained": true,
+  "reviewDisposition": "Fullarchitecture CHANGES_REQUIRED R1 accepted-as-documented after actual256case proof and independentfocusedPASS; fullsecurityPASS; no newfullreview claimed",
+  "sameFamilyLimitation": true,
+  "reviewedStagedCommittedBytesEqual": true,
+  "operatorContributions": "Parent-frozen actualC#13case fixture, independent22positiveoracle/4negative cases and256casecoupledproof; exactfile-string offline envelope recovery; AST/import-equivalent formatting only. Model source+one model repair.",
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "CI": "PENDING",
+  "pr": "https://github.com/Keon-Systems/keon-cortex/pull/99"
+}
