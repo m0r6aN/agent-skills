@@ -272,3 +272,14 @@ and missing ownership/cleanup/transport failure tests. One formalrepair used; no
 secondrepair, retry, fallback, sourcePR, merge or acceptance. Exactcandidate/source
 hashes and remaining work preserved. Original120 and newunknown150 held, affected
 routes held. Next scoped disposition required before more source/provider work.
+
+
+## P2C runtime additional repair — October24
+
+Owner directly authorizes ONE additional typing/test repair and fresh independent
+reviews; supersedes only prior second-repair prohibition. Same sole coordinator
+resumes; no new monitor or competing worker. See additional-repair-admission
+evidence. Local operator contribution is limited to variable typing correction
+and synthetic tests, no behavior or other-source changes. New finite250-credit
+October24 phase for2freshSolreviews, day6000/effort9000/floor1000 retained; all
+old reservations including120 and150 and affected routes held. No third repair.

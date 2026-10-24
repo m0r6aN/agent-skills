@@ -1,0 +1,56 @@
+{
+  "atUtc": "2026-10-24T11:51:05.040856+00:00",
+  "ownerAuthorizationVerbatim": "Brother, authorize one additional bounded repair for the typing error and missing failure-path tests, then fresh independent reviews. Keep all reservations and affected routes held, and use the cheapest capable approved route.",
+  "repairOrdinal": 2,
+  "additionalRepairsAllowed": 1,
+  "subsequentRepairAllowed": false,
+  "scope": [
+    "Behavior-preserving cleanup-loop local rename resolving mypy",
+    "Synthetic failure-path tests retaining actual ownership/cleanup/transport logic"
+  ],
+  "allowedChangedFiles": [
+    "src/keon/cortex/pipeline/ccm_python_runtime.py",
+    "tests/test_ccm_python_runtime.py"
+  ],
+  "otherFourCandidateFilesPinned": true,
+  "accepted422TreePinsRetained": true,
+  "sourceAuthorship": "Disclosed local operator contribution under owner direct additional repair and standing blanket non-destructive decision authority; no native/delegated shell worker; independent assessment produced by fresh external contexts",
+  "localBuilderStep0": {
+    "ready": true,
+    "flags": [],
+    "scope": "Only type-local rename and deterministic synthetic tests; no behavior/API/dependency/config/limit changes; stop on new product defect",
+    "tripwire": "Retain all59focused identities and full3124prebuild dispositions; add >=30 meaningful parametrized failure cases; no test threshold relaxation"
+  },
+  "route": "Controlled GenSpark no-tools private-artifact Sol for two fresh independent reviews only; cheapest currently qualified elevated-risk route",
+  "reviewFamilyLimitation": "Two independent contexts, same model family, not a multi-family council",
+  "phaseCap": 250,
+  "perReviewMax": 160,
+  "maxProviderPosts": 2,
+  "reviewOutputsMaxTokens": 4096,
+  "retries": 0,
+  "fallback": false,
+  "NYDate": "2026-10-24",
+  "expiresUtc": "2026-10-25T04:00:00Z",
+  "dayCeiling": 6000,
+  "effortCeiling": 9000,
+  "floor": 1000,
+  "oldConservative": 4384.464375,
+  "accountBalanceAtAdmission": 5642.9,
+  "afterAllOldHoldsAndNewPhase": 1008.4356250000001,
+  "old120Held": true,
+  "oldRuntime150Held": true,
+  "mimo10Held": true,
+  "allOldReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "nativePrivatePi": "HELD",
+  "oldSourceHashes": {
+    "src/keon/cortex/pipeline/ccm_python_protocol.py": "ea9de856c1f35146aa2e515195212688e98f03510c08d9df8cf3bdc05e1f7088",
+    "src/keon/cortex/pipeline/ccm_python_worker.py": "47e7600c565a86d81d7b62f38244cbffffebd82cb609fcae90eda6952965648e",
+    "src/keon/cortex/pipeline/ccm_python_runtime.py": "f316c4d310b9ffcc17c7592e3abf75e1bf3bb4349e302018232b94234a2f06d5",
+    "tests/test_ccm_python_runtime.py": "a3e92d3d2f3ec62dde1e9b251f9bda6a2e24eae680d03a0708dbc86e19e407d1",
+    "docker/ccm-python-parser/Dockerfile": "b8c2f008083d2d13194c7ebb76af91795181e594d5df1ffb97f060047cb07480",
+    "docs/specs/ccm-python-runtime-v1.md": "ebcd07eaf71bf4e4579f86edbda1d44ebd3f4fd2ec2644e0fd857d294345b4ad"
+  },
+  "futureReviewAdmission": "Sequential exact packet estimate and fresh account/remaining-phase guard; conditional future seat is not launched or guaranteed until cleared",
+  "amendedSpecSha256": "f9d116bbfb737223d331b14d17c6d2fd169d65523efa8dd7ff72b1a45a12c5d9"
+}

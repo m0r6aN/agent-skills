@@ -272,7 +272,12 @@ evidence is p2c-runtime-alarm-probe-20261023.json; no source program executed.
    mapped to exact reviewed/merged blobs; no threshold relaxation or invented
    receipt/registration. Restricted-host qualification applies only to this
    actual reviewed composition, not all Docker hosts/images.
-6. One implementation, at most one formal repair with its own Step0; two fresh
+6. One implementation, at most one formal repair with its own Step0; the owner
+   on October24 explicitly authorizes ONE additional bounded repair limited to
+   the remaining typing error and missing failure-path tests. No third repair,
+   changed runtime behavior, protocol/resource/route expansion or blind replay.
+   Disclosed operator source contribution is allowed for that narrow correction;
+   two fresh
    independent architecture/security composition reviews and green head/main
    chain before acceptance. No automatic retry/fallback, source route hunt,
    new dependency, parent/global config change or import authorization.
