@@ -212,6 +212,35 @@ from raw DTOs and transient key material. DTO returned by prepare is for explici
 inspection/tests only, not a durable-write capability. Cancellation is BaseException
 and propagates; Exception is sanitized only after its handler has exited.
 
+## Independent Review Repair Disposition
+
+Initial architecture/security reviews require changes; both original assessments
+are preserved. Actual PostgreSQL reproduced blocking cleanup of a locked expired
+fifth-attempt lease. Restricted synthetic reproduction confirmed reversible JSON
+escaping of a non-ASCII known secret in Python-symbol fields. One additional
+bounded production/test repair is admitted under standing owner authority, with
+fresh independent reviews required. All reservations/routes remain held.
+
+Structured artifact handling is explicit: python_symbol and civic are decoded
+JSON objects, validated/bounded, and their KEYS/values scrubbed BEFORE any JSON
+re-encoding. Remove the Python validation-only content_sha256 first. Preserve
+whole-envelope scrubbing/control validation; structured candidate field names
+are data and may change under scrub (collisions fail). No raw restoration.
+Other opaque text remains subject to the accepted literal known-secret/catalog
+scrubber profile, not a universal encoding-decoder claim. Do not introduce a
+competing civic/symbol schema or arbitrary callbacks. Test both structured kinds,
+non-ASCII and escaped control/quote/backslash secrets in keys AND values, asserting
+decoded persisted text plus SQL parameters contain no original secret.
+
+Expired-final cleanup must SELECT candidates FOR UPDATE SKIP LOCKED before
+UPDATE, preserving tenant-first lock order. Test a locked expired-fifth row with
+another eligible batch. Add controlled actual PostgreSQL interleavings for BOTH
+publication/fence lock orders and enqueue/fence on an initially open batch;
+assert durable source/outbox/batch states, including every source and original
+lease owner/generation/attempts after publication rollback. Retain all3948local
+passes145skips and initial11actual PG/guard cases. Add concurrent BYTE-capacity
+boundary test. Parent test-fixture correction did not clear these review findings.
+
 ## Context & References
 
 Binding charter D7/D8/D9 and accepted S12; CONTEXT-SPEC-V4 P3. Accepted PR100
