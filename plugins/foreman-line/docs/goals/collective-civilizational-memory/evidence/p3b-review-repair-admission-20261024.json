@@ -1,0 +1,18 @@
+{
+  "atUtc": "2026-10-24T23:45:06.090672+00:00",
+  "authority": "Standing owner full build/reviews/bounded repair and finite credit increase authority",
+  "phaseCap": 2600,
+  "dayCeiling": 12500,
+  "effortCeiling": 16000,
+  "floor": 1000,
+  "repairRound": "First adversarial-review repair round; prior local repair receipts preserved separately",
+  "maximumRepairPosts": 1,
+  "maxRepairCredits": 320,
+  "maxRepairOutput": 12000,
+  "freshFinalReviews": 2,
+  "maxTotalFullReviewAttempts": 5,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "oversizedParentEnvelopes": "HELD",
+  "maximumOutboundBytes": 196608
+}

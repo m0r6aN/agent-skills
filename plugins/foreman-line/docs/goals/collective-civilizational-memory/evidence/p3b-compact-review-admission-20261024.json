@@ -1,0 +1,20 @@
+{
+  "atUtc": "2026-10-24T23:41:14.801417+00:00",
+  "authority": "Standing owner blanket non-destructive decisions/approvals and finite credit-increase grant",
+  "disposition": "One fresh compact architecture review and one independent security review; original SSL architecture attempt remains unsuccessful/unknown, full reservation retained. No further transport retry admitted.",
+  "originalArchitectureHold": 378.061,
+  "oldPhaseCap": 2000,
+  "newPhaseCap": 2300,
+  "oldDayCeiling": 11000,
+  "newDayCeiling": 12500,
+  "effortCeilingUnchanged": 16000,
+  "floorUnchanged": 1000,
+  "maximumNewPosts": 2,
+  "maximumNewPostCredits": 320,
+  "maximumOutboundBytes": 196608,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "oversizedParentEnvelopes": "HELD",
+  "automaticRetry": false,
+  "fallback": false
+}
