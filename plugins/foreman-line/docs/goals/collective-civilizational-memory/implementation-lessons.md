@@ -72,3 +72,24 @@ untouched. Distinguish raw API balance updates from user topup confirmation;
 keep preflight before inference and funding-adjusted debit accounting. Final
 source/committed/merged tree equality and actual main CI close source acceptance,
 not full import readiness or held credential-route clearance.
+
+
+## Git object snapshot October24
+
+- Raw binary tree closure gives path/object binding; a supplied recursive path
+  listing alone does not prove a file belongs to the selected commit. Keep the
+  pure validator independent from the future privileged Git acquisition adapter.
+- Exact frozen-slots dataclasses can be allocated with object.__new__ without
+  initialized fields. Shape validation must classify absent slots before limits;
+  seven incomplete combinations with/without oversize sibling are meaningful
+  negative controls. Testing an existing frozen field avoids the unrelated
+  Python slots/nonexistent-attribute TypeError behavior.
+- Git symlink tree record cost is28bytes plus filename, not31. At-limit fixtures
+  must assert exact encoded lengths before testing validator outcomes.
+- Source JSON framing failure need not cause another paid request: preserve raw
+  output, recover only unambiguously decoded exact strings offline, independently
+  validate, and retain the conservative booking and original unsuccessful receipt.
+- No job steps plus explicit account billing annotation means source CI is
+  unverified. Preserve exact reviewed head and stop reruns; local tests/reviews
+  do not authorize bypassing the green merge chain. GenSpark credits do not
+  settle GitHubActions billing.

@@ -351,3 +351,18 @@ existing finite increase authority; day6000/floor1000 and every old reservation
 (4615.995125 conservative) remain. Affected/native/private-Pi routes held.
 Draft/advisory/readback and accepted3189PASS137skip baseline correspondence
 recorded. Source waits for Step0 disposition and exact workorder Gate2.
+
+
+## P2D-A Git source dependency reviewed, CI billing held — October24
+
+PR96 reviewed source9fce7a97e0efedd77ce133274689ef8928774a51:153focused/3342fullPASS137skip,
+428basepins retained,2freshSolreviewsPASS/PASS and14negativecontrolcasesPASS.
+Pure Git object snapshot foundation only; actual local acquisition isP2D-B and
+not yetqualified. See p2d-a-ci-held-20261024.md. Both exactheadCIruns failed
+before jobsteps with GitHubActions billing/payment/spending-limit annotations.
+No merge/acceptance/StageF or bypass; workorderactive, clean sourceworktree kept.
+Financialphaseclosed:146.3reported/198.475750booked of300, full110source
+booking plus alloldholds retained. Native/privatePi/affectedroutes held.
+Same solecoordinator stops at externalCIhold, no worker/monitor. Next:resolve
+GitHubActions accountcondition, rerun both exactheadworkflows, greenGate3/mainCI
+thenStageF; no newsource/providercall needed. FullContext/import notready.

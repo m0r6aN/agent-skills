@@ -1,0 +1,33 @@
+{
+  "atUtc": "2026-10-24T16:08:22.254411+00:00",
+  "status": "PASS_COORDINATOR_CLOSURE_LINT_NOT_MERGE",
+  "head": "9fce7a97e0efedd77ce133274689ef8928774a51",
+  "base": "f05f209fd919d47d1708b99838b2a220976be952",
+  "branch": "feat/foreman-line-ccm-p2d-a-git",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_git.py": "49a5d65632638ee2adcce0fabb5a9de19c44127ac99e92db8831bec453582b32",
+    "tests/test_ccm_git.py": "988ce5b85d8f1759cff155d583d5b3d3a64b66d1c5e20b63bebdc7085f22d945",
+    "docs/specs/ccm-git-snapshot-v1.md": "db246bf1ea15929a987288699ce9e4e27da17d638643be844f5c0a24c7deb586"
+  },
+  "old428PinsRetained": true,
+  "treeEntries": 431,
+  "focused": 153,
+  "fullCounts": {
+    "pass": 3342,
+    "skipped": 137,
+    "failure": 0,
+    "error": 0
+  },
+  "baselineDispositionsRetained": true,
+  "negativeControls": 14,
+  "finalReviews": "PASS/PASS",
+  "sameFamilyLimitation": true,
+  "reviewedStagedCommittedBytesEqual": true,
+  "operatorContributions": "Two explicit bounded local corrections: test oracles, then ARCH-01 missing-slot error classification/tests",
+  "allReservationsHeld": true,
+  "full110SourceBookingHeld": true,
+  "affectedRoutes": "HELD",
+  "CI": "PENDING",
+  "Gate3": "NOT_YET_MERGED",
+  "pr": "https://github.com/Keon-Systems/keon-cortex/pull/96"
+}
