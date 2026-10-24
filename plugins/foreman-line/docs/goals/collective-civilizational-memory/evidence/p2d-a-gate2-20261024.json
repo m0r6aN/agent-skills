@@ -1,0 +1,31 @@
+{
+  "atUtc": "2026-10-24T15:57:05.174961+00:00",
+  "gate2": "APPROVED_BY_DELEGATED_OWNER_AUTHORITY",
+  "workorderSha256": "e0ef2784a0950554ac911bf35b3e0846e518df26bd9204766973ea2559f5f3cb",
+  "base": "f05f209fd919d47d1708b99838b2a220976be952",
+  "worktree": "D:\\Repos\\ccm-worktrees\\cortex-p2d-a-git",
+  "allowedFiles": [
+    "src/keon/cortex/pipeline/ccm_git.py",
+    "tests/test_ccm_git.py",
+    "docs/specs/ccm-git-snapshot-v1.md"
+  ],
+  "baselineCounts": {
+    "pass": 3189,
+    "skipped": 137,
+    "failure": 0,
+    "error": 0
+  },
+  "trackedPins": 428,
+  "step0Flags": [],
+  "sourceModel": "gpt-6.1-sol",
+  "modelEffort": "low",
+  "sourceRoute": "Controlled GenSpark no-tools proposal",
+  "maxImplementations": 1,
+  "maxFocusedRepairs": 1,
+  "reviewsRequired": 2,
+  "affectedRoutes": "HELD",
+  "allReservationsHeld": true,
+  "actualAcquisitionAdmitted": false,
+  "mergeAllowedNow": false,
+  "historicalRouteNote": "The initial Step0 byte-bound check exceeded30 before any POST; local per-call cap raised35 within finite300 envelope, then one actual request only"
+}

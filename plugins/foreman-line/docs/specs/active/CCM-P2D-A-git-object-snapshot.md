@@ -1,7 +1,7 @@
 ---
 ticket: CCM-P2D-A
 title: Bounded Git object snapshot validation
-status: draft
+status: active
 owner: clinton.morgan
 created: '2026-10-24'
 updated: '2026-10-24'
@@ -160,3 +160,14 @@ source-tree correspondence, run focused/full new candidate in restricted pinned
 test image. Independently inspect output/error and forbidden-effect imports.
 Obtain two fresh source-only reviews, triage without reviewer edits, allow only
 one bounded focused repair if needed; exact-head and merged-main CI then StageF.
+
+
+## Delegated Gate2 — October24
+
+Owner next-parcel plus standing non-destructive approval authority admits ONE
+controlled GenSpark Sol/low source proposal over this exact workorder. Step0
+restate accepted with no flags. Allowed three new files only, basef05f209.
+Frozen independent object oracle precedes source. Parent only applies source
+after static inspection; restricted tests and two independent frontier reviews
+remain mandatory. No Git adapter, actual acquisition, trust admission or held
+route release. One focused repair maximum, all old holds retained.
