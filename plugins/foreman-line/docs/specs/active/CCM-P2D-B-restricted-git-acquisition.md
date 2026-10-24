@@ -1,7 +1,7 @@
 ---
 ticket: CCM-P2D-B
 title: Restricted local bare Git object acquisition
-status: draft
+status: active
 owner: clinton.morgan
 created: '2026-10-24'
 updated: '2026-10-24'
@@ -244,3 +244,15 @@ allowed artifacts after static inspection. Independently validate in restricted
 test containers, then actual worker/API composition and fixed faults. Triage
 before bounded focused repair; two fresh final reviews. Require exact-head/main
 green chain and StageF. No unregistered shell agents or held-route reactivation.
+
+
+## Delegated Gate2 — October24
+
+Owner expressly proceeds P2D-B under existing non-destructive decisions/approvals.
+Step0 restate accepted, no flags; exact431pin/source-baseline correspondence and
+actual fixed signed Git package/object-only readonly nonrecursive mount verified.
+Controlled no-tools GenSpark Sol/low source proposals in3fixed slices; parent
+applies exact6allowed newfiles, no existing-source edits. One focused repair
+maximum, two fresh source-only frontier reviews and actual CI/main/StageF remain
+mandatory. Stable operator source custody is a prerequisite, not implied auth.
+All4814.470875oldreservations and affected/native/privatePi routes stayHELD.
