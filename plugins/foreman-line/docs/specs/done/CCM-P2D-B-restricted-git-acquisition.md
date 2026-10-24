@@ -1,7 +1,7 @@
 ---
 ticket: CCM-P2D-B
 title: Restricted local bare Git object acquisition
-status: active
+status: done
 owner: clinton.morgan
 created: '2026-10-24'
 updated: '2026-10-24'

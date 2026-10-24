@@ -103,3 +103,27 @@ not full import readiness or held credential-route clearance.
   or spend on unnecessary source changes/model re-review. Disposition: installed
   in this parcel CI-resumption/StageF evidence and current loop, narrative-only
   for goal closure; no new runtime behavior or generic CI infrastructure.
+
+
+## Restricted Git acquisition October24
+
+- Mount the objectstore only; a synthetic bareGitdir and fixed cat-file requests
+  keep sourceconfiguration/hooks/refs outside Git input. Qualified native
+  WindowsDesktop junction behavior with a synthetic outside sentinel; never
+  assume recursive-readonly or labelclaims alone establish containment.
+- Docker/Python add benign HOME/HOSTNAME/locale names; qualify actual env and
+  constrain values. CMD[] may serialize absent/null; permit only no-argument
+  equivalents, still reject nonemptyCmd. Disposition: runtime guards plus tests.
+- Unit mocks must be module-local, preserve binary/textIO types, and avoid
+  mutating the interpreter sys.flags/platform/globalenv. Otherwise Pytest
+  metadata can masquerade as unexpected worker env. Disposition: isolated mocks.
+- Helper coverage does not prove executableentrypoint behavior. Directmain tests
+  must bind bounded read/EOF, rejection beforefetch, deadlines, silentstartup,
+  closedfailureframes and nonzerooutputfailure; negativecontrols discriminate
+  truncating extra input or masking exit70. Disposition:22tests and2guardprobes.
+- Keep scoped test-only completion within a finite envelope and freshreviews;
+  preserve firstfindings. Rootoperator code/test contributions must stay explicit,
+  never represented as builder-only independent authorship.
+- A policyblocked cleanup is not permission to bypass it. Retain an owned
+  syntheticartifact privately when removal is unnecessary for runtimeacceptance.
+  Disposition: cleanup record; no generaldeletion automation introduced.

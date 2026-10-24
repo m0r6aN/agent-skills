@@ -394,3 +394,19 @@ is required, not proved by input labels. Step0/Gate2 precede source.
 Finitephase450/effort10500 under standing finiteincrease authority; day6000,
 floor1000 and all4814.470875oldreservations retained. Affected/native/privatePi
 routes HELD. No source/model dispatch claimed by this preparation record.
+
+
+## P2D-B restricted local Git acquisition accepted — October24
+
+PR97 source3be411d93a4eab3a222c2c5c33af7b1cfd35bcfc merged0cdff676038d76c203f819ee697cda226980d305. All16sourcechecks and
+exactmainCI/deploymentPASS;334focused/3676fullPASS137skip,431priorentries kept.
+2freshSolreviewsPASS/PASS;7actualAPI/6faultimage/7guardsensitivitycasesPASS,
+allcontainersabsent. Workorderstatus-onlyarchived, StageFclosed; see
+p2d-b-acceptance-20261024.md. Trusted localWindows/Dockerimage only, stable
+operatorcustody precondition; no realcorpus/authproducer/hightrust admission.
+Financialphaseclosed:353.1reported/358.105000booked of550, actual
+belowinitial450; allold120/150/source110/otherholds and affected/native/privatePi
+routes stayHELD. Cleanpushedworktree/branch retained; private syntheticjunction
+probe retained after policyblockedremoval, no bypass. Same solecoordinator at
+parcelboundary, no worker/monitor. Nextcivicmapping/extractor thenP3-P8 and
+actualintegration/import gates; fullContext/bulkimport notready.

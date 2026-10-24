@@ -2,6 +2,13 @@
 
 ## Current execution addendum — October24 NY
 
+P2D-B restricted local Git object acquisition is accepted: PR97 merged0cdff676038d76c203f819ee697cda226980d305,
+all16headchecks and exactmainCI/deployment green. See
+p2d-b-acceptance-20261024.md. Only qualifiedWindows/Dockerimage and stable
+operator bare-root custody; no realcorpus, hightrustproducer or bulkreadiness.
+Civicmapping/extractor/P3-P8/fullintegration/import gates remainopen. All
+reservations and affected/native/privatePi routes remainHELD.
+
 P2D-A Git object snapshot validation is now accepted: PR96 merged0aec0e24af450032100c292de0e3e2879708a266,
 all16sourcechecks and exactmainCI/deployment green. See
 p2d-a-acceptance-20261024.md. Actual local repository acquisition remainsP2D-B
@@ -269,3 +276,19 @@ source/old120/150 and affected/native/privatePi routes stayHELD. Same sole
 coordinator at parcelboundary; cleanworktree/pushedbranch retained, no monitor.
 NextP2D-B restricted localbare acquisition stillunqualified; no actualrepository
 or personalcorpus imported. Civic/extractor/P3-P8/fullintegration/import open.
+
+
+## P2D-B restricted local Git acquisition accepted — October24
+
+PR97 source3be411d93a4eab3a222c2c5c33af7b1cfd35bcfc merged0cdff676038d76c203f819ee697cda226980d305. All16sourcechecks and
+exactmainCI/deploymentPASS;334focused/3676fullPASS137skip,431priorentries kept.
+2freshSolreviewsPASS/PASS;7actualAPI/6faultimage/7guardsensitivitycasesPASS,
+allcontainersabsent. Workorderstatus-onlyarchived, StageFclosed; see
+p2d-b-acceptance-20261024.md. Trusted localWindows/Dockerimage only, stable
+operatorcustody precondition; no realcorpus/authproducer/hightrust admission.
+Financialphaseclosed:353.1reported/358.105000booked of550, actual
+belowinitial450; allold120/150/source110/otherholds and affected/native/privatePi
+routes stayHELD. Cleanpushedworktree/branch retained; private syntheticjunction
+probe retained after policyblockedremoval, no bypass. Same solecoordinator at
+parcelboundary, no worker/monitor. Nextcivicmapping/extractor thenP3-P8 and
+actualintegration/import gates; fullContext/bulkimport notready.

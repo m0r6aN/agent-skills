@@ -1,0 +1,40 @@
+{
+  "atUtc": "2026-10-24T18:31:12.112256+00:00",
+  "status": "PASS_COORDINATOR_CLOSURE_LINT_NOT_MERGE",
+  "head": "3be411d93a4eab3a222c2c5c33af7b1cfd35bcfc",
+  "base": "0aec0e24af450032100c292de0e3e2879708a266",
+  "branch": "feat/foreman-line-ccm-p2d-b-git",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_git_protocol.py": "43813d00167aafc065cf66e04808c369a7ac8872244fa185e484a99cf129c463",
+    "src/keon/cortex/pipeline/ccm_git_worker.py": "fe04c0794099b720f83007bfdc7a7b0d3154d1a2f46a23f774d6fb4d9492e59a",
+    "src/keon/cortex/pipeline/ccm_git_runtime.py": "bea56dd96356b3bba9ba72560730fb51710f013ca5525ca0732bbb466beec399",
+    "tests/test_ccm_git_runtime.py": "a83f91ec95c476ef9a5d28504a762eafca5eb4358cbac199d293f75fa1bb7f6e",
+    "docker/ccm-git-source/Dockerfile": "58f8fc57bd97d1628ed0ca46be6cc3003bb667a678c9e79f1a92adafabc3e53a",
+    "docs/specs/ccm-git-runtime-v1.md": "f744555ce1540d0ae574cff6422e64906bae918c9fce4c7f638ba9780871ea28"
+  },
+  "old431TreePinsRetained": true,
+  "treeEntries": 437,
+  "focused": 334,
+  "fullCounts": {
+    "pass": 3676,
+    "skipped": 137,
+    "failure": 0,
+    "error": 0
+  },
+  "baseline3342Pass137SkipDispositionsRetained": true,
+  "actualAPICases": 7,
+  "actualFaultImages": 6,
+  "sensitivityGuardFaults": 7,
+  "finalReviews": "PASS/PASS",
+  "sameFamilyLimitation": true,
+  "operatorContributionDisclosed": true,
+  "reviewedStagedCommittedBytesEqual": true,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "nativePrivatePi": "HELD",
+  "CI": "PENDING",
+  "gate3": "NOT_MERGED",
+  "qualifiedLocalImage": "sha256:0bab30c07d270832fba40cd309a7891c0996d0a87a114220813a0f819d52ac04",
+  "privateSyntheticJunctionDisposition": "Retained with owned synthetic target after automatic approval blocked removal; no bypass or container left",
+  "pr": "https://github.com/Keon-Systems/keon-cortex/pull/97"
+}
