@@ -1,5 +1,12 @@
 # Credential containment handoff
 
+Latest post-restart disposition: current tool Process/User token equality PASS
+at2026-10-23T01:42:54.5741231Z (October22 New York). Both values present, no
+credential output/auth request, no8811/8812 listener. See
+evidence/gateway-parent-postrestart-check-20261022.json. Current-process stale
+inheritance is resolved; earlier stale-parent notes below remain historical.
+Native Pi/profile and provider holds remain; no general route/worker admission.
+
 Recorded October22 following the direct owner instruction relayed by the
 authorized oversight session: resolve the incident, provide exact names and
 rotation steps, keep affected routes held, and continue safe work under existing

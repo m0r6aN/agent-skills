@@ -1,4 +1,4 @@
-# CCM current loop — P2A and P2B accepted; credential disposition open
+# CCM current loop — P2A/P2B/P2C accepted; credential disposition open
 
 Custodian: ccm-coordinator-20261020-fresh-01. Originating authorized operator:
 01a155be-72a6-7b02-ac33-84dc64bbf102; factual oversight:
@@ -49,6 +49,14 @@ shaper existing-init/API claim and ratified four NEW files. Actual frozen
 advisory/schema/emitter/readback passed, Gate2 commit5e9d0b06 before fresh worker.
 
 ## Actual credential-handling incident — OPEN
+
+Owner restart follow-through PASS at2026-10-23T01:42:54.5741231Z (Oct22NY):
+current tool Process/User gateway token both present/equal, no8811/8812 listener,
+no credential values/auth request. See evidence/gateway-parent-postrestart-check-20261022.json.
+Stale-parent mismatch is resolved for THIS process; restart-pending text below is
+historical. Preserve earlier401/401/200 checks without unnecessary rerun. Native
+Pi/profile and provider cleanup remain held; no blanket route/worker release.
+Oversight chat is archived; persist evidence here without reviving a monitor.
 
 Saved normal project URL/header templates now freshly resolved against Windows
 User state and verified401/401/200 initialize in the empty loopback fixture.
@@ -169,6 +177,44 @@ output allowance; no automatic retry/provider hunt or partial-PASS acceptance.
 
 ## Remaining goal / next capability
 
+Latest Oct23 readiness: actual prebuild baseline2975PASS137SKIP0fail/error,
+all3047 accepted identities/dispositions retained plus65new,419tracked pins,
+source clean. One formal test-host repair -> fresh closure PASS/PASS, admitted
+fixed synthetic snapshot only with residuals explicit. See p2c-readiness-result-20261023.md.
+Kimi exact qualified public/no-tools L3 call attempted once: model matched but
+length2048/empty answer, unsuccessful, no retry; retain$0.025702 Go estimate reserve.
+Cortex is PRIVATE; current Kimi qualification does not admit private inputs or
+native Pi tools. Native/private source workers and affected routes stay HELD.
+Two initially started native review tasks were interrupted and not accepted;
+their usage unknown/separate. Controlled tools-free reviews completed instead.
+Review phase closed:207.9reported/210.94425conservative GenSpark credits, no future
+paid calls; dated Oct23 shared ceiling4500 expiresOct24 04UTC, old holds intact.
+
+Use p2c-noncircular-admission-sequence-20261023.md: qualified/reviewed test host,
+actual baseline and worker clearance -> library build/review -> production adapter
+and composition review -> hostile-input admission. No production adapter/library
+circular Gate2 dependency; no credential hold is waived by this clarification.
+
+October23 host/source prerequisites advanced: clean recovered Cortex checkout
+D:/Repos/ccm-cortex-readiness-20261023 at91c57778804a4f1097b07049176c1af533c840e2,
+both actual main workflows green, four accepted P2B blobs match, three P2C paths
+absent. See cortex-checkout-recovery evidence. No source edit or full baseline yet.
+Linux-container mechanism canaries PASS on3.10.22/3.12.15/3.13.15; all owned
+containers removed. Select pinned3.13.15 with3.10 grammar;3.10 is end-of-life and
+Unicode token counts differ across runtimes. See parser-host-profile-20261023.md.
+Numeric profile selected for adapter implementation/review, not production admit.
+User exact preferred Pi model opencode-go/kimi-k3.1-pro is requested only, not
+invoked/verified. Affected routes/credential workers remain held; no paid phase.
+
+October23 safe preparation produced draft CCM-P2C-python-declarations.md plus
+ccm-p2c-python-declarations-2026-10-23-operator.shaping-result.json in active specs.
+Frozen advisory/schema/emitter/readback PASS;164 source byte pins matched.
+See p2c-draft-handoff-20261023.md. No source dispatch, promotion or new spend.
+Old Cortex worktree gitdir no longer resolves; current base/path verification is
+pending rather than inferred from historical evidence. Parser-host and credential
+worker admission remain held. October22 daily spend envelope expired and is not
+carried forward; old reservations remain. No new paid phase admitted.
+
 AST boundary decision: use a separately qualified bounded subprocess for hostile
 input, not in-process byte/token guards alone. See
 ast-parser-execution-boundary-20261022.md. This is planning only; platform resource
@@ -195,3 +241,22 @@ coverage before real crypto effects, Wave1/Wave2/benchmark/live-model-smoke,
 capacity/privacy/recovery and bulk-import evidence remain OPEN. Raw P2B chunks
 must strict-decode into a P3 envelope and pass P2A at the real durable boundary.
 No personal data imported; full Context and bulk ingestion are not ready.
+
+
+## P2C Oct23 reconciliation and local completion
+
+See p2c-build-state-20261023.md and p2c-local-completion-status evidence.
+The failed repair remains unknown with120held. No source replay: one formal
+repair completed locally under disclosed operator authorship, then fresh
+Sol/Opus closure PASS/PASS. PR94 exact reviewed heade75da8a86b563a02120a30ecedccaca310e04197
+awaits real CI. No more model calls/repair in this closed phase. All affected
+routes and production/import gates remain held; no monitor was revived.
+
+
+## P2C accepted source milestone
+
+PR94 sourcee75da8a86b563a02120a30ecedccaca310e04197 merged5cb07ba47f7f52dc85c228e06dc3d1bfe3ec4d04.
+All16exact-headchecks and main CI40032237624/deployment40032237623passed.
+StageFclosed; workorder status-only archived. Full120failed-call hold and
+affected/private/native/provider routes remain held. Source production adapter
+and full Context/import gates remain open. No new model phase or monitor.

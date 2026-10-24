@@ -1,0 +1,46 @@
+{
+  "verdict": "PASS",
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "low",
+      "locator": "ccm_python.py _extract bracket loop (`brackets -= 1`)",
+      "trigger": "Use Python 3.10, where pure-Python tokenize does not reject unmatched closers. Supply input such as `)` repeated many times followed by more than 64 nested `(`.",
+      "impact": "The bracket counter goes negative, so the 64-level nesting guard is bypassed before `ast.parse` runs on the 3.10 compatibility runtime. The result is still `invalid_syntax` or `resource_limit`, and the canonical 3.13 C tokenizer rejects unmatched closers. This weakens the scalar guard only off the canonical runtime.",
+      "remediation": "On a closer at depth 0, fail with `invalid_syntax` instead of decrementing. Alternatively, clamp the counter at 0. Add a small fixed test below the bound.",
+      "confidence": "medium"
+    },
+    {
+      "id": "F2",
+      "severity": "low",
+      "locator": "ccm_python.py _cookie_allowed (BytesIO.readline)",
+      "trigger": "Use a CR-only first line such as `b\"\\r# coding: latin-1\\r...\"`. `readline` splits only on LF, so the whole input becomes line 1. That line is matched by `_BLANK`, and no second line exists.",
+      "impact": "The C tokenizer treats CR as a line break and would see an effective second-line latin-1 cookie. The library accepts the input instead of failing with `unsupported_encoding`. Decoding and offsets stay UTF-8-correct, so this is a policy divergence, not a disclosure.",
+      "remediation": "Split candidate lines on CR, LF or CRLF to match tokenizer line semantics. Add frozen CR-only cookie fixtures.",
+      "confidence": "medium"
+    }
+  ],
+  "coverage": [
+    "exact bytes type gate runs before any method call, including the Poison subclass",
+    "size, then strict decode, then cookie, then tokenize, then parse, then traversal order matches the workorder, including the latin-1 cookie with invalid UTF-8 returning invalid_utf8",
+    "the raw exception is handled before a fresh error is constructed outside the handlers",
+    "`raise failure from None` followed by context clearing and bare re-raise leaves `__context__`/`__cause__` as None under an ambient caller exception, because CPython skips self-context on re-raise",
+    "args are empty, and str/repr show only the code",
+    "COOKIE/BLANK regexes are identical to tokenize's, with only utf-8/utf8 allowed and aliases rejected",
+    "BOM handling: digest covers the BOM, and the offset base adds 3 bytes on line 1 only",
+    "AST byte columns map over physical CRLF/CR/LF line starts",
+    "NFKC names come from the parser while source bytes are kept",
+    "the iterative stack is sorted by start",
+    "ancestor check `>64` matches the spec text that depth 65 is allowed",
+    "declaration cap is enforced with no partial result",
+    "no exec/import/IO in the library",
+    "tests use literal digests and ranges, a non-executed raise canary, and injected MemoryError/RecursionError",
+    "docs disclaim sandboxing, trust attestation and frame-local secrecy"
+  ],
+  "gaps": [
+    "Fixtures, digests and runtime vectors were not executed by this reviewer, and parent validation JSON was taken as an unverified claim.",
+    "Restricted-host qualification and production adapter composition are out of scope here.",
+    "Python 3.10 tokenize edge behaviour (F1) was assessed by reasoning only.",
+    "There is no test for an unmatched closer or CR-only cookie lines."
+  ]
+}

@@ -1,0 +1,360 @@
+{
+  "atUtc": "2026-10-23T19:46:54.166892+00:00",
+  "status": "PASS_BOUNDED_SYNTHETIC_HOST_MECHANISMS",
+  "providerRequests": 0,
+  "newModelWorkers": 0,
+  "imagesPulled": 0,
+  "hostMounts": 0,
+  "runs": [
+    {
+      "image": "sha256:0f61d91517f6602b9d99096696845f54ddfe01a52029b4f55fdddb277ebe034a",
+      "containerName": "ccm-parser-qual-310-20261023194654",
+      "configVerified": true,
+      "removedAfterExit": true,
+      "observation": {
+        "python": "3.10.22",
+        "uid": 65534,
+        "cgroups": {
+          "memory.max": "134217728",
+          "memory.swap.max": "0",
+          "pids.max": "16",
+          "cpu.max": "50000 100000"
+        },
+        "memoryCanaryDenied": true,
+        "subprocessDenied": true,
+        "rootWriteDenied": true,
+        "networkDenied": true,
+        "fixtures": [
+          {
+            "fixture": "plain",
+            "bytes": 18,
+            "tokenCount": 12,
+            "declarations": 1,
+            "oracleDigest": "674d5f0697f7aa6daf81b7e90d97eba01939383d870a29d76c79dea5833e1f45",
+            "elapsedMs": 2.06
+          },
+          {
+            "fixture": "bom_crlf",
+            "bytes": 23,
+            "tokenCount": 12,
+            "declarations": 1,
+            "oracleDigest": "674d5f0697f7aa6daf81b7e90d97eba01939383d870a29d76c79dea5833e1f45",
+            "elapsedMs": 0.092
+          },
+          {
+            "fixture": "unicode",
+            "bytes": 46,
+            "tokenCount": 20,
+            "declarations": 2,
+            "oracleDigest": "007f17832e84f8fd22c3989a564e6490a0dc57e77a17f935ecb004e7e8391b2f",
+            "elapsedMs": 0.108
+          },
+          {
+            "fixture": "nested",
+            "bytes": 60,
+            "tokenCount": 27,
+            "declarations": 3,
+            "oracleDigest": "4e75a37e79b011eb08a7fd2bd09b3f3f8baa3fcf6db62f13a1fdbc997c26a51f",
+            "elapsedMs": 0.061
+          },
+          {
+            "fixture": "duplicates",
+            "bytes": 36,
+            "tokenCount": 22,
+            "declarations": 2,
+            "oracleDigest": "557d4f5d01f41af790b4d2c645cc206a7b9dddca405c3595e85e8837ac1d561f",
+            "elapsedMs": 0.049
+          },
+          {
+            "fixture": "async_decorator",
+            "bytes": 27,
+            "tokenCount": 16,
+            "declarations": 1,
+            "oracleDigest": "eb469e8128c0f7b42c97b545a6c70bdb287f6fdcb40a5863d50076dfa0a8ccd5",
+            "elapsedMs": 0.047
+          },
+          {
+            "fixture": "control",
+            "bytes": 35,
+            "tokenCount": 18,
+            "declarations": 1,
+            "oracleDigest": "8504bc20a221c8e89b334a7f4ca6ab779cc9e5074c8b31555154640117e5243a",
+            "elapsedMs": 0.047
+          },
+          {
+            "fixture": "not_executed",
+            "bytes": 54,
+            "tokenCount": 18,
+            "declarations": 1,
+            "oracleDigest": "e1cd864b78d2a1ff5facf8c61a25fb5b19f8410bac4f5deb8bd05d9b86ad5cf6",
+            "elapsedMs": 0.053
+          },
+          {
+            "fixture": "byte_limit_comment",
+            "bytes": 262144,
+            "tokenCount": 4,
+            "declarations": 0,
+            "oracleDigest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "elapsedMs": 2.173
+          },
+          {
+            "fixture": "declaration_limit",
+            "bytes": 35754,
+            "tokenCount": 14338,
+            "declarations": 2048,
+            "oracleDigest": "42ce3016a4edc533372638c9b51914ddd003c0f1f13dcfe954fbf3d1c69e359a",
+            "elapsedMs": 32.084
+          },
+          {
+            "fixture": "bracket_limit",
+            "bytes": 132,
+            "tokenCount": 134,
+            "declarations": 0,
+            "oracleDigest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "elapsedMs": 0.851
+          }
+        ],
+        "invalidFixturesRejected": 3,
+        "maxRssKiB": 24520,
+        "sourceExecuted": false
+      }
+    },
+    {
+      "image": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "containerName": "ccm-parser-qual-312-20261023194654",
+      "configVerified": true,
+      "removedAfterExit": true,
+      "observation": {
+        "python": "3.12.15",
+        "uid": 65534,
+        "cgroups": {
+          "memory.max": "134217728",
+          "memory.swap.max": "0",
+          "pids.max": "16",
+          "cpu.max": "50000 100000"
+        },
+        "memoryCanaryDenied": true,
+        "subprocessDenied": true,
+        "rootWriteDenied": true,
+        "networkDenied": true,
+        "fixtures": [
+          {
+            "fixture": "plain",
+            "bytes": 18,
+            "tokenCount": 12,
+            "declarations": 1,
+            "oracleDigest": "674d5f0697f7aa6daf81b7e90d97eba01939383d870a29d76c79dea5833e1f45",
+            "elapsedMs": 0.25
+          },
+          {
+            "fixture": "bom_crlf",
+            "bytes": 23,
+            "tokenCount": 12,
+            "declarations": 1,
+            "oracleDigest": "674d5f0697f7aa6daf81b7e90d97eba01939383d870a29d76c79dea5833e1f45",
+            "elapsedMs": 0.087
+          },
+          {
+            "fixture": "unicode",
+            "bytes": 46,
+            "tokenCount": 19,
+            "declarations": 2,
+            "oracleDigest": "007f17832e84f8fd22c3989a564e6490a0dc57e77a17f935ecb004e7e8391b2f",
+            "elapsedMs": 0.114
+          },
+          {
+            "fixture": "nested",
+            "bytes": 60,
+            "tokenCount": 27,
+            "declarations": 3,
+            "oracleDigest": "4e75a37e79b011eb08a7fd2bd09b3f3f8baa3fcf6db62f13a1fdbc997c26a51f",
+            "elapsedMs": 0.069
+          },
+          {
+            "fixture": "duplicates",
+            "bytes": 36,
+            "tokenCount": 22,
+            "declarations": 2,
+            "oracleDigest": "557d4f5d01f41af790b4d2c645cc206a7b9dddca405c3595e85e8837ac1d561f",
+            "elapsedMs": 0.057
+          },
+          {
+            "fixture": "async_decorator",
+            "bytes": 27,
+            "tokenCount": 16,
+            "declarations": 1,
+            "oracleDigest": "eb469e8128c0f7b42c97b545a6c70bdb287f6fdcb40a5863d50076dfa0a8ccd5",
+            "elapsedMs": 0.054
+          },
+          {
+            "fixture": "control",
+            "bytes": 35,
+            "tokenCount": 18,
+            "declarations": 1,
+            "oracleDigest": "8504bc20a221c8e89b334a7f4ca6ab779cc9e5074c8b31555154640117e5243a",
+            "elapsedMs": 0.051
+          },
+          {
+            "fixture": "not_executed",
+            "bytes": 54,
+            "tokenCount": 18,
+            "declarations": 1,
+            "oracleDigest": "e1cd864b78d2a1ff5facf8c61a25fb5b19f8410bac4f5deb8bd05d9b86ad5cf6",
+            "elapsedMs": 0.204
+          },
+          {
+            "fixture": "byte_limit_comment",
+            "bytes": 262144,
+            "tokenCount": 4,
+            "declarations": 0,
+            "oracleDigest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "elapsedMs": 4.115
+          },
+          {
+            "fixture": "declaration_limit",
+            "bytes": 35754,
+            "tokenCount": 14338,
+            "declarations": 2048,
+            "oracleDigest": "42ce3016a4edc533372638c9b51914ddd003c0f1f13dcfe954fbf3d1c69e359a",
+            "elapsedMs": 87.805
+          },
+          {
+            "fixture": "bracket_limit",
+            "bytes": 132,
+            "tokenCount": 134,
+            "declarations": 0,
+            "oracleDigest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "elapsedMs": 1.514
+          }
+        ],
+        "invalidFixturesRejected": 3,
+        "maxRssKiB": 29536,
+        "sourceExecuted": false
+      }
+    },
+    {
+      "image": "sha256:b2bb53ac7b6fbe78a48c95b7c15130ea21de1674fc683fbc93158b0c23826823",
+      "containerName": "ccm-parser-qual-313-20261023194654",
+      "configVerified": true,
+      "removedAfterExit": true,
+      "observation": {
+        "python": "3.13.15",
+        "uid": 65534,
+        "cgroups": {
+          "memory.max": "134217728",
+          "memory.swap.max": "0",
+          "pids.max": "16",
+          "cpu.max": "50000 100000"
+        },
+        "memoryCanaryDenied": true,
+        "subprocessDenied": true,
+        "rootWriteDenied": true,
+        "networkDenied": true,
+        "fixtures": [
+          {
+            "fixture": "plain",
+            "bytes": 18,
+            "tokenCount": 12,
+            "declarations": 1,
+            "oracleDigest": "674d5f0697f7aa6daf81b7e90d97eba01939383d870a29d76c79dea5833e1f45",
+            "elapsedMs": 0.367
+          },
+          {
+            "fixture": "bom_crlf",
+            "bytes": 23,
+            "tokenCount": 12,
+            "declarations": 1,
+            "oracleDigest": "674d5f0697f7aa6daf81b7e90d97eba01939383d870a29d76c79dea5833e1f45",
+            "elapsedMs": 0.214
+          },
+          {
+            "fixture": "unicode",
+            "bytes": 46,
+            "tokenCount": 19,
+            "declarations": 2,
+            "oracleDigest": "007f17832e84f8fd22c3989a564e6490a0dc57e77a17f935ecb004e7e8391b2f",
+            "elapsedMs": 0.241
+          },
+          {
+            "fixture": "nested",
+            "bytes": 60,
+            "tokenCount": 27,
+            "declarations": 3,
+            "oracleDigest": "4e75a37e79b011eb08a7fd2bd09b3f3f8baa3fcf6db62f13a1fdbc997c26a51f",
+            "elapsedMs": 0.174
+          },
+          {
+            "fixture": "duplicates",
+            "bytes": 36,
+            "tokenCount": 22,
+            "declarations": 2,
+            "oracleDigest": "557d4f5d01f41af790b4d2c645cc206a7b9dddca405c3595e85e8837ac1d561f",
+            "elapsedMs": 0.219
+          },
+          {
+            "fixture": "async_decorator",
+            "bytes": 27,
+            "tokenCount": 16,
+            "declarations": 1,
+            "oracleDigest": "eb469e8128c0f7b42c97b545a6c70bdb287f6fdcb40a5863d50076dfa0a8ccd5",
+            "elapsedMs": 0.224
+          },
+          {
+            "fixture": "control",
+            "bytes": 35,
+            "tokenCount": 18,
+            "declarations": 1,
+            "oracleDigest": "8504bc20a221c8e89b334a7f4ca6ab779cc9e5074c8b31555154640117e5243a",
+            "elapsedMs": 0.14
+          },
+          {
+            "fixture": "not_executed",
+            "bytes": 54,
+            "tokenCount": 18,
+            "declarations": 1,
+            "oracleDigest": "e1cd864b78d2a1ff5facf8c61a25fb5b19f8410bac4f5deb8bd05d9b86ad5cf6",
+            "elapsedMs": 0.197
+          },
+          {
+            "fixture": "byte_limit_comment",
+            "bytes": 262144,
+            "tokenCount": 4,
+            "declarations": 0,
+            "oracleDigest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "elapsedMs": 5.607
+          },
+          {
+            "fixture": "declaration_limit",
+            "bytes": 35754,
+            "tokenCount": 14338,
+            "declarations": 2048,
+            "oracleDigest": "42ce3016a4edc533372638c9b51914ddd003c0f1f13dcfe954fbf3d1c69e359a",
+            "elapsedMs": 114.773
+          },
+          {
+            "fixture": "bracket_limit",
+            "bytes": 132,
+            "tokenCount": 134,
+            "declarations": 0,
+            "oracleDigest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "elapsedMs": 2.24
+          }
+        ],
+        "invalidFixturesRejected": 3,
+        "maxRssKiB": 28708,
+        "sourceExecuted": false
+      }
+    }
+  ],
+  "productionAdmission": false,
+  "declarationMetadataMatchesAcrossThreeHosts": true,
+  "canonicalProductionCandidate": "Python3.10.22 pinned first image; token guards are canonical-runtime-specific",
+  "tokenCountsMatchAcrossHosts": false,
+  "timeoutCanary": {
+    "deadlineSeconds": 0.5,
+    "timedOut": true,
+    "ownedContainerKilledAndRemoved": true
+  },
+  "allOwnedContainersAbsent": true,
+  "completedAtUtc": "2026-10-23T19:47:04.591438+00:00"
+}

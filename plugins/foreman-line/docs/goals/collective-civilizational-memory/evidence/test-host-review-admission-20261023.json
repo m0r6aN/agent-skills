@@ -1,0 +1,40 @@
+{
+  "atUtc": "2026-10-23T20:09:36.254410+00:00",
+  "authority": "Direct owner existing blanket non-destructive/spend authority plus explicit independent test-host review instruction",
+  "model": "claude-opus-5-5",
+  "effort": "low",
+  "seats": 2,
+  "perSeatCap": 175,
+  "reviewPhaseCap": 350,
+  "automaticRetries": 0,
+  "maxPostsPerSeat": 1,
+  "maxOutputTokens": 8192,
+  "configuredSocketTimeoutSeconds": 180,
+  "newNYDayDecision": "Explicit finite Oct23 ceiling4000; NOT reuse of expired Oct22 allowance",
+  "guard": {
+    "atUtc": "2026-10-23T20:09:37.273406+00:00",
+    "balance": 6452.5,
+    "plan": "plus",
+    "foreignLedgerSha256": "6c931ccc348e9df89e7c4bb016d62fd3172ae673feb8bdf3f9df617b6f138c13",
+    "foreignGuard": 1700,
+    "carriedContextAndForeignReservations": 3394.3745,
+    "newTwoReviewReserve": 350,
+    "currentDayConservative": 3744.3745,
+    "effortConservative": 6858.6745,
+    "accountAfterGuards": 2708.1255,
+    "limits": {
+      "NY20261023": 4000,
+      "reviewPhase": 350,
+      "perSeat": 175,
+      "effort": 9000,
+      "floor": 1000,
+      "expiresUtc": "2026-10-24T04:00:00Z"
+    },
+    "knownCompletedHistoricUsage": "Not charged twice as outstanding reserve; cumulative accounting floor retained",
+    "oldUnknowns": "94.6 original/350failedP1B/P2A700within1150.494/foreign700within1700/APIUSDunknown separately retained"
+  },
+  "route": "Separately stored nonmatching GenSpark credential, supplied-source only; no affected-key/native-shell worker use",
+  "scope": "Two independent test-host security/architecture reviews; same model family limitation disclosed, no full multi-family council claim",
+  "kimi": "Separate public L3 advisory only, not required review/security approval/quorum",
+  "nativeTasks": "Two native reviewer tasks briefly started then interrupted because hard shell-env isolation was not established; no output accepted as clearance"
+}

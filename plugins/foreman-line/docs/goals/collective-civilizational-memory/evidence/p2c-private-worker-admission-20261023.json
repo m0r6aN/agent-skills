@@ -1,0 +1,62 @@
+{
+  "atUtc": "2026-10-23T20:52:59.996756+00:00",
+  "authority": "Direct owner private-worker qualification/AST build instruction plus standing blanket non-destructive decisions/spend authority",
+  "route": "GenSpark controlled HTTPS source-only, NOT native Pi or shell",
+  "model": "gpt-6.1-sol",
+  "effort": "low",
+  "classification": "Private authorized engineering artifacts only, no incident transcript/credentials/personal imports",
+  "tools": [],
+  "hostEffects": "Parent only; no model tools, environment, filesystem, shell, network or provider key access",
+  "kimiDisposition": "Public-only pilot ineligible for private packet; not relabelled or modified; failed prior public task not retried",
+  "nativeAndAffectedRoutes": "HELD",
+  "modelMetadata": [
+    {
+      "id": "gpt-6.1-sol",
+      "name": "GPT-6.1 Sol",
+      "cost": {
+        "input": 1100.0,
+        "output": 5500.0,
+        "cache_read": 55.0,
+        "cache_write": 1375.0
+      },
+      "limit": {
+        "context": 1000000,
+        "input": 872000,
+        "output": 128000
+      }
+    }
+  ],
+  "guard": {
+    "atUtc": "2026-10-23T20:52:59.987046+00:00",
+    "balance": 6242.4,
+    "foreignLedgerSha256": "6c931ccc348e9df89e7c4bb016d62fd3172ae673feb8bdf3f9df617b6f138c13",
+    "carriedReservations": 3394.3745,
+    "completedPriorPhaseConservative": 210.94425,
+    "newPhaseReservation": 300,
+    "accountDeltaConservative": 210.10000000000036,
+    "dayConservative": 4115.418750000001,
+    "effortConservative": 7229.71875,
+    "accountAfterHolds": 2337.0812499999997,
+    "dayCeiling": 4500,
+    "effortCeiling": 9000,
+    "floor": 1000,
+    "expiresUtc": "2026-10-24T04:00:00Z",
+    "oldUnknownReservationsRetained": true
+  },
+  "calls": {
+    "step0": {
+      "cap": 50,
+      "maxOutput": 2048
+    },
+    "build": {
+      "cap": 250,
+      "maxOutput": 24000
+    }
+  },
+  "maximumPosts": 2,
+  "automaticRetries": 0,
+  "fallback": false,
+  "formalRepair": "Separate future admission, at most one; not automatic",
+  "remoteHardBillingOrCancellationGuarantee": false,
+  "qualification": "Static envelope admitted; live Step0 and parent acceptance required before build; source tests/reviews still mandatory"
+}

@@ -1,0 +1,67 @@
+{
+  "verdict": "CHANGES_REQUIRED",
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "high",
+      "locator": "report['canonicalProductionCandidate'] assignment",
+      "trigger": "The harness hardcodes 'Python3.10.22 pinned first image' and calls its token guards canonical-runtime-specific. The production candidate is now 3.13.15.",
+      "impact": "The evidence names an EOL runtime as canonical. Token counts already differ between runtimes (unicode fixture: 20 on 3.10, 19 on 3.13), so any token guard derived from this record would target the wrong runtime.",
+      "remediation": "Select the canonical image by the 3.13 digest. Assert that observation['python']=='3.13.15'. Write the claim from observed values, not a literal.",
+      "confidence": "high"
+    },
+    {
+      "id": "F2",
+      "severity": "medium",
+      "locator": "report['runs'] loop and the images list",
+      "trigger": "No check compares observation['python'] with the expected version for each digest.",
+      "impact": "The image-to-runtime mapping in the evidence is assumed, not verified.",
+      "remediation": "Assert the expected version for each image tuple before appending the run.",
+      "confidence": "medium"
+    },
+    {
+      "id": "F3",
+      "severity": "medium",
+      "locator": "fixture loop: ast.parse(raw,feature_version=(3,10))",
+      "trigger": "The 3.12 and 3.13 hosts parse with feature_version=(3,10). That option is best-effort, not an exact 3.10 grammar.",
+      "impact": "'Grammar 3.10 fixtures' run on 3.13 do not prove 3.10-grammar conformance. Only the except* rejection is exercised.",
+      "remediation": "State the grammar target explicitly as the 3.13 parser with best-effort feature_version. Alternatively, drop feature_version for the canonical 3.13 lane.",
+      "confidence": "medium"
+    },
+    {
+      "id": "F4",
+      "severity": "medium",
+      "locator": "assertion signatures[0]==signatures[1]==signatures[2]",
+      "trigger": "Oracle digests are only cross-compared at runtime. No expected digests are pinned.",
+      "impact": "Drift that is identical across all hosts passes. The oracle is self-referential and not replayable as a fixed baseline.",
+      "remediation": "Embed expected digests per fixture and assert against them.",
+      "confidence": "medium"
+    },
+    {
+      "id": "F5",
+      "severity": "low",
+      "locator": "fixtures byte_limit_comment, declaration_limit, bracket_limit; memoryCanaryDenied",
+      "trigger": "Only at-limit inputs are accepted. No over-limit input is shown rejected. The memory canary exercises RLIMIT_AS, not cgroup memory.max.",
+      "impact": "The names imply limit enforcement and cgroup memory denial that the harness does not demonstrate.",
+      "remediation": "Rename them to at-limit acceptance and rlimit canary, or add over-limit cases with expected rejection.",
+      "confidence": "high"
+    }
+  ],
+  "coverage": [
+    "Isolation flags plus inspect checks",
+    "Cgroup values read in-container",
+    "rootfs, network and spawn denial canaries",
+    "Fixture declaration oracle across 3 runtimes",
+    "Invalid-input rejection",
+    "Owned-container cleanup and timeout canary",
+    "Evidence claims vs FACTS"
+  ],
+  "gaps": [
+    "Timeout canary runs on the 3.10 image, not the canonical runtime",
+    "No elapsed-time bounds are asserted",
+    "Design deadlines (5s/15s) are untested by design",
+    "Image digests are not re-verified against the registry",
+    "Cleanup absence is checked immediately after kill (possible --rm race)",
+    "Production adapter, sandbox, credential and source review are out of scope"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "atUtc": "2026-10-23T22:13:46.551924+00:00",
+  "sourceHead": "e75da8a86b563a02120a30ecedccaca310e04197",
+  "merged": {
+    "headRefOid": "e75da8a86b563a02120a30ecedccaca310e04197",
+    "mergeCommit": {
+      "oid": "5cb07ba47f7f52dc85c228e06dc3d1bfe3ec4d04"
+    },
+    "mergedAt": "2026-10-23T22:13:44Z",
+    "state": "MERGED"
+  },
+  "status": "MERGED_AWAITING_MAIN_CI",
+  "failed120Retained": true,
+  "affectedRoutes": "HELD"
+}

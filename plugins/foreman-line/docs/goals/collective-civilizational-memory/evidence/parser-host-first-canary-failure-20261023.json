@@ -1,0 +1,14 @@
+{
+  "atUtc": "2026-10-23T19:45:06.461182+00:00",
+  "status": "UNSUCCESSFUL",
+  "providerRequests": 0,
+  "newModelWorkers": 0,
+  "imagesPulled": 0,
+  "hostMounts": 0,
+  "runs": [],
+  "productionAdmission": false,
+  "failureType": "RuntimeError",
+  "closedFailure": "synthetic_container_fixture_failed_3.10",
+  "allOwnedContainersAbsent": true,
+  "completedAtUtc": "2026-10-23T19:45:07.400121+00:00"
+}

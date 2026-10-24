@@ -1,0 +1,10 @@
+{
+  "scope": "STEP0 restatement only: one formal repair of the existing P2C pure-stdlib AST library, preserving the exact API and limits. Remove ambient exception context while preserving closed errors and arguments; repair mypy AST stack/list/ancestry annotations and formatting; add fixed CR, Unicode, BOM/cookie, NUL, and ambient-exception regressions; document the canonical Python 3.13 f-string token guard with a fixed small canonical-only fixture, without exact-grammar or cross-runtime-bound claims. Retain existing exact-base baseline and isolated tests. Supplied dispositions are unverified artifact claims: 2984 PASS/137 SKIP diagnostics do not establish closure; the initial 16.23x timing failure remains unresolved, with no root-cause fix or threshold change claimed. Two closure reviews and exact-head/main CI remain pending. No production adapter or old-file edits. No code, tools, shell, credentials, execution, effects, mutation, or approval; parent applies and tests.",
+  "allowedFiles": [
+    "src/keon/cortex/pipeline/ccm_python.py",
+    "tests/test_ccm_python.py",
+    "docs/specs/ccm-python-symbols-v1.md"
+  ],
+  "flags": [],
+  "ready": true
+}

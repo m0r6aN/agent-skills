@@ -1,0 +1,63 @@
+{
+  "atUtc": "2026-10-23T22:06:48.104133+00:00",
+  "status": "completed_pending_parent_validation",
+  "modelRequested": "claude-opus-5-5",
+  "bookedCredits": 74.3985,
+  "packetSha256": "c493730e71aa8a92f7571366138a784bb73dc168495923052155a7c32e613aba",
+  "guard": {
+    "atUtc": "2026-10-23T22:06:48.103430+00:00",
+    "balance": 5990.5,
+    "existingAllConservativeIncluding120": 3878.579,
+    "newPhaseConservative": 350,
+    "phaseCap": 350,
+    "dayConservative": 4690.579,
+    "dayCeiling": 5000,
+    "effortConservative": 7804.879,
+    "effortCeiling": 9000,
+    "afterHolds": 1761.9209999999998,
+    "floor": 1000,
+    "oldUnknownsReleased": false,
+    "failed120Retained": true,
+    "accountDeltaNotExactAttribution": true,
+    "foreignLedgerSha256": "6c931ccc348e9df89e7c4bb016d62fd3172ae673feb8bdf3f9df617b6f138c13",
+    "expiresUtc": "2026-10-24T04:00:00Z"
+  },
+  "postsMaximum": 1,
+  "automaticRetries": 0,
+  "maxOutputTokens": 8192,
+  "HTTPStatus": 200,
+  "vendorRequestId": null,
+  "modelReturned": "claude-opus-5-5",
+  "responseId": "chatcmpl-f1c030e4-cae9-49de-856f-2b7f234a64bd",
+  "finishReason": "stop",
+  "usage": {
+    "completion_tokens": 2955,
+    "prompt_tokens": 15234,
+    "total_tokens": 18189,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 1749,
+      "rejected_prediction_tokens": null,
+      "text_tokens": 1206
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "cache_write_tokens": 15230,
+      "text_tokens": 0,
+      "cache_creation_tokens": 15230,
+      "cache_creation_token_details": {
+        "ephemeral_5m_input_tokens": 15230,
+        "ephemeral_1h_input_tokens": 0
+      }
+    },
+    "cache_creation_input_tokens": 15230,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "global",
+    "speed": "standard"
+  },
+  "reportedCredits": 73.7,
+  "catalogEstimate": 74.3985,
+  "completedAtUtc": "2026-10-23T22:07:21.345721+00:00"
+}

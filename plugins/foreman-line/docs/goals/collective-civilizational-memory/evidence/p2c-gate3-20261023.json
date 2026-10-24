@@ -1,0 +1,119 @@
+{
+  "atUtc": "2026-10-23T22:13:39.550485+00:00",
+  "gate3": "APPROVED_BY_EXISTING_DELEGATED_OWNER_AUTHORITY_BEHIND_GREEN_CHAIN",
+  "ownerAuthority": "Standing goal build/review/bounded repair/merge authority, plus current failed-request reconciliation and safe completion instruction",
+  "sourceHead": "e75da8a86b563a02120a30ecedccaca310e04197",
+  "pr": "https://github.com/Keon-Systems/keon-cortex/pull/94",
+  "checks": [
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40031869182/job/120682279782",
+      "name": "Tenant Isolation Proof",
+      "state": "SUCCESS",
+      "workflow": "CI"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40031869182/job/120682279716",
+      "name": "Proof Summary",
+      "state": "SUCCESS",
+      "workflow": "CI"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40031869182/job/120682279824",
+      "name": "Benchmark (fake provider)",
+      "state": "SUCCESS",
+      "workflow": "CI"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40031876912/job/120682262290",
+      "name": "Proof Summary",
+      "state": "SUCCESS",
+      "workflow": "CI"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40031876912/job/120682262277",
+      "name": "Benchmark (fake provider)",
+      "state": "SUCCESS",
+      "workflow": "CI"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40031876912/job/120682262183",
+      "name": "Tenant Isolation Proof",
+      "state": "SUCCESS",
+      "workflow": "CI"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40031876912/job/120681836196",
+      "name": "Unit Tests (3.11)",
+      "state": "SUCCESS",
+      "workflow": "CI"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40031876912/job/120681836468",
+      "name": "Lint + Type Check",
+      "state": "SUCCESS",
+      "workflow": "CI"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40031876912/job/120681836188",
+      "name": "Unit Tests (3.12)",
+      "state": "SUCCESS",
+      "workflow": "CI"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40031876912/job/120681836026",
+      "name": "Import Gate (OSS must not reference governed)",
+      "state": "SUCCESS",
+      "workflow": "CI"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40031876912/job/120681836467",
+      "name": "Unit Tests (3.10)",
+      "state": "SUCCESS",
+      "workflow": "CI"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40031869182/job/120681813600",
+      "name": "Unit Tests (3.11)",
+      "state": "SUCCESS",
+      "workflow": "CI"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40031869182/job/120681813630",
+      "name": "Unit Tests (3.10)",
+      "state": "SUCCESS",
+      "workflow": "CI"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40031869182/job/120681813475",
+      "name": "Unit Tests (3.12)",
+      "state": "SUCCESS",
+      "workflow": "CI"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40031869182/job/120681814898",
+      "name": "Lint + Type Check",
+      "state": "SUCCESS",
+      "workflow": "CI"
+    },
+    {
+      "link": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40031869182/job/120681813217",
+      "name": "Import Gate (OSS must not reference governed)",
+      "state": "SUCCESS",
+      "workflow": "CI"
+    }
+  ],
+  "headChecksSuccessful": 16,
+  "reviews": "Fresh independent Sol/Opus PASS/PASS, low notes reproduced and triaged",
+  "localRepairCycles": 1,
+  "newSourceGenerationRequests": 0,
+  "failed120Retained": true,
+  "affectedRoutes": "HELD",
+  "sourceBlobHashes": {
+    "src/keon/cortex/pipeline/ccm_python.py": "aa4d7d79058a4d4e364ab02519d5e97b3dc8d8ab5074872c61fdb7be1b31f9c3",
+    "tests/test_ccm_python.py": "75af3fe5cb7f3b1e7f5d66d28fd7fee61048e158d0fdbe51dfdce8bda0030b9a",
+    "docs/specs/ccm-python-symbols-v1.md": "5474f5aa5986ceec4c2442413fa432d8ed05932194319724cf50583c61f7deb2"
+  },
+  "mergeAction": "Squash with exact-head match, no admin bypass or branch deletion",
+  "acceptanceAfterMerge": "Not yet; require actual merged blobs/main CI, then StageF",
+  "productionOrBulkInputAdmission": false
+}

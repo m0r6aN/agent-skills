@@ -1,0 +1,31 @@
+{
+  "atUtc": "2026-10-23T21:04:49.060894+00:00",
+  "status": "unsuccessful_no_retry",
+  "modelRequested": "gpt-6.1-sol",
+  "bookedCredits": 120,
+  "packetSha256": "cec6ae4b403059baa14f73713db97aad32c537b78fd78a5913af773c5fcc0955",
+  "maxOutputTokens": 12000,
+  "guard": {
+    "atUtc": "2026-10-23T21:04:49.060787+00:00",
+    "balance": 6089.5,
+    "foreignLedgerSha256": "6c931ccc348e9df89e7c4bb016d62fd3172ae673feb8bdf3f9df617b6f138c13",
+    "oldReservations": 3394.3745,
+    "completedHostPhase": 210.94425,
+    "completedSourcePhase": 53.574125,
+    "newReviewRepairConservative": 569.686125,
+    "phaseCeiling": 850,
+    "unusedCompletedAllocationsReleasedOnly": true,
+    "observedDeltaConservative": 363.0,
+    "dayConservative": 4591.579,
+    "dayCeiling": 5000,
+    "effortConservative": 7705.879,
+    "effortCeiling": 9000,
+    "floorAfterHolds": 1860.921,
+    "floor": 1000,
+    "expiresUtc": "2026-10-24T04:00:00Z"
+  },
+  "postsMaximum": 1,
+  "retries": 0,
+  "failureClass": "HTTPError",
+  "completedAtUtc": "2026-10-23T21:06:54.190439+00:00"
+}

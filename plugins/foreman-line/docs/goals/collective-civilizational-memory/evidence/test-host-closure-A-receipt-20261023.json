@@ -1,0 +1,62 @@
+{
+  "atUtc": "2026-10-23T20:15:23.282268+00:00",
+  "status": "completed_pending_host_validation",
+  "seat": "closure-A",
+  "reservedCredits": 175,
+  "bookedCredits": 57.7885,
+  "requestCountMaximum": 1,
+  "guard": {
+    "atUtc": "2026-10-23T20:15:23.282034+00:00",
+    "balance": 6356.8,
+    "plan": "plus",
+    "foreignLedgerSha256": "6c931ccc348e9df89e7c4bb016d62fd3172ae673feb8bdf3f9df617b6f138c13",
+    "foreignGuard": 1700,
+    "carriedContextAndForeignReservations": 3394.3745,
+    "newReviewReserve": 700,
+    "currentDayConservative": 4190.0745,
+    "effortConservative": 7304.3745,
+    "accountAfterGuards": 2262.4255000000003,
+    "limits": {
+      "NY20261023": 4500,
+      "reviewPhase": 700,
+      "perSeat": 175,
+      "effort": 9000,
+      "floor": 1000,
+      "expiresUtc": "2026-10-24T04:00:00Z"
+    },
+    "knownCompletedHistoricUsage": "Not charged twice as outstanding reserve; cumulative accounting floor retained",
+    "oldUnknowns": "94.6 original/350failedP1B/P2A700within1150.494/foreign700within1700/APIUSDunknown separately retained"
+  },
+  "returnedModel": "claude-opus-5-5",
+  "finishReason": "stop",
+  "usage": {
+    "completion_tokens": 2581,
+    "prompt_tokens": 10690,
+    "total_tokens": 13271,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 1176,
+      "rejected_prediction_tokens": null,
+      "text_tokens": 1405
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "cache_write_tokens": 10686,
+      "text_tokens": 0,
+      "cache_creation_tokens": 10686,
+      "cache_creation_token_details": {
+        "ephemeral_5m_input_tokens": 10686,
+        "ephemeral_1h_input_tokens": 0
+      }
+    },
+    "cache_creation_input_tokens": 10686,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "global",
+    "speed": "standard"
+  },
+  "reportedCredits": 57.2,
+  "catalogEstimate": 57.7885,
+  "completedAtUtc": "2026-10-23T20:15:50.584910+00:00"
+}
