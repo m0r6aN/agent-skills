@@ -1,0 +1,78 @@
+{
+  "atUtc": "2026-10-24T17:38:24.940326+00:00",
+  "status": "PASS_SYNTHETIC_OBJECT_ONLY_MOUNT",
+  "hostRepository": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\synthetic.git",
+  "objectStorePath": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\synthetic.git\\objects",
+  "imageId": "sha256:f78d790dca6a14f381d53c771cac49fbe32d0a42a35d4429e8efa7232a64d665",
+  "observed": {
+    "gitVersion": "git version 2.47.3",
+    "exit": 0,
+    "stderrCount": 0,
+    "responseBase64": "NmE2ZmJiZWYxMjE4ZWI4NmZlMjIxZjg4NzJhYzAzYTQ4ZDI3YWQ2MiBjb21taXQgMjAwCnRyZWUgNjdmNzEyMWQ5MzkzYjdhNzA4ZjNhYTQ0NzNkODVkNGM0MWZmYjk1NQphdXRob3IgU3ludGhldGljIEF1dGhvciA8YXV0aG9yQGV4YW1wbGUuaW52YWxpZD4gMTIzNDU2Nzg5MCArMDUzMApjb21taXR0ZXIgU3ludGhldGljIENvbW1pdHRlciA8PiAtMSAtMDA0NQpncGdzaWcgc3ludGhldGljCiBjb250aW51YXRpb24KCm9wYXF1Zf9tZXNzYWdlCg==",
+    "objectBindReadonly": true,
+    "sourceConfigVisible": false,
+    "canaryExecuted": false,
+    "gitBinarySha256": "356db14e102d68a1a37d8a1ac577dfd678d45d46e92f468bef8b7154e7bfdc60"
+  },
+  "HostConfigMounts": [
+    {
+      "Type": "bind",
+      "Source": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\synthetic.git\\objects",
+      "Target": "/objects",
+      "ReadOnly": true,
+      "BindOptions": {
+        "NonRecursive": true
+      }
+    }
+  ],
+  "resolvedMounts": [
+    {
+      "Type": "bind",
+      "Source": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\synthetic.git\\objects",
+      "Destination": "/objects",
+      "Mode": "",
+      "RW": false,
+      "Propagation": "rprivate"
+    }
+  ],
+  "preStartConfig": {
+    "Hostname": "62af304225a3",
+    "Domainname": "",
+    "User": "65534:65534",
+    "AttachStdin": false,
+    "AttachStdout": true,
+    "AttachStderr": true,
+    "Tty": false,
+    "OpenStdin": false,
+    "StdinOnce": false,
+    "Env": [
+      "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305",
+      "PYTHON_VERSION=3.13.15",
+      "PYTHON_SHA256=1e66a7945a48390ee4c2a4268a0e4185884059a13c4aab6d148aa208deea4a76"
+    ],
+    "Cmd": [
+      "-I",
+      "-B",
+      "-c",
+      "import hashlib,json,os,pathlib,subprocess,sys\nroot=pathlib.Path('/tmp/ccm.git');root.mkdir();(root/'refs').mkdir();(root/'objects').mkdir();(root/'HEAD').write_text('ref: refs/heads/unused\\n');(root/'config').write_text('[core]\\n bare = true\\n')\nenv={'PATH':'/usr/bin:/bin','HOME':'/nonexistent','GIT_CONFIG_NOSYSTEM':'1','GIT_CONFIG_SYSTEM':'/dev/null','GIT_CONFIG_GLOBAL':'/dev/null','GIT_OBJECT_DIRECTORY':'/objects','GIT_NO_REPLACE_OBJECTS':'1','GIT_NO_LAZY_FETCH':'1','GIT_TERMINAL_PROMPT':'0','GIT_OPTIONAL_LOCKS':'0'}\nprefix=['/usr/bin/git','--no-pager','--no-replace-objects','--git-dir=/tmp/ccm.git','-c','protocol.allow=never','-c','core.hooksPath=/dev/null','-c','core.fsmonitor=false']\noid=sys.argv[1];r=subprocess.run(prefix+['cat-file','--batch'],input=(oid+'\\n').encode(),env=env,capture_output=True,timeout=3)\ntry:open('/objects/WRITE_CANARY','xb');readonly=False\nexcept OSError:readonly=True\nversion=subprocess.run(['/usr/bin/git','--version'],env=env,capture_output=True,timeout=3)\nprint(json.dumps({'gitVersion':version.stdout.decode().strip(),'exit':r.returncode,'stderrCount':len(r.stderr),'responseBase64':__import__('base64').b64encode(r.stdout).decode(),'objectBindReadonly':readonly,'sourceConfigVisible':os.path.exists('/objects/../config'),'canaryExecuted':os.path.exists('/tmp/CCM_HOOK_CANARY'),'gitBinarySha256':hashlib.sha256(pathlib.Path('/usr/bin/git').read_bytes()).hexdigest()}))\n",
+      "6a6fbbef1218eb86fe221f8872ac03a48d27ad62"
+    ],
+    "Image": "sha256:f78d790dca6a14f381d53c771cac49fbe32d0a42a35d4429e8efa7232a64d665",
+    "Volumes": null,
+    "WorkingDir": "",
+    "Entrypoint": [
+      "python"
+    ],
+    "Labels": {
+      "managed-by": "local-agent",
+      "purpose": "ccm-p2d-b-preflight"
+    }
+  },
+  "providerRequests": 0,
+  "realRepositoryRead": false,
+  "noNativeHostGit": true,
+  "securityTracker": "Debian trixie Git1:2.47.3-0+deb13u1; currently listed resolved security fixes, three open-unimportant issues (clone/display/mirror paths not used); no CVE-free claim",
+  "qualificationLimit": "Synthetic fixed object read; not production adapter, race-resistant authorization or hostile pack parser proof",
+  "allOwnedContainersAbsent": true
+}

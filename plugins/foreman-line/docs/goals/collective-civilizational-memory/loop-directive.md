@@ -381,3 +381,16 @@ source/old120/150 and affected/native/privatePi routes stayHELD. Same sole
 coordinator at parcelboundary; cleanworktree/pushedbranch retained, no monitor.
 NextP2D-B restricted localbare acquisition stillunqualified; no actualrepository
 or personalcorpus imported. Civic/extractor/P3-P8/fullintegration/import open.
+
+
+## P2D-B local Git acquisition started — October24
+
+Direct owner proceeds P2D-B under existing authority. Same solecoordinator;
+newbranch/worktree at accepted0aec0e2,431pins and3342PASS137skip baseline
+correspondence. Draft6files/advisory/readback pass; signedGitpackage2.47.3 and
+actual synthetic object-only readonly/nonrecursive mount qualified, no host
+Git/source config/hooks or realcorpus read. Stable operator directory custody
+is required, not proved by input labels. Step0/Gate2 precede source.
+Finitephase450/effort10500 under standing finiteincrease authority; day6000,
+floor1000 and all4814.470875oldreservations retained. Affected/native/privatePi
+routes HELD. No source/model dispatch claimed by this preparation record.

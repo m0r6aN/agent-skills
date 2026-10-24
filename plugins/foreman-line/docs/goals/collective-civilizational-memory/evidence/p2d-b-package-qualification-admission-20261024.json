@@ -1,0 +1,15 @@
+{
+  "atUtc": "2026-10-24T17:36:38.906420+00:00",
+  "authority": "Current owner expressly authorizes restricted Git acquisition under standing non-destructive decisions; qualify isolated Git image dependency without host installs",
+  "scope": "Signed Debian trixie package metadata and fixed-version Git installation in private Docker image layers only",
+  "destinations": [
+    "deb.debian.org/debian",
+    "deb.debian.org/debian-security"
+  ],
+  "source": "Existing official Python immutable base with Debian archive keyring; signed APT Release metadata required, no AllowUnauthenticated/trusted override",
+  "providerInference": 0,
+  "hostPackageOrCredentialChanges": false,
+  "realRepositoryAccess": false,
+  "affectedRoutes": "HELD",
+  "allReservationsHeld": true
+}
