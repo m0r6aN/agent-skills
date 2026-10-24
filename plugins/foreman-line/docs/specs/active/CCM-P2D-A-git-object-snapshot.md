@@ -171,3 +171,17 @@ Frozen independent object oracle precedes source. Parent only applies source
 after static inspection; restricted tests and two independent frontier reviews
 remain mandatory. No Git adapter, actual acquisition, trust admission or held
 route release. One focused repair maximum, all old holds retained.
+
+
+## October24 bounded ARCH-01 corrective amendment
+
+The first test-only correction remains recorded. Under the owner standing blanket
+non-destructive decision/approval authority, coordinator approves ONE additional
+local correction limited to ARCH-01: missing exact GitObject slots must return
+invalid_input during shape checking, with seven incomplete-slot combinations and
+shape-before-oversize tests. This explicitly supersedes the one-repair stop only
+for this named correction, not a general loop. No other behavior/docs changes,
+new source model request or phase ceiling increase. Initial PASS/security and
+CHANGES_REQUIRED/architecture retained. Independently reproduced invalid_object
+with empty args/context/cause. Two fresh final reviews mandatory; stop on any
+remaining material finding. All reservations and affected routes remain held.
