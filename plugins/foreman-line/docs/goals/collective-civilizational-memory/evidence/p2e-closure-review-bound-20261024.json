@@ -1,0 +1,14 @@
+{
+  "atUtc": "2026-10-24T20:08:16.468705+00:00",
+  "scope": "Measured final packets need101.859/101.843 conservative byte/output reservation; initial100per-seat bound stopped before POST",
+  "authority": "Existing delegated finite spending decisions",
+  "closurePerSeatMax": 110,
+  "phaseCap": 300,
+  "dayCeiling": 6500,
+  "effortCeiling": 10500,
+  "floor": 1000,
+  "maxReviewPosts": 4,
+  "oldReservations": "ALL_HELD",
+  "retryOrFallback": false,
+  "phaseIncrease": false
+}

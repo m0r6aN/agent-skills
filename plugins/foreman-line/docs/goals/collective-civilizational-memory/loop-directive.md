@@ -421,3 +421,17 @@ Base0cdff676,437pins, accepted3676PASS137skip baseline correspondence.
 Finite300 phase/day6500 under existing finite increase authority; effort10500
 and floor1000 unchanged, all5172.575875 old holds retained. Affected/native/Pi
 routesHELD. Step0 and exact Gate2 precede source; independent reviews intact.
+
+
+## P2E civic v2 mapping accepted — October24
+
+PR98 source2dbb2b5772e597a605cc3040b0380f7107250e05 merged7badb965e7c6842147747f542481e4c07a87e487;16headchecks/mainCI/deployment
+green.45focused/3721fullPASS137skip;437priorentries/dispositions retained.
+Two fresh final Sol reviewsPASS/PASS, samefamily limitation;3negativecontrols.
+Only rejection/caution/inheritance v2 unscoped candidates; legacy wrappers
+unsupported, no trust/storage/engine/import or hightrustproducer coverage.
+See p2e-acceptance-20261024.md. Financialphaseclosed:189.2reported/
+260.379000booked inclfull120.701source reservation. All prior
+reservations and affected/native/privatePi routesHELD. Same solecoordinator
+at parcelboundary; cleanpushedworktree retained, no worker/monitor. Next
+legacy civic coverage/extractor engine, thenP3-P8/fullintegration/import gates.

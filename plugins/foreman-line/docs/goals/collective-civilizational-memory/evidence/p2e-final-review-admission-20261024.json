@@ -1,0 +1,45 @@
+{
+  "atUtc": "2026-10-24T20:11:09.245436+00:00",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_civic.py": "e06b21bd14127c9d901356da50c0696e50832ffb6f2cc754dd06c69441ec5a70",
+    "tests/test_ccm_civic.py": "7915e0adaa3ab31f7b96f316d26dbf4f3101d73eb64e9975a056e7271bc87588",
+    "docs/specs/ccm-civic-mapping-v1.md": "bebc694baa1b389eca7c39e2f94f0c8e3e57a968253edf00bf6214a0ae747d12"
+  },
+  "workorderSha256": "88bace50c18c2ca676ff0fb1d65e1f683f5f3bb836593cc15f7e3121fa77683f",
+  "twoFreshContexts": true,
+  "sameModelFamilyLimitation": true,
+  "model": "gpt-6.1-sol",
+  "effort": "low",
+  "maxPerSeatCredits": 110,
+  "inputBytes": {
+    "accept-architecture": 56860,
+    "accept-security": 56848
+  },
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "summary": {
+    "focused": 45,
+    "fullCounts": {
+      "pass": 3721,
+      "skipped": 137,
+      "failure": 0,
+      "error": 0
+    },
+    "baselineDispositionsRetained": true,
+    "437PriorTreePinsRetained": true,
+    "fixedPrebuildOracle": {
+      "exit": 0,
+      "fixedPrebuildOracle": "PASS",
+      "vectors": 3,
+      "closedErrorControls": 3
+    },
+    "BlackIsortMypy": "PASS",
+    "allOwnedContainersAbsent": true,
+    "finalTestCompletion": "Exact-output boundary and individual payload/contract subclass predicates covered; no production change",
+    "scope": "Only existing rejection/caution/inheritance v2 profiles; legacy wrappers/engine unsupported, no scope/trust/persistence",
+    "authorship": "One controlled no-tools Sol source proposal, exact source strings recovered offline from misplaced outer JSON brace; original failed receipt/full source reservation preserved. Parent format-only AST/import-equivalent changes and one test-only repair: independently checked both literal hashes, corrected one wrong constant; production unchanged. No repair provider request.",
+    "sameFamilyLimitation": true
+  },
+  "phaseCap": 350,
+  "metadataClarification": "Inherited descriptive100 ceiling was stale. Prior closure-review-bound/final-canary-admission and actual pre-POST guards enforce110/350; no retroactive source/spend authority."
+}

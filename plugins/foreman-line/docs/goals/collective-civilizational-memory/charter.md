@@ -2,6 +2,11 @@
 
 ## Current execution addendum — October24 NY
 
+P2E civic v2 mapping accepted: PR98 merged7badb965e7c6842147747f542481e4c07a87e487,
+45focused/3721fullPASS137skip and exacthead/mainCI/deployment green.
+See p2e-acceptance-20261024.md. Three v2 profiles remain unadmitted; legacy
+wrappers/engine/P3-P8/import gates open. All reservations/routes held.
+
 P2D-B restricted local Git object acquisition is accepted: PR97 merged0cdff676038d76c203f819ee697cda226980d305,
 all16headchecks and exactmainCI/deployment green. See
 p2d-b-acceptance-20261024.md. Only qualifiedWindows/Dockerimage and stable
@@ -292,3 +297,17 @@ routes stayHELD. Cleanpushedworktree/branch retained; private syntheticjunction
 probe retained after policyblockedremoval, no bypass. Same solecoordinator at
 parcelboundary, no worker/monitor. Nextcivicmapping/extractor thenP3-P8 and
 actualintegration/import gates; fullContext/bulkimport notready.
+
+
+## P2E civic v2 mapping accepted — October24
+
+PR98 source2dbb2b5772e597a605cc3040b0380f7107250e05 merged7badb965e7c6842147747f542481e4c07a87e487;16headchecks/mainCI/deployment
+green.45focused/3721fullPASS137skip;437priorentries/dispositions retained.
+Two fresh final Sol reviewsPASS/PASS, samefamily limitation;3negativecontrols.
+Only rejection/caution/inheritance v2 unscoped candidates; legacy wrappers
+unsupported, no trust/storage/engine/import or hightrustproducer coverage.
+See p2e-acceptance-20261024.md. Financialphaseclosed:189.2reported/
+260.379000booked inclfull120.701source reservation. All prior
+reservations and affected/native/privatePi routesHELD. Same solecoordinator
+at parcelboundary; cleanpushedworktree retained, no worker/monitor. Next
+legacy civic coverage/extractor engine, thenP3-P8/fullintegration/import gates.

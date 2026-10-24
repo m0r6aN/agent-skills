@@ -1,0 +1,170 @@
+{
+  "atUtc": "2026-10-24T20:17:52.602777+00:00",
+  "reviewRounds": [
+    {
+      "final-architecture": {
+        "verdict": "CHANGES_REQUIRED",
+        "findings": [
+          {
+            "id": "CCM-P2E-001",
+            "severity": "medium",
+            "path": "tests/test_ccm_civic.py",
+            "line": 370,
+            "claim": "The canonical-output limit lacks the required exact-boundary test. The existing test cannot distinguish the implemented inclusive limit from an incorrect exclusive limit.",
+            "evidence": "test_canonical_expansion_guard verifies a canonical serialization larger than 262144 bytes and another strictly smaller than 262144 bytes. It never supplies an otherwise accepted contract whose canonical serialization is exactly 262144 bytes. Changing the production predicate from `len(canonical) > 262144` to `len(canonical) >= 262144` would therefore leave these assertions satisfied. Acceptance criteria 5 and 7 require inclusive admission and predicate-specific at/over-limit coverage for every resource boundary.",
+            "requestedFix": "Add independently constructed, schema-valid canonical-output vectors of exactly 262144 and 262145 bytes. Establish their canonical lengths using the accepted serializer, keep input size and all other resource limits within bounds, assert exact canonical-byte preservation for the at-limit vector, and assert resource_limit for the one-byte-over vector."
+          }
+        ],
+        "coverage": [
+          "Inspected the supplied adapter, tests, documentation, accepted unchanged models, and normative civic vectors as source data; no tools or execution were used.",
+          "The adapter delegates schema validation and canonical serialization to decode_v2 and canonical_v2 without duplicating the civic schema.",
+          "Subject selection and rejection reason classification match the supplied accepted contracts; null and absent reasons remain unclassified.",
+          "Receipt aliases, defaults, timestamp spelling, nested caution validation, and canonical receipt serialization are delegated to the accepted models and exercised by supplied tests.",
+          "Exact built-in input checks precede contract comparison and payload operations. Input-size and quote/escape-aware depth guards precede json.loads.",
+          "Inspected duplicate-name rejection, integer conversion limits, nonfinite-float rejection, strict UTF-8 handling, iterative node/string admission, and post-serialization size enforcement.",
+          "The supplied tests independently exercise at/over input bytes, container depth, value nodes, decoded string/key bytes, and integer lexical digits. Canonical-output equality coverage is the exception identified above.",
+          "The result is frozen and slotted with an omitted field repr, deterministic byte fingerprints, and fixed unadmitted/unverified properties.",
+          "The source and documentation consistently preserve the narrower adapter resource profile and unscoped candidate boundary: no authentication, receipt verification, scope authorization, reference resolution, storage admission, or general hostile-parser resource guarantee is claimed."
+        ],
+        "gaps": [
+          "Parent-reported test, formatting, typing, baseline-retention, and frozen-oracle results were supplied as evidence but were not executed or independently reproduced in this review.",
+          "Exact-head CI, merged-main CI, tracked-tree preservation, and review-independence gates cannot be established from these source excerpts. The disclosed same-family independence limitation remains applicable."
+        ]
+      },
+      "final-security": {
+        "verdict": "PASS",
+        "findings": [],
+        "coverage": [
+          "Reviewed the supplied adapter, tests, documentation, accepted models, and normative civic vectors as source data; performed no execution or effects.",
+          "Exact built-in type checks precede contract comparisons and payload decoding, preventing supplied subclass methods from being invoked. Supported-contract and input-size precedence is explicit.",
+          "Strict UTF-8 decoding and quote/escape-aware depth admission precede json.loads. Duplicate decoded names are rejected at every object depth; integer hooks bound lexical digits; float and constant hooks reject nonfinite values.",
+          "Iterative tree admission counts containers and scalar values, excludes keys from node counts, bounds decoded key/string UTF-8 bytes, and rejects unpaired surrogates before contract validation.",
+          "The adapter directly reuses decode_v2 and canonical_v2. Subject selection and rejection dispositions match the accepted models and all eight closed reason values. Nested caution validation, receipt aliases, defaults, and time spelling remain delegated to the accepted contracts.",
+          "CivicMapping is frozen and slotted, has a content-free default object repr, and exposes fixed read-only unadmitted/unverified properties. Digests fingerprint source and canonical bytes without promoting scope, provenance, receipts, or trust.",
+          "Public mapping errors have closed codes and empty args. Internal decoder and validator failures are translated, and the public exception is raised after leaving the internal exception handler, avoiding retained decoder/validator cause and context.",
+          "Tests include all three normative positives, supplied caution and inheritance negative patches, rejection reasons and missing/null defaults, conflicting receipt aliases, nested caution, unsupported profiles, extra trust/scope fields, fake receipts, immutability, and sanitized diagnostics.",
+          "Resource tests distinguish admission from later schema rejection for input bytes, depth, nodes, integer digits, and decoded string/key bytes. Canonical expansion tests independently establish schema acceptance and output-size overflow rather than relying on an earlier failure.",
+          "The documented narrower resource profile and unscoped candidate boundary are respected. No parser sandbox, general resource SLA, authentication, admission, persistence, scope authorization, or live enforcement claim is introduced."
+        ],
+        "gaps": [
+          "Parent-reported test counts, formatting/type-check results, oracle outcomes, and baseline/tree retention were supplied evidence, not independently executed or verified in this source-only review.",
+          "The supplied canonical-output guard tests cover below-limit success and above-limit rejection, but not an output of exactly 262144 bytes; the implementation predicate itself correctly permits equality.",
+          "Exact-head CI, merged-main CI, persisted source/workorder hashes, and completion of the remaining independent acceptance gates cannot be established from this source-only review. Same-family independence remains limited as disclosed."
+        ]
+      }
+    },
+    {
+      "closure-architecture": {
+        "verdict": "CHANGES_REQUIRED",
+        "findings": [
+          {
+            "id": "CCM-P2E-01",
+            "severity": "medium",
+            "path": "tests/test_ccm_civic.py",
+            "line": 243,
+            "claim": "The contract-subclass rejection predicate is not independently tested: the only StrCanary invocation is short-circuited by the payload-subclass rejection.",
+            "evidence": "test_types_and_precedence passes BytesCanary and StrCanary together. In _map, `type(payload) is not bytes or type(contract) is not str` rejects the payload before evaluating the contract predicate. Removing the contract exact-type check would therefore leave this test green, while an exact bytes payload paired with StrCanary could invoke its supplied comparison method during supported-contract checking. The production predicate is correct as supplied, but the required security-boundary regression coverage is missing.",
+            "requestedFix": "Add an independent public-boundary test using an exact built-in bytes payload and StrCanary as the contract, asserting sanitized invalid_input without invoking subclass methods. Also exercise BytesCanary with an exact built-in supported contract so each exact-type predicate has its own canary case."
+          }
+        ],
+        "coverage": [
+          "Inspected the supplied adapter, tests, specification, accepted unchanged models, and normative civic vectors as source only; no tools or execution were used.",
+          "Production exact-type checks precede supported-contract comparisons and payload decoding.",
+          "The adapter delegates schema validation and canonical serialization to decode_v2 and canonical_v2 without duplicating the civic schema.",
+          "Subject selection, all eight rejection-reason classifications, null/missing defaults, caution advisory semantics, and inheritance-reference semantics match the supplied accepted models and workorder.",
+          "Receipt aliases and conflicting aliases are delegated to accepted validation; nested caution preservation and validation are exercised.",
+          "Inspected byte, quote-aware depth, integer-digit, finite-float, duplicate-key, iterative node/string admission, and canonical-output predicates. Tests provide independent at/over-limit vectors, including exact canonical-output limits.",
+          "Strict UTF-8, BOM rejection, surrogate rejection, nested duplicate names, escaped delimiters, closed diagnostics, frozen results, and payload-free result repr are covered in the supplied source.",
+          "The mapping remains an unscoped, unverified candidate with byte fingerprints rather than authenticated identities. No scope authorization, receipt verification, storage, reference resolution, or execution authority is introduced.",
+          "The documented resource profile is explicitly narrower than the accepted schemas and makes no general hostile-parser sandbox or resource-SLA claim."
+        ],
+        "gaps": [
+          "The supplied parent evidence reports focused/full suite and oracle results; those checks were not run or independently reproduced by this review.",
+          "Repository-wide byte identity, retained baseline dispositions, exact-head CI, merged-main CI, and review-independence gates cannot be established from the supplied source excerpts.",
+          "No additional production correctness defect was identified within the supplied adapter's narrow mapping scope."
+        ]
+      },
+      "closure-security": {
+        "verdict": "PASS",
+        "findings": [],
+        "coverage": [
+          "Exact built-in payload and contract type checks precede contract comparison, decoding, and supplied subclass methods. Supported contracts are explicitly closed to rejection, caution, and inheritance.",
+          "Input size and quote/escape-aware depth admission precede json.loads. Strict UTF-8 decoding, duplicate decoded-name rejection at nested depths, integer lexical limits, nonfinite float rejection, surrogate rejection, and iterative string/node admission are implemented.",
+          "Resource tests distinguish admitted limits from over-limit rejection using downstream invalid_contract outcomes where appropriate. Input bytes and canonical output also have schema-valid exact-boundary tests. Escaped delimiters and escaped string spellings are covered without depending on earlier resource failures.",
+          "The adapter delegates schema validation and canonical serialization to the supplied unchanged decode_v2 and canonical_v2. Subject selection and rejection dispositions agree with the accepted models and all eight normative reasons; missing/null reasons remain unclassified.",
+          "Tests cover all three normative positives, supplied caution and inheritance negative patches, receipt aliases and conflicting aliases, nested caution validation, closed schemas, unsupported legacy wrappers, unknown reasons, fake receipts, and prohibited trust/scope fields.",
+          "CivicMapping is frozen, slotted, and payload-free in repr. Returned fields contain immutable built-in values; admitted and trust_tier remain fixed candidate properties. No scope binding, receipt verification, proof promotion, graph mutation, execution authorization, or persistence is introduced.",
+          "Public mapping errors are constructed after leaving internal exception handlers, with empty args, closed codes, and content-free str/repr. Tests inspect cause/context and sensitive sentinels across JSON and contract failures.",
+          "Documentation accurately limits the adapter to unscoped, unadmitted candidates and its narrower resource profile. It explicitly distinguishes fingerprints from provenance, in-memory unsanitized text from redaction, and source review from acceptance or release authority."
+        ],
+        "gaps": [
+          "This was a source-only review of the supplied artifacts; no tools were used and no tests were run by this reviewer. Reported suite, oracle, formatting, typing, baseline, and tree-retention results are parent evidence rather than independently reproduced results.",
+          "Imported identifier, clean-text, and ReceiptAnchor implementations were not supplied for direct inspection. Their accepted behavior is reused rather than reimplemented by this candidate.",
+          "Persisted exact-head evidence, the other fresh review, exact-head CI, and merged-main CI are not established by the supplied source. They remain separate acceptance gates; this PASS does not assert merge readiness or independent-family verification."
+        ]
+      }
+    },
+    {
+      "accept-architecture": {
+        "verdict": "PASS",
+        "findings": [],
+        "coverage": [
+          "Exact built-in payload and contract types are checked before decoding, comparison, or hashing can invoke subclass methods; tests exercise each subclass predicate separately.",
+          "The adapter directly reuses decode_v2 and canonical_v2 without duplicating the civic schema. Subject selection and rejection disposition predicates match the supplied accepted contracts and all eight reason values.",
+          "Canonical bytes preserve the accepted serializer's aliases, defaults, nested caution semantics, and timestamp spelling. Tests compare canonical bytes and both fingerprints, including a literal frozen rejection vector.",
+          "CivicMapping is frozen, slotted, and repr-disabled. Admission and trust properties remain false and unverified_candidate; receipts and failure labels do not promote authority. Digests are documented as fingerprints rather than scoped identities or authenticated provenance.",
+          "Input bytes and quote/escape-aware depth admission precede json.loads. Numeric hooks reject excessive integer digits and nonfinite floats; duplicate decoded names are rejected by the object-pairs hook. Iterative tree validation checks value-node counts and decoded key/string byte limits before model validation.",
+          "Tests independently distinguish admitted and excessive input size, depth, node count, string/key size, integer digit count, and canonical output size. Exact canonical output limits, escaped delimiters, nested duplicate keys, invalid UTF-8, BOMs, and unpaired surrogates are covered.",
+          "Public mapping failures use closed diagnostic codes with empty args and sanitized representations. The boundary constructs its public exception after leaving internal exception handlers; supplied tests assert absent cause and context for exercised failures.",
+          "Tests cover all three normative positive profiles, supplied caution and inheritance negative patches, rejection unknown values, alias conflicts, wrong profiles, extra trust/scope fields, nested caution rejection, immutable results, and fake-receipt non-promotion.",
+          "Documentation correctly limits this to an unscoped, in-memory candidate adapter with narrower local resource admission. It does not claim authentication, reference resolution, storage authorization, redaction, live enforcement, or a general hostile-parser resource guarantee."
+        ],
+        "gaps": [
+          "This was a source-only review; no tools or tests were executed. Parent-reported test, oracle, formatting, typing, baseline, and tracked-tree results were not independently reproduced.",
+          "Exact-head CI, merged-main CI, persisted verification hashes, and completion of the remaining acceptance gates cannot be established from source inspection. The documentation appropriately keeps those gates separate from this candidate.",
+          "The full fixture file and imported identifier/clean-text implementations were not supplied. Fixture-driven tests and their use of the supplied normative civic vectors were inspected, while behavior delegated to unchanged dependencies was assessed only from the provided accepted model source."
+        ]
+      },
+      "accept-security": {
+        "verdict": "PASS",
+        "findings": [],
+        "coverage": [
+          "Exact built-in payload and contract checks precede supplied-method invocation; supported-contract and input-size precedence are explicit. Tests separately exercise both subclass predicates.",
+          "Strict UTF-8 decoding and a quote/escape-aware depth scan precede json.loads. Duplicate decoded names are rejected at every object depth; numeric hooks bound integer digits and reject nonfinite floats. Iterative tree admission checks value-node counts and decoded key/string UTF-8 sizes before schema validation.",
+          "The adapter directly reuses decode_v2 and canonical_v2. Supplied models confirm the selected subject fields, closed rejection reasons, defaults, receipt aliases, nested caution validation, and preserved time spelling.",
+          "CivicMapping is frozen, slotted, and repr-disabled, with immutable returned field values. Admission and trust properties remain fixed at false and unverified_candidate; fingerprints do not establish scope, provenance, receipt validity, or authority.",
+          "Public mapping failures are translated to closed, content-free diagnostics raised after internal exception handlers. Tests check empty args, sanitized str/repr, and absent cause/context for parser, contract, resource, and exact-type failures.",
+          "Tests cover all supplied normative civic positives, caution/inheritance negative patches, all eight rejection reasons plus absent/null, receipt alias conflicts, unsupported schemas and trust/scope fields, fake receipts, nested caution, and output immutability.",
+          "Boundary tests distinguish admission from later schema rejection for depth, node count, integer digits, and decoded string/key bytes. Input and canonical-output limits include exact-boundary cases; canonical expansion tests independently establish accepted schema inputs before checking output rejection.",
+          "Documentation accurately limits the implementation to an unscoped, unadmitted candidate adapter with narrower local resource limits, no hostile-parser sandbox guarantee, and no storage, authentication, enforcement, or redaction claim."
+        ],
+        "gaps": [
+          "This was a source-only review; no tests, tools, execution, or repository effects were performed. Parent-reported verification results were not independently reproduced.",
+          "Only supplied source and artifacts were inspectable. Byte-identical preservation of existing sources, baseline dispositions, and tracked entries remains dependent on parent verification.",
+          "The full frozen external oracle, exact-head CI, merged-main CI, and completion of all independent review gates are not established by this review. Same-family independence limitations remain applicable."
+        ]
+      }
+    }
+  ],
+  "dispositions": [
+    {
+      "id": "CCM-P2E-001",
+      "decision": "fix",
+      "proof": "Exact262144/262145 accepted schema canonical vectors + exclusive-bound negative control"
+    },
+    {
+      "id": "CCM-P2E-01",
+      "decision": "fix",
+      "proof": "Individual exact bytes/str subclass predicates + two independent omission negative controls"
+    }
+  ],
+  "remainingMaterialFindings": [],
+  "oneFocusedTestRepairCompleted": true,
+  "productionUnchanged": true,
+  "sameFamilyLimitation": true,
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_civic.py": "e06b21bd14127c9d901356da50c0696e50832ffb6f2cc754dd06c69441ec5a70",
+    "tests/test_ccm_civic.py": "7915e0adaa3ab31f7b96f316d26dbf4f3101d73eb64e9975a056e7271bc87588",
+    "docs/specs/ccm-civic-mapping-v1.md": "bebc694baa1b389eca7c39e2f94f0c8e3e57a968253edf00bf6214a0ae747d12"
+  }
+}

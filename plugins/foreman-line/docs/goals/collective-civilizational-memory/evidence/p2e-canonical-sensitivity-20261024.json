@@ -1,0 +1,15 @@
+{
+  "productionChanged": false,
+  "injectedFault": "Exclusive >=canonical-output predicate instead of inclusive >",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_civic.py": "e06b21bd14127c9d901356da50c0696e50832ffb6f2cc754dd06c69441ec5a70",
+    "tests/test_ccm_civic.py": "3e90a2931b4f9ac13bd717284fa9a6b4d3ad12917298398bc23932ca7cc094ab",
+    "docs/specs/ccm-civic-mapping-v1.md": "bebc694baa1b389eca7c39e2f94f0c8e3e57a968253edf00bf6214a0ae747d12"
+  },
+  "providerRequests": 0,
+  "exit": 1,
+  "atLimitMutationDetected": true,
+  "overLimitStillRejected": true,
+  "status": "PASS_NEGATIVE_CONTROL",
+  "allOwnedContainersAbsent": true
+}

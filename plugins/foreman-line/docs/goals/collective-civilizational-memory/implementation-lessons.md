@@ -127,3 +127,15 @@ not full import readiness or held credential-route clearance.
 - A policyblocked cleanup is not permission to bypass it. Retain an owned
   syntheticartifact privately when removal is unnecessary for runtimeacceptance.
   Disposition: cleanup record; no generaldeletion automation introduced.
+
+
+## Civic mapping October24
+
+- A combined subclass canary can short-circuit one predicate. Exercise each
+  independent exact-type boundary with otherwise exact inputs and omit each
+  guard in isolated negative controls. Disposition: installed in mapper tests.
+- Inclusive serialized-output bounds need exact-limit and one-byte-over
+  schema-valid vectors with input/other limits admitted. Disposition: tests.
+- Never trust generated digest constants: independently hash literal bytes;
+  preserve initial failures and source/model receipts. Narrative-only evidence
+  lesson; existing prebuild oracle and closure checks enforce identity.

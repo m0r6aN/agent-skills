@@ -1,7 +1,7 @@
 ---
 ticket: CCM-P2E
 title: Deterministic unadmitted civic v2 mapping
-status: active
+status: done
 owner: clinton.morgan
 created: '2026-10-24'
 updated: '2026-10-24'
