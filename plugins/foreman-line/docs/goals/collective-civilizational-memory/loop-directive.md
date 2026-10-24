@@ -295,3 +295,14 @@ exception skipswait, independently reproduced, and protocol tests need independe
 pre-decoder/valid-envelope oracles. Operator test wrongly permitted missingwait;
 not waived. No third repair/POST/PR/merge/admission. All prior120/150/otherholds
 and affectedroutes remain. Exactcandidate and nextrepair criteria preserved.
+
+
+## P2C runtime teardown/protocol repair — October24
+
+Direct owner authorizes ONE bounded kill/wait and protocol-test repair, then
+fresh independent reviews. Supersedes only prior further-repair prohibition.
+Sole Context coordinator resumes, no new monitor/native worker. Scoped local
+operator changes runtime teardown and tests only, otherfour/accepted422pins
+unchanged. Old120/150/allreservations and affectedroutes held; floor1000, day6000,
+effort9000 retained. Review dispatch remains conditional on exactcost/account
+preflight. No fourth repair, retry/fallback or waived acceptance.

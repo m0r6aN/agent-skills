@@ -276,6 +276,12 @@ evidence is p2c-runtime-alarm-probe-20261023.json; no source program executed.
    on October24 explicitly authorizes ONE additional bounded repair limited to
    the remaining typing error and missing failure-path tests. No third repair,
    changed runtime behavior, protocol/resource/route expansion or blind replay.
+   Superseding only that further-repair prohibition, the owner on October24
+   directly authorizes ONE bounded kill/wait teardown correction and protocol
+   oracle repair, then fresh independent reviews. Independent bounded wait must
+   be attempted even when poll/kill fails, including timeout0 when no time remains;
+   teardown failure stays isolation_failure. No fourth repair, unrelated runtime
+   change, protocol/resource/route expansion, threshold relaxation or replay.
    Disclosed operator source contribution is allowed for that narrow correction;
    two fresh
    independent architecture/security composition reviews and green head/main
