@@ -1,0 +1,22 @@
+{
+  "atUtc": "2026-10-24T23:23:14.749558+00:00",
+  "authority": "Owner standing blanket authority to make non-destructive decisions/approvals and finite credit increases; current direct request to proceed keeping all reservations",
+  "disposition": "Authorize exactly one additional bounded supplied-artifact repair submission after TLS preflight, accepting possible unseen no-tools output/billing of failed call. This is an explicit scoped continuation, not an automatic retry or resolved outcome.",
+  "priorOutcome": "UNKNOWN upstream acceptance/generation/billing, no HTTP response recorded",
+  "oldRequestReservationHeld": 374.843,
+  "tlsPreflight": "Certificate-validated TLS1.3 handshake PASS, no HTTP/model request, does not prove prior request absent",
+  "oldPhaseCap": 1300,
+  "newPhaseCap": 1700,
+  "maxTotalRepairPosts": 2,
+  "additionalRepairPosts": 1,
+  "maxNewCall": 450,
+  "maxNewOutputTokens": 20000,
+  "dayCeiling": 11000,
+  "effortCeiling": 16000,
+  "floor": 1000,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "sameQualifiedParentRouteOnly": true,
+  "automaticRetry": false,
+  "fallback": false
+}
