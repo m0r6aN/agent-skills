@@ -165,3 +165,17 @@ not full import readiness or held credential-route clearance.
 - Capture dependency state before asserting actual composition. Initial Git failure
   remains unclassified; later diagnostic success supports only bounded positive
   composition, not erased failure or stability. Independent reviewers assess scope.
+
+
+## Durable candidate ingestion October24
+
+- Decode structured candidate JSON before scrubbing. Keep structures decoded
+  through the whole-envelope scrub; serializing between passes can hide secrets
+  or damage redaction-token keys. Disposition: ingestion implementation and
+  decoded SQL-boundary Unicode/control/key regressions.
+- Cleanup UPDATEs can defeat SKIP LOCKED in a later query. Lock cleanup candidates
+  nonblocking first. Disposition: CTE cleanup and locked-final-expiry PG regression.
+- Concurrent gather alone does not prove required orderings. Disposition: controlled
+  advisory-lock queue interleavings and direct full source/outbox rollback assertions.
+- PostgreSQL Docker temporary socket readiness is not final TCP readiness.
+  Disposition: parent isolated test harness checks TCP; failure diagnostic retained.

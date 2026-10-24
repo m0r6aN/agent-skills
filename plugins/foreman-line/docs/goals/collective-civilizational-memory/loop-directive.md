@@ -490,3 +490,18 @@ No canonical promotion/live API; remaining P3 deletion/crypto/PlaneA gates retai
 Finite700phase/day9500/effort14000 under standing finiteincrease authority,
 floor1000; all6056.408125 old reservations held. All affected/native/privatePi
 routes HELD. ExactStep0/Gate2 before source.447pins/3905PASS137skip baseline.
+
+
+## P3A durable candidate ingestion accepted — October24
+
+PR101 sourceb6a4ebaffa1ef3224dbce82ffedd69efb2d369a9 mergedfd0f478cc3d21d7ef4eb9f518f61487b010e296e;16headchecks and exactmainCI/deploymentgreen.
+46focused/3954fullPASS151skip;447priorpins retained,17actualPG/guardPASS.
+Fresharchitecture/securityPASS/PASS; initial findings/reproductions and coverage
+gaps retained. See p3a-acceptance-20261024.md. Internal candidate service only,
+no live/canonical writer or fullP3 completion. RemainingP3 canonical admission/
+PlaneA/B writers, governed shred/retract/minimal descendant invalidation and
+externalkeyqualification remain, thenP4-P8/integration/privacy/importgates.
+443.3reported/449.695125booked of700, phaseclosed;
+all old reservations and affected/native/privatePi routesHELD. No realcorpus/
+hightrustproducer/fullContext/bulkimport readiness. Same solecoordinator at
+parcelboundary; cleanpushedworktree retained, no worker/monitor.

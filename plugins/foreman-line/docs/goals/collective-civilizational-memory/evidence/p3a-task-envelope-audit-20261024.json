@@ -1,0 +1,944 @@
+{
+  "recordedAtUtc": "2026-10-24T22:42:10.077871+00:00",
+  "normalization": "Post-execution schema normalization of original persisted envelopes/receipts, not retroactive preflight",
+  "schemaValidation": "PASS",
+  "units": [
+    {
+      "id": "CCM-P3A-architecture",
+      "sdlc_stage": "review",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Scrubbed PostgreSQL candidate ingestion and durable pending work",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\architecture-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 29820,
+      "estimated_output_tokens": 4096,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\architecture-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3A-final-architecture",
+      "sdlc_stage": "review",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Scrubbed PostgreSQL candidate ingestion and durable pending work",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\final-architecture-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 33902,
+      "estimated_output_tokens": 4096,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\final-architecture-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3A-final-security",
+      "sdlc_stage": "security",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Scrubbed PostgreSQL candidate ingestion and durable pending work",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\final-security-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 33923,
+      "estimated_output_tokens": 4096,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\final-security-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3A-repair",
+      "sdlc_stage": "implementation",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Scrubbed PostgreSQL candidate ingestion and durable pending work",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\repair-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 18949,
+      "estimated_output_tokens": 10000,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\repair-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3A-repair2",
+      "sdlc_stage": "implementation",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Scrubbed PostgreSQL candidate ingestion and durable pending work",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\repair2-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 12906,
+      "estimated_output_tokens": 6000,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\repair2-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3A-security",
+      "sdlc_stage": "security",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Scrubbed PostgreSQL candidate ingestion and durable pending work",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\security-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 29841,
+      "estimated_output_tokens": 4096,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\security-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3A-source-A",
+      "sdlc_stage": "implementation",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Scrubbed PostgreSQL candidate ingestion and durable pending work",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\source-A-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 14603,
+      "estimated_output_tokens": 14000,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\source-A-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3A-source-B",
+      "sdlc_stage": "implementation",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Scrubbed PostgreSQL candidate ingestion and durable pending work",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\source-B-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 11532,
+      "estimated_output_tokens": 16000,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\source-B-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3A-source-C",
+      "sdlc_stage": "implementation",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Scrubbed PostgreSQL candidate ingestion and durable pending work",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\source-C-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 15067,
+      "estimated_output_tokens": 14000,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\source-C-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3A-source-D",
+      "sdlc_stage": "implementation",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Scrubbed PostgreSQL candidate ingestion and durable pending work",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\source-D-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 15193,
+      "estimated_output_tokens": 14000,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\source-D-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3A-step0",
+      "sdlc_stage": "planning",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Scrubbed PostgreSQL candidate ingestion and durable pending work",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\step0-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 6881,
+      "estimated_output_tokens": 3072,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\step0-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3A-compat-architecture",
+      "sdlc_stage": "review",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Scrubbed PostgreSQL candidate ingestion and durable pending work",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\compat-architecture-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 5057,
+      "estimated_output_tokens": 2048,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\compat-architecture-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3A-compat-security",
+      "sdlc_stage": "security",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Scrubbed PostgreSQL candidate ingestion and durable pending work",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\compat-security-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 5057,
+      "estimated_output_tokens": 2048,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\compat-security-input.txt"
+        ],
+        "write": []
+      }
+    }
+  ],
+  "reviewContextException": "Complete5newfiles+accepted dependency interfaces supplied,129-148KiB; actual token usage in receipts. Explicit full-source risk review exception to small-context target."
+}

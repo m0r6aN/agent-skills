@@ -1,0 +1,30 @@
+{
+  "atUtc": "2026-10-24T22:33:56.160547+00:00",
+  "authority": "Standing owner non-destructive bounded repair/review decisions. One test-only Python3.10 compatibility correction and2focused fresh independent delta reviews; no production change",
+  "phaseCap": 120,
+  "originalParcelCap": 700,
+  "closedParentBooked": 431.872375,
+  "maxCombined": 551.8723749999999,
+  "oldConservative": 6488.2805,
+  "dayBase": 8218.5805,
+  "effortBase": 12216.180500000002,
+  "lastBalance": 11338.9,
+  "dayCeiling": 9500,
+  "effortCeiling": 14000,
+  "floor": 1000,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "nativePrivatePi": "HELD",
+  "sourceNormalizerSha256": "e7ba95d2c43e033100eb97f5f5c544a4bcaf8e15c56e7d52912166e5ffb2e764",
+  "maxCalls": 2,
+  "noTransportRetryOrFallback": true,
+  "sourceHashesBefore": {
+    "src/keon/cortex/pipeline/ccm_ingestion.py": "fc7955c1cc1e1beba85f2c68461dedc8c12d7cef6b52078d9d7f76b57de56d0f",
+    "src/keon/cortex/providers/postgres/ccm_ingestion.py": "961a51e32dac098d115c52406eaab0dfc1844978ea305c796d58cd20b93de961",
+    "tests/test_ccm_ingestion.py": "ccb72797ca992742db8480e9f731fc6cb10330b97e832537723f3f54ba55fc14",
+    "tests/test_ccm_ingestion_postgres.py": "1a26e5d284c468a547dea3b969610625d9b08fd13e9bf7012ce52f0dba8806fe",
+    "docs/specs/ccm-durable-ingestion-v1.md": "0342e26c96eda210d613f7b5425c9c6be85740a199d1330f2d41049f1fde332d"
+  },
+  "testHashAfter": "e77607482606725b0dd952108b7cf657c3329736fb3346473e5e28e447472850",
+  "allFourOtherFilesUnchanged": true
+}

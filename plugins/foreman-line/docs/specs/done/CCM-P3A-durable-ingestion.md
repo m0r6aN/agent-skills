@@ -1,7 +1,7 @@
 ---
 ticket: CCM-P3A
 title: Scrubbed PostgreSQL ingestion storage and transactional outbox
-status: active
+status: done
 owner: clinton.morgan
 created: '2026-10-24'
 updated: '2026-10-24'

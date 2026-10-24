@@ -1,0 +1,42 @@
+{
+  "atUtc": "2026-10-24T22:24:23.395998+00:00",
+  "status": "EXACT_SCOPED_REPAIR_APPLIED_PENDING_VALIDATION",
+  "changes": [
+    {
+      "path": "src/keon/cortex/pipeline/ccm_ingestion.py",
+      "beforeSha256": "7ef2cfa5a9e75a8c1d801c350b84c84ecf0727789c5d7d55e7b01208c8a54597",
+      "afterSha256": "c331a60b0493379eb57f9cfcb9abc8b02b4bb26a28581b46d8a46efa29464b37",
+      "exactSingleMatch": true,
+      "tailOnlyAppendDisambiguation": false,
+      "originalAnchorMatches": 1
+    },
+    {
+      "path": "src/keon/cortex/providers/postgres/ccm_ingestion.py",
+      "beforeSha256": "275e1f6a670e879d54b045f5261492edb9c8ea0e58812f877c69f7a7fdc97dc8",
+      "afterSha256": "961a51e32dac098d115c52406eaab0dfc1844978ea305c796d58cd20b93de961",
+      "exactSingleMatch": true,
+      "tailOnlyAppendDisambiguation": false,
+      "originalAnchorMatches": 1
+    },
+    {
+      "path": "tests/test_ccm_ingestion.py",
+      "beforeSha256": "69ed9cafce0b0a3344d9e6c15bc123f8d80fe525994be5a4db6f1157a02f11a7",
+      "afterSha256": "b070304c85af3f20837f3e89703a1b8ef8aec9f8bb381b802384913d509be816",
+      "exactSingleMatch": true,
+      "tailOnlyAppendDisambiguation": false,
+      "originalAnchorMatches": 1
+    },
+    {
+      "path": "tests/test_ccm_ingestion_postgres.py",
+      "beforeSha256": "58159352a441c36b2c31a92e79232c16bff555fbfc32d90b5364605800fa000d",
+      "afterSha256": "74aef165e96a22c4bbc56c6f03abcfe749993b9f810902aecbb5c3d655867d89",
+      "exactSingleMatch": false,
+      "tailOnlyAppendDisambiguation": true,
+      "originalAnchorMatches": 2
+    }
+  ],
+  "parentDocUpdatedFromBindingRepairDisposition": true,
+  "newProviderRequests": 0,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD"
+}

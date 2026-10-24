@@ -1,0 +1,11 @@
+{
+  "atUtc": "2026-10-24T22:27:19.613212+00:00",
+  "edits": 6,
+  "allExactUniqueMatches": true,
+  "scope": [
+    "src/keon/cortex/pipeline/ccm_ingestion.py",
+    "tests/test_ccm_ingestion.py"
+  ],
+  "productionStoreUnchanged": true,
+  "pendingValidation": true
+}

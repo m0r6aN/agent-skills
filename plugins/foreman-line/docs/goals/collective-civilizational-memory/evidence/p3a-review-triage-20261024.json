@@ -1,0 +1,164 @@
+{
+  "atUtc": "2026-10-24T22:42:10.077871+00:00",
+  "initialArchitecture": {
+    "verdict": "CHANGES_REQUIRED",
+    "findings": [
+      {
+        "id": "CCM-P3A-01",
+        "severity": "medium",
+        "locator": "src/keon/cortex/providers/postgres/ccm_ingestion.py: PostgresIngestionStore.lease, expired final-attempt cleanup UPDATE",
+        "impact": "The unconditional cleanup UPDATE runs before the SKIP LOCKED selection and can block on a locked, expired fifth-attempt outbox row. Thus an otherwise eligible unlocked batch cannot be leased promptly. Because the transaction already holds the tenant advisory lock, the wait also blocks all other service mutations for that tenant. The supplied SKIP LOCKED test locks a pending row, so it does not exercise this path.",
+        "remediation": "Select final-expiry cleanup candidates with nonblocking row locking before updating them, preserving the tenant-first locking discipline. Add a PostgreSQL test that holds an expired fifth-attempt row locked while another eligible batch exists and verifies that leasing the eligible batch completes without waiting for the held row."
+      },
+      {
+        "id": "CCM-P3A-02",
+        "severity": "medium",
+        "locator": "tests/test_ccm_ingestion_postgres.py: test_scope_isolation_and_fence_races and test_transaction_faults_are_atomic",
+        "impact": "Several required load-bearing guarantees are not established by these assertions. The enqueue/fence gather targets a batch already fenced, so it tests rejection after fencing rather than an enqueue/fence race. The publication/fence gather accepts either publication result without checking the resulting source/outbox state or forcing both lock orderings. Publication rollback checks source states through pending(), which filters out nonpending sources; it therefore cannot detect a partial publication of other source rows, and it does not directly verify that the outbox transition rolled back.",
+        "remediation": "Add controlled PostgreSQL interleavings for enqueue versus fence on an initially open batch and for both publication/fence lock orderings, asserting the permitted outcomes and durable batch/source/outbox states. After injected publication failure, directly assert every source row remains staged and the outbox remains leased with its original owner, generation, and attempts."
+      }
+    ],
+    "coverage": [
+      "Reviewed preparation validation, exact DTO and built-in types, source/result matching, artifact counters and spans, closed reasons, resource bounds, and error sanitization.",
+      "Reviewed whole-envelope accepted scrubbing before pool acquisition, routing/control-field rejection, sanitized identity derivation, fingerprint omission, and SQL parameter boundaries.",
+      "Reviewed transactional enqueue, duplicate/conflict/fenced precedence, tenant-wide retained capacity accounting, parameterized inserts, and rollback structure.",
+      "Reviewed pending persistence and detached reads, publication versus extraction status separation, generation fencing, database-clock expiry, fifth-attempt retention, and scope linkage.",
+      "Reviewed tenant advisory-lock ordering, SKIP LOCKED selection, local publication atomicity, and fence interactions.",
+      "Reviewed supplied PostgreSQL16 execution evidence and test source; the reported results are evidence, not independently executed verification or proof of uncovered interleavings."
+    ],
+    "gaps": [
+      "Locked expired-final-attempt cleanup is not covered by the supplied PostgreSQL tests.",
+      "The supplied tests do not force both publication/fence orderings or a genuine initially-open enqueue/fence race.",
+      "Concurrent byte-capacity enforcement is not exercised: concurrent admission uses max_batches, while the byte assertion only rejects max_bytes=1.",
+      "Accepted full engine implementation, exact-head checks, merged-main checks, and completion of the remaining independent verification gates are not established by the supplied source excerpt and evidence."
+    ]
+  },
+  "initialSecurity": {
+    "verdict": "CHANGES_REQUIRED",
+    "findings": [
+      {
+        "id": "CCM-P3A-01",
+        "severity": "high",
+        "locator": "src/keon/cortex/pipeline/ccm_ingestion.py::_prepare, python_symbol normalization before scrub_payload",
+        "impact": "Python-symbol JSON is parsed and then ASCII-escaped with canonical_json before its contents reach the scrubber. Consequently, known secrets containing non-ASCII characters or JSON-escaped control characters are transformed into reversible escape sequences that no longer match the supplied known-secret values. For example, a non-ASCII secret in a symbol field becomes literal backslash-u text inside artifact.text. The whole-envelope scrub scans that encoded string rather than the decoded symbol values, allowing the secret's reversible representation into PostgreSQL and returned candidate payloads. Removing content_sha256 does not address this leakage.",
+        "remediation": "Scrub decoded python-symbol keys and values before converting the symbol object back into artifact text, while retaining whole-envelope scrubbing and control-field validation. Ensure serialization cannot hide known-secret matches. Add SQL-boundary regression cases for non-ASCII and escaped-character secrets in both symbol keys and values, checking decoded stored symbol content as well as literal SQL parameters."
+      }
+    ],
+    "coverage": [
+      "Reviewed supplied preparation code for exact-type validation, input/output bounds, raw fingerprint omission, sanitized identity derivation, and pre-acquisition scrubbing.",
+      "Reviewed metadata traversal and accepted scrubber behavior for nested key sanitization, normalization collisions, and fail-closed handling.",
+      "Reviewed control-shape validation for routing identifiers, prescribed keys, statuses, reasons, and artifact kinds.",
+      "Reviewed closed exception wrappers and cancellation propagation through transaction context managers.",
+      "Reviewed parameterized scoped SQL, retained-batch capacity accounting, transaction atomicity, lease generations and expiry, and shared tenant-lock ordering for enqueue, fence, and publication.",
+      "Reviewed supplied unit and PostgreSQL integration tests as evidence of their explicitly asserted scenarios, not proof of untested cases.",
+      "Reviewed documentation's limitations concerning internal-only operation, candidate authority, external effects, and absence of deletion or crypto-erasure guarantees."
+    ],
+    "gaps": [
+      "No tools or tests were executed in this review; execution results and source hashes are supplied evidence only.",
+      "Supplied privacy tests do not cover reversible JSON escaping of known secrets within python_symbol payloads.",
+      "Full accepted engine implementation, application wiring, repository-wide source pins, and merged-main verification were not independently inspected."
+    ]
+  },
+  "decisions": [
+    {
+      "finding": "architecture:CCM-P3A-01",
+      "disposition": "fixed",
+      "evidence": "Actual blocking reproduction, SKIPLOCKED cleanup regression"
+    },
+    {
+      "finding": "architecture:CCM-P3A-02",
+      "disposition": "fixed",
+      "evidence": "Controlled PG lock orderings, full source/outbox rollback state, concurrentbyte test"
+    },
+    {
+      "finding": "security:CCM-P3A-01",
+      "disposition": "fixed",
+      "evidence": "Actual reversibleUnicode leak reproduction; decoded structured tree scrub and SQL-boundary regressions for both kinds"
+    }
+  ],
+  "freshFinalReviews": {
+    "architecture": {
+      "verdict": "PASS",
+      "findings": [],
+      "coverage": [
+        "Preparation validates exact DTO and built-in types, source/result correspondence, digests, spans, closed statuses/reasons, artifact/output counters and resource bounds before pool acquisition.",
+        "Accepted whole-envelope scrubbing precedes identity derivation and SQL. Structured Python-symbol and civic JSON keys/values are decoded before scrubbing; Python validation-only content_sha256 is removed.",
+        "Enqueue performs retained-batch capacity accounting, duplicate/conflict/fenced checks and all inserts within one tenant-serialized transaction. SQL parameters contain prepared sanitized values rather than validation-only raw fingerprints.",
+        "Pending extraction text survives local publication and remains separately identifiable as pending. Pending reads are scope-filtered, open-batch-only, ordered and detached.",
+        "Lease grants use database time, increment attempts and monotone generations, and require open batches. Completion/failure require matching scope, owner, generation and an unexpired lease.",
+        "Expired fifth-attempt cleanup locks candidates with FOR UPDATE SKIP LOCKED before updating them. Mutation paths acquire the tenant advisory lock before batch/outbox row locks.",
+        "Fence and publication are transactionally serialized; fencing preserves retained payloads and prevents subsequent service publication, leasing and pending visibility without claiming deletion or external exactly-once effects.",
+        "Reviewed PostgreSQL test source covers pool close/reopen, insert and publication rollback, retained count and concurrent byte capacity, exclusive leasing, locked-row skipping, reclaim/stale tokens, final-dead retention, scope isolation and controlled publication/fence ordering.",
+        "Supplied evidence reports 17 passing PostgreSQL16/guard cases and local/static checks. These are supplied reports, not reviewer-executed verification."
+      ],
+      "gaps": [
+        "The controlled open-batch enqueue/fence test explicitly queues enqueue before fence; fence-before-enqueue rejection is exercised against an already fenced batch rather than through the same controlled initially-open interleaving.",
+        "Cancellation propagation has unit coverage at acquisition, but the supplied tests do not inject cancellation after a transactional write to demonstrate rollback.",
+        "Exact-head and merged-main verification, baseline/tree retention and the additional independent-review gate remain parent acceptance responsibilities; this source review does not independently establish them."
+      ]
+    },
+    "security": {
+      "verdict": "PASS",
+      "findings": [],
+      "coverage": [
+        "Reviewed supplied preparation and PostgreSQL source, tests, documentation, and accepted dependency contracts by static inspection.",
+        "Preparation validates exact DTO and built-in types, input and output bounds, fingerprints, counters, statuses, reasons, and artifact spans before pool acquisition.",
+        "Whole-envelope scrubbing covers durable candidate text and metadata keys and values; control-field mutations fail closed. Structured Python-symbol and civic data are decoded before scrubbing and re-encoded only afterward.",
+        "Validation-only source and artifact fingerprints are omitted from durable payloads. Python-symbol content_sha256 is removed before scrubbing, and persisted identities and payload hashes derive from sanitized data.",
+        "Exception wrappers raise closed errors after leaving handlers; cancellation is not caught by Exception handlers. No logging or external publication effects appear in the reviewed modules.",
+        "SQL is parameterized and scope-qualified. Tenant advisory locks serialize capacity, enqueue, lease, publication, and fence mutations; transactions protect multi-row updates.",
+        "Lease ownership, generation, expiry, attempt limits, open-batch checks, and SKIP LOCKED final-attempt cleanup were reviewed.",
+        "Reviewed supplied tests for privacy boundaries, restart persistence, rollback, retained capacity, stale leases, scope isolation, and controlled fence/publication interleavings."
+      ],
+      "gaps": [
+        "No tests were executed during this review. Reported local and PostgreSQL results are supplied evidence, not independently verified execution.",
+        "The accepted engine was supplied as a contract excerpt; its complete implementation and the surrounding application wiring were not reviewed.",
+        "Repository-wide baseline retention, exact-head provenance, merged-main checks, deployment configuration, and remaining acceptance gates require independent parent verification.",
+        "This verdict is limited to the supplied internal candidate-ingestion implementation; it does not establish live authorization, canonical admission, external exactly-once effects, governed deletion, or cryptographic erasure."
+      ]
+    }
+  },
+  "supplementalTestDeltaReviews": {
+    "architecture": {
+      "verdict": "PASS",
+      "findings": [],
+      "coverage": [
+        "Focused static review of the supplied test-only delta; not a new full production architecture or security review.",
+        "The cancellation assertion still requires asyncio.CancelledError and identity with the original injected exception. Catching it immediately around the awaited service call tests propagation through the service wrapper before the event-loop Task result boundary can replace the exception.",
+        "Cancellation swallowing, conversion to IngestionError, or replacement with a different CancelledError still causes this test to fail.",
+        "The direct service invocation preserves the fixture and routing/key arguments used by the enqueue helper.",
+        "Storage-error sanitization remains tested without changes: RuntimeError carrying SECRET must become storage_failure, with empty args, closed string/repr values, and no cause or context.",
+        "No test or parametrized case is removed by the supplied diff, and no production change is shown. The other four files remaining unchanged is supplied provenance, not independently verified here."
+      ],
+      "gaps": [
+        "No tests were executed in this review. The reported original Python 3.10 failure and Python 3.11/3.12 passes are supplied history, not independently verified results.",
+        "Require fresh post-commit CI on the exact committed head across all supported Python versions, including 3.10, 3.11, and 3.12, before acceptance. Preserve the original failing CI evidence and all subsequent failure results.",
+        "Production-byte and unchanged-file hash verification remains an independent parent/CI responsibility; this review assesses only the supplied delta and excerpts."
+      ]
+    },
+    "security": {
+      "verdict": "PASS",
+      "findings": [],
+      "coverage": [
+        "Focused supplemental review of the supplied test-only delta, not a new full production review.",
+        "The cancellation check still requires asyncio.CancelledError and exact identity with the injected exception. Moving both checks inside the coroutine tests propagation across the service await without depending on Python 3.10 Task-result exception identity.",
+        "Swallowed cancellation, conversion to IngestionError, or replacement with another CancelledError would still fail the test. Assertion failures inside the coroutine propagate through asyncio.run.",
+        "The direct service invocation preserves the fixture and routing/key arguments previously supplied by the enqueue helper.",
+        "Storage-error sanitization remains unchanged: RuntimeError carrying the synthetic secret must become storage_failure with empty args, closed string/repr, and no cause or context.",
+        "No test or parametrized case is removed, and no service-level assertion is weakened in the supplied diff.",
+        "The supplied diff changes no production code; the unchanged wrapper excerpt remains consistent with CancelledError bypassing its Exception handler."
+      ],
+      "gaps": [
+        "Static review only; no tests were executed and supplied hashes or unchanged-file claims were not independently verified.",
+        "The reported original Python 3.10 failure and Python 3.11/3.12 passes are historical evidence, not validation of the corrected exact head. Preserve those original results.",
+        "Require fresh post-commit CI on the exact reviewed head for all supported Python versions, including 3.10, 3.11, and 3.12, without test-count reductions, skips, or weakened assertions.",
+        "This delta tests injected cancellation at pool acquisition, not additional cancellation sites or Task.cancel scheduling behavior; broader production guarantees remain outside this supplemental review."
+      ]
+    }
+  },
+  "remainingMaterialFindings": [],
+  "coverageLimitsRetained": true,
+  "sameFamilyLimitation": true,
+  "firstRepairFailedNewRegressionsPreserved": true,
+  "narrowCorrectionSeparatelyAdmitted": true
+}

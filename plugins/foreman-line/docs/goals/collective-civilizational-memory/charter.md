@@ -2,6 +2,11 @@
 
 ## Current execution addendum — October24 NY
 
+P3A durable candidate ingestion accepted PR101;46focused/3954fullPASS151skip,
+17actual PostgreSQL/guardPASS; exacthead/mainCI/deployment green.
+See p3a-acceptance-20261024.md. Remaining P3 canonicalwriters/governeddeletion/
+externalkey gates stayopen; all holds retained, fullContext/bulkimport NOTready.
+
 Extractor engine accepted PR100; legacy wrappers PR99 complete.
 162focused/3905fullPASS137skip; exacthead/mainCI/deployment green.
 See p2f-acceptance-20261024.md for bounded scope/initialGit uncertainty.
@@ -345,3 +350,18 @@ Legacy wrappers and engine complete. Next P3 durable ingestion/storage/outbox,
 scrub-at-enqueue and pending fences, then remaining P4-P8/integration/import gates.
 Both parcels conservative 623.453250/1000; all reservations
 and affected/native/private-Pi routes HELD. No corpus/hightrust/bulk readiness.
+
+
+## P3A durable candidate ingestion accepted — October24
+
+PR101 sourceb6a4ebaffa1ef3224dbce82ffedd69efb2d369a9 mergedfd0f478cc3d21d7ef4eb9f518f61487b010e296e;16headchecks and exactmainCI/deploymentgreen.
+46focused/3954fullPASS151skip;447priorpins retained,17actualPG/guardPASS.
+Fresharchitecture/securityPASS/PASS; initial findings/reproductions and coverage
+gaps retained. See p3a-acceptance-20261024.md. Internal candidate service only,
+no live/canonical writer or fullP3 completion. RemainingP3 canonical admission/
+PlaneA/B writers, governed shred/retract/minimal descendant invalidation and
+externalkeyqualification remain, thenP4-P8/integration/privacy/importgates.
+443.3reported/449.695125booked of700, phaseclosed;
+all old reservations and affected/native/privatePi routesHELD. No realcorpus/
+hightrustproducer/fullContext/bulkimport readiness. Same solecoordinator at
+parcelboundary; cleanpushedworktree retained, no worker/monitor.
