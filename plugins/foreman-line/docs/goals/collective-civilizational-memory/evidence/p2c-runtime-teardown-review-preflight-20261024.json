@@ -1,0 +1,57 @@
+{
+  "accountObservation": {
+    "atUtc": "2026-10-24T14:30:16.651326+00:00",
+    "credit_balance": 5569.2,
+    "plan": "plus",
+    "responseFieldNames": [
+      "cogen_id",
+      "credit_balance",
+      "email",
+      "name",
+      "org_plan",
+      "org_role",
+      "personal_plan",
+      "plan"
+    ],
+    "otherNumericCreditFields": {
+      "credit_balance": 5569.2
+    },
+    "inferenceRequests": 0,
+    "userTopupConfirmed": true
+  },
+  "history": [
+    {
+      "atUtc": "2026-10-24T14:26:48.497380+00:00",
+      "mode": "architecture",
+      "balance": 5569.2,
+      "oldConservative": 4457.86875,
+      "booked": 0,
+      "cap": 180,
+      "phaseCap": 250,
+      "day": 4637.86875,
+      "effort": 8635.46875,
+      "afterAllHolds": 931.3312500000002,
+      "floor": 1000,
+      "admitted": false,
+      "inferenceRequestsThisCheck": 0
+    },
+    {
+      "atUtc": "2026-10-24T14:28:55.022677+00:00",
+      "mode": "architecture",
+      "balance": 5569.2,
+      "oldConservative": 4457.86875,
+      "booked": 0,
+      "cap": 180,
+      "phaseCap": 250,
+      "day": 4637.86875,
+      "effort": 8635.46875,
+      "afterAllHolds": 931.3312500000002,
+      "floor": 1000,
+      "admitted": false,
+      "inferenceRequestsThisCheck": 0
+    }
+  ],
+  "providerPosts": 0,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD"
+}

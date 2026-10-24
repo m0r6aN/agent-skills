@@ -306,3 +306,14 @@ operator changes runtime teardown and tests only, otherfour/accepted422pins
 unchanged. Old120/150/allreservations and affectedroutes held; floor1000, day6000,
 effort9000 retained. Review dispatch remains conditional on exactcost/account
 preflight. No fourth repair, retry/fallback or waived acceptance.
+
+
+## P2C teardown repair verified, review account preflight held — October24
+
+See p2c-runtime-teardown-progress-20261024.md. Scoped repair complete:154focused,
+3141fullPASS137skip/type/stylePASS;7API+5faultcasesPASS/allownedcontainersabsent.
+Kill1/wait1 proof and5mutation-sensitive protocol oraclesPASS. Reviewpackets ready,
+zeroinference/newcredits0. Existing4457.868750held; API5569.2 remains unchanged
+after owner topup confirmation. Need displayedbalance/account reconciliation
+before2freshSolreviews under existingguards. No source changes or test reruns
+needed; no fourthrepair, route release or merge. Same solecoordinator, no monitor.
