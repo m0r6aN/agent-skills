@@ -1,7 +1,7 @@
 ---
 ticket: CCM-P3B
 title: Canonical low-trust admission and atomic Plane A/B writer
-status: draft
+status: active
 owner: clinton.morgan
 created: '2026-10-24'
 updated: '2026-10-24'
@@ -233,6 +233,145 @@ immutable source-pin tripwires. Reviewer never fixes; disagreements reproduced.
 Step0 flags and exact Gate2 before source. Finite budgets, no transport retry or
 fallback, preserve every failed/uncertain reservation. Code/DB effects are parent-
 controlled trusted orchestration only, no delegated shell/private-Pi route.
+
+## Binding Step0 Dispositions
+
+F01-NORMATIVE-DEPENDENCIES: supply exact pinned accepted modules and P1A vectors
+with each relevant slice. Their source pins are all452baseentries, no substitute
+APIs. Five candidate source/test files, sixthdoc parent-owned. Caller grantset
+max256, every grant exactstr<=256bytes; all context primitives validate before
+calling accepted carriage functions. Set ShardRecord.created_at AND updated_at
+explicitly to observed_at, provenance.timestamp likewise; no default host clock.
+
+F02-SHARED-TRANSACTION-SEAM: accepted PostgresDocumentStore.upsert(record,
+connection=connection) and PostgresRecordStore.append_all(events,
+connection=connection) participate without acquiring/committing. Accepted P3A has
+NO connection-bound complete(), so do NOT call that method inside this transaction.
+Use its existing parameterized final UPDATE predicate directly on the SAME owned
+connection. Pin/reuse accepted _lock tenant key and lease grammar. Writer owns
+acquire/transaction/commit; no fallback to pool-level stores or nested owners.
+
+F03-SHARD-INTERVAL-CONTRADICTION: shard authoritative interval projects exact
+stored payload.created_at and NULL end. Registered shards are immutable here;
+any registry shard-end closure fails. Artifact endpoints may close with matching
+node/end/edges under the frozen graph contract. No invented shard closure field.
+
+F04-DEDUP-TIME-IDENTITY: preserve first-write nodes as well as shards, independently
+verify existing logical/binding/version/content. Existing edge found for exact
+tenant/sourcekind/sourceid/targetkind/targetid/edgekind is kept with its ORIGINAL
+stored valid_from_wire and verified ID, never reconstructed. For a genuinely new
+edge, start=max(requested observed_at,authoritative node start,shard start). On tie
+prefer exact requested observed_at spelling; otherwise use shard.created_at exact
+string if that wins, else format winning node timestamp UTC ISO with seconds plus
+trimmed fractional microseconds and Z. Persist that NEW spelling, then hash it.
+Both endpoint intervals must be open for new canonical admission in this parcel;
+closed endpoints return unavailable, not reopened. General deferred constraints
+still support valid finite intervals/supersession; no public supersession worker.
+
+F05-P3A-SCRUB-IDENTITY-LIFECYCLE: verify original staged rows, sourceIDs and hashed
+batch envelope BEFORE canonical transformation. Preserve all original P3A PKs,
+payloads, IDs, hashes and extraction statuses. Only publication state/outbox lease
+metadata changes on successful acknowledgement. New canonical sanitized IDs may
+differ; never write them back into staging. Stored source identity verification
+uses exact accepted P3A source preimage, excluding source_id itself. Audit/binding
+IDs scrubbed to different text reject rather than silently retarget pointers.
+
+F06-BOUNDED-VALIDATION: exact JSON depth<=32,totalnodes<=20000,strings/totalUTF8text
+<=1MiB before serialization, finite floats, intbit_length<=13607, cycles/custom
+hooks rejected. Pure 1MiB limit measures canonical_json of complete admission
+envelope (callercontext,rows,batch/time); output4MiB measures final canonical
+bundle JSON. Raw DB loads: use server CASE/length guards to return no payload
+when serialized batch/sourceaggregate exceeds4MiB; limit257rows then reject>256,
+never silently truncate. Reject oversize BEFORE client JSON decode. For loaded
+stage rows, validation/scrub occurs after bounded read but before canonical SQL;
+caller metadata validation/scrub occurs BEFORE acquiring any connection.
+
+F07-DEFERRED-CHECKS-ACKNOWLEDGEMENT: write all canonical rows; SET CONSTRAINTS ALL
+IMMEDIATE; then recheck locked current batch/lease owner/generation/open state and
+clock_timestamp()<expires_at in the final acknowledgement UPDATE. Ack/publication
+and canonical effects commit together; any later error rolls all back. Return
+committed only after transaction exits successfully. This is not a remote deadline
+or a claim to test wallclock expiry exactly at commit publication.
+
+F08-RLS-INTEGRITY-LOCKING: initialization is privileged trusted schema-operator
+work, not an app method invoked at startup. Integrity TRIGGER functions only are
+SECURITY DEFINER, fixed search_path=pg_catalog,keon_cortex, owned by that existing
+bootstrap role with BYPASSRLS/superuser capability. No role creation/alter/grants
+by code. Revoke PUBLIC execute on integrity functions. They inspect/lock backing
+rows across visibility without returning hidden values; all errors fixed text.
+Application principal has NO BYPASSRLS/superuser and cannot own those functions.
+Actual tests transfer the five graph TABLES to a non-superuser owner while
+integrity functions stay bootstrap-owned, proving FORCE RLS applies even to the
+table owner. Policy helpers are invoker pure predicates: binding policy uses
+stamp->context only; registry/node/subtype policies join visible bindings;
+edge SELECT joins visible binding AND both visible endpoints. No policy recursion.
+All five graph tables acquire one fixed namespaced transaction-level advisory
+lock in BEFORE STATEMENT mutation triggers, BEFORE row locks, to serialize graph
+closure/insertion even for direct trusted SQL. Writer lock order: P3A tenant lock,
+then graph advisory lock, then endpoint/edge keys sorted. Registered shard payload
+changes/deletes reject unconditionally; identical upsert is allowed. Unregistered
+legacy shard semantics are untouched. After locks, VOLATILE definer checks read
+fresh backing/interval state. This conservative serialization is NOT a throughput
+qualification; no SLO claimed. No blanket app RLS bypass or public DB principal.
+
+F09-SQL-IDENTITY-PREREQUISITES: PostgreSQL16 built-in sha256(bytea),encode,
+convert_to and jsonb primitives only; parent checks actual installed binary
+before source, never installs pgcrypto/otherextensions. SQL canonicalization must
+recursively produce Python core canonical_json equivalence: sortedASCIIkeys,
+compact separators, json escaping including nonASCII/surrogates and controls.
+Numbers in authoritative shard canonical payload must retain Python JSON numeric
+spelling; if SQLjsonb cannot reproduce a numeric literal faithfully, retain exact
+canonical payload text as an additive column on NEW graph registry entries for
+version checks (not on legacy shards), validate decoded equality against actual
+authoritative JSONB, and hash retained exact bytes. This is implementation identity
+metadata, never new payload authority. Registry TEXT pin must be immutable and
+its decoded value must match current shards.payload; no arbitrary asserted hash.
+Similarly valid_from_wire is immutable implementation metadata equality-checked
+against timestamp. Freeze exact allowed SQL additions in Gate2 after this flag.
+
+F10-ERROR-AND-RESULT-CONTRACT: result lives in pure slice, frozen slots reprFalse,
+status committed/unavailable, shard_ids/node_ids/edge_ids exacttuples of strings,
+pending_count exactint>=0. unavailable contains empty IDs and count0. Invalid
+supplied types/context -> invalid_input, bounds -> resource_limit, scrub/control
+failure -> scrub_failed before canonical persistence. Missing/stale/invisible/
+fenced/tampered loaded state -> unavailable without distinct disclosure. Existing
+sameidentity contradictory canonical data -> conflict, no overwrite. Unexpected
+DB/serialization error -> storage_failure; original exception discarded before
+new sanitized raise. Cancellation propagates. No claim that Python traceback
+frame locals can never hold transient input; no raw logging is implemented.
+
+F11-ACCEPTANCE-GATE: initial ready=false and all11flags remain historical evidence.
+Resolving preparation is not execution evidence. Full actualPG, non-superuser
+owner/RLS, concurrency/constraints, immutablebaseline,2freshreviews and exacthead/
+mergedmain green chain are mandatory before acceptance. No hightrustpositive
+producer/receipt/rolegeneration backing invented; fullP3/goal gates unchanged.
+
+### Exact dispatch choices
+
+Actual isolated PostgreSQL16.15 preflight PASS: built-in sha256 byte hash matches
+independent Python SHA256; JSONB retains fixed canonical 0.0/1.0/0.2 spellings;
+bootstrap role has existing bypass capability, no privilege changed. This covers
+only disposable local image, not a target production account qualification.
+NO additional registry payload-text column is selected. SQL canonical JSON
+recurses strings/objects/lists, preserves numeric text for the restricted emitted
+ShardRecord domain (only fixed defaults0.5/0.0/1.0/effective0.2 and bounded integers).
+Arbitrary source numbers are inside TEXT content, never projected as free payload
+numeric metadata. No claim of canonical numeric equivalence outside this domain.
+Graph DDL additions remain ONLY IF NOT EXISTS and edge.valid_from_wire; helper
+functions/triggers/policies are the required implementation, not table redesign.
+
+Pure API choices: TrustedContext(caller:CallerScope,decision_receipt_id:str),
+validate_context(caller,decision_receipt_id)->TrustedContext, scope_binding(caller)
+->str. CanonicalItem(node:dict[str,object],shard:ShardRecord,event:ISpineEvent,
+edge:dict[str,object]); CanonicalWriteResult(status:str,shard_ids:tuple[str,...],
+node_ids:tuple[str,...],edge_ids:tuple[str,...],pending_count:int). DTOs frozen slots
+reprFalse. Result IDs unique sorted; item tuple source/ordinal order. node/edge
+dicts use exact frozen SQL names, times as UTC strings, metadata_json exactdict;
+actual asyncpg TIMESTAMPTZ parameters use datetime or explicit text::timestamptz
+casts, not implicit driver coercion. No new callback or capability interface.
+Parent-owned docs are the exact frozen workorder body. Output code-only per fixed
+file; schema slice must use ONE literal GRAPH_SCHEMA_SQL constant, not generated
+unreviewable dynamic SQL. No placeholder functions/pass stubs in production.
 
 ## Out of Scope
 
