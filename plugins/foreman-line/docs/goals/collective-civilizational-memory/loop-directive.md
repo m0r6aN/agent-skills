@@ -435,3 +435,14 @@ See p2e-acceptance-20261024.md. Financialphaseclosed:189.2reported/
 reservations and affected/native/privatePi routesHELD. Same solecoordinator
 at parcelboundary; cleanpushedworktree retained, no worker/monitor. Next
 legacy civic coverage/extractor engine, thenP3-P8/fullintegration/import gates.
+
+
+## Legacy civic coverage then engine resumed — October24
+
+Direct owner authorizes both in sequence; same sole coordinator. Legacy3wrapper
+profile qualified against retained P1C C# artifact,13synthetic actual Validate/
+serialization fixtures frozen; reproduciblebinarybuild provenance not claimed.
+P2L4newfiles,440basepins/3721PASS137skip correspondence; Step0/Gate2 precede
+source. Finite aggregate1000credits: wrapper450, engine550conditional on accepted
+wrapper and own gates. Day8500/effort12500/floor1000, all5432.954875 oldholds
+retained, no topup assumed. Every affected/native/privatePi route staysHELD.
