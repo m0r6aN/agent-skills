@@ -275,3 +275,10 @@ normalizations, not weaker mounts/authorization/cleanup or source-effect scope.
 Worker/runtime/tests only; protocol/Dockerfile/docs pinned. One focused repair,
 zero new provider source calls, then complete deterministic/actualqualification
 and two fresh independent reviews. All old reservations/routes remainheld.
+
+
+Focused-repair documentation completion: after actual7APIcases/312focusedtests
+pass, replace ONLY the candidate README sentence claiming the old startup defect
+is stillcurrent and state emptyCmd null/[]equivalence. This narrowly supersedes
+its docs pin for factual status; protocol andDockerfile remainpinned. No runtime
+change or renewed tests for prose alone; exact5functional files remain qualified.
