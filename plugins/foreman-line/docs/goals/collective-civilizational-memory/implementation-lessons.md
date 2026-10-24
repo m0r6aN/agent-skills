@@ -44,3 +44,16 @@ signals; retain measured evidence and separate kernelCPU, Dockerwall and unprove
 daemon-cancellation guarantees. Parent stream-wire caps must account for SSE
 metadata overhead, not only normalized answer size; a missing capture stays
 unknown with its full reservation, even after offline client regression passes.
+
+
+### P2C additional repair review — October24
+
+A failure test must assert the required safety action even if an earlier teardown
+action throws: kill failure must not exempt a wait/reap attempt. Fail-closed public
+errors are not proof of subprocess reaping. Do not put independent teardown
+actions under a shared try if the first exception suppresses the second. Rejection
+tests need otherwise-valid inputs and validator-stage reachability assertions;
+malformed envelopes can hide removal of duplicate/depth guards. Test counters
+and all-green suites do not substitute for these independent oracles. Both fresh
+reviews caught the operator-authored assertion gap; reproduce and retain rather
+than weakening the requirement or silently adding another repair.

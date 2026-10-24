@@ -1,0 +1,209 @@
+{
+  "atUtc": "2026-10-24T12:00:38.787386+00:00",
+  "seats": {
+    "architecture": {
+      "cap": 160,
+      "outputTokens": 4096,
+      "byteBoundEstimate": 159.732375,
+      "bytes": 95285
+    },
+    "security": {
+      "cap": 160,
+      "outputTokens": 4096,
+      "byteBoundEstimate": 159.776375,
+      "bytes": 95317
+    }
+  },
+  "models": [
+    "gpt-6.1-sol",
+    "gpt-6.1-sol"
+  ],
+  "effort": "low",
+  "freshIndependentContexts": true,
+  "sameModelFamilyLimitation": true,
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_python_protocol.py": "ea9de856c1f35146aa2e515195212688e98f03510c08d9df8cf3bdc05e1f7088",
+    "src/keon/cortex/pipeline/ccm_python_worker.py": "47e7600c565a86d81d7b62f38244cbffffebd82cb609fcae90eda6952965648e",
+    "src/keon/cortex/pipeline/ccm_python_runtime.py": "f0febc4d5c7b58bd6a3e92dec00ab2988c8fe6f0c1217a748caaa9007c9f0419",
+    "tests/test_ccm_python_runtime.py": "59c1e8595b1c3dd4c03f5d233b6f5dd901fc2a74eec314ca26083702b5623c05",
+    "docker/ccm-python-parser/Dockerfile": "b8c2f008083d2d13194c7ebb76af91795181e594d5df1ffb97f060047cb07480",
+    "docs/specs/ccm-python-runtime-v1.md": "ebcd07eaf71bf4e4579f86edbda1d44ebd3f4fd2ec2644e0fd857d294345b4ad"
+  },
+  "phaseCap": 250,
+  "futureSeatConditionalOnFreshBudget": true,
+  "maxPosts": 2,
+  "retryFallback": false,
+  "tools": [],
+  "allReservationsAndAffectedHoldsIntact": true,
+  "facts": {
+    "checks": {
+      "status": "PASS_INITIAL_LOCAL",
+      "counts": {
+        "pass": 3117,
+        "skipped": 137,
+        "failure": 0,
+        "error": 0
+      },
+      "black": {
+        "exit": 0,
+        "output": "All done! \u2728 \ud83c\udf70 \u2728\n4 files would be left unchanged.\n",
+        "dockerExit": 0
+      },
+      "isort": {
+        "exit": 0,
+        "output": "",
+        "dockerExit": 0
+      },
+      "mypy": {
+        "exit": 0,
+        "output": "Success: no issues found in 3 source files\n",
+        "dockerExit": 0
+      },
+      "baselineIdentitiesRetained": true,
+      "trackedTreePinsRetained": true,
+      "allOwnedContainersAbsent": true
+    },
+    "focusedCount": 130,
+    "newFocusedCases": 71,
+    "original59FocusedDispositionsRetained": true,
+    "productionImageId": "sha256:a6a75dbc102b44c309be0fa8315e94e183de21557decb7da63b6f4aed20ba42c",
+    "moduleHashes": {
+      "src/keon/cortex/pipeline/ccm_python.py": "aa4d7d79058a4d4e364ab02519d5e97b3dc8d8ab5074872c61fdb7be1b31f9c3",
+      "src/keon/cortex/pipeline/ccm_python_protocol.py": "ea9de856c1f35146aa2e515195212688e98f03510c08d9df8cf3bdc05e1f7088",
+      "src/keon/cortex/pipeline/ccm_python_worker.py": "47e7600c565a86d81d7b62f38244cbffffebd82cb609fcae90eda6952965648e"
+    },
+    "actualProfile": {
+      "exit": 0,
+      "stderrBytes": 0,
+      "value": {
+        "python": "3.13.15",
+        "cpu": [
+          2,
+          2
+        ],
+        "as": [
+          100663296,
+          100663296
+        ],
+        "nproc": [
+          0,
+          0
+        ],
+        "modules": {
+          "ccm_python": "aa4d7d79058a4d4e364ab02519d5e97b3dc8d8ab5074872c61fdb7be1b31f9c3",
+          "ccm_python_protocol": "ea9de856c1f35146aa2e515195212688e98f03510c08d9df8cf3bdc05e1f7088",
+          "ccm_python_worker": "47e7600c565a86d81d7b62f38244cbffffebd82cb609fcae90eda6952965648e"
+        }
+      }
+    },
+    "actualAPICases": [
+      {
+        "bytes": 14,
+        "code": null,
+        "equal": true,
+        "seconds": 1.715
+      },
+      {
+        "bytes": 34,
+        "code": null,
+        "equal": true,
+        "seconds": 1.675
+      },
+      {
+        "bytes": 34,
+        "code": null,
+        "equal": true,
+        "seconds": 1.568
+      },
+      {
+        "bytes": 0,
+        "code": null,
+        "equal": true,
+        "seconds": 1.775
+      },
+      {
+        "bytes": 5,
+        "code": "invalid_syntax",
+        "equal": true,
+        "seconds": 1.638
+      },
+      {
+        "bytes": 1,
+        "code": "invalid_utf8",
+        "equal": true,
+        "seconds": 1.551
+      },
+      {
+        "bytes": 131,
+        "code": "resource_limit",
+        "equal": true,
+        "seconds": 1.756
+      }
+    ],
+    "actualFaults": [
+      {
+        "mode": "exit71",
+        "expectedCode": "isolation_failure",
+        "actualCode": "isolation_failure",
+        "pass": true,
+        "seconds": 3.24,
+        "allOwnedAbsent": true
+      },
+      {
+        "mode": "stderr",
+        "expectedCode": "invalid_response",
+        "actualCode": "invalid_response",
+        "pass": true,
+        "seconds": 1.962,
+        "allOwnedAbsent": true
+      },
+      {
+        "mode": "malformed",
+        "expectedCode": "invalid_response",
+        "actualCode": "invalid_response",
+        "pass": true,
+        "seconds": 1.601,
+        "allOwnedAbsent": true
+      },
+      {
+        "mode": "overflow",
+        "expectedCode": "invalid_response",
+        "actualCode": "invalid_response",
+        "pass": true,
+        "seconds": 2.057,
+        "allOwnedAbsent": true
+      },
+      {
+        "mode": "late",
+        "expectedCode": "deadline_exceeded",
+        "actualCode": "deadline_exceeded",
+        "pass": true,
+        "seconds": 6.143,
+        "allOwnedAbsent": true
+      }
+    ],
+    "allAPIContainersAbsent": true,
+    "allProfileContainersAbsent": true,
+    "allAPIEnvKeys": [
+      "COMSPEC",
+      "DOCKER_CONFIG",
+      "DOCKER_HOST",
+      "PATHEXT",
+      "PROGRAMDATA",
+      "SYSTEMDRIVE",
+      "SYSTEMROOT",
+      "TEMP",
+      "TMP",
+      "WINDIR"
+    ],
+    "sourceHashes": {
+      "src/keon/cortex/pipeline/ccm_python_protocol.py": "ea9de856c1f35146aa2e515195212688e98f03510c08d9df8cf3bdc05e1f7088",
+      "src/keon/cortex/pipeline/ccm_python_worker.py": "47e7600c565a86d81d7b62f38244cbffffebd82cb609fcae90eda6952965648e",
+      "src/keon/cortex/pipeline/ccm_python_runtime.py": "f0febc4d5c7b58bd6a3e92dec00ab2988c8fe6f0c1217a748caaa9007c9f0419",
+      "tests/test_ccm_python_runtime.py": "59c1e8595b1c3dd4c03f5d233b6f5dd901fc2a74eec314ca26083702b5623c05",
+      "docker/ccm-python-parser/Dockerfile": "b8c2f008083d2d13194c7ebb76af91795181e594d5df1ffb97f060047cb07480",
+      "docs/specs/ccm-python-runtime-v1.md": "ebcd07eaf71bf4e4579f86edbda1d44ebd3f4fd2ec2644e0fd857d294345b4ad"
+    },
+    "authorship": "Additional local operator repair; only runtime teardown-local rename plus synthetic tests. Other four files and all422 accepted entries preserved. Deterministic tests were run by parent, not reviewer."
+  }
+}

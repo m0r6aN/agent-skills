@@ -283,3 +283,15 @@ evidence. Local operator contribution is limited to variable typing correction
 and synthetic tests, no behavior or other-source changes. New finite250-credit
 October24 phase for2freshSolreviews, day6000/effort9000/floor1000 retained; all
 old reservations including120 and150 and affected routes held. No third repair.
+
+
+## P2C runtime additional repair reviewed — October24
+
+Sole Context coordinator stopped at additional-repair boundary, no monitor/new
+worker. See p2c-runtime-additional-repair-held-20261024.md. Typing fixed and71new
+focusedcases/130focusedtotal; full3117PASS137skip, style/typechecksPASS. Actual7API
+and5faultcasesPASS/allcontainersabsent. TwofreshSolreviews CHANGES_REQUIRED: kill
+exception skipswait, independently reproduced, and protocol tests need independent
+pre-decoder/valid-envelope oracles. Operator test wrongly permitted missingwait;
+not waived. No third repair/POST/PR/merge/admission. All prior120/150/otherholds
+and affectedroutes remain. Exactcandidate and nextrepair criteria preserved.

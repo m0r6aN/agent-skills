@@ -1,0 +1,132 @@
+{
+  "atUtc": "2026-10-24T12:06:08.845208+00:00",
+  "status": "CHANGES_REQUIRED_HELD",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_python_protocol.py": "ea9de856c1f35146aa2e515195212688e98f03510c08d9df8cf3bdc05e1f7088",
+    "src/keon/cortex/pipeline/ccm_python_worker.py": "47e7600c565a86d81d7b62f38244cbffffebd82cb609fcae90eda6952965648e",
+    "src/keon/cortex/pipeline/ccm_python_runtime.py": "f0febc4d5c7b58bd6a3e92dec00ab2988c8fe6f0c1217a748caaa9007c9f0419",
+    "tests/test_ccm_python_runtime.py": "59c1e8595b1c3dd4c03f5d233b6f5dd901fc2a74eec314ca26083702b5623c05",
+    "docker/ccm-python-parser/Dockerfile": "b8c2f008083d2d13194c7ebb76af91795181e594d5df1ffb97f060047cb07480",
+    "docs/specs/ccm-python-runtime-v1.md": "ebcd07eaf71bf4e4579f86edbda1d44ebd3f4fd2ec2644e0fd857d294345b4ad"
+  },
+  "reviews": {
+    "architecture": {
+      "verdict": "CHANGES_REQUIRED",
+      "findings": [
+        {
+          "id": "F1",
+          "severity": "medium",
+          "locator": "src/keon/cortex/pipeline/ccm_python_runtime.py::_process finally; tests/test_ccm_python_runtime.py::test_live_transport_failure_closes_and_reaps",
+          "trigger": "process.kill() raises during transport teardown.",
+          "impact": "The shared try block skips process.wait() entirely. The adapter reports isolation_failure, but never attempts to reap the exact CLI on this branch, contrary to the binding teardown requirement. Server-side container cleanup does not establish CLI termination or reaping. The new test explicitly accepts this omission through 'child.reaped or fault == \"kill\"'.",
+          "remediation": "Attempt bounded wait/reaping independently of whether kill raises, preserving isolation_failure when teardown remains unproved. Strengthen the kill-failure test to require the wait attempt rather than exempting that branch. Any runtime correction requires the owner's authorization under the bounded-repair restriction.",
+          "confidence": "high"
+        },
+        {
+          "id": "F2",
+          "severity": "medium",
+          "locator": "tests/test_ccm_python_runtime.py::test_bad_json and protocol boundary coverage",
+          "trigger": "Depth, huge-integer, float, NaN and duplicate-key fixtures are decoded as structurally invalid envelopes even if their intended strict-JSON rejection mechanisms are removed.",
+          "impact": "These tests exercise rejection but do not independently prove the advertised boundary invariants: for example, ignoring duplicate version keys still leaves the duplicate fixture missing required envelope fields; accepting the number/depth fixtures still reaches envelope rejection. Nested duplicate keys and independent symbol-count/frame-cap boundaries also lack direct assertions. This falls short of the binding requirement that each boundary invariant be independently exercised.",
+          "remediation": "Use otherwise-valid envelopes with isolated violations: duplicate required keys at envelope and symbol levels; float, constant or oversized integer values where an accepted field would otherwise pass; direct scanner assertions for pre-decoder depth/integer limits; and explicit accepted/rejected boundary pairs for frame size and symbol count. Assert the relevant validation mechanism is reached rather than relying on unrelated envelope rejection.",
+          "confidence": "high"
+        }
+      ],
+      "coverage": [
+        "Reviewed all six supplied files and the accepted library against the binding workorder, using source inspection only.",
+        "API uses exact built-in image strings and source bytes, fixed local Docker endpoints, cleared CLI environment, closed error wrappers and per-instance concurrency exclusion.",
+        "Lifecycle registers ownership before create, reconciles uncertain creation, checks known IDs and labels, validates created profiles, reconciles worker exit and gates results on cleanup.",
+        "Cleanup distinguishes narrowly whitelisted absence diagnostics from daemon errors; unproved cleanup retains opaque pending IDs and overrides prior results.",
+        "Transport uses capped nonblocking reads/writes and command teardown reserves; supplied actual observations report Windows-client API equivalence, fault rejection and owned-container absence.",
+        "Protocol validates framing, closed envelopes, digest, symbol names/order/ranges and accepted frozen wrappers. Worker verifies interpreter/library/profile and enforces the specified rlimits.",
+        "New lifecycle tests meaningfully exercise real cleanup/ownership branches through command seams, rather than replacing cleanup throughout; valid-reply failure tests and partial-I/O tests provide useful atomicity coverage.",
+        "Dockerfile pins the specified base, copies only the three intended modules, and uses the specified nonroot entrypoint; documentation preserves qualification and wall-boundary limitations."
+      ],
+      "gaps": [
+        "Supplied green checks are initial-local evidence, not the required complete exact-head/main CI, advisory/readback and acceptance chain; none is waived.",
+        "Only Windows Python 3.13.7 with Docker Desktop Linux Python 3.13.15 has actual client qualification evidence; Linux-client qualification remains unproved, not an implementation defect.",
+        "Fixed fault images replace mainworker and are not production candidates. Passive API observation is not behavior substitution.",
+        "No actual daemon-outage recovery proof or hard realtime cancellation guarantee is supplied. Immutable-image authentication remains the trusted operator's responsibility; labels alone are insufficient.",
+        "Independent contexts remain same-family Sol review, not a multi-family council. No production, import or affected-route authorization is implied."
+      ]
+    },
+    "security": {
+      "verdict": "CHANGES_REQUIRED",
+      "findings": [
+        {
+          "id": "F1",
+          "severity": "medium",
+          "locator": "src/keon/cortex/pipeline/ccm_python_runtime.py::_process finally; tests/test_ccm_python_runtime.py::test_live_transport_failure_closes_and_reaps",
+          "trigger": "process.kill() raises during teardown, including a possible process-exit race or interruption.",
+          "impact": "kill() and wait() share one try block, so a kill exception skips wait entirely. The adapter fails closed publicly, but does not reap the exact Docker CLI or establish its termination, violating the mandatory subprocess lifecycle requirement. The new test explicitly permits this with '(child.reaped or fault == \"kill\")', despite its name claiming reaping.",
+          "remediation": "Require an independent bounded wait/reap attempt after a failed kill, preserving isolation_failure when termination cannot be established. Strengthen the kill-failure test to assert that wait is attempted, including an already-exited race. Any runtime correction requires explicit owner disposition under the frozen repair limits.",
+          "confidence": "high"
+        }
+      ],
+      "coverage": [
+        "Reviewed all six exact supplied files, the accepted library, binding workorder and supplied actual observations as source/data only; no execution performed.",
+        "Hostile source remains exact built-in bytes, bounded before Docker activity, and travels through stdin rather than arguments, environment or source files. The accepted library parses declarations without executing or importing source.",
+        "Dockerfile pins the base digest, copies only the three specified modules, uses the required nonroot identity and isolated entrypoint. Runtime checks immutable image configuration; labels do not authenticate provenance.",
+        "Fixed local client/endpoints, cleared child environment, empty adapter-owned Docker configuration, network-none/read-only container settings and worker cgroup/mount/rlimit checks implement the specified isolation boundary.",
+        "Wire validation covers framing/EOF, bounded payloads, duplicate keys, depth and integer-token guards, closed envelopes, digest, symbol types/ranges/order and frozen accepted wrappers. Public failure paths sanitize ambient exception chaining.",
+        "Ownership reconciliation checks random name, exact labels and known ID; cleanup distinguishes narrowly recognized absence from daemon errors, refuses mismatches and retains pending identifiers when absence is unproved.",
+        "Added cleanup tests exercise real _cleanup, _inspect and ownership logic through command seams, including uncertain create, mismatches, interrupts and absence failures. Nonblocking transport tests exercise partial writes, would-block, overflow and teardown branches; F1 identifies an explicitly weakened assertion.",
+        "Supplied observations report passing local suites/style/type checks, actual Windows-client/Linux-worker API equivalence, fixed fault outcomes and owned-container absence. Passive transport observation does not itself change API behavior."
+      ],
+      "gaps": [
+        "Linux-client operation is unqualified, not an established implementation defect. Supplied actual host evidence is Windows Python 3.13.7 with Docker Desktop Linux Python 3.13.15.",
+        "No actual daemon-outage recovery or daemon sabotage evidence is supplied. Pending cleanup retention is not removal proof; cancellation and Python alarms do not establish hard realtime guarantees. Kernel CPU and parent Docker wall limits are separate.",
+        "Fixed fault images replace mainworker and retain profile labels intentionally; they are fault fixtures, not authenticated production candidates.",
+        "Exact-head/main CI, advisory/readback, coordinator lint, Step0/Gate2 and trusted-operator qualification of the immutable image remain required parent gates; initial local green observations do not waive them.",
+        "Same-family independent reviews are not a multi-family council. This review does not authorize production, imports or affected routes."
+      ]
+    }
+  },
+  "sameModelFamilyLimitation": true,
+  "sourceAuthorship": "Local operator additional repair, external fresh source-only Sol reviews; no autonomous shell worker or model source-generation request",
+  "typingFindingClosed": true,
+  "ownershipCleanupTransportCoverageImproved": "71newfocusedcases added; original59 retained; allchecksPASS but no waiver of newly reproduced findings",
+  "dispositions": [
+    {
+      "finding": "F1 both reviewers",
+      "decision": "ACCEPT_BLOCKER",
+      "reproduction": "kill raises fixed ProcessLookupError exit race; wait mock would return0, but actual _process calls kill1/wait0, closesallpipes and raises isolation_failure",
+      "scopeBoundary": "Changing runtime teardown control flow goes beyond authorized typing-only runtime edit; no third repair admitted",
+      "next": "Always attempt bounded wait independently after failed kill, including exited race and zero remaining-time nonblocking reap; preserve isolation_failure for unproved teardown. Test wait attempted instead of exempting kill branch."
+    },
+    {
+      "finding": "Architecture F2",
+      "decision": "ACCEPT_TEST_COVERAGE_BLOCKER",
+      "reproduction": "Existing duplicate-key fixture still rejected with duplicate validator bypassed, while otherwise-valid duplicate envelope is accepted. Depth fixture rejects with scanner bypassed but decoder is now reached, showing existing test does not establish pre-decoder guard. All mutation confined to in-memory mocks in isolated no-network container; no file changes",
+      "next": "Otherwise-valid envelope/symbol duplicate violations; direct pre-decoder depth/integer probes with reachability assertions and accepted/rejected size/count boundary pairs. No stress/flood or relaxed thresholds."
+    }
+  ],
+  "reproduction": {
+    "killFailure": {
+      "publicInternalCode": "isolation_failure",
+      "killAttempts": 1,
+      "waitAttempts": 0,
+      "allPipesClosed": true,
+      "fixedExitRaceWaitWouldReturn": 0
+    },
+    "testBlindSpot": {
+      "existingDuplicateFixtureRejectsWithGuardBypassed": true,
+      "OtherwiseValidDuplicateEnvelopeAcceptedWithGuardBypassed": true,
+      "depthFixtureRejectsWithScanBypassed": true,
+      "decoderCallsNormally": 0,
+      "decoderCallsWithScanBypassed": 1
+    },
+    "sourceFilesChanged": false,
+    "providerRequests": 0,
+    "atUtc": "2026-10-24T12:04:16.475965+00:00",
+    "status": "FINDINGS_REPRODUCED",
+    "allOwnedContainersAbsent": true
+  },
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "thirdRepairAllowed": false,
+  "moreProviderDispatchAllowed": false,
+  "sourcePR": null,
+  "merge": false,
+  "productionImportAdmission": false
+}
