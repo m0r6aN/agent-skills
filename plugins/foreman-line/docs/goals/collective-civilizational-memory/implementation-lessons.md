@@ -93,3 +93,13 @@ not full import readiness or held credential-route clearance.
   unverified. Preserve exact reviewed head and stop reruns; local tests/reviews
   do not authorize bypassing the green merge chain. GenSpark credits do not
   settle GitHubActions billing.
+
+
+## Git snapshot CI closure October24
+
+- After owner billing resolution, rerun the existing push AND PR workflows on
+  the immutable reviewed head, then verify all checks and main/deployment exact
+  merge. Preserve initial billing annotations; do not replace them with success
+  or spend on unnecessary source changes/model re-review. Disposition: installed
+  in this parcel CI-resumption/StageF evidence and current loop, narrative-only
+  for goal closure; no new runtime behavior or generic CI infrastructure.

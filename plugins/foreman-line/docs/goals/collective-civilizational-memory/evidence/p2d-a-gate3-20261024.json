@@ -1,0 +1,387 @@
+{
+  "atUtc": "2026-10-24T16:55:24.768327+00:00",
+  "gate3": "APPROVED_UNDER_EXISTING_STANDING_OWNER_AUTHORITY_EXACT_GREEN_CHAIN",
+  "ownerResume": "Owner reports GitHub issue should now be resolved; bounded rerun2 of each prior workflow independently confirms CI success",
+  "head": "9fce7a97e0efedd77ce133274689ef8928774a51",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_git.py": "49a5d65632638ee2adcce0fabb5a9de19c44127ac99e92db8831bec453582b32",
+    "tests/test_ccm_git.py": "988ce5b85d8f1759cff155d583d5b3d3a64b66d1c5e20b63bebdc7085f22d945",
+    "docs/specs/ccm-git-snapshot-v1.md": "db246bf1ea15929a987288699ce9e4e27da17d638643be844f5c0a24c7deb586"
+  },
+  "pr": {
+    "baseRefName": "main",
+    "headRefOid": "9fce7a97e0efedd77ce133274689ef8928774a51",
+    "isDraft": false,
+    "mergeStateStatus": "CLEAN",
+    "mergeable": "MERGEABLE",
+    "state": "OPEN",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:52:24Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120930012804",
+        "name": "Import Gate (OSS must not reference governed)",
+        "startedAt": "2026-10-24T16:52:16Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:52:19Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120930002693",
+        "name": "Import Gate (OSS must not reference governed)",
+        "startedAt": "2026-10-24T16:52:14Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:53:28Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120930012715",
+        "name": "Unit Tests (3.10)",
+        "startedAt": "2026-10-24T16:52:16Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:53:28Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120930002828",
+        "name": "Unit Tests (3.10)",
+        "startedAt": "2026-10-24T16:52:14Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:53:19Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120930012712",
+        "name": "Unit Tests (3.11)",
+        "startedAt": "2026-10-24T16:52:16Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:53:18Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120930002706",
+        "name": "Unit Tests (3.11)",
+        "startedAt": "2026-10-24T16:52:14Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:53:28Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120930012576",
+        "name": "Unit Tests (3.12)",
+        "startedAt": "2026-10-24T16:52:16Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:53:20Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120930002687",
+        "name": "Unit Tests (3.12)",
+        "startedAt": "2026-10-24T16:52:13Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:53:01Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120930012710",
+        "name": "Lint + Type Check",
+        "startedAt": "2026-10-24T16:52:16Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:53:07Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120930002442",
+        "name": "Lint + Type Check",
+        "startedAt": "2026-10-24T16:52:13Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:53:59Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120930284448",
+        "name": "Benchmark (fake provider)",
+        "startedAt": "2026-10-24T16:53:31Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:54:00Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120930283487",
+        "name": "Benchmark (fake provider)",
+        "startedAt": "2026-10-24T16:53:31Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:53:51Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120930284333",
+        "name": "Proof Summary",
+        "startedAt": "2026-10-24T16:53:31Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:53:56Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120930283499",
+        "name": "Proof Summary",
+        "startedAt": "2026-10-24T16:53:31Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:54:01Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120930284481",
+        "name": "Tenant Isolation Proof",
+        "startedAt": "2026-10-24T16:53:32Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:54:00Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120930283586",
+        "name": "Tenant Isolation Proof",
+        "startedAt": "2026-10-24T16:53:31Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      }
+    ],
+    "url": "https://github.com/Keon-Systems/keon-cortex/pull/96"
+  },
+  "runs": [
+    {
+      "attempt": 2,
+      "conclusion": "success",
+      "event": "push",
+      "headSha": "9fce7a97e0efedd77ce133274689ef8928774a51",
+      "jobs": [
+        {
+          "completedAt": "2026-10-24T16:53:07Z",
+          "conclusion": "success",
+          "databaseId": 120930002442,
+          "name": "Lint + Type Check",
+          "startedAt": "2026-10-24T16:52:13Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120930002442"
+        },
+        {
+          "completedAt": "2026-10-24T16:53:20Z",
+          "conclusion": "success",
+          "databaseId": 120930002687,
+          "name": "Unit Tests (3.12)",
+          "startedAt": "2026-10-24T16:52:13Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120930002687"
+        },
+        {
+          "completedAt": "2026-10-24T16:52:19Z",
+          "conclusion": "success",
+          "databaseId": 120930002693,
+          "name": "Import Gate (OSS must not reference governed)",
+          "startedAt": "2026-10-24T16:52:14Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120930002693"
+        },
+        {
+          "completedAt": "2026-10-24T16:53:18Z",
+          "conclusion": "success",
+          "databaseId": 120930002706,
+          "name": "Unit Tests (3.11)",
+          "startedAt": "2026-10-24T16:52:14Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120930002706"
+        },
+        {
+          "completedAt": "2026-10-24T16:53:28Z",
+          "conclusion": "success",
+          "databaseId": 120930002828,
+          "name": "Unit Tests (3.10)",
+          "startedAt": "2026-10-24T16:52:14Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120930002828"
+        },
+        {
+          "completedAt": "2026-10-24T16:54:00Z",
+          "conclusion": "success",
+          "databaseId": 120930283487,
+          "name": "Benchmark (fake provider)",
+          "startedAt": "2026-10-24T16:53:31Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120930283487"
+        },
+        {
+          "completedAt": "2026-10-24T16:53:56Z",
+          "conclusion": "success",
+          "databaseId": 120930283499,
+          "name": "Proof Summary",
+          "startedAt": "2026-10-24T16:53:31Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120930283499"
+        },
+        {
+          "completedAt": "2026-10-24T16:54:00Z",
+          "conclusion": "success",
+          "databaseId": 120930283586,
+          "name": "Tenant Isolation Proof",
+          "startedAt": "2026-10-24T16:53:31Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120930283586"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556",
+      "workflowName": "CI"
+    },
+    {
+      "attempt": 2,
+      "conclusion": "success",
+      "event": "pull_request",
+      "headSha": "9fce7a97e0efedd77ce133274689ef8928774a51",
+      "jobs": [
+        {
+          "completedAt": "2026-10-24T16:53:28Z",
+          "conclusion": "success",
+          "databaseId": 120930012576,
+          "name": "Unit Tests (3.12)",
+          "startedAt": "2026-10-24T16:52:16Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120930012576"
+        },
+        {
+          "completedAt": "2026-10-24T16:53:01Z",
+          "conclusion": "success",
+          "databaseId": 120930012710,
+          "name": "Lint + Type Check",
+          "startedAt": "2026-10-24T16:52:16Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120930012710"
+        },
+        {
+          "completedAt": "2026-10-24T16:53:19Z",
+          "conclusion": "success",
+          "databaseId": 120930012712,
+          "name": "Unit Tests (3.11)",
+          "startedAt": "2026-10-24T16:52:16Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120930012712"
+        },
+        {
+          "completedAt": "2026-10-24T16:53:28Z",
+          "conclusion": "success",
+          "databaseId": 120930012715,
+          "name": "Unit Tests (3.10)",
+          "startedAt": "2026-10-24T16:52:16Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120930012715"
+        },
+        {
+          "completedAt": "2026-10-24T16:52:24Z",
+          "conclusion": "success",
+          "databaseId": 120930012804,
+          "name": "Import Gate (OSS must not reference governed)",
+          "startedAt": "2026-10-24T16:52:16Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120930012804"
+        },
+        {
+          "completedAt": "2026-10-24T16:53:51Z",
+          "conclusion": "success",
+          "databaseId": 120930284333,
+          "name": "Proof Summary",
+          "startedAt": "2026-10-24T16:53:31Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120930284333"
+        },
+        {
+          "completedAt": "2026-10-24T16:53:59Z",
+          "conclusion": "success",
+          "databaseId": 120930284448,
+          "name": "Benchmark (fake provider)",
+          "startedAt": "2026-10-24T16:53:31Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120930284448"
+        },
+        {
+          "completedAt": "2026-10-24T16:54:01Z",
+          "conclusion": "success",
+          "databaseId": 120930284481,
+          "name": "Tenant Isolation Proof",
+          "startedAt": "2026-10-24T16:53:32Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120930284481"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809",
+      "workflowName": "CI"
+    }
+  ],
+  "checksPassed": 16,
+  "oldBillingFailureEvidencePreserved": true,
+  "sourceUnchangedSinceReviews": true,
+  "noBypassOrAdmin": true,
+  "newProviderRequests": 0,
+  "allReservationsHeld": true,
+  "full110SourceBookingHeld": true,
+  "affectedRoutes": "HELD",
+  "nativePrivatePi": "HELD",
+  "mergeRequested": true,
+  "merged": {
+    "headRefOid": "9fce7a97e0efedd77ce133274689ef8928774a51",
+    "mergeCommit": {
+      "oid": "0aec0e24af450032100c292de0e3e2879708a266"
+    },
+    "mergedAt": "2026-10-24T16:55:29Z",
+    "state": "MERGED",
+    "url": "https://github.com/Keon-Systems/keon-cortex/pull/96"
+  },
+  "sourceAndMergeTreesEqual": true,
+  "allThreeReviewedCommittedMergedBytesEqual": true
+}

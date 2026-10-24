@@ -2,6 +2,12 @@
 
 ## Current execution addendum — October24 NY
 
+P2D-A Git object snapshot validation is now accepted: PR96 merged0aec0e24af450032100c292de0e3e2879708a266,
+all16sourcechecks and exactmainCI/deployment green. See
+p2d-a-acceptance-20261024.md. Actual local repository acquisition remainsP2D-B
+and unqualified; no bulk import/trust admission. No new model spend during
+CIresumption; all reservations and affected routes retained.
+
 P2C pure declaration source and restricted runtime adapter are accepted: PR94
 5cb07ba and PR95 f05f209, with exact-source independent reviews and source/main
 CI green. See p2c-runtime-acceptance-20261024.md. This closes only the parser
@@ -248,3 +254,18 @@ booking plus alloldholds retained. Native/privatePi/affectedroutes held.
 Same solecoordinator stops at externalCIhold, no worker/monitor. Next:resolve
 GitHubActions accountcondition, rerun both exactheadworkflows, greenGate3/mainCI
 thenStageF; no newsource/providercall needed. FullContext/import notready.
+
+
+## P2D-A Git object snapshot accepted — October24
+
+PR96 source9fce7a97e0efedd77ce133274689ef8928774a51 merged0aec0e24af450032100c292de0e3e2879708a266. All16exact-headchecks on
+both original workflows attempt2 green; exact merged-mainCI/deployment green.
+153focused/3342fullPASS137skip,428priorentries retained,2freshSolreviewsPASS/PASS,
+14negativecontrolcasesPASS. Workorderstatus-onlyarchived, StageFclosed. See
+p2d-a-acceptance-20261024.md. This supersedes prior externalCIhold only; original
+billingfailure evidence preserved. No sourcechange/newmodelcall/newGenSpark
+credits or ledger changes during resumption. Allreservations includingfull110
+source/old120/150 and affected/native/privatePi routes stayHELD. Same sole
+coordinator at parcelboundary; cleanworktree/pushedbranch retained, no monitor.
+NextP2D-B restricted localbare acquisition stillunqualified; no actualrepository
+or personalcorpus imported. Civic/extractor/P3-P8/fullintegration/import open.
