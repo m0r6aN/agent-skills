@@ -510,6 +510,139 @@ test('A2(b)(3) Contract B — the home package is excluded from adjudication wit
   for (const f of contractBValueSignal) assert.ok(!f.includes(ROUTING_POLICY_HOME))
 })
 
+const contractBExpectedUndeclared = [
+  'plugins/foreman-line/authority-registry/src/generate.ts',
+  'plugins/foreman-line/authority-registry/src/r34-migrations.ts',
+  'plugins/foreman-line/authority-registry/src/validate.ts',
+  'plugins/foreman-line/dispatch/src/approval-cli/index.ts',
+  'plugins/foreman-line/dispatch/src/pi-entry/index.ts',
+  'plugins/foreman-line/dispatch/src/routing-cache.ts',
+  'plugins/foreman-line/dispatch/src/routing-eval/index.ts',
+  'plugins/foreman-line/internal-review-launch/src/schemas.ts',
+  'plugins/foreman-line/internal-review-launch/src/types.ts',
+  'plugins/foreman-line/ops-console/src/frontmatter.ts',
+  'plugins/foreman-line/ops-console/src/project.ts',
+  'plugins/foreman-line/ops-console/src/scan.ts',
+  'plugins/foreman-line/project-scaffold/src/equivalent-layout.ts',
+  'plugins/foreman-line/receipts/src/types.ts',
+  'plugins/foreman-line/receipts/src/validator.ts',
+  'plugins/foreman-line/skill-injection/src/cli.ts',
+  'plugins/foreman-line/spec-linter/src/grandfather.ts',
+  'plugins/foreman-line/spec-linter/src/index.ts',
+  'plugins/foreman-line/spec-linter/src/testing.ts',
+  'plugins/foreman-line/verification/src/d19-audit.ts',
+  'plugins/foreman-line/verification/src/pipeline/index.ts',
+  'plugins/foreman-line/verification/src/pipeline/stage-d-finalization.ts',
+].sort()
+
+const fixedEvidenceRulings = [
+  'plugins/foreman-line/authority-registry/src/r34-migrations.ts',
+  'plugins/foreman-line/verification/src/d19-audit.ts',
+] as const
+
+function assertContractBAccounting(
+  surfaced: ReadonlySet<string>,
+  declared: ReadonlySet<string>,
+  rulings: readonly string[],
+): void {
+  const undeclared = [...surfaced].filter((file) => !declared.has(file)).sort()
+  assert.deepEqual(undeclared, rulings)
+  for (const file of fixedEvidenceRulings) assert.equal(declared.has(file), false)
+}
+
+// A narrow source-basis tripwire, not a parser or semantic completeness proof.
+// All vocabulary matches must stay inside the identified evidence properties.
+function assertFixedEvidenceBasis(source: string, kind: 'r34' | 'd19'): void {
+  const literal = String.raw`(?:'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*")`
+  const property = kind === 'r34' ? 'normalized(?:Excerpt|Statement)' : 'value'
+  const expression = new RegExp(
+    `\\b${property}:\\s*${literal}(?:\\s*\\+\\s*REPO_LITERAL\\s*\\+\\s*${literal})?\\s*,`,
+    'g',
+  )
+  const dataStart = source.indexOf(
+    kind === 'd19' ? 'const R34_DATA_PINS = [' : 'export const R34_ITEM_MIGRATIONS:',
+  )
+  const dataEnd = source.indexOf(
+    kind === 'd19' ? '] as const' : 'export const R34_AUDIT_MIGRATIONS:',
+    dataStart,
+  )
+  assert.ok(dataStart >= 0 && dataEnd > dataStart)
+  const ranges = [...source.matchAll(expression)].filter(
+    (match) => match.index >= dataStart && match.index + match[0].length <= dataEnd,
+  )
+  const hits = [
+    ...source.matchAll(
+      /boilerplate|standard-feature|architecture\/risk|implementation\/standard|ROUTING_CLASSES/g,
+    ),
+  ]
+  assert.equal(hits.length, kind === 'r34' ? 10 : 5)
+  for (const hit of hits) {
+    assert.ok(
+      ranges.some(
+        (range) =>
+          hit.index >= range.index && hit.index + hit[0].length <= range.index + range[0].length,
+      ),
+    )
+  }
+}
+
+for (const [index, file] of fixedEvidenceRulings.entries()) {
+  test(`PAN-CI5 fixed evidence remains surfaced and undeclared: ${file}`, () => {
+    assert.ok(contractBValueSignal.includes(file))
+    assert.equal(contractBFieldSignal.includes(file), false)
+    assert.equal(contractBHomePackageHits.includes(file), false)
+    assert.equal(contractB.readers.flatMap(readerFiles).includes(file), false)
+    const source = readFileSync(join(repoRoot, file), 'utf8')
+    const kind = index === 0 ? 'r34' : 'd19'
+    assertFixedEvidenceBasis(source, kind)
+    const liveUse = '\nconst liveRoute = "architecture/risk";\n'
+    assert.throws(() => assertFixedEvidenceBasis(source + liveUse, kind))
+    // Preserve count but move one match outside evidence: the context check
+    // independently refuses it, even when the cardinality remains unchanged.
+    const moved = source.replace('architecture/risk', 'evidence-only')
+    assert.throws(() => assertFixedEvidenceBasis(moved + liveUse, kind))
+    const fakeProperty = '\nconst live = { normalizedExcerpt: "architecture/risk", };\n'
+    assert.throws(() => assertFixedEvidenceBasis(moved + fakeProperty, kind))
+  })
+
+  test(`PAN-CI5 accounting refuses omitted or live-reader ruling: ${file}`, () => {
+    const surfaced = new Set([...contractBFieldSignal, ...contractBValueSignal])
+    const declared = new Set(contractB.readers.flatMap(readerFiles))
+    assertContractBAccounting(surfaced, declared, contractBExpectedUndeclared)
+    assert.throws(() =>
+      assertContractBAccounting(
+        surfaced,
+        declared,
+        contractBExpectedUndeclared.filter((ruling) => ruling !== file),
+      ),
+    )
+    assert.throws(() =>
+      assertContractBAccounting(
+        surfaced,
+        new Set([...declared, file]),
+        contractBExpectedUndeclared,
+      ),
+    )
+    assert.throws(() =>
+      assertContractBAccounting(
+        surfaced,
+        new Set([...declared, file]),
+        contractBExpectedUndeclared.filter((ruling) => ruling !== file),
+      ),
+    )
+  })
+}
+
+test('PAN-CI5 accounting refuses an unknown surfaced file', () => {
+  assert.throws(() =>
+    assertContractBAccounting(
+      new Set([...contractBFieldSignal, ...contractBValueSignal, 'unknown/src/route.ts']),
+      new Set(contractB.readers.flatMap(readerFiles)),
+      contractBExpectedUndeclared,
+    ),
+  )
+})
+
 test('A2(b)(2)/(4) Contract B — every surfaced file is adjudicated; both signals; residual blindness stated', () => {
   const declared = new Set(
     contractB.readers.flatMap((r) => readerFiles(r).map(normalizeSeparators)),
@@ -686,28 +819,12 @@ test('A2(b)(2)/(4) Contract B — every surfaced file is adjudicated; both signa
   // projection/tests/helpers.ts — NOT readers under lockstep either (see the
   // Contract A ruling table above for the identical reasoning; the same four
   // files were reconsidered for both contracts).
-  const expectedUndeclared = [
-    'plugins/foreman-line/authority-registry/src/generate.ts',
-    'plugins/foreman-line/authority-registry/src/validate.ts',
-    'plugins/foreman-line/dispatch/src/approval-cli/index.ts',
-    'plugins/foreman-line/dispatch/src/pi-entry/index.ts',
-    'plugins/foreman-line/dispatch/src/routing-cache.ts',
-    'plugins/foreman-line/dispatch/src/routing-eval/index.ts',
-    'plugins/foreman-line/internal-review-launch/src/schemas.ts',
-    'plugins/foreman-line/internal-review-launch/src/types.ts',
-    'plugins/foreman-line/ops-console/src/frontmatter.ts',
-    'plugins/foreman-line/ops-console/src/project.ts',
-    'plugins/foreman-line/ops-console/src/scan.ts',
-    'plugins/foreman-line/project-scaffold/src/equivalent-layout.ts',
-    'plugins/foreman-line/receipts/src/types.ts',
-    'plugins/foreman-line/receipts/src/validator.ts',
-    'plugins/foreman-line/skill-injection/src/cli.ts',
-    'plugins/foreman-line/spec-linter/src/grandfather.ts',
-    'plugins/foreman-line/spec-linter/src/index.ts',
-    'plugins/foreman-line/spec-linter/src/testing.ts',
-    'plugins/foreman-line/verification/src/pipeline/index.ts',
-    'plugins/foreman-line/verification/src/pipeline/stage-d-finalization.ts',
-  ].sort()
+  // PAN-CI5: r34-migrations.ts's ten normalized excerpt/statement matches and
+  // d19-audit.ts's five R34_DATA_PINS values preserve fixed source evidence.
+  // ADD a routing class: neither evidence body changes, neither enumerates the
+  // live vocabulary. Both remain surfaced, adjudicated, and UNDECLARED.
+  const expectedUndeclared = contractBExpectedUndeclared
+  assertContractBAccounting(surfaced, declared, expectedUndeclared)
   assert.deepEqual(
     undeclared,
     expectedUndeclared,

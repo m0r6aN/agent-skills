@@ -30,7 +30,7 @@
 // `::`, bidi overrides neutralized; bounded); waiver matching uses bounded
 // linear-time substring checks.
 
-import { spawnSync } from 'node:child_process'
+import { execFileSync, spawnSync } from 'node:child_process'
 import { appendFileSync, lstatSync, readFileSync, readdirSync, statSync, writeFileSync, mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { createHash } from 'node:crypto'
@@ -1058,6 +1058,64 @@ export function buildAnnotation(level, name, check, layer = null) {
 
 // ─── per-shard executor (AC4) ──────────────────────────────────────────────
 
+// PAN-CI5 diagnostics are never terminal outcomes or an aggregate input.
+export const PROGRESS_LIMITS = Object.freeze({ events: 10000, bytes: 4 * 1024 * 1024, recordBytes: 256 * 1024, names: 512 })
+export const PROGRESS_FILES = Object.freeze(['events.jsonl', 'checkpoint.json'])
+const progressText = (value, cap = 120) => sanitizeField(value, cap).slice(0, cap)
+const progressNames = (names) => names.slice(0, PROGRESS_LIMITS.names).map((name) => progressText(name))
+
+/** Synchronous append + fsync before return; checkpoint is supplemental. A
+ * truncated checkpoint or start without finish means incomplete, never pass.
+ * No heartbeat can run while spawnSync is blocked. Bounds stop diagnostics,
+ * not package work; the caller separately records delivery failure. */
+export function createProgressSink({ directory, io = { mkdirSync, writeFileSync, appendFileSync } }) {
+  let events = 0
+  let bytes = 0
+  let initialized = false
+  return (record) => {
+    const line = `${JSON.stringify(record)}\n`
+    const size = Buffer.byteLength(line)
+    if (events >= PROGRESS_LIMITS.events || size > PROGRESS_LIMITS.recordBytes || bytes + size > PROGRESS_LIMITS.bytes) {
+      throw new ForemanCiError('Diagnostic capacity exhausted')
+    }
+    // Reserve before any I/O: a partially written failed append still consumes
+    // its conservative byte/event allowance; uncertainty never replenishes it.
+    events += 1
+    bytes += size
+    if (!initialized) {
+      io.mkdirSync(directory, { recursive: true })
+      // Refuse stale files rather than mix attempts. Both filenames are fixed.
+      io.writeFileSync(join(directory, PROGRESS_FILES[0]), '', { flag: 'wx', flush: true })
+      io.writeFileSync(join(directory, PROGRESS_FILES[1]), '', { flag: 'wx', flush: true })
+      initialized = true
+    }
+    io.appendFileSync(join(directory, PROGRESS_FILES[0]), line, { flush: true })
+    io.writeFileSync(join(directory, PROGRESS_FILES[1]), line, { flush: true })
+  }
+}
+
+/** Actual local Git identity and independently hashed inputs; unavailable is
+ * explicit. GITHUB_SHA is not substituted for an observed head/tree. */
+export function progressSource(root, git = execFileSync, read = readFileSync) {
+  const revision = (ref) => {
+    try {
+      const value = git('git', ['rev-parse', '--verify', ref], {
+        cwd: root, encoding: 'utf8', shell: false, timeout: 5000, maxBuffer: 4096,
+        env: { ...process.env, GIT_NO_LAZY_FETCH: '1', GIT_TERMINAL_PROMPT: '0' },
+        stdio: ['ignore', 'pipe', 'pipe'],
+      }).trim()
+      return /^[0-9a-f]{40}$/.test(value) ? value : null
+    } catch { return null }
+  }
+  const files = ['scripts/foreman-line-ci.mjs', '.github/workflows/foreman-line-ci.yml', 'scripts/ci-reuse.mjs', READ_GRAPH_PATH.join('/')]
+  const head = revision('HEAD')
+  const tree = head === null ? null : revision(head + '^{tree}')
+  return { head, tree, hashes: files.map((path) => {
+    try { return { path, sha256: sha256Hex(read(join(root, path))) } }
+    catch { return { path, sha256: null } }
+  }) }
+}
+
 /**
  * One shard of the sweep: install dependencies for ALL discovered packages
  * (per-shard full install), then run exactly {test, typecheck, lint} for this
@@ -1082,6 +1140,9 @@ export function runShard({
   readGraph = null,
   annotate = null,
   costTable = COST_TABLE,
+  progress = null,
+  sourceIdentity = null,
+  monotonic = () => performance.now(),
 } = {}) {
   if (typeof npmCli !== 'string' || npmCli.length === 0) {
     throw new ForemanCiError('Refusing shard run: npmCli must be a non-empty string')
@@ -1102,7 +1163,43 @@ export function runShard({
     ]),
   )
 
+  let progressSequence = 0
+  let invocation = 0
+  let progressFailures = 0
+  let lastElapsed = 0
+  const origin = monotonic()
+  const elapsed = () => {
+    const observed = monotonic() - origin
+    if (Number.isFinite(observed)) lastElapsed = Math.max(lastElapsed, Math.max(0, observed))
+    return Math.round(lastElapsed * 1000) / 1000
+  }
+  function diagnostic(type, fields = {}) {
+    if (typeof progress !== 'function') return
+    const record = { schema: 'foreman-ci-progress.v1', diagnosticOnly: true,
+      sequence: ++progressSequence, type, shard: shardIndex, shardCount,
+      elapsedMs: elapsed(), ...fields }
+    try { progress(record) } catch { progressFailures += 1 }
+  }
+  const identity = sourceIdentity ?? {}
+  const hash = (v) => typeof v === 'string' && /^[0-9a-f]{40}$/.test(v) ? v : null
+  diagnostic('plan', {
+    source: { head: hash(identity.head), tree: hash(identity.tree),
+      hashes: (Array.isArray(identity.hashes) ? identity.hashes : []).slice(0, 8).map((entry) => ({
+        path: progressText(entry.path, 200),
+        sha256: typeof entry.sha256 === 'string' && /^[0-9a-f]{64}$/.test(entry.sha256) ? entry.sha256 : null,
+      })) },
+    discovered: progressNames(names), discoveredCount: names.length,
+    assigned: progressNames(mine), assignedCount: mine.length,
+    namesSha256: sha256Hex(JSON.stringify(names)), assignedSha256: sha256Hex(JSON.stringify(mine)),
+    namesTruncated: names.length > PROGRESS_LIMITS.names || mine.length > PROGRESS_LIMITS.names,
+    costMissing: progressNames(costTableMissing(names, costTable)),
+    costMissingCount: costTableMissing(names, costTable).length,
+  })
+
   function invoke(name, args) {
+    const pair = { invocation: ++invocation, phase: args[0] === 'ci' ? 'install' : 'check', package: progressText(name), check: args[0] === 'ci' ? 'ci' : args[1] }
+    const started = elapsed()
+    diagnostic('start', pair)
     try {
       const result = spawn(process.execPath, [npmCli, ...args], {
         cwd: packageDir(root, name),
@@ -1116,8 +1213,14 @@ export function runShard({
       if (result?.signal) kind = 'signal'
       else if (result?.error || result === undefined || result === null || typeof result.status !== 'number') kind = 'error'
       const status = kind === 'exit' && result.status === 0 ? 'pass' : 'fail'
-      return { status, kind, output: `${result?.stdout ?? ''}${result?.stderr ?? ''}` }
+      const output = `${result?.stdout ?? ''}${result?.stderr ?? ''}`
+      diagnostic('finish', { ...pair, durationMs: Math.max(0, elapsed() - started), status: Number.isFinite(result?.status) ? result.status : null,
+        signal: typeof result?.signal === 'string' ? progressText(result.signal, 32) : null,
+        errorClass: result?.error ? 'spawn-error' : kind === 'error' ? 'missing-status' : null,
+        kind, passed: status === 'pass' })
+      return { status, kind, output }
     } catch (cause) {
+      diagnostic('finish', { ...pair, durationMs: Math.max(0, elapsed() - started), status: null, signal: null, errorClass: 'spawn-threw', kind: 'error', passed: false })
       // Failure classification contract (kept): a throwing spawn fails closed
       // as `fail`; the typed error stays attached to the seam result and no
       // untrusted error text ever reaches the outcomes or the report.
@@ -1160,6 +1263,7 @@ export function runShard({
   // The order is fixed here, before any check runs, from the changed paths and
   // the pin alone (no check output is ever read to decide it).
   const ordering = computeShardOrder({ mine, changedPaths, readGraph })
+  diagnostic('phase2', { order: progressNames(ordering.order), orderCount: ordering.order.length, mode: progressText(ordering.mode, 32), reason: progressText(ordering.reason, 80), installsOk })
   // CFF-P1 AC5 (D8): shard-early-exit at the first NON-WAIVED failure. Every
   // unreached pair keeps its pre-populated `skipped` (reconcile fails those as
   // `unexpected-skip`); the artifact is still built from `records` and the
@@ -1218,6 +1322,7 @@ export function runShard({
     ordering: { mode: ordering.mode, reason: ordering.reason, order: [...ordering.order], proximate: [...ordering.proximate] },
     earlyExit,
     emitFailures: [...emitFailures],
+    diagnostics: { deliveryFailures: progressFailures, eventsAttempted: progressSequence, complete: progressFailures === 0 && typeof progress === 'function' },
     artifact: buildShardOutcomes({
       shardIndex,
       shardCount,
@@ -1548,7 +1653,28 @@ export async function runCli(argv, env = process.env, deps = {}) {
     } catch {
       pin = { doc: null, reason: 'pin-unreadable' }
     }
+    const durableProgress = deps.progress ?? createProgressSink({ directory: join(repoRoot, 'shard-progress') })
+    let logBytes = 0
+    let logEvents = 0
+    const progress = (record) => {
+      let failed = false
+      try { durableProgress(record) } catch { failed = true }
+      const line = 'ci-progress ' + JSON.stringify(record) + String.fromCharCode(10)
+      const bytes = Buffer.byteLength(line)
+      // Console delivery is separate and also bounded; neither sink can mask
+      // the other's error or alter the package verdict.
+      if (++logEvents > PROGRESS_LIMITS.events || bytes > PROGRESS_LIMITS.recordBytes || logBytes + bytes > PROGRESS_LIMITS.bytes) {
+        failed = true
+      } else {
+        logBytes += bytes
+        try { stdout(line) } catch { failed = true }
+      }
+      if (failed) throw new ForemanCiError('Diagnostic delivery failed')
+    }
+    const sourceIdentity = (deps.progressSource ?? progressSource)(repoRoot)
     const result = runShard({
+      progress,
+      sourceIdentity,
       root: repoRoot,
       npmCli,
       spawn,
@@ -1564,6 +1690,7 @@ export async function runCli(argv, env = process.env, deps = {}) {
       // D8: sanitized fixed-shape annotations, emitted at failure/waive time
       annotate: (line) => stdout(`${line}\n`),
     })
+    try { stdout(`diagnostic delivery failures: ${result.diagnostics.deliveryFailures}; diagnostic files are not outcomes\n`) } catch { /* terminal verdict remains authoritative */ }
     const ord = result.ordering
     // A2 item 3: the informational lines before the artifact write are
     // best-effort too, so a broken stdout can never lose the partial artifact.
