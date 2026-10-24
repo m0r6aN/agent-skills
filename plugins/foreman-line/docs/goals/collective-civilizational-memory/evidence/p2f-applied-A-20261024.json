@@ -1,0 +1,29 @@
+{
+  "atUtc": "2026-10-24T21:26:06.512412+00:00",
+  "path": "src/keon/cortex/pipeline/ccm_engine.py",
+  "originalProposalSha256": "4ad017a2c6a0c947ba5c3d41ae3441029d54575ba86737a1e0401b2d711729be",
+  "appliedSha256": "fc110a74e704d8e4c94eb17bf3d08e0b6f027e2a9ee90266fbceadfb1cb7e021",
+  "staticImportsAndNoEffectCalls": "PASS",
+  "operatorCorrection": "Mechanically align _CIVIC_CODES to accepted ccm_civic._CODES via AST literal extraction; no semantic invention or dependency change. Original API excerpt referenced external constant but omitted its literal. All six canonical codes now supplied explicitly to testbuilder.",
+  "beforeCodes": [
+    "duplicate_key",
+    "invalid_input",
+    "invalid_json",
+    "invalid_schema",
+    "invalid_utf8",
+    "resource_limit",
+    "unsupported_contract"
+  ],
+  "acceptedCodes": [
+    "invalid_contract",
+    "invalid_input",
+    "invalid_json",
+    "invalid_utf8",
+    "resource_limit",
+    "unsupported_contract"
+  ],
+  "maxImplementationSlices": 2,
+  "sourceBStillPending": true,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD"
+}

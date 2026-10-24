@@ -468,3 +468,15 @@ PASS; Step0/Gate2 precede fixed2slice source. Fresh finite550engine phase plus
 closedwrapper418.670375=968.670375<=1000two-parcel cap. Day8500/effort12500/
 floor1000 unchanged; all5851.62525oldholds retained including both wrapper
 failed-envelope reservations. Allaffected/native/privatePi routesHELD.
+
+
+## Extractor engine accepted — October24
+
+PR100 source 839325eb087aeb2abc7ef4122c59af96db89f821 merged 6ba606012d338b51a92ee0320995406fae03aafb;16head checks/mainCI/deployment green.
+162focused/3905fullPASS137skip;444priorpins retained. Independent PASS/PASS.
+Actual bounded positive composition only; initial Git non-success remains
+unclassified and retained. See p2f-acceptance-20261024.md.
+Legacy wrappers and engine complete. Next P3 durable ingestion/storage/outbox,
+scrub-at-enqueue and pending fences, then remaining P4-P8/integration/import gates.
+Both parcels conservative 623.453250/1000; all reservations
+and affected/native/private-Pi routes HELD. No corpus/hightrust/bulk readiness.

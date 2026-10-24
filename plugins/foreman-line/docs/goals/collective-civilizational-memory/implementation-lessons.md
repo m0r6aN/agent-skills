@@ -153,3 +153,15 @@ not full import readiness or held credential-route clearance.
 - Dependent external commands require checked subprocess sequencing; PowerShell
   defaults can advance after a native nonzero exit. Disposition: subsequent
   coordinator helpers use checked orchestration; recording deviation retained.
+
+
+## Engine composition October24
+
+- Python AST syntax validity does not prove an expected module: a JSON-like dict
+  expression can parse. Parent must verify semantic artifact shape before tests.
+  Fixed-path test content recovered offline; no execution of wrapper.
+- Pytest may access hostile __class__ before generating IDs. Explicit ParameterSet
+  wrapping preserves hostile Canary semantics without weakening assertions.
+- Capture dependency state before asserting actual composition. Initial Git failure
+  remains unclassified; later diagnostic success supports only bounded positive
+  composition, not erased failure or stability. Independent reviewers assess scope.

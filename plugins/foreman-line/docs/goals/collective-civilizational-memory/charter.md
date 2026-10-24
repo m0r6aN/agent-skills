@@ -2,6 +2,11 @@
 
 ## Current execution addendum — October24 NY
 
+Extractor engine accepted PR100; legacy wrappers PR99 complete.
+162focused/3905fullPASS137skip; exacthead/mainCI/deployment green.
+See p2f-acceptance-20261024.md for bounded scope/initialGit uncertainty.
+Next P3; all holds retained, full Context/bulk import NOTready.
+
 Legacy3wrapper coverage accepted PR99 merge01531ec6fa65e42445296135364507d01d6a0642;
 22focused/3743fullPASS137skip; exacthead/mainCI/deployment green.
 See p2l-acceptance-20261024.md. Next extractorengine under same owner request.
@@ -328,3 +333,15 @@ fullreview claim. See p2l-acceptance-20261024.md. Financialphaseclosed:
 231.0reported/418.670375booked, fullsource/repair andallpriorholds
 retained. Affected/native/privatePiHELD. Same solecoordinator proceeds next
 extractorengine under direct owner request; no nativeworker/monitor, no import.
+
+
+## Extractor engine accepted — October24
+
+PR100 source 839325eb087aeb2abc7ef4122c59af96db89f821 merged 6ba606012d338b51a92ee0320995406fae03aafb;16head checks/mainCI/deployment green.
+162focused/3905fullPASS137skip;444priorpins retained. Independent PASS/PASS.
+Actual bounded positive composition only; initial Git non-success remains
+unclassified and retained. See p2f-acceptance-20261024.md.
+Legacy wrappers and engine complete. Next P3 durable ingestion/storage/outbox,
+scrub-at-enqueue and pending fences, then remaining P4-P8/integration/import gates.
+Both parcels conservative 623.453250/1000; all reservations
+and affected/native/private-Pi routes HELD. No corpus/hightrust/bulk readiness.
