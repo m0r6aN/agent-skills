@@ -256,3 +256,22 @@ applies exact6allowed newfiles, no existing-source edits. One focused repair
 maximum, two fresh source-only frontier reviews and actual CI/main/StageF remain
 mandatory. Stable operator source custody is a prerequisite, not implied auth.
 All4814.470875oldreservations and affected/native/privatePi routes stayHELD.
+
+
+## Focused repair Step0 and exact Docker normalization — October24
+
+First restricted fullsuite preserved baseline; fivefocusedfailures: necessary
+DockerHOME/HOSTNAME rejected, Pytest_CURRENT_TEST leaked into a mocked startup
+environment, and fixturetupleobjectorder differed from correct DFS queryorder.
+Actual Docker image inspection also represents Dockerfile CMD[] asnull. Before
+code, coordinator under existing owner authority admits one focused local repair:
+worker allows HOME only/,/nonexistent,/home/nobody, bounded nonemptyHOSTNAME and
+optional LC_CTYPE onlyC.UTF-8; unexpected/provider/proxy names remain rejected.
+Image/container Cmd may be null OR exactemptylist, never a nonempty command.
+Runtime repr omits sourcepath/config. Isolate unit mocks on module-local sys/os
+proxies, correct explicit DFS oracle without dropping query checks, and complete
+otherwise-valid wire/worker-boundary/failure tests. These are profile/diagnostic
+normalizations, not weaker mounts/authorization/cleanup or source-effect scope.
+Worker/runtime/tests only; protocol/Dockerfile/docs pinned. One focused repair,
+zero new provider source calls, then complete deterministic/actualqualification
+and two fresh independent reviews. All old reservations/routes remainheld.
