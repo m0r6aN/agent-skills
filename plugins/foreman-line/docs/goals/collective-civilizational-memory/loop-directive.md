@@ -339,3 +339,15 @@ All120/150/other reservations and affected/native/private-Pi routes stayheld;
 financialphaseclosed. Same solecoordinator, no worker/monitor/newdispatch.
 Next Git/civic/extractor and P3-P8/fullintegration/import gates remainOPEN;
 no bulk/personal import and no high-trust producer coverage claimed.
+
+
+## P2D-A Git source dependency started — October24
+
+Same sole Context coordinator resumes under owner next-parcel authority. First
+Git acquisition dependency is pure bounded hash-verified object snapshot decoding;
+P2D-B restricted local bare repository adapter remains separate and unqualified.
+No real repository/corpus acquired. New finite300credit envelope/effort9500 under
+existing finite increase authority; day6000/floor1000 and every old reservation
+(4615.995125 conservative) remain. Affected/native/private-Pi routes held.
+Draft/advisory/readback and accepted3189PASS137skip baseline correspondence
+recorded. Source waits for Step0 disposition and exact workorder Gate2.
