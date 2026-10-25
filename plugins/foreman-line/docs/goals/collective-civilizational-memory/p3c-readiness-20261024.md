@@ -5,6 +5,23 @@ Custodian remains ccm-coordinator-20261020-fresh-01. Direct owner instruction:
 minimal descendant invalidation. Keep all reservations and affected routes held,
 and use the cheapest capable approved route under my existing authority.”
 
+Latest disposition: owner clarified that the existing10164 credit balance is
+already available. Receipt-level reconciliation identified1906.3 reported
+completed-request expense inside the cumulative8926.999375 historical book.
+Classify that amount as historical spending rather than additional future
+exposure, retaining all estimate excess, failed/unknown/explicit/covered bookings
+and the entire unclassified remainder. Future exposure reserve7020.699375;
+at fresh observed10164.1, headroom above reserve/floor is2143.400625. No top-up
+required for finite2000 phase. Historical expense/day/effort records unchanged;
+no billing-settlement claim and no failed/uncertain reservation released.
+See evidence/p3c-exposure-reconciliation-20261024.json for pinned per-receipt proof.
+Standing authority records finite day16000/effort20000, expiryOct25 04UTC and
+unchanged1000 floor. Step0 supplied-artifact request admitted after fresh account,
+catalog/foreign/no-incident-key-equality guards. No source dispatch yet.
+
+Prior local preparation status follows; funding-hold text below is superseded
+only by the exact expense/exposure reconciliation above.
+
 Status: local source/contract investigation and draft boundary preparation only.
 Not a frozen dispatch specification, Gate2, independent review, implementation,
 real-data deletion authority, or accepted P3 completion. P3B remains accepted.

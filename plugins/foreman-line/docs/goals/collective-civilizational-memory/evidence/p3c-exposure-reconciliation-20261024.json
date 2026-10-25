@@ -1,0 +1,478 @@
+{
+  "atUtc": "2026-10-25T02:01:17.921125+00:00",
+  "status": "HISTORICAL_EXPENSE_VS_INCREMENTAL_EXPOSURE_CLASSIFICATION_NOT_BILLING_SETTLEMENT",
+  "historicalConservativeTotalUnchanged": 8926.999375,
+  "identifiedCompletedReportedExpense": 1906.3,
+  "futureExposureReserve": 7020.699375,
+  "selectedFailedReservationsPreserved": 2374.182,
+  "unclassifiedHistoricalAmountEntirelyReserved": true,
+  "allFailedUnknownAndExplicitReservationsUnchanged": true,
+  "originalReceiptsAndLedgersUnchanged": true,
+  "billingSettlementClaimed": false,
+  "method": "Only completed HTTP200 exact-model stop responses with parsed artifacts; subtract min(reportedCredits,historicalBook) from future exposure, retaining estimate excess. All failed/unknown/pre-send/covered bookings remain entirely reserved. Cumulative historical spending and day/effort totals remain unchanged.",
+  "phaseSums": [
+    {
+      "phase": "p2d-a-git-20261024-01",
+      "receiptBookSum": 198.47575,
+      "ledgerSha256": "81d38b9d2b0323e68862da87b03457a6968a1d12ed24599bd36a862a50f5fe19",
+      "ledgerBooked": 198.47575
+    },
+    {
+      "phase": "p2d-b-git-20261024-01",
+      "receiptBookSum": 358.105,
+      "ledgerSha256": "d32389e494bf220e82c651fc412cfa3c193f6a5cde9c3605603794b2c91f1227",
+      "ledgerBooked": 358.105
+    },
+    {
+      "phase": "p2e-civic-20261024-01",
+      "receiptBookSum": 260.379,
+      "ledgerSha256": "dab3be3f752ed634a67a67e642e181ffa5cdba4d0e1a5c22a8f5558fa86b01a5",
+      "ledgerBooked": 260.379
+    },
+    {
+      "phase": "p2l-legacy-20261024-01",
+      "receiptBookSum": 418.670375,
+      "ledgerSha256": "b3445e6c29b471ce2c62a0ff1b8075978fc9555076f07b44f0000442ce6f8f45",
+      "ledgerBooked": 418.670375
+    },
+    {
+      "phase": "p2f-engine-20261024-01",
+      "receiptBookSum": 204.782875,
+      "ledgerSha256": "722ea59e2a5117ccaf2c829abed01a5203df1f2e3610461401bc20c5e7a640c8",
+      "ledgerBooked": 204.782875
+    },
+    {
+      "phase": "p3a-ingestion-20261024-01",
+      "receiptBookSum": 431.872375,
+      "ledgerSha256": "cc2aa30940e733f0e57b512b6474df08827291b609943458c8c8981e015bad0c",
+      "ledgerBooked": 449.695125
+    },
+    {
+      "phase": "p3a-compat-20261024-01",
+      "receiptBookSum": 17.82275,
+      "ledgerSha256": "9e54d78f8834459e3a4994117cb9766b453743cdfc66db5afb1da9903797891a",
+      "ledgerBooked": 17.82275
+    },
+    {
+      "phase": "p3b-canonical-20261024-01",
+      "receiptBookSum": 2420.896125,
+      "ledgerSha256": "67b5d17153ce0d01ed53682d68cc334882b62a0712d58c184cdc4012ad89ef93",
+      "ledgerBooked": 2420.896125
+    }
+  ],
+  "classifiedReceipts": [
+    {
+      "receipt": "p2d-a-git-20261024-01\\architecture\\receipt.json",
+      "receiptSha256": "4fb1ee37b96e40ddf81d5a82154bf8fe3e4d3cae3595c003ec6a1a976f2a774c",
+      "historicalBook": 21.220375,
+      "reportedCompletedExpense": 20.9,
+      "remainingContingency": 0.3203750000000021
+    },
+    {
+      "receipt": "p2d-a-git-20261024-01\\final-architecture\\receipt.json",
+      "receiptSha256": "be3b1bb94c1ecdfe73d133fa6b0ba70aaf705373fd465c4d2ed906bfa81caecc",
+      "historicalBook": 20.224875,
+      "reportedCompletedExpense": 19.8,
+      "remainingContingency": 0.4248750000000001
+    },
+    {
+      "receipt": "p2d-a-git-20261024-01\\final-security\\receipt.json",
+      "receiptSha256": "56f4420ef3fe436a7c88d797df165ca55ef1202244e5cb97e83bb12a6c627147",
+      "historicalBook": 19.779375,
+      "reportedCompletedExpense": 18.7,
+      "remainingContingency": 1.0793750000000024
+    },
+    {
+      "receipt": "p2d-a-git-20261024-01\\security\\receipt.json",
+      "receiptSha256": "54b6005306732e317c9d00e939c819df9820363d7455d27593b3c4dffc1111e0",
+      "historicalBook": 20.285375,
+      "reportedCompletedExpense": 19.8,
+      "remainingContingency": 0.48537499999999767
+    },
+    {
+      "receipt": "p2d-a-git-20261024-01\\step0\\receipt.json",
+      "receiptSha256": "66be4e8ad27bf859232143dca42619654c535d36e91035ab66e634c65bd3d76c",
+      "historicalBook": 6.96575,
+      "reportedCompletedExpense": 6.6,
+      "remainingContingency": 0.36575000000000024
+    },
+    {
+      "receipt": "p2d-b-git-20261024-01\\architecture\\receipt.json",
+      "receiptSha256": "57be9747c9bff63ee0de1caab89dbcedcf203951ccdcedeb48843e1ec00b0e26",
+      "historicalBook": 49.383125,
+      "reportedCompletedExpense": 48.4,
+      "remainingContingency": 0.9831250000000011
+    },
+    {
+      "receipt": "p2d-b-git-20261024-01\\final-architecture\\receipt.json",
+      "receiptSha256": "64e600792e5cf91c5c717fca04040cc7f23904bd96fa0c7e70e53fa057386182",
+      "historicalBook": 46.607,
+      "reportedCompletedExpense": 46.2,
+      "remainingContingency": 0.4069999999999965
+    },
+    {
+      "receipt": "p2d-b-git-20261024-01\\final-security\\receipt.json",
+      "receiptSha256": "328a5b930f1b2f2e746394785d05799ef07e6bf4c59ff0bff4dabcfcb86dbd3d",
+      "historicalBook": 46.123,
+      "reportedCompletedExpense": 45.1,
+      "remainingContingency": 1.0229999999999961
+    },
+    {
+      "receipt": "p2d-b-git-20261024-01\\security\\receipt.json",
+      "receiptSha256": "5a9bd0a72367821359d41d117391c01a3e07682f1f57afec5d6832b33dc798d3",
+      "historicalBook": 48.049375,
+      "reportedCompletedExpense": 47.3,
+      "remainingContingency": 0.7493750000000006
+    },
+    {
+      "receipt": "p2d-b-git-20261024-01\\source-A\\receipt.json",
+      "receiptSha256": "b43db2aa8519cba89c857ffb69953987bf30f9a3573df9d7e8794387f1a7f3d6",
+      "historicalBook": 42.285375,
+      "reportedCompletedExpense": 41.8,
+      "remainingContingency": 0.4853750000000048
+    },
+    {
+      "receipt": "p2d-b-git-20261024-01\\source-B\\receipt.json",
+      "receiptSha256": "657a3b354f325a0bf0af9b3d8eb0a8443385603976c61eea864bb7013ab5133b",
+      "historicalBook": 40.852625,
+      "reportedCompletedExpense": 40.7,
+      "remainingContingency": 0.15262500000000045
+    },
+    {
+      "receipt": "p2d-b-git-20261024-01\\source-C\\receipt.json",
+      "receiptSha256": "5167a9cd3b3be6af130f22821fd0f5ec1515e665fd4f3df5b04d05ad7555eccb",
+      "historicalBook": 70.263875,
+      "reportedCompletedExpense": 69.3,
+      "remainingContingency": 0.9638750000000016
+    },
+    {
+      "receipt": "p2d-b-git-20261024-01\\step0\\receipt.json",
+      "receiptSha256": "dc83f4313308cf4b9412a6b76a7282c5cb93a3d730646e71269fa3923f3c06cc",
+      "historicalBook": 14.540625,
+      "reportedCompletedExpense": 14.3,
+      "remainingContingency": 0.24062499999999964
+    },
+    {
+      "receipt": "p2e-civic-20261024-01\\accept-architecture\\receipt.json",
+      "receiptSha256": "aaf6012e40a65ffa04fe81fce85b75364b5eb31100291db54df225d8acbcae13",
+      "historicalBook": 22.5665,
+      "reportedCompletedExpense": 22.0,
+      "remainingContingency": 0.5665000000000013
+    },
+    {
+      "receipt": "p2e-civic-20261024-01\\accept-security\\receipt.json",
+      "receiptSha256": "db95992fb369b0e61d86cf964b87a2461c1db5c21f2aad0560eb62c5744ac3bb",
+      "historicalBook": 22.501875,
+      "reportedCompletedExpense": 22.0,
+      "remainingContingency": 0.5018749999999983
+    },
+    {
+      "receipt": "p2e-civic-20261024-01\\closure-architecture\\receipt.json",
+      "receiptSha256": "d98382ec34b06f6b3220b30c792bf350cd94fd38ac9b6c0ae70da53ee3835e2e",
+      "historicalBook": 23.36125,
+      "reportedCompletedExpense": 23.1,
+      "remainingContingency": 0.2612499999999969
+    },
+    {
+      "receipt": "p2e-civic-20261024-01\\closure-security\\receipt.json",
+      "receiptSha256": "074abfc1e20f72be447a650f5ac37d7e9dcc1bc97f765a2e5bd4a058ec58c80e",
+      "historicalBook": 22.422125,
+      "reportedCompletedExpense": 22.0,
+      "remainingContingency": 0.4221250000000012
+    },
+    {
+      "receipt": "p2e-civic-20261024-01\\final-architecture\\receipt.json",
+      "receiptSha256": "b1a5714a32bf49825b4debe001e8fc4482410dff7c7020737ea1c4d8cc4ad73e",
+      "historicalBook": 23.161875,
+      "reportedCompletedExpense": 23.1,
+      "remainingContingency": 0.061874999999997016
+    },
+    {
+      "receipt": "p2e-civic-20261024-01\\final-security\\receipt.json",
+      "receiptSha256": "93a1bf445d4d5e2f8ad2324359a5118042c634da122473ebaa5d7104814fc0b9",
+      "historicalBook": 22.14025,
+      "reportedCompletedExpense": 22.0,
+      "remainingContingency": 0.14025000000000176
+    },
+    {
+      "receipt": "p2e-civic-20261024-01\\step0\\receipt.json",
+      "receiptSha256": "e70f0fe5580fb91c3a80d75532d8c50aff8ffa458356a52736988224f165a169",
+      "historicalBook": 3.524125,
+      "reportedCompletedExpense": 3.3,
+      "remainingContingency": 0.22412500000000035
+    },
+    {
+      "receipt": "p2l-legacy-20261024-01\\architecture\\receipt.json",
+      "receiptSha256": "fb8b023beaf5ad4e8c2b79b4935f08f650a9db976d9c264dd4a4366338c7306d",
+      "historicalBook": 35.113375,
+      "reportedCompletedExpense": 34.1,
+      "remainingContingency": 1.0133749999999964
+    },
+    {
+      "receipt": "p2l-legacy-20261024-01\\repair-step0\\receipt.json",
+      "receiptSha256": "73fbe8f4efa73fda5ae2d6e6d5a957ee3fe6ba24ee927b4c1da97da278f3f155",
+      "historicalBook": 6.9905,
+      "reportedCompletedExpense": 6.6,
+      "remainingContingency": 0.3905000000000003
+    },
+    {
+      "receipt": "p2l-legacy-20261024-01\\security\\receipt.json",
+      "receiptSha256": "bd24798b1c1cb31a2f0c199293a639eac9b0d3b276d631fd5f33ab6de7b9a0ba",
+      "historicalBook": 33.78925,
+      "reportedCompletedExpense": 33.0,
+      "remainingContingency": 0.7892500000000027
+    },
+    {
+      "receipt": "p2l-legacy-20261024-01\\step0\\receipt.json",
+      "receiptSha256": "9898bbd8f8b11510d86ac144b80124bd6a5322269928fe47dcdd57dccc2824d8",
+      "historicalBook": 4.868875,
+      "reportedCompletedExpense": 4.4,
+      "remainingContingency": 0.4688749999999997
+    },
+    {
+      "receipt": "p2l-legacy-20261024-01\\triage-architecture\\receipt.json",
+      "receiptSha256": "dd1b3bec7c56dafc6cdddefbb688e069ca3e27f4f36577b78475efd2f4bcab2b",
+      "historicalBook": 12.618375,
+      "reportedCompletedExpense": 12.1,
+      "remainingContingency": 0.5183750000000007
+    },
+    {
+      "receipt": "p2f-engine-20261024-01\\architecture\\receipt.json",
+      "receiptSha256": "c48eba2e5a40e56f66727d65408fc82adc4b54a782e4163c593abac0f1a2d006",
+      "historicalBook": 40.921375,
+      "reportedCompletedExpense": 40.7,
+      "remainingContingency": 0.22137499999999477
+    },
+    {
+      "receipt": "p2f-engine-20261024-01\\security\\receipt.json",
+      "receiptSha256": "23dd83229f96ea29c8e45e72fcb41fbf125a2330567b31186a09fc2aace87587",
+      "historicalBook": 40.29575,
+      "reportedCompletedExpense": 39.6,
+      "remainingContingency": 0.6957499999999968
+    },
+    {
+      "receipt": "p2f-engine-20261024-01\\source-A\\receipt.json",
+      "receiptSha256": "de8d6c234dc05f7e7816c8c3c1495e962ef5d5dcf0a182f61272a86d14002a70",
+      "historicalBook": 33.17325,
+      "reportedCompletedExpense": 33.0,
+      "remainingContingency": 0.173250000000003
+    },
+    {
+      "receipt": "p2f-engine-20261024-01\\source-B\\receipt.json",
+      "receiptSha256": "477d2e8d2322356c5ed4384bd9a7d0b6e3c3bd713cd71f67297639b7b14d140f",
+      "historicalBook": 77.149875,
+      "reportedCompletedExpense": 77.0,
+      "remainingContingency": 0.14987499999999443
+    },
+    {
+      "receipt": "p2f-engine-20261024-01\\step0\\receipt.json",
+      "receiptSha256": "a3771f3977f7a9bc009bbfddd514ad187b6052869131a4b12ecbba51e2c20f75",
+      "historicalBook": 13.242625,
+      "reportedCompletedExpense": 13.2,
+      "remainingContingency": 0.04262500000000102
+    },
+    {
+      "receipt": "p3a-ingestion-20261024-01\\architecture\\receipt.json",
+      "receiptSha256": "0edc95f2fde95936847a08fda37a9b40c22e4f486603403f33e3cf982e8bdc92",
+      "historicalBook": 45.6775,
+      "reportedCompletedExpense": 45.1,
+      "remainingContingency": 0.5775000000000006
+    },
+    {
+      "receipt": "p3a-ingestion-20261024-01\\final-architecture\\receipt.json",
+      "receiptSha256": "aac54ed273c8d20b2787584e75b45aeeb07053db13c15539694dd63af04688eb",
+      "historicalBook": 49.93175,
+      "reportedCompletedExpense": 49.5,
+      "remainingContingency": 0.43175000000000097
+    },
+    {
+      "receipt": "p3a-ingestion-20261024-01\\final-security\\receipt.json",
+      "receiptSha256": "4dd2b0d17411beb818334ed85f1631a066ea750c2bf9efcd5285e85879ae9d2b",
+      "historicalBook": 49.130125,
+      "reportedCompletedExpense": 48.4,
+      "remainingContingency": 0.730125000000001
+    },
+    {
+      "receipt": "p3a-ingestion-20261024-01\\repair\\receipt.json",
+      "receiptSha256": "eeb9eb08742518b120683f997dae0b6e47ed3cb03fefcdfd17e9343335975975",
+      "historicalBook": 44.683375,
+      "reportedCompletedExpense": 44.0,
+      "remainingContingency": 0.6833749999999981
+    },
+    {
+      "receipt": "p3a-ingestion-20261024-01\\repair2\\receipt.json",
+      "receiptSha256": "ffae39cc335753d3eb763178de0675d902158c26b6fd143528e96be53d738a94",
+      "historicalBook": 21.83225,
+      "reportedCompletedExpense": 20.9,
+      "remainingContingency": 0.9322499999999998
+    },
+    {
+      "receipt": "p3a-ingestion-20261024-01\\security\\receipt.json",
+      "receiptSha256": "5084e5c94d3a914958d4c5fdb5e297e27b8333f7f98edc8219d78a27c3400a75",
+      "historicalBook": 44.606375,
+      "reportedCompletedExpense": 44.0,
+      "remainingContingency": 0.6063749999999999
+    },
+    {
+      "receipt": "p3a-ingestion-20261024-01\\source-A\\receipt.json",
+      "receiptSha256": "ce7ab6a0e22900751d9d8717b5ffbe1af847aaf2f7ace2458fb66a3704a39f0e",
+      "historicalBook": 40.434625,
+      "reportedCompletedExpense": 39.6,
+      "remainingContingency": 0.8346249999999955
+    },
+    {
+      "receipt": "p3a-ingestion-20261024-01\\source-B\\receipt.json",
+      "receiptSha256": "2aad07b6d3c1420110fde3b663fa67b330ed54a595c69dd7752ff1836ab8eeb9",
+      "historicalBook": 38.852,
+      "reportedCompletedExpense": 38.5,
+      "remainingContingency": 0.35199999999999676
+    },
+    {
+      "receipt": "p3a-ingestion-20261024-01\\source-C\\receipt.json",
+      "receiptSha256": "2c684b6fd9562a6f2c23341eb846bcf5732e0c944e10899013a0a94770b5ee53",
+      "historicalBook": 39.956125,
+      "reportedCompletedExpense": 39.6,
+      "remainingContingency": 0.3561249999999987
+    },
+    {
+      "receipt": "p3a-ingestion-20261024-01\\source-D\\receipt.json",
+      "receiptSha256": "d6d30f9de26dbaa5078bdaf9d5354bb641da23c06b2ed4fa432a340f8fbf5434",
+      "historicalBook": 42.329375,
+      "reportedCompletedExpense": 41.8,
+      "remainingContingency": 0.5293750000000017
+    },
+    {
+      "receipt": "p3a-ingestion-20261024-01\\step0\\receipt.json",
+      "receiptSha256": "5a0e724558b0c47b5caed824712a832f0af475d06e1f4002ac6603823bf1986d",
+      "historicalBook": 14.438875,
+      "reportedCompletedExpense": 14.3,
+      "remainingContingency": 0.13887499999999875
+    },
+    {
+      "receipt": "p3a-compat-20261024-01\\architecture\\receipt.json",
+      "receiptSha256": "1fd8a5a785e0b75f30f0b6108b6120de19119842f36c261a5559f032774ec20c",
+      "historicalBook": 8.812375,
+      "reportedCompletedExpense": 8.8,
+      "remainingContingency": 0.012374999999998693
+    },
+    {
+      "receipt": "p3a-compat-20261024-01\\security\\receipt.json",
+      "receiptSha256": "fa978531619bf173228f2fa4d7af7ff265277df06b050c4918a07620c07969a2",
+      "historicalBook": 9.010375,
+      "reportedCompletedExpense": 8.8,
+      "remainingContingency": 0.2103749999999991
+    },
+    {
+      "receipt": "p3b-canonical-20261024-01\\closure-architecture\\receipt.json",
+      "receiptSha256": "19767d376cee5a1f961299c221c6aefde23d7cf05c61cf00e7b09775b89ad7d2",
+      "historicalBook": 28.5065,
+      "reportedCompletedExpense": 27.5,
+      "remainingContingency": 1.006499999999999
+    },
+    {
+      "receipt": "p3b-canonical-20261024-01\\closure-security\\receipt.json",
+      "receiptSha256": "da623395eeda2fa4cee95677e126b14f6f5cfbd9bc02ef152431bcc72dc8a918",
+      "historicalBook": 28.347,
+      "reportedCompletedExpense": 27.5,
+      "remainingContingency": 0.8470000000000013
+    },
+    {
+      "receipt": "p3b-canonical-20261024-01\\compact-architecture\\receipt.json",
+      "receiptSha256": "d4ef9c3473cff5a4402467f798cbe47c43985c4b36e042691beba21cbc2b7184",
+      "historicalBook": 60.869875,
+      "reportedCompletedExpense": 60.5,
+      "remainingContingency": 0.3698750000000004
+    },
+    {
+      "receipt": "p3b-canonical-20261024-01\\duplicate-completion\\receipt.json",
+      "receiptSha256": "c15176b624e3bbf58f9314a0b63fbf51f05622158b94cff19ccf7c8b7104ac69",
+      "historicalBook": 2.030875,
+      "reportedCompletedExpense": 1.1,
+      "remainingContingency": 0.9308749999999999
+    },
+    {
+      "receipt": "p3b-canonical-20261024-01\\final-architecture\\receipt.json",
+      "receiptSha256": "b835fa96792bbde52b9ddfc1fd44863aeed4d5bf567147d42975c5ec4178cfc2",
+      "historicalBook": 62.555625,
+      "reportedCompletedExpense": 61.6,
+      "remainingContingency": 0.9556249999999977
+    },
+    {
+      "receipt": "p3b-canonical-20261024-01\\final-security\\receipt.json",
+      "receiptSha256": "ef8d2c5a6efc7478a6eec6de0e3f357a90b7e5b851032b100765330d9d252ec3",
+      "historicalBook": 63.724375,
+      "reportedCompletedExpense": 62.7,
+      "remainingContingency": 1.0243749999999991
+    },
+    {
+      "receipt": "p3b-canonical-20261024-01\\format-control\\receipt.json",
+      "receiptSha256": "7bde4ccf709347d45f54fe194af57368633df0248ff26493804ec812c291dbd5",
+      "historicalBook": 6.69075,
+      "reportedCompletedExpense": 6.6,
+      "remainingContingency": 0.09075000000000077
+    },
+    {
+      "receipt": "p3b-canonical-20261024-01\\marker-completion\\receipt.json",
+      "receiptSha256": "6623a51685695cb1c226a247aa8e09a56e8a8e97583f61edcc3e3618ee6ce2ba",
+      "historicalBook": 7.52675,
+      "reportedCompletedExpense": 6.6,
+      "remainingContingency": 0.9267500000000002
+    },
+    {
+      "receipt": "p3b-canonical-20261024-01\\pure-repair\\receipt.json",
+      "receiptSha256": "ad4dcf37e28b06c503365635e8a0357799a3b90a4fdb7b093142cabde79d9edd",
+      "historicalBook": 33.231,
+      "reportedCompletedExpense": 33.0,
+      "remainingContingency": 0.23100000000000165
+    },
+    {
+      "receipt": "p3b-canonical-20261024-01\\repair-step0\\receipt.json",
+      "receiptSha256": "6db3b8c73ef09f07edfd303bfa583b842e0b4ae17ca12d53f8cc379337ca53e7",
+      "historicalBook": 8.883875,
+      "reportedCompletedExpense": 8.8,
+      "remainingContingency": 0.08387499999999903
+    },
+    {
+      "receipt": "p3b-canonical-20261024-01\\repair2\\receipt.json",
+      "receiptSha256": "19ef5af85df101ffc5abfe0481ef2d85ac746a66ca33517426737db451c68463",
+      "historicalBook": 79.25775,
+      "reportedCompletedExpense": 79.2,
+      "remainingContingency": 0.057749999999998636
+    },
+    {
+      "receipt": "p3b-canonical-20261024-01\\security\\receipt.json",
+      "receiptSha256": "027c8cc801688149efcaeda85090b284748be7ddc2ea325a3f103505e4b135e7",
+      "historicalBook": 62.316375,
+      "reportedCompletedExpense": 61.6,
+      "remainingContingency": 0.7163749999999993
+    },
+    {
+      "receipt": "p3b-canonical-20261024-01\\source-A\\receipt.json",
+      "receiptSha256": "9a39bc269a2850362bace365c5bba27d1a9e6a79e1dd29bd9b2d6b7ca81b0a04",
+      "historicalBook": 64.829875,
+      "reportedCompletedExpense": 63.8,
+      "remainingContingency": 1.029875000000004
+    },
+    {
+      "receipt": "p3b-canonical-20261024-01\\source-C\\receipt.json",
+      "receiptSha256": "f388aa18b3a86081f27c46a422c75002d909c6874120045e7f590a02075b292c",
+      "historicalBook": 41.2005,
+      "reportedCompletedExpense": 40.7,
+      "remainingContingency": 0.5004999999999953
+    },
+    {
+      "receipt": "p3b-canonical-20261024-01\\source-D\\receipt.json",
+      "receiptSha256": "2a0b5e3e05c5eadde52c49227cb07abf24e9ebd538b74c35745314d25bbda328",
+      "historicalBook": 31.937125,
+      "reportedCompletedExpense": 31.9,
+      "remainingContingency": 0.03712500000000318
+    },
+    {
+      "receipt": "p3b-canonical-20261024-01\\step0\\receipt.json",
+      "receiptSha256": "d480a830e7b0c1ef3022bbc2c3bae228b8376fc25ca628e1b295ca586f531e2e",
+      "historicalBook": 20.796875,
+      "reportedCompletedExpense": 19.8,
+      "remainingContingency": 0.9968749999999993
+    }
+  ]
+}

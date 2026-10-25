@@ -2,6 +2,16 @@
 
 ## Current boundary — October24 NY, governed deletion/retraction
 
+Funding correction after owner confirms existing10164 balance: receipt-pinned
+1906.3 completed reported expense belongs to unchanged cumulative historical
+spending, not new future exposure. Keep all failed/unknown/explicit reservations
+and estimate excess. Future reserve7020.699375; fresh10164.1 provides2143.400625
+above floor1000. No top-up needed. Finite2000 P3C phase, day16000/effort20000
+toOct25 04UTC under existing authority; historical expense totals unchanged.
+Step0 supplied-artifact request admitted on fresh guards; no source Gate2 yet.
+See evidence/p3c-exposure-reconciliation-20261024.json and planning admission.
+This supersedes funding hold below, not any route, key or governance restriction.
+
 Direct owner request advances governed deletion/retraction and minimal descendant
 invalidation. Same sole coordinator, no native worker or monitor. See
 p3c-readiness-20261024.md for investigated copy/read/graph/authority seams and
