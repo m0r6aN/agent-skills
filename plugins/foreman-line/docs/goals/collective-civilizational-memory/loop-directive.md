@@ -1,6 +1,8 @@
-# CCM current loop — P3B accepted; P3C preparation and funding boundary
+# CCM current loop — P3C1 accepted; full governed deletion gates open
 
-## Current boundary — October24 NY, governed deletion/retraction
+Latest current handoff: p3c1-handoff-20261024.md. P3C1 accepted; complete P3C runtime remains open. All reservations and affected routes held.
+
+## Historical preparation boundary — superseded by P3C1 closure
 
 Funding correction after owner confirms existing10164 balance: receipt-pinned
 1906.3 completed reported expense belongs to unchanged cumulative historical
@@ -555,3 +557,15 @@ qualification, thenP4-P8/privacy/backup/recovery/load/importgates remainopen.
 phaseclosed. All old/failedcall reservations andaffected/native/privatePi/oversized
 routesHELD. No fullP3/Context/bulkimport readiness. Sourceworktreeclean/pushed,
 no worker/monitor/syntheticcontainer/network. Same solecoordinator atparcelboundary.
+
+
+## P3C1 pure deletion protocol accepted — October24 NY
+
+PR103 source33af84782029b778bf94b8c3cd89452dd6cbd5be merged964f42000f02304ecf89d19079e3fa3d393dab46;16head/exactmainCI/deploymentgreen.
+1104focused/5127fullPASS208skip;458priorpins/461total.
+Fullrisk+freshcompleteproductionUTCsupplements PASS/PASS, limits retained.
+421.3+24.2=445.5reported;533.919875historicalbook;
+future reserve7220.21925, all failed/uncertainholds
+including193.232truncationheld. No topup needed after expense/exposure correction.
+Both paidphasesclosed, allaffected/native/privatePiHELD. FullP3C SQL/authority/
+copy/read/durableinvalidation/keyintegrations remainopen. See p3c1-handoff-20261024.md.

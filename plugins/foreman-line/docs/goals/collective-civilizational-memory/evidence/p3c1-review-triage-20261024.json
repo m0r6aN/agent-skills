@@ -1,0 +1,208 @@
+{
+  "atUtc": "2026-10-25T02:31:56.381264+00:00",
+  "status": "ALL_MATERIAL_PURE_SOURCE_FINDINGS_CLOSED",
+  "initialReviews": {
+    "architecture": {
+      "verdict": "CHANGES_REQUIRED",
+      "findings": [
+        {
+          "id": "F1",
+          "severity": "medium",
+          "locator": "tests/test_ccm_deletion_protocol.py::test_accepted_fixture_parent_loss_contract_is_present and test_eight_explicit_parent_loss_contract_examples",
+          "description": "The accepted fixture is checked only for the presence of two keys. The eight subsequent examples are locally authored and are not compared with the accepted parent-loss/signal vectors. Consequently, these tests do not establish the mandatory frozen-fixture correspondence. The supplied evidence metadata asserts independent coverage, but its underlying oracle and vectors are not supplied for review.",
+          "remedy": "Bind executable assertions to all eight accepted fixture vectors and their expected outcomes, including the accepted signal cases. Preserve the additional independently authored matrix tests; do not substitute key-presence checks or claimed oracle results for frozen-vector correspondence."
+        },
+        {
+          "id": "F2",
+          "severity": "medium",
+          "locator": "tests/test_ccm_deletion_protocol.py::test_exact_required_fields and test_every_field_wrong_exact_type_and_nullability",
+          "description": "Required-field expectations are derived from the same local factories used to construct valid inputs, rather than independently enumerated frozen field sets. A field omitted from both a factory and the implementation would escape these tests. Nullability coverage is also incomplete: nullable fields are largely tested at their default null values, while coverage custody_ref and non-expiry-state expiry_at lack explicit positive nonnull cases. This falls short of the explicit independent field/enum/nullability test requirement, although the supplied production DTO field sets match the normative excerpt on inspection.",
+          "remedy": "Add independent frozen field-set and nullability expectations for all four DTOs and nested structures, with positive and negative exact-type cases for each nullable field and paired-field constraints."
+        },
+        {
+          "id": "F3",
+          "severity": "medium",
+          "locator": "src/keon/cortex/pipeline/ccm_deletion_protocol.py::_boundary",
+          "description": "Raising the public error after leaving the internal except blocks removes internal exception context in ordinary calls, but does not guarantee the required absence of context. If a caller invokes a validator while handling another exception, Python assigns that caller's active exception to the new error's __context__. 'from None' suppresses its display but does not remove the context object, which can retain sensitive caller exception data. Existing tests exercise only calls without an ambient exception.",
+          "remedy": "Resolve the strict no-context contract for calls made inside an active exception handler, and add a regression assertion covering a caller exception containing a planted synthetic secret. Do not equate suppressed traceback display with absent exception context."
+        }
+      ],
+      "coverageGaps": [
+        "Static review found production field names, enums, explicit nullability, lease/signal rules, milestone precedence, completion coverage checks, retry exhaustion, and parent-loss transitions consistent with the supplied frozen requirements, apart from the error-context issue identified above.",
+        "The supplied counts, hashes, oracle results, formatting and typing results are unverified evidence claims, not execution established by this review.",
+        "Restricted execution, independent frozen-vector verification, baseline test-identity and 458-pin correspondence, Python 3.10 grammar/style/type checks, the second independent risk review, exact sixteen-head checks, and merged-main CI/deployment remain pending acceptance gates\u2014not source defects merely because they have not yet run.",
+        "No SQL deletion, authoritative inventory verification, read fencing, durable jobs/deduplication, lineage resolution, or key-provider qualification is implemented or established. Those are explicitly out-of-scope mandatory later integrations; validated claims and InvalidationResult do not confer authority or prove erasure."
+      ]
+    },
+    "security": {
+      "verdict": "CHANGES_REQUIRED",
+      "findings": [
+        {
+          "id": "SEC-01",
+          "severity": "medium",
+          "locator": "src/keon/cortex/pipeline/ccm_deletion_protocol.py::_boundary",
+          "description": "The public error does not always satisfy the required absence of exception context. If a validator is called while its caller is handling another exception, raising DeletionProtocolError(code) from None still attaches that active exception as __context__. The explicit cause is null and ordinary traceback display is suppressed, but programmatic exception inspection can recover the caller exception and any sensitive text it contains. Raising outside the local except blocks only prevents attachment of the locally caught validation exception. Existing tests invoke validators without an active caller exception, so they miss this case.",
+          "remedy": "Ensure the public boundary delivers errors with both __context__ and __cause__ actually null, including when invoked inside an existing exception handler. Add a regression with a synthetic-secret-bearing caller exception and inspect the resulting error attributes, not only its displayed string."
+        }
+      ],
+      "coverageGaps": [
+        "Static review covered the complete supplied production module, tests and documentation. No tools or execution were used. Supplied deterministic evidence metadata is untrusted reported evidence, not independently reproduced verification.",
+        "The fixture-reading test checks only that parent_loss and signals exist. The eight explicit examples are separately authored and are not compared with the accepted fixture values. The reported independent oracle may supply the required frozen-vector correspondence, but that correspondence is not demonstrable from the supplied test source alone.",
+        "Resource tests exercise oversized trees, cycles and hostile subclasses, but do not comprehensively pin acceptance at the exact depth, node and aggregate UTF-8 limits. Exact-limit regression coverage would strengthen the bounded-input contract.",
+        "The reviewed schemas, exact primitive checks, UTC parsing, milestone precedence, coverage requirements, retry exhaustion and parent-loss transitions otherwise appear consistent with the supplied pure-prerequisite contract. Accepted evidence references and completion labels remain structural claims, not authenticated authority or proof of erasure.",
+        "StageF exact head checks, remaining independent review, source-bound restricted verification, preserved baseline identities/pins, and the exact CI/merge/deployment green chain remain pending acceptance gates rather than source defects. Reported metadata alone does not establish that chain.",
+        "SQL tombstones, authoritative inventory and decision verification, read/write fencing, durable job processing/deduplication, trusted parent resolution and qualified key-custody effects remain mandatory later integration dependencies. Their absence is explicitly outside this prerequisite's scope and is not a finding against this module."
+      ]
+    }
+  },
+  "ambientContextDefectReproduced": {
+    "atUtc": "2026-10-25T02:13:21.562334+00:00",
+    "status": "CONFIRMED_PRE_FIX_AMBIENT_EXCEPTION_CONTEXT_DEFECT",
+    "sourceHashes": {
+      "src/keon/cortex/pipeline/ccm_deletion_protocol.py": "ee9097fb3f85d80c899aa786a6603e8574185821aa56c38f498024eb9143d550",
+      "tests/test_ccm_deletion_protocol.py": "7be654c3c4ca92d7c674a38301e46c2fc03085526929fef2ede2f49ebc3e7e64",
+      "docs/specs/ccm-deletion-protocol-v1.md": "e41aa5faaebb3ebd27ee11c10349148c287d434fe6b9fbb584a5cceabdf4ee58"
+    },
+    "exit": 1,
+    "observation": {
+      "publicContextAbsent": false,
+      "publicCauseAbsent": true,
+      "ambientExceptionRetained": true
+    },
+    "ownedContainerAbsent": true
+  },
+  "sourceRepairRecovery": {
+    "status": "LOSSLESS_COMPLETE_FIRST_FILE_ONLY_FROM_INCOMPLETE_RESPONSE",
+    "originalResponseSha256": "3e5df83f83f407fd29d6c2383dff98359827d2a59b2959a358ee40116dc2a6de",
+    "completeRowEndCharacter": 14810,
+    "recoveredSourceSha256": "e7b1c2034d0f32e29f71fcb8ff36a7c82ce7719162a3f8ead1fe9ddf708500ec",
+    "partialSecondTestFileRejected": true,
+    "originalReceiptAndResponseUntouched": true,
+    "fullReservationRetained": 193.232,
+    "newProviderRequests": 0,
+    "testRemedy": "Parent-authored independent fixed field/fixture/ambient exception regressions; retain original1066case identities"
+  },
+  "finalFullReviews": {
+    "architecture": {
+      "verdict": "PASS",
+      "findings": [],
+      "coverageGaps": [
+        "Static review of the supplied production source, tests and documentation found no material departure from the frozen pure-prerequisite requirements. All four DTO field sets, enums and explicit nullability match the supplied normative schemas; purge status correctly excludes a wire status/schema_version field.",
+        "Completion is structural claimed-state validation only. Coverage validation requires evidence and verification timestamps, expired coverage requires elapsed expiry, and complete purge/destroyed key status requires nonempty all-verified coverage. Neither lexical evidence references nor accepted labels establish authority, inventory completeness or real erasure. overall_status validates and rolls up milestones only; callers must validate the complete purge DTO before treating its claimed coverage as structurally consistent.",
+        "The supplied tests cover independent literal field sets, all 625 milestone combinations, parent-loss matrices, exact primitive rejection, resource limits, detachment, chronology, evidence requirements and ambient exception-context sanitization. Actual accepted fixture contents were not supplied, so their compatibility with fixture-reading tests and correspondence to the eight frozen vectors cannot be independently confirmed here.",
+        "Execution and repository-wide evidence remain pending independent gates: restricted tests and oracle, Python 3.10 grammar, style/type checks, exact three-new-file compliance, preservation of 4023 baseline PASS/208 SKIP identities and 458 tracked pins, and the exact 16-head checks followed by merged-main CI/deployment green chain. Supplied evidence metadata is not independently verified execution evidence and does not close these gates.",
+        "Later AUTH/COPY/GRAPH/LINEAGE/READS/JOBS/KEY integrations remain mandatory and blocked, not defects in this parcel: trusted parent resolution, independently verified authority/evidence, inventory reconciliation, SQL tombstones and writer/read fencing, durable leases/idempotency/signal deduplication, external cleanup/delivery and qualified key custody. already_applied remains advisory, retry exhaustion is not success, and parent transitions neither restore archived children nor reverse purged children. This PASS applies only to source architecture of the pure prerequisite, not full P3C readiness or dispatch authorization."
+      ]
+    },
+    "security": {
+      "verdict": "PASS",
+      "findings": [],
+      "coverageGaps": [
+        "Source review found no material security defect in the supplied pure prerequisite. Exact-type checks precede schema operations and detachment; bounded tree traversal rejects cycles, unsupported objects and subclasses without invoking their hooks. Public validation failures use content-free messages and explicitly detached exception links.",
+        "The supplied production code and tests were reviewed as text, not executed. Parent-provided test counts, oracle results, style/type outcomes and hashes are supplied evidence rather than independently verified execution results.",
+        "The referenced contracts-v2.json fixture and historical binding appendix were not supplied in full. Tests explicitly exercise eight fixture rows and applicable parent-loss signals, but their correspondence to the independently frozen artifact cannot be established from this packet alone.",
+        "StageF acceptance remains pending the required independent review chain, restricted deterministic verification, Python 3.10 grammar checks, baseline identity/pin correspondence, exact sixteen head checks, and merged-main CI/deployment green chain. These are pending acceptance gates, not source defects.",
+        "Validated completion states, evidence references, custody references, parent labels and authorization-context references remain untrusted structural claims. The module does not authenticate evidence, establish inventory completeness, qualify custody adapters, authorize destruction or prove erasure. Its documentation preserves this distinction; overall_status is only a milestone rollup, not a verified operational completion decision.",
+        "Mandatory later SQL/transactional fencing, current authority verification, reader enforcement, durable jobs and deduplication, trusted parent resolution, inventory reconciliation, and independently qualified key/copy destruction-or-expiry integrations remain outside this prerequisite. Full P3C and affected operational routes remain blocked pending those integrations."
+      ]
+    }
+  },
+  "compatibilitySupplements": {
+    "architecture": {
+      "verdict": "PASS",
+      "findings": [],
+      "coverageGaps": [
+        "The supplied 'Exact before _time' contains only an overload signature, not the previous implementation. Exact implementation-delta correspondence therefore relies on the stated change scope and retained prior reviews; the complete current implementation is structurally reviewable.",
+        "The appended tests cover all six fractional precisions with both UTC suffixes and a cross-precision milestone boundary. They do not themselves enumerate calendar rejection, fractional equality in lease/expiry/parent-loss comparisons, or nullable timestamps. Preservation of earlier test coverage is supplied evidence, not independently executed verification.",
+        "The original full test file, frozen reference schemas, and documentation body are not reproduced here. Their identity and prior dispositions remain supplied claims. Restricted execution, Python 3.10 checks, identity checks, and merged-main CI/deployment remain future acceptance gates, not prerequisites to this source-review verdict.",
+        "PASS is limited to the pure structural prerequisite. The timestamp parser retains exact ASCII wire matching, requires explicit UTC, pads fractional seconds without rounding, and delegates real-calendar validation to datetime.fromisoformat using Python 3.10-compatible syntax. Parsed values remain aware UTC datetimes, so chronology comparisons preserve fractional ordering and equality across suffixes. Normalization is internal: detached outputs retain original timestamp strings, and input-tree limits remain enforced before parsing. No completion, retry, coverage, or parent-loss rule is changed by this normalization. Structural acceptance supplies no operational authority, custody qualification, durable deduplication, read fencing, erasure guarantee, or full-P3 completion."
+      ]
+    },
+    "security": {
+      "verdict": "PASS",
+      "findings": [],
+      "coverageGaps": [
+        "Source review finds no security defect in the current _time implementation or its composition with the supplied validators. Exact-str checking and an anchored ASCII grammar precede normalization; only Z and +00:00 are accepted. Fraction padding preserves the represented microseconds, while datetime.fromisoformat supplies calendar validation. Invalid dates, naive times, nonzero offsets, malformed fractions and trailing input are not widened into accepted timestamps.",
+        "The supplied 'Exact before _time' contains only an overload declaration, not the previous implementation body. Consequently, the precise implementation delta cannot be independently reconstructed from this packet. Claims that only _time changed, original test ASTs remained identical and documentation remained unchanged are supplied evidence rather than independently established comparisons.",
+        "The appended tests cover all six accepted fractional precisions with both UTC suffixes and a fractional chronology boundary. They do not themselves enumerate malformed timestamps, invalid calendars, subclass inputs, resource limits or detached exception diagnostics. Retained prior coverage and validation metadata are evidence claims; no tests were executed in this review.",
+        "Composition review finds that public timestamp-validation paths perform bounded exact-built-in tree validation before parsing or copying. Parsing failures pass through the existing content-free error boundary, which explicitly clears exception context and cause. Normalization remains bounded and does not change returned wire strings. This assessment does not promise removal of rejected values from debugger-accessible traceback frames.",
+        "Independent restricted testing, Python 3.10 execution, style/type/grammar checks, source-pin correspondence and merged-main CI/deployment remain future acceptance gates, not prerequisites to this source-review verdict. This PASS applies only to pure structural-claim validation and transition primitives; it establishes no operational authority, persistent deduplication, read fencing, qualified custody effects, durable erasure or full P3C completion."
+      ]
+    }
+  },
+  "utcPreFixActual": {
+    "atUtc": "2026-10-25T02:23:55.574775+00:00",
+    "stage": "before",
+    "sourceSha256": "e7b1c2034d0f32e29f71fcb8ff36a7c82ce7719162a3f8ead1fe9ddf708500ec",
+    "imageId": "sha256:0d478c4ec0979689ade3543a7a3da19010e4d6302c3224325d301c474a3f7fbf",
+    "exit": 1,
+    "observation": {
+      "python": "3.10.22",
+      "results": [
+        {
+          "fractionDigits": 1,
+          "suffix": "Z",
+          "accepted": false
+        },
+        {
+          "fractionDigits": 1,
+          "suffix": "+00:00",
+          "accepted": false
+        },
+        {
+          "fractionDigits": 2,
+          "suffix": "Z",
+          "accepted": false
+        },
+        {
+          "fractionDigits": 2,
+          "suffix": "+00:00",
+          "accepted": false
+        },
+        {
+          "fractionDigits": 3,
+          "suffix": "Z",
+          "accepted": true
+        },
+        {
+          "fractionDigits": 3,
+          "suffix": "+00:00",
+          "accepted": true
+        },
+        {
+          "fractionDigits": 4,
+          "suffix": "Z",
+          "accepted": false
+        },
+        {
+          "fractionDigits": 4,
+          "suffix": "+00:00",
+          "accepted": false
+        },
+        {
+          "fractionDigits": 5,
+          "suffix": "Z",
+          "accepted": false
+        },
+        {
+          "fractionDigits": 5,
+          "suffix": "+00:00",
+          "accepted": false
+        },
+        {
+          "fractionDigits": 6,
+          "suffix": "Z",
+          "accepted": true
+        },
+        {
+          "fractionDigits": 6,
+          "suffix": "+00:00",
+          "accepted": true
+        }
+      ]
+    },
+    "ownedContainerAbsent": true
+  },
+  "freshSourceAndMainGreen": true,
+  "coverageLimits": "External fixture body not supplied to final full risk seats; parent actual frozen oracle and baseline fixture pins establish correspondence. UTC supplement before snippet accidentally selected overload; complete current implementation was reviewed and parent full-AST delta verifies only_time changed. No independent before-body comparison claimed."
+}

@@ -1,7 +1,7 @@
 ---
 ticket: CCM-P3C1
 title: Strict deletion protocol and minimal parent-loss transition primitives
-status: active
+status: done
 owner: clinton.morgan
 created: '2026-10-24'
 updated: '2026-10-24'

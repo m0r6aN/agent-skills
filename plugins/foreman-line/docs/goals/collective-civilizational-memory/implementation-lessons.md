@@ -201,3 +201,20 @@ not full import readiness or held credential-route clearance.
   are sequential gates; never create circular merge-before-review requirements.
 - Use fresh complete affected-module review supplements for a narrow final delta,
   with full-runtime baseline hashes/scopes explicit; do not relabel them full reviews.
+
+
+## Deletion protocol October24 NY
+
+- Separate completed reported expense from incremental future exposure. Keep
+  original historical books immutable and retain every failed/unknown reservation
+  and estimate excess. Disposition: installed in current handoff/financial schema.
+- fromNone suppresses display but can retain ambient caller exception context.
+  Clear actual exception links before bare re-raise; test in a caller handler.
+  Disposition: implemented production boundary and permanent regression.
+- Python3.10 grammar is not runtime qualification. Fractional UTC parsing differs
+  across supported runtimes; pad already-validated fractions for parsing only.
+  Disposition: production normalization,12precision/suffix regressions, actual
+  isolated3.10before/after proof and CI matrix. Original failedruns retained.
+- Large full-file repair output can truncate; preserve the full failed cap. Only
+  exact complete sub-artifacts may be independently recovered, never partial tests
+  relabeled complete. Disposition: recovery proof, original records and handoff.
