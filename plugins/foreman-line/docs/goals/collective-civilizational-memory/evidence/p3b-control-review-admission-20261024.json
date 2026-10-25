@@ -1,0 +1,39 @@
+{
+  "atUtc": "2026-10-25T00:08:37.753033+00:00",
+  "scope": "Two fresh independent supplements to completed full-production review chains; all production source changes confined to _controls, complete changed module supplied",
+  "priorFullReviewedSourceHashes": {
+    "src/keon/cortex/pipeline/ccm_admission.py": "10d24e202e732de653756b8848a5021c7090f84aeb0bbaedaae89e8895ad20e6",
+    "src/keon/cortex/providers/postgres/ccm_graph_schema.py": "41eab9c4e18a7fefd51681413359e11539aaaea9a877363cb6da84168d243eb2",
+    "src/keon/cortex/providers/postgres/ccm_canonical.py": "625a11b5b81fe0c9963675e0487413bace6ccd9f7fa1c8b690f17948d8f6728b",
+    "tests/test_ccm_admission.py": "d7f021b2adf2f04ef03e349b6ce4c5e2523cca4ce0bd13132ee206ccdd948075",
+    "tests/test_ccm_canonical_postgres.py": "d7ddebcba111bcb592beb27aaca16bc5c43a0a0bfec8e6741ff4a0a9e6348d7f",
+    "docs/specs/ccm-canonical-writers-v1.md": "2a1aa29a50206df14163053376ddb6c70813758f4e966a893ac888e8c4f3d9f3"
+  },
+  "currentSourceHashes": {
+    "src/keon/cortex/pipeline/ccm_admission.py": "d1f5a37e4b45234ccfbe8445846ff6932452845105089fa28e8b54538bc1ae6e",
+    "src/keon/cortex/providers/postgres/ccm_graph_schema.py": "41eab9c4e18a7fefd51681413359e11539aaaea9a877363cb6da84168d243eb2",
+    "src/keon/cortex/providers/postgres/ccm_canonical.py": "625a11b5b81fe0c9963675e0487413bace6ccd9f7fa1c8b690f17948d8f6728b",
+    "tests/test_ccm_admission.py": "8ffd4619a8077ccf0a9b045985b8c2c4af34c5f3b9aead4c089cb6aa8c41b897",
+    "tests/test_ccm_canonical_postgres.py": "163411607de6e3a800aabe602124e3e255363c2c4209d2cbb369fd2fe4f195a4",
+    "docs/specs/ccm-canonical-writers-v1.md": "2a1aa29a50206df14163053376ddb6c70813758f4e966a893ac888e8c4f3d9f3"
+  },
+  "threeOtherFilesByteIdentical": [
+    "src/keon/cortex/providers/postgres/ccm_graph_schema.py",
+    "src/keon/cortex/providers/postgres/ccm_canonical.py",
+    "docs/specs/ccm-canonical-writers-v1.md"
+  ],
+  "allOtherPureASTUnchanged": true,
+  "allPriorTestFunctionASTsUnchanged": true,
+  "newTests": [
+    "test_loaded_format_cannot_be_scrubbed",
+    "test_parent_loaded_format_scrub_change_has_no_canonical_effects"
+  ],
+  "sourceReviewVerdictMeaning": "PASS means no material source issue in supplied scope; it does NOT approve merge or claim future AC20 evidence complete",
+  "AC20StillRequired": "16 exact-head CI + both independent review chains cleared + exact matched merge + merged-main CI/deploy, coordinator must collect after source review; never waived",
+  "maxNewProviderPosts": 2,
+  "maxCallCredits": 150,
+  "phaseCap": 2600,
+  "sameModelFamilyLimitation": true,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD"
+}

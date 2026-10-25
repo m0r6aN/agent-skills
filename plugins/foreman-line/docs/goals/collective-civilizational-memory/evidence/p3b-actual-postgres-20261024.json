@@ -1,0 +1,351 @@
+{
+  "atUtc": "2026-10-25T00:07:37.293319+00:00",
+  "status": "PASS_ACTUAL_DISPOSABLE_POSTGRES_16",
+  "network": "isolated internal Docker network, no published port",
+  "syntheticOnly": true,
+  "newProviderCalls": 0,
+  "candidateImage": "ccm-p3b-candidate:cebf18f004b2",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_admission.py": "d1f5a37e4b45234ccfbe8445846ff6932452845105089fa28e8b54538bc1ae6e",
+    "src/keon/cortex/providers/postgres/ccm_graph_schema.py": "41eab9c4e18a7fefd51681413359e11539aaaea9a877363cb6da84168d243eb2",
+    "src/keon/cortex/providers/postgres/ccm_canonical.py": "625a11b5b81fe0c9963675e0487413bace6ccd9f7fa1c8b690f17948d8f6728b",
+    "tests/test_ccm_admission.py": "8ffd4619a8077ccf0a9b045985b8c2c4af34c5f3b9aead4c089cb6aa8c41b897",
+    "tests/test_ccm_canonical_postgres.py": "163411607de6e3a800aabe602124e3e255363c2c4209d2cbb369fd2fe4f195a4",
+    "docs/specs/ccm-canonical-writers-v1.md": "2a1aa29a50206df14163053376ddb6c70813758f4e966a893ac888e8c4f3d9f3"
+  },
+  "postgresImage": "sha256:275447c94b11b151decd1f29877965301d5a77032037c46de93d990f739f00a9",
+  "existingCanonicalSchemaPreconditionProvisioned": true,
+  "tests": {
+    "exit": 0,
+    "cases": [
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_enqueue_rejects_untrusted_context_before_sql[none]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_enqueue_rejects_untrusted_context_before_sql[bool]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_enqueue_rejects_untrusted_context_before_sql[dict]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_enqueue_rejects_untrusted_context_before_sql[hostile]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_construction_has_no_pool_effect",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_existing_node_query_withholds_raw_metadata",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_storage_diagnostic_discards_original_exception",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_cancellation_identity_inside_coroutine",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_force_rls_owner_and_four_scope_visibility",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_deferred_orphan_registry_rejected[receipt]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_deferred_orphan_registry_rejected[role_generation]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_deferred_orphan_registry_rejected[shard]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_deferred_orphan_registry_rejected[artifact_node]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_exact_edge_wire_identity_and_persistence[2026-01-01T00:00:00Z]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_exact_edge_wire_identity_and_persistence[2026-01-01T00:00:00+00:00]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_exact_edge_wire_identity_and_persistence[2026-01-01T00:00:00.000000Z]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_edge_failures_rollback_whole_graph[identity]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_edge_failures_rollback_whole_graph[before-start]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_edge_failures_rollback_whole_graph[orphan]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_immutable_history_and_endpoint_closure[delete]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_immutable_history_and_endpoint_closure[retitle]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_immutable_history_and_endpoint_closure[close-with-open-edge]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_select_context_does_not_authorize_mutation",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_cancellation_after_graph_writes_rolls_back",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_chain_duplicate_first_write_and_pending_reopen",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_unavailable_has_no_effects[stale]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_unavailable_has_no_effects[fenced]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_unavailable_has_no_effects[generation]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_unavailable_has_no_effects[worker]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_unavailable_has_no_effects[scope]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_failure_after_mutation_is_atomic[False-document]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_failure_after_mutation_is_atomic[False-event]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_failure_after_mutation_is_atomic[False-graph]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_failure_after_mutation_is_atomic[False-ack]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_failure_after_mutation_is_atomic[True-document]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_failure_after_mutation_is_atomic[True-event]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_failure_after_mutation_is_atomic[True-graph]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_failure_after_mutation_is_atomic[True-ack]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[payload0-batch]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[payload0-source]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[1-batch]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[1-source]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[malformed-batch]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[malformed-source]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[payload3-batch]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[payload3-source]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[payload4-batch]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[payload4-source]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_preexisting_observation_collision[False]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_preexisting_observation_collision[True]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_duplicate_tampered_observation_is_conflict",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_registered_shard_identity_and_receipt_sql_rejection[identity]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_registered_shard_identity_and_receipt_sql_rejection[root]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_registered_shard_identity_and_receipt_sql_rejection[provenance]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_registered_shard_identity_and_receipt_sql_rejection[wire-provenance]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_sql_parameters_exclude_unicode_secrets",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_concurrent_writer_serializes_with_duplicate_and_fence[duplicate]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_concurrent_writer_serializes_with_duplicate_and_fence[fence]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_parent_loaded_format_scrub_change_has_no_canonical_effects",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_parent_oversized_existing_node_metadata_is_withheld",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_parent_direct_edge_and_endpoint_closure_serialize[edge]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_parent_direct_edge_and_endpoint_closure_serialize[closure]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_parent_finite_replacement_chain_preserves_history[cycle]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_parent_finite_replacement_chain_preserves_history[reopen]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_parent_finite_replacement_chain_preserves_history[retarget]",
+        "status": "pass"
+      }
+    ],
+    "output": ".................................................................        [100%]\n----------------------- generated xml file: /tmp/pg.xml ------------------------\n65 passed in 5.78s\n"
+  },
+  "allOwnedContainersAbsent": true,
+  "networkAbsent": true
+}

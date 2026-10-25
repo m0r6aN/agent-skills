@@ -1,0 +1,11 @@
+{
+  "atUtc": "2026-10-24T23:36:12.821092+00:00",
+  "authority": "Standing owner bounded repair grant",
+  "scope": "Complete same marker-boundary repair: Callable typing and idempotence regression, no broad redesign",
+  "maxPosts": 1,
+  "maxOutputTokens": 3500,
+  "maxCall": 65,
+  "phaseCap": 1700,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD"
+}

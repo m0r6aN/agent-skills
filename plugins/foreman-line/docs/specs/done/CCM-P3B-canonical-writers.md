@@ -1,7 +1,7 @@
 ---
 ticket: CCM-P3B
 title: Canonical low-trust admission and atomic Plane A/B writer
-status: active
+status: done
 owner: clinton.morgan
 created: '2026-10-24'
 updated: '2026-10-24'

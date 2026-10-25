@@ -1,0 +1,12 @@
+{
+  "atUtc": "2026-10-24T23:33:21.461407+00:00",
+  "authority": "Standing owner bounded non-destructive repair authority",
+  "scope": "One pure admission fix plus focused regressions for reproduced re-scrub corruption of prior scrubber redaction markers",
+  "maximumPosts": 1,
+  "maxOutputTokens": 10000,
+  "maxCallReservation": 200,
+  "phaseCap": 1700,
+  "acceptedPriorFilesUnchanged": true,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD"
+}

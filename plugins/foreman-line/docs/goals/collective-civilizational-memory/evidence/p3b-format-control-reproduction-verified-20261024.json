@@ -1,0 +1,9 @@
+{
+  "atUtc": "2026-10-25T00:05:58.493789+00:00",
+  "status": "EXPECTED_FORMAT_CONTROL_REGRESSION_REPRODUCED",
+  "preRepairProductionImage": "ccm-p3b-review-repro:1a16bf7f59",
+  "testExit": 1,
+  "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n____________________ test_loaded_format_cannot_be_scrubbed _____________________\ntests/test_ccm_admission.py:668: in test_loaded_format_cannot_be_scrubbed\n    with pytest.raises(admission.CanonicalAdmissionError, match=\"^scrub_failed$\"):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE   Failed: DID NOT RAISE <class 'keon.cortex.pipeline.ccm_admission.CanonicalAdmissionError'>\n=============================== warnings summary ===============================\n../usr/local/lib/python3.12/site-packages/_pytest/config/__init__.py:1474\n  /usr/local/lib/python3.12/site-packages/_pytest/config/__init__.py:1474: PytestConfigWarning: Unknown config option: asyncio_mode\n  \n    self._warn_or_fail_if_strict(f\"Unknown config option: {key}\\n\")\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_ccm_admission.py::test_loaded_format_cannot_be_scrubbed - F...\n1 failed, 60 deselected, 1 warning in 0.28s\n",
+  "containerAbsent": true,
+  "providerRequests": 0
+}

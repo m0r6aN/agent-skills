@@ -179,3 +179,25 @@ not full import readiness or held credential-route clearance.
   advisory-lock queue interleavings and direct full source/outbox rollback assertions.
 - PostgreSQL Docker temporary socket readiness is not final TCP readiness.
   Disposition: parent isolated test harness checks TCP; failure diagnostic retained.
+
+
+## Canonical writer October24 NY
+
+- Delegate complete fixed-path source with ONE consistent system/user output
+  grammar. Contradictory rawPython/JSON instructions caused recoverable envelopes
+  and costly conservative holds; no launcher-development project is required.
+- Measure exact serialized outbound bytes AFTER newline normalization and BEFORE
+  reserving/sending. Preserve original failures; never infer no provider request
+  from SSL alone. Only deterministic pre-send proof permits same-purpose reservation
+  coverage without borrowing an uncertain request's funds.
+- Queue ack and shard/graph/event publication must share one connection. A
+  conflicting ON CONFLICT DO NOTHING event needs explicit persisted-event equality.
+- Re-scrubbing prior redaction markers is not automatically idempotent. Bound the
+  exact marker namespace and preserve literal-secret overlap/collision detection;
+  keep structured content decoded until scrubbing is complete.
+- Negative fixtures must respect existing DB root constraints to reach nested
+  loaded-state guards. Count real old-code failures, separate fixture/import errors.
+- Source-review PASS is not final acceptance. CI16, exact merge and main CI/deploy
+  are sequential gates; never create circular merge-before-review requirements.
+- Use fresh complete affected-module review supplements for a narrow final delta,
+  with full-runtime baseline hashes/scopes explicit; do not relabel them full reviews.

@@ -1,0 +1,44 @@
+{
+  "atUtc": "2026-10-25T00:10:25.162005+00:00",
+  "status": "SOURCE_REVIEW_CHAIN_CLEARED_CI_PENDING",
+  "head": "c8560b5bedd334f5c9296c9ab90b7c6b32dffe6c",
+  "base": "fd0f478cc3d21d7ef4eb9f518f61487b010e296e",
+  "branch": "feat/foreman-line-ccm-p3b-canonical",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_admission.py": "d1f5a37e4b45234ccfbe8445846ff6932452845105089fa28e8b54538bc1ae6e",
+    "src/keon/cortex/providers/postgres/ccm_graph_schema.py": "41eab9c4e18a7fefd51681413359e11539aaaea9a877363cb6da84168d243eb2",
+    "src/keon/cortex/providers/postgres/ccm_canonical.py": "625a11b5b81fe0c9963675e0487413bace6ccd9f7fa1c8b690f17948d8f6728b",
+    "tests/test_ccm_admission.py": "8ffd4619a8077ccf0a9b045985b8c2c4af34c5f3b9aead4c089cb6aa8c41b897",
+    "tests/test_ccm_canonical_postgres.py": "163411607de6e3a800aabe602124e3e255363c2c4209d2cbb369fd2fe4f195a4",
+    "docs/specs/ccm-canonical-writers-v1.md": "2a1aa29a50206df14163053376ddb6c70813758f4e966a893ac888e8c4f3d9f3"
+  },
+  "old452PinsRetained": true,
+  "treeEntries": 458,
+  "focus": 61,
+  "fullCounts": {
+    "pass": 4023,
+    "skipped": 208,
+    "failure": 0,
+    "error": 0
+  },
+  "actualPostgresCases": 65,
+  "reviewedStagedCommittedBytesEqual": true,
+  "reviewChain": {
+    "full": [
+      "compact-architecture",
+      "security",
+      "final-architecture",
+      "final-security"
+    ],
+    "supplements": [
+      "closure-architecture",
+      "closure-security"
+    ],
+    "sourceChangeScope": "Two fresh independent supplements to completed full-production review chains; all production source changes confined to _controls, complete changed module supplied",
+    "sameFamilyLimitation": true
+  },
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "CI": "PENDING",
+  "pr": "https://github.com/Keon-Systems/keon-cortex/pull/102"
+}
