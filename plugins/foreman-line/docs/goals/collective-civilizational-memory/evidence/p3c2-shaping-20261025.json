@@ -1,0 +1,32 @@
+{
+  "advisory": {
+    "valid": true,
+    "frontmatter": {
+      "valid": true,
+      "errors": [],
+      "warnings": [
+        "advisory: surfaces entry 'src/keon/cortex_governed/ccm_deletion_authorization.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+        "advisory: surfaces entry 'src/keon/cortex/providers/postgres/ccm_copy_tracking.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+        "advisory: surfaces entry 'src/keon/cortex/providers/postgres/ccm_canonical.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+        "advisory: surfaces entry 'tests/test_ccm_deletion_authorization.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+        "advisory: surfaces entry 'tests/test_ccm_copy_tracking_postgres.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+        "advisory: surfaces entry 'tests/test_ccm_canonical_postgres.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74"
+      ]
+    },
+    "body": {
+      "valid": true,
+      "errors": []
+    },
+    "errors": []
+  },
+  "result": {
+    "artifactPath": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\ccm-p3c2-authority-copies-2026-10-25.shaping-result.json",
+    "artifactRef": "plugins/foreman-line/docs/specs/active/ccm-p3c2-authority-copies-2026-10-25.shaping-result.json",
+    "payload": {
+      "parcelSpecRefs": [
+        "plugins/foreman-line/docs/specs/active/CCM-P3C2-authority-copies.md"
+      ],
+      "epics": []
+    }
+  }
+}
