@@ -1,0 +1,28 @@
+{
+  "atUtc": "2026-10-25T02:07:01.365007+00:00",
+  "gate2": "APPROVED_EXISTING_OWNER_NONDESTRUCTIVE_BUILD_REVIEW_AUTHORITY",
+  "parcel": "CCM-P3C1",
+  "base": "43323f535df458543c0161ca501f8f974650008e",
+  "worktree": "D:\\Repos\\ccm-worktrees\\cortex-p3c-deletion",
+  "allowedFiles": [
+    "src/keon/cortex/pipeline/ccm_deletion_protocol.py",
+    "tests/test_ccm_deletion_protocol.py",
+    "docs/specs/ccm-deletion-protocol-v1.md"
+  ],
+  "workorderSha256": "e2387198f6b5a058529fb3a7275a3b1a121993cf06e3162c9f8d1d4b4480e40a",
+  "step0FlagsDisposed": [
+    "AUTH",
+    "FILES",
+    "COPY",
+    "GRAPH",
+    "LINEAGE",
+    "READS",
+    "JOBS",
+    "KEY",
+    "GATES"
+  ],
+  "dispositions": "Pure prerequisite only; complete P3C SQL/authority/read/job/crypto integrations remain mandatory and unqualified",
+  "sourcePosts": 0,
+  "affectedRoutes": "HELD",
+  "allFailedUnknownAndExplicitReservationsUnchanged": true
+}
