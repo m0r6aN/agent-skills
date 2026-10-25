@@ -1,4 +1,18 @@
-# CCM current loop — P2A/P2B/P2C accepted; credential disposition open
+# CCM current loop — P3B accepted; P3C preparation and funding boundary
+
+## Current boundary — October24 NY, governed deletion/retraction
+
+Direct owner request advances governed deletion/retraction and minimal descendant
+invalidation. Same sole coordinator, no native worker or monitor. See
+p3c-readiness-20261024.md for investigated copy/read/graph/authority seams and
+finite Step0 prerequisites. Preparation only; no source edit, Gate2, independent
+review, inference or real-data deletion. Accepted P3B remains unchanged.
+Fresh balance10164.1 minus all8926.999375 conservative holds and floor1000 leaves
+237.100625. Complete build/review funding not admitted; requested actual2500
+GenSpark top-up, not another authority grant. No top-up assumed. All reservations,
+affected/native/private-Pi/oversized routes remain HELD. Crypto/key/backup and
+independent deletion-decision adapter qualification are not invented. Continue
+local preparation; refresh actual funds/day/foreign guards before paid dispatch.
 
 Custodian: ccm-coordinator-20261020-fresh-01. Originating authorized operator:
 01a155be-72a6-7b02-ac33-84dc64bbf102; factual oversight:
