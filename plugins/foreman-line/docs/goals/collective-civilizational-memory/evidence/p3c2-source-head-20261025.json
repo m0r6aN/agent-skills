@@ -1,0 +1,29 @@
+{
+  "atUtc": "2026-10-25T15:31:42.346010+00:00",
+  "head": "a8ab5bb35975c735c49b0dde92352b58db447fe7",
+  "base": "964f42000f02304ecf89d19079e3fa3d393dab46",
+  "branch": "feat/foreman-line-ccm-p3c2-authority-copies",
+  "sourceHashes": {
+    "src/keon/cortex_governed/ccm_deletion_authorization.py": "49a9ec6c79662dfbfd7da9623929947305c730de78a09387e3471881f4d33812",
+    "src/keon/cortex/providers/postgres/ccm_copy_tracking.py": "c4d614c6c821cb92fb4bc66f7b26b053b9c0ff4ad67abe6c35dfc423482be9ce",
+    "src/keon/cortex/providers/postgres/ccm_canonical.py": "1145f6c63f852a7d15b036cd78ff99e5499273b6b1c7f4889941d861ac138764",
+    "tests/test_ccm_deletion_authorization.py": "169d3d982026bdac341168a944b7405905a417bd7ddc1fe5a0dad7a5b9728846",
+    "tests/test_ccm_copy_tracking_postgres.py": "a5b96feadbcba7520c90b4b0e6766e78add124bbacf3612fd7ffaef76314c7a5",
+    "tests/test_ccm_canonical_postgres.py": "a30bbde4d42c3d7e9d905d7ed7c7450f3fa1287e02f4a2a09556f39931c6c79c",
+    "docs/specs/ccm-authority-copies-v1.md": "06f4422c6d7e2bb401f167bb7eece4228225f2dd5e794f6970d8b0b889584c3e"
+  },
+  "old461PinsRetainedExceptTwoAllowedFiles": true,
+  "existingCanonicalTestBodiesUnchanged": true,
+  "counts": {
+    "pass": 5187,
+    "skipped": 248,
+    "failure": 0,
+    "error": 0
+  },
+  "focus": 100,
+  "actualPGCases": 165,
+  "fullP3CComplete": false,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "pr": "https://github.com/Keon-Systems/keon-cortex/pull/104"
+}

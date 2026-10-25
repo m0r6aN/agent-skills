@@ -1,7 +1,7 @@
 ---
 ticket: CCM-P3C2
 title: Independent deletion decision authentication and transactional copy memberships
-status: active
+status: done
 owner: clinton.morgan
 created: '2026-10-25'
 updated: '2026-10-25'

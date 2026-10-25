@@ -1,6 +1,6 @@
-# CCM current loop — P3C1 accepted; full governed deletion gates open
+# CCM current loop — P3C2 accepted; operational deletion gates open
 
-Latest current handoff: p3c1-handoff-20261024.md. P3C1 accepted; complete P3C runtime remains open. All reservations and affected routes held.
+Latest current handoff: p3c2-handoff-20261025.md. P3C2 authorization/copy tracking accepted; operational deletion remains open. All reservations and affected routes held.
 
 ## Historical preparation boundary — superseded by P3C1 closure
 
@@ -569,3 +569,8 @@ future reserve7220.21925, all failed/uncertainholds
 including193.232truncationheld. No topup needed after expense/exposure correction.
 Both paidphasesclosed, allaffected/native/privatePiHELD. FullP3C SQL/authority/
 copy/read/durableinvalidation/keyintegrations remainopen. See p3c1-handoff-20261024.md.
+
+
+## P3C2 accepted — October25 NY
+
+PR 104 merge `a96cc851aad6f98b8dc4695ddd0e7c4c15e18175`;5187fullPASS248skip;165actualPG16;freshindependentPASS/PASS;16head/mainCI/deploymentgreen. See p3c2-handoff-20261025.md. Authorization/copy source subset accepted, fullP3C deletion remains open. All reservations and affected routes held.

@@ -1,0 +1,146 @@
+{
+  "atUtc": "2026-10-25T15:36:41.865632+00:00",
+  "status": "ALL_MATERIAL_IN_SCOPE_FINDINGS_CLOSED",
+  "initialReviews": {
+    "architecture": {
+      "verdict": "CHANGES_REQUIRED",
+      "findings": [
+        {
+          "id": "AUTH-TEST-01",
+          "severity": "medium",
+          "locator": "tests/test_ccm_deletion_authorization.py::test_postgres_current_revocation_locks_and_owner_rollback; test_time_grammar_sampling_metadata_and_body_identity",
+          "description": "Required actual-PostgreSQL authorization boundary coverage is incomplete. Time sampling and effect-body exception/cancellation identity are tested only through Connection doubles. The PostgreSQL rollback case inserts its synthetic effect before an already-revoked authorization fails at entry; it does not exercise an admitted body followed by normal-exit expiry, body failure, or cancellation. Revocation races exercise reader-first blocking, but not writer-first current-state resolution or decision-to-key-to-operator lock ordering.",
+          "remedy": "Add synthetic PostgreSQL16 cases for entry and normal-exit expiry, admitted-body exception and cancellation with owning-transaction rollback, writer-first revocation visibility for all three authority rows, and observable resolver lock ordering. Keep sampling distinct from arbitrary later commit validity."
+        },
+        {
+          "id": "COPY-TEST-01",
+          "severity": "medium",
+          "locator": "tests/test_ccm_copy_tracking_postgres.py::test_empty_and_noncomplete_positions; test_sql_immutability_rls_and_bootstrap_ownership; test_tracking_rejects_malformed_or_conflicting_records",
+          "description": "Several explicitly required copy guarantees lack implementation-level PostgreSQL tests in the supplied new suite. Empty/noncomplete cases test only build_memberships, not durable zero-mapping markers and their counts. SQL negatives cover changed UPDATEs and SELECT visibility, but not direct INSERT association/FK failures, DELETE/TRUNCATE rejection, or copy-specific lease expiry/fence races. The conflict case compares against an existing membership; it does not test an invalid graph association on initial insertion.",
+          "remedy": "Add actual fixture-based cases for zero-occurrence/pending-only batches, initial wrong-edge/wrong-scope/missing-endpoint associations, direct immutable-operation negatives, and lease expiry or generation change after tracking but before acknowledgment, asserting full shared-transaction rollback."
+        },
+        {
+          "id": "COPY-INPUT-01",
+          "severity": "medium",
+          "locator": "src/keon/cortex/providers/postgres/ccm_copy_tracking.py::_record identity validation",
+          "description": "scope_id is validated with the generic identifier grammar rather than the required lowercase 64-hex scope-binding grammar. Consequently values such as 'scope' pass public input validation, execute SQL, and typically become unavailable or storage_failure instead of invalid_input. This does not create an association bypass because subsequent authoritative lookups and FKs constrain it, but it violates the copy helper's exact accepted identifier contract.",
+          "remedy": "Validate scope_id with _SHA before any SQL and add public record_batch input tests proving malformed scope bindings are rejected as invalid_input without database calls."
+        }
+      ],
+      "coverageGaps": [
+        "Static review supports exact signed request binding, Ed25519 verification over all canonical claims, empty-default issuer denial, immutable authority bindings, and current-row FOR SHARE locking in decision/key/operator order. Entry and normal exit remain sampling points, not a commit-time validity guarantee.",
+        "Writer integration uses the same owning transaction, original payload positions, current prepared provenance and actual returned edge IDs before constraints and guarded acknowledgment; first-wins records are not rewritten by tracking.",
+        "Production Runtime issuer/provisioning adapters, deletion effects, external copies, backups/replicas and remaining staged plaintext inventory are explicitly held and unqualified, not missing implementations required within this subset. Historical processed batches without markers remain unreconciled.",
+        "The specification document body and unchanged older test bodies were not supplied for direct inspection. Retained evidence metadata is not independent execution evidence from this review. Python3.10 qualification, exact16head and subsequent merged-main CI remain sequential acceptance gates, not prerequisites for this source review."
+      ]
+    },
+    "security": {
+      "verdict": "CHANGES_REQUIRED",
+      "findings": [
+        {
+          "id": "SEC-01",
+          "severity": "medium",
+          "locator": "tests/test_ccm_deletion_authorization.py::test_postgres_current_revocation_locks_and_owner_rollback; test_time_grammar_sampling_metadata_and_body_identity",
+          "description": "Required actual-PostgreSQL authorization failure-path coverage is incomplete. Body exception/cancellation identity and normal-exit expiry are exercised only through Connection mocks. The PostgreSQL rollback case inserts an effect before an already-revoked entry denial; it does not demonstrate rollback after successful authorization followed by a body exception, cancellation, or exit-time expiry. The revocation cases demonstrate blocking on individual rows, but not acquisition order or the writer-first current-state race. These are missing tests in the supplied source, not missing production Runtime qualification.",
+          "remedy": "Add synthetic PostgreSQL16 cases that enter successfully, write a transactional marker, then propagate body failure, cancellation, and normal-exit expiry through the owning transaction and verify rollback. Add bounded writer-first revocation cases and lock-order observations for decision, key, then exact operator rows."
+        },
+        {
+          "id": "SEC-02",
+          "severity": "medium",
+          "locator": "tests/test_ccm_copy_tracking_postgres.py::test_empty_and_noncomplete_positions; test_sql_immutability_rls_and_bootstrap_ownership; test_tracking_rejects_malformed_or_conflicting_records",
+          "description": "The required actual-database copy-integrity negative coverage is incomplete. Zero-occurrence/noncomplete batches are tested only in build_memberships, not through durable marker publication. The SQL test covers changed updates and read visibility, but does not attempt direct malformed inserts, scoped FK/edge-binding violations, deletion/truncation, or unauthorized mutation. The helper-conflict case compares a changed duplicate after a valid insertion; it does not establish rejection of an initially forged structural association. No new test exercises lease expiry or fence/generation change during tracking.",
+          "remedy": "Add actual-PG zero/pending/unsupported batch publication cases with exact persisted counts, direct SQL structural/FK/RLS and immutable-delete/truncate negatives, and bounded late lease/fence races demonstrating rollback of canonical, graph, copy, and acknowledgment writes. Keep structural association tests distinct from independent content-proof claims."
+        }
+      ],
+      "coverageGaps": [
+        "The referenced specification document was not included as source text; its inventory qualifications, transaction-owner contract, and production-admission wording could not be independently reviewed.",
+        "Imported CallerScope validation, canonical serialization, ingestion schemas, and graph policy/locking functions were not supplied. Calls and integration seams were inspected, but their underlying guarantees remain dependencies rather than independently established facts.",
+        "No additional production authorization bypass was established from the supplied implementation: the issuer allowlist defaults empty, signatures cover all validated claims, authority comes from protected resolver rows rather than receipt labels, and the writer records memberships before constraints and acknowledgment in its owning transaction.",
+        "Runtime issuer/provisioning integration, deletion effects, external copies, backup/replica inventory, and historical reconciliation are explicitly unqualified, not implementation omissions demanded of this subset. No live API or issuer admission should be inferred.",
+        "Parent-retained evidence metadata is not independent execution evidence from this review. Omitted unchanged test bodies, actual Python3.10 behavior, deployment privileges, and exact16head/merged-main results were not independently verified; the latter remain future sequential acceptance gates."
+      ]
+    }
+  },
+  "scopeReproduction": {
+    "atUtc": "2026-10-25T15:16:10.844417+00:00",
+    "status": "CONFIRMED_SCOPE_ID_VALIDATION_BEFORE_SQL_DEFECT",
+    "sourceHashes": {
+      "src/keon/cortex_governed/ccm_deletion_authorization.py": "49a9ec6c79662dfbfd7da9623929947305c730de78a09387e3471881f4d33812",
+      "src/keon/cortex/providers/postgres/ccm_copy_tracking.py": "fc6933a512892733c609ec3a8515facdf9473f04e14aa5752ad2213e4c6da3d1",
+      "src/keon/cortex/providers/postgres/ccm_canonical.py": "1145f6c63f852a7d15b036cd78ff99e5499273b6b1c7f4889941d861ac138764",
+      "tests/test_ccm_deletion_authorization.py": "8c9275671755cd3ef10fc6b59a81d8b9c6f27b9db6b36e61613e62d4c9a4bfdd",
+      "tests/test_ccm_copy_tracking_postgres.py": "785501c1837fb3a0db30af536fde7ea47ee338b18b6c484a025c22f45f568964",
+      "tests/test_ccm_canonical_postgres.py": "a30bbde4d42c3d7e9d905d7ed7c7450f3fa1287e02f4a2a09556f39931c6c79c",
+      "docs/specs/ccm-authority-copies-v1.md": "06f4422c6d7e2bb401f167bb7eece4228225f2dd5e794f6970d8b0b889584c3e"
+    },
+    "observation": {
+      "code": "storage_failure",
+      "sqlCalls": 1
+    },
+    "ownedContainerAbsent": true
+  },
+  "appendProof": [
+    {
+      "path": "tests/test_ccm_deletion_authorization.py",
+      "oldSha256": "8c9275671755cd3ef10fc6b59a81d8b9c6f27b9db6b36e61613e62d4c9a4bfdd",
+      "newSha256": "c9f82bc35b5bc95e8b890b1b6c9986cd837d09e340affb736a752f51fb409dc7",
+      "oldPrefixByteIdentical": true,
+      "newNames": [
+        "test_review_postgres_owned_body_boundaries",
+        "review_authority_rows",
+        "review_wait_blocked",
+        "test_review_writer_first_revocation",
+        "test_review_resolver_row_acquisition_order"
+      ]
+    },
+    {
+      "path": "tests/test_ccm_copy_tracking_postgres.py",
+      "oldSha256": "785501c1837fb3a0db30af536fde7ea47ee338b18b6c484a025c22f45f568964",
+      "newSha256": "3b1d0174f159d6981a75430ad5f4ea4010d73ddcfa4f595e1ffd902644e51d38",
+      "oldPrefixByteIdentical": true,
+      "newNames": [
+        "test_review_record_scope_guard_without_calls",
+        "test_review_initial_direct_association_failure_rolls_back",
+        "test_review_late_tracking_fence_rollback",
+        "test_review_direct_admin_integrity_and_app_unauthorized_mutations"
+      ]
+    }
+  ],
+  "parentTestCorrection": {
+    "before": "591620182c2f0a0848f64a8f6eb790bbf0f7ab1a7aa72964e12f0e9037a435f2",
+    "after": "a4e56ebca11dc8628f61dde9b94434e00244a91beb61516a6d282b81addb55d8",
+    "reason": "Actual PG exposed test-only assumptions: one-artifact fixture has no alternate edge; public writer returns unavailable after owned rollback. Added omitted zero-mapping marker tests. No production changes."
+  },
+  "finalReviews": {
+    "architecture": {
+      "verdict": "PASS",
+      "findings": [],
+      "coverageGaps": [
+        "Static source review found no material defect in the supplied implementation. PostgresDeletionAuthorizer.authorize binds the validated caller and every request field to signed claims; _resolve independently checks protected current policy, issuer admission, signature and time bounds. The allowed issuer set defaults empty. AUTH_SCHEMA_SQL::ccm_resolve_deletion_locked locks decision, referenced key and exact operator subject/scope rows FOR SHARE in that order under READ COMMITTED.",
+        "Authorization remains entry/normal-exit sampling, not a guarantee of validity until arbitrary later commit. authorize preserves exceptional body exits; the owning transaction must propagate failures and acquire tenant then graph locks first. No deletion executor, external effect or live API is introduced.",
+        "Retained AUTH-TEST-01 and SEC-01 are addressed in the supplied test source by test_review_postgres_owned_body_boundaries, test_review_writer_first_revocation and test_review_resolver_row_acquisition_order. These add admitted-body rollback paths, entry/exit time boundaries, writer-first current-state cases and observable row acquisition ordering. This is a source-coverage disposition, not an independent execution claim.",
+        "Retained COPY-INPUT-01 is addressed by ccm_copy_tracking._record validating scope_id with _SHA before connection access, with test_review_record_scope_guard_without_calls. COPY-TEST-01 and SEC-02 are addressed by durable zero-mapping marker tests, initial direct association negatives, immutable-operation and unauthorized-mutation cases, and late expiry/generation/batch-fence rollback cases. Late fence tests inject state changes within the owning transaction rather than demonstrating a concurrent writer race; the existing row locks and final guarded acknowledgment remain the production serialization mechanism.",
+        "PostgresCanonicalWriter._write_locked preserves first-wins records and gathers actual _edge return values in item order. build_memberships uses original source/artifact positions and current prepared provenance, not stored first-wins provenance. _record compares complete membership sets and marker fields against authoritative staged state. Tracking precedes constraints and acknowledgment on the same connection inside the existing owning transaction.",
+        "Pending publication is not extraction completion, and historical processed batches without tracking markers remain unreconciled. The source exposes no new inventory reader or historical backfill. Structural graph association checks do not independently prove content provenance against an arbitrary SQL client; the trusted internal database-principal boundary remains necessary.",
+        "The specification document body, unchanged older test bodies and underlying imported scope, canonicalization, ingestion and graph implementations were not supplied for direct inspection. Their guarantees remain dependencies. The changed database fixture grants the two copy tables to the synthetic role without transferring their ownership; full historical fixture-diff preservation cannot be independently established from this packet.",
+        "Production Runtime issuer/provisioning adapters, deletion effects, external copies, backups/replicas and remaining staged plaintext inventory are explicitly held and unqualified, not missing implementations required within this subset. Parent-retained test and cleanup metadata is not reviewer execution evidence. Python 3.10 qualification, exact16head and subsequent merged-main CI/deployment remain sequential acceptance gates, not circular prerequisites to this source-review verdict."
+      ]
+    },
+    "security": {
+      "verdict": "PASS",
+      "findings": [],
+      "coverageGaps": [
+        "Prior AUTH-TEST-01/SEC-01 is addressed in the supplied test source: test_review_postgres_owned_body_boundaries covers admitted-body failure/cancellation, normal-exit expiry and owning-transaction rollback; test_review_writer_first_revocation covers committed and waiting writer-first revocations for decision/key/operator; test_review_resolver_row_acquisition_order observes preceding locks and an unacquired later row. These are source-level dispositions, not claims that this reviewer executed them.",
+        "Prior COPY-TEST-01/SEC-02 is addressed by test_review_zero_mapping_durable_markers, test_review_initial_direct_association_failure_rolls_back, test_review_direct_admin_integrity_and_app_unauthorized_mutations and test_review_late_tracking_fence_rollback. The late-fence tests inject changes within the owning transaction rather than demonstrating an independent concurrent writer; existing row locks and final guarded acknowledgment remain relevant dependencies.",
+        "Prior COPY-INPUT-01 is addressed: ccm_copy_tracking._record validates scope_id with _SHA before connection access, and test_review_record_scope_guard_without_calls checks malformed bindings without database calls.",
+        "Static inspection supports independent authority rather than forged labels: PostgresDeletionAuthorizer defaults to an empty issuer allowlist, validates exact claims and request bindings, verifies canonical Ed25519 signatures including issuer/key names, and requires current protected key/operator/decision state. AUTH_SCHEMA_SQL fixes the SECURITY DEFINER search_path, qualifies authority relations, revokes PUBLIC access and acquires decision, key and exact operator rows FOR SHARE. No production credentials, signing operation, effect executor or live API is introduced.",
+        "Static inspection supports scoped transactional copy integrity: build_memberships uses original staged positions, current prepared provenance and returned persisted edge IDs; _write_locked records tracking before constraints and guarded acknowledgment on the same connection. COPY_SCHEMA_SQL applies structural association checks, scoped references, immutable guards and FORCE RLS. These checks are not independent content proof, and the internal trusted-database-principal contract does not admit arbitrary SQL clients.",
+        "Imported CallerScope validation, canonical serialization, ingestion schemas, graph locking and visibility/writability functions were not supplied for independent implementation review. The specification document body and unchanged older test bodies were also omitted. Their guarantees remain dependencies; supplied hashes and parent-retained evidence metadata do not replace direct inspection or reviewer execution.",
+        "Production Runtime issuer/provisioning integration, deployment privileges, deletion effects, external copies, backups/replicas and remaining staged plaintext inventory are explicitly held and unqualified, not missing implementations required in this subset. Historical batches without markers remain unreconciled. Authorization entry/normal exit are sampling points, not arbitrary commit-time validity guarantees. Python3.10 qualification, exact16head and subsequent merged-main CI remain sequential acceptance gates."
+      ]
+    }
+  },
+  "scopeFix": "_record scope validates lowercase64hex before SQL",
+  "actualPostgresFailureAndRecovery": "First repaired PG run failed4newtests due one-edge fixture and unavailable return contract,158passed; corrected test-only assumptions and added3zero-mapping tests; final165pass. Original records retained.",
+  "coverageLimits": "Normative source document body, unchanged older test bodies and imported source dependencies omitted. Doc derives frozen workorder; parent old-test AST/pins and actual full/PG suite supply correspondence, not reviewer execution. Same-model-family limitation. Late fence injection proves owned rollback, not an independent concurrent writer race."
+}

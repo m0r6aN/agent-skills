@@ -1,0 +1,852 @@
+{
+  "atUtc": "2026-10-25T15:29:00.961872+00:00",
+  "status": "PASS_ACTUAL_DISPOSABLE_POSTGRES_16",
+  "network": "isolated internal Docker network, no published port",
+  "syntheticOnly": true,
+  "newProviderCalls": 0,
+  "candidateImage": "ccm-p3c2-candidate:ab3e1036b898",
+  "sourceHashes": {
+    "src/keon/cortex_governed/ccm_deletion_authorization.py": "49a9ec6c79662dfbfd7da9623929947305c730de78a09387e3471881f4d33812",
+    "src/keon/cortex/providers/postgres/ccm_copy_tracking.py": "c4d614c6c821cb92fb4bc66f7b26b053b9c0ff4ad67abe6c35dfc423482be9ce",
+    "src/keon/cortex/providers/postgres/ccm_canonical.py": "1145f6c63f852a7d15b036cd78ff99e5499273b6b1c7f4889941d861ac138764",
+    "tests/test_ccm_deletion_authorization.py": "169d3d982026bdac341168a944b7405905a417bd7ddc1fe5a0dad7a5b9728846",
+    "tests/test_ccm_copy_tracking_postgres.py": "a5b96feadbcba7520c90b4b0e6766e78add124bbacf3612fd7ffaef76314c7a5",
+    "tests/test_ccm_canonical_postgres.py": "a30bbde4d42c3d7e9d905d7ed7c7450f3fa1287e02f4a2a09556f39931c6c79c",
+    "docs/specs/ccm-authority-copies-v1.md": "06f4422c6d7e2bb401f167bb7eece4228225f2dd5e794f6970d8b0b889584c3e"
+  },
+  "postgresImage": "sha256:275447c94b11b151decd1f29877965301d5a77032037c46de93d990f739f00a9",
+  "existingCanonicalSchemaPreconditionProvisioned": true,
+  "tests": {
+    "exit": 0,
+    "cases": [
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_enqueue_rejects_untrusted_context_before_sql[none]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_enqueue_rejects_untrusted_context_before_sql[bool]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_enqueue_rejects_untrusted_context_before_sql[dict]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_enqueue_rejects_untrusted_context_before_sql[hostile]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_construction_has_no_pool_effect",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_existing_node_query_withholds_raw_metadata",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_storage_diagnostic_discards_original_exception",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_cancellation_identity_inside_coroutine",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_force_rls_owner_and_four_scope_visibility",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_deferred_orphan_registry_rejected[receipt]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_deferred_orphan_registry_rejected[role_generation]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_deferred_orphan_registry_rejected[shard]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_deferred_orphan_registry_rejected[artifact_node]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_exact_edge_wire_identity_and_persistence[2026-01-01T00:00:00Z]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_exact_edge_wire_identity_and_persistence[2026-01-01T00:00:00+00:00]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_exact_edge_wire_identity_and_persistence[2026-01-01T00:00:00.000000Z]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_edge_failures_rollback_whole_graph[identity]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_edge_failures_rollback_whole_graph[before-start]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_edge_failures_rollback_whole_graph[orphan]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_immutable_history_and_endpoint_closure[delete]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_immutable_history_and_endpoint_closure[retitle]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_immutable_history_and_endpoint_closure[close-with-open-edge]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_select_context_does_not_authorize_mutation",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_cancellation_after_graph_writes_rolls_back",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_chain_duplicate_first_write_and_pending_reopen",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_unavailable_has_no_effects[stale]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_unavailable_has_no_effects[fenced]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_unavailable_has_no_effects[generation]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_unavailable_has_no_effects[worker]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_unavailable_has_no_effects[scope]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_failure_after_mutation_is_atomic[False-document]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_failure_after_mutation_is_atomic[False-event]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_failure_after_mutation_is_atomic[False-graph]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_failure_after_mutation_is_atomic[False-ack]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_failure_after_mutation_is_atomic[True-document]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_failure_after_mutation_is_atomic[True-event]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_failure_after_mutation_is_atomic[True-graph]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_writer_failure_after_mutation_is_atomic[True-ack]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[payload0-batch]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[payload0-source]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[1-batch]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[1-source]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[malformed-batch]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[malformed-source]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[payload3-batch]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[payload3-source]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[payload4-batch]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[payload4-source]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_preexisting_observation_collision[False]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_preexisting_observation_collision[True]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_duplicate_tampered_observation_is_conflict",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_registered_shard_identity_and_receipt_sql_rejection[identity]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_registered_shard_identity_and_receipt_sql_rejection[root]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_registered_shard_identity_and_receipt_sql_rejection[provenance]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_registered_shard_identity_and_receipt_sql_rejection[wire-provenance]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_sql_parameters_exclude_unicode_secrets",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_concurrent_writer_serializes_with_duplicate_and_fence[duplicate]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_actual_concurrent_writer_serializes_with_duplicate_and_fence[fence]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_parent_loaded_format_scrub_change_has_no_canonical_effects",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_parent_oversized_existing_node_metadata_is_withheld",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_parent_direct_edge_and_endpoint_closure_serialize[edge]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_parent_direct_edge_and_endpoint_closure_serialize[closure]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_parent_finite_replacement_chain_preserves_history[cycle]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_parent_finite_replacement_chain_preserves_history[reopen]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_parent_finite_replacement_chain_preserves_history[retarget]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_config_primitives[config0]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_config_primitives[config1]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_config_primitives[config2]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_config_primitives[config3]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_config_primitives[config4]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_config_primitives[config5]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_config_primitives[config6]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_config_primitives[config7]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_request_guards_before_sql[caller-value0]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_request_guards_before_sql[receipt_id-]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_request_guards_before_sql[receipt_id-x\\n]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_request_guards_before_sql[target_kind-SHARD]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_request_guards_before_sql[target_id-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_request_guards_before_sql[expected_target_version-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_request_guards_before_sql[expected_fence_epoch-True]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_request_guards_before_sql[expected_fence_epoch--1]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_request_guards_before_sql[expected_fence_epoch-2147483648]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_request_guards_before_sql[expected_fence_epoch-0.0]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_request_guards_before_sql[idempotency_key-with space]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_closed_ambient_database_errors_and_transaction_guards",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_every_signed_field_tamper_and_current_binding",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_untrusted_envelope_and_current_policy[key_state-retired]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_untrusted_envelope_and_current_policy[key_state-revoked]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_untrusted_envelope_and_current_policy[revoked-True]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_untrusted_envelope_and_current_policy[operator_active-False]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_untrusted_envelope_and_current_policy[authority_revision-2]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_untrusted_envelope_and_current_policy[allowed_effects-value5]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_untrusted_envelope_and_current_policy[public_key-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_untrusted_envelope_and_current_policy[signature_b64-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_untrusted_envelope_and_current_policy[signature_b64-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_untrusted_envelope_and_current_policy[claims_body-{}]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_untrusted_envelope_and_current_policy[claims_body-{\"decision\":\"allow\",\"decision\":\"allow\"}]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_time_grammar_sampling_metadata_and_body_identity",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_postgres_privileges_bindings_and_transaction_modes",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_postgres_current_revocation_locks_and_owner_rollback[decision]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_postgres_current_revocation_locks_and_owner_rollback[key]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_postgres_current_revocation_locks_and_owner_rollback[operator]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_review_postgres_owned_body_boundaries[error]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_review_postgres_owned_body_boundaries[cancel]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_review_postgres_owned_body_boundaries[expiry]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_review_postgres_owned_body_boundaries[future]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_review_postgres_owned_body_boundaries[expired]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_review_writer_first_revocation[False-decision]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_review_writer_first_revocation[False-key]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_review_writer_first_revocation[False-operator]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_review_writer_first_revocation[True-decision]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_review_writer_first_revocation[True-key]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_review_writer_first_revocation[True-operator]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_review_resolver_row_acquisition_order[key-held0-not_held0]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_deletion_authorization",
+        "name": "test_review_resolver_row_acquisition_order[operator-held1-not_held1]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_empty_and_noncomplete_positions",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_build_rejects_shape_cardinality_and_identifier_errors[payloads0-items0-edges0]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_build_rejects_shape_cardinality_and_identifier_errors[payloads1-items1-edges1]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_build_rejects_shape_cardinality_and_identifier_errors[payloads2-items2-edges2]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_build_rejects_shape_cardinality_and_identifier_errors[payloads3-items3-edges3]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_build_rejects_shape_cardinality_and_identifier_errors[payloads4-items4-edges4]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_build_rejects_shape_cardinality_and_identifier_errors[payloads5-items5-edges5]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_build_rejects_shape_cardinality_and_identifier_errors[payloads6-items6-edges6]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_build_rejects_shape_cardinality_and_identifier_errors[payloads7-items7-edges7]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_build_rejects_shape_cardinality_and_identifier_errors[payloads8-items8-edges8]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_build_rejects_shape_cardinality_and_identifier_errors[payloads9-items9-edges9]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_build_rejects_shape_cardinality_and_identifier_errors[payloads10-items10-edges10]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_build_rejects_shape_cardinality_and_identifier_errors[payloads11-items11-edges11]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_build_rejects_shape_cardinality_and_identifier_errors[payloads12-items12-edges12]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_build_rejects_shape_cardinality_and_identifier_errors[payloads13-items13-edges13]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_build_rejects_shape_cardinality_and_identifier_errors[payloads14-items14-edges14]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_build_rejects_shape_cardinality_and_identifier_errors[payloads15-items15-edges15]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_duplicate_import_exact_current_mapping_and_restart",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_late_tracking_failure_rolls_back_owned_transaction[False]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_late_tracking_failure_rolls_back_owned_transaction[True]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_tracking_rejects_malformed_or_conflicting_records[position]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_tracking_rejects_malformed_or_conflicting_records[identifier]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_tracking_rejects_malformed_or_conflicting_records[extra]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_tracking_rejects_malformed_or_conflicting_records[missing]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_tracking_rejects_malformed_or_conflicting_records[conflict]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_sql_immutability_rls_and_bootstrap_ownership",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_record_scope_guard_without_calls[scope]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_record_scope_guard_without_calls[]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_record_scope_guard_without_calls[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_record_scope_guard_without_calls[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_record_scope_guard_without_calls[AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_record_scope_guard_without_calls[gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_record_scope_guard_without_calls[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\n]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_record_scope_guard_without_calls[None]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_record_scope_guard_without_calls[True]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_record_scope_guard_without_calls[64]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_initial_direct_association_failure_rolls_back[malformed]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_initial_direct_association_failure_rolls_back[other_edge]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_initial_direct_association_failure_rolls_back[missing_node]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_initial_direct_association_failure_rolls_back[missing_shard]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_initial_direct_association_failure_rolls_back[wrong_scope]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_initial_direct_association_failure_rolls_back[staged_source]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_initial_direct_association_failure_rolls_back[position]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_late_tracking_fence_rollback[expires]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_late_tracking_fence_rollback[generation]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_late_tracking_fence_rollback[batch]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_direct_admin_integrity_and_app_unauthorized_mutations",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_zero_mapping_durable_markers[empty-0-0]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_zero_mapping_durable_markers[pending-1-1]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_copy_tracking_postgres",
+        "name": "test_review_zero_mapping_durable_markers[unsupported-1-0]",
+        "status": "pass"
+      }
+    ],
+    "output": "........................................................................ [ 43%]\n........................................................................ [ 87%]\n.....................                                                    [100%]\n----------------------- generated xml file: /tmp/pg.xml ------------------------\n165 passed in 12.41s\n"
+  },
+  "allOwnedContainersAbsent": true,
+  "networkAbsent": true
+}

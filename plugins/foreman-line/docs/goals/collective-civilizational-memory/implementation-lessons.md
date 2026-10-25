@@ -218,3 +218,19 @@ not full import readiness or held credential-route clearance.
 - Large full-file repair output can truncate; preserve the full failed cap. Only
   exact complete sub-artifacts may be independently recovered, never partial tests
   relabeled complete. Disposition: recovery proof, original records and handoff.
+
+
+## Independent authorization and copy tracking — October25 NY
+
+- Validate cryptographic scope grammar before connection access. Mock and actual
+  SQL tests serve different purposes; both are required at this trust boundary.
+- Test caller-owned rollback with an admitted body, body errors/cancellation,
+  exit expiry, writer-first revocation and observable row acquisition order.
+- Use source/artifact positions and actual persisted edge IDs for shared copies;
+  first-wins provenance cannot represent every later import association.
+- Pending/unsupported/empty batches need explicit markers; absent history stays
+  unreconciled. Test late ACK refusal after tracking and whole transaction rollback.
+- Audit generated test fixtures and existing return contracts before interpreting
+  failures as production defects. Preserve failures, correct assumptions explicitly.
+- A Python version tag alone does not qualify a test host; the optional3.10 image
+  lacked pytest. Actual exact-head and main supported-version CI passed instead.
