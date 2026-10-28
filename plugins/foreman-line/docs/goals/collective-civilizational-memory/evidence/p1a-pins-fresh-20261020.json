@@ -1,0 +1,205 @@
+{
+  "observedAt": "2026-10-20T11:13:26.237Z",
+  "coordinator": "ccm-coordinator-20261020-fresh-01",
+  "scope": "Offline identities and local docs-only snapshot; not implementation/test/registration/admission evidence",
+  "cortex": {
+    "repo": "D:/Repos/keon-omega/keon-cortex",
+    "acceptedLocalBase": "684785f220c066e8686e160eec2611c727582a00",
+    "baseSource": "local origin/main tracking ref; remote freshness not queried",
+    "head": "684785f220c066e8686e160eec2611c727582a00",
+    "sources": [
+      {
+        "path": "conftest.py",
+        "gitBlob": "5846e224613a33a1e0327b487eb2e96bd06061c0",
+        "bytes": 239,
+        "sha256": "d6755f4f3b8e494ecd8299f713a02308725d400e8dbd78b6c6e5e6d960ba89a8",
+        "workingCopyMatches": true
+      },
+      {
+        "path": "pyproject.toml",
+        "gitBlob": "d86505fe86ab0c880b3ea5abbd0b02de51ea4fd8",
+        "bytes": 3040,
+        "sha256": "cce0914bc142b2d758a17d49ae0e7d8fd0df5b51f2887fd96180deab90af2a02",
+        "workingCopyMatches": true
+      },
+      {
+        "path": "src/keon/cortex/envelope/taxonomy.py",
+        "gitBlob": "777a1ea99f0c4da750d20bdaf74ca3792cdc18a6",
+        "bytes": 4739,
+        "sha256": "4b5293da0efd226c73204f9f8828f7488160d8d8d83737e32943dafea4690867",
+        "workingCopyMatches": true
+      },
+      {
+        "path": "src/keon/cortex/gravity/__init__.py",
+        "gitBlob": "c4eb83649e534749e073acbaf9bfb964a4d9b144",
+        "bytes": 1372,
+        "sha256": "219dc23c9c30b25c02110425203af1b68923933553808328b8e257c45d971a93",
+        "workingCopyMatches": true
+      },
+      {
+        "path": "src/keon/cortex/gravity/anomaly.py",
+        "gitBlob": "24609cbe403f5750b5df48c2b80376a2571fa406",
+        "bytes": 1639,
+        "sha256": "ba6fad1cd38a8392ce5e3af433aa0425605fc8c99a4c7ce94a8651d18e0e67eb",
+        "workingCopyMatches": true
+      },
+      {
+        "path": "src/keon/cortex/gravity/blend.py",
+        "gitBlob": "e263bd1d79767a345aa46f2b3aa550e3ecbdbb48",
+        "bytes": 1961,
+        "sha256": "96e3c5c4b781af9c7929749cb2332125e4f1962a807a3718581be46d995a2074",
+        "workingCopyMatches": true
+      },
+      {
+        "path": "src/keon/cortex/gravity/contracts.py",
+        "gitBlob": "944b2d62c37f46d6c4fda2dbefb6d0dd54cdf46a",
+        "bytes": 7565,
+        "sha256": "103d00aaeb2b515223e6108b61b45a5ce8dc95e4edb4b55da6fa3cfffb543377",
+        "workingCopyMatches": true
+      },
+      {
+        "path": "src/keon/cortex/gravity/forces.py",
+        "gitBlob": "6168d202db8e53516c83ac614272630f3f51bbf7",
+        "bytes": 3314,
+        "sha256": "01ffce35b4d152f677461ba54bd1e56bd96d8d7d455f8d7b58e5d0dee91115c2",
+        "workingCopyMatches": true
+      },
+      {
+        "path": "src/keon/cortex/gravity/function.py",
+        "gitBlob": "e38c4248cc582269fcfa1c89d84d5db5d2683e89",
+        "bytes": 7751,
+        "sha256": "163161e25fb6657bd87fa08f41086624d85abaf6676c35a36a1a2bd19850445f",
+        "workingCopyMatches": true
+      },
+      {
+        "path": "src/keon/cortex/gravity/function_v1_1.py",
+        "gitBlob": "997112dcd427bcee76a0d5bce79410ed2541960f",
+        "bytes": 6774,
+        "sha256": "b5f22c30d2e256ede85480fe040ee9eb6938960405f7ee26d51b8ba49f09e6aa",
+        "workingCopyMatches": true
+      },
+      {
+        "path": "src/keon/cortex/gravity/params.py",
+        "gitBlob": "284d343c00fbf3fc19eca8545b34a6ff6f6ff159",
+        "bytes": 4878,
+        "sha256": "0e413168555b9629515f742e3c7b1323d86f4431d034ec54fae5b1df078de0b8",
+        "workingCopyMatches": true
+      },
+      {
+        "path": "src/keon/cortex/gravity/projection.py",
+        "gitBlob": "753678e477419eaf04178aa2bfa357f3ba0e8115",
+        "bytes": 7326,
+        "sha256": "5b352e9acb690c93266d0e6865ef70f482f27df84ab65f2463293eb575094320",
+        "workingCopyMatches": true
+      },
+      {
+        "path": "src/keon/cortex/gravity/recall.py",
+        "gitBlob": "47abd78a9816aede431c0244022313131ba669bd",
+        "bytes": 3034,
+        "sha256": "0348a0848819cfb3cc00282e60e9256a789c657879b5779a0e1a4664260d423f",
+        "workingCopyMatches": true
+      },
+      {
+        "path": "src/keon/cortex/ingress/models.py",
+        "gitBlob": "708c4323cf8f63fbb12017fee97d5eafee7365d4",
+        "bytes": 21971,
+        "sha256": "cfb33fe44ee6789281b36456918e68db0943486c83f74c61792c5943e13ec911",
+        "workingCopyMatches": true
+      },
+      {
+        "path": "tests/gravity/test_contracts.py",
+        "gitBlob": "6b48e7910afbe5820a1a81c2fdc39ed03a2338e4",
+        "bytes": 2486,
+        "sha256": "8dd7e25e84cf6427f355d47d9aa9f87afb6c6cb4753c758201d88ccb715395f7",
+        "workingCopyMatches": true
+      },
+      {
+        "path": "tests/gravity/test_projection_fixtures.py",
+        "gitBlob": "97b8200c0f08e04bfc8aa64447f0a283c442bde6",
+        "bytes": 29541,
+        "sha256": "753457f9adc4187174a3af6676005783a4fd2c49fa9d7bcbbc6eccde1dcb0736",
+        "workingCopyMatches": true
+      },
+      {
+        "path": "tests/inheritance/test_inheritance.py",
+        "gitBlob": "dbffea9652aface9988ec15803ec5f8281d866ad",
+        "bytes": 12891,
+        "sha256": "26c131c5c377a7e2cfa40062754db5b6561eedd3b25229fee37936f2e5d41d75",
+        "workingCopyMatches": true
+      },
+      {
+        "path": "tests/test_evidence_envelope.py",
+        "gitBlob": "bd24c71b8466d262e8e15d4d9f7d7a895a922f01",
+        "bytes": 13002,
+        "sha256": "ef0c7b369b109ae29a519a93cacd18d5de84f2fc63ed6041e51274f6829de2e7",
+        "workingCopyMatches": true
+      },
+      {
+        "path": "tests/test_ingress_models.py",
+        "gitBlob": "84a46ddb86107dc1f645227bf96fd05965832007",
+        "bytes": 13912,
+        "sha256": "823299ef4b3b8eb0de0da568aa2ec6254fb6e8bd0511c9f448cc2d208c005a67",
+        "workingCopyMatches": true
+      },
+      {
+        "path": "tests/test_shards_v1_1.py",
+        "gitBlob": "71c52bc72dd6a55f48efe4265450e423abec5f69",
+        "bytes": 47303,
+        "sha256": "3169cea6e0f1914c1b219b843732a0b99ed4f4f63ff738af647ba43c2922e891",
+        "workingCopyMatches": true
+      }
+    ]
+  },
+  "workOrder": {
+    "repo": "D:/Repos/agent-skills",
+    "ref": "refs/heads/docs/ccm-readiness-20261020-fresh-01",
+    "commit": "d6c4adce4bad3b37e496afd3a7db48b525461bb2",
+    "parent": "64fb8949bf5134f96fda02df0d4f52ac291a6138",
+    "changedPaths": [
+      "plugins/foreman-line/docs/specs/active/CCM-P1A-memory-graph-contracts.md",
+      "plugins/foreman-line/docs/specs/active/CCM-P1B-gravity-v2-fixtures.md",
+      "plugins/foreman-line/docs/specs/active/CCM-P1C-collective-wire-compatibility.md",
+      "plugins/foreman-line/docs/specs/active/CCM-P1D-postgres-capability-check.md"
+    ],
+    "specs": [
+      {
+        "path": "plugins/foreman-line/docs/specs/active/CCM-P1A-memory-graph-contracts.md",
+        "sha256": "2db53117a6d990355cff5c0cf7f09a058bcf2a78c55b35a659395ae9b45f2dd8"
+      },
+      {
+        "path": "plugins/foreman-line/docs/specs/active/CCM-P1B-gravity-v2-fixtures.md",
+        "sha256": "4d08fab475d32bdcd3643c5c77f9569f39d2360899fe55049a8dfc778b42d2e1"
+      },
+      {
+        "path": "plugins/foreman-line/docs/specs/active/CCM-P1C-collective-wire-compatibility.md",
+        "sha256": "b782e06829119a3993c18155e331882a44a7c82cf6dd05ec8061c7e9f3c26c09"
+      },
+      {
+        "path": "plugins/foreman-line/docs/specs/active/CCM-P1D-postgres-capability-check.md",
+        "sha256": "33d2f4d90c57db9c4583328a50442e1fed37e9a2de421742661b7553d6f86603"
+      }
+    ],
+    "status": "draft; registration/promotion requires a new pinned approved revision"
+  },
+  "canonical": [
+    {
+      "path": "D:/Repos/Pantheon/docs/CONTEXT-SHAPING-DECISIONS.md",
+      "bytes": 18926,
+      "sha256": "06deef13d081f2173c98c241a09478a7a4f91091e5d5aa1e3818ed02280ef9c5"
+    },
+    {
+      "path": "D:/Repos/Pantheon/docs/CONTEXT-SPEC-V4.txt",
+      "bytes": 66730,
+      "sha256": "299fbe78ab0d34609715e49b88987070ab586a5c9d2b76d43d8a948fb4ceb1ec"
+    },
+    {
+      "path": "D:/Repos/Pantheon/docs/CONTEXT-SHAPING-HANDOFF.md",
+      "bytes": 15939,
+      "sha256": "401aea8a9bd7cddbef7ecdb872108e5ec01a73894a3e141646361c25ae8d6194"
+    }
+  ],
+  "testExecution": "NOT RUN; pre-P1A baseline outputs still required",
+  "rootIndexAndCheckout": "not modified; temporary alternate index only",
+  "worktree": "D:/Repos/ccm-worktrees/cortex-p1a (reserved name only; not created)",
+  "branch": "feat/ccm-p1a-contracts (not created)"
+}

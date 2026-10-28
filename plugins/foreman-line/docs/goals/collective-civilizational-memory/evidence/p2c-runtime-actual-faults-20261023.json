@@ -1,0 +1,110 @@
+{
+  "atUtc": "2026-10-23T23:52:26.941154+00:00",
+  "providerRequests": 0,
+  "productionImageId": "sha256:a6a75dbc102b44c309be0fa8315e94e183de21557decb7da63b6f4aed20ba42c",
+  "sourceChanged": false,
+  "status": "PASS_FIXED_ACTUAL_FAULTS",
+  "fixtures": [
+    {
+      "mode": "exit71",
+      "trustedFixedFaultImage": "sha256:5b12676da90f393dbcb928d641a7b05499d5188b22cb7de50fa0f2ed33b2563c",
+      "workerFixtureSha256": "fe4d0553dd88c9b4eb4847cc6400e7714d506b6215d4e754b939a8e951ffc180",
+      "expectedCode": "isolation_failure",
+      "actual": {
+        "returnedResult": false,
+        "code": "isolation_failure",
+        "argsEmpty": true,
+        "causeAbsent": true,
+        "contextAbsent": true,
+        "names": [
+          "ccm-python-a40f6e5f5cbb4c69bca6d1e5c1a5fbee"
+        ],
+        "pending": [],
+        "seconds": 1.558
+      },
+      "allOwnedAbsent": true,
+      "pass": true
+    },
+    {
+      "mode": "stderr",
+      "trustedFixedFaultImage": "sha256:6762cfd24700a5c321981caeb69c5faac3af7b4ea628a9da58260aff606b8fd4",
+      "workerFixtureSha256": "26021afe35a853cb939bc1bb88108e12c0f32cfc6eac59cdc1d7e392b9209ec9",
+      "expectedCode": "invalid_response",
+      "actual": {
+        "returnedResult": false,
+        "code": "invalid_response",
+        "argsEmpty": true,
+        "causeAbsent": true,
+        "contextAbsent": true,
+        "names": [
+          "ccm-python-95c62a2bc5314e4894d2be38d468d38a"
+        ],
+        "pending": [],
+        "seconds": 1.493
+      },
+      "allOwnedAbsent": true,
+      "pass": true
+    },
+    {
+      "mode": "malformed",
+      "trustedFixedFaultImage": "sha256:20cd524e5d72bb88ea367bc5ab7ca59add5398eb2d4d353fd9aa22a99c4a700d",
+      "workerFixtureSha256": "3677317d97e824c12965fcccd1a6f541e755da0b27c22e16ce6c5651f18e8511",
+      "expectedCode": "invalid_response",
+      "actual": {
+        "returnedResult": false,
+        "code": "invalid_response",
+        "argsEmpty": true,
+        "causeAbsent": true,
+        "contextAbsent": true,
+        "names": [
+          "ccm-python-76480c6958344dc5afc14343ef3353fa"
+        ],
+        "pending": [],
+        "seconds": 1.368
+      },
+      "allOwnedAbsent": true,
+      "pass": true
+    },
+    {
+      "mode": "overflow",
+      "trustedFixedFaultImage": "sha256:90d977e9ab287d41350afc4b9ce1ef1e8ebcfd148ad570bd0f863c2dc8d5ca42",
+      "workerFixtureSha256": "84c9fb90c44a3dd0c47905c8ce64b917f52359184e02a4339aaf1d6a71ba5737",
+      "expectedCode": "invalid_response",
+      "actual": {
+        "returnedResult": false,
+        "code": "invalid_response",
+        "argsEmpty": true,
+        "causeAbsent": true,
+        "contextAbsent": true,
+        "names": [
+          "ccm-python-a3c3faafa9ab4fae9329c0885978839c"
+        ],
+        "pending": [],
+        "seconds": 1.59
+      },
+      "allOwnedAbsent": true,
+      "pass": true
+    },
+    {
+      "mode": "late",
+      "trustedFixedFaultImage": "sha256:9166e503888b93d365d4fa41cac1404ce98c067db5a10a17142a05a8aa9df3f2",
+      "workerFixtureSha256": "7a1ebc3b662a1ff7be0ff4398158a6422d3aae23dd90294da573d781dec3a7c3",
+      "expectedCode": "deadline_exceeded",
+      "actual": {
+        "returnedResult": false,
+        "code": "deadline_exceeded",
+        "argsEmpty": true,
+        "causeAbsent": true,
+        "contextAbsent": true,
+        "names": [
+          "ccm-python-68b41a7f6c9241a282e8cf4f384b200e"
+        ],
+        "pending": [],
+        "seconds": 5.749
+      },
+      "allOwnedAbsent": true,
+      "pass": true
+    }
+  ],
+  "completedAtUtc": "2026-10-23T23:52:41.784225+00:00"
+}

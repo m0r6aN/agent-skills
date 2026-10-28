@@ -1,0 +1,42 @@
+{
+  "atUtc": "2026-10-22T05:18:10.801487+00:00",
+  "sourceHead": "50c704050c18b218f1913d51ee9ed39a330993c5",
+  "independentVerdicts": "PASS/PASS",
+  "findings": [],
+  "seats": [
+    {
+      "seat": "review-A",
+      "requestId": "chatcmpl-b8dc25c1-d00d-44c3-b66e-78f216a20af2",
+      "verdict": "PASS",
+      "inputSha256": "05d6b2b4ca1da23c05b828597a56d7abdadcca2e6443ec17cf90902b4c92c01e",
+      "gaps": [
+        "Non-blocking test-strength gaps: no in-suite multi-chunk vector asserts that equal repeated chunks have equal chunk_sha256 (e.g. 2x65,536 'a'). No test asserts that NFC and NFD inputs yield distinct digests. No test asserts per-chunk payload==content[start:end] beyond concatenation. The independent oracle reportedly covers these.",
+        "TextChunk is publicly constructible without field validation. This is acceptable per the contract, which says it is not an attestation; downstream code must not treat constructed instances as chunker-produced.",
+        "An exception context attached by a caller's own enclosing except block is outside this module's control, as the contract acknowledges.",
+        "Exact-head and merged-main CI and the second independent review are not evidenced in this packet."
+      ]
+    },
+    {
+      "seat": "review-B",
+      "requestId": "chatcmpl-d1d055fe-2e52-47cb-8026-35dc9a058ba6",
+      "verdict": "PASS",
+      "inputSha256": "92cdc2f45759b9cda3721b650c1591d0bdf9de8685e500fdb9033b64529f2ba0",
+      "gaps": [
+        "Low/non-blocking: no test places identical equal-digest chunks at distinct offsets within one multi-chunk input. Digest repetition is shown only across formats.",
+        "Low/non-blocking: content-type-over-format priority is not tested with both inputs invalid at once (e.g. str content with format='pdf'). Code order is correct by inspection.",
+        "Low/non-blocking: no explicit test asserts every non-final chunk is >=65,533 bytes or that the lowercase hex length is 64. Both are implied by the hashlib comparisons and the 65-chunk vector.",
+        "Exact-head and merged-main CI, plus the second independent review, remain external closure gates not evidenced here."
+      ]
+    }
+  ],
+  "nonblockingGapsDisposition": "Source is correct by both independentreviews/host vectors. Retainedsuite has smaller specificity gaps for repeat-digest/differentoffset, normalizationformdigest distinction, combined invalidtype+format priority; independently frozen vectors cover actualoffset/hash rules. No attestation claim for publicconstructible DTO. External caller exceptioncontext outside module control. No extra source repair/paidclosure needed.",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/__init__.py": "4c372bf8394770080ffc7826e71eb2c30a349a31997bd085e724f1923eb6f937",
+    "src/keon/cortex/pipeline/ccm_text.py": "ebd6117e0a99a7f8361dfd83274ab60d938dc6403e9d25041b675ea210888757",
+    "tests/test_ccm_text.py": "2096e241756e9aeab275fcbd215e833e2f151e2ff9c5964f3044a8d2437764ab",
+    "docs/specs/ccm-text-parser-v1.md": "c6c7361e84660a1ea7fa2b039bb69518cfc4f2c9142621bcf7c046f1055c6b13"
+  },
+  "formalRepairUsed": 0,
+  "sourceCredentialHandling": "Source review alone does not close actual worker environment-transcript incident; keys/tasktokenrotation still unresolved. Exposed-key APIs remain unused; worker stopped, parentowned sanitizedvalidation.",
+  "noFurtherPaidP2BCalls": true
+}

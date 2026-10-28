@@ -1,0 +1,15 @@
+{
+  "status": "OFFLINE_EXACT_FILE_STRING_RECOVERY",
+  "candidateSha256": "55dc177ff968c927e597fb97efa8617b194d76915be68788be584f083f376220",
+  "decodedObjectEnd": 27037,
+  "envelopeIssue": "Extra closing brace before notes; first complete JSON object has all three exact file strings",
+  "sourceStringsChanged": false,
+  "noProviderRequest": true,
+  "originalFailedReceiptUntouched": true,
+  "fullSourceReservationRetained": true,
+  "files": {
+    "src/keon/cortex/pipeline/ccm_civic.py": "e06b21bd14127c9d901356da50c0696e50832ffb6f2cc754dd06c69441ec5a70",
+    "tests/test_ccm_civic.py": "469bd9465a6bc0df7f5dd564d21dc9b5aa4ae48663b6fef71ed205c2b8edda43",
+    "docs/specs/ccm-civic-mapping-v1.md": "bebc694baa1b389eca7c39e2f94f0c8e3e57a968253edf00bf6214a0ae747d12"
+  }
+}

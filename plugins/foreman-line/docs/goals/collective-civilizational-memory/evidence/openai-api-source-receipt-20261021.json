@@ -1,0 +1,10 @@
+{
+  "phase": "source",
+  "httpStatus": 520,
+  "errorType": null,
+  "errorCode": null,
+  "requestId": null,
+  "atUtc": "2026-10-21T20:01:27.242489+00:00",
+  "billing": "unknown",
+  "retry": false
+}

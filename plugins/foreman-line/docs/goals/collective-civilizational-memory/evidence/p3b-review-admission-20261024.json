@@ -1,0 +1,25 @@
+{
+  "atUtc": "2026-10-24T23:39:50.636046+00:00",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_admission.py": "b9a097edb8cd8de9431b6a0a2c8bcb311fb67b95c6a6129a165cd797c9d39100",
+    "src/keon/cortex/providers/postgres/ccm_graph_schema.py": "f23c86d370a60c6470c3364328d7511b8dc4e022bf29c49c17e65759d31570e9",
+    "src/keon/cortex/providers/postgres/ccm_canonical.py": "b90e29c10692eaba0ddc9750da4a30e72a1c5ffa3e0d9c65e5bbcda49bf99e65",
+    "tests/test_ccm_admission.py": "5e0df43b409dd2e097380df332cc39ccfad88c384462e18105eac02796059e34",
+    "tests/test_ccm_canonical_postgres.py": "a71818f1bb4d517948bf7824dad31e96bdd022c5e2634a071162332d993d7b1e",
+    "docs/specs/ccm-canonical-writers-v1.md": "2a1aa29a50206df14163053376ddb6c70813758f4e966a893ac888e8c4f3d9f3"
+  },
+  "workorderSha256": "69e53c1aecc101b036a0b284049ca7f70c987d8cb8ae8380e790444134134f59",
+  "localValidationStage": "completion",
+  "reviews": "Two fresh no-tools independent architecture/security Sol low suppliedartifact requests; no other opinions",
+  "sameFamilyLimitation": true,
+  "fullCounts": {
+    "pass": 4020,
+    "skipped": 184,
+    "failure": 0,
+    "error": 0
+  },
+  "focusedCases": 59,
+  "actualPostgresCases": 40,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD"
+}

@@ -1,0 +1,101 @@
+{
+  "recordedAt": "2026-10-19T13:04:16.672Z",
+  "kind": "source-byte-pins-not-clean-release-attestation",
+  "files": [
+    {
+      "path": "D:/Repos/agent-skills/plugins/foreman-line/docs/goals/pantheon-incarnation-v0/charter.md",
+      "bytes": 24077,
+      "sha256": "a99a4b06aad10e642c8076ee3f3ff075062a331e46772644a6dba4f0cf3416e1"
+    },
+    {
+      "path": "D:/Repos/agent-skills/plugins/foreman-line/docs/goals/pantheon-incarnation-v0/amendment-01-early-development-device-PROPOSED.md",
+      "bytes": 9847,
+      "sha256": "c7b70e6ded64aea8e424b29de90aa790c0bdfae8cd289897e830fa5a4dfd9f25"
+    },
+    {
+      "path": "D:/Repos/agent-skills/plugins/foreman-line/docs/goals/pantheon-incarnation-v0/RESUME.md",
+      "bytes": 9489,
+      "sha256": "76fc995e811382660b78a41bf57b7c41377d087ae93ff7fab3e7c0d5de777a4f"
+    },
+    {
+      "path": "D:/Repos/agent-skills/plugins/foreman-line/docs/goals/pantheon-incarnation-v0/gate-record.md",
+      "bytes": 35618,
+      "sha256": "cef626e2b148e1834f24264dc82dc6f69a845817474eb89a08ae0c1bb0eb39ce"
+    },
+    {
+      "path": "D:/Repos/agent-skills/plugins/foreman-line/docs/goals/pantheon-incarnation-v0/resume-20261019-01a15394.md",
+      "bytes": 6051,
+      "sha256": "cda308325fc4bd04338788e9e6cad62bec5a144357b56e5201546c7cad2c8188"
+    },
+    {
+      "path": "D:/Repos/agent-skills/plugins/foreman-line/docs/COORDINATOR-PATTERN.md",
+      "bytes": 14921,
+      "sha256": "0feddca48ced13267263e4e7af5b3fa6ff7caa075f21e567e51fa609f4efe0c1"
+    },
+    {
+      "path": "D:/Repos/agent-skills/plugins/foreman-line/docs/SPEC-CONVENTION.md",
+      "bytes": 21933,
+      "sha256": "70508684d2c929d1331ed0cd9a147fcc2206593a04fbf210314e22fb80cba0a8"
+    },
+    {
+      "path": "D:/Repos/agent-skills/plugins/foreman-line/approval/src/cli.ts",
+      "bytes": 7135,
+      "sha256": "9a64dbe07e77042fa54cc0cd50be77917a01abb7e5664ce2875a3a03e4512f8f"
+    },
+    {
+      "path": "D:/Repos/agent-skills/plugins/foreman-line/dispatch/src/pmc-launch/pi-runtime-port.ts",
+      "bytes": 33260,
+      "sha256": "2cf2fa23278bc9adf80b550e0bb7a2ab175893165d8da747576a9fd13f724db4"
+    },
+    {
+      "path": "D:/Repos/agent-skills/plugins/foreman-line/dispatch/src/pmc-launch/recovery-admission.ts",
+      "bytes": 26479,
+      "sha256": "79e1d0ddc66d929803baf0af04f517efc0590b37f8d0eed0800799dd55d60029"
+    },
+    {
+      "path": "D:/Repos/agent-skills/plugins/foreman-line/dispatch/src/pmc-launch/ledger.ts",
+      "bytes": 37459,
+      "sha256": "cf72406826da269166cab2a7c8f914234cc2e2729842267d3b3bbab594a34f63"
+    },
+    {
+      "path": "D:/Repos/agent-skills/plugins/foreman-line/kernel-state/README.md",
+      "bytes": 10062,
+      "sha256": "da5f5ee5776cbbccad842fddcc2be5db2264e4ecfad7562bc2e5cc2e6a66be70"
+    },
+    {
+      "path": "D:/Repos/agent-skills/plugins/foreman-line/kernel-lease/README.md",
+      "bytes": 7427,
+      "sha256": "e0fcded040e874583b7240c9751b182e511e8cf27855e99000183d2be4f8d08c"
+    },
+    {
+      "path": "D:/Repos/keon-omega/keon-systems/src/Keon.Runtime.Api/LaunchReadiness.cs",
+      "bytes": 4317,
+      "sha256": "0d7deb299d09b3070f5314ae9df1c8722419d42ed98b2cbd94e33065aa6a5ffa"
+    },
+    {
+      "path": "D:/Repos/keon-omega/keon-systems/src/Keon.Runtime.Api/Program.cs",
+      "bytes": 19989,
+      "sha256": "e78a53071eea3c125ddcfae69b9fd877f2c87824fe7345bfdc7c79e8cc18b356"
+    },
+    {
+      "path": "D:/Repos/keon-omega/keon-systems/src/Keon.Runtime/Execution/ExecutionDispatcher.cs",
+      "bytes": 74383,
+      "sha256": "10dbc18f5346c6e5aadf21c3460c65fb19ae9d4dd193fee776326a2657939827"
+    },
+    {
+      "path": "D:/Repos/keon-omega/keon-systems/src/Keon.Contracts/Authority/AuthorityBinding.cs",
+      "bytes": 1983,
+      "sha256": "e70f79db8d2210a3ec278d9ce2d8fd3706fd64484254428133f6dbfeb8fe3e2b"
+    },
+    {
+      "path": "D:/Repos/keon-omega/keon-mcp-gateway/src/Keon.McpGateway/Backends/CortexClient.cs",
+      "bytes": 13731,
+      "sha256": "8851f7c63908d854b7f3fbcfcef1c3e07be79512c54bc612b0c060ebf209afaf"
+    },
+    {
+      "path": "D:/Repos/keon-omega/keon-cortex/src/keon/cortex/api.py",
+      "bytes": 94845,
+      "sha256": "927506c778d77b1bc4700ec8f2640209acd1597f4b3965daa0ee956810c80269"
+    }
+  ]
+}

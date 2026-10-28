@@ -1,0 +1,80 @@
+{
+  "schema": "pantheon.offline-native-sender-verification.v1",
+  "evidenceClass": "native-loopback-fixtures-only",
+  "recordedAtUtc": "2026-10-19T13:56:42.1321501Z",
+  "assignmentSha256": "6e135460709afc6b5f278a9606181e9809409b170a96749156eaba2269a69d37",
+  "mandateManifestSha256": "ca6645f02284dca74b17a9500ec0482552bb192e785f1d76ae0be1f4f9532f82",
+  "workspace": "D:/Repos/Pantheon/work/foreman-om-pan-001-p00",
+  "branch": "codex/om-pan-001-p00",
+  "sourceHead": "64fb8949bf5134f96fda02df0d4f52ac291a6138",
+  "writeScope": "plugins/foreman-line/docs/goals/pantheon-incarnation-v0/execution-om-pan-001/native-sender/",
+  "runtime": {
+    "node": "v24.7.0",
+    "platform": "win32",
+    "host": "M0R6AN",
+    "curlPath": "C:/Windows/System32/curl.exe",
+    "curlVersion": "8.21.0",
+    "curlSha256": "73d24149ff289afc49ec41f08918ef9faa727d39ad993e929757dc2ddafab805"
+  },
+  "test": {
+    "command": "node --test plugins/foreman-line/docs/goals/pantheon-incarnation-v0/execution-om-pan-001/native-sender/native-sender.test.mjs",
+    "tests": 41,
+    "passed": 41,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 7390.3275,
+    "exitCode": 0,
+    "syntaxCheck": "passed",
+    "testFirst": "Initial missing-module and later targeted regressions observed failing before implementation/fixes."
+  },
+  "files": [
+    {
+      "path": "native-sender.mjs",
+      "sha256": "eaf3e5acbbda69870eb8cfd3725fb92ffa909444068363c6d10c6d1fa3605993",
+      "bytes": 22271
+    },
+    {
+      "path": "native-sender.test.mjs",
+      "sha256": "f7e9e626945c478a5c27245d046f54358b7bfdd47998311cf14c8157c2cab640",
+      "bytes": 23915
+    },
+    {
+      "path": "PLAN.md",
+      "sha256": "e1d0bddc8a7bce9f2b9cefe63265553376c3f4a54203e094d6fc2b8cb3dc1414",
+      "bytes": 2324
+    },
+    {
+      "path": "README.md",
+      "sha256": "e6dd6655cd87fc0ba6f9c7f5505e3996098afd7aa7fd622a6ef1706159311b65",
+      "bytes": 10084
+    },
+    {
+      "path": "HANDOFF.md",
+      "sha256": "8d975296fd76ddfa4171b2ab04878bf73493d5f782545ed686902fe827ffb880",
+      "bytes": 3542
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "cbd6304bf6ef7e783bbbbb9e86c52cf08400094899a94622657117f6b0c8da6a",
+      "bytes": 12
+    }
+  ],
+  "effects": {
+    "liveProviderCalls": 0,
+    "credentialLookups": 0,
+    "historicalReplay": false,
+    "runtimeAdmission": false,
+    "independentReview": false,
+    "committed": false,
+    "pushed": false,
+    "productionAdapterChanged": false
+  },
+  "limitations": [
+    "Loopback tests are not live provider or account qualification.",
+    "Every structurally complete review is held; reviewAccepted is always false.",
+    "Descriptor is data only; no live executor exists.",
+    "Local claims do not replace distributed dispatch/fencing/accounting.",
+    "Other coordinator-owned changes observed outside write scope were preserved without modification."
+  ],
+  "recordAuthority": "Builder-observed deterministic test evidence; not a signed Runtime receipt or approval."
+}

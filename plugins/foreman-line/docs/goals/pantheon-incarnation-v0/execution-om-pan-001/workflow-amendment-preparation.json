@@ -1,0 +1,77 @@
+{
+  "status": "PREPARED_NOT_INSTALLED_OR_REVIEWED",
+  "worktree": "D:/Repos/Pantheon/work/foreman-om-pan-001-p00/plugins/foreman-line",
+  "files": [
+    {
+      "path": "docs/standing-mandates/OM-PAN-001.md",
+      "beforeSha256": null,
+      "afterSha256": "781d0070f4d7da63bb893a62a4722679cebbea36eb80660cb31f2708651d98d5"
+    },
+    {
+      "path": "AGENTS.md",
+      "beforeSha256": "4ce53b826835a856cf90a5ebb112cdb47bc690e54f13ea96ce14c9bcb9393bf8",
+      "afterSha256": "506549aa9d7b240246cccfe2e2a26a7dc86b8143f767ed02aa5ea4ae9d0a38c0"
+    },
+    {
+      "path": "README.md",
+      "beforeSha256": "1481be78af5d9e118a146fb410aed71ee0575711378c8fb0b6511f7666ba96f3",
+      "afterSha256": "a834ebb3e0dfbc43ea2ee3c080b5aea008ed39d62e0247e8bd7274faf818535e"
+    },
+    {
+      "path": "docs/COORDINATOR-PATTERN.md",
+      "beforeSha256": "0feddca48ced13267263e4e7af5b3fa6ff7caa075f21e567e51fa609f4efe0c1",
+      "afterSha256": "bc15f77b26d27471ca0abd58ceeba4e81798d91c6bb71b3d9f44d271be2b65d9"
+    },
+    {
+      "path": "docs/SPEC-CONVENTION.md",
+      "beforeSha256": "70508684d2c929d1331ed0cd9a147fcc2206593a04fbf210314e22fb80cba0a8",
+      "afterSha256": "80591a3179ebac575bf39a633d660b04ecba65f0a52719187c2d0c78912626b8"
+    },
+    {
+      "path": "skills/goal/SKILL.md",
+      "beforeSha256": "883ff389b6f040e04fc173329c09ac2a46b26bd0eb7e42980826be4c54d857bc",
+      "afterSha256": "4290255eaec83d89d720f138f0dec61aa77b23c2bd61614d52ee9f2550787205"
+    },
+    {
+      "path": "skills/foreman-shaping/SKILL.md",
+      "beforeSha256": "badec66c8b8b81dd59a9e807ea71fc484fd2d09c30b5556014c53f0591126b37",
+      "afterSha256": "0675ec82c2f295ef1d7763c4a27ffcf64cfd7721d9de171c9b4693674ae4f0a6"
+    },
+    {
+      "path": "skills/parcel-driven-development/SKILL.md",
+      "beforeSha256": "f673472c804a659f9f01515b878f02c653d4ed97c2c4c97f7340139325c6df05",
+      "afterSha256": "fdbd8be9bb608bca9c2bb718f933308727026c0b38b701185335435267f8b73a"
+    },
+    {
+      "path": "templates/kickstarters/loop-directive-template.md",
+      "beforeSha256": "d24a1a10d3d842160467d76eaae5f7907b3920f04838ff18492987f275df3fda",
+      "afterSha256": "e3064633acf68d383406f55666c7c72891f44efbeb4d344c46492d4aacac3782"
+    },
+    {
+      "path": "templates/kickstarters/builder-template.md",
+      "beforeSha256": "0ba0329544837783c06fd41116db7b382d9aef6c8fc6e9643df15391c996e167",
+      "afterSha256": "1470e3ba7876847cbe815d43bcbcf87d6de95ae53869a7e9f44463478d0ffd7d"
+    },
+    {
+      "path": "templates/kickstarters/reviewer-template.md",
+      "beforeSha256": "e04fb2005154a146871fbf85db549b03476629744fc6ccbc870ecb4cc6ab9c4e",
+      "afterSha256": "096fa39ff63d051f067df017def30fd6220d25d0f49056f6ae1b93fbc7404556"
+    },
+    {
+      "path": "templates/kickstarters/shaping-template.md",
+      "beforeSha256": "3380d72976b49edfbd4e5492aa4d36f31a6ba7422dd1ee99a8957a50dfeac833",
+      "afterSha256": "8d96ef0ffd68a2a3a4b17729896967c03ac185fdfae01410d2605040bd56ccf5"
+    },
+    {
+      "path": "docs/kickstarters/foreman-shaping-template.md",
+      "beforeSha256": "68d82c40aee9ace58e1c5cd6731a17d092409d561d4959926a7aa5c46c2f6bc3",
+      "afterSha256": "77c92641957e77d736356ea7e5362c66b0dadf48dc82894f08065a48fa04cea6"
+    },
+    {
+      "path": "templates/AGENTS.md",
+      "beforeSha256": "8007ac0de899a3d0ed3d2bb9ea61611e98c6ac1886706ad15a6a84409ad20446",
+      "afterSha256": "9a0976911f7fc6f83622d300bf37468be7263c99c30b829674e255f20e91d856"
+    }
+  ],
+  "productionBehaviorChanged": false
+}

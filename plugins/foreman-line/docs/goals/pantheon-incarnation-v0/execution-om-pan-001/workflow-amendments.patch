@@ -1,0 +1,275 @@
+diff --git a/plugins/foreman-line/docs/COORDINATOR-PATTERN.md b/plugins/foreman-line/docs/COORDINATOR-PATTERN.md
+index 243907a3..c3caeef0 100644
+--- a/plugins/foreman-line/docs/COORDINATOR-PATTERN.md
++++ b/plugins/foreman-line/docs/COORDINATOR-PATTERN.md
+@@ -24,7 +24,7 @@ Goal exit                      - exit criterion met                → final rep
+ Everything downstream of Stage Zero was formalized first; Stage Zero was run by hand (FOREMAN-LINE-PLAN.md was relay-built) until this charter. Most mistakes start here, so it gets structure:
+ 
+ 1. **Intake.** Developer brings a concept - a sentence to a page. The coordinator interrogates it: what does done mean, who consumes the result, what is deliberately out, what constraints are non-negotiable, what existing canon applies.
+-2. **Ideation is mutual.** The coordinator proposes; the developer disposes. Open design questions are surfaced as explicit numbered decisions with a recommendation each - never silently resolved. (The four-decision ratification that created this document is the reference example.)
++2. **Ideation is mutual.** For Pantheon under a verified, active OM-PAN-001 grant, apply `docs/standing-mandates/OM-PAN-001.md`; this exception does not apply to other goals or create Runtime authority. Within that mandate, the coordinator records routine refinements and escalates material intent/authority changes only. Outside that scoped mandate: The coordinator proposes; the developer disposes. Open design questions are surfaced as explicit numbered decisions with a recommendation each - never silently resolved. (The four-decision ratification that created this document is the reference example.)
+ 3. **Commentary is not a change request.** Treat a developer's reaction, rationale, question, preference, or conversational aside as context, not authority to mutate a ratified charter, dependency graph, dispatch gate, Linear relation, or implementation scope. Make such a change only when the developer explicitly directs the mutation and names its target and intended replacement; otherwise draft the proposed amendment and request ratification. This prevents a coordinator from converting informal conversation into operational state.
+ 4. **Output: the Goal Charter**, one document, containing: the objective; locked decisions (D1–Dn, each with its reasoning recorded); the wave/parcel decomposition with dependency order; per-parcel one-liners with risk and routing class; the goal exit criterion; standing authorizations granted for this goal (see Gates); and the stop conditions.
+ 5. **Gate 1 - ratification.** The developer approves the charter explicitly. This gate can never be delegated or pre-authorized: a "mutual final design decision" with one party absent is neither mutual nor a decision.
+@@ -66,11 +66,11 @@ Per-role routing is governed by the shipped routing policy (`plugins/foreman-lin
+ | Adversarial reviewer        | Frontier, always                    | Fresh session per review, zero builder context        | **Structurally reduced, mechanically-enforced-where-loaded - no Edit/Write, enumerable repo-mutation commands denied in both shells; "reviewer never fixes" is reduced, not eliminated (Bash/PowerShell residual is a deliberate, documented trade-off, not a gap)** |
+ | Shaping agent               | Frontier                            | Fresh session per parcel                              | Docs-only writes                                                                                                                                                                                                                                                     |
+ 
+-Three dispatch mechanics rules, all earned: every dispatch - including rework - opens with a Step 0 restate-and-stop gate; the branch/worktree is named in the directive, never ambient; and rework directives mandate "every X," never "the listed X" - the findings are a floor, not a ceiling, and no role is exempt from the sweep, including the coordinator (lesson #16). Every builder/reviewer kickstarter includes the standing constraints by reference (`plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`). For architecture/risk parcels, run **two independent adversarial reviews** (lesson #12: two frontier reviews of W0-P4 agreed on every focus question and only one found the blocker). Where reviews disagree, the coordinator reproduces the disputed finding before triaging - the reproduction is the tie-breaker at triage and the closure proof at acceptance.
++Three dispatch mechanics rules, all earned: every dispatch - including rework - opens with a Step 0 scope check; under OM-PAN-001 an exact admitted match proceeds on coordinator validation without a human prompt, and outside it the restate-and-stop gate remains; the branch/worktree is named in the directive, never ambient; and rework directives mandate "every X," never "the listed X" - the findings are a floor, not a ceiling, and no role is exempt from the sweep, including the coordinator (lesson #16). Every builder/reviewer kickstarter includes the standing constraints by reference (`plugins/foreman-line/docs/kickstarters/STANDING-CONSTRAINTS.md`). For architecture/risk parcels, run **two independent adversarial reviews** (lesson #12: two frontier reviews of W0-P4 agreed on every focus question and only one found the blocker). Where reviews disagree, the coordinator reproduces the disputed finding before triaging - the reproduction is the tie-breaker at triage and the closure proof at acceptance.
+ 
+ ## The long-running loop
+ 
+-The coordinator runs as a self-pacing loop (`/goal` enters it after ratification): work while there is work, sleep on a long fallback while builders build (completion notifications are the primary wake signal), stop when the exit criterion is met or a stop condition fires. One goal, one coordinator: the loop directive carries an ownership block, and ownership transfers only at parcel boundaries via that block (rule earned when a second coordinator committed onto a live parcel branch - 491fb80 - and was benign only by luck). Universal stop conditions: a frozen contract needs modification; a tripwire fires twice on one parcel; a security finding can't close in-parcel; anything outward-facing beyond the standing authorizations; queue empty.
++The coordinator runs as a self-pacing loop (`/goal` enters it after ratification): work while there is work, sleep on a long fallback while builders build (completion notifications are the primary wake signal), stop when the exit criterion is met or a stop condition fires. One goal, one coordinator: the loop directive carries an ownership block, and outside a verified succession mandate, ownership transfers only at parcel boundaries via that block; OM-PAN-001 instead uses its explicit initial transfer, then transactional lease/CAS and effect-side fencing after service acceptance (rule earned when a second coordinator committed onto a live parcel branch - 491fb80 - and was benign only by luck). OM-PAN-001 evidence failures hold dependent actions with bounded recovery and independent work continuing; queue exhaustion never proves exits met. Outside that scoped policy, universal stop conditions: a frozen contract needs modification; a tripwire fires twice on one parcel; a security finding can't close in-parcel; anything outward-facing beyond the standing authorizations; queue empty.
+ 
+ When triage re-opens Gate 1 for specific decisions, the re-open is scoped, not blanket: list exactly which downstream work each re-opened decision blocks; work provably orthogonal to every re-opened element proceeds under the standing authorizations. Hold the *irreversible* step (merge-to-main, outward-facing wiring) for the human - not the reversible local upstream work (shaping, building, review) the re-opened decisions do not touch. Over-holding is a real cost, not a safe default (lesson #27).
+ 
+diff --git a/plugins/foreman-line/docs/SPEC-CONVENTION.md b/plugins/foreman-line/docs/SPEC-CONVENTION.md
+index f58aaea1..31916257 100644
+--- a/plugins/foreman-line/docs/SPEC-CONVENTION.md
++++ b/plugins/foreman-line/docs/SPEC-CONVENTION.md
+@@ -55,7 +55,7 @@ A spec is a **point-in-time work order**, not a living document. Stale specs loa
+ 
+ | State | Location | Agent behavior |
+ |---|---|---|
+-| `draft` | `active/` | Not dispatchable. Human still authoring. |
++| `draft` | `active/` | Not dispatchable. Authoring/lint/promotion outstanding; an authorized coordinator may shape drafts. |
+ | `active` | `active/` | Loadable and dispatchable. This is the contract for the work. |
+ | `done` | `done/` | Never auto-loaded. Historical/archaeological reference only. |
+ | `superseded` | `done/` | As `done`, plus frontmatter points to the replacing spec. |
+@@ -65,7 +65,7 @@ A spec is a **point-in-time work order**, not a living document. Stale specs loa
+ 1. State lives in frontmatter (`status:`) **and** folder location. They must agree; the folder is authoritative for agent tooling.
+ 2. When work merges, the spec moves to `done/` **in the same PR** or an immediate follow-up. This is a merge-checklist item, not an honor-system chore.
+ 3. Material changes to an `active` spec require a comment on the linked Jira ticket (see §5).
+-4. Agents load only: (a) the spec for their assigned ticket, and (b) `core/`. Nothing else, ever, without explicit human instruction. "Load the specs folder" is not a thing.
++4. Agents load only: (a) the spec for their assigned ticket, and (b) `core/`. Under verified OM-PAN-001, a coordinator-issued bounded context manifest may add read-only sources within scope. Otherwise additional context needs explicit human instruction. "Load the specs folder" is not a thing.
+ 
+ ---
+ 
+@@ -100,7 +100,7 @@ thinking_level: low               # Optional: off | minimal | low | medium | hig
+ 
+ Four fields extend the required schema beyond the original eight. All four are machine-validated by `plugins/foreman-line/spec-linter/`.
+ 
+-- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, human-approved (not agent-inferred). Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md` §6.
++- **`risk:`** — **Required.** One of `low | standard | elevated | critical`. Declared risk level, set at shaping time, approved under the applicable authority: OM-PAN-001 uses its ratified rubric and independent review floor; other goals require human approval. Consumed by CI audit-trigger rules and model-routing tier selection. Values are per `plugins/foreman-line/docs/FOREMAN-LINE-PLAN.md` §6.
+ - **`surfaces:`** — **Required, non-empty array of strings.** Repo-relative paths or glob patterns describing the filesystem surfaces the parcel touches. Consumed by audit-trigger CI rules and skill-injection matrix evaluation. At least one entry is required — an empty array fails schema validation. See §4.7 for the canonical vocabulary of known prefixes and the advisory-warning behavior for entries outside it.
+ - **`routing_class:`** — **Required.** One of `boilerplate | standard-feature | architecture/risk | implementation/standard`. Task-class key used by routing-policy evaluation at dispatch. This enum is identical to the `classes` map keys in `plugins/foreman-line/routing-policy/routing-policy.yaml`; this convention is the authoritative definition, the routing-policy file is the corroborating instantiation.
+ - **`permission_profile:`** — **Optional until the permission-profile registry ships.** A name referencing a profile in a reviewed permission-profile registry (a separate, deferred parcel). Never inline permission rules directly in a spec — a self-describing document must not be its own security authority. Lint behavior: if present, the value must be a non-empty, non-whitespace-only string (rejected otherwise); if absent, the spec-linter emits a non-blocking advisory warning to stderr (exit code remains `0`). The linter CLI exposes a `--no-permission-profile-warning` flag to suppress this advisory. When the registry ships, it will add enum validation as a non-breaking additive change to this field's contract.
+@@ -216,7 +216,7 @@ Two systems of record will drift unless the contract is explicit. This is the co
+ 1. Every spec carries the Jira key in frontmatter (`ticket:`) and filename.
+ 2. Every linked Jira ticket carries a link to the spec **path at a specific commit SHA** (permalink), not a branch-relative link. Branch links rot; SHA links are receipts.
+ 3. When a spec's `updated:` date bumps for a material change, the ticket gets a comment: *"Spec updated: <permalink> — <one-line summary>."*
+-4. Conflicts resolve as follows: Jira wins on delivery state (priority, schedule, assignment); the spec wins on implementation detail. If they disagree on scope, work **stops** until a human reconciles them. Agents do not adjudicate scope conflicts.
++4. Conflicts resolve as follows: Jira wins on delivery state (priority, schedule, assignment); the spec wins on implementation detail. Under OM-PAN-001, versioned goal/parcel IDs and Git/PR evidence are canonical; unavailable Jira/Linear fields are explicitly not applicable. The coordinator reconciles stale projections; conflicting material authority is an exception. Other scope conflicts stop for human reconciliation.
+ 
+ ---
+ 
+@@ -249,9 +249,9 @@ Specs are repo content: cloned to every workstation, shipped to inference endpoi
+ This convention pairs with the dispatch discipline already validated under PDD:
+ 
+ 1. **One spec → one agent → one isolated branch/worktree.** No shared working state between concurrent agents.
+-2. **Scope pinning at dispatch (Step 0):** the agent's first act is to restate the spec's scope and its exact `Allowed Files` mutation authority. The human confirms before work begins. `surfaces:` informs routing but never grants permission to edit a path.
++2. **Scope pinning at dispatch (Step 0):** the agent's first act is to restate the spec's scope and its exact `Allowed Files` mutation authority. For verified OM-PAN-001, the coordinator compares the spec hash, source head, worktree/branch, allowed paths, role, tools, host, route and flags to the admitted descriptor; exact matches proceed automatically. Other goals retain human confirmation. `surfaces:` informs routing but never grants permission to edit a path.
+ 3. **Agents claim completion against Acceptance Criteria; verification is external.** No agent verifies its own claim — validation is a separate deterministic check or separate reviewer.
+-4. **Gate 3 is human-owned unless delegation is proven at merge time.** Delegation is valid only when the target repository's effective branch rules name the agent's distinct identity as a bypass actor. The coordinator must query that rule at merge time and stop before any merge call when it cannot be proven. Missing configuration, an empty bypass list, a human-authenticated agent session, or an unavailable ruleset query all fail closed to human ownership.
++4. **Gate 3 requires current authority and exact-head evidence.** Under OM-PAN-001, the coordinator may merge with the authenticated actor's ordinary permission after current effective repository rules, accepted source/base and all required evidence/checks pass. This mandate grants no bypass or protection change. A missing rule/permission fact holds the merge. Other goals retain their explicit human or delegated merge policy; this exception grants no authority to them.
+ 
+ ---
+ 
+diff --git a/plugins/foreman-line/docs/kickstarters/foreman-shaping-template.md b/plugins/foreman-line/docs/kickstarters/foreman-shaping-template.md
+index a0008af2..406de855 100644
+--- a/plugins/foreman-line/docs/kickstarters/foreman-shaping-template.md
++++ b/plugins/foreman-line/docs/kickstarters/foreman-shaping-template.md
+@@ -55,6 +55,8 @@ Anthropic models use dots (e.g. `openrouter/anthropic/claude-opus-5.5`).
+ - Environment: Windows. Node toolchain commands run in **PowerShell only**; run
+   `node -v` first (must satisfy `>=24.11.1`).
+ 
++For Pantheon under a verified, active OM-PAN-001 grant, apply `docs/standing-mandates/OM-PAN-001.md`; this exception does not apply to other goals or create Runtime authority. Step 0 waits for the coordinator's evidence comparison; an exact match requires no human confirmation. Any later rework uses the same rule. The native bootstrap grant is explicitly separate from a Runtime/resolver receipt; do not fabricate one.
++
+ ## Step 0 — restate and STOP (mandatory gate)
+ 
+ Before writing any draft: restate the idea in your own words; enumerate the
+diff --git a/plugins/foreman-line/skills/foreman-shaping/SKILL.md b/plugins/foreman-line/skills/foreman-shaping/SKILL.md
+index 639be7e3..804909c1 100644
+--- a/plugins/foreman-line/skills/foreman-shaping/SKILL.md
++++ b/plugins/foreman-line/skills/foreman-shaping/SKILL.md
+@@ -11,6 +11,8 @@ artifact; you do not promote it, register it, or mint a receipt. The determinist
+ machinery you call lives in `plugins/foreman-line/shaping/` — this skill is the
+ interaction guidance around it.
+ 
++For Pantheon under a verified, active OM-PAN-001 grant, apply `docs/standing-mandates/OM-PAN-001.md`; this exception does not apply to other goals or create Runtime authority. Shaping returns drafts; the coordinator may then invoke verified lint/promotion separately without a human turn.
++
+ ## Inputs
+ 
+ - **A raw idea** (required) — the concept to shape.
+@@ -25,8 +27,7 @@ interaction guidance around it.
+ 2. **Surface constraints and propose a decomposition** into one or more parcels,
+    in dependency order, each with a risk level and routing class.
+ 3. **Ask clarifying questions in small batches** — numbered, each with a
+-   **recommended default** attached. Propose, let the developer dispose. Never
+-   silently resolve a design question.
++   **recommended default** attached. For verified OM-PAN-001, record routine resolutions within ratified intent and escalate material authority deltas only. Otherwise propose, let the developer dispose; never silently resolve a design question.
+ 4. **Write the drafts.** Author each parcel spec under
+    `plugins/foreman-line/docs/specs/active/` at **`status: draft`** (draft is not
+    dispatchable — SPEC-CONVENTION §3). Run the package's two-layer advisory
+diff --git a/plugins/foreman-line/skills/goal/SKILL.md b/plugins/foreman-line/skills/goal/SKILL.md
+index 50fe794b..cc5325b6 100644
+--- a/plugins/foreman-line/skills/goal/SKILL.md
++++ b/plugins/foreman-line/skills/goal/SKILL.md
+@@ -7,6 +7,8 @@ description: Become the long-running Coordinator for a development goal - carry
+ 
+ You are becoming the Coordinator defined in `${CLAUDE_PLUGIN_ROOT}/docs/COORDINATOR-PATTERN.md`. Read that charter first, then `${CLAUDE_PLUGIN_ROOT}/skills/parcel-driven-development/SKILL.md` for parcel mechanics. If this repo has a coordinator carryover or existing goal directives in `${CLAUDE_PLUGIN_ROOT}/docs/kickstarters/`, read those too. You consume verification results; you never produce them.
+ 
++For Pantheon under a verified, active OM-PAN-001 grant, apply `docs/standing-mandates/OM-PAN-001.md`; this exception does not apply to other goals or create Runtime authority. Read the scoped amendment alongside this skill before processing a Pantheon resume.
++
+ ## Parse the input
+ 
+ - `/goal <concept>` — start Stage Zero on the concept.
+@@ -15,7 +17,7 @@ You are becoming the Coordinator defined in `${CLAUDE_PLUGIN_ROOT}/docs/COORDINA
+ 
+ ## Stage Zero — run it, don't skip it
+ 
+-1. Interrogate the concept: what does done mean; who consumes the result; what is deliberately out of scope; which constraints are non-negotiable; what existing canon (plans, conventions, contracts, lessons files) applies; and whether the goal will store any state beyond its prose standing authorizations and gate record: such stored state may only restrict, never grant or widen authority. Ask the developer in batches of numbered questions with a recommendation attached to each — propose, let them dispose. Never silently resolve a design question.
++1. Interrogate the concept: what does done mean; who consumes the result; what is deliberately out of scope; which constraints are non-negotiable; what existing canon (plans, conventions, contracts, lessons files) applies; and whether the goal will store any state beyond its prose standing authorizations and gate record: such stored state may only restrict, never grant or widen authority. Ask the developer in batches of numbered questions with a recommendation attached to each — propose, let them dispose. Outside a verified scoped mandate, never silently resolve a design question. OM-PAN-001 permits recorded routine refinements within ratified intent and authority; material changes reopen only the affected owner decision.
+ 2. Draft the **Goal Charter** at `${CLAUDE_PLUGIN_ROOT}/docs/goals/<goal-slug>/charter.md`: objective; locked decisions D1–Dn with reasoning; wave/parcel decomposition in dependency order; per-parcel one-liners with risk + routing class; exit criterion; standing authorizations requested (Gates 2 and 3); stop conditions.
+ 3. **Gate 1:** present the charter's decision list to the developer for explicit ratification. This gate is never delegable and never inferred from silence. Iterate until ratified.
+ 
+@@ -25,15 +27,15 @@ Dispatch a fresh adversarial session (frontier model, no context beyond the char
+ 
+ ## Generate the loop directive, then become the loop
+ 
+-Write `${CLAUDE_PLUGIN_ROOT}/docs/goals/<goal-slug>/loop-directive.md` modeled on `${CLAUDE_PLUGIN_ROOT}/templates/kickstarters/loop-directive-template.md`: ownership block (you are the owner, named by session ID and working copy; one goal, one coordinator; transfers only at parcel boundaries), resume command and integration branch, gate record, standing authorizations verbatim with contingencies, the queue in strict order, per-iteration algorithm, the `Active restrictions` entry and decision log (see Quick flags below), stop conditions, wakeup pacing, crash recovery.
++Write `${CLAUDE_PLUGIN_ROOT}/docs/goals/<goal-slug>/loop-directive.md` modeled on `${CLAUDE_PLUGIN_ROOT}/templates/kickstarters/loop-directive-template.md`: ownership block (you are the owner, named by session ID and working copy; one goal, one coordinator; transfers follow the verified succession mandate when one exists; otherwise only at parcel boundaries), resume command and integration branch, gate record, standing authorizations verbatim with contingencies, the queue in strict order, per-iteration algorithm, the `Active restrictions` entry and decision log (see Quick flags below), stop conditions, wakeup pacing, crash recovery.
+ 
+ Then run the goal as a self-pacing loop (dynamic `/loop` mechanics: ScheduleWakeup with the resume prompt; long fallbacks while builders run — completion notifications are the primary wake signal; never poll):
+ 
+-Per parcel, the proven cycle — shaping session → coordinator lint (verify every factual claim on disk) → Gate 2 → dispatch builder in its own worktree/branch, named in the kickstarter, Step 0 restate-and-stop gate → rule on flags (a real spec gap becomes a ratified amendment committed alone before code) → completion claim mapped to evidence with test count, wrong-shaped claims presumptively empty → coordinator closure check against disk BEFORE re-running anything → deterministic pass in the environment the repo's lessons mandate → adversarial review (fresh session, frontier; TWO independent reviews for architecture/risk parcels; reviewers never fix, never commit; license hostile-input probing) → triage; reproduce disputed findings yourself before ruling → rework with its own Step 0 gate and a test-count tripwire → Gate 3 merge behind a green chain, paper trail riding in the PR → stage-F closure (spec to done/, worktree/branch cleanup, lessons appended, charter/carryover state updated).
++Per parcel, the proven cycle — shaping session → coordinator lint (verify every factual claim on disk) → Gate 2 → dispatch builder in its own worktree/branch, named in the kickstarter, Step 0 compare-and-continue under OM-PAN-001 (restate-and-stop otherwise) → rule on flags (a real spec gap becomes a ratified amendment committed alone before code) → completion claim mapped to evidence with test count, wrong-shaped claims presumptively empty → coordinator closure check against disk BEFORE re-running anything → deterministic pass in the environment the repo's lessons mandate → adversarial review (fresh session, frontier; TWO independent reviews for architecture/risk parcels; reviewers never fix, never commit; license hostile-input probing) → triage; reproduce disputed findings yourself before ruling → rework with its own Step 0 gate and a test-count tripwire → Gate 3 merge behind a green chain, paper trail riding in the PR → stage-F closure (spec to done/, worktree/branch cleanup, lessons appended, charter/carryover state updated).
+ 
+ ## Hook/goal conditions must be agent-completable
+ 
+-If this session runs under a stop-hook goal condition (hookify `/goal <condition>`, `/loop`, or any harness that blocks stopping until a condition holds), the condition must describe a state the AGENT can reach in the transcript — never a state only a human can produce. Human gates (ratification, one-tap approval, merges, GitHub ruleset promotion, OAuth consent) are LOOP STOP CONDITIONS: the agent stops and writes a report naming exactly what the human must do; the hook-verifiable end state is "stop-report written and loop stopped awaiting <gate>", not "<gate> completed". A condition phrased as a human action traps the session in a stop→feedback→stop cycle it can neither satisfy nor exit. If you find yourself running under such a condition, say so plainly in your report and ask the developer to `/goal clear` and re-issue with an agent-completable condition.
++If this session runs under a stop-hook goal condition (hookify `/goal <condition>`, `/loop`, or any harness that blocks stopping until a condition holds), the condition must describe a state the AGENT can reach in the transcript — never a state only a human can produce. Actual human authority/access exceptions are LOOP STOP CONDITIONS; evidence-decided shaping, dispatch and eligible merge under OM-PAN-001 are automatic. Hold dependent actions and continue independent authorized work. For actual human gates: the agent stops and writes a report naming exactly what the human must do; the hook-verifiable end state is "stop-report written and loop stopped awaiting <gate>", not "<gate> completed". A condition phrased as a human action traps the session in a stop→feedback→stop cycle it can neither satisfy nor exit. If you find yourself running under such a condition, say so plainly in your report and ask the developer to `/goal clear` and re-issue with an agent-completable condition.
+ 
+ ## Stop
+ 
+diff --git a/plugins/foreman-line/skills/parcel-driven-development/SKILL.md b/plugins/foreman-line/skills/parcel-driven-development/SKILL.md
+index c064223b..ebea70e5 100644
+--- a/plugins/foreman-line/skills/parcel-driven-development/SKILL.md
++++ b/plugins/foreman-line/skills/parcel-driven-development/SKILL.md
+@@ -7,6 +7,8 @@ description: Reusable methodology for coordinating multi-agent, multi-session, a
+ 
+ A methodology for shipping large features and multi-project initiatives by composing small, isolated, agent-built parts against stable contracts, with coordinator-owned sequencing, persistent state, integration readiness, and release gate discipline.
+ 
++For Pantheon under a verified, active OM-PAN-001 grant, apply `docs/standing-mandates/OM-PAN-001.md`; this exception does not apply to other goals or create Runtime authority. A worker reports contract gaps to its coordinator; that report is not an automatic owner-approval request.
++
+ ## Core Principle
+ 
+ > Prefer contract-first, parcel-sized development. Agents produce isolated, testable parts against stable interfaces. Coordination happens through contracts, initiative state, dependency graphs, integration surfaces, verification evidence, and merge discipline, not through agents negotiating with each other.
+diff --git a/plugins/foreman-line/templates/AGENTS.md b/plugins/foreman-line/templates/AGENTS.md
+index 7f34aa1c..6e853973 100644
+--- a/plugins/foreman-line/templates/AGENTS.md
++++ b/plugins/foreman-line/templates/AGENTS.md
+@@ -68,9 +68,7 @@ meant to stand alone for a reader who has never seen this pipeline before.
+   ratifying a plan before build work starts; **Gate 2** — approving a
+   build's scope once shaped into concrete units of work; **Gate 3** —
+   approving the final merge of finished work into the shared codebase.
+-  **Gate 3 is never delegated to an agent, under any circumstance** — an
+-  agent may prepare a change completely and still must stop and wait for a
+-  human to merge it.
++  For a verified OM-PAN-001 grant, Gates 2 and 3 are delegated subject to exact-scope admission, independent verification and effective repository rules. Other goals retain their explicit approval policy. No document can grant itself authority.
+ - **Parcel.** The unit of work this Line moves through its stage sequence:
+   one spec, one builder session, one round of adversarial review, one merge.
+   A goal (below) decomposes into one or more parcels.
+@@ -78,9 +76,7 @@ meant to stand alone for a reader who has never seen this pipeline before.
+   by one coordinator (below) from initial idea through every one of its
+   parcels to completion.
+ - **Coordinator.** The role that carries a goal end to end. It is a
+-  **human-driven agent session** — an agent session, but one a human directs
+-  at each gate and whose rulings it waits for; it is not an autonomous agent
+-  deciding on its own, and not a human acting alone without an agent session.
++  session operating within the owner's ratified authority. OM-PAN-001 delegates routine coordination and reserves material authority decisions to the owner; other goals use their own grants and gates.
+   "Coordinator lint" (used elsewhere in this kit as a gating step) is that
+   same session's own automated check of a draft artifact against this kit's
+   conventions before promoting it — a tool invocation the coordinator session
+diff --git a/plugins/foreman-line/templates/kickstarters/builder-template.md b/plugins/foreman-line/templates/kickstarters/builder-template.md
+index fd92b4a3..bc59812a 100644
+--- a/plugins/foreman-line/templates/kickstarters/builder-template.md
++++ b/plugins/foreman-line/templates/kickstarters/builder-template.md
+@@ -107,6 +107,8 @@ A genuine spec *gap* is a flag to raise at Step 0 or the moment you hit it; the
+ coordinator rules and, if needed, ratifies an amendment before further work.
+ Silently designing around a gap is the failure this gate exists to prevent.
+ 
++For Pantheon under a verified, active OM-PAN-001 grant, apply `docs/standing-mandates/OM-PAN-001.md`; this exception does not apply to other goals or create Runtime authority. Step 0 waits for the coordinator's evidence comparison; an exact match requires no human confirmation. Any later rework uses the same rule. The native bootstrap grant is explicitly separate from a Runtime/resolver receipt; do not fabricate one.
++
+ ## Step 0 — restate and STOP (mandatory gate)
+ 
+ Before writing any code or artifact:
+@@ -175,8 +177,7 @@ concrete command or inspection that catches it, not just the risk.>`
+ 
+ ## STOP boundary
+ 
+-Commit to `<BRANCH-NAME>`. **Do not open a PR. Do not merge.** Gate 3 is human
+-and never delegated. Report back with your evidence; the coordinator then
++Commit to `<BRANCH-NAME>`. **Do not open a PR. Do not merge.** Gate 3 belongs to the coordinator only where verified standing authority delegates it; otherwise it remains human. The builder receives no merge authority. Report back with your evidence; the coordinator then
+ dispatches adversarial review.
+ 
+ ## Completion report
+diff --git a/plugins/foreman-line/templates/kickstarters/loop-directive-template.md b/plugins/foreman-line/templates/kickstarters/loop-directive-template.md
+index 8290a662..d4e2722c 100644
+--- a/plugins/foreman-line/templates/kickstarters/loop-directive-template.md
++++ b/plugins/foreman-line/templates/kickstarters/loop-directive-template.md
+@@ -13,7 +13,7 @@
+ > `<INTEGRATION-BRANCH-CHECKOUT>` (an absolute path, or the same as the
+ > working copy). Claimed `<CLAIM-DATE>`: `<CLAIM-PROVENANCE>`.
+ > **State:** `<STATE>` (updated on every stop). One goal, one coordinator.
+-> Ownership transfers only at parcel boundaries, by editing this block; a
++> With a verified succession mandate, transfers use its lease/CAS/fencing procedure and reconcile pending effects. Otherwise ownership transfers only at parcel boundaries, by editing this block; a
+ > transfer updates the session ID and both paths together. If this block names
+ > another live coordinator, STOP and report; never assume.
+ 
+@@ -50,7 +50,7 @@ reinterprets or revokes one (registry §3).
+ 
+ ## Queue (strict order)
+ 
+-In the charter's dependency order. A new parcel idea is stop-and-report.
++In the charter's dependency order. Under OM-PAN-001, the coordinator may split/refine within-scope parcels without widening authority; material changes stop dependent work for one exception. Other new parcel ideas are stop-and-report.
+ 
+ 1. `<PARCEL-1-ID>`: `<ONE-LINER, RISK, ROUTING CLASS>`
+ 2. `<PARCEL-2-ID>`: `<ONE-LINER, RISK, ROUTING CLASS>`
+@@ -80,7 +80,7 @@ Decision log:
+ 
+ ## Stop conditions
+ 
+-Stop the loop and write a report naming exactly what the human must do when:
++Under verified OM-PAN-001, use its automatic hold/recovery and precise exception policy; independent authorized work continues, and an empty queue is not proof closure. Outside that scope, stop the loop and write a report naming exactly what the human must do when:
+ 
+ 1. A frozen contract needs modification.
+ 2. A tripwire fires twice on one parcel.
+diff --git a/plugins/foreman-line/templates/kickstarters/reviewer-template.md b/plugins/foreman-line/templates/kickstarters/reviewer-template.md
+index f29c12a2..974f4896 100644
+--- a/plugins/foreman-line/templates/kickstarters/reviewer-template.md
++++ b/plugins/foreman-line/templates/kickstarters/reviewer-template.md
+@@ -100,6 +100,8 @@ work and you owe its builder nothing.**
+ `git status` is clean and no commits exist beyond `<COMMIT-SHA>` (Standing
+ Constraint #10) — the permission envelope is a layer, not the guarantee.
+ 
++For Pantheon under a verified, active OM-PAN-001 grant, apply `docs/standing-mandates/OM-PAN-001.md`; this exception does not apply to other goals or create Runtime authority. Step 0 waits for the coordinator's evidence comparison; an exact match requires no human confirmation. Any later rework uses the same rule. The native bootstrap grant is explicitly separate from a Runtime/resolver receipt; do not fabricate one.
++
+ ## Step 0 — restate and STOP (mandatory gate)
+ 
+ Before reviewing, state the approved route you are running on and confirm it
+diff --git a/plugins/foreman-line/templates/kickstarters/shaping-template.md b/plugins/foreman-line/templates/kickstarters/shaping-template.md
+index 136e4934..304032f5 100644
+--- a/plugins/foreman-line/templates/kickstarters/shaping-template.md
++++ b/plugins/foreman-line/templates/kickstarters/shaping-template.md
+@@ -100,6 +100,8 @@ dispatch carries, a session's traps are inherently session-specific.>`
+   from their own environment; do not carry another repo's environment forward
+   as a default.>`
+ 
++For Pantheon under a verified, active OM-PAN-001 grant, apply `docs/standing-mandates/OM-PAN-001.md`; this exception does not apply to other goals or create Runtime authority. Step 0 waits for the coordinator's evidence comparison; an exact match requires no human confirmation. Any later rework uses the same rule. The native bootstrap grant is explicitly separate from a Runtime/resolver receipt; do not fabricate one.
++
+ ## Step 0 — restate and STOP (mandatory gate)
+ 
+ Before writing any draft:

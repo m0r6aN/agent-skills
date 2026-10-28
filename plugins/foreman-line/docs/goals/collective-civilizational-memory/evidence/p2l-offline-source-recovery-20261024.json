@@ -1,0 +1,9 @@
+{
+  "status": "OFFLINE_EXACT_FILE_STRING_RECOVERY",
+  "candidateSha256": "1ceb8a6eee456248e8b8a9bbf47f0d25989e40d5c5e9ec51a74b188d2c5e23aa",
+  "envelopeIssue": "Documentation key one level too high plus trailing closing brace; all three exact file strings recovered without edits",
+  "sourceStringsChanged": false,
+  "newProviderRequests": 0,
+  "originalFailedReceiptUntouched": true,
+  "fullSourceReservationRetained": true
+}

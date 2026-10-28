@@ -1,0 +1,86 @@
+{
+  "atUtc": "2026-10-24T22:22:02.880380+00:00",
+  "authority": "Existing direct owner and blanket non-destructive decisions/approvals; one additional bounded production/test repair within700phase",
+  "step0Ready": true,
+  "sourceHashesBefore": {
+    "src/keon/cortex/pipeline/ccm_ingestion.py": "7ef2cfa5a9e75a8c1d801c350b84c84ecf0727789c5d7d55e7b01208c8a54597",
+    "src/keon/cortex/providers/postgres/ccm_ingestion.py": "275e1f6a670e879d54b045f5261492edb9c8ea0e58812f877c69f7a7fdc97dc8",
+    "tests/test_ccm_ingestion.py": "69ed9cafce0b0a3344d9e6c15bc123f8d80fe525994be5a4db6f1157a02f11a7",
+    "tests/test_ccm_ingestion_postgres.py": "58159352a441c36b2c31a92e79232c16bff555fbfc32d90b5364605800fa000d",
+    "docs/specs/ccm-durable-ingestion-v1.md": "e8e14c962916360cd84172d1bd2fc57326a1cb43522044b5cec113758154dda5"
+  },
+  "workorderSha256": "fddd8567ad9bbb67e205881180cdac6f58080612f4afac2e932e6d5188b98ddf",
+  "findings": {
+    "architecture": {
+      "verdict": "CHANGES_REQUIRED",
+      "findings": [
+        {
+          "id": "CCM-P3A-01",
+          "severity": "medium",
+          "locator": "src/keon/cortex/providers/postgres/ccm_ingestion.py: PostgresIngestionStore.lease, expired final-attempt cleanup UPDATE",
+          "impact": "The unconditional cleanup UPDATE runs before the SKIP LOCKED selection and can block on a locked, expired fifth-attempt outbox row. Thus an otherwise eligible unlocked batch cannot be leased promptly. Because the transaction already holds the tenant advisory lock, the wait also blocks all other service mutations for that tenant. The supplied SKIP LOCKED test locks a pending row, so it does not exercise this path.",
+          "remediation": "Select final-expiry cleanup candidates with nonblocking row locking before updating them, preserving the tenant-first locking discipline. Add a PostgreSQL test that holds an expired fifth-attempt row locked while another eligible batch exists and verifies that leasing the eligible batch completes without waiting for the held row."
+        },
+        {
+          "id": "CCM-P3A-02",
+          "severity": "medium",
+          "locator": "tests/test_ccm_ingestion_postgres.py: test_scope_isolation_and_fence_races and test_transaction_faults_are_atomic",
+          "impact": "Several required load-bearing guarantees are not established by these assertions. The enqueue/fence gather targets a batch already fenced, so it tests rejection after fencing rather than an enqueue/fence race. The publication/fence gather accepts either publication result without checking the resulting source/outbox state or forcing both lock orderings. Publication rollback checks source states through pending(), which filters out nonpending sources; it therefore cannot detect a partial publication of other source rows, and it does not directly verify that the outbox transition rolled back.",
+          "remediation": "Add controlled PostgreSQL interleavings for enqueue versus fence on an initially open batch and for both publication/fence lock orderings, asserting the permitted outcomes and durable batch/source/outbox states. After injected publication failure, directly assert every source row remains staged and the outbox remains leased with its original owner, generation, and attempts."
+        }
+      ],
+      "coverage": [
+        "Reviewed preparation validation, exact DTO and built-in types, source/result matching, artifact counters and spans, closed reasons, resource bounds, and error sanitization.",
+        "Reviewed whole-envelope accepted scrubbing before pool acquisition, routing/control-field rejection, sanitized identity derivation, fingerprint omission, and SQL parameter boundaries.",
+        "Reviewed transactional enqueue, duplicate/conflict/fenced precedence, tenant-wide retained capacity accounting, parameterized inserts, and rollback structure.",
+        "Reviewed pending persistence and detached reads, publication versus extraction status separation, generation fencing, database-clock expiry, fifth-attempt retention, and scope linkage.",
+        "Reviewed tenant advisory-lock ordering, SKIP LOCKED selection, local publication atomicity, and fence interactions.",
+        "Reviewed supplied PostgreSQL16 execution evidence and test source; the reported results are evidence, not independently executed verification or proof of uncovered interleavings."
+      ],
+      "gaps": [
+        "Locked expired-final-attempt cleanup is not covered by the supplied PostgreSQL tests.",
+        "The supplied tests do not force both publication/fence orderings or a genuine initially-open enqueue/fence race.",
+        "Concurrent byte-capacity enforcement is not exercised: concurrent admission uses max_batches, while the byte assertion only rejects max_bytes=1.",
+        "Accepted full engine implementation, exact-head checks, merged-main checks, and completion of the remaining independent verification gates are not established by the supplied source excerpt and evidence."
+      ]
+    },
+    "security": {
+      "verdict": "CHANGES_REQUIRED",
+      "findings": [
+        {
+          "id": "CCM-P3A-01",
+          "severity": "high",
+          "locator": "src/keon/cortex/pipeline/ccm_ingestion.py::_prepare, python_symbol normalization before scrub_payload",
+          "impact": "Python-symbol JSON is parsed and then ASCII-escaped with canonical_json before its contents reach the scrubber. Consequently, known secrets containing non-ASCII characters or JSON-escaped control characters are transformed into reversible escape sequences that no longer match the supplied known-secret values. For example, a non-ASCII secret in a symbol field becomes literal backslash-u text inside artifact.text. The whole-envelope scrub scans that encoded string rather than the decoded symbol values, allowing the secret's reversible representation into PostgreSQL and returned candidate payloads. Removing content_sha256 does not address this leakage.",
+          "remediation": "Scrub decoded python-symbol keys and values before converting the symbol object back into artifact text, while retaining whole-envelope scrubbing and control-field validation. Ensure serialization cannot hide known-secret matches. Add SQL-boundary regression cases for non-ASCII and escaped-character secrets in both symbol keys and values, checking decoded stored symbol content as well as literal SQL parameters."
+        }
+      ],
+      "coverage": [
+        "Reviewed supplied preparation code for exact-type validation, input/output bounds, raw fingerprint omission, sanitized identity derivation, and pre-acquisition scrubbing.",
+        "Reviewed metadata traversal and accepted scrubber behavior for nested key sanitization, normalization collisions, and fail-closed handling.",
+        "Reviewed control-shape validation for routing identifiers, prescribed keys, statuses, reasons, and artifact kinds.",
+        "Reviewed closed exception wrappers and cancellation propagation through transaction context managers.",
+        "Reviewed parameterized scoped SQL, retained-batch capacity accounting, transaction atomicity, lease generations and expiry, and shared tenant-lock ordering for enqueue, fence, and publication.",
+        "Reviewed supplied unit and PostgreSQL integration tests as evidence of their explicitly asserted scenarios, not proof of untested cases.",
+        "Reviewed documentation's limitations concerning internal-only operation, candidate authority, external effects, and absence of deletion or crypto-erasure guarantees."
+      ],
+      "gaps": [
+        "No tools or tests were executed in this review; execution results and source hashes are supplied evidence only.",
+        "Supplied privacy tests do not cover reversible JSON escaping of known secrets within python_symbol payloads.",
+        "Full accepted engine implementation, application wiring, repository-wide source pins, and merged-main verification were not independently inspected."
+      ]
+    }
+  },
+  "reproductionEvidence": [
+    "locked-final-reproduction.json",
+    "unicode-secret-reproduction.json"
+  ],
+  "initialTestFixtureRepairPreserved": true,
+  "maximumRepairProviderPosts": 1,
+  "maximumFreshFullReviews": 2,
+  "noRetryOrFallback": true,
+  "baseline3948Pass145SkipAnd11ActualCasesMustRemain": true,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "nativePrivatePi": "HELD"
+}

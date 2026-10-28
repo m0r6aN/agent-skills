@@ -1,0 +1,79 @@
+{
+  "atUtc": "2026-10-24T22:18:29.376024+00:00",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_ingestion.py": "7ef2cfa5a9e75a8c1d801c350b84c84ecf0727789c5d7d55e7b01208c8a54597",
+    "src/keon/cortex/providers/postgres/ccm_ingestion.py": "275e1f6a670e879d54b045f5261492edb9c8ea0e58812f877c69f7a7fdc97dc8",
+    "tests/test_ccm_ingestion.py": "69ed9cafce0b0a3344d9e6c15bc123f8d80fe525994be5a4db6f1157a02f11a7",
+    "tests/test_ccm_ingestion_postgres.py": "58159352a441c36b2c31a92e79232c16bff555fbfc32d90b5364605800fa000d",
+    "docs/specs/ccm-durable-ingestion-v1.md": "e8e14c962916360cd84172d1bd2fc57326a1cb43522044b5cec113758154dda5"
+  },
+  "workorderSha256": "e5d7f8ff5c1fbacdfc5d273cb989895a6baf2f20e4a7db072117eee429c8f3bc",
+  "reviews": "Two fresh no-tools independent Sol/low requests, no other reviewer conclusions",
+  "sameFamilyLimitation": true,
+  "localCounts": {
+    "pass": 3948,
+    "skipped": 145,
+    "failure": 0,
+    "error": 0
+  },
+  "actualPostgresTests": [
+    {
+      "class": "tests.test_ccm_ingestion_postgres",
+      "name": "test_restart_pending_duplicate_conflict_and_privacy",
+      "status": "pass"
+    },
+    {
+      "class": "tests.test_ccm_ingestion_postgres",
+      "name": "test_transaction_faults_are_atomic[second-source-rollback]",
+      "status": "pass"
+    },
+    {
+      "class": "tests.test_ccm_ingestion_postgres",
+      "name": "test_transaction_faults_are_atomic[publication-rollback]",
+      "status": "pass"
+    },
+    {
+      "class": "tests.test_ccm_ingestion_postgres",
+      "name": "test_concurrent_capacity_and_retained_accounting",
+      "status": "pass"
+    },
+    {
+      "class": "tests.test_ccm_ingestion_postgres",
+      "name": "test_exclusive_leases_skip_locked_and_stale_tokens",
+      "status": "pass"
+    },
+    {
+      "class": "tests.test_ccm_ingestion_postgres",
+      "name": "test_final_attempt_dead_retains_pending[fifth-failure]",
+      "status": "pass"
+    },
+    {
+      "class": "tests.test_ccm_ingestion_postgres",
+      "name": "test_final_attempt_dead_retains_pending[expired-fifth-grant]",
+      "status": "pass"
+    },
+    {
+      "class": "tests.test_ccm_ingestion_postgres",
+      "name": "test_scope_isolation_and_fence_races",
+      "status": "pass"
+    },
+    {
+      "class": "tests.test_ccm_ingestion_postgres",
+      "name": "test_hostile_values_never_reach_pool[hostile-metadata]",
+      "status": "pass"
+    },
+    {
+      "class": "tests.test_ccm_ingestion_postgres",
+      "name": "test_hostile_values_never_reach_pool[nested-hostile-metadata]",
+      "status": "pass"
+    },
+    {
+      "class": "tests.test_ccm_ingestion_postgres",
+      "name": "test_scrubber_failure_never_acquires_pool",
+      "status": "pass"
+    }
+  ],
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "nativePrivatePi": "HELD"
+}

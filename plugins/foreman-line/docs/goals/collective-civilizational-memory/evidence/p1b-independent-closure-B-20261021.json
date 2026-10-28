@@ -1,0 +1,63 @@
+{
+  "startedAtUtc": "2026-10-22T02:35:14.533639+00:00",
+  "phase": "replacement-B",
+  "modelRequested": "claude-opus-5-5",
+  "effortRequested": "low",
+  "outputMax": 6144,
+  "inputBytes": 87000,
+  "inputSha256": "bccf043428562a5dc1a55a4627b22c88b70ad4394c12ff9928ba766f0ab40dba",
+  "inputOperationalBound": 91256,
+  "creditReservation": 320,
+  "modeledAtByteBoundCredits": 318.538,
+  "status": "completed_json_pending_host_validation",
+  "retries": 0,
+  "requestsMax": 1,
+  "creditGuard": {
+    "balance": 8320.3,
+    "sharedDayUsed": 2686.81,
+    "effortUsed": 2767.11,
+    "P1BBookedBefore": 677.05475,
+    "newCycleBooked": 0,
+    "rawSharedDay": 2595.7,
+    "rawEffort": 2676.0,
+    "ownedPendingAlreadyInSharedLedger": 700,
+    "ourClosureCompletedPlusRemainingHold": 791.11,
+    "reservationAccounting": "Replace exact named P1B pending hold, retain all unrelated/unknown holds, conservatively count own completed book too"
+  },
+  "httpStatus": 200,
+  "modelReturned": "claude-opus-5-5",
+  "requestId": "chatcmpl-0eb1da4d-9867-4fbe-8f96-1dae0a0b8b60",
+  "finishReason": "stop",
+  "usage": {
+    "completion_tokens": 1858,
+    "prompt_tokens": 36346,
+    "total_tokens": 38204,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": null,
+      "text_tokens": 1858
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "cache_write_tokens": 36342,
+      "text_tokens": 0,
+      "cache_creation_tokens": 36342,
+      "cache_creation_token_details": {
+        "ephemeral_5m_input_tokens": 36342,
+        "ephemeral_1h_input_tokens": 0
+      }
+    },
+    "cache_creation_input_tokens": 36342,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "global",
+    "speed": "standard"
+  },
+  "reportedCredits": 119.9,
+  "conservativeCatalogCredits": 120.3895,
+  "bookedCredits": 120.3895,
+  "visibleBytes": 5043,
+  "finishedAtUtc": "2026-10-22T02:35:37.363976+00:00"
+}

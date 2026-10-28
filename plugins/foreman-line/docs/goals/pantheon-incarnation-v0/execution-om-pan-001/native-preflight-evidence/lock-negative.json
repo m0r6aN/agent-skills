@@ -1,0 +1,8 @@
+{
+  "id": "N05",
+  "finding": "NP-04",
+  "fixture": "absent private lock file",
+  "observed": "accepted-by-current-catch",
+  "liveWrapperExecuted": false,
+  "secretAccess": false
+}

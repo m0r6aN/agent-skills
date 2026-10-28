@@ -1,0 +1,19 @@
+{
+  "atUtc": "2026-10-24T22:15:34.810247+00:00",
+  "authority": "Existing owner non-destructive bounded repair authority",
+  "scope": "One focused test-only repair: invalid synthetic HMAC fixture, real original-pool close/reopen proof and explicit byte-capacity check",
+  "productionHashesUnchanged": {
+    "src/keon/cortex/pipeline/ccm_ingestion.py": "7ef2cfa5a9e75a8c1d801c350b84c84ecf0727789c5d7d55e7b01208c8a54597",
+    "src/keon/cortex/providers/postgres/ccm_ingestion.py": "275e1f6a670e879d54b045f5261492edb9c8ea0e58812f877c69f7a7fdc97dc8"
+  },
+  "beforeTestSha256": "d6442322fa8f220e2cfb780b33129e0a14eabb654245d6325d3d4dc076445527",
+  "baseline3948Pass145SkipRetainedRequired": true,
+  "step0Ready": true,
+  "providerRepairRequests": 0,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "nativePrivatePi": "HELD",
+  "initialActualFailurePreserved": true,
+  "afterTestSha256": "58159352a441c36b2c31a92e79232c16bff555fbfc32d90b5364605800fa000d",
+  "invalidSyntheticKeyReplacements": 2
+}

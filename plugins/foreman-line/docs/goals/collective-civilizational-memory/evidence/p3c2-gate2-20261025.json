@@ -1,0 +1,34 @@
+{
+  "atUtc": "2026-10-25T14:57:08.224330+00:00",
+  "gate2": "APPROVED_EXISTING_DIRECT_OWNER_AND_STANDING_AUTHORITY",
+  "base": "964f42000f02304ecf89d19079e3fa3d393dab46",
+  "worktree": "D:\\Repos\\ccm-worktrees\\cortex-p3c2-authority-copies",
+  "workorderSha256": "fb9cc85e81a0f23e468d974f169d22cac2a88002a1ecdc4dfecf88855fc94c1d",
+  "allowedFiles": [
+    "src/keon/cortex_governed/ccm_deletion_authorization.py",
+    "src/keon/cortex/providers/postgres/ccm_copy_tracking.py",
+    "src/keon/cortex/providers/postgres/ccm_canonical.py",
+    "tests/test_ccm_deletion_authorization.py",
+    "tests/test_ccm_copy_tracking_postgres.py",
+    "tests/test_ccm_canonical_postgres.py",
+    "docs/specs/ccm-authority-copies-v1.md"
+  ],
+  "step0FlagsDisposed": [
+    "AUTH-TRANSACTION-BOUNDARY",
+    "AUTH-CURRENT-STATE",
+    "AUTH-PROTECTED-SQL",
+    "AUTH-SCHEMA-BOUNDS",
+    "AUTH-TIME-AND-ERRORS",
+    "COPY-POSITION-BINDING",
+    "COPY-IDENTITY-AND-CONFLICT",
+    "COPY-MARKER-SEMANTICS",
+    "COPY-ATOMIC-INTEGRATION",
+    "COPY-VISIBILITY-AND-SURFACES",
+    "EVIDENCE-QUALIFICATION"
+  ],
+  "dispositions": "Binding Step0 Dispositions +17exact acceptance criteria, default deny/unqualified production adapters",
+  "sourcePosts": 0,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "nativePrivatePi": "HELD"
+}

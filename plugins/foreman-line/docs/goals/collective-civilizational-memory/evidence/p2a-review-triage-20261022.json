@@ -1,0 +1,47 @@
+{
+  "atUtc": "2026-10-22T04:26:58.524475+00:00",
+  "initialVerdicts": [
+    "CHANGES_REQUIRED",
+    "CHANGES_REQUIRED"
+  ],
+  "specPriorSha256": "4a55bcbc3552f4a97ba9083b59e1ade2ad6bb3a0740c9a0b52e180cb01482efe",
+  "specRepairSha256": "f6de7120cffe91932f7c3f4fa1b5c8c5e1e36149d7cf1a6d7709ec73f9a2274f",
+  "amendment": "C02-R1 finite scanner/integer/raw allocation bounds and exact URL/depth/epoch semantics ratified before repair under owner blanket authority",
+  "dispositions": [
+    {
+      "id": "R1",
+      "status": "repair",
+      "findings": "A-F1/B-F1/B-F4",
+      "scope": "Dense candidate explosion/member-list copying; repeated PEM/assignment scans; URL greedy scheme scanning; early integer/known/context bounds; bounded regression coverage",
+      "severity": "high prerequisite availability defect; no live ingestion claimed"
+    },
+    {
+      "id": "R2",
+      "status": "repair",
+      "findings": "A-F2/B-F2",
+      "scope": "Empty-username and last-@ authority credentials leak; slash beyond authority is not a URI credential by clarified grammar",
+      "severity": "high prerequisite confidentiality defect"
+    },
+    {
+      "id": "R3",
+      "status": "repair",
+      "findings": "A-F3/B-F3",
+      "scope": "Known-secret substring in epoch returned as metadata",
+      "severity": "medium, trusted caller misconfiguration"
+    },
+    {
+      "id": "R4",
+      "status": "repair",
+      "findings": "A-F4/B-F4",
+      "scope": "Exact depth32/33, canonical input/output, known literal and partial error-count boundaries",
+      "severity": "low correctness/coverage"
+    },
+    {
+      "id": "JWT-allegation",
+      "status": "not established; require bounded long-run proof",
+      "reason": "Negative lookbehind prevents retries at every interior token character. Do not claim reproduced O(n*4096) without evidence."
+    }
+  ],
+  "formalRepairUsed": 0,
+  "next": "ONE native Luna formal repair; Step0 restate and stop, then explicit GO; two independent closure reviews required"
+}

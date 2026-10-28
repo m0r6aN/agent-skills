@@ -1,0 +1,13 @@
+{
+  "schema": "pantheon.local-check-observation.v1",
+  "date": "2026-10-19",
+  "kind": "offline decision-kernel and package checks; not live execution",
+  "command": "node --test scripts/coordinator-loop.test.mjs",
+  "observed": {"tests": 14, "passed": 14, "failed": 0, "skipped": 0, "exitCode": 0},
+  "coveredFailures": ["unratified or expired authority","malformed expiry","stale lease","missing accounting state","budget exhaustion","unknown send replay","Runtime outage","account not qualified","empty review","wrong review head","self-review","rework exhaustion","changed merge head","empty queue with open exits","bootstrap cap"],
+  "checkCommand": "node coordinator-loop.mjs --check",
+  "observedInitialAction": "MANDATE_NOT_RATIFIED",
+  "livePortsBound": false,
+  "packageValidation": "PASS: ten dependency-ordered parcels, four models, 44 prototype-test record and source hashes, local document links, no approval references",
+  "limitations": ["Trusted verifier and execution ports not implemented by this decision kernel", "No live Runtime admission", "No substantive independent plan review", "No paid API call"]
+}

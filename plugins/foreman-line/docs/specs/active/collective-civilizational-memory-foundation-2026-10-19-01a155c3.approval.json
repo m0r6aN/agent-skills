@@ -1,0 +1,69 @@
+{
+  "approvedHash": "9431a8649c2c1125da28e3e4a62f3d9cb15d69b8a1f83dd9c7b1291e8a9c2f96",
+  "artifactRef": "docs/specs/active/collective-civilizational-memory-foundation-2026-10-19-01a155c3.projected.shaping-result.json",
+  "subject": {
+    "projectedResult": {
+      "parcelSpecRefs": [
+        "plugins/foreman-line/docs/specs/active/CCM-P1A-memory-graph-contracts.md",
+        "plugins/foreman-line/docs/specs/active/CCM-P1B-gravity-v2-fixtures.md",
+        "plugins/foreman-line/docs/specs/active/CCM-P1C-collective-wire-compatibility.md",
+        "plugins/foreman-line/docs/specs/active/CCM-P1D-postgres-capability-check.md"
+      ],
+      "epics": [
+        {
+          "key": "epic-collective-civilizational-memory-foundation-2026-10-19-01a155c3",
+          "title": "Context: collective civilizational memory foundation",
+          "stories": [
+            {
+              "key": "CCM-P1A-memory-graph-contracts",
+              "title": "Cortex memory and temporal graph v2 contracts"
+            },
+            {
+              "key": "CCM-P1B-gravity-v2-fixtures",
+              "title": "Frozen gravity v2 scorer and retention simulations"
+            },
+            {
+              "key": "CCM-P1C-collective-wire-compatibility",
+              "title": "Collective civic memory v2 wire compatibility"
+            },
+            {
+              "key": "CCM-P1D-postgres-capability-check",
+              "title": "Read-only PostgreSQL capability check and evidence"
+            }
+          ]
+        }
+      ]
+    },
+    "specSet": [
+      {
+        "ref": "plugins/foreman-line/docs/specs/active/CCM-P1A-memory-graph-contracts.md",
+        "contentHash": "2db53117a6d990355cff5c0cf7f09a058bcf2a78c55b35a659395ae9b45f2dd8"
+      },
+      {
+        "ref": "plugins/foreman-line/docs/specs/active/CCM-P1B-gravity-v2-fixtures.md",
+        "contentHash": "4d08fab475d32bdcd3643c5c77f9569f39d2360899fe55049a8dfc778b42d2e1"
+      },
+      {
+        "ref": "plugins/foreman-line/docs/specs/active/CCM-P1C-collective-wire-compatibility.md",
+        "contentHash": "b782e06829119a3993c18155e331882a44a7c82cf6dd05ec8061c7e9f3c26c09"
+      },
+      {
+        "ref": "plugins/foreman-line/docs/specs/active/CCM-P1D-postgres-capability-check.md",
+        "contentHash": "33d2f4d90c57db9c4583328a50442e1fed37e9a2de421742661b7553d6f86603"
+      }
+    ]
+  },
+  "decision": "approved",
+  "timestamp": "2026-10-21T15:54:57.907Z",
+  "approver": "Clinton Morgan",
+  "correlation": {
+    "correlationId": "4a3b485a-1ae0-4197-83ac-8ad6810ade1d",
+    "sessionId": "6aa662d1-b660-457d-9345-537fb496312e",
+    "workflowId": "34014809-a177-4946-a29c-a71be1f311fe",
+    "runId": "4be9719d-5c1d-47f2-8e27-6a335248862a"
+  },
+  "receipt": {
+    "hash": "7072cdf78e67a322220a6a0e3098a11522d6ff3180b8a373cbc8d2b19fdd442f",
+    "locator": "docs/receipts/34014809-a177-4946-a29c-a71be1f311fe/000000-A-shaping-result.json"
+  }
+}

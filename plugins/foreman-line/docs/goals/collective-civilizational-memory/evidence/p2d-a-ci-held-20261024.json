@@ -1,0 +1,545 @@
+{
+  "atUtc": "2026-10-24T16:10:52.815261+00:00",
+  "status": "HELD_GITHUB_ACTIONS_ACCOUNT_BILLING_BEFORE_JOB_EXECUTION",
+  "head": "9fce7a97e0efedd77ce133274689ef8928774a51",
+  "pr": {
+    "baseRefName": "main",
+    "headRefOid": "9fce7a97e0efedd77ce133274689ef8928774a51",
+    "isDraft": false,
+    "mergeStateStatus": "UNSTABLE",
+    "state": "OPEN",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:08:34Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120920051007",
+        "name": "Import Gate (OSS must not reference governed)",
+        "startedAt": "2026-10-24T16:08:30Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:08:30Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120920039562",
+        "name": "Import Gate (OSS must not reference governed)",
+        "startedAt": "2026-10-24T16:08:27Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:08:33Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120920051066",
+        "name": "Unit Tests (3.10)",
+        "startedAt": "2026-10-24T16:08:30Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:08:30Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120920039537",
+        "name": "Unit Tests (3.10)",
+        "startedAt": "2026-10-24T16:08:27Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:08:33Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120920050996",
+        "name": "Unit Tests (3.11)",
+        "startedAt": "2026-10-24T16:08:30Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:08:30Z",
+        "conclusion": "CANCELLED",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120920039579",
+        "name": "Unit Tests (3.11)",
+        "startedAt": "2026-10-24T16:08:27Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:08:33Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120920051004",
+        "name": "Unit Tests (3.12)",
+        "startedAt": "2026-10-24T16:08:30Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:08:30Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120920039550",
+        "name": "Unit Tests (3.12)",
+        "startedAt": "2026-10-24T16:08:27Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:08:33Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120920050847",
+        "name": "Lint + Type Check",
+        "startedAt": "2026-10-24T16:08:30Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:08:30Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120920039324",
+        "name": "Lint + Type Check",
+        "startedAt": "2026-10-24T16:08:27Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:08:46Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120920107552",
+        "name": "Benchmark (fake provider)",
+        "startedAt": "2026-10-24T16:08:46Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:08:31Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120920052708",
+        "name": "Benchmark (fake provider)",
+        "startedAt": "2026-10-24T16:08:31Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:08:46Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120920107131",
+        "name": "Proof Summary",
+        "startedAt": "2026-10-24T16:08:46Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:08:31Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120920052604",
+        "name": "Proof Summary",
+        "startedAt": "2026-10-24T16:08:31Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:08:46Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120920107141",
+        "name": "Tenant Isolation Proof",
+        "startedAt": "2026-10-24T16:08:46Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T16:08:31Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120920053393",
+        "name": "Tenant Isolation Proof",
+        "startedAt": "2026-10-24T16:08:31Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      }
+    ],
+    "url": "https://github.com/Keon-Systems/keon-cortex/pull/96"
+  },
+  "runs": [
+    {
+      "conclusion": "failure",
+      "event": "push",
+      "headSha": "9fce7a97e0efedd77ce133274689ef8928774a51",
+      "jobs": [
+        {
+          "completedAt": "2026-10-24T16:08:30Z",
+          "conclusion": "failure",
+          "databaseId": 120920039324,
+          "name": "Lint + Type Check",
+          "startedAt": "2026-10-24T16:08:27Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120920039324"
+        },
+        {
+          "completedAt": "2026-10-24T16:08:30Z",
+          "conclusion": "failure",
+          "databaseId": 120920039537,
+          "name": "Unit Tests (3.10)",
+          "startedAt": "2026-10-24T16:08:27Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120920039537"
+        },
+        {
+          "completedAt": "2026-10-24T16:08:30Z",
+          "conclusion": "failure",
+          "databaseId": 120920039550,
+          "name": "Unit Tests (3.12)",
+          "startedAt": "2026-10-24T16:08:27Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120920039550"
+        },
+        {
+          "completedAt": "2026-10-24T16:08:30Z",
+          "conclusion": "failure",
+          "databaseId": 120920039562,
+          "name": "Import Gate (OSS must not reference governed)",
+          "startedAt": "2026-10-24T16:08:27Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120920039562"
+        },
+        {
+          "completedAt": "2026-10-24T16:08:30Z",
+          "conclusion": "cancelled",
+          "databaseId": 120920039579,
+          "name": "Unit Tests (3.11)",
+          "startedAt": "2026-10-24T16:08:27Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120920039579"
+        },
+        {
+          "completedAt": "2026-10-24T16:08:31Z",
+          "conclusion": "skipped",
+          "databaseId": 120920052604,
+          "name": "Proof Summary",
+          "startedAt": "2026-10-24T16:08:31Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120920052604"
+        },
+        {
+          "completedAt": "2026-10-24T16:08:31Z",
+          "conclusion": "skipped",
+          "databaseId": 120920052708,
+          "name": "Benchmark (fake provider)",
+          "startedAt": "2026-10-24T16:08:31Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120920052708"
+        },
+        {
+          "completedAt": "2026-10-24T16:08:31Z",
+          "conclusion": "skipped",
+          "databaseId": 120920053393,
+          "name": "Tenant Isolation Proof",
+          "startedAt": "2026-10-24T16:08:31Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556/job/120920053393"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556",
+      "workflowName": "CI"
+    },
+    {
+      "conclusion": "failure",
+      "event": "pull_request",
+      "headSha": "9fce7a97e0efedd77ce133274689ef8928774a51",
+      "jobs": [
+        {
+          "completedAt": "2026-10-24T16:08:33Z",
+          "conclusion": "failure",
+          "databaseId": 120920050847,
+          "name": "Lint + Type Check",
+          "startedAt": "2026-10-24T16:08:30Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120920050847"
+        },
+        {
+          "completedAt": "2026-10-24T16:08:33Z",
+          "conclusion": "failure",
+          "databaseId": 120920050996,
+          "name": "Unit Tests (3.11)",
+          "startedAt": "2026-10-24T16:08:30Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120920050996"
+        },
+        {
+          "completedAt": "2026-10-24T16:08:33Z",
+          "conclusion": "failure",
+          "databaseId": 120920051004,
+          "name": "Unit Tests (3.12)",
+          "startedAt": "2026-10-24T16:08:30Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120920051004"
+        },
+        {
+          "completedAt": "2026-10-24T16:08:34Z",
+          "conclusion": "failure",
+          "databaseId": 120920051007,
+          "name": "Import Gate (OSS must not reference governed)",
+          "startedAt": "2026-10-24T16:08:30Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120920051007"
+        },
+        {
+          "completedAt": "2026-10-24T16:08:33Z",
+          "conclusion": "failure",
+          "databaseId": 120920051066,
+          "name": "Unit Tests (3.10)",
+          "startedAt": "2026-10-24T16:08:30Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120920051066"
+        },
+        {
+          "completedAt": "2026-10-24T16:08:46Z",
+          "conclusion": "skipped",
+          "databaseId": 120920107131,
+          "name": "Proof Summary",
+          "startedAt": "2026-10-24T16:08:46Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120920107131"
+        },
+        {
+          "completedAt": "2026-10-24T16:08:46Z",
+          "conclusion": "skipped",
+          "databaseId": 120920107141,
+          "name": "Tenant Isolation Proof",
+          "startedAt": "2026-10-24T16:08:46Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120920107141"
+        },
+        {
+          "completedAt": "2026-10-24T16:08:46Z",
+          "conclusion": "skipped",
+          "databaseId": 120920107552,
+          "name": "Benchmark (fake provider)",
+          "startedAt": "2026-10-24T16:08:46Z",
+          "status": "completed",
+          "steps": [],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809/job/120920107552"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809",
+      "workflowName": "CI"
+    }
+  ],
+  "annotations": [
+    {
+      "run": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556",
+      "job": "Lint + Type Check",
+      "jobId": 120920039324,
+      "noJobSteps": true,
+      "billingAnnotations": [
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/Keon-Systems/keon-cortex/blob/9fce7a97e0efedd77ce133274689ef8928774a51/.github",
+          "start_line": 1,
+          "start_column": null,
+          "end_line": 1,
+          "end_column": null,
+          "annotation_level": "failure",
+          "title": "",
+          "message": "The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings",
+          "raw_details": ""
+        }
+      ]
+    },
+    {
+      "run": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556",
+      "job": "Unit Tests (3.10)",
+      "jobId": 120920039537,
+      "noJobSteps": true,
+      "billingAnnotations": [
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/Keon-Systems/keon-cortex/blob/9fce7a97e0efedd77ce133274689ef8928774a51/.github",
+          "start_line": 1,
+          "start_column": null,
+          "end_line": 1,
+          "end_column": null,
+          "annotation_level": "failure",
+          "title": "",
+          "message": "The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings",
+          "raw_details": ""
+        }
+      ]
+    },
+    {
+      "run": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556",
+      "job": "Unit Tests (3.12)",
+      "jobId": 120920039550,
+      "noJobSteps": true,
+      "billingAnnotations": [
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/Keon-Systems/keon-cortex/blob/9fce7a97e0efedd77ce133274689ef8928774a51/.github",
+          "start_line": 1,
+          "start_column": null,
+          "end_line": 1,
+          "end_column": null,
+          "annotation_level": "failure",
+          "title": "",
+          "message": "The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings",
+          "raw_details": ""
+        }
+      ]
+    },
+    {
+      "run": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110169556",
+      "job": "Import Gate (OSS must not reference governed)",
+      "jobId": 120920039562,
+      "noJobSteps": true,
+      "billingAnnotations": [
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/Keon-Systems/keon-cortex/blob/9fce7a97e0efedd77ce133274689ef8928774a51/.github",
+          "start_line": 1,
+          "start_column": null,
+          "end_line": 1,
+          "end_column": null,
+          "annotation_level": "failure",
+          "title": "",
+          "message": "The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings",
+          "raw_details": ""
+        }
+      ]
+    },
+    {
+      "run": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809",
+      "job": "Lint + Type Check",
+      "jobId": 120920050847,
+      "noJobSteps": true,
+      "billingAnnotations": [
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/Keon-Systems/keon-cortex/blob/9fce7a97e0efedd77ce133274689ef8928774a51/.github",
+          "start_line": 1,
+          "start_column": null,
+          "end_line": 1,
+          "end_column": null,
+          "annotation_level": "failure",
+          "title": "",
+          "message": "The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings",
+          "raw_details": ""
+        }
+      ]
+    },
+    {
+      "run": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809",
+      "job": "Unit Tests (3.11)",
+      "jobId": 120920050996,
+      "noJobSteps": true,
+      "billingAnnotations": [
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/Keon-Systems/keon-cortex/blob/9fce7a97e0efedd77ce133274689ef8928774a51/.github",
+          "start_line": 1,
+          "start_column": null,
+          "end_line": 1,
+          "end_column": null,
+          "annotation_level": "failure",
+          "title": "",
+          "message": "The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings",
+          "raw_details": ""
+        }
+      ]
+    },
+    {
+      "run": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809",
+      "job": "Unit Tests (3.12)",
+      "jobId": 120920051004,
+      "noJobSteps": true,
+      "billingAnnotations": [
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/Keon-Systems/keon-cortex/blob/9fce7a97e0efedd77ce133274689ef8928774a51/.github",
+          "start_line": 1,
+          "start_column": null,
+          "end_line": 1,
+          "end_column": null,
+          "annotation_level": "failure",
+          "title": "",
+          "message": "The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings",
+          "raw_details": ""
+        }
+      ]
+    },
+    {
+      "run": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809",
+      "job": "Import Gate (OSS must not reference governed)",
+      "jobId": 120920051007,
+      "noJobSteps": true,
+      "billingAnnotations": [
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/Keon-Systems/keon-cortex/blob/9fce7a97e0efedd77ce133274689ef8928774a51/.github",
+          "start_line": 1,
+          "start_column": null,
+          "end_line": 1,
+          "end_column": null,
+          "annotation_level": "failure",
+          "title": "",
+          "message": "The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings",
+          "raw_details": ""
+        }
+      ]
+    },
+    {
+      "run": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40110172809",
+      "job": "Unit Tests (3.10)",
+      "jobId": 120920051066,
+      "noJobSteps": true,
+      "billingAnnotations": [
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/Keon-Systems/keon-cortex/blob/9fce7a97e0efedd77ce133274689ef8928774a51/.github",
+          "start_line": 1,
+          "start_column": null,
+          "end_line": 1,
+          "end_column": null,
+          "annotation_level": "failure",
+          "title": "",
+          "message": "The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings",
+          "raw_details": ""
+        }
+      ]
+    }
+  ],
+  "reruns": 0,
+  "workflowChanges": false,
+  "bypass": false,
+  "mergeRequested": false,
+  "sourceCIOutcome": "UNVERIFIED_JOBS_NOT_STARTED",
+  "needed": "Repository owner resolves GitHub Actions account billing or spending limit, then rerun both existing failed workflows on EXACT reviewed head; all checks must pass before delegated Gate3 merge. No GenSpark topup inferred as a GitHub Actions billing remedy."
+}

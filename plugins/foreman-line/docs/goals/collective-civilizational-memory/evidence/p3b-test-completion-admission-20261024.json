@@ -1,0 +1,13 @@
+{
+  "atUtc": "2026-10-24T23:26:26.751705+00:00",
+  "authority": "Standing owner build and bounded repair grant",
+  "scope": "One missing-test completion request only, two testfiles; preceding repair omitted required test changes",
+  "maxProviderPosts": 1,
+  "maxCall": 300,
+  "maxOutputTokens": 16000,
+  "phaseCap": 1700,
+  "noProductionSourceEdits": true,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "automaticRetry": false
+}

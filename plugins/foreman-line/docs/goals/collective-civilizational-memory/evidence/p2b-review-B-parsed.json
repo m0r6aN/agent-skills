@@ -1,0 +1,19 @@
+{
+  "verdict": "PASS",
+  "findings": [],
+  "coverage": [
+    "Input bounds: chunk_text validates exact bytes, then exact str format in {txt,md}, then the <=4,194,304-byte limit, all before decode or hash allocation. Strict decode allocates at most one bounded transient str.",
+    "Boundary loop: retreats at most 3 continuation bytes on validated UTF-8. Non-final chunks are >=65,533 bytes, so valid input yields <=65 chunks. No empty chunks, contiguous half-open offsets, and exact concatenation.",
+    "Errors are content-free: TextChunkError.__new__ keeps args empty, and the closed codes appear in str/repr only. invalid_utf8 is raised outside the except block, so __cause__ and __context__ are None. No partial tuple is returned.",
+    "Strict types: type(...) is checks reject subclasses before any length or equality hook runs. Tests prove this with hook-raising subclasses.",
+    "Value safety: frozen slots TextChunk, and repr omits payload. The sentinel test passes. Module docs and spec disclaim trust, scrubbing, authentication, unique-ID and provenance claims.",
+    "Raw preservation of BOM, CRLF, NFD, NUL, Markdown syntax and trailing whitespace is tested and documented as intentionally unsanitized. The P3/P2A obligation before enqueue and P8 checkpoint ownership are stated.",
+    "Purity: no filesystem, network, logging, global mutable state, parser or effects. __init__ is minimal. Only the four allowed paths were added. Baseline/skip/format/type/Python 3.10 evidence was accepted as reported."
+  ],
+  "gaps": [
+    "Low/non-blocking: no test places identical equal-digest chunks at distinct offsets within one multi-chunk input. Digest repetition is shown only across formats.",
+    "Low/non-blocking: content-type-over-format priority is not tested with both inputs invalid at once (e.g. str content with format='pdf'). Code order is correct by inspection.",
+    "Low/non-blocking: no explicit test asserts every non-final chunk is >=65,533 bytes or that the lowercase hex length is 64. Both are implied by the hashlib comparisons and the 65-chunk vector.",
+    "Exact-head and merged-main CI, plus the second independent review, remain external closure gates not evidenced here."
+  ]
+}

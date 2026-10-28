@@ -1,0 +1,16 @@
+{
+  "schema": "pantheon.active-control-location.v1",
+  "mandate": "OM-PAN-001",
+  "ownerSessionId": "01a15424-1fd5-77a2-a73a-d92a60a5de34",
+  "at": "2026-10-19T14:46:54.8275846Z",
+  "activeGoalControlRoot": "C:/Users/clint/AppData/Local/Pantheon/OM-PAN-001/control/goals/pantheon-incarnation-v0",
+  "priorGoalRoot": "D:/Repos/agent-skills/plugins/foreman-line/docs/goals/pantheon-incarnation-v0",
+  "sourceRepositoriesUnchanged": true,
+  "newAuthority": false,
+  "migrationManifest": "execution-om-pan-001/storage-recovery/migration-manifest.json",
+  "priorDiskOwnerReleased": true,
+  "activeLockProcessId": 54060,
+  "activeLockProcessStartedUtc": "2026-10-19T14:45:58.5842396Z",
+  "qualificationCallsSent": 0,
+  "reason": "USB D drive dismount invalidated held lock and lost two preparation writes"
+}

@@ -1,0 +1,70 @@
+{
+  "atUtc": "2026-10-24T22:36:27.611306+00:00",
+  "status": "PASS_FULL_PRODUCTION_REVIEWS_PLUS_FOCUSED_TEST_DELTA",
+  "initialHead": "2d7124cca049d2e293c35c0d0c9162e3ceb3a3bc",
+  "head": "b6a4ebaffa1ef3224dbce82ffedd69efb2d369a9",
+  "sourceHashes": {
+    "tests/test_ccm_ingestion_postgres.py": "1a26e5d284c468a547dea3b969610625d9b08fd13e9bf7012ce52f0dba8806fe",
+    "docs/specs/ccm-durable-ingestion-v1.md": "0342e26c96eda210d613f7b5425c9c6be85740a199d1330f2d41049f1fde332d",
+    "src/keon/cortex/providers/postgres/ccm_ingestion.py": "961a51e32dac098d115c52406eaab0dfc1844978ea305c796d58cd20b93de961",
+    "src/keon/cortex/pipeline/ccm_ingestion.py": "fc7955c1cc1e1beba85f2c68461dedc8c12d7cef6b52078d9d7f76b57de56d0f",
+    "tests/test_ccm_ingestion.py": "e77607482606725b0dd952108b7cf657c3329736fb3346473e5e28e447472850"
+  },
+  "fullReviewSourceHashes": {
+    "src/keon/cortex/pipeline/ccm_ingestion.py": "fc7955c1cc1e1beba85f2c68461dedc8c12d7cef6b52078d9d7f76b57de56d0f",
+    "src/keon/cortex/providers/postgres/ccm_ingestion.py": "961a51e32dac098d115c52406eaab0dfc1844978ea305c796d58cd20b93de961",
+    "tests/test_ccm_ingestion.py": "ccb72797ca992742db8480e9f731fc6cb10330b97e832537723f3f54ba55fc14",
+    "tests/test_ccm_ingestion_postgres.py": "1a26e5d284c468a547dea3b969610625d9b08fd13e9bf7012ce52f0dba8806fe",
+    "docs/specs/ccm-durable-ingestion-v1.md": "0342e26c96eda210d613f7b5425c9c6be85740a199d1330f2d41049f1fde332d"
+  },
+  "allFourOtherFilesUnchanged": true,
+  "testOnlyChanged": "tests/test_ccm_ingestion.py",
+  "supplementalReviews": {
+    "architecture": {
+      "verdict": "PASS",
+      "findings": [],
+      "coverage": [
+        "Focused static review of the supplied test-only delta; not a new full production architecture or security review.",
+        "The cancellation assertion still requires asyncio.CancelledError and identity with the original injected exception. Catching it immediately around the awaited service call tests propagation through the service wrapper before the event-loop Task result boundary can replace the exception.",
+        "Cancellation swallowing, conversion to IngestionError, or replacement with a different CancelledError still causes this test to fail.",
+        "The direct service invocation preserves the fixture and routing/key arguments used by the enqueue helper.",
+        "Storage-error sanitization remains tested without changes: RuntimeError carrying SECRET must become storage_failure, with empty args, closed string/repr values, and no cause or context.",
+        "No test or parametrized case is removed by the supplied diff, and no production change is shown. The other four files remaining unchanged is supplied provenance, not independently verified here."
+      ],
+      "gaps": [
+        "No tests were executed in this review. The reported original Python 3.10 failure and Python 3.11/3.12 passes are supplied history, not independently verified results.",
+        "Require fresh post-commit CI on the exact committed head across all supported Python versions, including 3.10, 3.11, and 3.12, before acceptance. Preserve the original failing CI evidence and all subsequent failure results.",
+        "Production-byte and unchanged-file hash verification remains an independent parent/CI responsibility; this review assesses only the supplied delta and excerpts."
+      ]
+    },
+    "security": {
+      "verdict": "PASS",
+      "findings": [],
+      "coverage": [
+        "Focused supplemental review of the supplied test-only delta, not a new full production review.",
+        "The cancellation check still requires asyncio.CancelledError and exact identity with the injected exception. Moving both checks inside the coroutine tests propagation across the service await without depending on Python 3.10 Task-result exception identity.",
+        "Swallowed cancellation, conversion to IngestionError, or replacement with another CancelledError would still fail the test. Assertion failures inside the coroutine propagate through asyncio.run.",
+        "The direct service invocation preserves the fixture and routing/key arguments previously supplied by the enqueue helper.",
+        "Storage-error sanitization remains unchanged: RuntimeError carrying the synthetic secret must become storage_failure with empty args, closed string/repr, and no cause or context.",
+        "No test or parametrized case is removed, and no service-level assertion is weakened in the supplied diff.",
+        "The supplied diff changes no production code; the unchanged wrapper excerpt remains consistent with CancelledError bypassing its Exception handler."
+      ],
+      "gaps": [
+        "Static review only; no tests were executed and supplied hashes or unchanged-file claims were not independently verified.",
+        "The reported original Python 3.10 failure and Python 3.11/3.12 passes are historical evidence, not validation of the corrected exact head. Preserve those original results.",
+        "Require fresh post-commit CI on the exact reviewed head for all supported Python versions, including 3.10, 3.11, and 3.12, without test-count reductions, skips, or weakened assertions.",
+        "This delta tests injected cancellation at pool acquisition, not additional cancellation sites or Task.cancel scheduling behavior; broader production guarantees remain outside this supplemental review."
+      ]
+    }
+  },
+  "noNewFullReviewClaim": true,
+  "localValidation": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3a-ingestion-20261024-01\\validation-compatibility\\result.json",
+  "actualPgReexecutionRequired": false,
+  "reason": "All production, actualPGtest and docs bytes unchanged; affected unit test is not imported by actualPG test module",
+  "initialCIRunsPreserved": [
+    40138867253,
+    40138871767
+  ],
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD"
+}

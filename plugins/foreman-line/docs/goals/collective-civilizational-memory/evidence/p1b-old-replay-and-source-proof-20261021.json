@@ -1,0 +1,54 @@
+{
+  "atUtc": "2026-10-22T02:19:18.963019+00:00",
+  "status": "Exact v1/1.1 served fixture replay bytes identical across original preP1A,acceptedP1Amerge and currentP1B",
+  "method": "Read-only git archive snapshots plus unchanged test_projection_fixtures.fixture_outputs; existing canonical ASCII/sorted/compactJSON; sanitized subprocess env, no inherited provider credentials",
+  "replayRuns": [
+    {
+      "name": "pre-p1a",
+      "base": "efb5f4bcead899332f4f35f5e0b3a181eb988d2c",
+      "bytes": 11824,
+      "sha256": "903b2460fb4514cce054d38f91fceae63684d4653db812aa2ec5f81c7dd1867e",
+      "topLevelKeys": [
+        "g9_replay",
+        "scores",
+        "served_function_hash",
+        "served_version"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "pre-p1b",
+      "base": "cc3a6defa78849b8df8795c58ac65866f31179d5",
+      "bytes": 11824,
+      "sha256": "903b2460fb4514cce054d38f91fceae63684d4653db812aa2ec5f81c7dd1867e",
+      "topLevelKeys": [
+        "g9_replay",
+        "scores",
+        "served_function_hash",
+        "served_version"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "current",
+      "base": null,
+      "bytes": 11824,
+      "sha256": "903b2460fb4514cce054d38f91fceae63684d4653db812aa2ec5f81c7dd1867e",
+      "topLevelKeys": [
+        "g9_replay",
+        "scores",
+        "served_function_hash",
+        "served_version"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "capture": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1b-20261021-01\\replay-proof",
+  "normativeSources": {
+    "decisionRegisterPath": "D:\\Repos\\Pantheon\\docs\\CONTEXT-SHAPING-DECISIONS.md",
+    "decisionRegisterSha256": "06deef13d081f2173c98c241a09478a7a4f91091e5d5aa1e3818ed02280ef9c5",
+    "S05S07ExcerptSha256": "1a8c8694cd7c0ddae1cd9a9b0c153c57572ebd1474b5dc27f800d4c30d95e87a",
+    "acceptedP1AContractSha256": "0fb819cf5f96cf05fe1e6ec6bec3b831fb379173bf9e089acffe0458eb6059a2"
+  },
+  "scope": "This proves unchanged old served numerical fixture output, not new retrieval eligibility or performance"
+}

@@ -1,0 +1,14 @@
+{
+  "atUtc": "2026-10-24T23:29:11.124831+00:00",
+  "status": "LOSSLESS_MEMBER_RECOVERY_NOT_ACCEPTANCE",
+  "algorithm": "Strict raw_decode exact object shape and sole excess closing brace; extract both complete Python string members without source edits",
+  "candidateSha256": "2f09e09a6ef39f75fcd678ea5450733273334240d7fed7ef7db952f7516b5d34",
+  "sourceHashes": {
+    "tests/test_ccm_admission.py": "d941d46f6db4f07b06dd3e6b2005a2465d3dc32f6e85e892880bd6d365bd730c",
+    "tests/test_ccm_canonical_postgres.py": "12fa50517f8e873cee3cd8972edd9ff89cca5de8d444d85d80dfa1dd18607b5e"
+  },
+  "originalReceiptUnchanged": true,
+  "fullReservationHeld": true,
+  "oldTestFunctionNamesRetained": true,
+  "providerRequests": 0
+}

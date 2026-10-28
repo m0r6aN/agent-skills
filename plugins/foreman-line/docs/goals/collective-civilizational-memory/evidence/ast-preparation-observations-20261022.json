@@ -1,0 +1,138 @@
+{
+  "atUtc": "2026-10-22T12:37:15.696482+00:00",
+  "status": "Synthetic local observations only; no source parcel or parser admission",
+  "environment": "Explicit OS-only allowlist; no credential values read/printed/saved",
+  "observations": {
+    "python": "3.13.7",
+    "fixtures": [
+      {
+        "fixture": "ascii",
+        "sourceBytes": 26,
+        "sourceSha256": "ba505671282f62d066e2de2f5da1f1f123d814ffdc9cdd4112b2841433851ef1",
+        "result": "parsed",
+        "declarations": [
+          {
+            "name": "alpha",
+            "kind": "FunctionDef",
+            "startByte": 0,
+            "endByte": 25,
+            "sliceSha256": "5112a98b830bf2c99cb1274c4e54d1daa7331c2dc5a79b79dbcf93a5da124c3a"
+          }
+        ]
+      },
+      {
+        "fixture": "bom_crlf",
+        "sourceBytes": 31,
+        "sourceSha256": "5e84cb9056811ca23d09d765b518d1a21afe03793c48b840c0ea73b2000b3a60",
+        "result": "parsed",
+        "declarations": [
+          {
+            "name": "alpha",
+            "kind": "FunctionDef",
+            "startByte": 3,
+            "endByte": 29,
+            "sliceSha256": "e92fb7403aef0fee903ed0cb7cebabcc8aca50dd25fdae85c94bfc4c87847307"
+          }
+        ]
+      },
+      {
+        "fixture": "unicode_identifier",
+        "sourceBytes": 53,
+        "sourceSha256": "1a6b43139c5372c765e25bc7f788ffd7687d34b8206ca462984bf6dec64c7207",
+        "result": "parsed",
+        "declarations": [
+          {
+            "name": "K",
+            "kind": "ClassDef",
+            "startByte": 5,
+            "endByte": 51,
+            "sliceSha256": "9e21af451165cd9ec7f6ca22525f296d65aba73e8c42e32ec0091401b475d73e"
+          },
+          {
+            "name": "caf\u00e9",
+            "kind": "FunctionDef",
+            "startByte": 21,
+            "endByte": 51,
+            "sliceSha256": "a284332237932af5a5321b233df3e129acc3a27bd7727fe94fcfcbb716ba91ff"
+          }
+        ]
+      },
+      {
+        "fixture": "decomposed_identifier",
+        "sourceBytes": 23,
+        "sourceSha256": "5f223ddf6b93ed5899643d2dfccde2014a6bb7983dec3e33674670055b1c2cb5",
+        "result": "parsed",
+        "declarations": [
+          {
+            "name": "caf\u00e9",
+            "kind": "FunctionDef",
+            "startByte": 0,
+            "endByte": 22,
+            "sliceSha256": "bfc6c2dc6fb05891ba7096f81ea749811b55a4eb127751513e1a7158550e6a36"
+          }
+        ]
+      },
+      {
+        "fixture": "decorator_nested",
+        "sourceBytes": 76,
+        "sourceSha256": "381232b277c64107e2310cfcec1ae9eb412a2cc886d5bcd75563c3af9e41028c",
+        "result": "parsed",
+        "declarations": [
+          {
+            "name": "outer",
+            "kind": "AsyncFunctionDef",
+            "startByte": 10,
+            "endByte": 75,
+            "sliceSha256": "440914eccf09d34df0cc8b3c3a439ebfef3c732228d95e36dcd8baf824464850"
+          },
+          {
+            "name": "inner",
+            "kind": "FunctionDef",
+            "startByte": 33,
+            "endByte": 58,
+            "sliceSha256": "c5b39e0ee5949139398dbf2d02880ca9a6b82b9382b911bb4046dc63fddd9c74"
+          }
+        ]
+      },
+      {
+        "fixture": "encoding_cookie",
+        "sourceBytes": 40,
+        "sourceSha256": "87cf12539b9532ebd34646afec004bfe655e2e6bba26cfcd1791d0441d5bc09e",
+        "result": "syntax_or_encoding_rejected",
+        "declarations": []
+      },
+      {
+        "fixture": "outside_grammar",
+        "sourceBytes": 17,
+        "sourceSha256": "23eadc23712d5b7ffdb65b8faae3da8dd95a9e46eedaa4c22916cea8324d29a7",
+        "result": "syntax_or_encoding_rejected",
+        "declarations": []
+      },
+      {
+        "fixture": "not_executed",
+        "sourceBytes": 68,
+        "sourceSha256": "9d193011c19a828442d30c8afcc94abaf4dff2c5f5ade06d81693d1e203558b4",
+        "result": "parsed",
+        "declarations": [
+          {
+            "name": "alpha",
+            "kind": "FunctionDef",
+            "startByte": 46,
+            "endByte": 67,
+            "sliceSha256": "bfdfa874a9c278b07eb46aca4160e55342d3d5ce4b6a92e5c4cba796a58eff15"
+          }
+        ]
+      }
+    ],
+    "checks": "PASS",
+    "sourceExecuted": false
+  },
+  "limitations": [
+    "Only current Python runtime tested; actual supported CI runtimes remain unqualified",
+    "No adversarial depth/token/memory limit qualification",
+    "Encoding-cookie/BOM/name-semantics contract still requires ratification",
+    "Original-byte span mapping is a preparation hypothesis, not accepted production implementation"
+  ],
+  "newWorkers": 0,
+  "providerRequests": 0
+}

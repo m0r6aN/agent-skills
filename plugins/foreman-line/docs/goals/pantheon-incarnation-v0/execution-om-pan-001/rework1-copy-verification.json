@@ -1,0 +1,85 @@
+{
+  "schema": "pantheon.rework-copy.v1",
+  "at": "2026-10-19T14:32:00.6690929Z",
+  "source": "D:/Repos/Pantheon/work/foreman-om-pan-001-p00/plugins/foreman-line/docs/goals/pantheon-incarnation-v0/execution-om-pan-001",
+  "destination": "D:/Repos/agent-skills/plugins/foreman-line/docs/goals/pantheon-incarnation-v0/execution-om-pan-001",
+  "files": [
+    {
+      "path": "native-sender/native-sender.mjs",
+      "sha256": "00d3a10e5874fbe8b0919cf574411bc99cdae19b5bb12dcde167441cc1ee73c6"
+    },
+    {
+      "path": "native-sender/native-sender.test.mjs",
+      "sha256": "f7e9e626945c478a5c27245d046f54358b7bfdd47998311cf14c8157c2cab640"
+    },
+    {
+      "path": "native-sender/README.md",
+      "sha256": "747545f7c316c6a7b29f77ba3caace7f20481cead140ea44ff2cc61a0db475a7"
+    },
+    {
+      "path": "run-bootstrap-once.mjs",
+      "sha256": "67b5f0271deb4a1ed4ece0ad51eba4ec041d000351bdabf5dd2d370c1286a128"
+    },
+    {
+      "path": "bootstrap-guards.mjs",
+      "sha256": "0d2fc22db4bf4c37bb427a7a3ba6605646befb5f171fb0b6bca41549ca823b9e"
+    },
+    {
+      "path": "bootstrap-guards.test.mjs",
+      "sha256": "28cf7d933a3bfe54ffc764a3328fa2d18b1de753a98741595deb1c482d471fbd"
+    },
+    {
+      "path": "bootstrap-lock-check.ps1",
+      "sha256": "26434cd4cc35209d06d63a5c52cf2178c7ee3516d296a09b79eed9d37fc7c533"
+    },
+    {
+      "path": "key-to-curl-stdin.ps1",
+      "sha256": "b4bfd9ee3d464b01a8b4857f08f01f70a631484fc1e7b279069f26c1a5ce6325"
+    },
+    {
+      "path": "prepare-amended-plan-packet.mjs",
+      "sha256": "8ca07f80409553a15f23c16fd792e045eeab122649db95137624f4c4139167c3"
+    },
+    {
+      "path": "prepare-attempt-specs.mjs",
+      "sha256": "5dc987cf0104bf8b34c78fe1fc4ccca873a759743e21e6dc154d6f6cb713bcf8"
+    },
+    {
+      "path": "attempt-specs/qualification-r2.json",
+      "sha256": "47dd1be9d7096a8ab0abb580787df11480b47bed2f4ed0d03a828e4e8b13698f"
+    },
+    {
+      "path": "attempt-specs/qualification-r2-request.json",
+      "sha256": "b4bbc5bbcf3f6a2138c2c66846027e4e06dad4652161bcd77b3a8ee4d37a415b"
+    },
+    {
+      "path": "attempt-specs/plan-review-r2.json",
+      "sha256": "025bc298715fba42012d217f35c8fe5794c3f4cf8ecb0f72bbb9b4b95227d017"
+    },
+    {
+      "path": "amended-plan-review-r2/packet.md",
+      "sha256": "9e8f01b195af7d733eb371dbabb7d63d954cc63a5826de387e6e46fa7bf1aae9"
+    },
+    {
+      "path": "amended-plan-review-r2/request.json",
+      "sha256": "5483950685f254aa400303c9adf5e072f7abd89f6642eca466175e151a89ba47"
+    },
+    {
+      "path": "amended-plan-review-r2/manifest.json",
+      "sha256": "807c1093487f8937d2f58e181fd3079295471c8983d2743ea8ed44f48277246c"
+    },
+    {
+      "path": "bootstrap-rate-evidence.json",
+      "sha256": "df697966e8ac703e78865c7d96e1fcd85192b329cc4923aadec908e628841fe0"
+    },
+    {
+      "path": "REWORK1-HANDOFF.md",
+      "sha256": "40db7366003dbbaa3ea2b95a7aea25999d979f7558bec93af0aa1a48170339fb"
+    },
+    {
+      "path": "rework1-verification.json",
+      "sha256": "55c1c2124cc2c3e34ccb81e58d9d944e91e06ff9745ab5b4848a4c8e4d6d1cad"
+    }
+  ],
+  "independentlyAccepted": false
+}

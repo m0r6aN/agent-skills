@@ -1,0 +1,165 @@
+{
+  "schema": "pantheon.independent-native-preflight.v1",
+  "status": "CHANGES_REQUIRED",
+  "authorSessionId": "/root/foreman_rules",
+  "authorIdentityKind": "native-independent-agent-canonical-task-name",
+  "parentSessionId": "01a15424-1fd5-77a2-a73a-d92a60a5de34",
+  "recordedAtUtc": "2026-10-19T10:03:24.8411834-04:00",
+  "scope": "P00 finite native transport safety only",
+  "reportRef": "native-preflight-report.md",
+  "reportSha256": "8b43c02dbacc689b205430889bba2e3decb03eb638b089a27c75380a6f4babad",
+  "findings": [
+    {
+      "id": "NP-01",
+      "severity": "high",
+      "source": "attempt-specs/plan-review.json; run-bootstrap-once.mjs:75; native-sender/native-sender.mjs:240",
+      "claim": "Plan coverage is rejected only after paid send",
+      "repair": "Pin nonempty focus labels and validate parser expectations before sends",
+      "evidence": [
+        "native-preflight-evidence/negative-checks.json#N01"
+      ]
+    },
+    {
+      "id": "NP-02",
+      "severity": "high",
+      "source": "run-bootstrap-once.mjs:75-81; native-sender/native-sender.mjs:220-246",
+      "claim": "Parser errors can retain complete=true and release reserve using malformed stream counters",
+      "repair": "Separate strict transfer/stream/usage/review validity; retain uncertainty",
+      "evidence": [
+        "native-preflight-evidence/negative-checks.json#N02",
+        "native-preflight-evidence/negative-checks.json#N03"
+      ]
+    },
+    {
+      "id": "NP-03",
+      "severity": "high",
+      "source": "run-bootstrap-once.mjs:15-24,32-38,53-55",
+      "claim": "Unpinned attempt configs and packet/source members can change purpose without independent preflight invalidation",
+      "repair": "Allowlist exact pinned P00 config/request/manifest set and verify all members"
+    },
+    {
+      "id": "NP-04",
+      "severity": "high",
+      "source": "run-bootstrap-once.mjs:30-31",
+      "claim": "Missing lock passes catch IOException",
+      "repair": "Require existing lock and positively identified lock conflict; reject other IO failures",
+      "evidence": [
+        "native-preflight-evidence/lock-negative.json#N05"
+      ]
+    },
+    {
+      "id": "NP-05",
+      "severity": "medium",
+      "source": "run-bootstrap-once.mjs:19,26",
+      "claim": "Invalid/future timestamps bypass expiry/freshness",
+      "repair": "Validate finite canonical bounded timestamps",
+      "evidence": [
+        "native-preflight-evidence/negative-checks.json#N04"
+      ]
+    },
+    {
+      "id": "NP-06",
+      "severity": "high",
+      "source": "run-bootstrap-once.mjs:45-51,79",
+      "claim": "Per-artifact/parcel caps and matching input reservation bounds are missing",
+      "repair": "Bind stable artifact/parcel identities and enforce applicable caps and exact nonpremium request bounds"
+    },
+    {
+      "id": "NP-07",
+      "severity": "high",
+      "source": "run-bootstrap-once.mjs:19,28,58-73; MANDATE.md:47-49",
+      "claim": "No immediate pre-effect or in-flight revocation/expiry enforcement",
+      "repair": "Revalidate before spawn and cancel owned child within five seconds on release/revocation/expiry; retain uncertainty"
+    }
+  ],
+  "files": [
+    {
+      "path": "run-bootstrap-once.mjs",
+      "sha256": "84cbf665fc9be1cc5b3d26eb9e3a9e530f76e308116b9af99a8498de55a0aef7"
+    },
+    {
+      "path": "key-to-curl-stdin.ps1",
+      "sha256": "ef57d78ba42e68112ff2fc206ecfc6c8647e790cde8441039653fc77b06e7384"
+    },
+    {
+      "path": "qualify-account-metadata.ps1",
+      "sha256": "02280d13792ee9c95abfdbcf5711ef241e10b482793b1f135eddbc7ac92cbf7d"
+    },
+    {
+      "path": "owner-ratification.json",
+      "sha256": "05e2fb7d929d360f77e278a9faef8c0edea1c2e7ab4082caea0614bab11c6b15"
+    },
+    {
+      "path": "native-sender/native-sender.mjs",
+      "sha256": "eaf3e5acbbda69870eb8cfd3725fb92ffa909444068363c6d10c6d1fa3605993"
+    },
+    {
+      "path": "native-sender/native-sender.test.mjs",
+      "sha256": "f7e9e626945c478a5c27245d046f54358b7bfdd47998311cf14c8157c2cab640"
+    },
+    {
+      "path": "native-sender/README.md",
+      "sha256": "e6dd6655cd87fc0ba6f9c7f5505e3996098afd7aa7fd622a6ef1706159311b65"
+    },
+    {
+      "path": "native-sender/verification.json",
+      "sha256": "444df36be361b7e777602342e82773868eba7fe7e470b08986a4e95352f2cc26"
+    },
+    {
+      "path": "attempt-specs/plan-review.json",
+      "sha256": "3bfc24338a7f1df3c6ca96fd48291657e118d816979f3b10c56549f04deccc39"
+    },
+    {
+      "path": "attempt-specs/qualification.json",
+      "sha256": "1ce1e13594333f0a906887800755cd5fd789ab34d244045eb9181b58960210e0"
+    },
+    {
+      "path": "attempt-specs/qualification-request.json",
+      "sha256": "803dc740bd415db609def3c7b0c1fc654d42571bbacf2df9ce3860418cb38552"
+    },
+    {
+      "path": "amended-plan-review/manifest.json",
+      "sha256": "5059c63ee720342280db8341544c480360507467108097ef04f53f0379334f7e"
+    },
+    {
+      "path": "native-preflight-evidence/negative-checks.mjs",
+      "sha256": "48b483d4b8bc73136962f4cbe4ccfd8a427acdb246b2a7d78e8e8731614b5377"
+    },
+    {
+      "path": "native-preflight-evidence/negative-checks.json",
+      "sha256": "03efb47826cbec6d5858917964797b74ca12a7bbe17b86eed1fdb495261151f8"
+    },
+    {
+      "path": "native-preflight-evidence/lock-negative.json",
+      "sha256": "aa48b1cfac66896dc07b17e4313910d6172241ef0ac8d45d0ff3dcdcbebc7ca0"
+    },
+    {
+      "path": "../autonomy-20261019/package-manifest.json",
+      "sha256": "ca6645f02284dca74b17a9500ec0482552bb192e785f1d76ae0be1f4f9532f82"
+    },
+    {
+      "path": "../autonomy-20261019/BOOTSTRAP.md",
+      "sha256": "17402923146da21ac52886ed53942c4e80c0ca4ea37a9311eb6fcbf2121e7936"
+    },
+    {
+      "path": "../autonomy-20261019/MANDATE.md",
+      "sha256": "e889ba52ee12495721c0ba176de5ea04e44689e9d7baee822cb701d15e7b4f28"
+    }
+  ],
+  "checks": {
+    "ratificationRecordHashVerified": true,
+    "userRoleVerified": true,
+    "sealedManifestHashVerified": true,
+    "builderReportedSourceHashesVerified": true,
+    "builderReportedTestCount": 41,
+    "builderSuiteIndependentlyRerun": false,
+    "negativeReproductions": 5,
+    "liveCalls": 0,
+    "credentialLookups": 0,
+    "networkCalls": 0,
+    "liveWrapperExecuted": false
+  },
+  "runtimeDecisionRef": null,
+  "signedApproval": false,
+  "planReview": false
+}

@@ -1,0 +1,44 @@
+{
+  "atUtc": "2026-10-24T21:08:15.984415+00:00",
+  "status": "PASS_EXHAUSTIVE_COUPLED_INVARIANT_PROOF",
+  "finiteDomainCases": 256,
+  "accepted": 4,
+  "rejected": 252,
+  "csharpPythonParity": true,
+  "acceptedAndStatusOmittedOutcomesEqual": true,
+  "proof": "For closed statuses, entryresolved iff entryresolutionnonnull; wrapperresolved iff wrapperresolutionnonnull; resolution equality therefore implies status equality. Removing only status equality cannot admit any additional public payload.",
+  "finding": "CCM-P2L-R1",
+  "dispositionRecommendation": "Accept-as-documented unobservable redundant predicate; retain explicit source guard and public coupled negative coverage. No meaningless mirror test or further source mutation.",
+  "binaryProvenanceLimit": "Retained P1C artifact, no reproducible source-to-binary claim",
+  "allOwnedContainersAbsent": true,
+  "productionChanged": false,
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_civic_legacy.py": "0b905a74748b7002b363ba76c327ef7f4e8123e37cd4253a2324a5464147deb4",
+    "tests/test_ccm_civic_legacy.py": "625fa8f07a85c389d245403b09fbabb8fb9b8469187db5fae82af16e883a3ba5",
+    "docs/specs/ccm-legacy-civic-v1.md": "aca6aa5fea53a3a413b695a7bae4f7a5d77ee89d97b3ac4db6bebeed42b7cad9",
+    "tests/fixtures/ccm/legacy-civic-v1.json": "92d378e594fc7076ba9113b762c6ff22e9e8a198c4ed1697eac73275bfb27476"
+  },
+  "modelRequests": 0,
+  "results": {
+    "accepted": {
+      "cases": 256,
+      "accepted": [
+        "w0-e0-wrNone-erNone-c0-r0",
+        "w1-e1-wr0-er0-c1-r1",
+        "w1-e1-wr1-er1-c1-r1",
+        "w1-e1-wr2-er2-c1-r1"
+      ],
+      "allOutcomesMatch": true
+    },
+    "omitted-status": {
+      "cases": 256,
+      "accepted": [
+        "w0-e0-wrNone-erNone-c0-r0",
+        "w1-e1-wr0-er0-c1-r1",
+        "w1-e1-wr1-er1-c1-r1",
+        "w1-e1-wr2-er2-c1-r1"
+      ],
+      "allOutcomesMatch": true
+    }
+  }
+}

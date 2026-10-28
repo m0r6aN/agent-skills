@@ -1,0 +1,9 @@
+{
+  "parcelSpecRefs": [
+    "plugins/foreman-line/docs/specs/active/CCM-P1A-memory-graph-contracts.md",
+    "plugins/foreman-line/docs/specs/active/CCM-P1B-gravity-v2-fixtures.md",
+    "plugins/foreman-line/docs/specs/active/CCM-P1C-collective-wire-compatibility.md",
+    "plugins/foreman-line/docs/specs/active/CCM-P1D-postgres-capability-check.md"
+  ],
+  "epics": []
+}

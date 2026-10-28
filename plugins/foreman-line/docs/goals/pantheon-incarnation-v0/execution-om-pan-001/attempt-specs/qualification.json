@@ -1,0 +1,10 @@
+{
+  "attemptId": "om-pan-001-qualification-001",
+  "purpose": "qualification",
+  "requestRef": "attempt-specs/qualification-request.json",
+  "requestSha256": "803dc740bd415db609def3c7b0c1fc654d42571bbacf2df9ce3860418cb38552",
+  "artifactManifestSha256": "627f606580a3aad464df84933a1352a291a52b2638f14cc4d220cd4ee8131378",
+  "requiredCoverage": [
+    "synthetic-transport"
+  ]
+}

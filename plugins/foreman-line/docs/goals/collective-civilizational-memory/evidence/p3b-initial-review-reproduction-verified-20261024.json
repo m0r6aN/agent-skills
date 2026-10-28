@@ -1,0 +1,118 @@
+{
+  "atUtc": "2026-10-24T23:56:17.147981+00:00",
+  "status": "UNSUCCESSFUL",
+  "network": "isolated internal Docker network, no published port",
+  "syntheticOnly": true,
+  "newProviderCalls": 0,
+  "candidateImage": "ccm-p3b-review-repro:e819598bee",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_admission.py": "b9a097edb8cd8de9431b6a0a2c8bcb311fb67b95c6a6129a165cd797c9d39100",
+    "src/keon/cortex/providers/postgres/ccm_graph_schema.py": "f23c86d370a60c6470c3364328d7511b8dc4e022bf29c49c17e65759d31570e9",
+    "src/keon/cortex/providers/postgres/ccm_canonical.py": "b90e29c10692eaba0ddc9750da4a30e72a1c5ffa3e0d9c65e5bbcda49bf99e65",
+    "tests/test_ccm_admission.py": "d7f021b2adf2f04ef03e349b6ce4c5e2523cca4ce0bd13132ee206ccdd948075",
+    "tests/test_ccm_canonical_postgres.py": "8001a6e6255775d43fcea20fe43bfe6bb7a1828b8799d43d003dc50af73588d9",
+    "docs/specs/ccm-canonical-writers-v1.md": "2a1aa29a50206df14163053376ddb6c70813758f4e966a893ac888e8c4f3d9f3"
+  },
+  "intentionalPreRepairProductionRegressionReproduction": true,
+  "postgresImage": "sha256:275447c94b11b151decd1f29877965301d5a77032037c46de93d990f739f00a9",
+  "existingCanonicalSchemaPreconditionProvisioned": true,
+  "tests": {
+    "exit": 1,
+    "cases": [
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[payload0-batch]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[payload0-source]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[1-batch]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[1-source]",
+        "status": "failure"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[malformed-batch]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[malformed-source]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[payload3-batch]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[payload3-source]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[payload4-batch]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_loaded_malformed_shapes_are_unavailable[payload4-source]",
+        "status": "failure"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_preexisting_observation_collision[False]",
+        "status": "pass"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_preexisting_observation_collision[True]",
+        "status": "failure"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_duplicate_tampered_observation_is_conflict",
+        "status": "failure"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_registered_shard_identity_and_receipt_sql_rejection[identity]",
+        "status": "failure"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_registered_shard_identity_and_receipt_sql_rejection[root]",
+        "status": "failure"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_registered_shard_identity_and_receipt_sql_rejection[provenance]",
+        "status": "failure"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_registered_shard_identity_and_receipt_sql_rejection[wire-provenance]",
+        "status": "failure"
+      },
+      {
+        "class": "tests.test_ccm_canonical_postgres",
+        "name": "test_parent_oversized_existing_node_metadata_is_withheld",
+        "status": "failure"
+      }
+    ],
+    "output": "...F.....F.FFFFFFF                                                       [100%]\n=================================== FAILURES ===================================\n____________ test_loaded_malformed_shapes_are_unavailable[1-source] ____________\ntests/test_ccm_canonical_postgres.py:1005: in test_loaded_malformed_shapes_are_unavailable\n    run(scenario())\ntests/test_ccm_canonical_postgres.py:36: in run\n    return asyncio.run(coro)\n           ^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/runners.py:195: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/base_events.py:691: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_ccm_canonical_postgres.py:1001: in scenario\n    _assert_unavailable(await writer.write(lease, **opts))\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nsrc/keon/cortex/providers/postgres/ccm_canonical.py:57: in wrapped\n    raise CanonicalAdmissionError(failure) from None\nE   keon.cortex.pipeline.ccm_admission.CanonicalAdmissionError: storage_failure\n________ test_loaded_malformed_shapes_are_unavailable[payload4-source] _________\ntests/test_ccm_canonical_postgres.py:1005: in test_loaded_malformed_shapes_are_unavailable\n    run(scenario())\ntests/test_ccm_canonical_postgres.py:36: in run\n    return asyncio.run(coro)\n           ^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/runners.py:195: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/base_events.py:691: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_ccm_canonical_postgres.py:1001: in scenario\n    _assert_unavailable(await writer.write(lease, **opts))\n                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nsrc/keon/cortex/providers/postgres/ccm_canonical.py:57: in wrapped\n    raise CanonicalAdmissionError(failure) from None\nE   keon.cortex.pipeline.ccm_admission.CanonicalAdmissionError: storage_failure\n_________________ test_preexisting_observation_collision[True] _________________\ntests/test_ccm_canonical_postgres.py:1050: in test_preexisting_observation_collision\n    run(scenario())\ntests/test_ccm_canonical_postgres.py:36: in run\n    return asyncio.run(coro)\n           ^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/runners.py:195: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/base_events.py:691: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_ccm_canonical_postgres.py:1042: in scenario\n    with pytest.raises(CanonicalAdmissionError) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE   Failed: DID NOT RAISE <class 'keon.cortex.pipeline.ccm_admission.CanonicalAdmissionError'>\n_______________ test_duplicate_tampered_observation_is_conflict ________________\ntests/test_ccm_canonical_postgres.py:1070: in test_duplicate_tampered_observation_is_conflict\n    run(scenario())\ntests/test_ccm_canonical_postgres.py:36: in run\n    return asyncio.run(coro)\n           ^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/runners.py:195: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/base_events.py:691: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_ccm_canonical_postgres.py:1065: in scenario\n    with pytest.raises(CanonicalAdmissionError) as caught:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE   Failed: DID NOT RAISE <class 'keon.cortex.pipeline.ccm_admission.CanonicalAdmissionError'>\n______ test_registered_shard_identity_and_receipt_sql_rejection[identity] ______\ntests/test_ccm_canonical_postgres.py:1121: in test_registered_shard_identity_and_receipt_sql_rejection\n    run(scenario())\ntests/test_ccm_canonical_postgres.py:36: in run\n    return asyncio.run(coro)\n           ^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/runners.py:195: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/base_events.py:691: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_ccm_canonical_postgres.py:1100: in scenario\n    with pytest.raises(asyncpg.IntegrityConstraintViolationError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE   Failed: DID NOT RAISE <class 'asyncpg.exceptions.IntegrityConstraintViolationError'>\n________ test_registered_shard_identity_and_receipt_sql_rejection[root] ________\ntests/test_ccm_canonical_postgres.py:1121: in test_registered_shard_identity_and_receipt_sql_rejection\n    run(scenario())\ntests/test_ccm_canonical_postgres.py:36: in run\n    return asyncio.run(coro)\n           ^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/runners.py:195: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/base_events.py:691: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_ccm_canonical_postgres.py:1100: in scenario\n    with pytest.raises(asyncpg.IntegrityConstraintViolationError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE   Failed: DID NOT RAISE <class 'asyncpg.exceptions.IntegrityConstraintViolationError'>\n_____ test_registered_shard_identity_and_receipt_sql_rejection[provenance] _____\ntests/test_ccm_canonical_postgres.py:1121: in test_registered_shard_identity_and_receipt_sql_rejection\n    run(scenario())\ntests/test_ccm_canonical_postgres.py:36: in run\n    return asyncio.run(coro)\n           ^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/runners.py:195: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/base_events.py:691: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_ccm_canonical_postgres.py:1100: in scenario\n    with pytest.raises(asyncpg.IntegrityConstraintViolationError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE   Failed: DID NOT RAISE <class 'asyncpg.exceptions.IntegrityConstraintViolationError'>\n__ test_registered_shard_identity_and_receipt_sql_rejection[wire-provenance] ___\ntests/test_ccm_canonical_postgres.py:1121: in test_registered_shard_identity_and_receipt_sql_rejection\n    run(scenario())\ntests/test_ccm_canonical_postgres.py:36: in run\n    return asyncio.run(coro)\n           ^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/runners.py:195: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/base_events.py:691: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_ccm_canonical_postgres.py:1100: in scenario\n    with pytest.raises(asyncpg.IntegrityConstraintViolationError):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE   Failed: DID NOT RAISE <class 'asyncpg.exceptions.IntegrityConstraintViolationError'>\n___________ test_parent_oversized_existing_node_metadata_is_withheld ___________\ntests/test_ccm_canonical_postgres.py:1382: in test_parent_oversized_existing_node_metadata_is_withheld\n    run(scenario())\ntests/test_ccm_canonical_postgres.py:36: in run\n    return asyncio.run(coro)\n           ^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/runners.py:195: in run\n    return runner.run(main)\n           ^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.12/asyncio/base_events.py:691: in run_until_complete\n    return future.result()\n           ^^^^^^^^^^^^^^^\ntests/test_ccm_canonical_postgres.py:1362: in scenario\n    assert observed and all(\nE   AssertionError: assert ([({'binding_id', 'commit_sha', 'content_hash', 'content_version', 'endpoint_kind', 'file_path', ...}, None)] and False)\nE    +  where False = all(<generator object test_parent_oversized_existing_node_metadata_is_withheld.<locals>.scenario.<locals>.<genexpr> at 0x7d09bda99080>)\n----------------------- generated xml file: /tmp/pg.xml ------------------------\n=========================== short test summary info ============================\nFAILED tests/test_ccm_canonical_postgres.py::test_loaded_malformed_shapes_are_unavailable[1-source]\nFAILED tests/test_ccm_canonical_postgres.py::test_loaded_malformed_shapes_are_unavailable[payload4-source]\nFAILED tests/test_ccm_canonical_postgres.py::test_preexisting_observation_collision[True]\nFAILED tests/test_ccm_canonical_postgres.py::test_duplicate_tampered_observation_is_conflict\nFAILED tests/test_ccm_canonical_postgres.py::test_registered_shard_identity_and_receipt_sql_rejection[identity]\nFAILED tests/test_ccm_canonical_postgres.py::test_registered_shard_identity_and_receipt_sql_rejection[root]\nFAILED tests/test_ccm_canonical_postgres.py::test_registered_shard_identity_and_receipt_sql_rejection[provenance]\nFAILED tests/test_ccm_canonical_postgres.py::test_registered_shard_identity_and_receipt_sql_rejection[wire-provenance]\nFAILED tests/test_ccm_canonical_postgres.py::test_parent_oversized_existing_node_metadata_is_withheld\n9 failed, 9 passed, 46 deselected in 2.72s\n"
+  },
+  "failureClass": "AssertionError",
+  "allOwnedContainersAbsent": true,
+  "networkAbsent": true
+}

@@ -1,0 +1,13 @@
+{
+  "atUtc": "2026-10-24T23:20:36.462989+00:00",
+  "authority": "Standing owner non-destructive decisions, bounded repair and finite credit-increase grant",
+  "oldPhaseCap": 900,
+  "newPhaseCap": 1300,
+  "reason": "Preserve full reservations of two completed but envelope-rejected source calls while funding one focused repair and independent reviews. No failed-call reservation released; no transport retry.",
+  "repairProviderPostsMaximum": 1,
+  "repairOutputMaximum": 20000,
+  "repairPerCallMaximum": 450,
+  "otherLimitsUnchanged": true,
+  "affectedRoutes": "HELD",
+  "allOldReservationsHeld": true
+}

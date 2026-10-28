@@ -1,0 +1,130 @@
+{
+  "atUtc": "2026-10-22T05:11:01.179495+00:00",
+  "parcel": "CCM-P2B",
+  "parentTookValidationAfterWorkerEnvIncident": true,
+  "sanitization": "OS-only exact allowlist used; no environment values printed or saved; all named provider/DB/key vars absent",
+  "originalPinsUnchanged": 397,
+  "baselineIdentities": 3028,
+  "allBaselineIdentitiesAnd137SkipsRetained": true,
+  "candidateCases": 3047,
+  "candidatePassed": 2910,
+  "candidateSkipped": 137,
+  "candidateFailed": 0,
+  "focusedCases": 19,
+  "newCases": 19,
+  "fullExit": 0,
+  "commands": [
+    {
+      "label": "black-initial",
+      "exit": 1,
+      "seconds": 1.085,
+      "args": [
+        "-m",
+        "black",
+        "--check",
+        "src/keon/cortex/pipeline",
+        "tests/test_ccm_text.py"
+      ]
+    },
+    {
+      "label": "black-format",
+      "exit": 0,
+      "seconds": 2.156,
+      "args": [
+        "-m",
+        "black",
+        "src/keon/cortex/pipeline",
+        "tests/test_ccm_text.py"
+      ]
+    },
+    {
+      "label": "isort-initial",
+      "exit": 0,
+      "seconds": 0.319,
+      "args": [
+        "-m",
+        "isort",
+        "--check-only",
+        "src/keon/cortex/pipeline",
+        "tests/test_ccm_text.py"
+      ]
+    },
+    {
+      "label": "black-final",
+      "exit": 0,
+      "seconds": 0.475,
+      "args": [
+        "-m",
+        "black",
+        "--check",
+        "src/keon/cortex/pipeline",
+        "tests/test_ccm_text.py"
+      ]
+    },
+    {
+      "label": "isort-final",
+      "exit": 0,
+      "seconds": 0.278,
+      "args": [
+        "-m",
+        "isort",
+        "--check-only",
+        "src/keon/cortex/pipeline",
+        "tests/test_ccm_text.py"
+      ]
+    },
+    {
+      "label": "mypy",
+      "exit": 0,
+      "seconds": 1.618,
+      "args": [
+        "-m",
+        "mypy",
+        "src/keon/cortex/pipeline",
+        "--ignore-missing-imports",
+        "--namespace-packages"
+      ]
+    },
+    {
+      "label": "focused",
+      "exit": 0,
+      "seconds": 0.838,
+      "args": [
+        "-m",
+        "pytest",
+        "-p",
+        "pytest_asyncio.plugin",
+        "-p",
+        "no:cacheprovider",
+        "tests/test_ccm_text.py",
+        "--tb=short",
+        "--junitxml=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2b-20261022-01\\parent-run-01\\focused.xml"
+      ]
+    },
+    {
+      "label": "full",
+      "exit": 0,
+      "seconds": 71.972,
+      "args": [
+        "-m",
+        "pytest",
+        "-p",
+        "pytest_asyncio.plugin",
+        "-p",
+        "no:cacheprovider",
+        "tests/",
+        "--tb=short",
+        "--junitxml=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2b-20261022-01\\parent-run-01\\full.xml"
+      ]
+    }
+  ],
+  "python310Ast": true,
+  "fileHashes": {
+    "src/keon/cortex/pipeline/__init__.py": "4c372bf8394770080ffc7826e71eb2c30a349a31997bd085e724f1923eb6f937",
+    "src/keon/cortex/pipeline/ccm_text.py": "ebd6117e0a99a7f8361dfd83274ab60d938dc6403e9d25041b675ea210888757",
+    "tests/test_ccm_text.py": "2096e241756e9aeab275fcbd215e833e2f151e2ff9c5964f3044a8d2437764ab",
+    "docs/specs/ccm-text-parser-v1.md": "c6c7361e84660a1ea7fa2b039bb69518cfc4f2c9142621bcf7c046f1055c6b13"
+  },
+  "privateLogs": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2b-20261022-01\\parent-run-01",
+  "initialLane": "Only formatting corrections if required; no formal review repair used; no provider/key/network/DB/dependency changes"
+}

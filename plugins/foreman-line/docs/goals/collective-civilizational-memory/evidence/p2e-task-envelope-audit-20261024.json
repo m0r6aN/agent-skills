@@ -1,0 +1,584 @@
+{
+  "recordedAtUtc": "2026-10-24T20:17:52.602777+00:00",
+  "normalization": "Post-execution schema normalization of original persisted envelopes/receipts, not retroactive preflight",
+  "originalReceiptsPreserved": true,
+  "schemaValidation": "PASS",
+  "units": [
+    {
+      "id": "CCM-P2E-accept-architecture",
+      "sdlc_stage": "review",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Deterministic unadmitted civic v2 mapping",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\accept-architecture-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped JSON assessment"
+      ],
+      "constraints": [
+        "No tools, filesystem, credentials or effects",
+        "All reservations/affected routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent parent deterministic verification and fresh reviews; exact-head/main CI before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 3,
+      "context_tokens": 13892,
+      "estimated_output_tokens": 3072,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "schema/content checks",
+          "restricted deterministic suite/oracle",
+          "fresh reviews"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "Uncertain/failed call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\accept-architecture-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P2E-accept-security",
+      "sdlc_stage": "security",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Deterministic unadmitted civic v2 mapping",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\accept-security-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped JSON assessment"
+      ],
+      "constraints": [
+        "No tools, filesystem, credentials or effects",
+        "All reservations/affected routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent parent deterministic verification and fresh reviews; exact-head/main CI before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 3,
+      "context_tokens": 13901,
+      "estimated_output_tokens": 3072,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "schema/content checks",
+          "restricted deterministic suite/oracle",
+          "fresh reviews"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "Uncertain/failed call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\accept-security-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P2E-closure-architecture",
+      "sdlc_stage": "review",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Deterministic unadmitted civic v2 mapping",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\closure-architecture-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped JSON assessment"
+      ],
+      "constraints": [
+        "No tools, filesystem, credentials or effects",
+        "All reservations/affected routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent parent deterministic verification and fresh reviews; exact-head/main CI before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 3,
+      "context_tokens": 13718,
+      "estimated_output_tokens": 3072,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "schema/content checks",
+          "restricted deterministic suite/oracle",
+          "fresh reviews"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "Uncertain/failed call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\closure-architecture-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P2E-closure-security",
+      "sdlc_stage": "security",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Deterministic unadmitted civic v2 mapping",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\closure-security-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped JSON assessment"
+      ],
+      "constraints": [
+        "No tools, filesystem, credentials or effects",
+        "All reservations/affected routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent parent deterministic verification and fresh reviews; exact-head/main CI before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 3,
+      "context_tokens": 13727,
+      "estimated_output_tokens": 3072,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "schema/content checks",
+          "restricted deterministic suite/oracle",
+          "fresh reviews"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "Uncertain/failed call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\closure-security-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P2E-final-architecture",
+      "sdlc_stage": "review",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Deterministic unadmitted civic v2 mapping",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\final-architecture-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped JSON assessment"
+      ],
+      "constraints": [
+        "No tools, filesystem, credentials or effects",
+        "All reservations/affected routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent parent deterministic verification and fresh reviews; exact-head/main CI before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 3,
+      "context_tokens": 13321,
+      "estimated_output_tokens": 3072,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "schema/content checks",
+          "restricted deterministic suite/oracle",
+          "fresh reviews"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "Uncertain/failed call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\final-architecture-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P2E-final-security",
+      "sdlc_stage": "security",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Deterministic unadmitted civic v2 mapping",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\final-security-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped JSON assessment"
+      ],
+      "constraints": [
+        "No tools, filesystem, credentials or effects",
+        "All reservations/affected routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent parent deterministic verification and fresh reviews; exact-head/main CI before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 3,
+      "context_tokens": 13330,
+      "estimated_output_tokens": 3072,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "schema/content checks",
+          "restricted deterministic suite/oracle",
+          "fresh reviews"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "Uncertain/failed call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\final-security-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P2E-source",
+      "sdlc_stage": "implementation",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Deterministic unadmitted civic v2 mapping",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\source-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed three-file JSON source proposal"
+      ],
+      "constraints": [
+        "No tools, filesystem, credentials or effects",
+        "All reservations/affected routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent parent deterministic verification and fresh reviews; exact-head/main CI before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 3,
+      "context_tokens": 9215,
+      "estimated_output_tokens": 12000,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "schema/content checks",
+          "restricted deterministic suite/oracle",
+          "fresh reviews"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "Uncertain/failed call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\source-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P2E-step0",
+      "sdlc_stage": "planning",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Deterministic unadmitted civic v2 mapping",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\step0-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped JSON assessment"
+      ],
+      "constraints": [
+        "No tools, filesystem, credentials or effects",
+        "All reservations/affected routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent parent deterministic verification and fresh reviews; exact-head/main CI before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 3,
+      "context_tokens": 1651,
+      "estimated_output_tokens": 2048,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "schema/content checks",
+          "restricted deterministic suite/oracle",
+          "fresh reviews"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "Uncertain/failed call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2e-civic-20261024-01\\step0-input.txt"
+        ],
+        "write": []
+      }
+    }
+  ]
+}

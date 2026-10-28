@@ -1,0 +1,35 @@
+{
+  "completeFields": [
+    {
+      "path": "src/keon/cortex/envelope/taxonomy.py",
+      "bytes": 4871,
+      "sha256": "1f2cacaefe3b5086ea4a556c50677ba9e1e3719d51b2944f74caf1712712424d",
+      "syntax": "PASS"
+    },
+    {
+      "path": "src/keon/cortex/ingress/models_v2.py",
+      "bytes": 10267,
+      "sha256": "86fc439b5a22f1b0625c64ce0dab494bd73c035d0350c9b59859bcb7d87173f6",
+      "syntax": "PASS"
+    },
+    {
+      "path": "tests/fixtures/ccm/contracts-v2.json",
+      "bytes": 5747,
+      "sha256": "de4bde4dfee3299dabc5d87cf53566266d3d798391417bbfa7ae40f1335c2dd8",
+      "json": "PASS"
+    },
+    {
+      "path": "tests/test_ccm_contracts_v2.py",
+      "bytes": 4014,
+      "sha256": "7814925b144a129bef7b64da5b120e63cbfae67f0c3815b9ccdbd48d19fda77e",
+      "syntax": "PASS"
+    }
+  ],
+  "incompleteField": {
+    "field": "docs/specs/ccm-memory-graph-v2.md",
+    "type": "JSONDecodeError",
+    "offset": 26551
+  },
+  "fullPackageValid": false,
+  "applied": false
+}

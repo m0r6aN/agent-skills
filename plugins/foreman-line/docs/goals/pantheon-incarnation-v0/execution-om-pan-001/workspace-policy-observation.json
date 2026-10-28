@@ -1,0 +1,15 @@
+{
+  "schema": "pantheon.workspace-policy-observation.v1",
+  "observedAt": "2026-10-19T14:17:28.2891897Z",
+  "source": "authenticated Console accessibility tree",
+  "url": "https://platform.claude.com/settings/workspaces?workspace=default",
+  "organization": "Morgan Findings LLC",
+  "workspace": "Default",
+  "workspaceId": "wrkspc_01Ddkc7MrJwHXBnjszr5fDrk",
+  "visiblePolicyText": "Workspace geo United States Inference geo Global by default, any geo allowed",
+  "workspaceGeo": "United States",
+  "defaultInferenceGeo": "global",
+  "allowedInferenceGeos": "any",
+  "policyChanged": false,
+  "inferenceProven": false
+}

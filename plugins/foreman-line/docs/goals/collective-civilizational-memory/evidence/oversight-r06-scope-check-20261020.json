@@ -1,0 +1,47 @@
+{
+  "observedAt": "2026-10-20T09:59:00.556244+00:00",
+  "scope": "Draft amendment scope only; no gate or implementation acceptance",
+  "results": [
+    {
+      "file": "CCM-P1A-memory-graph-contracts.md",
+      "beforeSha256": "c99c9f750fcb0f3a378e7f5196fe6348da393423b28f2f313c5baaaa15e609d5",
+      "afterSha256": "2db53117a6d990355cff5c0cf7f09a058bcf2a78c55b35a659395ae9b45f2dd8",
+      "frontmatterUnchanged": true,
+      "allowedFilesUnchanged": true,
+      "outOfScopeUnchanged": true,
+      "onlyInsertions": true,
+      "changed": true
+    },
+    {
+      "file": "CCM-P1B-gravity-v2-fixtures.md",
+      "beforeSha256": "5a5bef5717fa9c78359c681aac99065dcf443e7767596d24ea5322c483b40c57",
+      "afterSha256": "4d08fab475d32bdcd3643c5c77f9569f39d2360899fe55049a8dfc778b42d2e1",
+      "frontmatterUnchanged": true,
+      "allowedFilesUnchanged": true,
+      "outOfScopeUnchanged": true,
+      "onlyInsertions": true,
+      "changed": true
+    },
+    {
+      "file": "CCM-P1C-collective-wire-compatibility.md",
+      "beforeSha256": "356b2c5d30b32f0f3062e6eca858f0f3879aaa73cf19a40b7bef418479876b25",
+      "afterSha256": "b782e06829119a3993c18155e331882a44a7c82cf6dd05ec8061c7e9f3c26c09",
+      "frontmatterUnchanged": true,
+      "allowedFilesUnchanged": true,
+      "outOfScopeUnchanged": true,
+      "onlyInsertions": true,
+      "changed": true
+    },
+    {
+      "file": "CCM-P1D-postgres-capability-check.md",
+      "beforeSha256": "33d2f4d90c57db9c4583328a50442e1fed37e9a2de421742661b7553d6f86603",
+      "afterSha256": "33d2f4d90c57db9c4583328a50442e1fed37e9a2de421742661b7553d6f86603",
+      "frontmatterUnchanged": true,
+      "allowedFilesUnchanged": true,
+      "outOfScopeUnchanged": true,
+      "onlyInsertions": true,
+      "changed": false
+    }
+  ],
+  "consumedReviewPacketUnchanged": true
+}

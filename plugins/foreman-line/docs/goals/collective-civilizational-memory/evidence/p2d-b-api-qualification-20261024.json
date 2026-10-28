@@ -1,0 +1,93 @@
+{
+  "atUtc": "2026-10-24T18:09:43.868650+00:00",
+  "status": "PASS_ACTUAL_WINDOWS_API_SYNTHETIC_LOOSE_AND_PACKED",
+  "imageId": "sha256:0bab30c07d270832fba40cd309a7891c0996d0a87a114220813a0f819d52ac04",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_git_protocol.py": "43813d00167aafc065cf66e04808c369a7ac8872244fa185e484a99cf129c463",
+    "src/keon/cortex/pipeline/ccm_git_worker.py": "fe04c0794099b720f83007bfdc7a7b0d3154d1a2f46a23f774d6fb4d9492e59a",
+    "src/keon/cortex/pipeline/ccm_git_runtime.py": "bea56dd96356b3bba9ba72560730fb51710f013ca5525ca0732bbb466beec399",
+    "tests/test_ccm_git_runtime.py": "9b695686d502989a70b8c6fa71e7f8bc651fdd62f9e849d5be521c8bcf7705ce",
+    "docker/ccm-git-source/Dockerfile": "58f8fc57bd97d1628ed0ca46be6cc3003bb667a678c9e79f1a92adafabc3e53a",
+    "docs/specs/ccm-git-runtime-v1.md": "ed5871d1d314d859e1a42ad92b8ac98fce6fdb632a38a7df1cb126f130151cfb"
+  },
+  "cases": [
+    {
+      "case": "loose",
+      "status": "EXPECTED_COMPLETE_SNAPSHOT",
+      "code": null,
+      "pending": [],
+      "files": 2,
+      "excluded": 2,
+      "providerRequests": 0,
+      "newAuthOrTrustClaim": false
+    },
+    {
+      "case": "packed",
+      "status": "EXPECTED_COMPLETE_SNAPSHOT",
+      "code": null,
+      "pending": [],
+      "files": 2,
+      "excluded": 2,
+      "providerRequests": 0,
+      "newAuthOrTrustClaim": false
+    },
+    {
+      "case": "missing",
+      "status": "EXPECTED_CLOSED_FAILURE",
+      "code": "missing_object",
+      "pending": [],
+      "files": null,
+      "excluded": null,
+      "providerRequests": 0,
+      "newAuthOrTrustClaim": false
+    },
+    {
+      "case": "alternates",
+      "status": "EXPECTED_CLOSED_FAILURE",
+      "code": "unsupported_repository",
+      "pending": [],
+      "files": null,
+      "excluded": null,
+      "providerRequests": 0,
+      "newAuthOrTrustClaim": false
+    },
+    {
+      "case": "http-alternates",
+      "status": "EXPECTED_CLOSED_FAILURE",
+      "code": "unsupported_repository",
+      "pending": [],
+      "files": null,
+      "excluded": null,
+      "providerRequests": 0,
+      "newAuthOrTrustClaim": false
+    },
+    {
+      "case": "canary",
+      "status": "EXPECTED_COMPLETE_SNAPSHOT",
+      "code": null,
+      "pending": [],
+      "files": 1,
+      "excluded": 0,
+      "providerRequests": 0,
+      "newAuthOrTrustClaim": false
+    },
+    {
+      "case": "oversize",
+      "status": "EXPECTED_CLOSED_FAILURE",
+      "code": "resource_limit",
+      "pending": [],
+      "files": null,
+      "excluded": null,
+      "providerRequests": 0,
+      "newAuthOrTrustClaim": false
+    }
+  ],
+  "count": 7,
+  "allOwnedContainersAbsent": true,
+  "syntheticRepositoriesByteUnchanged": true,
+  "oneAttemptLifetimeVerified": true,
+  "hostNativeGitUsed": false,
+  "realRepositoryOrCorpusRead": false,
+  "providerRequests": 0,
+  "qualificationScope": "Exact local image and WindowsPython3.13.7/DockerDesktop/LinuxPython3.13.15/Git2.47.3 composition only; stable operator custody precondition, no raceproof/authentication/hightrust claim"
+}

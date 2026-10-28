@@ -1,0 +1,143 @@
+{
+  "schema": "pantheon.repository-rule-preflight.v1",
+  "observedAt": "2026-10-19T14:31:35.4326351Z",
+  "readOnly": true,
+  "queries": [
+    {
+      "repository": "m0r6aN/agent-skills",
+      "query": "repository",
+      "endpoint": "repos/m0r6aN/agent-skills",
+      "exitCode": 0,
+      "output": "foreman-repository.json",
+      "error": "foreman-repository.stderr.txt",
+      "outputSha256": "51b368d910a7d5c04d7d447fed302423fcb878bb3ba644517aa5c445b1f661b4"
+    },
+    {
+      "repository": "m0r6aN/agent-skills",
+      "query": "rulesets",
+      "endpoint": "repos/m0r6aN/agent-skills/rulesets?includes_parents=true",
+      "exitCode": 0,
+      "output": "foreman-rulesets.json",
+      "error": "foreman-rulesets.stderr.txt",
+      "outputSha256": "ea64165e9d5812f625904dd7d2d0a39d2bdff71faa337e83663b1ad9e11754e7"
+    },
+    {
+      "repository": "m0r6aN/agent-skills",
+      "query": "main-rules",
+      "endpoint": "repos/m0r6aN/agent-skills/rules/branches/main",
+      "exitCode": 0,
+      "output": "foreman-main-rules.json",
+      "error": "foreman-main-rules.stderr.txt",
+      "outputSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "repository": "m0r6aN/agent-skills",
+      "query": "main-protection",
+      "endpoint": "repos/m0r6aN/agent-skills/branches/main/protection",
+      "exitCode": 1,
+      "output": "foreman-main-protection.json",
+      "error": "foreman-main-protection.stderr.txt",
+      "outputSha256": "d6020ee3b0852c3deb66c66d159cc80caabeaa66ee301778307a2a18d486450d"
+    },
+    {
+      "repository": "m0r6aN/agent-skills",
+      "query": "main-head",
+      "endpoint": "repos/m0r6aN/agent-skills/git/ref/heads/main",
+      "exitCode": 0,
+      "output": "foreman-main-head.json",
+      "error": "foreman-main-head.stderr.txt",
+      "outputSha256": "18bf808a230be02c72b015a078e75d8084ed928d3ff0097dfc03a65294e65732"
+    },
+    {
+      "repository": "Keon-Systems/keon-systems",
+      "query": "repository",
+      "endpoint": "repos/Keon-Systems/keon-systems",
+      "exitCode": 0,
+      "output": "runtime-repository.json",
+      "error": "runtime-repository.stderr.txt",
+      "outputSha256": "0bffa914957b4b0c02ea8ac100fd7a7a3e1a42a01a93c44515ac87cb391b55ef"
+    },
+    {
+      "repository": "Keon-Systems/keon-systems",
+      "query": "rulesets",
+      "endpoint": "repos/Keon-Systems/keon-systems/rulesets?includes_parents=true",
+      "exitCode": 0,
+      "output": "runtime-rulesets.json",
+      "error": "runtime-rulesets.stderr.txt",
+      "outputSha256": "57a334cbef9d72cac02506f956d661203bc007a658b68ccd21db8385f26a4b0b"
+    },
+    {
+      "repository": "Keon-Systems/keon-systems",
+      "query": "main-rules",
+      "endpoint": "repos/Keon-Systems/keon-systems/rules/branches/main",
+      "exitCode": 0,
+      "output": "runtime-main-rules.json",
+      "error": "runtime-main-rules.stderr.txt",
+      "outputSha256": "7629121d9f827bfae5e250fe356458117333c8fb8e1ea760c43ac33f63e30e21"
+    },
+    {
+      "repository": "Keon-Systems/keon-systems",
+      "query": "main-protection",
+      "endpoint": "repos/Keon-Systems/keon-systems/branches/main/protection",
+      "exitCode": 0,
+      "output": "runtime-main-protection.json",
+      "error": "runtime-main-protection.stderr.txt",
+      "outputSha256": "d287ebcc30db1fde12b706a7caa6ee121fc01566581301b51cfe9c68579499b2"
+    },
+    {
+      "repository": "Keon-Systems/keon-systems",
+      "query": "main-head",
+      "endpoint": "repos/Keon-Systems/keon-systems/git/ref/heads/main",
+      "exitCode": 0,
+      "output": "runtime-main-head.json",
+      "error": "runtime-main-head.stderr.txt",
+      "outputSha256": "1c5cf88db9a4a4567ab058f5a81a04642281f33936a002bf00cc1c9024512e5c"
+    },
+    {
+      "repository": "m0r6aN/pantheon26",
+      "query": "repository",
+      "endpoint": "repos/m0r6aN/pantheon26",
+      "exitCode": 0,
+      "output": "pantheon-repository.json",
+      "error": "pantheon-repository.stderr.txt",
+      "outputSha256": "992426246b49e02408f3d3c227595efb8e86c2ba452be25044f2432eba3c8bcd"
+    },
+    {
+      "repository": "m0r6aN/pantheon26",
+      "query": "rulesets",
+      "endpoint": "repos/m0r6aN/pantheon26/rulesets?includes_parents=true",
+      "exitCode": 0,
+      "output": "pantheon-rulesets.json",
+      "error": "pantheon-rulesets.stderr.txt",
+      "outputSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "repository": "m0r6aN/pantheon26",
+      "query": "main-rules",
+      "endpoint": "repos/m0r6aN/pantheon26/rules/branches/main",
+      "exitCode": 0,
+      "output": "pantheon-main-rules.json",
+      "error": "pantheon-main-rules.stderr.txt",
+      "outputSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "repository": "m0r6aN/pantheon26",
+      "query": "main-protection",
+      "endpoint": "repos/m0r6aN/pantheon26/branches/main/protection",
+      "exitCode": 1,
+      "output": "pantheon-main-protection.json",
+      "error": "pantheon-main-protection.stderr.txt",
+      "outputSha256": "f2b6c9c01411d103ca0a59b9e3e3cf621e9977c787154cc7d22fe4c2099ce1d7"
+    },
+    {
+      "repository": "m0r6aN/pantheon26",
+      "query": "main-head",
+      "endpoint": "repos/m0r6aN/pantheon26/git/ref/heads/main",
+      "exitCode": 1,
+      "output": "pantheon-main-head.json",
+      "error": "pantheon-main-head.stderr.txt",
+      "outputSha256": "2045763370825109f80ad5474e398ab585368fe64929538f729754cc7b36c782"
+    }
+  ],
+  "mergeEligibility": false
+}

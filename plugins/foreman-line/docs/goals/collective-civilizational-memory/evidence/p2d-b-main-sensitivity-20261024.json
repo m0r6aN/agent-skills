@@ -1,0 +1,33 @@
+{
+  "atUtc": "2026-10-24T18:29:22.408036+00:00",
+  "status": "PASS_MAIN_ENTRYPOINT_GUARD_FAULT_SENSITIVITY",
+  "cases": [
+    {
+      "fault": "main_extra",
+      "status": "EXPECTED_REGRESSION_DETECTED",
+      "failedAssertions": [
+        "test_main_rejects_malformed_input_without_fetch[6a6fbbef1218eb86fe221f8872ac03a48d27ad62\\nx]",
+        "test_main_rejects_malformed_input_without_fetch[6a6fbbef1218eb86fe221f8872ac03a48d27ad62\\nzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz]",
+        "test_main_rejects_malformed_input_without_fetch[6a6fbbef1218eb86fe221f8872ac03a48d27ad62\\n\\n]"
+      ],
+      "errors": [],
+      "sourceFilesChanged": false
+    },
+    {
+      "fault": "main_exit",
+      "status": "EXPECTED_REGRESSION_DETECTED",
+      "failedAssertions": [
+        "test_main_output_failure_cannot_be_success[write]",
+        "test_main_output_failure_cannot_be_success[flush]"
+      ],
+      "errors": [],
+      "sourceFilesChanged": false
+    }
+  ],
+  "count": 2,
+  "earlierCoreGuardFaults": 5,
+  "allOwnedContainersAbsent": true,
+  "productionSourceMutated": false,
+  "providerRequests": 0,
+  "privateJunctionDisposition": "Retained with synthetic target; automatic approval review rejected attempted removal, reported only blocked by policy. No bypass; no container left."
+}

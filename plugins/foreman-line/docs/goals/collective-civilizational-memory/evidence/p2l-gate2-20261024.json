@@ -1,0 +1,23 @@
+{
+  "atUtc": "2026-10-24T20:54:45.873836+00:00",
+  "gate2": "APPROVED_BY_DELEGATED_OWNER_AUTHORITY",
+  "workorderSha256": "cb10ae8c8650a6a688f8240f1c1832808d5a7e92898648f053fe6b63de665ea7",
+  "base": "7badb965e7c6842147747f542481e4c07a87e487",
+  "allowedFiles": [
+    "src/keon/cortex/pipeline/ccm_civic_legacy.py",
+    "tests/test_ccm_civic_legacy.py",
+    "tests/fixtures/ccm/legacy-civic-v1.json",
+    "docs/specs/ccm-legacy-civic-v1.md"
+  ],
+  "proposedFiles": [
+    "src/keon/cortex/pipeline/ccm_civic_legacy.py",
+    "tests/test_ccm_civic_legacy.py",
+    "docs/specs/ccm-legacy-civic-v1.md"
+  ],
+  "fixtureSha256": "92d378e594fc7076ba9113b762c6ff22e9e8a198c4ed1697eac73275bfb27476",
+  "maxSourcePosts": 1,
+  "maxFocusedRepairs": 1,
+  "twoFreshReviewsRequired": true,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD"
+}

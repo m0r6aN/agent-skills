@@ -1,0 +1,600 @@
+{
+  "recordedAtUtc": "2026-10-24T18:38:42.030389+00:00",
+  "normalization": "Post-execution schema normalization of original admitted workorders/receipts, not a newly invented preflight",
+  "originalReceiptsPreserved": true,
+  "schemaValidation": "PASS",
+  "units": [
+    {
+      "id": "CCM-P2D-B-architecture",
+      "sdlc_stage": "review",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Restricted Git acquisition source/assessment/review",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\architecture-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped JSON assessment"
+      ],
+      "constraints": [
+        "No model tools, filesystem, network, credentials or effects",
+        "No retry/fallback; allreservations/routes held",
+        "Exact admittedworkorder and creditsledger, USD unknown"
+      ],
+      "acceptance_criteria": [
+        "Parent independently validates artifacts",
+        "Qualified execution and2freshreviews, exactCI/main green beforeacceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 32523,
+      "estimated_output_tokens": 4096,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/contentchecks",
+          "restricted deterministic andactualqualification",
+          "2freshreviews"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertaincall",
+          "scope/permission/capboundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\architecture-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P2D-B-final-architecture",
+      "sdlc_stage": "review",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Restricted Git acquisition source/assessment/review",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\final-architecture-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped JSON assessment"
+      ],
+      "constraints": [
+        "No model tools, filesystem, network, credentials or effects",
+        "No retry/fallback; allreservations/routes held",
+        "Exact admittedworkorder and creditsledger, USD unknown"
+      ],
+      "acceptance_criteria": [
+        "Parent independently validates artifacts",
+        "Qualified execution and2freshreviews, exactCI/main green beforeacceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 31300,
+      "estimated_output_tokens": 4096,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/contentchecks",
+          "restricted deterministic andactualqualification",
+          "2freshreviews"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertaincall",
+          "scope/permission/capboundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\final-architecture-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P2D-B-final-security",
+      "sdlc_stage": "security",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Restricted Git acquisition source/assessment/review",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\final-security-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped JSON assessment"
+      ],
+      "constraints": [
+        "No model tools, filesystem, network, credentials or effects",
+        "No retry/fallback; allreservations/routes held",
+        "Exact admittedworkorder and creditsledger, USD unknown"
+      ],
+      "acceptance_criteria": [
+        "Parent independently validates artifacts",
+        "Qualified execution and2freshreviews, exactCI/main green beforeacceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 31304,
+      "estimated_output_tokens": 4096,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/contentchecks",
+          "restricted deterministic andactualqualification",
+          "2freshreviews"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertaincall",
+          "scope/permission/capboundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\final-security-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P2D-B-security",
+      "sdlc_stage": "security",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Restricted Git acquisition source/assessment/review",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\security-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped JSON assessment"
+      ],
+      "constraints": [
+        "No model tools, filesystem, network, credentials or effects",
+        "No retry/fallback; allreservations/routes held",
+        "Exact admittedworkorder and creditsledger, USD unknown"
+      ],
+      "acceptance_criteria": [
+        "Parent independently validates artifacts",
+        "Qualified execution and2freshreviews, exactCI/main green beforeacceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 32533,
+      "estimated_output_tokens": 4096,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/contentchecks",
+          "restricted deterministic andactualqualification",
+          "2freshreviews"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertaincall",
+          "scope/permission/capboundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\security-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P2D-B-source-A",
+      "sdlc_stage": "implementation",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Restricted Git acquisition source/assessment/review",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\source-A-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed fixed source-slice JSON"
+      ],
+      "constraints": [
+        "No model tools, filesystem, network, credentials or effects",
+        "No retry/fallback; allreservations/routes held",
+        "Exact admittedworkorder and creditsledger, USD unknown"
+      ],
+      "acceptance_criteria": [
+        "Parent independently validates artifacts",
+        "Qualified execution and2freshreviews, exactCI/main green beforeacceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 11929,
+      "estimated_output_tokens": 12288,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/contentchecks",
+          "restricted deterministic andactualqualification",
+          "2freshreviews"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertaincall",
+          "scope/permission/capboundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\source-A-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P2D-B-source-B",
+      "sdlc_stage": "implementation",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Restricted Git acquisition source/assessment/review",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\source-B-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed fixed source-slice JSON"
+      ],
+      "constraints": [
+        "No model tools, filesystem, network, credentials or effects",
+        "No retry/fallback; allreservations/routes held",
+        "Exact admittedworkorder and creditsledger, USD unknown"
+      ],
+      "acceptance_criteria": [
+        "Parent independently validates artifacts",
+        "Qualified execution and2freshreviews, exactCI/main green beforeacceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 10671,
+      "estimated_output_tokens": 10000,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/contentchecks",
+          "restricted deterministic andactualqualification",
+          "2freshreviews"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertaincall",
+          "scope/permission/capboundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\source-B-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P2D-B-source-C",
+      "sdlc_stage": "implementation",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Restricted Git acquisition source/assessment/review",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\source-C-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed fixed source-slice JSON"
+      ],
+      "constraints": [
+        "No model tools, filesystem, network, credentials or effects",
+        "No retry/fallback; allreservations/routes held",
+        "Exact admittedworkorder and creditsledger, USD unknown"
+      ],
+      "acceptance_criteria": [
+        "Parent independently validates artifacts",
+        "Qualified execution and2freshreviews, exactCI/main green beforeacceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 13861,
+      "estimated_output_tokens": 12288,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/contentchecks",
+          "restricted deterministic andactualqualification",
+          "2freshreviews"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertaincall",
+          "scope/permission/capboundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\source-C-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P2D-B-step0",
+      "sdlc_stage": "planning",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Restricted Git acquisition source/assessment/review",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\step0-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped JSON assessment"
+      ],
+      "constraints": [
+        "No model tools, filesystem, network, credentials or effects",
+        "No retry/fallback; allreservations/routes held",
+        "Exact admittedworkorder and creditsledger, USD unknown"
+      ],
+      "acceptance_criteria": [
+        "Parent independently validates artifacts",
+        "Qualified execution and2freshreviews, exactCI/main green beforeacceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\admission.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 8491,
+      "estimated_output_tokens": 2048,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/contentchecks",
+          "restricted deterministic andactualqualification",
+          "2freshreviews"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertaincall",
+          "scope/permission/capboundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2d-b-git-20261024-01\\step0-input.txt"
+        ],
+        "write": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,799 @@
+{
+  "atUtc": "2026-10-25T02:31:56.381264+00:00",
+  "schemaValidation": "PASS",
+  "normalization": "Post-execution schema normalization, not retroactive preflight; actual prompt usage where available, otherwise estimated bytes/4; original conservative caps retained.",
+  "units": [
+    {
+      "id": "CCM-P3C1-architecture",
+      "sdlc_stage": "review",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Pure deletion protocol prerequisite, no operational authority or erasure",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\architecture-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 20698,
+      "estimated_output_tokens": 5000,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\architecture-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3C1-final-architecture",
+      "sdlc_stage": "review",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Pure deletion protocol prerequisite, no operational authority or erasure",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\final-architecture-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 22428,
+      "estimated_output_tokens": 5000,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\final-architecture-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3C1-final-security",
+      "sdlc_stage": "security",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Pure deletion protocol prerequisite, no operational authority or erasure",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\final-security-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 22438,
+      "estimated_output_tokens": 5000,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\final-security-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3C1-repair",
+      "sdlc_stage": "implementation",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Pure deletion protocol prerequisite, no operational authority or erasure",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\repair-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 7369,
+      "estimated_output_tokens": 16000,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\repair-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3C1-repair2",
+      "sdlc_stage": "implementation",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Pure deletion protocol prerequisite, no operational authority or erasure",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\repair2-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 17023,
+      "estimated_output_tokens": 16000,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\repair2-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3C1-security",
+      "sdlc_stage": "security",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Pure deletion protocol prerequisite, no operational authority or erasure",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\security-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 20709,
+      "estimated_output_tokens": 5000,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\security-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3C1-source-A",
+      "sdlc_stage": "implementation",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Pure deletion protocol prerequisite, no operational authority or erasure",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\source-A-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 9251,
+      "estimated_output_tokens": 18000,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\source-A-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3C1-source-B",
+      "sdlc_stage": "implementation",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Pure deletion protocol prerequisite, no operational authority or erasure",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\source-B-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 6531,
+      "estimated_output_tokens": 20000,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\source-B-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3C1-step0",
+      "sdlc_stage": "planning",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Pure deletion protocol prerequisite, no operational authority or erasure",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\step0-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 30007,
+      "estimated_output_tokens": 5000,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\step0-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3C1-compat-architecture",
+      "sdlc_stage": "review",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Pure deletion protocol prerequisite, no operational authority or erasure",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c1-compat-20261024-01\\architecture-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 7509,
+      "estimated_output_tokens": 5000,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c1-compat-20261024-01\\architecture-input.txt"
+        ],
+        "write": []
+      }
+    },
+    {
+      "id": "CCM-P3C1-compat-security",
+      "sdlc_stage": "security",
+      "task_type": "bounded supplied-artifact proposal",
+      "goal": "Pure deletion protocol prerequisite, no operational authority or erasure",
+      "inputs": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c1-compat-20261024-01\\security-input.txt"
+      ],
+      "expected_outputs": [
+        "Completed scoped artifact or assessment"
+      ],
+      "constraints": [
+        "No tools/filesystem/credentials/effects",
+        "All reservations/routes held; no retry/fallback"
+      ],
+      "acceptance_criteria": [
+        "Independent deterministic/contract review; exact-head/main green before acceptance"
+      ],
+      "dependencies": [
+        "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c-deletion-20261024-01\\gate2.json"
+      ],
+      "risk": "high",
+      "data_classification": "confidential",
+      "allow_external_sensitive": true,
+      "complexity": 4,
+      "context_tokens": 7509,
+      "estimated_output_tokens": 5000,
+      "max_budget_usd": null,
+      "allowed_execution_classes": [
+        "frontier"
+      ],
+      "requirements": {
+        "modalities": [
+          "text"
+        ],
+        "languages": [
+          "python"
+        ],
+        "tool_calling": false,
+        "structured_output": true
+      },
+      "permissions": {
+        "filesystem": [],
+        "network": [],
+        "tools": [],
+        "secrets": [],
+        "destructive_actions": false
+      },
+      "validation": {
+        "methods": [
+          "parent schema/content checks",
+          "restricted deterministic",
+          "independent reviews/triage"
+        ],
+        "owner": "sole Context coordinator",
+        "independent_review": true
+      },
+      "retry_policy": {
+        "max_transient_retries": 0,
+        "max_validation_cycles": 1,
+        "escalation_conditions": [
+          "failed/uncertain call",
+          "scope/budget boundary"
+        ]
+      },
+      "paths": {
+        "read": [
+          "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p3c1-compat-20261024-01\\security-input.txt"
+        ],
+        "write": []
+      }
+    }
+  ]
+}

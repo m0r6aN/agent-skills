@@ -1,0 +1,115 @@
+{
+  "schema": "pantheon.native-independent-recheck.v1",
+  "authorSessionId": "/root/foreman_rules",
+  "recordedAt": "2026-10-19T14:35:08.286Z",
+  "verdict": "evidence-only; final report separate",
+  "scope": {
+    "liveProviderCalls": 0,
+    "credentialLookups": 0,
+    "dpapiReads": 0,
+    "liveWrapperImports": 0,
+    "metadataCollectorExecutions": 0,
+    "network": "none in this script; separate 77-test regression loopback fixtures only"
+  },
+  "exactCodeAndDataPins": 17,
+  "verifiedBuilderFiles": 18,
+  "preservedOriginals": 6,
+  "sealedMembers": 33,
+  "packetSources": 14,
+  "ratificationEvidenceVerified": true,
+  "actualOwnerProbe": {
+    "status": "HELD",
+    "processId": 33896,
+    "processStartedUtc": "2026-10-19T13:37:41.8116339Z",
+    "at": "2026-10-19T14:35:08.286Z"
+  },
+  "metadata": {
+    "ref": "account-metadata-3/qualification.json",
+    "at": "2026-10-19T14:26:34.7982448+00:00",
+    "qualificationSha256": "7957d3df74b587e550eff1d4ca747418fde06b1acdcf3582bad63b447a70564f",
+    "credentialCiphertextDigestMatchesDeclared": true,
+    "collectorSourceSha256": "b00b3fb9601b73f068d48a453eb84d1e6436814ae908ca45faa068895a08d551"
+  },
+  "attempts": {
+    "qualification": {
+      "requiredCoverage": 1,
+      "reservation": 4.71
+    },
+    "plan-review": {
+      "requiredCoverage": 14,
+      "reservation": 5.34
+    }
+  },
+  "cases": [
+    {
+      "id": "strict-valid",
+      "nativeTransferComplete": true,
+      "strictStreamValid": true,
+      "finalUsageTrusted": true,
+      "reviewUsable": true,
+      "parseCode": null,
+      "reviewStatus": "held-for-independent-semantic-triage",
+      "delivery": "complete",
+      "provisionalExposureUsd": 0.004796,
+      "retainFullReservation": false,
+      "reportedTier": null,
+      "pricingBasis": "pinned requested standard_only/global rates; missing response tier is not measured pricing"
+    },
+    {
+      "id": "trailing-malformed",
+      "nativeTransferComplete": true,
+      "strictStreamValid": false,
+      "finalUsageTrusted": false,
+      "reviewUsable": false,
+      "parseCode": "SSE_MALFORMED",
+      "reviewStatus": "failed",
+      "delivery": "unknown",
+      "provisionalExposureUsd": null,
+      "retainFullReservation": true,
+      "reportedTier": null,
+      "pricingBasis": "pinned requested standard_only/global rates; missing response tier is not measured pricing"
+    },
+    {
+      "id": "missing-terminal-usage",
+      "nativeTransferComplete": true,
+      "strictStreamValid": true,
+      "finalUsageTrusted": false,
+      "reviewUsable": true,
+      "parseCode": null,
+      "reviewStatus": "held-for-independent-semantic-triage",
+      "delivery": "unknown",
+      "provisionalExposureUsd": null,
+      "retainFullReservation": true,
+      "reportedTier": null,
+      "pricingBasis": "pinned requested standard_only/global rates; missing response tier is not measured pricing"
+    },
+    {
+      "id": "invalid-review",
+      "nativeTransferComplete": true,
+      "strictStreamValid": true,
+      "finalUsageTrusted": true,
+      "reviewUsable": false,
+      "parseCode": "REVIEW_CONTRACT_INVALID",
+      "reviewStatus": "failed",
+      "delivery": "complete",
+      "provisionalExposureUsd": 0.004796,
+      "retainFullReservation": false,
+      "reportedTier": null,
+      "pricingBasis": "pinned requested standard_only/global rates; missing response tier is not measured pricing"
+    },
+    {
+      "id": "contradictory-usage",
+      "nativeTransferComplete": true,
+      "strictStreamValid": false,
+      "finalUsageTrusted": false,
+      "reviewUsable": false,
+      "parseCode": "USAGE_INVALID",
+      "reviewStatus": "failed",
+      "delivery": "unknown",
+      "provisionalExposureUsd": null,
+      "retainFullReservation": true,
+      "reportedTier": null,
+      "pricingBasis": "pinned requested standard_only/global rates; missing response tier is not measured pricing"
+    }
+  ]
+}

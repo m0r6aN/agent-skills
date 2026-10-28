@@ -1,0 +1,12 @@
+{
+  "parcelSpecRefs": [
+    "plugins/foreman-line/docs/specs/active/EXA-P0-contract-reuse-and-bootstrap.md",
+    "plugins/foreman-line/docs/specs/active/EXA-P1-packet-and-route-admission.md",
+    "plugins/foreman-line/docs/specs/active/EXA-P2-durable-authority-and-accounting.md",
+    "plugins/foreman-line/docs/specs/active/EXA-P3-pi-runtime-and-isolation.md",
+    "plugins/foreman-line/docs/specs/active/EXA-P4-installed-cli-and-composition.md",
+    "plugins/foreman-line/docs/specs/active/EXA-P5-goal-shaping-and-council-wiring.md",
+    "plugins/foreman-line/docs/specs/active/EXA-P6-independent-proof-and-activation.md"
+  ],
+  "epics": []
+}

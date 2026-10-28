@@ -1,0 +1,58 @@
+{
+  "observedAt": "2026-10-20T00:48:10.049Z",
+  "scope": "local CLI version/help and filtered auth readiness only; no inference",
+  "reviewInvocations": 0,
+  "nativeMetadataCommands": [
+    [
+      "--version"
+    ],
+    [
+      "auth",
+      "status",
+      "--json"
+    ],
+    [
+      "--help"
+    ]
+  ],
+  "version": {
+    "state": "pass",
+    "expected": "2.1.303 (Claude Code)",
+    "observed": "2.1.303 (Claude Code)"
+  },
+  "account": {
+    "state": "pass",
+    "loggedIn": true,
+    "authMethod": "claude.ai",
+    "apiProvider": "firstParty",
+    "subscriptionType": "max"
+  },
+  "flags": {
+    "state": "failed",
+    "missing": [
+      "--max-turns"
+    ],
+    "note": "CLI option presence only; not provider/model/account/policy enforcement proof."
+  },
+  "model": {
+    "requested": "claude-opus-5-5",
+    "state": "unknown",
+    "note": "No live availability probe or provider call authorized."
+  },
+  "extraUsageOff": {
+    "state": "unknown",
+    "note": "Requires current account setting evidence; auth metadata is insufficient."
+  },
+  "modelImprovementOff": {
+    "state": "unknown",
+    "note": "Requires current privacy setting evidence; no setting change authorized."
+  },
+  "managedPolicy": {
+    "state": "unknown",
+    "note": "Neither safe-mode flags nor CLI help prove absence of managed policy additions."
+  },
+  "finalHumanSendOnce": {
+    "state": "not-given"
+  },
+  "state": "held"
+}

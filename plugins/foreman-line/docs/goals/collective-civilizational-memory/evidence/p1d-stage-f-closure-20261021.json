@@ -1,0 +1,50 @@
+{
+  "atUtc": "2026-10-22T03:40:45.602640+00:00",
+  "parcel": "CCM-P1D",
+  "disposition": "All source acceptance criteria met with explicit later operational gates; exact source and merge CI green",
+  "sourceCommit": "76bd08d45b5e3a5e297417fcbdcb29790a846830",
+  "acceptedCommit": "6139ddd8802540829eebce07215106e4b16ca360",
+  "pr": {
+    "mergeCommit": {
+      "oid": "6139ddd8802540829eebce07215106e4b16ca360"
+    },
+    "mergedAt": "2026-10-22T03:35:08Z",
+    "state": "MERGED",
+    "url": "https://github.com/Keon-Systems/keon-cortex/pull/84"
+  },
+  "mergeChecks": [
+    {
+      "conclusion": "success",
+      "headSha": "6139ddd8802540829eebce07215106e4b16ca360",
+      "status": "completed",
+      "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39717649317"
+    },
+    {
+      "conclusion": "success",
+      "headSha": "6139ddd8802540829eebce07215106e4b16ca360",
+      "status": "completed",
+      "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39717649103"
+    }
+  ],
+  "candidatePins": {
+    "scripts/ccm_check_postgres.py": "53383e904c128271b52f13dec1c620c0cdc195c1bc704bd0c0d92f427688956d",
+    "tests/test_ccm_postgres_capabilities.py": "3cdcfcb849353ee9090be81743d7031d8984e3667d55bc6f188ca35022cf8d7c",
+    "docs/specs/ccm-postgres-profile.md": "ed151ce8e5f85329cebbd6e0edeb81b26e5df46b3b482ce6ef8e2c7c993c8283"
+  },
+  "independentReviews": "One independent initial CHANGES_REQUIRED, one focused repair, one closure PASS; nonblocking doc nit corrected without code/test changes",
+  "targetedPostRepairPass": 110,
+  "oldTestIdentitiesRetained": 79,
+  "preRepairIdentitiesRetained": 94,
+  "additionalEvidence": [
+    "p1d-real-local-capability-20261021.json",
+    "p1d-local-operational-authorization-20261021.json"
+  ],
+  "workOrderArchive": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\done\\CCM-P1D-postgres-capability-check.md",
+  "activeWorkOrderSha256": "b8867511f1063886a590ee64eb6fedd9e587dd45afeb6a9a5a40666a84418da0",
+  "doneWorkOrderSha256": "58db0ac99984f21e6a5068285862795a31169573a294796b99562270c4b3b272",
+  "archiveChange": "status-only; body unchanged",
+  "cleanup": "Source worktree and branch retained for dependent accepted pins; no destructive cleanup",
+  "laterGates": "Actual local DB capability gate PASS; named target/Neon remains OPEN before P4, all performance/storage/import gates remain open",
+  "wholeGoalComplete": false,
+  "bulkIngestionReady": false
+}

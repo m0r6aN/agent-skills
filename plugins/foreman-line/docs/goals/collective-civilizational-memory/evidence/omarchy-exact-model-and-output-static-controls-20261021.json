@@ -1,0 +1,47 @@
+{
+  "binarySha256": "c2415d6e6f7c67b0a55744c5ace5054936e252fcc3cf56ce087bc314061315ca",
+  "inferenceRequests": 0,
+  "staticOnly": true,
+  "exactModels": [
+    {
+      "provider": "openai",
+      "modelId": "gpt-6.1-sol",
+      "api": "openai-responses",
+      "baseUrl": "https://api.openai.com/v1",
+      "contextWindow": 272000,
+      "catalogMaxTokens": 128000,
+      "costMetadataLiteral": "input: 2, output: 10, cacheRead: 0.1, cacheWrite: 2.5, tiers: [{ inputTokensAbove: 272000, input: 4, output: 15, cacheRead: 0.2, cacheWrite: 5",
+      "sourceOffset": 97586599
+    },
+    {
+      "provider": "opencode-go",
+      "modelId": "mimo-v2.6-pro",
+      "api": "openai-completions",
+      "baseUrl": "https://opencode.ai/inference/go/v1",
+      "contextWindow": 1048576,
+      "catalogMaxTokens": 131072,
+      "costMetadataLiteral": "input: 0.435, output: 0.87, cacheRead: 0.003625, cacheWrite: 0",
+      "sourceOffset": 97665855
+    }
+  ],
+  "controls": [
+    {
+      "term": "async _checkCompaction(",
+      "found": true,
+      "offset": 104708428,
+      "excerpt": "  abortBranchSummary() {\n    this._branchSummaryAbortController?.abort();\n  }\n  async _checkCompaction(assistantMessage, skipAbortedCheck = true, toolResults = []) {\n    const settings3 = this.settingsManager.getCompactionSettings(this.model);\n    if (!settings3.enabled)\n      return false;\n    if (skipAbortedCheck && assistantMessage.stopReason === \"aborted\")\n      return false;\n    const messageModel = this._modelForMessage(assistantMessage);\n    const sameModel = messageModel !== undefined;\n    const contextWindow = (messageModel ?? this.model)?.contextWindow ?? 0;\n    c"
+    },
+    {
+      "term": "maxTokens: clampMaxTokensToContext(",
+      "found": true,
+      "offset": 94538591,
+      "excerpt": "ams);\n  return {\n    temperature: options?.temperature,\n    samplingParams,\n    maxTokens: clampMaxTokensToContext(model, context, options?.maxTokens ?? model.maxTokens),\n    signal: options?.signal,\n    telemetryContext: options?.telemetryContext,\n    apiKey: apiKey || options?.apiKey,\n    fetch: options?.fetch,\n    transport: options?.transport,\n    cacheRetention: options?.cacheRetention,\n    sessionId: options?.sessionId,\n    headers: options?.headers,\n    onPayload: options?.onPayload,\n    onResponse: options?.onResponse,\n    onProviderStreamEvent: options?.onProviderS"
+    },
+    {
+      "term": "params.max_tokens = options.maxTokens",
+      "found": true,
+      "offset": 97147192,
+      "excerpt": " (options?.maxTokens) {\n    if (compat.maxTokensField === \"max_tokens\") {\n      params.max_tokens = options.maxTokens;\n    } else {\n      params.max_completion_tokens = options.maxTokens;\n    }\n  }\n  if (options?.temperature !== undefined) {\n    params.temperature = options.temperature;\n  }\n  if (transcriptTools.requestTools.length > 0) {\n    params.tools = convertTools3(transcriptTools.requestTools, compat);\n    if (compat.za"
+    }
+  ]
+}

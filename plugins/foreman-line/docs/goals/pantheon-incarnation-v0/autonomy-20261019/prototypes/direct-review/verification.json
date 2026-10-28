@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "evidenceClass": "offline-fixture",
+  "recordedAtUtc": "2026-10-19T12:43:51.6127036Z",
+  "node": "v24.7.0",
+  "platform": "win32",
+  "command": "node --test plugins/foreman-line/docs/goals/pantheon-incarnation-v0/autonomy-20261019/prototypes/direct-review/sender.test.mjs",
+  "observedResult": {
+    "tests": 44,
+    "passed": 44,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 10784.096,
+    "exitCode": 0
+  },
+  "sourceFiles": [
+    {
+      "path": "sender.mjs",
+      "sha256": "9b98761a2b12c57bfcf83a343c0e7fec3d16d2ec7bc988b05c077a0379ebe123",
+      "bytes": 15564
+    },
+    {
+      "path": "sender.test.mjs",
+      "sha256": "0e17c4352c66c3559d1a58aae524c94fd5b2d31e1889bd96d5ca81e4f39d1c6e",
+      "bytes": 18771
+    },
+    {
+      "path": "SPEC.md",
+      "sha256": "125e86d983fe9d657097efbef740d96d57a355e0a706aa9915c6a2b0b975c291",
+      "bytes": 5040
+    },
+    {
+      "path": "README.md",
+      "sha256": "125186a56a428699880811affda55649b297ec1151b9dcea4703bdc7692ceb0c",
+      "bytes": 9874
+    }
+  ],
+  "externalProviderRequests": 0,
+  "liveProviderExecutionVerified": false,
+  "accountQualified": false,
+  "runtimeAdmitted": false,
+  "independentReviewCompleted": false,
+  "historicalReviewReplayed": false,
+  "productionAdapterModified": false,
+  "caveat": "Agent-recorded local test observation; not a signed Runtime receipt, bill, review verdict, or approval."
+}

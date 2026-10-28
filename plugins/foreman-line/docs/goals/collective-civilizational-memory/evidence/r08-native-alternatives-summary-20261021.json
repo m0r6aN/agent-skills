@@ -1,0 +1,11 @@
+{
+  "nativeCodexVersion": "0.153.4",
+  "nativeFilesystemProbe": "Read-only denies all writes; workspace allows in-root writes, denies outside writes and active .codex configuration. Inactive .claude file remains writable, so no loaded Claude-profile claim.",
+  "nativeChatgptModelProbe": "Exact gpt-6.1-sol rejected as unsupported for this CLI ChatGPT login; no substitute chosen.",
+  "nativeApiPreparation": "Built-in provider override rejected before any provider call; separate same-endpoint supported alias then rejected existing environment key401, retries0. No key creation/persistent auth changes.",
+  "nativeUsageAndBilling": "No usage reported on failed probes; billing unknown, not declared zero.",
+  "gensparkCliHelpSideEffect": "Installed CLI help announced an automatic background update and its default-token tools request failed401. No update/login command was issued or repeated. The separate fixed reviewed sender using GENSPARK_AI_KEY was authenticated and completed qualification; no credential/billing changes made by this task.",
+  "qualificationReportedCredits": 51.7,
+  "chosenRuntime": "Existing fixed GenSpark text-only sender, not native CLI or a new launcher",
+  "timestampUtc": "2026-10-21T16:54:02.147727+00:00"
+}

@@ -1,0 +1,32 @@
+{
+  "atUtc": "2026-10-25T15:52:33.339302+00:00",
+  "nyDay": "2026-10-25",
+  "status": "METADATA_PREFLIGHT_PASS",
+  "checks": {
+    "date": true,
+    "notExpired": true,
+    "catalogPricing": true,
+    "foreignGuard": true,
+    "floor": true,
+    "day": true,
+    "effort": true
+  },
+  "balance": 9107.0,
+  "priorFutureExposureReserve": 7225.37,
+  "priorHistoricalBookUnchanged": 9966.57,
+  "foreignGuard": 1677.5,
+  "foreignLedgerSha256": "8bc0bf731db734a4b694c616e05ec61f9b7c84c79ec1e3766de401bfa4a333ed",
+  "unattributedBalanceDecreaseGuard": 84.70000000000073,
+  "availableAfterPriorReservesAndFloor": 881.63,
+  "candidatePreparationCap": 200,
+  "afterPreparationReservationAndFloor": 681.63,
+  "dayConservativeWithFullPreparationCap": 2973.8507500000005,
+  "effortConservativeWithFullPreparationCap": 18126.37,
+  "expiresUtc": "2026-10-26T04:00:00Z",
+  "floor": 1000,
+  "inferencePosts": 0,
+  "credentialOrRouteAdmission": false,
+  "allFailedUnknownExplicitReservationsRetained": true,
+  "affectedNativePrivatePiOversizedRoutes": "HELD",
+  "billingSettlementClaimed": false
+}

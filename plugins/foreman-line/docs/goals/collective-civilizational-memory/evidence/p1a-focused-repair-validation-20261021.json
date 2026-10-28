@@ -1,0 +1,139 @@
+{
+  "runs": [
+    {
+      "name": "isort-format",
+      "exitCode": 0,
+      "seconds": 0.366,
+      "argv": [
+        "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "isort",
+        "src/keon/cortex/envelope/taxonomy.py",
+        "src/keon/cortex/ingress/models_v2.py",
+        "tests/test_ccm_contracts_v2.py"
+      ],
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "black-format",
+      "exitCode": 0,
+      "seconds": 1.3,
+      "argv": [
+        "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "black",
+        "src/keon/cortex/envelope/taxonomy.py",
+        "src/keon/cortex/ingress/models_v2.py",
+        "tests/test_ccm_contracts_v2.py"
+      ],
+      "outputSha256": "ea723966fdddddc9bf972838a985f407f41ab301311f5c9607465bbf0e350b04"
+    },
+    {
+      "name": "black",
+      "exitCode": 0,
+      "seconds": 0.466,
+      "argv": [
+        "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "black",
+        "--check",
+        "src/keon/cortex/envelope/taxonomy.py",
+        "src/keon/cortex/ingress/models_v2.py",
+        "tests/test_ccm_contracts_v2.py"
+      ],
+      "outputSha256": "ab81d49758ee3d83e73f7d022b92772c8d7969bfd4d6680c5baf6a23890a301f"
+    },
+    {
+      "name": "isort",
+      "exitCode": 0,
+      "seconds": 0.331,
+      "argv": [
+        "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "isort",
+        "--check-only",
+        "src/keon/cortex/envelope/taxonomy.py",
+        "src/keon/cortex/ingress/models_v2.py",
+        "tests/test_ccm_contracts_v2.py"
+      ],
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "mypy",
+      "exitCode": 0,
+      "seconds": 36.517,
+      "argv": [
+        "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "mypy",
+        "src/keon/cortex/ingress/models_v2.py",
+        "--ignore-missing-imports",
+        "--namespace-packages",
+        "--cache-dir=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\api-focused-repair-20261021-01\\applied-verification\\mypy-cache"
+      ],
+      "outputSha256": "8e63ae22e8213e327a5e9cbd584067681681bd8ef7f25c869877887ccdcfc4ff"
+    },
+    {
+      "name": "pytest",
+      "exitCode": 0,
+      "seconds": 12.327,
+      "argv": [
+        "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-X",
+        "utf8",
+        "-B",
+        "-m",
+        "pytest",
+        "-p",
+        "pytest_asyncio.plugin",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--basetemp=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\api-focused-repair-20261021-01\\applied-verification\\pytest-tmp",
+        "--junitxml=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\api-focused-repair-20261021-01\\applied-verification\\tests.xml",
+        "tests/test_ccm_contracts_v2.py",
+        "tests/test_ingress_models.py",
+        "tests/inheritance/test_inheritance.py",
+        "tests/gravity/test_contracts.py",
+        "tests/gravity/test_projection_fixtures.py",
+        "tests/test_evidence_envelope.py",
+        "tests/test_shards_v1_1.py"
+      ],
+      "outputSha256": "8b6aacd22e789740a8959f08c42ff84ae8dd93c5ec84030a609ef80f22c35803"
+    }
+  ],
+  "allPassed": true,
+  "candidatePinsAfter": {
+    "src/keon/cortex/envelope/taxonomy.py": "1f2cacaefe3b5086ea4a556c50677ba9e1e3719d51b2944f74caf1712712424d",
+    "src/keon/cortex/ingress/models_v2.py": "ecf7ea3a50f08435f1f07204f3e2828cf146200515f87707063cfc2756032dcf",
+    "tests/fixtures/ccm/contracts-v2.json": "c419250a4a9e232aca9a168ffeb7bb20b3acaf9746e6b7bc06babad8c1de9e90",
+    "tests/test_ccm_contracts_v2.py": "b6714d9f28556e9f238eda38ca0f50a5a520c71b0910fb2cbbb877ecfb1c38a2",
+    "docs/specs/ccm-memory-graph-v2.md": "96f54416e3fa464d97f08383373a0679ed7a1000e4f766369480f52750e722b4"
+  },
+  "otherSourceAndTestsUnchanged": true,
+  "sourceWorktree": "D:\\Repos\\ccm-worktrees\\cortex-p1a",
+  "privateCapture": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\api-focused-repair-20261021-01\\applied-verification",
+  "accepted": false,
+  "modelRequests": 0,
+  "tests": {
+    "collected": 399,
+    "originalIdentitiesRetained": 238,
+    "failures": 0,
+    "errors": 0
+  }
+}

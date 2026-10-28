@@ -1,0 +1,297 @@
+{
+  "atUtc": "2026-10-22T13:26:47.258100+00:00",
+  "method": "Fixed isolated-mode stdlib child with four OS environment names only; small synthetic sources parsed, never executed",
+  "observations": {
+    "python": "3.13.7",
+    "featureVersion": "3.10",
+    "cases": [
+      {
+        "fixture": "nested",
+        "sourceBytes": 60,
+        "sourceSha256": "7966f3a932410beb0ce95e0ab3cf527ee90e701d9ed4b6cefaceac0003bfee73",
+        "expectedDeclarations": [
+          [
+            "class",
+            [
+              "C"
+            ]
+          ],
+          [
+            "function",
+            [
+              "C",
+              "f"
+            ]
+          ],
+          [
+            "function",
+            [
+              "C",
+              "f",
+              "g"
+            ]
+          ]
+        ],
+        "observedDeclarations": [
+          [
+            "class",
+            [
+              "C"
+            ]
+          ],
+          [
+            "function",
+            [
+              "C",
+              "f"
+            ]
+          ],
+          [
+            "function",
+            [
+              "C",
+              "f",
+              "g"
+            ]
+          ]
+        ],
+        "result": "parsed",
+        "pass": true
+      },
+      {
+        "fixture": "duplicates",
+        "sourceBytes": 36,
+        "sourceSha256": "a976966e5acf96beba55f11785f1c648061a8c8fd9660e6462c85bb9c3d45b34",
+        "expectedDeclarations": [
+          [
+            "function",
+            [
+              "f"
+            ]
+          ],
+          [
+            "function",
+            [
+              "f"
+            ]
+          ]
+        ],
+        "observedDeclarations": [
+          [
+            "function",
+            [
+              "f"
+            ]
+          ],
+          [
+            "function",
+            [
+              "f"
+            ]
+          ]
+        ],
+        "result": "parsed",
+        "pass": true
+      },
+      {
+        "fixture": "control_block",
+        "sourceBytes": 35,
+        "sourceSha256": "fb6e1aec0d893b579e2b3181ba20df4d93b0be3a9192e3f164a49a01b733486b",
+        "expectedDeclarations": [
+          [
+            "function",
+            [
+              "f"
+            ]
+          ]
+        ],
+        "observedDeclarations": [
+          [
+            "function",
+            [
+              "f"
+            ]
+          ]
+        ],
+        "result": "parsed",
+        "pass": true
+      },
+      {
+        "fixture": "decorated_async",
+        "sourceBytes": 27,
+        "sourceSha256": "4e72afc2ffa404be349539ccda7f39ba6f475f4091462fd25ad4011e290f8061",
+        "expectedDeclarations": [
+          [
+            "async_function",
+            [
+              "f"
+            ]
+          ]
+        ],
+        "observedDeclarations": [
+          [
+            "async_function",
+            [
+              "f"
+            ]
+          ]
+        ],
+        "result": "parsed",
+        "pass": true
+      },
+      {
+        "fixture": "nfkc",
+        "sourceBytes": 20,
+        "sourceSha256": "540e92aadb464b4b5151be207fcc8bf3ee286b3e720c843cb534d4c169d188e7",
+        "expectedDeclarations": [
+          [
+            "class",
+            [
+              "K"
+            ]
+          ]
+        ],
+        "observedDeclarations": [
+          [
+            "class",
+            [
+              "K"
+            ]
+          ]
+        ],
+        "result": "parsed",
+        "pass": true
+      },
+      {
+        "fixture": "nfd",
+        "sourceBytes": 23,
+        "sourceSha256": "5f223ddf6b93ed5899643d2dfccde2014a6bb7983dec3e33674670055b1c2cb5",
+        "expectedDeclarations": [
+          [
+            "function",
+            [
+              "caf\u00e9"
+            ]
+          ]
+        ],
+        "observedDeclarations": [
+          [
+            "function",
+            [
+              "caf\u00e9"
+            ]
+          ]
+        ],
+        "result": "parsed",
+        "pass": true
+      },
+      {
+        "fixture": "multiline",
+        "sourceBytes": 31,
+        "sourceSha256": "1a7b78cc7c82da9d135e1d3a4c918bc6d4d6241678140049e5a997f04c7299d4",
+        "expectedDeclarations": [
+          [
+            "function",
+            [
+              "f"
+            ]
+          ]
+        ],
+        "observedDeclarations": [
+          [
+            "function",
+            [
+              "f"
+            ]
+          ]
+        ],
+        "result": "parsed",
+        "pass": true
+      },
+      {
+        "fixture": "parse_only_raise",
+        "sourceBytes": 64,
+        "sourceSha256": "8d3e6cdb7fe711d92ec22655cee2bb78514e67fad2e53ce93b8ef4d4997afa6a",
+        "expectedDeclarations": [
+          [
+            "function",
+            [
+              "f"
+            ]
+          ]
+        ],
+        "observedDeclarations": [
+          [
+            "function",
+            [
+              "f"
+            ]
+          ]
+        ],
+        "result": "parsed",
+        "pass": true
+      },
+      {
+        "fixture": "invalid_utf8",
+        "sourceBytes": 1,
+        "sourceSha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89",
+        "expectedDeclarations": [],
+        "observedDeclarations": [],
+        "result": "rejected",
+        "pass": true
+      },
+      {
+        "fixture": "truncated",
+        "sourceBytes": 6,
+        "sourceSha256": "268194c96dd3bbad4945ebbadcb9bfa0b1fb23dbfcba3f40dee588ab142fba9b",
+        "expectedDeclarations": [],
+        "observedDeclarations": [],
+        "result": "rejected",
+        "pass": true
+      },
+      {
+        "fixture": "new_grammar",
+        "sourceBytes": 42,
+        "sourceSha256": "6f1fd6fee4f2f0238854e8b0339f39babd00626a7de674c977b8700b250969fe",
+        "expectedDeclarations": [],
+        "observedDeclarations": [],
+        "result": "rejected",
+        "pass": true
+      },
+      {
+        "fixture": "non_utf8_cookie_ascii",
+        "sourceBytes": 36,
+        "sourceSha256": "603f6952548bf05d72d155309bb19ba97fca28692e17a7f2b7c89d0a5243d50b",
+        "expectedDeclarations": [
+          [
+            "function",
+            [
+              "f"
+            ]
+          ]
+        ],
+        "observedDeclarations": [
+          [
+            "function",
+            [
+              "f"
+            ]
+          ]
+        ],
+        "result": "parsed",
+        "pass": true
+      }
+    ],
+    "sourceExecuted": false,
+    "pass": true
+  },
+  "providerRequests": 0,
+  "newDelegatedWorkers": 0,
+  "preparationCorrection": "Initial private harness redundantly decoded already interpreted Unicode escapes and failed before evidence was saved; removed redundant decoding. No production code changed.",
+  "limits": [
+    "Only locally located Python 3.13 runtime tested; not actual Python 3.10 host qualification",
+    "No hostile resource tests or memory/time bound proof",
+    "Raw AST accepts ASCII latin-1 cookie: proposed UTF-8-only cookie policy needs explicit prevalidation",
+    "Fixture observer is private evidence code, not accepted source implementation"
+  ]
+}

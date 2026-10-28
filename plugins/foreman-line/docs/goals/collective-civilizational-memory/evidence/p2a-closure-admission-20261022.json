@@ -1,0 +1,33 @@
+{
+  "atUtc": "2026-10-22T04:40:35.237726+00:00",
+  "formalRepairUsed": 1,
+  "workorderSha256": "f6de7120cffe91932f7c3f4fa1b5c8c5e1e36149d7cf1a6d7709ec73f9a2274f",
+  "step0": "Actual fresh restate/stop observed from /root/p2a_builder; operator GO under owner grant; no second formal repair",
+  "model": "claude-opus-5-5",
+  "effort": "low",
+  "perSeatCreditReservation": 350,
+  "configuredOutputTokens": 6144,
+  "configuredSocketSeconds": 180,
+  "existingParcelCeiling": 1400,
+  "existingSharedNYOct22Ceiling": 3200,
+  "freshAccountForeignDayGuard": "Required again before each single POST by existing reviewed helper; no automatic retry",
+  "packets": {
+    "closure-A-input.txt": {
+      "bytes": 73102,
+      "sha256": "a0c2679887cd145c58812ece3a55a3c75b587bf9d5e5ae22744daddd8f6efbc9"
+    },
+    "closure-B-input.txt": {
+      "bytes": 73142,
+      "sha256": "80b34487a1dc700b2bf24c0ea1ad36e5299c8ae3034bf1c1ffd6e3f7bab0f8bd"
+    }
+  },
+  "sourceFileHashes": {
+    "src/keon/cortex/scrubber/__init__.py": "3be2e23bab4f17b393b5de8a25a22782f6fa3a3a6da88917d58f8b116efdbc7a",
+    "src/keon/cortex/scrubber/models.py": "c57a6b725224d6f405e4ffd4d09b2c0a649f03094411f80121de5714b7d456b2",
+    "src/keon/cortex/scrubber/service.py": "d2f4023333fefd7a04dfd061d4418c96cf6cb6c448ab519af7a8f1527b28da96",
+    "tests/test_ccm_scrubber.py": "f47771aa7bec1172b4923a98659cf42b6e6a60e2b72d2b2bf86ed61002933e6e",
+    "docs/specs/ccm-scrubber-v1.md": "4038aa4d649c98b734d1e4a7aa4f1e65224cdf4ac6e6beb5eaab5940b29ac279"
+  },
+  "hostEvidence": "evidence/p2a-repair-host-validation-20261022.json",
+  "noProviderRequestFromPreparation": true
+}

@@ -1,0 +1,38 @@
+{
+  "verdict": "PASS",
+  "findings": [
+    {
+      "id": "P1",
+      "severity": "low",
+      "locator": "service.py _ASSIGN_START lookbehind/lookahead",
+      "trigger": "Compound names such as db_password=hunter2, client_secret=..., AWS_SECRET_ACCESS_KEY=...",
+      "impact": "These assignments are not catalog-redacted unless a known secret or another pattern matches. This is a realistic recall gap. It is consistent with the bounded frozen catalog, which makes no universal-detection claim.",
+      "remediation": "Optional future catalog amendment to allow underscore-prefixed or suffixed key names, plus fixtures. Not required for this closure.",
+      "confidence": "medium"
+    },
+    {
+      "id": "P2",
+      "severity": "low",
+      "locator": "service.py _catalog_candidates PEM pairing",
+      "trigger": "Two BEGIN markers before an END, or a stray END in ordinary prose or docs",
+      "impact": "The whole envelope fails closed with invalid_payload. This is an availability cost, not a confidentiality cost. It matches the ratified unmatched-marker rule.",
+      "remediation": "Document in the spec that nested or stray markers reject.",
+      "confidence": "medium"
+    }
+  ],
+  "coverage": [
+    "R1 closed: the whole-call candidate budget is checked before append; PEM, assignment (bisect), URL (find plus bounded back/forward scan) and JWT (start-only, 4096-capped segments) scanners are linear or bounded; probes are consistent",
+    "R2 closed: authority ends at whitespace (including Unicode) or /?#; userinfo uses the last @; empty username is accepted; scheme and host are preserved",
+    "R3 closed: an epoch containing a known substring or a catalog match rejects without echo",
+    "R4 closed: container-depth 32 accepts and 33 rejects; exact and +1 boundaries for canonical 1MiB input and 4MiB output; integer 4096/4097 digits with bit guard; known-secret 128 count and 64KiB limits; partial counts",
+    "Aho output links and known-first priority/tie ordering, transitive overlap union, touching spans separate, HMAC over the full NFC union via canonical_json",
+    "Errors are closed and raised outside the except context (no args/cause/context); exact builtin types; cycles rejected; atomic with no partial output",
+    "No regression found against the 267 pins, 3013 identities and 137 skips; JWT quadratic allegation not substantiated, and the scanner is linear"
+  ],
+  "gaps": [
+    "Pure library only: no P3 enqueue enforcement, live ingestion, key custody or entropy claim",
+    "BM2 timing variance is unrepaired; actual exact-head CI must pass",
+    "Peak memory is not constant (per-string encode, candidate lists); explicit bounds only",
+    "Catalog recall is limited to the frozen patterns"
+  ]
+}

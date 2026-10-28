@@ -1,0 +1,67 @@
+{
+  "verdict": "CHANGES_REQUIRED",
+  "findings": [
+    {
+      "id": "P2C-SEC-1",
+      "severity": "high",
+      "locator": "src/keon/cortex/pipeline/ccm_python.py:114,124,144 (symbols list; stack/scope tuple inference)",
+      "trigger": "mypy run: var-annotated on `symbols`; tuple[str] assigned to tuple[()]; generator yields tuple[AST,...] where tuple[Module,...] is expected",
+      "impact": "Acceptance criterion 6 (mypy) fails. Exact-head CI cannot pass.",
+      "remediation": "Annotate `symbols: List[PythonSymbol] = []`, `stack: List[Tuple[ast.AST, Tuple[str, ...]]]`, and `scope: Tuple[str, ...]`. Keep the syntax 3.10-compatible (typing.List/Tuple). Do not change behavior.",
+      "confidence": "high"
+    },
+    {
+      "id": "P2C-SEC-2",
+      "severity": "high",
+      "locator": "ccm_python.py and tests/test_ccm_python.py (formatting/import order)",
+      "trigger": "black exit 1 on both files; isort exit 1 on the test file",
+      "impact": "Criterion 6 formatting gates fail.",
+      "remediation": "Apply the repository black/isort configuration only to the three new files, inside the single formal repair.",
+      "confidence": "high"
+    },
+    {
+      "id": "P2C-SEC-3",
+      "severity": "medium",
+      "locator": "full suite: tests.temporal.test_benchmark::TestBenchReceiptEmitOverhead::test_receipt_overhead_bounded[20]; baselineIdentitiesRetained=false",
+      "trigger": "BM-2 overhead was 16.23x against a 3.0x bound. Baseline was 2975 PASS/0 fail; this run had 2983 PASS/1 fail. Identity retention was reported false.",
+      "impact": "Criterion 6 requires evidence-based triage and full identity retention. This is probably a timing flake unrelated to the P2C files, but that is unproven.",
+      "remediation": "Rerun on a clean base and on the head under the same host. Attach identity diff evidence. Do not relax the threshold.",
+      "confidence": "medium"
+    },
+    {
+      "id": "P2C-SEC-4",
+      "severity": "low",
+      "locator": "ccm_python.py tokenize bracket loop (OP tokens only)",
+      "trigger": "On Python 3.10, f-string replacement fields are a single STRING token. Deep bracket nesting inside f\"{((((...))))}\" is therefore not counted. On 3.12+ these appear as OP tokens and are counted.",
+      "impact": "The bracket guard is runtime-dependent. It is bypassable on the best-effort 3.10 host and only fully meaningful on the canonical 3.13.15. Scalar guards are not a sandbox in any case.",
+      "remediation": "Document in the spec that the bracket guard is canonical-runtime-specific (the spec already says this for tokens). Optionally add a fixed small f-string fixture asserting canonical behavior in the restricted host.",
+      "confidence": "medium"
+    },
+    {
+      "id": "P2C-SEC-5",
+      "severity": "low",
+      "locator": "tests/test_ccm_python.py (coverage)",
+      "trigger": "No fixed test for a lone-CR line ending, a multibyte identifier before a nested def on a later line (byte vs char column), a BOM plus second-line cookie, or a NUL byte (ValueError on 3.10/3.11, SyntaxError on 3.12+).",
+      "impact": "Unicode byte-mapping and error-mapping regressions could pass the focused suite. These are not current defects.",
+      "remediation": "Add small frozen literal oracles for these cases, with the digests and offsets computed independently.",
+      "confidence": "medium"
+    }
+  ],
+  "coverage": [
+    "Exact type check uses `type is bytes` before any method call; the Poison subclass is rejected without callbacks.",
+    "Order is size, then BOM strip and strict decode, then cookie, then tokenize, then ast.parse, then traversal limits. The decode-before-cookie test exists.",
+    "Cookie regex and blank-line regex mirror tokenize's cookie_re/blank_re. First-line precedence and alias rejection were verified by reading and by tests.",
+    "Sanitized error is raised outside the except block, so __context__ is None; args are empty and str/repr contain only the code.",
+    "Traversal is iterative. Ancestor limit allows 64 enclosing declarations; declaration limit 2048. No partial result is returned.",
+    "Byte columns map via physical-line starts plus the BOM offset on line 1; CRLF/CR handling matches the parser's newline translation.",
+    "No exec/import/filesystem/network/env access; the side-effect canary is parse-only.",
+    "Reprs carry no payload; dataclasses are frozen and slotted.",
+    "Restricted three-runtime boundary vectors passed (out-of-band evidence)."
+  ],
+  "gaps": [
+    "Restricted-vector evidence does not tie librarySha256 to the reviewed file hash; this needs to be verified.",
+    "Deep unary/attribute recursion behavior on 3.10 was not reviewed beyond the reliance on the restricted host.",
+    "Production adapter and hostile-input admission remain out of scope and held.",
+    "Merged-main CI and the second independent review are pending."
+  ]
+}

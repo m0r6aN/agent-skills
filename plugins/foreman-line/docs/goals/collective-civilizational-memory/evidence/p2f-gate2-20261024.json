@@ -1,0 +1,31 @@
+{
+  "atUtc": "2026-10-24T21:22:49.765499+00:00",
+  "gate2": "APPROVED_UNDER_EXISTING_OWNER_AUTHORITY",
+  "base": "01531ec6fa65e42445296135364507d01d6a0642",
+  "workorderSha256": "a7311356fc39caa25ab7e3536dbad9c126d1c2d80b82fa048be1d66239ff6c83",
+  "allowedFiles": [
+    "src/keon/cortex/pipeline/ccm_engine.py",
+    "tests/test_ccm_engine.py",
+    "docs/specs/ccm-extractor-engine-v1.md"
+  ],
+  "fixedSlices": {
+    "source-A": "src/keon/cortex/pipeline/ccm_engine.py",
+    "source-B": "tests/test_ccm_engine.py"
+  },
+  "parentDocSha256": "90734573429f61015219ca097c89f7b694a6c0e8aa9be50895c4f044b6049873",
+  "step0Flags": {
+    "GATE2_EVIDENCE": "RESOLVED explicit binding clarification plus pinned API/base evidence",
+    "ACCEPTED_PORT_CONTRACTS": "RESOLVED explicit binding clarification plus pinned API/base evidence",
+    "GIT_BATCH_OVERFLOW": "RESOLVED explicit binding clarification plus pinned API/base evidence",
+    "GIT_RESPONSE_AND_HOLD_POLICY": "RESOLVED explicit binding clarification plus pinned API/base evidence",
+    "VALIDATION_AND_FAILURE_BOUNDARIES": "RESOLVED explicit binding clarification plus pinned API/base evidence",
+    "DOCUMENT_OWNERSHIP": "RESOLVED explicit binding clarification plus pinned API/base evidence"
+  },
+  "initialStep0ReadyFalsePreserved": true,
+  "maxImplementationSlices": 2,
+  "maxFocusedRepairs": 1,
+  "twoIndependentReviewsRequired": true,
+  "actualSyntheticCompositionRequired": true,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD"
+}

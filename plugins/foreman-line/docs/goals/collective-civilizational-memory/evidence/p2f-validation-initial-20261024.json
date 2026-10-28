@@ -1,0 +1,68 @@
+{
+  "atUtc": "2026-10-24T21:30:39.502229+00:00",
+  "status": "CHANGES_REQUIRED",
+  "stage": "initial",
+  "providerRequests": 0,
+  "image": "ccm-p2f-candidate:dde6228e358b",
+  "oracle": {
+    "exit": 0,
+    "fixedPrebuildOracle": "PASS",
+    "sourceCases": 3,
+    "fixtureDedupCases": 2,
+    "noParserFallback": true,
+    "closedGlobalFailure": true
+  },
+  "focus": {
+    "exit": 2,
+    "python": "3.12.15",
+    "cases": [
+      {
+        "class": "",
+        "name": "tests.test_ccm_engine",
+        "status": "error",
+        "detail": "collection failure"
+      }
+    ],
+    "output": "\n==================================== ERRORS ====================================\n__________________ ERROR collecting tests/test_ccm_engine.py ___________________\ntests/test_ccm_engine.py:30: in __getattribute__\n    raise AssertionError(\"untrusted attribute access\")\nE   AssertionError: untrusted attribute access\n--------------------- generated xml file: /tmp/result.xml ----------------------\n=========================== short test summary info ============================\nERROR tests/test_ccm_engine.py - AssertionError: untrusted attribute access\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 0.64s\n"
+  },
+  "black": {
+    "exit": 0,
+    "output": "All done! \u2728 \ud83c\udf70 \u2728\n2 files would be left unchanged.\n"
+  },
+  "isort": {
+    "exit": 0,
+    "output": ""
+  },
+  "mypy": {
+    "exit": 0,
+    "output": "Success: no issues found in 1 source file\n"
+  },
+  "full": {
+    "exit": 2,
+    "python": "3.12.15",
+    "cases": [
+      {
+        "class": "",
+        "name": "tests.test_ccm_engine",
+        "status": "error",
+        "detail": "collection failure"
+      }
+    ],
+    "output": "\n==================================== ERRORS ====================================\n__________________ ERROR collecting tests/test_ccm_engine.py ___________________\ntests/test_ccm_engine.py:30: in __getattribute__\n    raise AssertionError(\"untrusted attribute access\")\nE   AssertionError: untrusted attribute access\n=============================== warnings summary ===============================\n../usr/local/lib/python3.12/site-packages/starlette/testclient.py:51\n  /usr/local/lib/python3.12/site-packages/starlette/testclient.py:51: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.\n    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n--------------------- generated xml file: /tmp/result.xml ----------------------\n=========================== short test summary info ============================\nERROR tests/test_ccm_engine.py - AssertionError: untrusted attribute access\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 warning, 1 error in 3.63s\n"
+  },
+  "baselineIdentitiesRetained": false,
+  "baselineCases": 3880,
+  "trackedTreePinsRetained": true,
+  "counts": {
+    "pass": 0,
+    "skipped": 0,
+    "failure": 0,
+    "error": 1
+  },
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_engine.py": "b992d36204900bf2ae1290a23db2725094a08cd8a18d0f5c756404b493818110",
+    "tests/test_ccm_engine.py": "5c1043c97655b286c6e8c008abf91dbcab61fb0c72c68633b0586649196adf59",
+    "docs/specs/ccm-extractor-engine-v1.md": "90734573429f61015219ca097c89f7b694a6c0e8aa9be50895c4f044b6049873"
+  },
+  "allOwnedContainersAbsent": true
+}

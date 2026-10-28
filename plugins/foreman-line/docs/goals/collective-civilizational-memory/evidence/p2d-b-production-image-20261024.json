@@ -1,0 +1,45 @@
+{
+  "atUtc": "2026-10-24T18:08:33.345283+00:00",
+  "tag": "ccm-p2gb-production:ba57e31c2711",
+  "imageId": "sha256:0bab30c07d270832fba40cd309a7891c0996d0a87a114220813a0f819d52ac04",
+  "imageConfig": {
+    "Entrypoint": [
+      "python",
+      "-I",
+      "-B",
+      "-m",
+      "keon.cortex.pipeline.ccm_git_worker"
+    ],
+    "Env": [
+      "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305",
+      "PYTHON_VERSION=3.13.15",
+      "PYTHON_SHA256=1e66a7945a48390ee4c2a4268a0e4185884059a13c4aab6d148aa208deea4a76",
+      "LANG=C.UTF-8"
+    ],
+    "Labels": {
+      "keon.ccm.git-validator-sha256": "49a5d65632638ee2adcce0fabb5a9de19c44127ac99e92db8831bec453582b32",
+      "keon.ccm.profile": "git-v1"
+    },
+    "User": "65534:65534",
+    "WorkingDir": "/tmp"
+  },
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_git_protocol.py": "43813d00167aafc065cf66e04808c369a7ac8872244fa185e484a99cf129c463",
+    "src/keon/cortex/pipeline/ccm_git_worker.py": "fe04c0794099b720f83007bfdc7a7b0d3154d1a2f46a23f774d6fb4d9492e59a",
+    "src/keon/cortex/pipeline/ccm_git_runtime.py": "bea56dd96356b3bba9ba72560730fb51710f013ca5525ca0732bbb466beec399",
+    "tests/test_ccm_git_runtime.py": "9b695686d502989a70b8c6fa71e7f8bc651fdd62f9e849d5be521c8bcf7705ce",
+    "docker/ccm-git-source/Dockerfile": "58f8fc57bd97d1628ed0ca46be6cc3003bb667a678c9e79f1a92adafabc3e53a",
+    "docs/specs/ccm-git-runtime-v1.md": "ed5871d1d314d859e1a42ad92b8ac98fce6fdb632a38a7df1cb126f130151cfb"
+  },
+  "dependencyHashes": {
+    "src/keon/cortex/pipeline/ccm_git.py": "49a5d65632638ee2adcce0fabb5a9de19c44127ac99e92db8831bec453582b32",
+    "src/keon/cortex/pipeline/ccm_python_runtime.py": "c753c6269464cb5b1fe5b7acccc5843ac46634de7e55de3ba76279c6582b48b7",
+    "src/keon/cortex/pipeline/ccm_python.py": "aa4d7d79058a4d4e364ab02519d5e97b3dc8d8ab5074872c61fdb7be1b31f9c3",
+    "src/keon/cortex/pipeline/ccm_python_protocol.py": "ea9de856c1f35146aa2e515195212688e98f03510c08d9df8cf3bdc05e1f7088"
+  },
+  "exactRepositoryDockerfile": true,
+  "hostInstalls": 0,
+  "providerRequests": 0,
+  "notQualifiedUntilActualAPIAndReviews": true
+}

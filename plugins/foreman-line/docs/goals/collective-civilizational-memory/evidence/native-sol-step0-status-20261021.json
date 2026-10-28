@@ -1,0 +1,39 @@
+{
+  "phase": "nativeStep0",
+  "eventCounts": {
+    "response": 2,
+    "agent_start": 1,
+    "turn_start": 1,
+    "message_start": 3,
+    "message_end": 3,
+    "turn_end": 1,
+    "agent_end": 1,
+    "agent_settled": 1
+  },
+  "agentEnded": true,
+  "fileBytes": 402022,
+  "secondsRemaining": 554.5,
+  "assistantMessages": [
+    {
+      "provider": "openai",
+      "model": "gpt-6.1-sol",
+      "api": "openai-responses",
+      "stopReason": "error",
+      "usage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0,
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0
+        }
+      },
+      "errorPresent": true
+    }
+  ]
+}

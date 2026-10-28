@@ -1,0 +1,23 @@
+{
+  "privateCaptureDirectory": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\native-sol-20261021-01",
+  "files": [
+    {
+      "path": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\native-sol-20261021-01\\step0.events.jsonl",
+      "bytes": 402022,
+      "sha256": "26df7ae7f1f642a12d87e2e21efbee410a40622b33c5c1dd731030b1e2296e28"
+    },
+    {
+      "path": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\native-sol-20261021-01\\step0.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\native-sol-20261021-01\\native-repair.jsonl",
+      "bytes": 134044,
+      "sha256": "857a926fef87f2ee56d450db2ee32d006fc53a54802543aa347af04191ea0b6c"
+    }
+  ],
+  "originalBytesVerified": true,
+  "authFilesCopied": false,
+  "remoteGenSpark94.6ReservationUnchanged": true
+}

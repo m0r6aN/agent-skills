@@ -1,0 +1,27 @@
+{
+  "approvedAtRecordedUtc": "2026-10-21T20:46:50.196243+00:00",
+  "ownerApproval": "Approve the single document-only completion up to $0.14, brother. Freeze the four completed files, keep all reserves counted, and proceed with validation and both independent reviews once the package is complete.",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "serviceTier": "default",
+  "inputSha256": "1d649e1a3d9d87f90706a9ce1557b3cb8ba5d1bdf472fd23795721729ca80592",
+  "conservativeInputTokens": 34187,
+  "inputTokenCounts": {
+    "cl100k_base": 28167,
+    "o200k_base": 28276
+  },
+  "maxInput": 36000,
+  "maxOutput": 4096,
+  "estimatedTokenCostCapUsd": 0.14,
+  "worstModeledUsd": 0.13096,
+  "maxRequests": 1,
+  "retry": false,
+  "tools": [],
+  "timeSeconds": 600,
+  "store": false,
+  "reservationsRetained": {
+    "originalGenSparkCredits": 94.6,
+    "priorApiSourceUsd": 0.17192
+  },
+  "passedScopeReused": true
+}

@@ -1,0 +1,28 @@
+{
+  "attemptId": "om-pan-001-plan-review-r2-001",
+  "purpose": "plan-review",
+  "parcelId": "P00",
+  "artifactId": "P00-amended-plan-R2",
+  "requestRef": "amended-plan-review-r2/request.json",
+  "requestSha256": "5483950685f254aa400303c9adf5e072f7abd89f6642eca466175e151a89ba47",
+  "manifestRef": "amended-plan-review-r2/manifest.json",
+  "artifactManifestSha256": "807c1093487f8937d2f58e181fd3079295471c8983d2743ea8ed44f48277246c",
+  "packetRef": "amended-plan-review-r2/packet.md",
+  "packetSha256": "9e8f01b195af7d733eb371dbabb7d63d954cc63a5826de387e6e46fa7bf1aae9",
+  "requiredCoverage": [
+    "intent preservation",
+    "first-proof isolation",
+    "independent verification",
+    "Runtime authority/enforcement",
+    "credential/identity boundary",
+    "cumulative budget and unknown sends",
+    "crash/succession/fencing",
+    "Cortex versus transactional state",
+    "bootstrap dependency and limits",
+    "merge rules",
+    "two-machine scope",
+    "human interruptions",
+    "missing dependencies",
+    "unnecessary complexity"
+  ]
+}

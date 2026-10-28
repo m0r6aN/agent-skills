@@ -1,0 +1,8 @@
+{
+  "attemptId": "om-pan-001-plan-review-001",
+  "purpose": "plan-review",
+  "requestRef": "amended-plan-review/request.json",
+  "requestSha256": "de6483ec6dcee4c8a62e1c5673100b5e87313b001682de6f24a87d3c2f89a329",
+  "artifactManifestSha256": "43264651db23bf95ff8ddcd4375dd9ebc8ce4b1b0dda7dc2e510693a2f96abdc",
+  "requiredCoverage": []
+}

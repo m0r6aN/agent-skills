@@ -1,0 +1,1542 @@
+{
+  "atUtc": "2026-10-24T18:33:38.608015+00:00",
+  "gate3": "APPROVED_UNDER_EXISTING_STANDING_OWNER_AUTHORITY_EXACT_GREEN_CHAIN",
+  "ownerResume": "Direct owner P2D-B proceed under existing standing non-destructive decisions/approvals; complete exact-head green chain independently verified",
+  "head": "3be411d93a4eab3a222c2c5c33af7b1cfd35bcfc",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_git_protocol.py": "43813d00167aafc065cf66e04808c369a7ac8872244fa185e484a99cf129c463",
+    "src/keon/cortex/pipeline/ccm_git_worker.py": "fe04c0794099b720f83007bfdc7a7b0d3154d1a2f46a23f774d6fb4d9492e59a",
+    "src/keon/cortex/pipeline/ccm_git_runtime.py": "bea56dd96356b3bba9ba72560730fb51710f013ca5525ca0732bbb466beec399",
+    "tests/test_ccm_git_runtime.py": "a83f91ec95c476ef9a5d28504a762eafca5eb4358cbac199d293f75fa1bb7f6e",
+    "docker/ccm-git-source/Dockerfile": "58f8fc57bd97d1628ed0ca46be6cc3003bb667a678c9e79f1a92adafabc3e53a",
+    "docs/specs/ccm-git-runtime-v1.md": "f744555ce1540d0ae574cff6422e64906bae918c9fce4c7f638ba9780871ea28"
+  },
+  "pr": {
+    "baseRefName": "main",
+    "headRefOid": "3be411d93a4eab3a222c2c5c33af7b1cfd35bcfc",
+    "isDraft": false,
+    "mergeStateStatus": "CLEAN",
+    "mergeable": "MERGEABLE",
+    "state": "OPEN",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T18:31:29Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121085325/job/120952546363",
+        "name": "Import Gate (OSS must not reference governed)",
+        "startedAt": "2026-10-24T18:31:24Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T18:31:27Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121079797/job/120952531276",
+        "name": "Import Gate (OSS must not reference governed)",
+        "startedAt": "2026-10-24T18:31:20Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T18:32:38Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121085325/job/120952546350",
+        "name": "Unit Tests (3.10)",
+        "startedAt": "2026-10-24T18:31:23Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T18:32:37Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121079797/job/120952530667",
+        "name": "Unit Tests (3.10)",
+        "startedAt": "2026-10-24T18:31:20Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T18:32:19Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121085325/job/120952546276",
+        "name": "Unit Tests (3.11)",
+        "startedAt": "2026-10-24T18:31:24Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T18:32:28Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121079797/job/120952530587",
+        "name": "Unit Tests (3.11)",
+        "startedAt": "2026-10-24T18:31:20Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T18:32:35Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121085325/job/120952546391",
+        "name": "Unit Tests (3.12)",
+        "startedAt": "2026-10-24T18:31:24Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T18:32:37Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121079797/job/120952530542",
+        "name": "Unit Tests (3.12)",
+        "startedAt": "2026-10-24T18:31:20Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T18:32:14Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121085325/job/120952546051",
+        "name": "Lint + Type Check",
+        "startedAt": "2026-10-24T18:31:23Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T18:32:28Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121079797/job/120952530387",
+        "name": "Lint + Type Check",
+        "startedAt": "2026-10-24T18:31:20Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T18:33:08Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121085325/job/120952851255",
+        "name": "Benchmark (fake provider)",
+        "startedAt": "2026-10-24T18:32:40Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T18:33:01Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121079797/job/120952849913",
+        "name": "Benchmark (fake provider)",
+        "startedAt": "2026-10-24T18:32:40Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T18:33:07Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121085325/job/120952851229",
+        "name": "Proof Summary",
+        "startedAt": "2026-10-24T18:32:41Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T18:33:09Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121079797/job/120952849902",
+        "name": "Proof Summary",
+        "startedAt": "2026-10-24T18:32:41Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T18:33:09Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121085325/job/120952851323",
+        "name": "Tenant Isolation Proof",
+        "startedAt": "2026-10-24T18:32:41Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-24T18:33:08Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121079797/job/120952849992",
+        "name": "Tenant Isolation Proof",
+        "startedAt": "2026-10-24T18:32:41Z",
+        "status": "COMPLETED",
+        "workflowName": "CI"
+      }
+    ],
+    "url": "https://github.com/Keon-Systems/keon-cortex/pull/97"
+  },
+  "runs": [
+    {
+      "attempt": 1,
+      "conclusion": "success",
+      "event": "push",
+      "headSha": "3be411d93a4eab3a222c2c5c33af7b1cfd35bcfc",
+      "jobs": [
+        {
+          "completedAt": "2026-10-24T18:32:28Z",
+          "conclusion": "success",
+          "databaseId": 120952530387,
+          "name": "Lint + Type Check",
+          "startedAt": "2026-10-24T18:31:20Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-24T18:31:22Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-24T18:31:21Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:23Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "startedAt": "2026-10-24T18:31:22Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:23Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "startedAt": "2026-10-24T18:31:23Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:50Z",
+              "conclusion": "success",
+              "name": "Install dev deps",
+              "number": 4,
+              "startedAt": "2026-10-24T18:31:23Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:18Z",
+              "conclusion": "success",
+              "name": "black check",
+              "number": 5,
+              "startedAt": "2026-10-24T18:31:50Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:18Z",
+              "conclusion": "success",
+              "name": "isort check",
+              "number": 6,
+              "startedAt": "2026-10-24T18:32:18Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:26Z",
+              "conclusion": "success",
+              "name": "mypy",
+              "number": 7,
+              "startedAt": "2026-10-24T18:32:18Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:26Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 13,
+              "startedAt": "2026-10-24T18:32:26Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:26Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 14,
+              "startedAt": "2026-10-24T18:32:26Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:26Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 15,
+              "startedAt": "2026-10-24T18:32:26Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121079797/job/120952530387"
+        },
+        {
+          "completedAt": "2026-10-24T18:32:37Z",
+          "conclusion": "success",
+          "databaseId": 120952530542,
+          "name": "Unit Tests (3.12)",
+          "startedAt": "2026-10-24T18:31:20Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-24T18:31:22Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-24T18:31:21Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:23Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "startedAt": "2026-10-24T18:31:22Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:23Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "startedAt": "2026-10-24T18:31:23Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:46Z",
+              "conclusion": "success",
+              "name": "Install dependencies",
+              "number": 4,
+              "startedAt": "2026-10-24T18:31:23Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:34Z",
+              "conclusion": "success",
+              "name": "Run tests",
+              "number": 5,
+              "startedAt": "2026-10-24T18:31:46Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:34Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 9,
+              "startedAt": "2026-10-24T18:32:34Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:34Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 10,
+              "startedAt": "2026-10-24T18:32:34Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:34Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 11,
+              "startedAt": "2026-10-24T18:32:34Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121079797/job/120952530542"
+        },
+        {
+          "completedAt": "2026-10-24T18:32:28Z",
+          "conclusion": "success",
+          "databaseId": 120952530587,
+          "name": "Unit Tests (3.11)",
+          "startedAt": "2026-10-24T18:31:20Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-24T18:31:21Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-24T18:31:21Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:22Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "startedAt": "2026-10-24T18:31:21Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:23Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "startedAt": "2026-10-24T18:31:22Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:40Z",
+              "conclusion": "success",
+              "name": "Install dependencies",
+              "number": 4,
+              "startedAt": "2026-10-24T18:31:23Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:26Z",
+              "conclusion": "success",
+              "name": "Run tests",
+              "number": 5,
+              "startedAt": "2026-10-24T18:31:40Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:26Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 9,
+              "startedAt": "2026-10-24T18:32:26Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:26Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 10,
+              "startedAt": "2026-10-24T18:32:26Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:26Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 11,
+              "startedAt": "2026-10-24T18:32:26Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121079797/job/120952530587"
+        },
+        {
+          "completedAt": "2026-10-24T18:32:37Z",
+          "conclusion": "success",
+          "databaseId": 120952530667,
+          "name": "Unit Tests (3.10)",
+          "startedAt": "2026-10-24T18:31:20Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-24T18:31:21Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-24T18:31:21Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:22Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "startedAt": "2026-10-24T18:31:21Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:22Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "startedAt": "2026-10-24T18:31:22Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:43Z",
+              "conclusion": "success",
+              "name": "Install dependencies",
+              "number": 4,
+              "startedAt": "2026-10-24T18:31:22Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:36Z",
+              "conclusion": "success",
+              "name": "Run tests",
+              "number": 5,
+              "startedAt": "2026-10-24T18:31:43Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:36Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 9,
+              "startedAt": "2026-10-24T18:32:36Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:36Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 10,
+              "startedAt": "2026-10-24T18:32:36Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:36Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 11,
+              "startedAt": "2026-10-24T18:32:36Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121079797/job/120952530667"
+        },
+        {
+          "completedAt": "2026-10-24T18:31:27Z",
+          "conclusion": "success",
+          "databaseId": 120952531276,
+          "name": "Import Gate (OSS must not reference governed)",
+          "startedAt": "2026-10-24T18:31:20Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-24T18:31:22Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-24T18:31:21Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:23Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "startedAt": "2026-10-24T18:31:22Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:24Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "startedAt": "2026-10-24T18:31:23Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:24Z",
+              "conclusion": "success",
+              "name": "Run import gate",
+              "number": 4,
+              "startedAt": "2026-10-24T18:31:24Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:24Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 7,
+              "startedAt": "2026-10-24T18:31:24Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:24Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 8,
+              "startedAt": "2026-10-24T18:31:24Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:24Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 9,
+              "startedAt": "2026-10-24T18:31:24Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121079797/job/120952531276"
+        },
+        {
+          "completedAt": "2026-10-24T18:33:09Z",
+          "conclusion": "success",
+          "databaseId": 120952849902,
+          "name": "Proof Summary",
+          "startedAt": "2026-10-24T18:32:41Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-24T18:32:43Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-24T18:32:42Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:44Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "startedAt": "2026-10-24T18:32:43Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:44Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "startedAt": "2026-10-24T18:32:44Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:04Z",
+              "conclusion": "success",
+              "name": "Install dependencies",
+              "number": 4,
+              "startedAt": "2026-10-24T18:32:44Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:05Z",
+              "conclusion": "success",
+              "name": "Generate proof summary",
+              "number": 5,
+              "startedAt": "2026-10-24T18:33:04Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:05Z",
+              "conclusion": "success",
+              "name": "Assert benchmark_assertions_passed",
+              "number": 6,
+              "startedAt": "2026-10-24T18:33:05Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:07Z",
+              "conclusion": "success",
+              "name": "Upload proof summary artifact",
+              "number": 7,
+              "startedAt": "2026-10-24T18:33:05Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:07Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 13,
+              "startedAt": "2026-10-24T18:33:07Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:07Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 14,
+              "startedAt": "2026-10-24T18:33:07Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:07Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 15,
+              "startedAt": "2026-10-24T18:33:07Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121079797/job/120952849902"
+        },
+        {
+          "completedAt": "2026-10-24T18:33:01Z",
+          "conclusion": "success",
+          "databaseId": 120952849913,
+          "name": "Benchmark (fake provider)",
+          "startedAt": "2026-10-24T18:32:40Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-24T18:32:42Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-24T18:32:41Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:43Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "startedAt": "2026-10-24T18:32:42Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:43Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "startedAt": "2026-10-24T18:32:43Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:57Z",
+              "conclusion": "success",
+              "name": "Install dependencies",
+              "number": 4,
+              "startedAt": "2026-10-24T18:32:43Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:58Z",
+              "conclusion": "success",
+              "name": "Run benchmark",
+              "number": 5,
+              "startedAt": "2026-10-24T18:32:57Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:59Z",
+              "conclusion": "success",
+              "name": "Upload benchmark artifact",
+              "number": 6,
+              "startedAt": "2026-10-24T18:32:58Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:59Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 11,
+              "startedAt": "2026-10-24T18:32:59Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:59Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 12,
+              "startedAt": "2026-10-24T18:32:59Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:59Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 13,
+              "startedAt": "2026-10-24T18:32:59Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121079797/job/120952849913"
+        },
+        {
+          "completedAt": "2026-10-24T18:33:08Z",
+          "conclusion": "success",
+          "databaseId": 120952849992,
+          "name": "Tenant Isolation Proof",
+          "startedAt": "2026-10-24T18:32:41Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-24T18:32:43Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-24T18:32:42Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:44Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "startedAt": "2026-10-24T18:32:43Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:44Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "startedAt": "2026-10-24T18:32:44Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:03Z",
+              "conclusion": "success",
+              "name": "Install dependencies",
+              "number": 4,
+              "startedAt": "2026-10-24T18:32:44Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:03Z",
+              "conclusion": "success",
+              "name": "Generate tenant-isolation proof",
+              "number": 5,
+              "startedAt": "2026-10-24T18:33:03Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:03Z",
+              "conclusion": "success",
+              "name": "Assert all_checks_passed and shape",
+              "number": 6,
+              "startedAt": "2026-10-24T18:33:03Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:04Z",
+              "conclusion": "success",
+              "name": "Verify deterministic (double-run diff)",
+              "number": 7,
+              "startedAt": "2026-10-24T18:33:03Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:05Z",
+              "conclusion": "success",
+              "name": "Upload tenant-isolation proof artifact",
+              "number": 8,
+              "startedAt": "2026-10-24T18:33:04Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:05Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 15,
+              "startedAt": "2026-10-24T18:33:05Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:06Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 16,
+              "startedAt": "2026-10-24T18:33:05Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:06Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 17,
+              "startedAt": "2026-10-24T18:33:06Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121079797/job/120952849992"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121079797",
+      "workflowName": "CI"
+    },
+    {
+      "attempt": 1,
+      "conclusion": "success",
+      "event": "pull_request",
+      "headSha": "3be411d93a4eab3a222c2c5c33af7b1cfd35bcfc",
+      "jobs": [
+        {
+          "completedAt": "2026-10-24T18:32:14Z",
+          "conclusion": "success",
+          "databaseId": 120952546051,
+          "name": "Lint + Type Check",
+          "startedAt": "2026-10-24T18:31:23Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-24T18:31:25Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-24T18:31:25Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:26Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "startedAt": "2026-10-24T18:31:25Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:26Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "startedAt": "2026-10-24T18:31:26Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:46Z",
+              "conclusion": "success",
+              "name": "Install dev deps",
+              "number": 4,
+              "startedAt": "2026-10-24T18:31:26Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:01Z",
+              "conclusion": "success",
+              "name": "black check",
+              "number": 5,
+              "startedAt": "2026-10-24T18:31:46Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:02Z",
+              "conclusion": "success",
+              "name": "isort check",
+              "number": 6,
+              "startedAt": "2026-10-24T18:32:01Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:12Z",
+              "conclusion": "success",
+              "name": "mypy",
+              "number": 7,
+              "startedAt": "2026-10-24T18:32:02Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:12Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 13,
+              "startedAt": "2026-10-24T18:32:12Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:12Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 14,
+              "startedAt": "2026-10-24T18:32:12Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:12Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 15,
+              "startedAt": "2026-10-24T18:32:12Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121085325/job/120952546051"
+        },
+        {
+          "completedAt": "2026-10-24T18:32:19Z",
+          "conclusion": "success",
+          "databaseId": 120952546276,
+          "name": "Unit Tests (3.11)",
+          "startedAt": "2026-10-24T18:31:24Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-24T18:31:26Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-24T18:31:25Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:27Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "startedAt": "2026-10-24T18:31:26Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:27Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "startedAt": "2026-10-24T18:31:27Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:42Z",
+              "conclusion": "success",
+              "name": "Install dependencies",
+              "number": 4,
+              "startedAt": "2026-10-24T18:31:27Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:16Z",
+              "conclusion": "success",
+              "name": "Run tests",
+              "number": 5,
+              "startedAt": "2026-10-24T18:31:42Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:17Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 9,
+              "startedAt": "2026-10-24T18:32:16Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:17Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 10,
+              "startedAt": "2026-10-24T18:32:17Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:17Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 11,
+              "startedAt": "2026-10-24T18:32:17Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121085325/job/120952546276"
+        },
+        {
+          "completedAt": "2026-10-24T18:32:38Z",
+          "conclusion": "success",
+          "databaseId": 120952546350,
+          "name": "Unit Tests (3.10)",
+          "startedAt": "2026-10-24T18:31:23Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-24T18:31:25Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-24T18:31:25Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:26Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "startedAt": "2026-10-24T18:31:25Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:27Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "startedAt": "2026-10-24T18:31:26Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:46Z",
+              "conclusion": "success",
+              "name": "Install dependencies",
+              "number": 4,
+              "startedAt": "2026-10-24T18:31:27Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:36Z",
+              "conclusion": "success",
+              "name": "Run tests",
+              "number": 5,
+              "startedAt": "2026-10-24T18:31:46Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:36Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 9,
+              "startedAt": "2026-10-24T18:32:36Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:36Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 10,
+              "startedAt": "2026-10-24T18:32:36Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:36Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 11,
+              "startedAt": "2026-10-24T18:32:36Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121085325/job/120952546350"
+        },
+        {
+          "completedAt": "2026-10-24T18:31:29Z",
+          "conclusion": "success",
+          "databaseId": 120952546363,
+          "name": "Import Gate (OSS must not reference governed)",
+          "startedAt": "2026-10-24T18:31:24Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-24T18:31:25Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-24T18:31:25Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:26Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "startedAt": "2026-10-24T18:31:25Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:27Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "startedAt": "2026-10-24T18:31:26Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:27Z",
+              "conclusion": "success",
+              "name": "Run import gate",
+              "number": 4,
+              "startedAt": "2026-10-24T18:31:27Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:27Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 7,
+              "startedAt": "2026-10-24T18:31:27Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:27Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 8,
+              "startedAt": "2026-10-24T18:31:27Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:27Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 9,
+              "startedAt": "2026-10-24T18:31:27Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121085325/job/120952546363"
+        },
+        {
+          "completedAt": "2026-10-24T18:32:35Z",
+          "conclusion": "success",
+          "databaseId": 120952546391,
+          "name": "Unit Tests (3.12)",
+          "startedAt": "2026-10-24T18:31:24Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-24T18:31:26Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-24T18:31:25Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:27Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "startedAt": "2026-10-24T18:31:26Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:27Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "startedAt": "2026-10-24T18:31:27Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:31:45Z",
+              "conclusion": "success",
+              "name": "Install dependencies",
+              "number": 4,
+              "startedAt": "2026-10-24T18:31:27Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:32Z",
+              "conclusion": "success",
+              "name": "Run tests",
+              "number": 5,
+              "startedAt": "2026-10-24T18:31:45Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:32Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 9,
+              "startedAt": "2026-10-24T18:32:32Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:32Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 10,
+              "startedAt": "2026-10-24T18:32:32Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:32Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 11,
+              "startedAt": "2026-10-24T18:32:32Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121085325/job/120952546391"
+        },
+        {
+          "completedAt": "2026-10-24T18:33:07Z",
+          "conclusion": "success",
+          "databaseId": 120952851229,
+          "name": "Proof Summary",
+          "startedAt": "2026-10-24T18:32:41Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-24T18:32:43Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-24T18:32:41Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:43Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "startedAt": "2026-10-24T18:32:43Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:44Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "startedAt": "2026-10-24T18:32:43Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:02Z",
+              "conclusion": "success",
+              "name": "Install dependencies",
+              "number": 4,
+              "startedAt": "2026-10-24T18:32:44Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:02Z",
+              "conclusion": "success",
+              "name": "Generate proof summary",
+              "number": 5,
+              "startedAt": "2026-10-24T18:33:02Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:02Z",
+              "conclusion": "success",
+              "name": "Assert benchmark_assertions_passed",
+              "number": 6,
+              "startedAt": "2026-10-24T18:33:02Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:04Z",
+              "conclusion": "success",
+              "name": "Upload proof summary artifact",
+              "number": 7,
+              "startedAt": "2026-10-24T18:33:02Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:04Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 13,
+              "startedAt": "2026-10-24T18:33:04Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:04Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 14,
+              "startedAt": "2026-10-24T18:33:04Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:04Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 15,
+              "startedAt": "2026-10-24T18:33:04Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121085325/job/120952851229"
+        },
+        {
+          "completedAt": "2026-10-24T18:33:08Z",
+          "conclusion": "success",
+          "databaseId": 120952851255,
+          "name": "Benchmark (fake provider)",
+          "startedAt": "2026-10-24T18:32:40Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-24T18:32:42Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-24T18:32:42Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:43Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "startedAt": "2026-10-24T18:32:42Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:43Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "startedAt": "2026-10-24T18:32:43Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:05Z",
+              "conclusion": "success",
+              "name": "Install dependencies",
+              "number": 4,
+              "startedAt": "2026-10-24T18:32:43Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:05Z",
+              "conclusion": "success",
+              "name": "Run benchmark",
+              "number": 5,
+              "startedAt": "2026-10-24T18:33:05Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:06Z",
+              "conclusion": "success",
+              "name": "Upload benchmark artifact",
+              "number": 6,
+              "startedAt": "2026-10-24T18:33:05Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:06Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 11,
+              "startedAt": "2026-10-24T18:33:06Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:06Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 12,
+              "startedAt": "2026-10-24T18:33:06Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:06Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 13,
+              "startedAt": "2026-10-24T18:33:06Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121085325/job/120952851255"
+        },
+        {
+          "completedAt": "2026-10-24T18:33:09Z",
+          "conclusion": "success",
+          "databaseId": 120952851323,
+          "name": "Tenant Isolation Proof",
+          "startedAt": "2026-10-24T18:32:41Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-24T18:32:43Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-24T18:32:42Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:45Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "startedAt": "2026-10-24T18:32:43Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:32:45Z",
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "startedAt": "2026-10-24T18:32:45Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:04Z",
+              "conclusion": "success",
+              "name": "Install dependencies",
+              "number": 4,
+              "startedAt": "2026-10-24T18:32:45Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:05Z",
+              "conclusion": "success",
+              "name": "Generate tenant-isolation proof",
+              "number": 5,
+              "startedAt": "2026-10-24T18:33:04Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:05Z",
+              "conclusion": "success",
+              "name": "Assert all_checks_passed and shape",
+              "number": 6,
+              "startedAt": "2026-10-24T18:33:05Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:05Z",
+              "conclusion": "success",
+              "name": "Verify deterministic (double-run diff)",
+              "number": 7,
+              "startedAt": "2026-10-24T18:33:05Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:06Z",
+              "conclusion": "success",
+              "name": "Upload tenant-isolation proof artifact",
+              "number": 8,
+              "startedAt": "2026-10-24T18:33:05Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:06Z",
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 15,
+              "startedAt": "2026-10-24T18:33:06Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:07Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 16,
+              "startedAt": "2026-10-24T18:33:06Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-24T18:33:07Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 17,
+              "startedAt": "2026-10-24T18:33:07Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121085325/job/120952851323"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/40121085325",
+      "workflowName": "CI"
+    }
+  ],
+  "checksPassed": 16,
+  "initialLocalFindingsAndReviewsPreserved": true,
+  "sourceUnchangedSinceReviews": true,
+  "noBypassOrAdmin": true,
+  "newProviderRequests": 0,
+  "allReservationsHeld": true,
+  "full110SourceBookingHeld": true,
+  "affectedRoutes": "HELD",
+  "nativePrivatePi": "HELD",
+  "mergeRequested": true,
+  "merged": {
+    "headRefOid": "3be411d93a4eab3a222c2c5c33af7b1cfd35bcfc",
+    "mergeCommit": {
+      "oid": "0cdff676038d76c203f819ee697cda226980d305"
+    },
+    "mergedAt": "2026-10-24T18:33:42Z",
+    "state": "MERGED",
+    "url": "https://github.com/Keon-Systems/keon-cortex/pull/97"
+  },
+  "sourceAndMergeTreesEqual": true,
+  "allSixReviewedCommittedMergedBytesEqual": true
+}

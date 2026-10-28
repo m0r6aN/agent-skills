@@ -1,0 +1,56 @@
+{
+  "status": "One focused architecture repair approved by delegated authority",
+  "reproductions": {
+    "producerLabel": {
+      "projected": "Receipt",
+      "explicitAdmittedMarker": false
+    },
+    "camelProvenanceAccepted": true,
+    "receiptCollisionAccepted": "receipt-a",
+    "duplicateCautionAccepted": 2,
+    "wrongFixtureStateAndScoreStillPassInventoryTest": true
+  },
+  "decisions": [
+    {
+      "ids": [
+        "A1",
+        "B-01"
+      ],
+      "disposition": "FIX explicit requested_authority and read-only admitted=False; preserve all63frozen classification mappings, do not reject legaltier/kindrows just because reviewer suggestedit; no positive produceradmission"
+    },
+    {
+      "ids": [
+        "A2",
+        "B-03"
+      ],
+      "disposition": "FIX strictsnakecase provenance, normative nestedreceipt alias/name/null/extra rules and collisionreject in v2boundary; preserve v1ReceiptAnchor/CandidateProvenancebehavior"
+    },
+    {
+      "ids": [
+        "A3",
+        "B-02"
+      ],
+      "disposition": "FIX structured externallyspecified input/result vectors and bindingtests for all archival/loss/time cases, math,visibility,legacy,caution; no futureworker implementation"
+    },
+    {
+      "ids": [
+        "A4"
+      ],
+      "disposition": "FIX freezeunresolvedscopedreference admission/selfreplacement/crossscope vectors; reject duplicatecautionrole/domain; canonicalscopedpositiveIDs"
+    },
+    {
+      "ids": [
+        "A5",
+        "B-05"
+      ],
+      "disposition": "FIX 1.0/1.1/handoff/rawconcat replay, UTC/receipt negatives and failure-reasonnonadmission cases"
+    },
+    {
+      "ids": [
+        "B-04"
+      ],
+      "disposition": "FIX concrete amended scopedPlaneADDL and registry/milestone/job/key/cursorinterfaces in DOCUMENT ONLY, preserving currentidentity/visibilitylaw; do not applyDBDDL or inventqualifiedkeyprovider"
+    }
+  ],
+  "scope": "Same5allowedpaths; preserve oldv1and238test identities; one repair Step0 thenone sourceproposal. ModelSolmedium, maxinput60000 each/maxoutput1536then16384, singleHTTPrequesteach, no retries, <=$0.50 modeledcombined,600seccombined local observation. Sourceeffects hostonly. Required2reviewclosureafterrepair; no selfacceptance."
+}

@@ -48,6 +48,8 @@ observation ("at 1440px the nav renders as X").
 
 ### 2. Assign one distinct lens per seat
 
+Machine-local addition (2026-10-23): **Kimi K3.1 Pro / Moonshot** is available as a supplementary council seat for public code/contract reasoning. Read [its qualified dispatch instructions](references/kimi-k31.md) before selecting it; its bounded L3 launcher supersedes the generic Pi/CLI and retry instructions for this seat only. Required reviewer lanes and critique quorum remain unchanged.
+
 Identical prompts produce redundancy; distinct lenses produce coverage. Diversity catches
 failure modes that redundancy cannot. Give each seat a role one sentence long, plus "judge X
 hardest". Default roster (adapt the lenses to the domain, keep the spread).

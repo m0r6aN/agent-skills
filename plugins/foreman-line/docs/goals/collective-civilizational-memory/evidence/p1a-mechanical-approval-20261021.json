@@ -1,0 +1,20 @@
+{
+  "recordedAtUtc": "2026-10-21T22:06:28.396002+00:00",
+  "source": "Direct human authorization relayed from oversight chat01a158b8-93f8-7423-b5b6-aaca46092870",
+  "exact": "Approve applying the exact mechanical patch to the two frozen files, brother. Run the checks afterward and keep paid reviews on hold until the reviewer controls are qualified.",
+  "patchSha256": "fa8cdab381ff2bff4529e2bb032e0b042d125ab10249b484ccdca1b03dac3ef2",
+  "paths": [
+    "src/keon/cortex/ingress/models_v2.py",
+    "tests/test_ccm_contracts_v2.py"
+  ],
+  "paidReviews": "HELD",
+  "modelRequestsAuthorized": 0,
+  "originalCandidatePins": {
+    "src/keon/cortex/envelope/taxonomy.py": "1f2cacaefe3b5086ea4a556c50677ba9e1e3719d51b2944f74caf1712712424d",
+    "src/keon/cortex/ingress/models_v2.py": "86fc439b5a22f1b0625c64ce0dab494bd73c035d0350c9b59859bcb7d87173f6",
+    "tests/fixtures/ccm/contracts-v2.json": "de4bde4dfee3299dabc5d87cf53566266d3d798391417bbfa7ae40f1335c2dd8",
+    "tests/test_ccm_contracts_v2.py": "7814925b144a129bef7b64da5b120e63cbfae67f0c3815b9ccdbd48d19fda77e",
+    "docs/specs/ccm-memory-graph-v2.md": "3481152e93b611ebfe3ea53450ed629a733fd32139d0fa926f812c301cdbed4e"
+  },
+  "originalsPreserved": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\openai-api-document-20261021-01\\mechanical-applied-20261021-01\\originals"
+}

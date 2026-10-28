@@ -1,0 +1,56 @@
+{
+  "atUtc": "2026-10-24T18:13:26.788985+00:00",
+  "status": "PASS_FIXED_IN_MEMORY_GUARD_FAULT_SENSITIVITY",
+  "cases": [
+    {
+      "fault": "readonly",
+      "status": "EXPECTED_REGRESSION_DETECTED",
+      "failedAssertions": [
+        "test_each_container_predicate[path38-1]"
+      ],
+      "errors": [],
+      "sourceFilesChanged": false
+    },
+    {
+      "fault": "nonrecursive",
+      "status": "EXPECTED_REGRESSION_DETECTED",
+      "failedAssertions": [
+        "test_each_container_predicate[path39-value39]",
+        "test_each_container_predicate[path40-1]"
+      ],
+      "errors": [],
+      "sourceFilesChanged": false
+    },
+    {
+      "fault": "version",
+      "status": "EXPECTED_REGRESSION_DETECTED",
+      "failedAssertions": [
+        "test_success_scalars[version-True]"
+      ],
+      "errors": [],
+      "sourceFilesChanged": false
+    },
+    {
+      "fault": "duplicates",
+      "status": "EXPECTED_REGRESSION_DETECTED",
+      "failedAssertions": [
+        "test_bad_json[[{\"version\":1,\"version\":1,\"ok\":false,\"code\":\"invalid_input\"}]]"
+      ],
+      "errors": [],
+      "sourceFilesChanged": false
+    },
+    {
+      "fault": "provider_env",
+      "status": "EXPECTED_REGRESSION_DETECTED",
+      "failedAssertions": [
+        "test_startup_rejects_unexpected_environment[OPENAI_API_KEY]"
+      ],
+      "errors": [],
+      "sourceFilesChanged": false
+    }
+  ],
+  "count": 5,
+  "allOwnedContainersAbsent": true,
+  "productionSourceMutated": false,
+  "providerRequests": 0
+}

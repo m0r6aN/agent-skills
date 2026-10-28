@@ -1,0 +1,45 @@
+{
+  "atUtc": "2026-10-23T22:06:48.001432+00:00",
+  "status": "completed_pending_parent_validation",
+  "modelRequested": "gpt-6.1-sol",
+  "bookedCredits": 16.83,
+  "packetSha256": "246b87c033cace2310b014687dbd31225b04a5a817de77cfc691bd93bf5eb601",
+  "guard": {
+    "atUtc": "2026-10-23T22:06:48.000472+00:00",
+    "balance": 5990.5,
+    "existingAllConservativeIncluding120": 3878.579,
+    "newPhaseConservative": 350,
+    "phaseCap": 350,
+    "dayConservative": 4690.579,
+    "dayCeiling": 5000,
+    "effortConservative": 7804.879,
+    "effortCeiling": 9000,
+    "afterHolds": 1761.9209999999998,
+    "floor": 1000,
+    "oldUnknownsReleased": false,
+    "failed120Retained": true,
+    "accountDeltaNotExactAttribution": true,
+    "foreignLedgerSha256": "6c931ccc348e9df89e7c4bb016d62fd3172ae673feb8bdf3f9df617b6f138c13",
+    "expiresUtc": "2026-10-24T04:00:00Z"
+  },
+  "postsMaximum": 1,
+  "automaticRetries": 0,
+  "maxOutputTokens": 8192,
+  "HTTPStatus": 200,
+  "vendorRequestId": null,
+  "modelReturned": "gpt-6.1-sol",
+  "responseId": "chatcmpl-fceb69e0-2ea1-4b5f-87b5-b5b22c0d0b95",
+  "finishReason": "stop",
+  "usage": {
+    "prompt_tokens": 9296,
+    "completion_tokens": 736,
+    "total_tokens": 10032,
+    "prompt_tokens_details": {
+      "cache_write_tokens": 9293
+    },
+    "reasoning_tokens": 153
+  },
+  "reportedCredits": 16.5,
+  "catalogEstimate": 16.83,
+  "completedAtUtc": "2026-10-23T22:07:06.056410+00:00"
+}

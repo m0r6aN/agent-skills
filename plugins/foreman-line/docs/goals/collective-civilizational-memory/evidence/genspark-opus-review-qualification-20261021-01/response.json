@@ -1,0 +1,47 @@
+{
+  "id": "chatcmpl-f013db6c-ab58-4799-811c-82b2fb19ada2",
+  "object": "chat.completion",
+  "created": 1792599431,
+  "model": "claude-opus-5-5",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "```json\n{\n  \"verdict\": \"changes_required\",\n  \"findings\": [\n    {\n      \"line\": 2,\n      \"trigger\": \"A candidate supplies record[\\\"source_kind\\\"] = \\\"verified_tool\\\" or \\\"human_asserted\\\". Any caller can set this field.\",\n      \"consequence\": \"The caller label alone satisfies the producer condition. No authentication occurs. The candidate's record ID, content hash, tenant and current authorized scope are never bound to an approved producer.\",\n      \"required_property\": \"Supported standing requires independent authentication that binds the exact record ID, content hash, tenant and current authorized scope to an approved producer. Caller-supplied labels must not authenticate a producer.\"\n    },\n    {\n      \"line\": 3,\n      \"trigger\": \"supplied_parents is an empty list or other empty iterable. all() over an empty sequence returns True.\",\n      \"consequence\": \"A record with zero parents passes the parent check. Combined with an accepted label, it is admitted with no parent at all.\",\n      \"required_property\": \"Every derived record must have at least one currently authoritative parent. An empty or missing parent set must fail closed.\"\n    },\n    {\n      \"line\": 3,\n      \"trigger\": \"Each caller-supplied parent dict contains \\\"score\\\": 0.8 or higher. The parent can be fabricated, missing from the trusted store, out of scope, purged or unresolved.\",\n      \"consequence\": \"Untrusted parent assertions and numeric scores are accepted as proof of parentage. The trusted lookup is never consulted, so missing, out-of-scope, purged and unresolved parents are admitted.\",\n      \"required_property\": \"Each parent must be resolved through the trusted lookup and confirmed as currently authoritative and within the record's tenant and scope. Supplied parent data and scores must be treated as untrusted and must not grant standing.\"\n    },\n    {\n      \"line\": 4,\n      \"trigger\": \"Any input where both the label and score conditions hold.\",\n      \"consequence\": \"The function returns True, meaning admitted as supported, based only on caller-controlled fields. No producer authentication and no trusted parent resolution happen on any path.\",\n      \"required_property\": \"A True result must occur only after producer authentication succeeds and at least one trusted, currently authoritative, in-scope parent resolves. Every other path must return a fail-closed result.\"\n    }\n  ],\n  \"coverage_gaps\": [\n    \"Observed defects (lines 2-4) are distinct from omissions. The example contains no authentication step, no trusted parent lookup, and no tenant, scope, purge or currency checks. These omissions are reported as findings only because line 4 returns acceptance without them. The intended interfaces for authentication and trusted lookup are unknown.\",\n    \"Input mutation: the shown lines only read via .get() and do not mutate record or supplied_parents. This is an observation from the text only. It assumes .get() on the supplied objects has no side effects, and that is unknown.\",\n    \"Exception behavior is unknown. A non-dict record or parent, or a non-numeric score such as a string, may raise. Whether the caller treats an exception as a rejection (fail closed) or otherwise is not specified.\",\n    \"Edge values: a NaN score fails the >= comparison and would reject. A boolean True score compares as 1 and would pass. Whether score-type validation matters is moot, because scores must not grant standing at all.\",\n    \"The return contract is unspecified. It is unclear whether a boolean True means 'supported' and whether any distinct 'unsupported but stored' state exists.\",\n    \"Not assessed: the caller context, the definition of 'approved producer' and 'current authorized scope', concurrency or time-of-check issues between authentication and lookup, and logging or audit"
+      },
+      "finish_reason": "length"
+    }
+  ],
+  "usage": {
+    "completion_tokens": 1536,
+    "prompt_tokens": 625,
+    "total_tokens": 2161,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 309,
+      "rejected_prediction_tokens": null,
+      "text_tokens": 1227
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "cache_write_tokens": 621,
+      "text_tokens": 0,
+      "cache_creation_tokens": 621,
+      "cache_creation_token_details": {
+        "ephemeral_5m_input_tokens": 621,
+        "ephemeral_1h_input_tokens": 0
+      }
+    },
+    "cache_creation_input_tokens": 621,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "global",
+    "speed": "standard"
+  },
+  "genspark_usage": {
+    "credits": 17.6,
+    "unit": "credit"
+  }
+}

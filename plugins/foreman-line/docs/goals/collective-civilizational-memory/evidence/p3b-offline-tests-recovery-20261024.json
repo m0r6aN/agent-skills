@@ -1,0 +1,10 @@
+{
+  "atUtc": "2026-10-24T23:17:04.891382+00:00",
+  "status": "LOSSLESS_FIXED_MEMBER_RECOVERY_NOT_ACCEPTANCE",
+  "algorithm": "Exact sole candidate JSON member extraction, no source changes/inference",
+  "candidateSha256": "6c3b7bc093dab82b3361bf7540473cca13314a8d2ee4f4c16c17fc3a3363db02",
+  "sourceSha256": "7406c951fe53b62f77b6fedf6d4889c02af3276223d71fe938324fd6069d2d12",
+  "originalReceiptUnchanged": true,
+  "fullReservationHeld": true,
+  "providerRequests": 0
+}

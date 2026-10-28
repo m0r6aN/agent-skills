@@ -1,0 +1,33 @@
+{
+  "schema": "pantheon.planning-observations.v1",
+  "date": "2026-10-19",
+  "sessionId": "01a15424-1fd5-77a2-a73a-d92a60a5de34",
+  "evidenceClass": "local tool and authenticated UI observations; not Runtime receipts",
+  "historicalValidator": {"command": "node docs/reviews/pantheon-incarnation-v0-plan-review/validate-manual-preparation.cjs", "exitCode": 0, "allChecksPassed": true, "providerCalls": 0},
+  "historicalSupervisionTests": {"command": "node --test D:/Repos/agent-skills/plugins/foreman-line/pi-package/review-tools/review.test.mjs", "passed": 9, "failed": 0, "liveProviderEvidence": false},
+  "isolationProbe": {
+    "recordedAt": "2026-10-19T12:38:07.4989535Z",
+    "container": "pantheon-isolation-probe-01a15424-20261019123806",
+    "image": "sha256:a797d6440ed0b09e51fb884f30e47ec14cbf58482c5e19db681a0cb8df45b089",
+    "dockerServer": "29.8.2", "kernel": "6.6.87.2-microsoft-standard-WSL2",
+    "checksPassed": ["nonroot","capabilitiesDropped","noNewPrivileges","seccomp","noDockerSocket","noHostWorkspace","networkIsLoopbackOnly","pidsLimited","memoryLimited","rootReadOnly","tmpfsWritable"],
+    "network": "none", "pull": "never", "mounts": [], "autoRemoved": true,
+    "limitations": ["No malicious-host or kernel-escape test", "No Runtime admission", "No workspace/broker integration", "Not a dedicated guest VM"]
+  },
+  "accountConsole": {
+    "organization": "Morgan Findings LLC", "workspace": "Default", "existingKeyRecordCount": 6,
+    "purchasedCreditUsd": 49.92, "promotionalCreditUsd": 100, "dashboardAggregateUsd": 149.94,
+    "aggregateReconciled": false, "promoExpiry": "2026-11-16", "promoApiApplicable": true,
+    "autoReload": "ON", "retention": "ON / 30 days", "developmentPartnerJoinOffered": true,
+    "feedbackEnabled": false, "codeMetricsEnabled": true, "selectedModelQuotaRowsVisible": true,
+    "keyValuesRead": false, "credentialBindingAvailable": false, "liveInference": false, "settingsChanged": false
+  },
+  "githubReadOnly": {
+    "pantheon": {"repository": "m0r6aN/pantheon26", "private": true, "viewerPermission": "ADMIN", "defaultBranch": null, "heads": [], "rulesetsListed": []},
+    "foreman": {"repository": "m0r6aN/agent-skills", "private": true, "viewerPermission": "ADMIN", "defaultBranch": "main"},
+    "caveat": "Read-only repository metadata; effective branch rules and actor must be rechecked for each actual merge. No clone, push or merge performed."
+  },
+  "externalInferenceRequestsThisPlanningSession": 0,
+  "ratified": false,
+  "ownershipTransferred": false
+}

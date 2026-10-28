@@ -1,0 +1,12 @@
+{
+  "atUtc": "2026-10-22T05:13:16.675836+00:00",
+  "frozenIndependentReferenceSha256": "f4a2b99f7f563833c510b80733ff23999861756fa19a6e46d96d149af8dd2087",
+  "method": "Independent per-codepoint reencoded-length oracle frozen before builder output; compares actual offsets, payloads and both SHA256fields, no productionboundaryalgorithm reused",
+  "independentFixtureCases": 10,
+  "formatCaseComparisons": 20,
+  "malformedUtf8ClosedExceptions": 4,
+  "largestExpectedChunks": 65,
+  "pureLocalSyntheticOnly": true,
+  "rawNulPreservation": "Intended transientraw behavior, not sanitization; P3muststrictdecodeandP2Abeforeenqueue",
+  "sourceSafety": "No provider/process environment values or tool transcripts in these fixtures/proofs"
+}

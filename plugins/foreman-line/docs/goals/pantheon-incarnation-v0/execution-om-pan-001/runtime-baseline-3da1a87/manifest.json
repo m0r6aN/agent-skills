@@ -1,0 +1,37 @@
+{
+  "schema": "pantheon.source-snapshot.v1",
+  "observedAt": "2026-10-19T14:36:42.156Z",
+  "repository": "D:/Repos/keon-omega/keon-systems",
+  "commit": "3da1a87f1519e1661b26059bfc773a446cc763f4",
+  "source": "git show exact remote-observed commit; no working-tree checkout change",
+  "files": [
+    {
+      "source": "src/Keon.Runtime.Api/LaunchReadiness.cs",
+      "commit": "3da1a87f1519e1661b26059bfc773a446cc763f4",
+      "path": "D:/Repos/agent-skills/plugins/foreman-line/docs/goals/pantheon-incarnation-v0/execution-om-pan-001/runtime-baseline-3da1a87/LaunchReadiness.cs",
+      "bytes": 4819,
+      "sha256": "4cfd2a72310de994a9e3a7efbbf3aa297c61814eac9a101ffe31fb0b023a224b"
+    },
+    {
+      "source": "src/Keon.Runtime/Observability/Persistence/SqlitePermissionSpendLedger.cs",
+      "commit": "3da1a87f1519e1661b26059bfc773a446cc763f4",
+      "path": "D:/Repos/agent-skills/plugins/foreman-line/docs/goals/pantheon-incarnation-v0/execution-om-pan-001/runtime-baseline-3da1a87/SqlitePermissionSpendLedger.cs",
+      "bytes": 71903,
+      "sha256": "b3fd028b252cd115847e15b8e3dd744fef546265872cec01be1930650a4ed541"
+    },
+    {
+      "source": "src/Keon.Verify/AtomicEffectSpendTransaction.cs",
+      "commit": "3da1a87f1519e1661b26059bfc773a446cc763f4",
+      "path": "D:/Repos/agent-skills/plugins/foreman-line/docs/goals/pantheon-incarnation-v0/execution-om-pan-001/runtime-baseline-3da1a87/AtomicEffectSpendTransaction.cs",
+      "bytes": 48021,
+      "sha256": "027742f91ce5e15e69de5ac96cc9bbb5ccfc08bb0353cb5dbaf20d9c0e61ce78"
+    },
+    {
+      "source": "src/Keon.Runtime/Observability/Persistence/DependencyInjection/ReceiptPersistenceServiceCollectionExtensions.cs",
+      "commit": "3da1a87f1519e1661b26059bfc773a446cc763f4",
+      "path": "D:/Repos/agent-skills/plugins/foreman-line/docs/goals/pantheon-incarnation-v0/execution-om-pan-001/runtime-baseline-3da1a87/ReceiptPersistenceServiceCollectionExtensions.cs",
+      "bytes": 4188,
+      "sha256": "a9856c11899e92a72c530aad005a23862ba275aa9bb2449060ea7943ae7c88f4"
+    }
+  ]
+}

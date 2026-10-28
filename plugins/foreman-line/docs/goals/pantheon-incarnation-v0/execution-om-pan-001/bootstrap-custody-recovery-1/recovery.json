@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-19T14:42:29.4248066Z",
+  "reason": "guard detected unheld lock while original owner process remained alive",
+  "oldProcessId": 33896,
+  "releaseObserved": true,
+  "oldProcessExited": true,
+  "providerAttemptCreated": false,
+  "credentialResolved": false,
+  "ownerUnchanged": "01a15424-1fd5-77a2-a73a-d92a60a5de34"
+}

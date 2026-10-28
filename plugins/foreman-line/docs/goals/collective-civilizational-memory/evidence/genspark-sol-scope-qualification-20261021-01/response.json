@@ -1,0 +1,29 @@
+{
+  "id": "chatcmpl-5ce47ace-ee4d-489f-9c85-660330c28bc1",
+  "object": "chat.completion",
+  "created": 1792599780,
+  "model": "gpt-6.1-sol",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"role\": \"artifact_only_builder_candidate\",\n  \"acceptance_criteria\": [\n    {\n      \"id\": 1,\n      \"summary\": \"Proposed: extend canonical taxonomy additively with CAUSAL, REPULSIVE, BUFFERED and orthogonal ValidityStatus; add shards/2.0 validation enforcing closed tier/kind/state rules, UTC times, finite numbers, trusted admission and non-content diagnostics. Preserve v1 behavior, ranks, serialized identities, scoped/handoff hashes and receipt/cognition separation. Reject null supersession replacements and persisted derived_decay_state.\"\n    },\n    {\n      \"id\": 2,\n      \"summary\": \"Proposed: freeze canonical JSON fixtures covering the complete accepted/rejected tier-kind cross-product, actual-validator-compatible canonical/scoped IDs, old replay, UTC events, transitions, migration and errors. Freeze civic rejection, caution and multi-parent fields, casing, enum encoding, aliases, absent/null/default semantics and S11 negatives using supplied normative inputs; record source/copy comparison and pinned contract version.\"\n    },\n    {\n      \"id\": 3,\n      \"summary\": \"Proposed: distinguish resolved trusted-parent mathematics from producer payloads. Assert Procedural [0.85,1.0] -> distilled_verified/0.70/ProceduralMemory and [0.20] -> unverified_candidate/0.18/Summary. Reject empty/nonfinite parents and fail closed for missing, invisible, unauthenticated, substituted parents or injected scores/tiers/verification. Numeric inheritance never grants evidentiary or execution standing.\"\n    },\n    {\n      \"id\": 4,\n      \"summary\": \"Proposed: specify sole/all-parent loss -> archived/contested; partial loss preserves every surviving archival state while contesting validity; purged children remain unchanged. Cover repeated/equal/older signals, explicit invalidation reasons, terminal purges and no implicit archived restoration. Buffer bookkeeping uses event-time deduplicated verified successes, strict 0.50/0.25 thresholds and at most one archival transition per sweep.\"\n    },\n    {\n      \"id\": 5,\n      \"summary\": \"Proposed: document complete S03-S12 contracts: scoped temporal Plane-A DDL, immutable versioned endpoints, preserved edge hashing, current authorization, bounded traversal/cursors, total routing and whole-warning/conflict budgets, deletion milestones/jobs/fences, key-custody coverage, civic caution and fail-closed scrubbing. Outline P2 -> P3 -> P4 -> P5 Wave1; P6 -> P7/P8 Wave2; serialize api.py integration ownership without making downstream packets dispatchable.\"\n    },\n    {\n      \"id\": 6,\n      \"summary\": \"Proposed: version legacy provenance admission and fixtures. High trust requires exact producer/version/source-kind mapping plus authenticated original-record/content/scope binding; labels, issuedBy and receipt pointers are insufficient. No concrete producer is qualified from supplied evidence. Unknown/unauthenticated sources remain unverified_candidate. Keep producer allowlist/authentication evidence explicitly open for later bounded migration before P3 high-trust backfill; this does not block contract-only P1A closure.\"\n    },\n    {\n      \"id\": 7,\n      \"summary\": \"Proposed: independently specified expectations cover same-tenant cross-role denial, historical current-authorization denial, terminal states and old replay. Record implementation versus contract-only coverage, pre-P1A exact-base gravity/replay baseline identities and retained outputs, and downstream source/version/hash pins. Preserve S05-S07 constants; P1B independently recomputes numerics under its AC4.\"\n    }\n  ],\n  \"allowed_files\": [\n    \"docs/specs/ccm-memory-graph-v2.md\",\n    \"src/keon/cortex/envelope/taxonomy.py\",\n    \"src/keon/cortex/ingress/models_v2.py\",\n    \"tests/test_ccm_contracts_v2.py\",\n    \"tests/fixtures/ccm/contracts-v2.json\"\n  ],\n  \"non_goals\": [\n    \"No implementation, tools, repository access, delegation, follow-up, execution, approval or file changes here.\",\n    \"No migrations, HTTP/api.py wiring, storage/privacy workers, live resolver/verifier/receipt authority, scoring implementation, runtime multi-parent conversion or changed legacy event IDs.\",\n    \"No imports, cloud/credentials, key provider/store, actual shred, deployment, OPMEM/Gateway edits, generated snapshots or unrelated configuration.\",\n    \"No claimed tests, live interoperability, SQL enforcement, traversal, erasure or overall readiness.\"\n  ],\n  \"flags\": [\n    \"Accepted S01-S12 and amended AC6 override conflicting v4; historical planning grants confer no authority.\",\n    \"Human tree approval is reported, not independently verified; Gate 2 and implementation GO remain separate. This artifact changes nothing.\",\n    \"Missing implementation inputs: existing taxonomy/ingress/ID validators and named tests; complete referenced laws; P1C Required wire behavior; exact pre-P1A baseline evidence. Observed HEAD is not an admitted clean base.\",\n    \"No exact spec hash was supplied. Future mechanics require separately pinned artifacts, applicable reviews, registration, admitted route and enforceable budgets. Additional required paths need amendment.\"\n  ]\n}"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 14303,
+    "completion_tokens": 1145,
+    "total_tokens": 15448,
+    "prompt_tokens_details": {
+      "cache_write_tokens": 14300
+    },
+    "reasoning_tokens": 62
+  },
+  "genspark_usage": {
+    "credits": 25.3,
+    "unit": "credit"
+  }
+}

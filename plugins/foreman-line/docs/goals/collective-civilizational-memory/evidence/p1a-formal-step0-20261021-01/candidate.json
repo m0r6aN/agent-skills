@@ -1,0 +1,51 @@
+{
+  "phase": "step0_stop",
+  "base": "efb5f4bcead899332f4f35f5e0b3a181eb988d2c",
+  "worktree": "D:/Repos/ccm-worktrees/cortex-p1a",
+  "branch": "feat/foreman-line-ccm-p1a",
+  "active_work_order_sha256": "e11b0da82f80b4dd1a993ae3993951782360f1a5adb791a14f438a12c6ce55e1",
+  "acceptance_criteria": [
+    {
+      "id": 1,
+      "summary": "Add canonical enums and isolated v2 tier/kind/state validation; preserve v1 behavior, identities and receipt/cognition separation. Reject null supersession replacements and persisted derived_decay_state."
+    },
+    {
+      "id": 2,
+      "summary": "Freeze canonical fixtures covering the total tier/kind cross-product, legacy replay, valid canonical/scoped IDs, UTC times, transitions, migration and exact civic rejection/caution/multi-parent wire semantics, including aliases, defaults, nullability and errors."
+    },
+    {
+      "id": 3,
+      "summary": "Specify trusted resolved-parent derivation: [0.85,1.0] gives distilled_verified/0.70/ProceduralMemory; [0.20] gives unverified_candidate/0.18/Summary. Reject empty/nonfinite inputs and fail closed on unresolved, invisible, unauthenticated, substituted or producer-injected trust."
+    },
+    {
+      "id": 4,
+      "summary": "Cover parent-loss archival/contestation, partial-loss archival preservation, terminal purge, equality/repeated-signal no-ops and no implicit archived restoration; preserve buffered-success evidence and one-transition sweep semantics."
+    },
+    {
+      "id": 5,
+      "summary": "Document complete accepted S03–S12 contracts, scoped temporal Plane-A DDL, routing/budget safety, deletion/key-custody/scrubber interfaces and named Wave-1/Wave-2 dependencies; serialize shared API integration ownership without enabling downstream dispatch."
+    },
+    {
+      "id": 6,
+      "summary": "Define versioned legacy admission bound to exact producer/version/source-kind, authenticated original record/content identity and scope. No high-trust producer is qualified; missing/unknown/unauthenticated sources remain unverified. Keep positive allowlist/authentication qualification explicitly open before high-trust backfill."
+    },
+    {
+      "id": 7,
+      "summary": "Use externally specified expectations for visibility negatives, terminal states and legacy replay. Distinguish executable validation from contract-only coverage; pin S05–S07 formula/source identities and pre-P1A replay evidence without implementing scoring or depending on future P1B output."
+    }
+  ],
+  "allowed_files": [
+    "docs/specs/ccm-memory-graph-v2.md",
+    "src/keon/cortex/envelope/taxonomy.py",
+    "src/keon/cortex/ingress/models_v2.py",
+    "tests/test_ccm_contracts_v2.py",
+    "tests/fixtures/ccm/contracts-v2.json"
+  ],
+  "flags": [
+    "Restated and stopped; no implementation, tools, execution, mutation or approval performed.",
+    "Worktree cleanliness, HEAD, baseline 238 passed and delegated Gate 2 recording are supplied host assertions, not independently verified results or claims by this assistant.",
+    "Accepted S01–S12 and amended AC6 override conflicting historical v4; active metadata derivative does not change approved scope.",
+    "No blocking contract-input conflict identified. Future runtime resolver, producer qualification, key coverage and enforcement evidence remain separate dependencies, not P1A implementation authority.",
+    "Future output is candidate complete-source JSON for exactly five files; no HTTP, storage, scoring, deletion workers, live verification or provider implementation."
+  ]
+}

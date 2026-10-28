@@ -1,0 +1,93 @@
+{
+  "atUtc": "2026-10-22T03:18:14.555881+00:00",
+  "status": "Independent CHANGES_REQUIRED; ONE focused repair pending builder Step0",
+  "review": {
+    "verdict": "CHANGES_REQUIRED",
+    "findings": [
+      {
+        "id": "F1",
+        "severity": "high",
+        "path": "scripts/ccm_check_postgres.py",
+        "location": "_check_with_driver: '[0,0]'::vector probe and hnsw.iterative_scan read",
+        "trigger": "pgvector 0.8.0+ is installed, but this session has not yet loaded vector.so. This is the normal case when the probe is the first vector use in a fresh backend, and on servers where vector is not in shared_preload_libraries.",
+        "actual_behavior": "The code assumes that casting a text literal to the vector type loads the library and registers the hnsw.* GUCs. That assumption is unproved. A text-literal-to-vector cast calls vector_in, which should load the module and run _PG_init. However, current_setting('hnsw.iterative_scan', true) can return NULL if no load occurred, or a placeholder value if the GUC was set in config before load. Separately, if the cast itself errors (for example, the vector type lives in a non-search_path schema), the whole run becomes unavailable/query_failed instead of unsupported/iterative_scan_unproved. No test or document evidence shows the load semantics. The fake driver returns True and 'off' unconditionally, so the 'loads GUCs' comment is asserted, not verified.",
+        "violated_requirement": "Iterative-scan setting must be proved via a supported read-only probe after loading/recognizing vector capability. If it cannot be established, mark unsupported with iterative_scan_unproved and never manufacture a pass. The documentation must be honest.",
+        "required_change": "Make the probe robust and fail closed. Schema-qualify the type, or look up the vector type via pg_type/pg_extension. Wrap the cast and the GUC read in a savepoint (connection.transaction() nested) so a failure maps to iterative_scan_unproved rather than unavailable. Optionally corroborate with a read-only pg_settings row showing vartype enum and enumvals that include relaxed_order. Downgrade the code comment and documentation claims to 'expected; must be confirmed by AC4 real-DB evidence'. Add fake tests for a cast failure mapping to unsupported, and for a NULL setting after the cast."
+      },
+      {
+        "id": "F2",
+        "severity": "medium",
+        "path": "scripts/ccm_check_postgres.py",
+        "location": "_check_with_driver outer except / _exception_report",
+        "trigger": "A SET LOCAL or catalog query raises after the connection is established, for example asyncpg QueryCanceledError from statement_timeout, or InsufficientPrivilegeError.",
+        "actual_behavior": "Any query failure discards observed state and reports unavailable/3 with only query_failed or query_timeout. This is consistent with the contract, which maps query failure to unavailable. However, timeout detection relies on matching type-name strings. asyncpg raises asyncio.TimeoutError for command_timeout and QueryCanceledError for statement_timeout; both names happen to match. The connect timeout is classified as query_timeout rather than connection_unavailable, so timeout and connection codes are not cleanly distinguished.",
+        "violated_requirement": "Stable sanitized codes must distinguish timeout from unavailable connection.",
+        "required_change": "Pass failure_code context into timeout classification. Use connect_timeout for connect-phase timeouts and query_timeout for query-phase timeouts, or document the mapping. Add a test for a connect-phase TimeoutError and one for an exception class named QueryCanceledError."
+      },
+      {
+        "id": "F3",
+        "severity": "medium",
+        "path": "scripts/ccm_check_postgres.py",
+        "location": "_write_report / _is_source_path",
+        "trigger": "--output is given as a relative path while the process cwd is outside the repo, or as a symlink. Or the output's parent directory is missing.",
+        "actual_behavior": "The source-path guard resolves relative to cwd, which is acceptable. However, a source-tree rejection and a real write failure produce the same output_write_failed code. Also, the guard only protects the parents[1] repo root, so the script cannot detect a different worktree copy. No test covers rejection of a source-tree path, and the existing write-failure test does not assert absence of the planted secret in stdout/stderr.",
+        "violated_requirement": "AC1 requires that output-file write failure returns unavailable with a sanitized code and that there is no accidental default source-tree artifact. AC3 requires sanitization tests.",
+        "required_change": "Add a test where an in-repo --output path yields unavailable/3, with no file created. Assert that 'planted-password' is absent from captured out/err in the write-failure test. Optionally use a distinct code such as output_path_in_source. Also remove the redundant if/else in main, where both branches print identically, and the f-string without placeholders in the error method."
+      },
+      {
+        "id": "F4",
+        "severity": "low",
+        "path": "tests/test_ccm_postgres_capabilities.py",
+        "location": "test_positive_profile_uses_readonly_transaction_and_bounded_queries",
+        "trigger": "A code regression issues queries outside the transaction, or SET statement_timeout runs before readonly is entered.",
+        "actual_behavior": "The fake records readonly=True only on __aenter__. The test does not verify ordering, that is, that all queries occur inside the transaction and that SET LOCAL comes first. The DDL keyword scan omits ALTER, GRANT, TRUNCATE, COPY, and non-LOCAL SET. Tests also do not cover a cancellation/KeyboardInterrupt re-raise, close() being called on failure paths, or an unknown postgres server_version string such as '16.4 (Debian ...)'. That last case returns 'unknown' because server_version often includes a suffix, which is honest but loses information.",
+        "violated_requirement": "AC3 requires that query construction tests verify read-only transaction/timeout settings and lack of DDL.",
+        "required_change": "Track transaction-entered state per call and assert that the first in-transaction statement is SET LOCAL. Extend the keyword denylist. Add tests for close-on-error and for CancelledError propagation. Consider using server_version_num for a numeric postgres version."
+      }
+    ],
+    "ac_coverage": {
+      "AC1": "Partially met. The contract, exit codes, numeric parsing, asyncpg connect/transaction(readonly=True), SET LOCAL timeout, and sanitized errors are implemented. Gaps: the iterative probe robustness (F1), timeout code distinction (F2), and output-path tests (F3).",
+      "AC2": "Mostly met by unit cases: 0.8.0 pass, 0.7.4 unsupported/2, 0.10.0 pass, missing vector, unknown version, missing config. CLI unavailable/3 is reported by the host. The positive iterative case depends on fake behavior only.",
+      "AC3": "Partially met. Statuses, numeric comparison and planted-DSN sanitization are covered. Query-ordering, DDL denylist and output-sanitization assertions are weak (F3, F4).",
+      "AC4": "OPEN. No real disposable database run is authorized or performed, and none is inferred. Unit fakes are not evidence.",
+      "AC5": "OPEN. No named target/Neon verification. Local results would not certify Neon.",
+      "AC6": "Met in documentation. SLOs are stated as unmeasured targets, and the benchmark envelope and import-readiness requirements are listed. The iterative-probe claim needs an honesty downgrade (F1)."
+    },
+    "coverage_gaps": [
+      "Real-DB proof that the vector cast loads pgvector GUCs and that hnsw.iterative_scan reads as off, strict_order or relaxed_order on pgvector 0.8.x, without preload.",
+      "Real-DB behavior of SET LOCAL inside an asyncpg readonly transaction, and of statement_timeout-to-QueryCanceledError classification.",
+      "Real asyncpg connect-timeout and close behavior under cancellation, which was not exercised.",
+      "Assertion that no stderr or traceback output leaks on unexpected asyncio.run failures in main.",
+      "Source-tree --output rejection test.",
+      "Exact real-run tool version/base pinning and environment label remain an AC4 obligation.",
+      "This review does not certify P1 completion, Neon support, or any SLO."
+    ]
+  },
+  "dispositions": [
+    {
+      "id": "F1",
+      "disposition": "Partly fix, partly reject hypothesis. No demonstrated false pass from vector literal; actual real-DB proof pending. Corroborate iterative-scan GUC via pg_settings typed enum/enumvals rather than bare current_setting string, safely schema-qualify vector type using installed extension namespace with proper identifier quoting, and fake-test missing/nondefault-schema/unrecognized setting. Do NOT force every cast/query exception to unsupported: report contract explicitly says query failure unavailable3. NULL/absence/unproved GUC without a query failure ->unsupported iterative_scan_unproved. Generic query failure/timeout staysunavailable. No requirement for savepoint recovery if it would hide query failure."
+    },
+    {
+      "id": "F2",
+      "disposition": "Fix stable connection_timeout vs query_timeout context; add connect timeout and real-driver-style QueryCanceledError class tests, no raw error text."
+    },
+    {
+      "id": "F3",
+      "disposition": "Add in-repo output rejection with no filecreated and actual planted DSN absence bothstdout/stderr. Same output_write_failed code allowed, no spec requires multiple codes or all foreign worktrees protection. Remove redundant print branch and placeholder-free fstring as trivial cleanup."
+    },
+    {
+      "id": "F4",
+      "disposition": "Track transaction state/order, first statement SET LOCAL, reject DDL/nonlocal SET inclALTER/GRANT/TRUNCATE/COPY; test cancellation propagation and close onfailure. Use safe numeric server_version_num for actual server version rather than drop standard distribution suffix. Add bounded connection.close(timeout=5) with cancellation notswallowed; actual asyncpg supports timeout. Fake timeout semantics are not runtime enforcement proof."
+    }
+  ],
+  "allowedFiles": [
+    "scripts/ccm_check_postgres.py",
+    "tests/test_ccm_postgres_capabilities.py",
+    "docs/specs/ccm-postgres-profile.md"
+  ],
+  "testTripwire": "All94current tests incl79baseline identities retained; add meaningful regressions; Black/isort/mypy and absentconfig CLIgreen",
+  "formalFocusedRepairCount": 1,
+  "realDatabaseGate": "OPEN; no realDB access/provisioning in builder lane",
+  "sourceAccepted": false
+}

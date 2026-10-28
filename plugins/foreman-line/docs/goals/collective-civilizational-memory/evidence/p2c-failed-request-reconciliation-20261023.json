@@ -1,0 +1,67 @@
+{
+  "atUtc": "2026-10-23T22:03:18.387029+00:00",
+  "authority": "Direct owner reconcile failed P2C repair, preserve120 and affected-route holds, determine bounded completion; existing build/review authority persists",
+  "failedRequest": "LOCALLY_TERMINATED_UPSTREAM_OUTCOME_UNKNOWN",
+  "originalReceiptSha256": "2035bfb82b240d3a1d6ac90315707c1087bfc281d26ee44be30212059d904a76",
+  "inventory": {
+    "receipt.json": {
+      "bytes": 1085,
+      "sha256": "2035bfb82b240d3a1d6ac90315707c1087bfc281d26ee44be30212059d904a76"
+    }
+  },
+  "packetSha256Verified": true,
+  "requestElapsedSeconds": 125.129545,
+  "HTTPStatusOrVendorRequestIdAvailable": false,
+  "lookupDisposition": "No supported per-request lookup identifier retained; no guessed lookup, support send, inference probe or replay",
+  "billing": "Earlier6089.5->6033.4 delta56.1 is not attributable per request; latest balance also not a settlement receipt",
+  "reservation120Retained": true,
+  "oldUnknownReservationsReleased": false,
+  "failedSourceAndAffectedRoutes": "HELD",
+  "nativeShellAndPrivateKimi": "HELD",
+  "sourceByteIdenticalToInitial": true,
+  "guard": {
+    "balance": 5990.5,
+    "existingAllConservative": 3878.5789999999997,
+    "newClosureMaximum": 350,
+    "afterHolds": 1761.9210000000003,
+    "dayConservative": 4690.579,
+    "dayCeiling": 5000,
+    "effortConservative": 7804.879,
+    "effortCeiling": 9000,
+    "floor": 1000,
+    "foreignKnown": 1677.5,
+    "foreignGuard": 1700,
+    "foreignLedgerSha256": "6c931ccc348e9df89e7c4bb016d62fd3172ae673feb8bdf3f9df617b6f138c13",
+    "expiresUtc": "2026-10-24T04:00:00Z",
+    "reviewBudgetEligible": true
+  },
+  "boundedPath": {
+    "sourceGenerationRequests": 0,
+    "operatorRole": "Scoped local deterministic application of already reviewed prescriptions, completing existing formal repair; no new autonomous worker, tools grant or provider source request. Explicit local role disposition under owner authority; coordinator authorship disclosed to independent reviewers.",
+    "formalRepairCycles": 1,
+    "allowedFiles": [
+      "src/keon/cortex/pipeline/ccm_python.py",
+      "tests/test_ccm_python.py",
+      "docs/specs/ccm-python-symbols-v1.md"
+    ],
+    "changes": [
+      "Fresh sanitized error context/cause cleared before propagation, including ambient caller exception",
+      "Explicit AST stack, ancestry and symbol list typing",
+      "Black/isort with AST-preserving mechanical format",
+      "Frozen CR/Unicode/BOM-cookie/NUL and ambient-error regressions",
+      "Document canonical-runtime token/bracket limits; no blanket traceback secrecy or production sandbox claim"
+    ],
+    "verification": "Existing isolated no-network/no-host-mount lanes; complete prebuild identities and old files retained; fresh runtime/boundary comparisons; stop on any unresolved defect, no automatic second repair",
+    "independentReviews": {
+      "freshSeats": 2,
+      "architecture": "gpt-6.1-sol/low tools-free",
+      "security": "claude-opus-5-5/low tools-free",
+      "maximumNewCredits": 350,
+      "maximumPosts": 2,
+      "maxOutput": 8192,
+      "retryFallbackOrRepairAfterReviews": false,
+      "notSourceRouteRelease": true
+    },
+    "merge": "Held pending completed PASS/PASS, exact-head and main green CI; current task does not itself establish acceptance"
+  }
+}

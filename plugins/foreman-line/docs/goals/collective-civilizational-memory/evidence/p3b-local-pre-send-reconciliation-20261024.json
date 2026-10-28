@@ -1,0 +1,16 @@
+{
+  "atUtc": "2026-10-24T23:46:55.455687+00:00",
+  "status": "PROVEN_LOCAL_PRE_SEND_REJECTION_ZERO_INFERENCE_POSTS",
+  "workerSha256": "4f30b928eaaf84a8a322c88d635b5906758833b90756f5d9e01aeae5e0b7d8a3",
+  "actualRejectedOutboundBytes": 198840,
+  "checkedOutboundBytes": 190826,
+  "ceiling": 196608,
+  "proof": "Deterministic failing body-size guard immediately before Request construction and opener.open. Earlier guard account/catalog GETs occurred; no inference POST was constructed/sent.",
+  "originalReceiptUnchanged": true,
+  "existingReservationHeld": 330.315,
+  "checkedRequestUsesExistingSamePurposeReservation": true,
+  "noBorrowFromAnyUnknownRequest": true,
+  "maximumIntendedProviderPosts": 1,
+  "additionalCreditAllocation": 0,
+  "allOtherReservationsHeld": true
+}

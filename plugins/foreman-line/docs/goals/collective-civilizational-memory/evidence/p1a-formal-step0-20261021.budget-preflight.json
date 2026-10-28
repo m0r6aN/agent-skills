@@ -1,0 +1,11 @@
+{
+  "allowed": true,
+  "currentBalance": 9740.4,
+  "knownSharedDayUsed": 179.3,
+  "nextPhaseConservativeCredits": 57.2,
+  "sharedDayAfterReservation": 236.5,
+  "knownEffortUsed": 259.6,
+  "contextReportedSpent": 51.7,
+  "limitsUnchanged": true,
+  "caveat": "Operator guard from live balance and known settled records, not a global concurrent-account atomic reservation"
+}

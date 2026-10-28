@@ -1,0 +1,29 @@
+{
+  "schema": "pantheon.execution-checkpoint.v1",
+  "at": "2026-10-19T14:33:06.3109298Z",
+  "mandate": "OM-PAN-001",
+  "ownerSessionId": "01a15424-1fd5-77a2-a73a-d92a60a5de34",
+  "currentParcel": "P00",
+  "state": "native-preflight-independent-recheck",
+  "activeWorker": "/root/foreman_rules",
+  "workerBase": "64fb8949bf5134f96fda02df0d4f52ac291a6138",
+  "workerPath": "D:/Repos/Pantheon/work/foreman-om-pan-001-p00",
+  "reviewRef": "native-preflight-check.json",
+  "repairCycle": 1,
+  "nextActions": [
+    "consume independent recheck with exact source pins",
+    "new bounded synthetic qualification",
+    "new independent amended-plan review and triage"
+  ],
+  "providerInferenceCalls": 0,
+  "runtimeAdmissionReady": false,
+  "p01Draft": "P01-SPEC-DRAFT.md",
+  "routineHumanApprovalPrompts": 0,
+  "credentialAccessInterventions": 1,
+  "materialExceptionPending": false,
+  "automaticHolds": [
+    "NATIVE_PREFLIGHT_CHANGES_REQUIRED",
+    "LIVE_SENDER_UNQUALIFIED",
+    "PLAN_REVIEW_PENDING"
+  ]
+}

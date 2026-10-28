@@ -1,0 +1,62 @@
+{
+  "schema": "pantheon.local-toolchain-inventory.v1",
+  "observedAt": "2026-10-19T14:14:36.8570353Z",
+  "evidenceClass": "read-only installed-image metadata",
+  "images": [
+    {
+      "requestedReference": "node:24-bookworm-slim",
+      "imageId": "sha256:a797d6440ed0b09e51fb884f30e47ec14cbf58482c5e19db681a0cb8df45b089",
+      "repoDigests": [
+        "node@sha256:a5f4366e834695d5f363b920c104953a535d3a9864d1bdf74566a0ebe01daee5"
+      ],
+      "architecture": "amd64",
+      "os": "linux",
+      "created": "2026-10-14T18:30:05.784794905Z"
+    },
+    {
+      "requestedReference": "mcr.microsoft.com/dotnet/sdk:10.0",
+      "imageId": "sha256:9087b2e7762d148ff39cbf3766cd7fffe608dbd9990c8673c2cbb77f6eacd82f",
+      "repoDigests": [
+        "mcr.microsoft.com/dotnet/sdk@sha256:35d40304542c8689331f8cab17c65926cdf48fe711e289321d71924b230a7d29"
+      ],
+      "architecture": "amd64",
+      "os": "linux",
+      "created": "2026-09-21T20:39:30.942374151Z"
+    },
+    {
+      "requestedReference": "mcr.microsoft.com/dotnet/aspnet:10.0",
+      "imageId": "sha256:7afc7c5b75e74e2df0fcbcabbc03b97e2b20ea7fc480ecc89dabf6aac5b8a6a9",
+      "repoDigests": [
+        "mcr.microsoft.com/dotnet/aspnet@sha256:7644f992230d35cf230017189d4038c0ae0f7388b13f4f7ae1900a155bafb597"
+      ],
+      "architecture": "amd64",
+      "os": "linux",
+      "created": "2026-06-25T01:11:54.907768704Z"
+    },
+    {
+      "requestedReference": "postgres:16",
+      "imageId": "sha256:275447c94b11b151decd1f29877965301d5a77032037c46de93d990f739f00a9",
+      "repoDigests": [
+        "postgres@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d"
+      ],
+      "architecture": "amd64",
+      "os": "linux",
+      "created": "2026-10-06T01:33:18.890712895Z"
+    },
+    {
+      "requestedReference": "python:3.12-slim",
+      "imageId": "sha256:df18428df8a0f9189c84e7424d214b4c50092af1f9dca5842a00c41c39bda316",
+      "repoDigests": [
+        "python@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1"
+      ],
+      "architecture": "amd64",
+      "os": "linux",
+      "created": "2026-10-06T02:04:40.915617827Z"
+    }
+  ],
+  "runtimeSdkRequirement": "net10.0; repository CI10.0.x",
+  "foremanNodeRequirement": ">=24.11.1",
+  "knownNodeProbe": "v24.22.0 on pinned node image",
+  "readinessClaim": false,
+  "stubsEligible": false
+}

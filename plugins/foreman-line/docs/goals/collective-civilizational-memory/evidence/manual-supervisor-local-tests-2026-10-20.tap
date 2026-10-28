@@ -1,0 +1,17 @@
+Γ£ö inspection validates exact bytes without creating an attempt or launching (26.4193ms)
+Γ£ö changed packet or authority, stronger envelope and extra options refuse (104.8151ms)
+Γ£ö environment excludes alternate billing, proxies, hooks and injection while preserving nesting guards (1.4226ms)
+Γ£ö one attempt directory refuses a second invocation even after failure (34.9065ms)
+Γ£ö only a complete exact-model tool-free response is captured, never approved (2.9168ms)
+Γ£ö real child receives exact stdin; raw output survives and nonzero exit holds (400.2926ms)
+Γ£ö timeout terminates owned child and preserves an uncertain remote outcome (229.2278ms)
+Γ£ö CLI check is offline, noninteractive send refuses, and successful capture is reviewable (379.1116ms)
+Γ£ö capture overflow and missing executable fail closed without hanging (154.3028ms)
+Γä╣ tests 9
+Γä╣ suites 0
+Γä╣ pass 9
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 1449.7824

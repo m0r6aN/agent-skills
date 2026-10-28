@@ -1,0 +1,33 @@
+{
+  "atUtc": "2026-10-24T22:05:41.966414+00:00",
+  "authority": "Direct owner durable ingestion/storage/outbox/scrub/pending request plus existing blanket non-destructive decisions/approvals and finite credit-increase authority",
+  "phaseCap": 700,
+  "dayCeiling": 9500,
+  "effortCeiling": 14000,
+  "floor": 1000,
+  "oldConservative": 6056.408125,
+  "dayBase": 7354.408125,
+  "effortBase": 11352.008125,
+  "lastBalance": 11771.2,
+  "expiresUtc": "2026-10-25T04:00:00Z",
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "nativePrivatePi": "HELD",
+  "model": "gpt-6.1-sol",
+  "effort": "low",
+  "route": "Parent-controlled approved GenSpark no-tools fixed-artifact proposals; cheapest qualified private-code route. No new native worker.",
+  "maxImplementationSlices": 4,
+  "maxFocusedRepairs": 1,
+  "maxFullReviewPosts": 4,
+  "retry": false,
+  "fallback": false,
+  "worktree": "D:\\Repos\\ccm-worktrees\\cortex-p3a-ingestion",
+  "base": "6ba606012d338b51a92ee0320995406fae03aafb",
+  "allowedFiles": [
+    "src/keon/cortex/pipeline/ccm_ingestion.py",
+    "src/keon/cortex/providers/postgres/ccm_ingestion.py",
+    "tests/test_ccm_ingestion.py",
+    "tests/test_ccm_ingestion_postgres.py",
+    "docs/specs/ccm-durable-ingestion-v1.md"
+  ]
+}

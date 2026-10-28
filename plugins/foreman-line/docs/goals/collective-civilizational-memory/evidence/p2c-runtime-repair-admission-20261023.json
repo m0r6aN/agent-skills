@@ -1,0 +1,24 @@
+{
+  "atUtc": "2026-10-23T23:30:35.222013+00:00",
+  "authority": "Owner productionadapter/compositionreview and existing blanket decisions/boundedrepair authority",
+  "formalRepair": 1,
+  "scope": "All6allowedfiles, everyknownissue and missingtests/docs; noreplayofsourceC",
+  "sourceModel": "gpt-6.1-sol",
+  "sourceTools": [],
+  "step0OnlyFirst": true,
+  "step0Cap": 40,
+  "repairCap": 150,
+  "wholePhaseCap": 800,
+  "failed120Held": true,
+  "sourceC150Held": true,
+  "MimoFailed10ConservativeHeld": true,
+  "retryFallbackOrSecondRepair": false,
+  "wireCapFinite8MiB": true,
+  "outputAndPriceBoundsRetained": true,
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_python_protocol.py": "6b68fff7c54befe77ae9f013d06bd82e45cd646443fab7bd33b37f816c35a0a1",
+    "src/keon/cortex/pipeline/ccm_python_worker.py": "7bffc8c12484021dd7885774a4c9ee016c133b159442a507b8bc4636d75968e9",
+    "src/keon/cortex/pipeline/ccm_python_runtime.py": "1819c5efa20f344aa0296afca1b685993077196af46bb49743601a9b78aabcbb"
+  },
+  "specSha256": "4dbeffaf22c75275f2dc1184178ba98720e41f4cb56b3cf8621646fd8bc68ca6"
+}

@@ -1,0 +1,204 @@
+{
+  "atUtc": "2026-10-24T18:16:11.126523+00:00",
+  "status": "ADMITTED_CONDITIONAL_ON_FRESH_EACH_CALL_GUARDS",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_git_protocol.py": "43813d00167aafc065cf66e04808c369a7ac8872244fa185e484a99cf129c463",
+    "src/keon/cortex/pipeline/ccm_git_worker.py": "fe04c0794099b720f83007bfdc7a7b0d3154d1a2f46a23f774d6fb4d9492e59a",
+    "src/keon/cortex/pipeline/ccm_git_runtime.py": "bea56dd96356b3bba9ba72560730fb51710f013ca5525ca0732bbb466beec399",
+    "tests/test_ccm_git_runtime.py": "9b695686d502989a70b8c6fa71e7f8bc651fdd62f9e849d5be521c8bcf7705ce",
+    "docker/ccm-git-source/Dockerfile": "58f8fc57bd97d1628ed0ca46be6cc3003bb667a678c9e79f1a92adafabc3e53a",
+    "docs/specs/ccm-git-runtime-v1.md": "f744555ce1540d0ae574cff6422e64906bae918c9fce4c7f638ba9780871ea28"
+  },
+  "workorderSha256": "0889ef50d64f6134c972e3a2f569d24b33ad8d7c395ef60bbc90ecab1da40d90",
+  "model": "gpt-6.1-sol",
+  "effort": "low",
+  "twoFreshContexts": true,
+  "sameModelFamilyLimitation": true,
+  "perSeatCap": 220,
+  "aggregatePhaseCap": 450,
+  "inputBytes": {
+    "architecture": 134371,
+    "security": 134418
+  },
+  "contextException": {
+    "defaultTargetTokens": 16000,
+    "exception": "Bounded exact6files plus two pinned private composition dependencies and workorder needed to review security/control boundary; no conversation/history/corpus. Measure actual prompt tokens from receipts; no wide whole-goal packet.",
+    "maxUtf8Bytes": 150000,
+    "ownerAuthority": "Existing measured-exception S01-S12 and blanket non-destructive decisions; fixed phase/per-call financial guards unchanged"
+  },
+  "summary": {
+    "actualCounts": {
+      "pass": 3654,
+      "skipped": 137,
+      "failure": 0,
+      "error": 0
+    },
+    "focusedCases": 312,
+    "all3342Pass137SkipBaselineDispositionsRetained": true,
+    "oldTreePins": 431,
+    "blackIsortMypy": "PASS",
+    "fixedPrebuildObjectAndWireOracle": "PASS",
+    "actualWindowsAPICases": [
+      {
+        "case": "loose",
+        "status": "EXPECTED_COMPLETE_SNAPSHOT",
+        "code": null,
+        "pending": [],
+        "files": 2,
+        "excluded": 2,
+        "providerRequests": 0,
+        "newAuthOrTrustClaim": false
+      },
+      {
+        "case": "packed",
+        "status": "EXPECTED_COMPLETE_SNAPSHOT",
+        "code": null,
+        "pending": [],
+        "files": 2,
+        "excluded": 2,
+        "providerRequests": 0,
+        "newAuthOrTrustClaim": false
+      },
+      {
+        "case": "missing",
+        "status": "EXPECTED_CLOSED_FAILURE",
+        "code": "missing_object",
+        "pending": [],
+        "files": null,
+        "excluded": null,
+        "providerRequests": 0,
+        "newAuthOrTrustClaim": false
+      },
+      {
+        "case": "alternates",
+        "status": "EXPECTED_CLOSED_FAILURE",
+        "code": "unsupported_repository",
+        "pending": [],
+        "files": null,
+        "excluded": null,
+        "providerRequests": 0,
+        "newAuthOrTrustClaim": false
+      },
+      {
+        "case": "http-alternates",
+        "status": "EXPECTED_CLOSED_FAILURE",
+        "code": "unsupported_repository",
+        "pending": [],
+        "files": null,
+        "excluded": null,
+        "providerRequests": 0,
+        "newAuthOrTrustClaim": false
+      },
+      {
+        "case": "canary",
+        "status": "EXPECTED_COMPLETE_SNAPSHOT",
+        "code": null,
+        "pending": [],
+        "files": 1,
+        "excluded": 0,
+        "providerRequests": 0,
+        "newAuthOrTrustClaim": false
+      },
+      {
+        "case": "oversize",
+        "status": "EXPECTED_CLOSED_FAILURE",
+        "code": "resource_limit",
+        "pending": [],
+        "files": null,
+        "excluded": null,
+        "providerRequests": 0,
+        "newAuthOrTrustClaim": false
+      }
+    ],
+    "faultImages": [
+      {
+        "case": "fault-nonzero",
+        "status": "EXPECTED_CLOSED_FAILURE",
+        "code": "isolation_failure"
+      },
+      {
+        "case": "fault-stderr",
+        "status": "EXPECTED_CLOSED_FAILURE",
+        "code": "invalid_response"
+      },
+      {
+        "case": "fault-malformed",
+        "status": "EXPECTED_CLOSED_FAILURE",
+        "code": "invalid_response"
+      },
+      {
+        "case": "fault-overflow",
+        "status": "EXPECTED_CLOSED_FAILURE",
+        "code": "invalid_response"
+      },
+      {
+        "case": "fault-timeout",
+        "status": "EXPECTED_CLOSED_FAILURE",
+        "code": "deadline_exceeded"
+      },
+      {
+        "case": "fault-environment",
+        "status": "EXPECTED_CLOSED_FAILURE",
+        "code": "runtime_unavailable"
+      }
+    ],
+    "fiveInMemoryGuardSensitivityCases": [
+      {
+        "fault": "readonly",
+        "status": "EXPECTED_REGRESSION_DETECTED",
+        "failedAssertions": [
+          "test_each_container_predicate[path38-1]"
+        ],
+        "errors": [],
+        "sourceFilesChanged": false
+      },
+      {
+        "fault": "nonrecursive",
+        "status": "EXPECTED_REGRESSION_DETECTED",
+        "failedAssertions": [
+          "test_each_container_predicate[path39-value39]",
+          "test_each_container_predicate[path40-1]"
+        ],
+        "errors": [],
+        "sourceFilesChanged": false
+      },
+      {
+        "fault": "version",
+        "status": "EXPECTED_REGRESSION_DETECTED",
+        "failedAssertions": [
+          "test_success_scalars[version-True]"
+        ],
+        "errors": [],
+        "sourceFilesChanged": false
+      },
+      {
+        "fault": "duplicates",
+        "status": "EXPECTED_REGRESSION_DETECTED",
+        "failedAssertions": [
+          "test_bad_json[[{\"version\":1,\"version\":1,\"ok\":false,\"code\":\"invalid_input\"}]]"
+        ],
+        "errors": [],
+        "sourceFilesChanged": false
+      },
+      {
+        "fault": "provider_env",
+        "status": "EXPECTED_REGRESSION_DETECTED",
+        "failedAssertions": [
+          "test_startup_rejects_unexpected_environment[OPENAI_API_KEY]"
+        ],
+        "errors": [],
+        "sourceFilesChanged": false
+      }
+    ],
+    "allOwnedContainersAbsent": true,
+    "exactQualifiedLocalImage": "sha256:0bab30c07d270832fba40cd309a7891c0996d0a87a114220813a0f819d52ac04",
+    "sourceAuthorship": "Three Sol no-tools source proposals; one explicitly scoped local operator correction (Docker/Python benign env, null/noCmd equivalence, repr privacy, isolated test mocks/query-order/boundary tests) and factual docs completion. Initial failures preserved. No affected/native route cleared.",
+    "qualificationScope": "Exact local image and WindowsPython3.13.7/DockerDesktop/LinuxPython3.13.15/Git2.47.3 composition only; stable operator custody precondition, no raceproof/authentication/hightrust claim",
+    "documentationCorrespondence": "Five executable/factory files byte-identical to successful restricted/actual qualification; README-only factual correction after testing, exactbefore/after recorded, no unjustified rerun",
+    "daemonOutageCancellationUncertainty": "Actual timeout plus kill/remove cleanup proved; actual daemon outage, hostile local principal races and hard remote cancellation are NOT claimed"
+  },
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "nativePrivatePi": "HELD",
+  "reviewersMayEdit": false
+}

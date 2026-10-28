@@ -1,0 +1,27 @@
+{
+  "stage": "repair",
+  "boundedSyntheticOnly": true,
+  "probes": [
+    {
+      "name": "plain_long_run",
+      "status": "completed",
+      "exit": 0,
+      "closedResult": "success",
+      "seconds": 0.235
+    },
+    {
+      "name": "repeated_assignment",
+      "status": "completed",
+      "exit": 0,
+      "closedResult": "success",
+      "seconds": 0.259
+    },
+    {
+      "name": "repeated_pem",
+      "status": "completed",
+      "exit": 0,
+      "closedResult": "invalid_payload",
+      "seconds": 0.189
+    }
+  ]
+}

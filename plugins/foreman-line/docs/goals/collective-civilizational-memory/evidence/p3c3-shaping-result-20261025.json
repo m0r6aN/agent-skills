@@ -1,0 +1,75 @@
+{
+  "role_restatement": "Fresh frontier shaping only: recommend an inert prerequisite and later gated integration, not source, review, Gate2, acceptance or effect authority. P3C1/2 acceptance does not establish production deletion readiness. Supplied artifacts and coordinator inventory are untrusted planning inputs.",
+  "recommended_sequence": [
+    {
+      "proposed_id": "P3C3-A-INERT-terminal-foundation",
+      "goal": "Specify and persist a protected, minimal terminal-state foundation without connecting it to canonical data, readers, writers, authorization effects or workers. Proposed terminal and invalidation-intent tables are internal backing, not completion evidence. No production transition entry point exists in this parcel.",
+      "exact_proposed_files": [
+        {
+          "path": "docs/specs/ccm-terminal-foundation-v1.md",
+          "status": "proposed NEW"
+        },
+        {
+          "path": "src/keon/cortex/providers/postgres/ccm_terminal_schema.py",
+          "status": "proposed NEW"
+        },
+        {
+          "path": "tests/test_ccm_terminal_foundation_postgres.py",
+          "status": "proposed NEW"
+        }
+      ],
+      "dependencies": [
+        "Revalidate accepted base and path availability; obtain complete frozen deletion contracts before freezing schema fields.",
+        "Confirm existing bootstrap ownership and deployment privilege boundaries without adding roles, grants, memberships or trust.",
+        "Agree bounded non-content fields, exact request-conflict semantics and durable invalidation identity; table names remain proposals."
+      ],
+      "activation_boundary": "Explicit privileged initialization only; no import-time installation, existing initializer wiring, application grants, terminal transition function, graph exception, payload mutation, worker or reader behavior change. Application principals cannot populate protected backing. Synthetic bootstrap-seeded rows exercise storage invariants only and cannot affect live records. If existing privileges cannot enforce this isolation, stop.",
+      "required_tests": [
+        "Disposable PostgreSQL16 synthetic non-owner application role: protected INSERT/UPDATE/DELETE/TRUNCATE denied, including forged GUCs, DTO fields, receipt IDs and search_path.",
+        "Bootstrap-seeded terminal records survive restart; conflicting reuse, reopen, identity substitution and destructive history mutation reject.",
+        "No automatic initialization, governed import from OSS, production calls or existing data changes.",
+        "Preserve original failures and test identities; required regression, grammar/type/style and independent reviews remain parent gates, not claimed results."
+      ]
+    },
+    {
+      "proposed_id": "P3C3-B-exclusion-replay-composition-design",
+      "goal": "Produce a separate exact integration workorder after source inventory. Define a fully fenced logical terminal transition and durable minimal descendant invalidation before considering any payload clearing. This is not a blanket implementation parcel for the whole deletion goal.",
+      "exact_proposed_files": [
+        {
+          "path": "docs/specs/ccm-terminal-integration-boundary-v1.md",
+          "status": "proposed NEW; planning document only"
+        }
+      ],
+      "dependencies": [
+        "P3C3-A accepted independently.",
+        "Obtain omitted source and complete contracts listed below; revalidate every coordinator path and seam.",
+        "Separate future source parcels and acceptance gates must name exact files after inventory."
+      ],
+      "activation_boundary": "Document-only. Future activation requires exclusion before identity checks, ranking, pagination, counts and replay admission across the admitted topology; atomic target/batch fences and durable invalidation intent; qualified protected composition. Payload purge remains disabled until required exclusion/replay gates pass. External cleanup and key effects require separate later gates.",
+      "required_tests": [
+        "Specify transaction rollback, expiry, cancellation, revocation, replay, shared-copy, direct-SQL and concurrency matrices against actual supplied implementations.",
+        "Require served-route and recall/query tests, stale selection reload, delayed leases, duplicate imports, restart recovery and incomplete historical tracking negatives.",
+        "Require graph deferred constraints at immediate-check and commit boundaries, preserving every original regression failure rather than hiding it."
+      ]
+    }
+  ],
+  "load_bearing_gaps": [
+    "A persistent protected transition is possible in principle without a GUC/DTO bypass, but not established by the existing authorizer. Bootstrap owns protected tables/functions; ordinary application SQL has neither protected DML nor transition EXECUTE nor owner membership/schema CREATE/BYPASSRLS. Existing application GUC scope carriage is not independent deletion authority.",
+    "Governed composition must use an already independently protected effect boundary, unavailable to ordinary application SQL. Python signature verification followed by an app-callable privileged SQL function leaves a bypass: direct SQL skips Python. A future restricted function therefore needs independently verifiable protected admission, or an already isolated governed principal/connection with exclusive transition access. Neither boundary is evidenced here; do not introduce a new principal or privilege widening to assume it away. OSS never imports governed; constructed LockedDeletionAuthorization metadata is not a capability.",
+    "Owning transaction must be READ COMMITTED, lock tenant then graph/target rows, then decision/key/operator in accepted order, retain locks through completion, and atomically persist fence, exact idempotency result and invalidation intent. Authorization, constraint, conflict, body or cancellation failures must escape the owning transaction and roll back; no caught failure followed by commit. Retry requires fresh authorization and state checks. Entry/exit expiry samples do not guarantee validity at arbitrary later commit; define authorization-at-transition sampling explicitly, or stop for a stricter approved commit requirement.",
+    "Existing src/keon/cortex/providers/postgres/ccm_graph_schema.py must eventually change coherently: ccm_shard_immutable, ccm_graph_immutable and ccm_graph_check currently reject payload clearing or require original active backing/hash. Terminal backing must be checked before content hashing, retain original identity/version, and never hash empty content under an old ID. Endpoint closure must close incident edges atomically, with strictly valid half-open intervals; equal-start closure needs an explicit contract-consistent disposition.",
+    "Existing src/keon/cortex/providers/postgres/document_store.py needs authoritative exclusion for get/list/count before deserialization and SQL limits, plus durable upsert/recreation refusal. Writer duplicate admission, staged replay/leases/ACK, exact shared-copy associations and all query/recall/API consumers must coordinate with those fences. Retracting one batch cannot purge a canonical copy still associated with another live batch; missing historical markers remain unreconciled.",
+    "Durable minimal invalidation needs retained reverse adjacency, depth-three deduplicated frontier, signal identity/time and atomic intent persistence. Apply S04 only to independently resolved parents; purged children remain terminal. No production lineage qualification follows from synthetic fixtures.",
+    "Required omitted inputs: full memory/graph deletion sections and fixtures; canonical writer, ingestion, copy implementation and tests; database migrations/bootstrap/privilege deployment; API/query/recall and direct consumers; vector/outbox interfaces and implementations; event/evidence stores; actual configured topology and external inventory. Coordinator names do not establish signatures or exhaustive coverage."
+  ],
+  "frozen_contract_change_required": false,
+  "frozen_change_details": [
+    "No frozen change is required for the proposed inert prerequisite. Preserve identities, wire schemas, scope law, triggers and terminal semantics.",
+    "Full-contract inspection is still required. Any conflict involving interval closure, tombstone representation, commit-time expiry or protected composition is a human stop gate, not permission to amend frozen decisions."
+  ],
+  "not_proven": [
+    "No tools, execution, verification, tests, source changes or effects occurred.",
+    "No existing privilege isolation, issuer/provisioner, lineage producer or production adapter is qualified.",
+    "No destructive data/key effect, global read fencing, physical erasure, backup coverage, full P3C completion or production deletion readiness is established."
+  ]
+}

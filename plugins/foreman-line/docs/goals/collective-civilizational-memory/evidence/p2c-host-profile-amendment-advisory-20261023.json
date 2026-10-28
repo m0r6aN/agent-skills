@@ -1,0 +1,34 @@
+{
+  "atUtc": "2026-10-23T20:55:13.808375+00:00",
+  "status": "PASS_DRAFT_AMENDMENT_ONLY",
+  "frozenPackageBytePinsMatched": 164,
+  "advisory": {
+    "valid": true,
+    "frontmatter": {
+      "valid": true,
+      "errors": [],
+      "warnings": [
+        "advisory: surfaces entry 'src/keon/cortex/pipeline/ccm_python.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+        "advisory: surfaces entry 'tests/test_ccm_python.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74"
+      ]
+    },
+    "body": {
+      "valid": true,
+      "errors": []
+    },
+    "errors": []
+  },
+  "existingShapingResultReadback": {
+    "parcelSpecRefs": [
+      "plugins/foreman-line/docs/specs/active/CCM-P2C-python-declarations.md"
+    ],
+    "epics": []
+  },
+  "artifactNotOverwritten": true,
+  "sourceDispatched": false,
+  "modelRequested": "opencode-go/kimi-k3.1-pro",
+  "modelInvoked": false,
+  "newPaidReservation": 0,
+  "hostMechanisms": "PASS_BOUNDED_SYNTHETIC_HOST_MECHANISMS; production adapter and independent review still pending",
+  "selectedProfile": "parser-host-profile-20261023.md"
+}

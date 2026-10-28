@@ -1,0 +1,9 @@
+﻿{
+    "route":  "organization",
+    "method":  "GET",
+    "httpStatus":  "400",
+    "curlExitCode":  0,
+    "stderrPresent":  false,
+    "recordedAtUtc":  "2026-10-19T13:45:21.8309651+00:00",
+    "responseSha256":  "ad1d459aaa36d4f819557bb9bc59162b9298fcc22fb9d69c6ef4a3e5e037bee2"
+}

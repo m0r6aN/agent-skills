@@ -1,0 +1,26 @@
+{
+  "atUtc": "2026-10-24T20:04:29.276356+00:00",
+  "authority": "Standing delegated owner bounded non-destructive repair authority",
+  "scope": "Correct two hallucinated test SHA256 constants from exact AST literal bytes using hashlib; no production or expected byte changes",
+  "focusedRepairs": 1,
+  "newProviderRequests": 0,
+  "preRepairHashes": {
+    "src/keon/cortex/pipeline/ccm_civic.py": "e06b21bd14127c9d901356da50c0696e50832ffb6f2cc754dd06c69441ec5a70",
+    "tests/test_ccm_civic.py": "3eb5ae3becdec8a86d5129df8a47bf65394416e649bc7dd9d7ee1e9106172612",
+    "docs/specs/ccm-civic-mapping-v1.md": "bebc694baa1b389eca7c39e2f94f0c8e3e57a968253edf00bf6214a0ae747d12"
+  },
+  "fullSourceReservationRetained": true,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "independentReviewsStillRequired": 2,
+  "oldConstants": [
+    "8524d3736ce96afe166353426265c9b07139f342b1bd23da6b8eb94bcbaed59c",
+    "fa858569c675528f282265f432d91e8648239d71cd34637dd9dac9ce1c8f038e"
+  ],
+  "newConstants": [
+    "8c7e869937ddb5f6dd356115208471ca4338c2ca4ab826d1c8de4ffdfd4eb910",
+    "fa858569c675528f282265f432d91e8648239d71cd34637dd9dac9ce1c8f038e"
+  ],
+  "independentComputation": "AST literal_eval exact two fixed bytes values + hashlib only, no candidate imports",
+  "productionUnchanged": true
+}

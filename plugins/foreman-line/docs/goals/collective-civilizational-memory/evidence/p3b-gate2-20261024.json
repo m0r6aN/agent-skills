@@ -1,0 +1,43 @@
+{
+  "atUtc": "2026-10-24T23:02:58.177586+00:00",
+  "gate2": "APPROVED_EXISTING_DIRECT_OWNER_AND_BLANKET_AUTHORITY",
+  "base": "fd0f478cc3d21d7ef4eb9f518f61487b010e296e",
+  "workorderSha256": "69e53c1aecc101b036a0b284049ca7f70c987d8cb8ae8380e790444134134f59",
+  "step0FlagsDisposed": [
+    "F01-NORMATIVE-DEPENDENCIES",
+    "F02-SHARED-TRANSACTION-SEAM",
+    "F03-SHARD-INTERVAL-CONTRADICTION",
+    "F04-DEDUP-TIME-IDENTITY",
+    "F05-P3A-SCRUB-IDENTITY-LIFECYCLE",
+    "F06-BOUNDED-VALIDATION",
+    "F07-DEFERRED-CHECKS-ACKNOWLEDGEMENT",
+    "F08-RLS-INTEGRITY-LOCKING",
+    "F09-SQL-IDENTITY-PREREQUISITES",
+    "F10-ERROR-AND-RESULT-CONTRACT",
+    "F11-ACCEPTANCE-GATE"
+  ],
+  "dispositions": "Binding Step0 Dispositions and Exact dispatch choices, no charter decision/exit changes",
+  "prerequisites": {
+    "atUtc": "2026-10-24T23:01:18.619291+00:00",
+    "postgresImage": "sha256:275447c94b11b151decd1f29877965301d5a77032037c46de93d990f739f00a9",
+    "syntheticOnly": true,
+    "providerCalls": 0,
+    "network": "none",
+    "hostPorts": [],
+    "status": "PASS_ACTUAL_PG16_BUILTIN_PREREQUISITES",
+    "proof": {
+      "version": "160015",
+      "sha256": "b3cc0475bb78a5026098858e9889acf666d31062d513d303314eca31d36e72f2",
+      "zero": "0.0",
+      "one": "1.0",
+      "pointtwo": "0.2",
+      "jsonb": "object",
+      "bootstrap_bypass": true
+    },
+    "ownedContainerAbsent": true
+  },
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "nativePrivatePi": "HELD",
+  "sourceCalls": 0
+}

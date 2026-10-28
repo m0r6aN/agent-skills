@@ -1,0 +1,36 @@
+{
+  "exitCode": 0,
+  "seconds": 7.184,
+  "argv": [
+    "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "-X",
+    "utf8",
+    "-B",
+    "-m",
+    "pytest",
+    "-p",
+    "pytest_asyncio.plugin",
+    "-p",
+    "no:cacheprovider",
+    "-q",
+    "--basetemp=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\openai-api-document-20261021-01\\pytest-tmp",
+    "--junitxml=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\openai-api-document-20261021-01\\complete-tests.xml",
+    "tests/test_ccm_contracts_v2.py",
+    "tests/test_ingress_models.py",
+    "tests/inheritance/test_inheritance.py",
+    "tests/gravity/test_contracts.py",
+    "tests/gravity/test_projection_fixtures.py",
+    "tests/test_evidence_envelope.py",
+    "tests/test_shards_v1_1.py"
+  ],
+  "outputSha256": "077d7d70c5e38e8224a1d9360dce1f89c51589de25f6794b171f924240f48d8e",
+  "worktree": "D:\\Repos\\ccm-worktrees\\cortex-p1a",
+  "sourceBase": "efb5f4bcead899332f4f35f5e0b3a181eb988d2c",
+  "packagePins": {
+    "src/keon/cortex/envelope/taxonomy.py": "1f2cacaefe3b5086ea4a556c50677ba9e1e3719d51b2944f74caf1712712424d",
+    "src/keon/cortex/ingress/models_v2.py": "86fc439b5a22f1b0625c64ce0dab494bd73c035d0350c9b59859bcb7d87173f6",
+    "tests/fixtures/ccm/contracts-v2.json": "de4bde4dfee3299dabc5d87cf53566266d3d798391417bbfa7ae40f1335c2dd8",
+    "tests/test_ccm_contracts_v2.py": "7814925b144a129bef7b64da5b120e63cbfae67f0c3815b9ccdbd48d19fda77e",
+    "docs/specs/ccm-memory-graph-v2.md": "3481152e93b611ebfe3ea53450ed629a733fd32139d0fa926f812c301cdbed4e"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "atUtc": "2026-10-23T20:55:13.829889+00:00",
+  "gate2": "APPROVED_BY_DELEGATED_OWNER_AUTHORITY",
+  "workorderSha256": "dbe63e08aa202be0a85dec6c02ef66b5a0a258e6e27dcafe8d506269ad5c4e2b",
+  "base": "91c57778804a4f1097b07049176c1af533c840e2",
+  "branch": "feat/foreman-line-ccm-p2c",
+  "worktree": "D:\\Repos\\ccm-cortex-readiness-20261023",
+  "allowedFiles": [
+    "src/keon/cortex/pipeline/ccm_python.py",
+    "tests/test_ccm_python.py",
+    "docs/specs/ccm-python-symbols-v1.md"
+  ],
+  "baselineCounts": {
+    "pass": 2975,
+    "skipped": 137,
+    "failure": 0,
+    "error": 0
+  },
+  "trackedPinsVerified": 419,
+  "step0FlagDispositions": [
+    {
+      "id": "draft-and-admission-held",
+      "disposition": "Accepted stated boundary; source worker is tools-free and separately admitted; actual baseline and host closure evidence verified by parent; runtime/production adapter and review gates remain binding"
+    },
+    {
+      "id": "reported-readiness-not-executed-here",
+      "disposition": "Accepted stated boundary; source worker is tools-free and separately admitted; actual baseline and host closure evidence verified by parent; runtime/production adapter and review gates remain binding"
+    },
+    {
+      "id": "restricted-host-prerequisite",
+      "disposition": "Accepted stated boundary; source worker is tools-free and separately admitted; actual baseline and host closure evidence verified by parent; runtime/production adapter and review gates remain binding"
+    },
+    {
+      "id": "runtime-and-language-boundary",
+      "disposition": "Accepted stated boundary; source worker is tools-free and separately admitted; actual baseline and host closure evidence verified by parent; runtime/production adapter and review gates remain binding"
+    },
+    {
+      "id": "frozen-fixtures-and-parent-validation",
+      "disposition": "Accepted stated boundary; source worker is tools-free and separately admitted; actual baseline and host closure evidence verified by parent; runtime/production adapter and review gates remain binding"
+    },
+    {
+      "id": "scope-and-review-gates",
+      "disposition": "Accepted stated boundary; source worker is tools-free and separately admitted; actual baseline and host closure evidence verified by parent; runtime/production adapter and review gates remain binding"
+    },
+    {
+      "id": "fingerprints-not-attestations",
+      "disposition": "Accepted stated boundary; source worker is tools-free and separately admitted; actual baseline and host closure evidence verified by parent; runtime/production adapter and review gates remain binding"
+    }
+  ],
+  "model": "gpt-6.1-sol",
+  "route": "Controlled GenSpark tools-free private-source proposal; not native Pi/shell",
+  "sourceImplementationAttempts": 1,
+  "formalRepairsMaximum": 1,
+  "affectedRoutes": "HELD",
+  "hostileProductionAdmission": false,
+  "process": "Existing scoped local workorder/hash ledger, no external Jira or pipeline receipt claimed",
+  "reviewsRequired": 2,
+  "mergeAllowedNow": false
+}

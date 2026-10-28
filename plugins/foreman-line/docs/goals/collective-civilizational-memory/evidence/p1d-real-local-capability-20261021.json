@@ -1,0 +1,158 @@
+{
+  "atUtc": "2026-10-22T03:23:25.052876+00:00",
+  "operation": "P1D-LOCAL01",
+  "status": "REAL DISPOSABLE LOCAL CAPABILITY PASS; missing-extension negative also correct",
+  "environmentLabel": "new synthetic Docker-local CCM-P1D-LOCAL01, no existing database or credentials",
+  "image": {
+    "imageRequested": "pgvector/pgvector:0.8.0-pg16",
+    "imageId": "sha256:56a5b20c7a157dbb94149ba3cce70da76f02e1645dec234379709ddaebe607ea",
+    "repoDigests": [
+      "pgvector/pgvector@sha256:a132765ec351c65111b5b675928a3a0515a466a40f97277329db8b8209ad8bc9"
+    ],
+    "architecture": "amd64",
+    "os": "linux",
+    "pullSeconds": 15.274,
+    "status": "Image ready; database not started"
+  },
+  "checkerPins": {
+    "scripts/ccm_check_postgres.py": "53383e904c128271b52f13dec1c620c0cdc195c1bc704bd0c0d92f427688956d",
+    "tests/test_ccm_postgres_capabilities.py": "3cdcfcb849353ee9090be81743d7031d8984e3667d55bc6f188ca35022cf8d7c",
+    "docs/specs/ccm-postgres-profile.md": "68fe033494a15ef3c30b5365acc1935598231fd541b7b6acf7863633c7fd8406"
+  },
+  "base": "cc3a6defa78849b8df8795c58ac65866f31179d5",
+  "toolVersions": {
+    "python": "3.13.7",
+    "asyncpg": "0.31.0"
+  },
+  "profiles": [
+    {
+      "profile": "missing-extensions",
+      "exitCode": 2,
+      "seconds": 0.507,
+      "report": {
+        "contract_version": "ccm-contracts/2.0.1",
+        "error_codes": [
+          "vector_extension_missing",
+          "pg_trgm_missing",
+          "iterative_scan_unproved"
+        ],
+        "extensions": {
+          "pg_trgm": null,
+          "vector": null
+        },
+        "features": {
+          "iterative_hnsw": false,
+          "pg_trgm": false,
+          "pgvector": false,
+          "tsvector_ts_rank_cd": true
+        },
+        "observed_at": "2026-10-22T03:23:23Z",
+        "postgres_version": "16.10",
+        "schema_version": "ccm-postgres-capabilities/1.0",
+        "status": "unsupported"
+      }
+    },
+    {
+      "profile": "supported-public-schema",
+      "exitCode": 0,
+      "seconds": 0.506,
+      "report": {
+        "contract_version": "ccm-contracts/2.0.1",
+        "error_codes": [],
+        "extensions": {
+          "pg_trgm": "1.6",
+          "vector": "0.8.0"
+        },
+        "features": {
+          "iterative_hnsw": true,
+          "pg_trgm": true,
+          "pgvector": true,
+          "tsvector_ts_rank_cd": true
+        },
+        "observed_at": "2026-10-22T03:23:24Z",
+        "postgres_version": "16.10",
+        "schema_version": "ccm-postgres-capabilities/1.0",
+        "status": "pass"
+      }
+    },
+    {
+      "profile": "supported-nondefault-schema",
+      "exitCode": 0,
+      "seconds": 0.57,
+      "report": {
+        "contract_version": "ccm-contracts/2.0.1",
+        "error_codes": [],
+        "extensions": {
+          "pg_trgm": "1.6",
+          "vector": "0.8.0"
+        },
+        "features": {
+          "iterative_hnsw": true,
+          "pg_trgm": true,
+          "pgvector": true,
+          "tsvector_ts_rank_cd": true
+        },
+        "observed_at": "2026-10-22T03:23:25Z",
+        "postgres_version": "16.10",
+        "schema_version": "ccm-postgres-capabilities/1.0",
+        "status": "pass"
+      }
+    }
+  ],
+  "setupSnapshots": {
+    "initial": {
+      "sharedPreloadLibraries": "",
+      "publicApplicationTables": 0,
+      "extensions": [
+        {
+          "extname": "plpgsql",
+          "extversion": "1.0"
+        }
+      ]
+    },
+    "extensions": {
+      "sharedPreloadLibraries": "",
+      "publicApplicationTables": 0,
+      "extensions": [
+        {
+          "extname": "pg_trgm",
+          "extversion": "1.6"
+        },
+        {
+          "extname": "plpgsql",
+          "extversion": "1.0"
+        },
+        {
+          "extname": "vector",
+          "extversion": "0.8.0"
+        }
+      ]
+    },
+    "nondefault": {
+      "sharedPreloadLibraries": "",
+      "publicApplicationTables": 0,
+      "extensions": [
+        {
+          "extname": "pg_trgm",
+          "extversion": "1.6"
+        },
+        {
+          "extname": "plpgsql",
+          "extversion": "1.0"
+        },
+        {
+          "extname": "vector",
+          "extversion": "0.8.0"
+        }
+      ]
+    }
+  },
+  "setupSeparatedFromReadOnlyChecker": true,
+  "readOnlyProbeRole": "Separate generated test-only login default_transaction_read_only=on; actual checker read-only transaction, bounded queries/close",
+  "schemaTest": "Same installed vector extension moved into non-search_path isolated schema; no preloaded library; fresh checker connection each profile",
+  "applicationTablesCreated": 0,
+  "credentials": "Ephemeral synthetic values in memory only, no existing secrets accessed, reports omit URL/endpoint/user/tenant",
+  "namedTargetNeonGate": "OPEN; this local profile does not certify any remote deployment or SLO",
+  "accepted": false,
+  "cleanup": "Stopped only exact newly created owned container; --rm removed its synthetic tmpfs state; no prior resource touched"
+}

@@ -1,0 +1,19 @@
+{
+  "verdict": "PASS",
+  "findings": [],
+  "coverage": [
+    "API/models/closed errors: ratified signature; frozen, repr-safe wrappers; content-free str/repr/args; cause and context suppressed via from None outside the caught context",
+    "R1 availability: one whole-call _CandidateBudget checked before each append; unions keep only interval and selected metadata; PEM, URL, JWT and assignment scans are linear (precomputed delimiters/quotes with bisect; JWT starts only at run boundaries, so each segment is scanned at most about 3 times); int bit guard runs before str(); raw codepoint guards run before NFC",
+    "R2 URL: authority stops at whitespace (including Unicode space), /, ? or #; rfind gives the last @; an empty username is accepted; scheme back-scan stops at non-scheme chars, so no greedy retry; scheme, separators and host are preserved",
+    "R3 epoch: _valid_secrets rejects any normalized literal substring and catalog matches in the epoch, without echoing them",
+    "R4 depth/limits: container-only depth (32 accepts, 33 rejects); exact canonical 1MiB input and 4MiB output edges; integer 4096/4097 digits; known-literal 128/64KiB limits; partial failure counts asserted",
+    "Union/priority: sort by (start,end) gives transitive overlap merge; touching intervals stay separate; known candidates (priority 0) precede catalog; Aho-Corasick output links follow suffix matches; HMAC over the NFC union substring matches 32 withheld vectors",
+    "Contract/docs: no integration, storage, entropy, universal-detection or erasure claims; synthetic hint has no effect on redaction or counts; whole suite 0 failures and 137 retained skips"
+  ],
+  "gaps": [
+    "JWT no-dot quadratic allegation remains unproven; source analysis and bounded probes show linear behaviour.",
+    "Escaped-quote handling uses global backslash parity. Exotic escaped-quote and multi-assignment overlaps have only a targeted test (nested token=token=), not exhaustive cases.",
+    "MemoryError and interrupts propagate uncaught. This is acceptable because they are content-free and not converted to success.",
+    "Exact-head CI and BM2 timing variance remain outside this review; P3 enforcement immediately before enqueue is unproven by design."
+  ]
+}

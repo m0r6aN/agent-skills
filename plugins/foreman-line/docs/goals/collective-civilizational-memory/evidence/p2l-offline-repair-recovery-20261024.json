@@ -1,0 +1,9 @@
+{
+  "status": "OFFLINE_EXACT_REPAIR_FILE_STRING_RECOVERY",
+  "candidateSha256": "42db94ad209be63743a3f64258ae91ced7df4b4827e16b0ec2557ab2da3fc900",
+  "envelopeIssue": "Documentation key one level too high plus one trailing brace; exact3file strings recovered unchanged",
+  "sourceStringsChanged": false,
+  "newProviderRequests": 0,
+  "originalFailedReceiptUntouched": true,
+  "fullRepairReservationRetained": true
+}

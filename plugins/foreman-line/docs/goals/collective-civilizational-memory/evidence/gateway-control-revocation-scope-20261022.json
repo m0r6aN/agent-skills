@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-22",
+  "method": "Static local source inspection only",
+  "repository": "D:/Repos/keon-omega/keon-control-prmerges",
+  "provisioningRoute": "src/app/api/internal/control/api-keys/route.ts",
+  "revocationRoute": "src/app/api/internal/control/api-keys/[prefix]/revoke/route.ts",
+  "revocationFunction": "src/server/db/internal-control-plane.ts:revokeInternalLearningApiKey",
+  "revocationScope": ["prefix", "tenantId equals INTERNAL_LEARNING_TENANT_ID", "status equals active"],
+  "generalTenantRevocationEstablished": false,
+  "adminAuthNames": ["x-admin-signature", "KEON_INTERNAL_CONTROL_SECRET"],
+  "gatewayReadAuthNames": ["x-keon-control-secret", "KEON_GATEWAY_CONTROL_SECRET"],
+  "incidentVariable": "MCP_GATEWAY_AUTH_TOKEN",
+  "distinctUserSuppliedName": "MCP_GATEWAY_TOKENS",
+  "consumerOrIssuerRecordMapped": false,
+  "liveRequests": 0,
+  "credentialMutations": 0,
+  "secretsReadOrPersistedThisInspection": false,
+  "nextAction": "Map incident variable to actual consuming client/header and nonsecret issuer record before selecting exact tenant/key revocation path. Affected routes/workers stay held; safe source preparation continues."
+}

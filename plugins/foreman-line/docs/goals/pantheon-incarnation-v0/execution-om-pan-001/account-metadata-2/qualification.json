@@ -1,0 +1,22 @@
+﻿{
+    "schema":  "pantheon.account-metadata-qualification.v1",
+    "at":  "2026-10-19T13:45:48.5875527+00:00",
+    "bindingName":  "pantheon-om-pan-001-anthropic-default",
+    "organization":  "Morgan Findings LLC",
+    "organizationId":  "49582c99-6fa8-4c45-9875-c21ca0ea4267",
+    "workspaceName":  "Default",
+    "workspaceId":  "wrkspc_01Ddkc7MrJwHXBnjszr5fDrk",
+    "workspaceBindingEvidence":  "Console workspace ID plus successful authenticated GET with matching anthropic-workspace-id header",
+    "approvedModels":  [
+                           "claude-opus-5-5",
+                           "claude-sonnet-5-5"
+                       ],
+    "metadataQualified":  true,
+    "inferenceQualified":  false,
+    "providerInferenceCalls":  0,
+    "secretValueLogged":  false,
+    "apiSources":  [
+                       "https://platform.claude.com/docs/en/api/http/beta/organization/retrieve",
+                       "https://platform.claude.com/docs/en/api/models/list"
+                   ]
+}

@@ -1,0 +1,23 @@
+{
+  "atUtc": "2026-10-22T03:24:29.311125+00:00",
+  "parcel": "CCM-P1D",
+  "authority": "Owner blanket non-destructive decisions/approvals;500parcel includes initial68.475conservative+closure250reservation",
+  "localDay": "2026-10-21",
+  "sharedDayCeiling": 4000,
+  "perCallCredits": 250,
+  "callsMax": 1,
+  "model": "claude-opus-5-5",
+  "effort": "low",
+  "inputBytes": 57614,
+  "inputSha256": "1bc3ea4568c7c4805be9be57e703e36e3785939e16dc5f2fbeee8c89ebcd3368",
+  "inputByteMax": 62000,
+  "proxyOverhead": 4096,
+  "outputMax": 6144,
+  "timeoutSeconds": 180,
+  "retries": 0,
+  "floor": 1000,
+  "effortCap": 9000,
+  "realLocalEvidence": "p1d-real-local-capability-20261021.json",
+  "namedTargetGate": "OPEN before P4",
+  "limits": "Operational estimates only; not hard remote billing/token/cancellation guarantee. No automatic retries."
+}

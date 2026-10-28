@@ -1,0 +1,53 @@
+{
+  "checkedAtUtc": "2026-10-21T16:01:36.674133+00:00",
+  "scope": "Bounded local harness evidence; no provider discovery, authentication probe or model invocation",
+  "findings": [
+    {
+      "id": "PROFILE_NOT_DEMONSTRATED",
+      "evidence": "Foreman Pi extension registers/expands skill commands. Its inspected source contains no settings.local.json loading or tool_call permission enforcement. Shipped emitter writes .claude/settings.local.json; its README conditions enforcement on an actually loading harness. No accepted Pi builder/reviewer profile-load proof found in this bounded set.",
+      "impact": "Cannot count emitted Claude settings as Pi restrictions."
+    },
+    {
+      "id": "BUDGET_GUARD_NOT_ENVELOPE",
+      "evidence": "Installed Jev budget guard documents shadow-first model routing, advisory spam handling and fail-open current-model continuation; explicitly says cost router is not a safety or authorization control. Its daily caps concern Jev calls, not cumulative P1A delivery tokens/tools/charges.",
+      "impact": "Cannot count this extension as task-tree budget enforcement."
+    },
+    {
+      "id": "CRITIQUE_DRAFT_NOT_BUILDER",
+      "evidence": "EXA-P3 is draft; its Allowed Files runtime implementation path is absent. Its stated scope is shaping/council read_evidence-only critique and explicitly excludes code-writing workers.",
+      "impact": "Do not claim that draft or its eventual implementation qualifies a P1A code-writing builder."
+    }
+  ],
+  "sources": [
+    {
+      "label": "foremanPiExtension",
+      "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\pi-package\\index.ts",
+      "sha256": "60d852fb7bec67e0bbdc0f1273689370bbf574e771f7270b82b474ded2703947"
+    },
+    {
+      "label": "permissionEmitter",
+      "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\permission-profiles\\src\\emitter.ts",
+      "sha256": "a3cd674a5ffa8093efe86d8d7be04d6e67eedea3aa452ea2bbd9f14da6153b85"
+    },
+    {
+      "label": "permissionProfileContract",
+      "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\permission-profiles\\README.md",
+      "sha256": "b790947a8223daab2babf45cba648f1bfd073d7d0b1e6f524fa02f51dc129f00"
+    },
+    {
+      "label": "installedBudgetGuard",
+      "path": "C:\\Users\\clint\\.pi\\agent\\extensions\\pi-jev-budget-guard\\README.md",
+      "sha256": "37bce45b1a2ebf7815cdeaa8431b59eb6b7a857dc05a2008a0da520cc0552549"
+    },
+    {
+      "label": "existingCritiqueRuntimeDraft",
+      "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\EXA-P3-pi-runtime-and-isolation.md",
+      "sha256": "b2c4584748d3f7def627c39ba4bf7e5bc8aff493c3c55b4956d10447424e7d70"
+    }
+  ],
+  "missingDraftRuntimePathExists": false,
+  "routeStatus": "Existing first-party coordinator route observed live; no new builder/two-reviewer route admitted by that fact. Prior roster candidates remain unqualified.",
+  "smallestRequiredEvidence": "An existing accepted launch profile for one frontier code-writing builder plus two fresh independent frontier reviewers, with actual profile-load/tool restrictions, route/data eligibility and bounded aggregate accounting; or a separately scoped implementation decision for the missing capability.",
+  "authority": "Existing Context authority is sufficient for coordination; this report does not request blanket permission or change a gate.",
+  "dispatch": "HOLD; zero builder/reviewer launches in this check"
+}

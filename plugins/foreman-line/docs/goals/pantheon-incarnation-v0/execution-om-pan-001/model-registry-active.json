@@ -1,0 +1,299 @@
+{
+  "schema": "pantheon.model-registry.v1",
+  "recordedAtUtc": "2026-10-19 12:47:20 UTC",
+  "status": "ratified-profile-metadata-qualified; live qualification pending",
+  "refresh": {
+    "intervalHours": 24,
+    "priceMaxAgeHours": 24,
+    "capabilityMaxAgeDays": 7,
+    "accountPreflightMaxAgeMinutes": 60,
+    "worker": "registry-maintainer",
+    "maxHttpGets": 8,
+    "maxRuntimeSeconds": 120,
+    "paidInferenceAllowed": false,
+    "allowedDomains": [
+      "platform.claude.com",
+      "developers.openai.com"
+    ],
+    "onFailure": "retain last version; stale affected route held",
+    "onMaterialChange": "new version and reservation recomputation; no automatic authority expansion"
+  },
+  "accounts": [
+    {
+      "id": "anthropic-morgan-default",
+      "provider": "anthropic",
+      "organization": "Morgan Findings LLC",
+      "workspace": "Default",
+      "credentialBindingRef": "pantheon-om-pan-001-anthropic-default",
+      "qualification": {
+        "consoleObserved": true,
+        "apiCredentialBound": true,
+        "liveQualified": false,
+        "autoReload": "off",
+        "policy": "30-day retention; Development Partner Join offered; feedback off",
+        "credit": {
+          "purchasedUsd": 49.92,
+          "promotionalUsd": 100,
+          "promoAppliesTo": [
+            "API",
+            "Agent SDK",
+            "Batch API",
+            "Playground",
+            "Managed Agents"
+          ],
+          "promoExpiry": "2026-11-16",
+          "source": "authenticated Console billing observation; dashboard aggregate 149.94 differs from component sum and is not reconciled"
+        },
+        "metadataEvidenceRef": "account-metadata-2/qualification.json"
+      },
+      "approved": true
+    }
+  ],
+  "models": [
+    {
+      "id": "claude-opus-5-5",
+      "provider": "anthropic",
+      "family": "anthropic-claude",
+      "accountProfile": "anthropic-morgan-default",
+      "intendedRoles": [
+        "architecture-builder",
+        "reviewer",
+        "plan-reviewer"
+      ],
+      "eligibility": "proposed; credential and live qualification pending",
+      "source": "https://platform.claude.com/docs/en/models/opus-5-5/overview",
+      "observedAtUtc": "2026-10-19 12:47:20 UTC",
+      "contextTokens": 1000000,
+      "maxOutputTokens": 128000,
+      "modalities": {
+        "input": [
+          "text",
+          "image"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "outputSemantics": {
+        "limitParameter": "max_tokens",
+        "includes": [
+          "reasoning",
+          "visible text"
+        ],
+        "reasoning": "adaptive always on",
+        "effortDefault": "medium",
+        "effortProfile": "high",
+        "thinkingBudget": "not independently numeric"
+      },
+      "pricing": {
+        "currency": "USD",
+        "unitTokens": 1000000,
+        "tier": "standard global first-party",
+        "input": 4,
+        "output": 20,
+        "cacheRead": 0.2,
+        "cacheWrite5m": 5,
+        "cacheWrite1h": 8
+      },
+      "limits": {
+        "reviewDefaultOutputTokens": 32768,
+        "reviewRecoveryOutputTokens": 65536,
+        "continuations": 0,
+        "automaticRetries": 0
+      },
+      "usageLimitations": [
+        "Provider reported usage is not invoice.",
+        "Internal reasoning can exceed visible thinking; do not infer cost from visible text.",
+        "Streaming totals must not be summed repeatedly.",
+        "Account quota rows are not API credential qualification."
+      ],
+      "semanticsSource": "https://platform.claude.com/docs/en/build-with-claude/thinking-steering-and-cost"
+    },
+    {
+      "id": "claude-sonnet-5-5",
+      "provider": "anthropic",
+      "family": "anthropic-claude",
+      "accountProfile": "anthropic-morgan-default",
+      "intendedRoles": [
+        "standard-builder"
+      ],
+      "eligibility": "proposed; credential and live qualification pending",
+      "source": "https://platform.claude.com/docs/en/models/sonnet-5-5/overview",
+      "observedAtUtc": "2026-10-19 12:47:20 UTC",
+      "contextTokens": 1000000,
+      "maxOutputTokens": 128000,
+      "modalities": {
+        "input": [
+          "text",
+          "image"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "outputSemantics": {
+        "limitParameter": "max_tokens",
+        "includes": [
+          "reasoning",
+          "visible text"
+        ],
+        "reasoning": "adaptive; between_tools option exists but not selected",
+        "effortDefault": "high",
+        "forcedToolUse": "unsupported; no forced tool choice"
+      },
+      "pricing": {
+        "currency": "USD",
+        "unitTokens": 1000000,
+        "tier": "standard global first-party",
+        "input": 2,
+        "output": 10,
+        "cacheRead": 0.1,
+        "cacheWrite5m": 2.5,
+        "cacheWrite1h": 4
+      },
+      "limits": {
+        "perCallOutputTokens": 32768,
+        "maxCallsPerBuilderSession": 12
+      },
+      "usageLimitations": [
+        "Each tool-loop call has its own cap; aggregate reservations required.",
+        "Provider usage not invoice; visible text not all billed output."
+      ]
+    },
+    {
+      "id": "gpt-6.1-sol",
+      "provider": "openai",
+      "family": "openai-gpt",
+      "accountProfile": null,
+      "intendedRoles": [
+        "catalog-only"
+      ],
+      "eligibility": "not approved for API dispatch; native Codex access is separate",
+      "source": "https://developers.openai.com/api/docs/models/gpt-6.1-sol",
+      "observedAtUtc": "2026-10-19 12:47:20 UTC",
+      "contextTokens": 1050000,
+      "maxOutputTokens": 128000,
+      "modalities": {
+        "input": [
+          "text",
+          "image"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "outputSemantics": {
+        "limitParameter": "max_output_tokens",
+        "includes": [
+          "reasoning",
+          "visible output",
+          "non-visible formatting"
+        ],
+        "efforts": [
+          "low",
+          "medium",
+          "high",
+          "xhigh",
+          "max"
+        ],
+        "toolEndpoint": "Responses; Chat Completions has no tool calling"
+      },
+      "pricing": {
+        "currency": "USD",
+        "unitTokens": 1000000,
+        "tier": "standard",
+        "input": 2,
+        "output": 10,
+        "cacheRead": 0.1,
+        "cacheWrite": 2.5,
+        "longContextThreshold": 272000,
+        "longInputMultiplier": 2,
+        "longOutputMultiplier": 1.5,
+        "fastMultiplier": 2,
+        "ultrafastMultiplier": 6,
+        "regionalMultiplier": 1.1
+      },
+      "usageLimitations": [
+        "API prices do not measure included Codex subscription usage.",
+        "Account organization and paid API entitlement not qualified.",
+        "Incomplete response may have only reasoning and still incur cost."
+      ],
+      "semanticsSource": "https://developers.openai.com/api/docs/guides/reasoning"
+    },
+    {
+      "id": "gpt-6-astra",
+      "provider": "openai",
+      "family": "openai-gpt",
+      "accountProfile": null,
+      "intendedRoles": [
+        "catalog-only"
+      ],
+      "eligibility": "not approved for API dispatch",
+      "source": "https://developers.openai.com/api/docs/models/gpt-6-astra",
+      "observedAtUtc": "2026-10-19 12:47:20 UTC",
+      "contextTokens": 1050000,
+      "maxOutputTokens": 128000,
+      "modalities": {
+        "input": [
+          "text",
+          "image"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "outputSemantics": {
+        "limitParameter": "max_output_tokens",
+        "includes": [
+          "reasoning",
+          "visible output",
+          "non-visible formatting"
+        ],
+        "effortProfile": null
+      },
+      "pricing": {
+        "currency": "USD",
+        "unitTokens": 1000000,
+        "tier": "standard",
+        "input": 10,
+        "output": 50,
+        "cacheRead": 1,
+        "cacheWrite": 12.5,
+        "longContextThreshold": 272000,
+        "longInputMultiplier": 2,
+        "longOutputMultiplier": 1.5
+      },
+      "usageLimitations": [
+        "Account applicability unqualified; price is not permission.",
+        "Reasoning is billed output."
+      ]
+    }
+  ],
+  "excluded": [
+    {
+      "provider": "xai",
+      "reason": "Prior configured team blocked; combined reasoning cap unestablished in prior review preflight; no new account qualification or grant."
+    },
+    {
+      "provider": "openrouter",
+      "reason": "Existing source sender is not a grant or qualified account for Pantheon."
+    },
+    {
+      "provider": "anthropic-max-cli",
+      "reason": "Consumed REVIEW-004; hidden continuations and no text; no replay."
+    }
+  ],
+  "routing": {
+    "order": [
+      "mandate scope",
+      "account/data eligibility",
+      "capabilities and context",
+      "role and declared independence policy",
+      "freshness",
+      "budget and call slots",
+      "deterministic rank"
+    ],
+    "sameVendorReviewPolicy": "Only explicit OM-PAN-001 development exception; never inherited by other goals",
+    "pricingIsMeasuredUsage": false
+  }
+}

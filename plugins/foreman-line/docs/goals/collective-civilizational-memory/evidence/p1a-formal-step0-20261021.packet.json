@@ -1,0 +1,11 @@
+{
+  "phase": "step0",
+  "prompt": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\collective-civilizational-memory\\evidence\\p1a-formal-step0-20261021.txt",
+  "sha256": "11aaaa56eff13980116a93c4f5daa0d4528e037db3c5e2213d16a3283100377f",
+  "estimatedTokensCl100k": 29355,
+  "conservativeInputTokens": 35347,
+  "maxTokens": 1536,
+  "conservativePhaseCreditEstimate": 57.050125,
+  "outputDirectory": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\collective-civilizational-memory\\evidence\\p1a-formal-step0-20261021-01",
+  "sender": "D:/Repos/Pantheon/.audit/genspark-offload-2026-10-20/invoke-genspark.ps1"
+}

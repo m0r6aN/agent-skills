@@ -1,0 +1,32 @@
+{
+  "schema": "pantheon.coordinator-state.observation.v1",
+  "authority": {
+    "verified": false,
+    "sourceRef": null,
+    "expiresAt": null
+  },
+  "lease": {
+    "verified": false,
+    "ownerSessionId": null,
+    "epoch": null,
+    "expiresAt": null
+  },
+  "account": {
+    "qualified": false,
+    "credentialBound": false,
+    "autoReloadOff": false
+  },
+  "workflowApplied": false,
+  "planReviewClosed": false,
+  "runtimeReady": false,
+  "bootstrapClosed": false,
+  "totalPaidRequests": 0,
+  "bootstrapPaidRequests": 0,
+  "bootstrapExposureUsd": 0,
+  "newExposureUsd": 0,
+  "priorUnknownUsd": 5,
+  "attempts": [],
+  "parcels": {},
+  "exceptions": [],
+  "completedExitCriteria": []
+}

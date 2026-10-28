@@ -1,0 +1,32 @@
+{
+  "parcelSpecRefs": [
+    "plugins/foreman-line/docs/specs/active/CCM-P1A-memory-graph-contracts.md",
+    "plugins/foreman-line/docs/specs/active/CCM-P1B-gravity-v2-fixtures.md",
+    "plugins/foreman-line/docs/specs/active/CCM-P1C-collective-wire-compatibility.md",
+    "plugins/foreman-line/docs/specs/active/CCM-P1D-postgres-capability-check.md"
+  ],
+  "epics": [
+    {
+      "key": "epic-collective-civilizational-memory-foundation-2026-10-19-01a155c3",
+      "title": "Context: collective civilizational memory foundation",
+      "stories": [
+        {
+          "key": "CCM-P1A-memory-graph-contracts",
+          "title": "Cortex memory and temporal graph v2 contracts"
+        },
+        {
+          "key": "CCM-P1B-gravity-v2-fixtures",
+          "title": "Frozen gravity v2 scorer and retention simulations"
+        },
+        {
+          "key": "CCM-P1C-collective-wire-compatibility",
+          "title": "Collective civic memory v2 wire compatibility"
+        },
+        {
+          "key": "CCM-P1D-postgres-capability-check",
+          "title": "Read-only PostgreSQL capability check and evidence"
+        }
+      ]
+    }
+  ]
+}

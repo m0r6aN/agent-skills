@@ -1,0 +1,13 @@
+{
+  "observedAt": "2026-10-20T00:52:47.132Z",
+  "providerCalls": 0,
+  "scope": "Local comparisons to preserved pre-amendment packet; not independent review",
+  "exactApprovedAC6": true,
+  "p1aChangesConfinedToApprovedAC6DateAuthorityReference": true,
+  "p1bP1cP1dUnchanged": true,
+  "fullGoalExitCriteriaUnchanged": true,
+  "finalPacket": {
+    "bytes": 126259,
+    "sha256": "a69a31d84ab47ab235551a62a2de3214bfdcc96e5eada0db431c191d224bffb1"
+  }
+}

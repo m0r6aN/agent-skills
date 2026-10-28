@@ -1,0 +1,56 @@
+{
+  "status": "PROPOSED ONLY, not applied to admittedworktree",
+  "changes": "Explicit validator signatures, typed modelmap, imports and Black/isort formatting only; no rule/fixture/doc/schema-design change",
+  "files": [
+    "src/keon/cortex/ingress/models_v2.py",
+    "tests/test_ccm_contracts_v2.py"
+  ],
+  "patch": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\openai-api-document-20261021-01\\mechanical-fix-proposed.patch",
+  "patchSha256": "fa8cdab381ff2bff4529e2bb032e0b042d125ab10249b484ccdca1b03dac3ef2",
+  "runs": [
+    {
+      "name": "isort-format",
+      "exitCode": 0,
+      "seconds": 0.37,
+      "outputSha256": "20597a60e317da7a77a4e33f4da5c68d03826cd8ffb1c6cb0ee947f72620d1f1"
+    },
+    {
+      "name": "black-format",
+      "exitCode": 0,
+      "seconds": 1.265,
+      "outputSha256": "1e4b8ecd01ead3753a3a455cd6b451bb265bc2a20491acf1119c9d40779e7aeb"
+    },
+    {
+      "name": "black-check",
+      "exitCode": 0,
+      "seconds": 1.108,
+      "outputSha256": "ab81d49758ee3d83e73f7d022b92772c8d7969bfd4d6680c5baf6a23890a301f"
+    },
+    {
+      "name": "isort-check",
+      "exitCode": 0,
+      "seconds": 0.358,
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "mypy",
+      "exitCode": 0,
+      "seconds": 13.512,
+      "outputSha256": "8e63ae22e8213e327a5e9cbd584067681681bd8ef7f25c869877887ccdcfc4ff"
+    },
+    {
+      "name": "pytest",
+      "exitCode": 0,
+      "seconds": 5.987,
+      "outputSha256": "c27d2ca98ad4945d66c187a4dd2990ae361f17247bd7f66c113b233940aeacd1"
+    }
+  ],
+  "admittedFrozenHashesStillMatch": true,
+  "modelRequests": 0,
+  "independentReview": "still required, no selfacceptance",
+  "testResult": {
+    "passed": 328,
+    "oldTestIdentitiesRetained": 238,
+    "new": 90
+  }
+}

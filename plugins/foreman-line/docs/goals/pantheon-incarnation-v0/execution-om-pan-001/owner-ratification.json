@@ -1,0 +1,20 @@
+{
+  "schema": "pantheon.owner-ratification-record.v1",
+  "id": "OM-PAN-001-RAT-001",
+  "mandateId": "OM-PAN-001",
+  "packageManifestSha256": "ca6645f02284dca74b17a9500ec0482552bb192e785f1d76ae0be1f4f9532f82",
+  "recordedAt": "2026-10-19T13:38:02.935Z",
+  "ratification": {
+    "source": "actual user message in current Codex transcript",
+    "sessionId": "01a15424-1fd5-77a2-a73a-d92a60a5de34",
+    "transcript": "C:/Users/clint/.codex/sessions/2026/10/19/rollout-2026-10-19T08-30-16-01a15424-1fd5-77a2-a73a-d92a60a5de34.jsonl",
+    "line": 517,
+    "timestamp": "2026-10-19T13:34:16.105Z",
+    "rawRecordSha256": "c0027582bd9c2642527a39e4c1bf6afe954feed729d205ac8dda8f675922bd1b",
+    "messageSha256": "206e4fafc0c9b3db46000bec09035faf63d1f5da03c6c07f8a1b123448727fed",
+    "verbatim": "**Ratify OM-PAN-001 as written,” or specify the defaults to change.** This is the single ratification boundary you requested for new authority, spending, custody, and material design changes. After ratification, I’ll record it and proceed through the supported `/goal` workflow without another routine start approval; only the defined material exceptions return to you.  \n"
+  },
+  "scope": "exact sealed OM-PAN-001; no inferred extension",
+  "runtimeDecisionRef": null,
+  "approvalKind": "human-ratification-evidence; not a Runtime permit"
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "TimeCreated": "2026-10-19T10:37:39.081948-04:00",
+    "Id": 140,
+    "ProviderName": "Microsoft-Windows-Ntfs",
+    "Message": "The system failed to flush data to the transaction log. Corruption may occur in VolumeId: D:, DeviceName: \\Device\\HarddiskVolume15.\r\n\r\n           Failure status: An operation was attempted to a volume after it was dismounted.\r\n\r\n           Device GUID: {5e8453db-5a90-9a89-09c8-5019bfeb24b6}\r\n           Device manufacturer: WD      \r\n           Device model: Elements 2621   \r\n           Device revision: 1034\r\n           Device serial number: WX52D231XYSU    \r\n           Bus type: USB\r\n\r\n           Adapter serial number: \r\n"
+  },
+  {
+    "TimeCreated": "2026-10-19T10:37:36.3011122-04:00",
+    "Id": 51,
+    "ProviderName": "disk",
+    "Message": "An error was detected on device \\Device\\Harddisk1\\DR10 during a paging operation."
+  },
+  {
+    "TimeCreated": "2026-10-19T10:37:36.3025154-04:00",
+    "Id": 140,
+    "ProviderName": "Microsoft-Windows-Ntfs",
+    "Message": "The system failed to flush data to the transaction log. Corruption may occur in VolumeId: D:, DeviceName: \\Device\\HarddiskVolume15.\r\n\r\n           Failure status: A device which does not exist was specified.\r\n\r\n           Device GUID: {5e8453db-5a90-9a89-09c8-5019bfeb24b6}\r\n           Device manufacturer: WD      \r\n           Device model: Elements 2621   \r\n           Device revision: 1034\r\n           Device serial number: WX52D231XYSU    \r\n           Bus type: USB\r\n\r\n           Adapter serial number: \r\n"
+  },
+  {
+    "TimeCreated": "2026-10-19T10:37:36.3011122-04:00",
+    "Id": 51,
+    "ProviderName": "disk",
+    "Message": "An error was detected on device \\Device\\Harddisk1\\DR10 during a paging operation."
+  },
+  {
+    "TimeCreated": "2026-10-19T10:37:36.3011122-04:00",
+    "Id": 51,
+    "ProviderName": "disk",
+    "Message": "An error was detected on device \\Device\\Harddisk1\\DR10 during a paging operation."
+  }
+]

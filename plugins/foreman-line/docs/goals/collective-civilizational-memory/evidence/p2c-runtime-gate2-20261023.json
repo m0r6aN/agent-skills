@@ -1,0 +1,75 @@
+{
+  "atUtc": "2026-10-23T22:58:16.067215+00:00",
+  "gate2": "APPROVED_BY_DELEGATED_OWNER_AUTHORITY",
+  "parcel": "CCM-P2C-RUNTIME",
+  "specSha256": "bd525af4f718718279c39d6bf0d4e229b9e7442c507aab7698ce459ccf8e3b9c",
+  "base": "5cb07ba47f7f52dc85c228e06dc3d1bfe3ec4d04",
+  "worktree": "D:\\Repos\\ccm-worktrees\\cortex-p2c-runtime",
+  "branch": "feat/foreman-line-ccm-p2c-runtime",
+  "oldTreePins": 422,
+  "acceptedBaselineReusedCounts": {
+    "pass": 2987,
+    "skipped": 137,
+    "failure": 0,
+    "error": 0
+  },
+  "baselineReusedAfterExactSnapshotCorrespondence": true,
+  "advisory": {
+    "advisory": {
+      "valid": true,
+      "frontmatter": {
+        "valid": true,
+        "errors": [],
+        "warnings": [
+          "advisory: surfaces entry 'src/keon/cortex/pipeline/ccm_python_protocol.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+          "advisory: surfaces entry 'src/keon/cortex/pipeline/ccm_python_worker.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+          "advisory: surfaces entry 'src/keon/cortex/pipeline/ccm_python_runtime.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+          "advisory: surfaces entry 'tests/test_ccm_python_runtime.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+          "advisory: surfaces entry 'docker/ccm-python-parser/Dockerfile' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74"
+        ]
+      },
+      "body": {
+        "valid": true,
+        "errors": []
+      },
+      "errors": []
+    },
+    "result": {
+      "parcelSpecRefs": [
+        "plugins/foreman-line/docs/specs/active/CCM-P2C-RUNTIME-restricted-python-adapter.md"
+      ],
+      "epics": []
+    }
+  },
+  "flagDisposition": "All9explicit beforeGO; no new unresolvedflags",
+  "sourceModel": "gpt-6.1-sol",
+  "sourceTools": [],
+  "sourceSlices": [
+    "Aprotocol/worker/Dockerfile",
+    "Bhostruntime",
+    "Ctests/docs conditional cheapest eligible private route"
+  ],
+  "sourceEffects": "Parent-controlled six-file application only; no model shell/credentials/filesystem",
+  "attempts": 1,
+  "formalRepairsMaximum": 1,
+  "failed120Held": true,
+  "oldAffectedRoutes": "HELD",
+  "newTaskNotReplayOfOldFailedRequest": true,
+  "process": "Scoped local exact-hash workorder/ledger precedent; no Jira/external receipt invented",
+  "phaseGuardRefinement": "Wholephase800 unchanged; reserve actual booked/unknown plus nextstage allocations. Conditional review/repair requires fresh residualcapacity before dispatch. Release unusedcompleted allocations only, never old unknown holds.",
+  "mergeAllowedNow": false,
+  "productionOrBulkAdmission": false,
+  "sourceResponseControl": {
+    "stream": true,
+    "maxWireBytes": 2097152,
+    "configuredSocketReadTimeout": 180,
+    "configuredStreamObservation": 240,
+    "hardTotalOrRemoteCancellationGuaranteed": false,
+    "maxPostPerSlice": 1,
+    "automaticRetry": false,
+    "sourceAMaxOutput": 12200,
+    "sourceACapUnchanged": 110,
+    "oldRequestNotReplayed": true,
+    "offlineBudgetCheck": "Initial110.416625estimate refused beforepost; reducedoutput88tokens,cap110unchanged"
+  }
+}

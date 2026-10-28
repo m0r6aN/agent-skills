@@ -1,0 +1,251 @@
+{
+  "schema": "pantheon.p00-rework-verification.v1",
+  "createdAtUtc": "2026-10-19T14:30:52.6846034Z",
+  "status": "OFFLINE_CHECKS_PASS_INDEPENDENT_RECHECK_REQUIRED",
+  "builderSession": "native-bootstrap-1-of-8",
+  "reworkCycle": 1,
+  "workspace": "D:\\Repos\\Pantheon\\work\\foreman-om-pan-001-p00",
+  "branch": "codex/om-pan-001-p00",
+  "head": "64fb8949bf5134f96fda02df0d4f52ac291a6138",
+  "manifestSha256": "ca6645f02284dca74b17a9500ec0482552bb192e785f1d76ae0be1f4f9532f82",
+  "tests": {
+    "command": "node --test plugins/foreman-line/docs/goals/pantheon-incarnation-v0/execution-om-pan-001/native-sender/native-sender.test.mjs plugins/foreman-line/docs/goals/pantheon-incarnation-v0/execution-om-pan-001/bootstrap-guards.test.mjs",
+    "exitCode": 0,
+    "total": 77,
+    "passed": 77,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "durationMs": 9849.1182,
+    "retainedNativeTests": 41,
+    "newGuardTests": 36,
+    "nodeVersion": "v24.7.0",
+    "fixturesOnly": true,
+    "frozenFixtureClock": "2026-10-19T14:30:00.000Z",
+    "testLogToolChunks": [
+      "6cfef6",
+      "fbe903"
+    ]
+  },
+  "syntax": {
+    "nodeCheck": [
+      "run-bootstrap-once.mjs",
+      "bootstrap-guards.mjs"
+    ],
+    "powershellParseOnly": [
+      "bootstrap-lock-check.ps1",
+      "key-to-curl-stdin.ps1"
+    ],
+    "passed": true
+  },
+  "nativeCurl": {
+    "path": "C:/Windows/System32/curl.exe",
+    "version": "8.21.0",
+    "sha256": "73d24149ff289afc49ec41f08918ef9faa727d39ad993e929757dc2ddafab805"
+  },
+  "effects": {
+    "providerInferenceCalls": 0,
+    "externalNetworkCallsByBuilder": 0,
+    "secretFilesRead": 0,
+    "dpapiOperations": 0,
+    "liveWrapperExecutions": 0,
+    "keyBridgeExecutions": 0,
+    "canonicalWrites": 0,
+    "commits": 0,
+    "pushes": 0,
+    "nativeLoopbackFixtures": true,
+    "fakeOwnedSubprocesses": true
+  },
+  "accounting": {
+    "qualificationReservationUsd": 4.71,
+    "planReservationUsd": 5.34,
+    "inputReservationTokens": 1048576,
+    "maxRequestBytes": 1048576,
+    "perCallUsd": 6,
+    "artifactAttempts": 2,
+    "parcelUsd": 15,
+    "bootstrapUsd": 25,
+    "bootstrapCalls": 16,
+    "arithmetic": "integer micro-USD caps; single ceiling and 10 percent provisional uncertainty buffer",
+    "billedCost": null
+  },
+  "files": [
+    {
+      "path": "native-sender/native-sender.mjs",
+      "bytes": 23228,
+      "sha256": "00d3a10e5874fbe8b0919cf574411bc99cdae19b5bb12dcde167441cc1ee73c6"
+    },
+    {
+      "path": "native-sender/native-sender.test.mjs",
+      "bytes": 23915,
+      "sha256": "f7e9e626945c478a5c27245d046f54358b7bfdd47998311cf14c8157c2cab640"
+    },
+    {
+      "path": "native-sender/README.md",
+      "bytes": 11032,
+      "sha256": "747545f7c316c6a7b29f77ba3caace7f20481cead140ea44ff2cc61a0db475a7"
+    },
+    {
+      "path": "run-bootstrap-once.mjs",
+      "bytes": 15061,
+      "sha256": "67b5f0271deb4a1ed4ece0ad51eba4ec041d000351bdabf5dd2d370c1286a128"
+    },
+    {
+      "path": "bootstrap-guards.mjs",
+      "bytes": 16672,
+      "sha256": "0d2fc22db4bf4c37bb427a7a3ba6605646befb5f171fb0b6bca41549ca823b9e"
+    },
+    {
+      "path": "bootstrap-guards.test.mjs",
+      "bytes": 25141,
+      "sha256": "28cf7d933a3bfe54ffc764a3328fa2d18b1de753a98741595deb1c482d471fbd"
+    },
+    {
+      "path": "bootstrap-lock-check.ps1",
+      "bytes": 1392,
+      "sha256": "26434cd4cc35209d06d63a5c52cf2178c7ee3516d296a09b79eed9d37fc7c533"
+    },
+    {
+      "path": "key-to-curl-stdin.ps1",
+      "bytes": 1683,
+      "sha256": "b4bfd9ee3d464b01a8b4857f08f01f70a631484fc1e7b279069f26c1a5ce6325"
+    },
+    {
+      "path": "prepare-amended-plan-packet.mjs",
+      "bytes": 2689,
+      "sha256": "8ca07f80409553a15f23c16fd792e045eeab122649db95137624f4c4139167c3"
+    },
+    {
+      "path": "prepare-attempt-specs.mjs",
+      "bytes": 1840,
+      "sha256": "5dc987cf0104bf8b34c78fe1fc4ccca873a759743e21e6dc154d6f6cb713bcf8"
+    },
+    {
+      "path": "attempt-specs/qualification-r2.json",
+      "bytes": 452,
+      "sha256": "47dd1be9d7096a8ab0abb580787df11480b47bed2f4ed0d03a828e4e8b13698f"
+    },
+    {
+      "path": "attempt-specs/qualification-r2-request.json",
+      "bytes": 829,
+      "sha256": "b4bbc5bbcf3f6a2138c2c66846027e4e06dad4652161bcd77b3a8ee4d37a415b"
+    },
+    {
+      "path": "attempt-specs/plan-review-r2.json",
+      "bytes": 1044,
+      "sha256": "025bc298715fba42012d217f35c8fe5794c3f4cf8ecb0f72bbb9b4b95227d017"
+    },
+    {
+      "path": "amended-plan-review-r2/packet.md",
+      "bytes": 160908,
+      "sha256": "9e8f01b195af7d733eb371dbabb7d63d954cc63a5826de387e6e46fa7bf1aae9"
+    },
+    {
+      "path": "amended-plan-review-r2/request.json",
+      "bytes": 163043,
+      "sha256": "5483950685f254aa400303c9adf5e072f7abd89f6642eca466175e151a89ba47"
+    },
+    {
+      "path": "amended-plan-review-r2/manifest.json",
+      "bytes": 5277,
+      "sha256": "807c1093487f8937d2f58e181fd3079295471c8983d2743ea8ed44f48277246c"
+    },
+    {
+      "path": "bootstrap-rate-evidence.json",
+      "bytes": 1303,
+      "sha256": "df697966e8ac703e78865c7d96e1fcd85192b329cc4923aadec908e628841fe0"
+    },
+    {
+      "path": "REWORK1-HANDOFF.md",
+      "bytes": 8443,
+      "sha256": "40db7366003dbbaa3ea2b95a7aea25999d979f7558bec93af0aa1a48170339fb"
+    }
+  ],
+  "preservedOriginals": [
+    {
+      "path": "attempt-specs/qualification.json",
+      "sha256": "1ce1e13594333f0a906887800755cd5fd789ab34d244045eb9181b58960210e0",
+      "matchesCanonicalOriginal": true
+    },
+    {
+      "path": "attempt-specs/qualification-request.json",
+      "sha256": "803dc740bd415db609def3c7b0c1fc654d42571bbacf2df9ce3860418cb38552",
+      "matchesCanonicalOriginal": true
+    },
+    {
+      "path": "attempt-specs/plan-review.json",
+      "sha256": "3bfc24338a7f1df3c6ca96fd48291657e118d816979f3b10c56549f04deccc39",
+      "matchesCanonicalOriginal": true
+    },
+    {
+      "path": "amended-plan-review/packet.md",
+      "sha256": "43264651db23bf95ff8ddcd4375dd9ebc8ce4b1b0dda7dc2e510693a2f96abdc",
+      "matchesCanonicalOriginal": true
+    },
+    {
+      "path": "amended-plan-review/request.json",
+      "sha256": "de6483ec6dcee4c8a62e1c5673100b5e87313b001682de6f24a87d3c2f89a329",
+      "matchesCanonicalOriginal": true
+    },
+    {
+      "path": "amended-plan-review/manifest.json",
+      "sha256": "5059c63ee720342280db8341544c480360507467108097ef04f53f0379334f7e",
+      "matchesCanonicalOriginal": true
+    }
+  ],
+  "readOnlyInputs": [
+    {
+      "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\execution-om-pan-001\\P00-SENDER-SPEC.md",
+      "sha256": "6e135460709afc6b5f278a9606181e9809409b170a96749156eaba2269a69d37"
+    },
+    {
+      "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\execution-om-pan-001\\native-preflight-report.md",
+      "sha256": "8b43c02dbacc689b205430889bba2e3decb03eb638b089a27c75380a6f4babad"
+    },
+    {
+      "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\execution-om-pan-001\\native-preflight-evidence\\negative-checks.json",
+      "sha256": "03efb47826cbec6d5858917964797b74ca12a7bbe17b86eed1fdb495261151f8"
+    },
+    {
+      "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\execution-om-pan-001\\owner-ratification.json",
+      "sha256": "05e2fb7d929d360f77e278a9faef8c0edea1c2e7ab4082caea0614bab11c6b15"
+    },
+    {
+      "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\execution-om-pan-001\\bootstrap-rate-evidence.json",
+      "sha256": "df697966e8ac703e78865c7d96e1fcd85192b329cc4923aadec908e628841fe0"
+    },
+    {
+      "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\execution-om-pan-001\\account-metadata-3\\qualification.json",
+      "sha256": "7957d3df74b587e550eff1d4ca747418fde06b1acdcf3582bad63b447a70564f"
+    },
+    {
+      "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\execution-om-pan-001\\account-metadata-3\\transport.json",
+      "sha256": "277aec409fcc2f649026e05cae30eeda5078b753a7d05e9806aeb961459cf7f2"
+    },
+    {
+      "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\execution-om-pan-001\\account-metadata-3\\organization.json",
+      "sha256": "9bcab6ef1e0d1d3376ae699e7f7d79520bcc30c643d611a6ba9907b0cc1fbee0"
+    },
+    {
+      "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\execution-om-pan-001\\account-metadata-3\\models.json",
+      "sha256": "02a9188989a823990a206aff15d9764786d298d249cd7b4f355ab834361fcd9e"
+    },
+    {
+      "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\autonomy-20261019\\package-manifest.json",
+      "sha256": "ca6645f02284dca74b17a9500ec0482552bb192e785f1d76ae0be1f4f9532f82"
+    },
+    {
+      "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\autonomy-20261019\\model-registry.json",
+      "sha256": "a365b77ed760b95f3ec439b3291200bf2290075d53b3b46ed390b9fa3f9211e2"
+    }
+  ],
+  "limitations": [
+    "No live provider/account/credential qualification claimed by builder",
+    "No live wrapper or key bridge imported or executed",
+    "Ciphertext continuity tested with synthetic digests; actual bridge syntax checked only",
+    "No Runtime receipt, independent review PASS, source semantic acceptance or merge manufactured",
+    "Local locks and claims do not implement multi-machine transactional fencing",
+    "Unknown delivery or usage retains full reservation and prevents automatic recovery sends"
+  ]
+}

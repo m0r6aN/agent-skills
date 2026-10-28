@@ -1,0 +1,11 @@
+{
+  "tables": {
+    "graph_scope_bindings": true,
+    "graph_endpoint_registry": true,
+    "artifact_nodes": true,
+    "graph_endpoint_registry_receipts": true,
+    "graph_edges": true
+  },
+  "sqlSha256": "0b8ec78c1805fb206b2105c8633443c39722016a8a9094bb8a0456238117800e",
+  "claim": "Exact token equality of tablebodies except IFNOTEXISTS/valid_from_wire, not proof of omitted normative trigger semantics"
+}

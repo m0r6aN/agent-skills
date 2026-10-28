@@ -1,0 +1,46 @@
+{
+  "atUtc": "2026-10-24T14:19:48.869071+00:00",
+  "ownerAuthorizationVerbatim": "Brother, authorize one bounded repair for the kill/wait teardown and protocol test gaps, then fresh independent reviews. Keep all reservations and affected routes held, and use the cheapest capable approved route.",
+  "repairOrdinal": 3,
+  "additionalRepairsAllowed": 1,
+  "subsequentRepairAllowed": false,
+  "allowedChangedFiles": [
+    "src/keon/cortex/pipeline/ccm_python_runtime.py",
+    "tests/test_ccm_python_runtime.py"
+  ],
+  "scope": [
+    "Independent bounded wait/reap even after poll/kill exception, including zero remaining time; retain isolation_failure on failed teardown",
+    "Strengthen kill-failure wait assertions and independent protocol oracles with otherwise-valid envelope/symbol violations and direct pre-decoder/count/frame bounds"
+  ],
+  "sourceAuthorship": "Disclosed scoped local operator contribution, no delegated shell worker/source inference",
+  "localStep0": {
+    "ready": true,
+    "flags": [],
+    "tripwire": "Retain all130focused dispositions and priorfullsuite identities; add >=15 meaningful cases. No protocol/resource/image/dependency/other-source changes. Stop on unrelated defect."
+  },
+  "oldConservative": 4457.86875,
+  "oldEffortConservative": 8455.46875,
+  "accountBalanceAtAdmission": 5569.2,
+  "afterAllOldHolds": 1111.3312500000002,
+  "reviewRoute": "Two fresh controlled no-tools GenSpark Sol contexts, cheapest qualified elevated-risk route, same-family limitation disclosed",
+  "reviewAdmission": "HELD pending exact packets and fresh per-call/day/effort/floor guard; no paid call or arbitrary allowance increase from this metadata",
+  "phaseCapMaximumIfFunded": 250,
+  "dayCeiling": 6000,
+  "effortCeiling": 9000,
+  "floor": 1000,
+  "old120Held": true,
+  "oldRuntime150Held": true,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "nativePrivatePi": "HELD",
+  "oldSourceHashes": {
+    "src/keon/cortex/pipeline/ccm_python_protocol.py": "ea9de856c1f35146aa2e515195212688e98f03510c08d9df8cf3bdc05e1f7088",
+    "src/keon/cortex/pipeline/ccm_python_worker.py": "47e7600c565a86d81d7b62f38244cbffffebd82cb609fcae90eda6952965648e",
+    "src/keon/cortex/pipeline/ccm_python_runtime.py": "f0febc4d5c7b58bd6a3e92dec00ab2988c8fe6f0c1217a748caaa9007c9f0419",
+    "tests/test_ccm_python_runtime.py": "59c1e8595b1c3dd4c03f5d233b6f5dd901fc2a74eec314ca26083702b5623c05",
+    "docker/ccm-python-parser/Dockerfile": "b8c2f008083d2d13194c7ebb76af91795181e594d5df1ffb97f060047cb07480",
+    "docs/specs/ccm-python-runtime-v1.md": "ebcd07eaf71bf4e4579f86edbda1d44ebd3f4fd2ec2644e0fd857d294345b4ad"
+  },
+  "sourceRepairNowAuthorized": true,
+  "amendedSpecSha256": "ef4b768a06f685003c8ceaed55983caf085c35408eef3bca8b3b6fe1758d314a"
+}

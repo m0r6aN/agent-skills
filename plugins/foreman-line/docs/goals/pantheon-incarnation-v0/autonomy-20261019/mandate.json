@@ -1,0 +1,58 @@
+{
+  "schema": "pantheon.mandate.proposal.v1",
+  "id": "OM-PAN-001",
+  "status": "PROPOSED",
+  "ratificationRef": null,
+  "authorityGrantRef": null,
+  "goal": "pantheon-incarnation-v0",
+  "owner": "Clinton Morgan",
+  "planningSessionId": "01a15424-1fd5-77a2-a73a-d92a60a5de34",
+  "predecessorSessionId": "01a151ad-3cea-70cf-9dfc-233a9da3dd00",
+  "expiresDaysAfterActivation": 14,
+  "spending": {
+    "currency": "USD",
+    "newAllowance": 75,
+    "priorUncertaintyHold": 5,
+    "totalExposureEnvelope": 80,
+    "bootstrapAllowance": 25,
+    "perRequestReservationCeiling": 6,
+    "perParcelExposureCeiling": 15,
+    "provisionalDiscrepancyBufferPercent": 10,
+    "autoReloadRequired": "OFF",
+    "billedCostGuarantee": false
+  },
+  "concurrency": {
+    "workers": 2,
+    "workersPerHost": 1,
+    "paidRequests": 1
+  },
+  "limits": {
+    "totalPaidRequests": 120,
+    "bootstrapPaidRequests": 16,
+    "bootstrapNativeBuilderSessions": 8,
+    "builderCallsPerSession": 12,
+    "reviewAttemptsPerArtifactVersion": 2,
+    "reworkCyclesPerParcel": 2,
+    "reviewCombinedOutputDefault": 32768,
+    "reviewCombinedOutputRecovery": 65536,
+    "requestTimeoutSeconds": 600,
+    "streamIdleSeconds": 120,
+    "cleanupSeconds": 5,
+    "workerWallMinutes": 45,
+    "transportRetries": 0,
+    "reviewContinuations": 0
+  },
+  "lease": {
+    "ttlSeconds": 120,
+    "renewSeconds": 30,
+    "minRemainingToBeginEffectSeconds": 30,
+    "localRevocationStopSeconds": 5
+  },
+  "profiles": [
+    "anthropic-morgan-default/claude-sonnet-5-5",
+    "anthropic-morgan-default/claude-opus-5-5"
+  ],
+  "independencePolicy": "fresh-distinct-no-authorship; same-vendor development exception; two architecture reviews",
+  "runtimeRequiredAfterBootstrap": true,
+  "productionAuthorized": false
+}

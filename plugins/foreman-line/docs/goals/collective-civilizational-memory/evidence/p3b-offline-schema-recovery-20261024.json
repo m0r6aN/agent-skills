@@ -1,0 +1,11 @@
+{
+  "atUtc": "2026-10-24T23:12:52.094016+00:00",
+  "status": "LOSSLESS_FIXED_PATH_MEMBER_RECOVERY_NOT_ACCEPTANCE",
+  "algorithm": "Strict exactpath rawPython JSON member extraction after ordinary JSON decoding, no source edits/inference",
+  "candidateSha256": "6da7a8320ed610daba6c9752bbba97cda9fefe287a2005834f966bc10304449b",
+  "sourceSha256": "cdcedfe988d4d36367c7998f8145f537a399326c509ae9220c413f1d8babc8c9",
+  "sourceLines": 692,
+  "originalFailedReceiptUnchanged": true,
+  "fullCallReservationHeld": true,
+  "newProviderRequests": 0
+}

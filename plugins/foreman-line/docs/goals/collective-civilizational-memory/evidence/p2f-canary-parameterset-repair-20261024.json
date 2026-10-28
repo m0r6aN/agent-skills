@@ -1,0 +1,9 @@
+{
+  "status": "TEST_ONLY_PARAMETERSET_WRAPPING_WITHIN_FOCUSED_REPAIR",
+  "diagnosis": "pytest ParameterSet.extract_from calls isinstance on bare hostile values, which probes __class__ before ID generation. Explicit pytest.param wrappers bypass framework classification; hostile Canary behavior remains completely unchanged.",
+  "wrappedValues": 3,
+  "beforeTestHash": "b1123048dbddafaea91a9e1fc22de7d24e68a0d1b108f0c0ca555bc9854ca8bf",
+  "afterTestHash": "9b26be4065bee72c5d10d01c167c108c17157ed043c8d9e2492ddcd8311eee79",
+  "productionChanged": false,
+  "providerRequests": 0
+}

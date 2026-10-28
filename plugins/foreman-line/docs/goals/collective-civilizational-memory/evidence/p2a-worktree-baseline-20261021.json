@@ -1,0 +1,47 @@
+{
+  "atUtc": "2026-10-22T03:57:23.147077+00:00",
+  "parcel": "CCM-P2A",
+  "worktree": "D:\\Repos\\ccm-worktrees\\cortex-p2a",
+  "branch": "feat/foreman-line-ccm-p2a",
+  "base": "6139ddd8802540829eebce07215106e4b16ca360",
+  "sourcePins": 267,
+  "allowedPaths": [
+    "src/keon/cortex/scrubber/__init__.py",
+    "src/keon/cortex/scrubber/models.py",
+    "src/keon/cortex/scrubber/service.py",
+    "tests/test_ccm_scrubber.py",
+    "docs/specs/ccm-scrubber-v1.md"
+  ],
+  "baselineExit": 1,
+  "baselineIdentities": 2993,
+  "baselineSkipped": 137,
+  "baselineFailures": [
+    {
+      "classname": "tests.temporal.test_benchmark.TestBenchReceiptEmitOverhead",
+      "name": "test_receipt_overhead_bounded[50]",
+      "failureTypes": [
+        null
+      ]
+    }
+  ],
+  "command": [
+    "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "-X",
+    "utf8",
+    "-B",
+    "-m",
+    "pytest",
+    "-p",
+    "pytest_asyncio.plugin",
+    "-p",
+    "no:cacheprovider",
+    "-q",
+    "--basetemp=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2a-20261021-01\\pytest-tmp",
+    "--junitxml=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2a-20261021-01\\baseline.xml"
+  ],
+  "seconds": 126.142,
+  "capture": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p2a-20261021-01",
+  "providerEnvironment": "Sanitized, no database/provider/key vars, no new model requests",
+  "sourceAccepted": false,
+  "sourceDispatched": false
+}

@@ -1,0 +1,84 @@
+{
+  "schema": "pantheon.independent-native-negative-checks.v1",
+  "authorSessionId": "/root/foreman_rules",
+  "at": "2026-10-19T14:02:07.741Z",
+  "liveCalls": 0,
+  "credentialLookups": 0,
+  "networkCalls": 0,
+  "liveWrapperExecuted": false,
+  "cases": [
+    {
+      "id": "N01",
+      "finding": "NP-01",
+      "observed": "CAPTURE_EXPECTATIONS_REFUSED",
+      "meaning": "Current plan spec fails the actual parser interface."
+    },
+    {
+      "id": "N02",
+      "finding": "NP-02",
+      "observed": {
+        "complete": true,
+        "error": "SSE_MALFORMED",
+        "wrapperComplete": true,
+        "usage": {
+          "input_tokens": 90,
+          "output_tokens": 200
+        }
+      },
+      "meaning": "Malformed trailing stream is classified complete by the wrapper and its retained counters are eligible for provisional exposure reduction."
+    },
+    {
+      "id": "N03",
+      "finding": "NP-02",
+      "observed": {
+        "complete": true,
+        "error": "REVIEW_CONTRACT_INVALID",
+        "wrapperComplete": true,
+        "review": null
+      },
+      "meaning": "A complete but unusable review is not explicitly failed by the wrapper; parseCode would remain null."
+    },
+    {
+      "id": "N04",
+      "finding": "NP-05",
+      "observed": {
+        "invalidActivationExpiryDenied": false,
+        "invalidAccountFreshnessDenied": false
+      },
+      "meaning": "NaN timestamps fail open in the existing wrapper freshness expressions."
+    }
+  ],
+  "ratificationRawPinVerified": true,
+  "userRoleVerified": true,
+  "sealedPackageManifestPinVerified": true,
+  "helperReportedFilesVerified": [
+    {
+      "path": "native-sender.mjs",
+      "match": true
+    },
+    {
+      "path": "native-sender.test.mjs",
+      "match": true
+    },
+    {
+      "path": "PLAN.md",
+      "match": true
+    },
+    {
+      "path": "README.md",
+      "match": true
+    },
+    {
+      "path": "HANDOFF.md",
+      "match": true
+    },
+    {
+      "path": ".gitignore",
+      "match": true
+    }
+  ],
+  "builderReportedTests": {
+    "passed": 41,
+    "runByThisReviewer": false
+  }
+}

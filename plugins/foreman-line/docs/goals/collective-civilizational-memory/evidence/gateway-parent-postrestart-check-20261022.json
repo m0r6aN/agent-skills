@@ -1,0 +1,12 @@
+{
+  "atUtc": "2026-10-23T01:42:54.5741231Z",
+  "ownerReportedRestart": true,
+  "processTokenPresent": true,
+  "savedUserTokenPresent": true,
+  "processMatchesSavedUser": true,
+  "targetListenerCount": 0,
+  "credentialValuesEmitted": false,
+  "authenticationRequests": 0,
+  "routeReleased": false,
+  "broaderIncidentClosed": false
+}

@@ -1,0 +1,33 @@
+{
+  "recorded_at": "2026-10-19T01:07:02Z",
+  "source_thread": "01a14ead-21c6-7af2-974d-64e3ff1c2180",
+  "evidence_type": "owner report of sending the immediately preceding proposed directive; not a verbatim approval recovered from the stopped Pi transcript",
+  "proposed_directive": {
+    "turn_id": "01a15197-5fbc-78b3-a949-c1a7a6595c92",
+    "message_id": "msg_03588180c83f756a016ad56688e0a88190bca4e34ed4408f7f",
+    "text": "I approve SA4-M1 with one explicit change: the coordinator may launch and supervise the single fresh Claude Code review invocation, using my existing first-party Max authentication, once I confirm the required account settings.\n\nThis supersedes the human-start-only restriction and prohibition on coordinator execution for this one attempt. Record it as a separately authorized, one-off CLI review procedure—not an admitted production Foreman launch.\n\nRetain the fixed packet, exact model, disabled tools, configured output limit, local deadline, included-usage-only condition, privacy terms, raw evidence capture, and prohibition on retries or fallback. Preserve all existing conversations and production launcher safeguards.\n\nComplete the remaining local preparation autonomously. If my account-setting confirmation is still missing, ask only for those observations. After confirmation, execute the one attempt and return the review with findings triage."
+  },
+  "owner_report": {
+    "turn_id": "01a1519a-7dee-70e2-a6f8-0be92a7c254c",
+    "message_id": "01a1519a-7e9d-73a1-bb94-79fe6a925f94",
+    "started_at": "2026-10-19T00:40:41.000Z",
+    "text": "I sent that, thanks. I don't understand why we are suddenly having issues launching reviews. Or any other sessions for that matter. Foreman has been doing great with that for a while.  Is it because we changed the seats.md file?\n"
+  },
+  "interpretation": "SA4-M1 approved with coordinator-execution override, conditional on account/policy observations; not approved as originally written; no review performed by recording this evidence",
+  "stopped_pi_transcript_last_human": {
+    "id": "e9868cff",
+    "timestamp": "2026-10-19T00:18:29.472Z",
+    "scope": "authenticated terminal report only; later approval not found in saved Pi transcript"
+  },
+  "account_confirmation": {
+    "recorded_at": "2026-10-19T01:09:08Z",
+    "source": "current chat owner reply to explicit three-condition question",
+    "owner_response": "All three confirmed. Note: We also have $100 USD in API credits.",
+    "conditions": {
+      "max_paid_extra_usage_or_credits": "OFF (owner-confirmed)",
+      "model_improvement": "OFF (owner-confirmed)",
+      "managed_policy_adds_tools_hooks_context_or_another_provider": "No (owner-confirmed)"
+    },
+    "evidence_limit": "Owner observation, not independent machine attestation; separate API credit balance does not change this review's included-Max-only route or grant a new spending envelope."
+  }
+}

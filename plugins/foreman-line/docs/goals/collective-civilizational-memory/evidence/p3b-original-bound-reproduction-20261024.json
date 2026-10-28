@@ -1,0 +1,9 @@
+{
+  "atUtc": "2026-10-24T23:53:29.647104+00:00",
+  "status": "EXPECTED_ORIGINAL_ENVELOPE_BOUND_REGRESSION_REPRODUCED",
+  "preRepairProductionImage": "ccm-p3b-review-repro:cc89aa1de2",
+  "testExit": 1,
+  "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n________ test_original_envelope_limit_before_structured_transformation _________\ntests/test_ccm_admission.py:384: in test_original_envelope_limit_before_structured_transformation\n    assert_closed(caught.value, \"resource_limit\")\ntests/test_ccm_admission.py:60: in assert_closed\n    assert error.code == code\nE   AssertionError: assert 'scrub_failed' == 'resource_limit'\nE     \nE     - resource_limit\nE     + scrub_failed\n=============================== warnings summary ===============================\n../usr/local/lib/python3.12/site-packages/_pytest/config/__init__.py:1474\n  /usr/local/lib/python3.12/site-packages/_pytest/config/__init__.py:1474: PytestConfigWarning: Unknown config option: asyncio_mode\n  \n    self._warn_or_fail_if_strict(f\"Unknown config option: {key}\\n\")\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED tests/test_ccm_admission.py::test_original_envelope_limit_before_structured_transformation\n1 failed, 59 deselected, 1 warning in 0.44s\n",
+  "containerAbsent": true,
+  "providerRequests": 0
+}

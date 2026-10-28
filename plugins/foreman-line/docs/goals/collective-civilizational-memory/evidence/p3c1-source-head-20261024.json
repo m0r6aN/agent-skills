@@ -1,0 +1,23 @@
+{
+  "atUtc": "2026-10-25T02:19:49.306433+00:00",
+  "head": "88356c683ed05f94d4e0a28cb9252d295959de21",
+  "base": "43323f535df458543c0161ca501f8f974650008e",
+  "branch": "feat/foreman-line-ccm-p3c1-deletion-protocol",
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_deletion_protocol.py": "e7b1c2034d0f32e29f71fcb8ff36a7c82ce7719162a3f8ead1fe9ddf708500ec",
+    "tests/test_ccm_deletion_protocol.py": "982329790ba881165f23c0a418f46c28410d91016f07ab82603c0a9d5f6a2020",
+    "docs/specs/ccm-deletion-protocol-v1.md": "e41aa5faaebb3ebd27ee11c10349148c287d434fe6b9fbb584a5cceabdf4ee58"
+  },
+  "old458PinsRetained": true,
+  "counts": {
+    "pass": 5114,
+    "skipped": 208,
+    "failure": 0,
+    "error": 0
+  },
+  "focus": 1091,
+  "fullP3CComplete": false,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "pr": "https://github.com/Keon-Systems/keon-cortex/pull/103"
+}

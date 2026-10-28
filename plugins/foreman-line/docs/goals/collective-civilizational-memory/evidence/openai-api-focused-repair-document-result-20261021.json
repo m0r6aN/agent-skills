@@ -1,0 +1,33 @@
+{
+  "startedAtUtc": "2026-10-22T01:42:02.384704+00:00",
+  "requestedModel": "gpt-6.1-sol",
+  "requestCount": 1,
+  "retries": 0,
+  "status": "completed",
+  "inputSha256": "32b212b8019f42c5da0261d67bd57e89e68b6156bd666c5442f152c28d87095c",
+  "maxOutput": 10240,
+  "capture": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\api-repair-document-20261021-02\\run",
+  "httpStatus": 200,
+  "requestId": "req_c7cff6c3070a4bdc9930af2159103906",
+  "contentType": "text/event-stream; charset=utf-8",
+  "responseId": "resp_0dab1f2d83d34613016ad969eb24d087d29d2665a3bc885fec",
+  "model": "gpt-6.1-sol",
+  "usage": {
+    "input_tokens": 39009,
+    "input_tokens_details": {
+      "cache_write_tokens": 39006,
+      "cached_tokens": 0
+    },
+    "output_tokens": 8558,
+    "output_tokens_details": {
+      "reasoning_tokens": 364
+    },
+    "total_tokens": 47567
+  },
+  "incompleteDetails": null,
+  "completedAtUtc": "2026-10-22T01:44:32.766944+00:00",
+  "events": 8198,
+  "captureBytes": 2320627,
+  "textBytes": 38525,
+  "conservativeTokenPriceUsd": 0.1831025
+}

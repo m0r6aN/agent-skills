@@ -1,0 +1,183 @@
+{
+  "observedAt": "2026-10-20T00:10:39.295Z",
+  "node": "v24.19.0",
+  "authority": "local preparation only; no approved reviewer route or manual exception",
+  "packet": {
+    "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\collective-civilizational-memory\\review-launch-packet.txt",
+    "bytes": 118055,
+    "capBytes": 131072,
+    "inventory": [
+      {
+        "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\collective-civilizational-memory\\plan-review-brief.md",
+        "start": "entire file",
+        "endExclusive": "EOF",
+        "includedBytes": 6292
+      },
+      {
+        "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\collective-civilizational-memory\\charter.md",
+        "start": "entire file",
+        "endExclusive": "EOF",
+        "includedBytes": 14953
+      },
+      {
+        "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1A-memory-graph-contracts.md",
+        "start": "entire file",
+        "endExclusive": "EOF",
+        "includedBytes": 13064
+      },
+      {
+        "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1B-gravity-v2-fixtures.md",
+        "start": "entire file",
+        "endExclusive": "EOF",
+        "includedBytes": 9561
+      },
+      {
+        "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1C-collective-wire-compatibility.md",
+        "start": "entire file",
+        "endExclusive": "EOF",
+        "includedBytes": 10678
+      },
+      {
+        "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1D-postgres-capability-check.md",
+        "start": "entire file",
+        "endExclusive": "EOF",
+        "includedBytes": 9004
+      },
+      {
+        "path": "D:/Repos/Pantheon/docs/CONTEXT-SHAPING-DECISIONS.md",
+        "start": "entire file",
+        "endExclusive": "## Local source observations",
+        "includedBytes": 14756
+      },
+      {
+        "path": "D:/Repos/Pantheon/docs/CONTEXT-SPEC-V4.txt",
+        "start": "   ## 3. Locked Architectural Decisions",
+        "endExclusive": "   ## 4. Core Technical Schemas",
+        "includedBytes": 19828
+      },
+      {
+        "path": "D:/Repos/Pantheon/docs/CONTEXT-SPEC-V4.txt",
+        "start": " 6. End-to-End Verification & Loop Stop Conditions",
+        "endExclusive": "EOF",
+        "includedBytes": 1648
+      },
+      {
+        "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\COORDINATOR-PATTERN.md",
+        "start": "## Stage Zero",
+        "endExclusive": "## The long-running loop",
+        "includedBytes": 8588
+      },
+      {
+        "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\SPEC-CONVENTION.md",
+        "start": "## 3. Spec Lifecycle",
+        "endExclusive": "## 4. Required Spec Schema",
+        "includedBytes": 1171
+      },
+      {
+        "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\SPEC-CONVENTION.md",
+        "start": "### 4.8 `Allowed Files`",
+        "endExclusive": "### 4.9",
+        "includedBytes": 642
+      },
+      {
+        "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\SPEC-CONVENTION.md",
+        "start": "Required body sections, in order:",
+        "endExclusive": "## 5. The Spec",
+        "includedBytes": 1636
+      },
+      {
+        "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\SPEC-CONVENTION.md",
+        "start": "## 8. Dispatch Model",
+        "endExclusive": "## 9. Known Trade-offs",
+        "includedBytes": 1156
+      },
+      {
+        "path": "D:/Repos/Pantheon/docs/COLLECTIVE-INCARNATION.md",
+        "start": "## Owner direction",
+        "endExclusive": "## Proposed contract interpretation",
+        "includedBytes": 1608
+      }
+    ],
+    "tokenCount": "not measured; bytes are not request tokens",
+    "suppliedTextOnly": true
+  },
+  "sourceObservations": [
+    {
+      "repo": "D:/Repos/keon-omega/keon-cortex",
+      "head": "684785f220c066e8686e160eec2611c727582a00",
+      "status": " D .claude/worktrees/ci-type-hygiene\n D .claude/worktrees/frosty-bardeen-3ba362\n D .claude/worktrees/lane2-outbox-replay-proof\n D .claude/worktrees/pedantic-cori-a6b573\n D .claude/worktrees/practical-brahmagupta-25b2b3\n?? .agents/skills/neon-postgres/\n?? .agents/skills/neon/\n?? skills-lock.json",
+      "files": [
+        {
+          "file": "src/keon/cortex/api.py",
+          "equalsHeadBytes": true
+        },
+        {
+          "file": "src/keon/cortex/ingress/models.py",
+          "equalsHeadBytes": false
+        },
+        {
+          "file": "src/keon/cortex/services/memory_events.py",
+          "equalsHeadBytes": true
+        }
+      ]
+    },
+    {
+      "repo": "D:/Repos/keon-omega/keon.collective",
+      "head": "461e2767a046418b098766090723e0cc34d9edc7",
+      "status": "",
+      "files": [
+        {
+          "file": "src/Keon.Collective.Abstractions/Society/CivicMemoryContracts.cs",
+          "equalsHeadBytes": true
+        },
+        {
+          "file": "src/Keon.Collective.Abstractions/Cognition/EvidenceSourceKinds.cs",
+          "equalsHeadBytes": true
+        },
+        {
+          "file": "src/Keon.Collective.Core/Cognition/EvidenceAnchorValidator.cs",
+          "equalsHeadBytes": true
+        }
+      ]
+    },
+    {
+      "repo": "D:/Repos/opmem-worktrees/cortex-p4b",
+      "head": "360a3d6e63c8762a6fb10cd39d071ef5dff6e89d",
+      "status": "",
+      "files": [
+        {
+          "file": "src/keon/cortex/api.py",
+          "equalsHeadBytes": true
+        },
+        {
+          "file": "src/keon/cortex/services/memory_events.py",
+          "equalsHeadBytes": true
+        }
+      ]
+    },
+    {
+      "repo": "D:/Repos/opmem-worktrees/gateway-p5a-01a1358d",
+      "head": "b3a4b1b529ea0b804c07c681c69de8d4e2aebfdf",
+      "status": "",
+      "files": [
+        {
+          "file": "src/Keon.McpGateway/Backends/CortexClient.cs",
+          "equalsHeadBytes": true
+        },
+        {
+          "file": "src/Keon.McpGateway/Tools/Cortex/CortexMemoryWriteHandler.cs",
+          "equalsHeadBytes": true
+        }
+      ]
+    }
+  ],
+  "manualHelper": {
+    "directory": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\pi-package\\review-tools",
+    "tracked": "",
+    "nativeExecutableExists": true,
+    "nativeExecutableBytes": 290228384,
+    "nativeExecutableInvoked": false,
+    "authInspected": false,
+    "accountSettingsInspected": false
+  }
+}

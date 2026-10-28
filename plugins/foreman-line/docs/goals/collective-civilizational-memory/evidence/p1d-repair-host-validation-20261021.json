@@ -1,0 +1,102 @@
+{
+  "atUtc": "2026-10-22T03:23:09.786103+00:00",
+  "sourceBase": "cc3a6defa78849b8df8795c58ac65866f31179d5",
+  "allPassed": true,
+  "testIdentities": 110,
+  "retainedBaseline": 79,
+  "candidatePins": {
+    "scripts/ccm_check_postgres.py": "53383e904c128271b52f13dec1c620c0cdc195c1bc704bd0c0d92f427688956d",
+    "tests/test_ccm_postgres_capabilities.py": "3cdcfcb849353ee9090be81743d7031d8984e3667d55bc6f188ca35022cf8d7c",
+    "docs/specs/ccm-postgres-profile.md": "68fe033494a15ef3c30b5365acc1935598231fd541b7b6acf7863633c7fd8406"
+  },
+  "builderHandoffPinsBeforeMechanicalFormat": {
+    "scripts/ccm_check_postgres.py": "53383e904c128271b52f13dec1c620c0cdc195c1bc704bd0c0d92f427688956d",
+    "tests/test_ccm_postgres_capabilities.py": "3cdcfcb849353ee9090be81743d7031d8984e3667d55bc6f188ca35022cf8d7c",
+    "docs/specs/ccm-postgres-profile.md": "68fe033494a15ef3c30b5365acc1935598231fd541b7b6acf7863633c7fd8406"
+  },
+  "priorInitialMechanicalFormattingOnly": "isort/Black on two allowed new Python files before initial independent review; argparse error override return annotation corrected None to Never to match its actual unconditional exit; no semantic changes. Prior first host run94PASS with this single mypy override error is preserved in sibling host-validation.",
+  "runs": [
+    {
+      "name": "black",
+      "exitCode": 0,
+      "seconds": 0.448,
+      "argv": [
+        "black",
+        "--check",
+        "scripts/ccm_check_postgres.py",
+        "tests/test_ccm_postgres_capabilities.py"
+      ],
+      "outputSha256": "42952929f98ff284b84ffc33f5fca4e517620f9b2ceb3fca1375e504affa8195"
+    },
+    {
+      "name": "isort",
+      "exitCode": 0,
+      "seconds": 0.268,
+      "argv": [
+        "isort",
+        "--check-only",
+        "scripts/ccm_check_postgres.py",
+        "tests/test_ccm_postgres_capabilities.py"
+      ],
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "mypy",
+      "exitCode": 0,
+      "seconds": 1.525,
+      "argv": [
+        "mypy",
+        "scripts/ccm_check_postgres.py",
+        "--ignore-missing-imports",
+        "--namespace-packages",
+        "--cache-dir=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1d-20261021-01\\host-repair-validation\\mypy-cache"
+      ],
+      "outputSha256": "8e63ae22e8213e327a5e9cbd584067681681bd8ef7f25c869877887ccdcfc4ff"
+    },
+    {
+      "name": "pytest",
+      "exitCode": 0,
+      "seconds": 1.602,
+      "argv": [
+        "pytest",
+        "-p",
+        "pytest_asyncio.plugin",
+        "-p",
+        "no:cacheprovider",
+        "-q",
+        "--basetemp=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1d-20261021-01\\host-repair-validation\\pytest-tmp",
+        "--junitxml=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1d-20261021-01\\host-repair-validation\\tests.xml",
+        "tests/test_ccm_postgres_capabilities.py",
+        "tests/test_ingress_models.py",
+        "tests/test_evidence_envelope.py"
+      ],
+      "outputSha256": "69d236aa5fa9f6051512ac31b39dbdc9962e38e050b3f0b26b0b6dadef871229"
+    }
+  ],
+  "missingConfig": {
+    "contract_version": "ccm-contracts/2.0.1",
+    "error_codes": [
+      "config_missing"
+    ],
+    "extensions": {
+      "pg_trgm": null,
+      "vector": null
+    },
+    "features": {
+      "iterative_hnsw": false,
+      "pg_trgm": false,
+      "pgvector": false,
+      "tsvector_ts_rank_cd": false
+    },
+    "observed_at": "2026-10-22T03:23:09Z",
+    "postgres_version": "unknown",
+    "schema_version": "ccm-postgres-capabilities/1.0",
+    "status": "unavailable"
+  },
+  "missingConfigExit": 3,
+  "capture": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\p1d-20261021-01\\host-repair-validation",
+  "realDatabaseEvidence": false,
+  "realDisposableDatabaseGate": "OPEN; mock tests do not satisfy AC4",
+  "namedTargetGate": "OPEN before P4 pgvector use",
+  "accepted": false
+}

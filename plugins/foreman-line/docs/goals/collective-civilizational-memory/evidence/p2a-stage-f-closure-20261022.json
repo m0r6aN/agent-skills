@@ -1,0 +1,62 @@
+{
+  "atUtc": "2026-10-22T04:55:07.160679+00:00",
+  "parcel": "CCM-P2A",
+  "disposition": "Accepted pure in-memory scrubber library; all parcel acceptance criteria evidenced with later integration gates explicit",
+  "sourceHead": "cb794ba7c51dd3508c90832a892aaa2490894993",
+  "acceptedCommit": "76fa7c6eda6a4859e7d3a64815c760a77d4c07f0",
+  "pr": {
+    "mergeCommit": {
+      "oid": "76fa7c6eda6a4859e7d3a64815c760a77d4c07f0"
+    },
+    "mergedAt": "2026-10-22T04:50:42Z",
+    "state": "MERGED",
+    "url": "https://github.com/Keon-Systems/keon-cortex/pull/87"
+  },
+  "mainChecks": [
+    {
+      "conclusion": "success",
+      "headSha": "76fa7c6eda6a4859e7d3a64815c760a77d4c07f0",
+      "name": "CI",
+      "status": "completed",
+      "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39724637602"
+    },
+    {
+      "conclusion": "success",
+      "headSha": "76fa7c6eda6a4859e7d3a64815c760a77d4c07f0",
+      "name": "Trigger auto deployment for keon-cortex",
+      "status": "completed",
+      "url": "https://github.com/Keon-Systems/keon-cortex/actions/runs/39724637630"
+    }
+  ],
+  "exactHeadChecks": "16SUCCESS; originalcombinedPRclockfailure preserved; one same-head failed/cancelled diagnostic rerun2SUCCESS",
+  "independentReviews": "2initialCHANGES_REQUIRED ->ONE focused Luna repair ->2incomplete closures(not accepted/full700holdsretained) ->explicit new finite concisepairPASS/PASS",
+  "sourceGitBlobsMatchReviewedFileHashes": {
+    "src/keon/cortex/scrubber/__init__.py": "3be2e23bab4f17b393b5de8a25a22782f6fa3a3a6da88917d58f8b116efdbc7a",
+    "src/keon/cortex/scrubber/models.py": "c57a6b725224d6f405e4ffd4d09b2c0a649f03094411f80121de5714b7d456b2",
+    "src/keon/cortex/scrubber/service.py": "d2f4023333fefd7a04dfd061d4418c96cf6cb6c448ab519af7a8f1527b28da96",
+    "tests/test_ccm_scrubber.py": "f47771aa7bec1172b4923a98659cf42b6e6a60e2b72d2b2bf86ed61002933e6e",
+    "docs/specs/ccm-scrubber-v1.md": "4038aa4d649c98b734d1e4a7aa4f1e65224cdf4ac6e6beb5eaab5940b29ac279"
+  },
+  "focusedPass": 33,
+  "fullLocalPass": 2889,
+  "fullLocalSkip": 137,
+  "fullLocalFailures": 0,
+  "original267PinsUnchanged": true,
+  "all3013InitialIdentitiesRetained": true,
+  "parentHmacIndependentCases": 32,
+  "parentAdditionalChecks": "20 categories including HMAC vectors, exact size/depth/epoch/URL/overlap/numeric/candidate/known-secret boundaries",
+  "oldRisks": "Inherited BM2 timing variance and unfrozen-clock gravity tie test are not fixed. Clock mechanism reproduced without scrubber; actual originalCIclocktrace unavailable. No broad teststability claim.",
+  "catalogLimitations": [
+    "Compound assignment names outside exact frozen catalog require known literals or other detector; no universal secret recall",
+    "Nested/stray recognized PEM markers reject the entire item",
+    "No P3 enforcement, producer/key qualification, operational data ingestion or erasure"
+  ],
+  "archive": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\done\\CCM-P2A-deterministic-memory-scrubber.md",
+  "archiveChange": "status-only, body unchanged",
+  "activeWorkorderSha256": "f6de7120cffe91932f7c3f4fa1b5c8c5e1e36149d7cf1a6d7709ec73f9a2274f",
+  "doneWorkorderSha256": "0e71daa5bbb6d26183b276fc46e6fca269b9e7ac4b2b7d420557f9d35cdf359b",
+  "cleanup": "Owned source worktree/branch retained for accepted pins and dependent parcels; no destructive cleanup",
+  "next": "P2B narrow pure UTF8/Markdown byte chunker draft; later AST/civicmapper/extractor/wholeP2, P3-P8 and real integration gates remain",
+  "wholeGoalComplete": false,
+  "bulkIngestionReady": false
+}

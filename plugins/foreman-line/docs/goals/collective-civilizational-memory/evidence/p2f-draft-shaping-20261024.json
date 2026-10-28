@@ -1,0 +1,28 @@
+{
+  "advisory": {
+    "valid": true,
+    "frontmatter": {
+      "valid": true,
+      "errors": [],
+      "warnings": [
+        "advisory: surfaces entry 'src/keon/cortex/pipeline/ccm_engine.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74",
+        "advisory: surfaces entry 'tests/test_ccm_engine.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) \u2014 see SPEC-CONVENTION \u00a74"
+      ]
+    },
+    "body": {
+      "valid": true,
+      "errors": []
+    },
+    "errors": []
+  },
+  "result": {
+    "artifactPath": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\ccm-p2f-extractor-engine-2026-10-24.shaping-result.json",
+    "artifactRef": "plugins/foreman-line/docs/specs/active/ccm-p2f-extractor-engine-2026-10-24.shaping-result.json",
+    "payload": {
+      "parcelSpecRefs": [
+        "plugins/foreman-line/docs/specs/active/CCM-P2F-extractor-engine.md"
+      ],
+      "epics": []
+    }
+  }
+}

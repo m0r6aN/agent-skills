@@ -1,0 +1,179 @@
+{
+  "observedAt": "2026-10-20T00:49:33.199Z",
+  "node": "v24.19.0",
+  "scope": "Mechanical coordinator checks only; not independent review, Gate 1/2 approval or implementation acceptance",
+  "sourceFilesCompared": 39,
+  "mirrorSourceByteIdentical": true,
+  "sourceObservations": [
+    {
+      "repo": "D:/Repos/agent-skills",
+      "head": "64fb8949bf5134f96fda02df0d4f52ac291a6138",
+      "branch": "main",
+      "status": " M plugins/.last_inuse_sweep\n M plugins/foreman-line/skills/ai-council/references/seats.md\n M skills/synced/b1615d10-039d-4783-acf0-ab3f00e92f65_48b499d1-feb5-4dd7-a1c2-31c0becec6cb/.last-complete-round\n M skills/synced/b1615d10-039d-4783-acf0-ab3f00e92f65_48b499d1-feb5-4dd7-a1c2-31c0becec6cb/manifest.json\n?? .update.lock\n?? plugins/foreman-line/docs/goals/collective-civilizational-memory/\n?? plugins/foreman-line/docs/goals/pantheon-incarnation-v0/\n?? plugins/foreman-line/docs/specs/active/CCM-P1A-memory-graph-contracts.md\n?? plugins/foreman-line/docs/specs/active/CCM-P1B-gravity-v2-fixtures.md\n?? plugins/foreman-line/docs/specs/active/CCM-P1C-collective-wire-compatibility.md\n?? plugins/foreman-line/docs/specs/active/CCM-P1D-postgres-capability-check.md\n?? plugins/foreman-line/docs/specs/active/EXA-P0-contract-reuse-and-bootstrap.md\n?? plugins/foreman-line/docs/specs/active/EXA-P1-packet-and-route-admission.md\n?? plugins/foreman-line/docs/specs/active/EXA-P2-durable-authority-and-accounting.md\n?? plugins/foreman-line/docs/specs/active/EXA-P3-pi-runtime-and-isolation.md\n?? plugins/foreman-line/docs/specs/active/EXA-P4-installed-cli-and-composition.md\n?? plugins/foreman-line/docs/specs/active/EXA-P5-goal-shaping-and-council-wiring.md\n?? plugins/foreman-line/docs/specs/active/EXA-P6-independent-proof-and-activation.md\n?? plugins/foreman-line/docs/specs/active/collective-civilizational-memory-foundation-2026-10-19-01a155c3.shaping-result.json\n?? plugins/foreman-line/docs/specs/active/execution-adapter-shaping-20261017.shaping-result.json\n?? plugins/foreman-line/pi-package/review-tools/\n?? plugins/foreman-line/skills/ai-council/references/seats_pantheon_base.md\n?? plugins/plugin-directory-cache-v2.json\n?? plugins/store/"
+    },
+    {
+      "repo": "D:/Repos/keon-omega/keon-cortex",
+      "head": "684785f220c066e8686e160eec2611c727582a00",
+      "branch": "main",
+      "status": " D .claude/worktrees/ci-type-hygiene\n D .claude/worktrees/frosty-bardeen-3ba362\n D .claude/worktrees/lane2-outbox-replay-proof\n D .claude/worktrees/pedantic-cori-a6b573\n D .claude/worktrees/practical-brahmagupta-25b2b3\n?? .agents/skills/neon-postgres/\n?? .agents/skills/neon/\n?? skills-lock.json"
+    },
+    {
+      "repo": "D:/Repos/keon-omega/keon.collective",
+      "head": "461e2767a046418b098766090723e0cc34d9edc7",
+      "branch": "main",
+      "status": ""
+    }
+  ],
+  "dependencyMode": "Existing isolated dependency mirror; no installs or checkout node_modules mutations",
+  "shapingResult": {
+    "path": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\collective-civilizational-memory-foundation-2026-10-19-01a155c3.shaping-result.json",
+    "schemaValid": true,
+    "refs": 4,
+    "epics": 0,
+    "inputUnchanged": true
+  },
+  "exactAllowedFileCount": 18,
+  "interParcelMutationCollisions": [],
+  "results": [
+    {
+      "ref": "plugins/foreman-line/docs/specs/active/CCM-P1A-memory-graph-contracts.md",
+      "ticket": "CCM-P1A",
+      "cliExit": 0,
+      "cliStdout": "",
+      "cliStderr": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1A-memory-graph-contracts.md: advisory: surfaces entry 'src/keon/cortex/envelope/taxonomy.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4\nD:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1A-memory-graph-contracts.md: advisory: surfaces entry 'src/keon/cortex/ingress/models_v2.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4\nD:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1A-memory-graph-contracts.md: advisory: surfaces entry 'tests/test_ccm_contracts_v2.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4\nD:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1A-memory-graph-contracts.md: advisory: surfaces entry 'tests/fixtures/ccm/contracts-v2.json' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4\n",
+      "body": {
+        "valid": true,
+        "errors": []
+      },
+      "bytes": 13903,
+      "allowedFiles": [
+        {
+          "file": "docs/specs/ccm-memory-graph-v2.md",
+          "existsAtReview": false
+        },
+        {
+          "file": "src/keon/cortex/envelope/taxonomy.py",
+          "existsAtReview": true
+        },
+        {
+          "file": "src/keon/cortex/ingress/models_v2.py",
+          "existsAtReview": false
+        },
+        {
+          "file": "tests/test_ccm_contracts_v2.py",
+          "existsAtReview": false
+        },
+        {
+          "file": "tests/fixtures/ccm/contracts-v2.json",
+          "existsAtReview": false
+        }
+      ],
+      "status": "draft",
+      "risk": "elevated",
+      "routingClass": "architecture/risk"
+    },
+    {
+      "ref": "plugins/foreman-line/docs/specs/active/CCM-P1B-gravity-v2-fixtures.md",
+      "ticket": "CCM-P1B",
+      "cliExit": 0,
+      "cliStdout": "",
+      "cliStderr": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1B-gravity-v2-fixtures.md: advisory: surfaces entry 'src/keon/cortex/gravity/params.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4\nD:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1B-gravity-v2-fixtures.md: advisory: surfaces entry 'src/keon/cortex/gravity/function_v2.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4\nD:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1B-gravity-v2-fixtures.md: advisory: surfaces entry 'src/keon/cortex/gravity/retention_v2.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4\nD:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1B-gravity-v2-fixtures.md: advisory: surfaces entry 'tests/gravity/test_ccm_v2.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4\nD:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1B-gravity-v2-fixtures.md: advisory: surfaces entry 'tests/fixtures/ccm/gravity-v2.json' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4\n",
+      "body": {
+        "valid": true,
+        "errors": []
+      },
+      "bytes": 9562,
+      "allowedFiles": [
+        {
+          "file": "src/keon/cortex/gravity/params.py",
+          "existsAtReview": true
+        },
+        {
+          "file": "src/keon/cortex/gravity/function_v2.py",
+          "existsAtReview": false
+        },
+        {
+          "file": "src/keon/cortex/gravity/retention_v2.py",
+          "existsAtReview": false
+        },
+        {
+          "file": "tests/gravity/test_ccm_v2.py",
+          "existsAtReview": false
+        },
+        {
+          "file": "tests/fixtures/ccm/gravity-v2.json",
+          "existsAtReview": false
+        }
+      ],
+      "status": "draft",
+      "risk": "elevated",
+      "routingClass": "implementation/standard"
+    },
+    {
+      "ref": "plugins/foreman-line/docs/specs/active/CCM-P1C-collective-wire-compatibility.md",
+      "ticket": "CCM-P1C",
+      "cliExit": 0,
+      "cliStdout": "",
+      "cliStderr": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1C-collective-wire-compatibility.md: advisory: surfaces entry 'src/Keon.Collective.Abstractions/Society/AgentIdentityContracts.cs' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4\nD:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1C-collective-wire-compatibility.md: advisory: surfaces entry 'src/Keon.Collective.Abstractions/Society/CivicMemoryContracts.cs' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4\nD:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1C-collective-wire-compatibility.md: advisory: surfaces entry 'src/Keon.Collective.Abstractions/Society/CivilizationalMemoryContracts.cs' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4\nD:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1C-collective-wire-compatibility.md: advisory: surfaces entry 'tests/Keon.Collective.Abstractions.Tests/Society/CivilizationalMemoryContractTests.cs' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4\nD:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1C-collective-wire-compatibility.md: advisory: surfaces entry 'tests/Keon.Collective.Abstractions.Tests/Society/ccm-contracts-v2.json' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4\n",
+      "body": {
+        "valid": true,
+        "errors": []
+      },
+      "bytes": 10679,
+      "allowedFiles": [
+        {
+          "file": "src/Keon.Collective.Abstractions/Society/AgentIdentityContracts.cs",
+          "existsAtReview": true
+        },
+        {
+          "file": "src/Keon.Collective.Abstractions/Society/CivicMemoryContracts.cs",
+          "existsAtReview": true
+        },
+        {
+          "file": "src/Keon.Collective.Abstractions/Society/CivilizationalMemoryContracts.cs",
+          "existsAtReview": false
+        },
+        {
+          "file": "tests/Keon.Collective.Abstractions.Tests/Society/CivilizationalMemoryContractTests.cs",
+          "existsAtReview": false
+        },
+        {
+          "file": "tests/Keon.Collective.Abstractions.Tests/Society/ccm-contracts-v2.json",
+          "existsAtReview": false
+        }
+      ],
+      "status": "draft",
+      "risk": "elevated",
+      "routingClass": "implementation/standard"
+    },
+    {
+      "ref": "plugins/foreman-line/docs/specs/active/CCM-P1D-postgres-capability-check.md",
+      "ticket": "CCM-P1D",
+      "cliExit": 0,
+      "cliStdout": "",
+      "cliStderr": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1D-postgres-capability-check.md: advisory: surfaces entry 'scripts/ccm_check_postgres.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4\nD:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\specs\\active\\CCM-P1D-postgres-capability-check.md: advisory: surfaces entry 'tests/test_ccm_postgres_capabilities.py' does not begin with a known vocabulary prefix (docs/, plugins/, skills/, apps/, config/) — see SPEC-CONVENTION §4\n",
+      "body": {
+        "valid": true,
+        "errors": []
+      },
+      "bytes": 9005,
+      "allowedFiles": [
+        {
+          "file": "scripts/ccm_check_postgres.py",
+          "existsAtReview": false
+        },
+        {
+          "file": "tests/test_ccm_postgres_capabilities.py",
+          "existsAtReview": false
+        },
+        {
+          "file": "docs/specs/ccm-postgres-profile.md",
+          "existsAtReview": false
+        }
+      ],
+      "status": "draft",
+      "risk": "standard",
+      "routingClass": "implementation/standard"
+    }
+  ]
+}

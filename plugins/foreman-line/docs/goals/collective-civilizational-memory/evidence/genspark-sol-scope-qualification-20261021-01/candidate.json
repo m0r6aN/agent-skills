@@ -1,0 +1,52 @@
+{
+  "role": "artifact_only_builder_candidate",
+  "acceptance_criteria": [
+    {
+      "id": 1,
+      "summary": "Proposed: extend canonical taxonomy additively with CAUSAL, REPULSIVE, BUFFERED and orthogonal ValidityStatus; add shards/2.0 validation enforcing closed tier/kind/state rules, UTC times, finite numbers, trusted admission and non-content diagnostics. Preserve v1 behavior, ranks, serialized identities, scoped/handoff hashes and receipt/cognition separation. Reject null supersession replacements and persisted derived_decay_state."
+    },
+    {
+      "id": 2,
+      "summary": "Proposed: freeze canonical JSON fixtures covering the complete accepted/rejected tier-kind cross-product, actual-validator-compatible canonical/scoped IDs, old replay, UTC events, transitions, migration and errors. Freeze civic rejection, caution and multi-parent fields, casing, enum encoding, aliases, absent/null/default semantics and S11 negatives using supplied normative inputs; record source/copy comparison and pinned contract version."
+    },
+    {
+      "id": 3,
+      "summary": "Proposed: distinguish resolved trusted-parent mathematics from producer payloads. Assert Procedural [0.85,1.0] -> distilled_verified/0.70/ProceduralMemory and [0.20] -> unverified_candidate/0.18/Summary. Reject empty/nonfinite parents and fail closed for missing, invisible, unauthenticated, substituted parents or injected scores/tiers/verification. Numeric inheritance never grants evidentiary or execution standing."
+    },
+    {
+      "id": 4,
+      "summary": "Proposed: specify sole/all-parent loss -> archived/contested; partial loss preserves every surviving archival state while contesting validity; purged children remain unchanged. Cover repeated/equal/older signals, explicit invalidation reasons, terminal purges and no implicit archived restoration. Buffer bookkeeping uses event-time deduplicated verified successes, strict 0.50/0.25 thresholds and at most one archival transition per sweep."
+    },
+    {
+      "id": 5,
+      "summary": "Proposed: document complete S03-S12 contracts: scoped temporal Plane-A DDL, immutable versioned endpoints, preserved edge hashing, current authorization, bounded traversal/cursors, total routing and whole-warning/conflict budgets, deletion milestones/jobs/fences, key-custody coverage, civic caution and fail-closed scrubbing. Outline P2 -> P3 -> P4 -> P5 Wave1; P6 -> P7/P8 Wave2; serialize api.py integration ownership without making downstream packets dispatchable."
+    },
+    {
+      "id": 6,
+      "summary": "Proposed: version legacy provenance admission and fixtures. High trust requires exact producer/version/source-kind mapping plus authenticated original-record/content/scope binding; labels, issuedBy and receipt pointers are insufficient. No concrete producer is qualified from supplied evidence. Unknown/unauthenticated sources remain unverified_candidate. Keep producer allowlist/authentication evidence explicitly open for later bounded migration before P3 high-trust backfill; this does not block contract-only P1A closure."
+    },
+    {
+      "id": 7,
+      "summary": "Proposed: independently specified expectations cover same-tenant cross-role denial, historical current-authorization denial, terminal states and old replay. Record implementation versus contract-only coverage, pre-P1A exact-base gravity/replay baseline identities and retained outputs, and downstream source/version/hash pins. Preserve S05-S07 constants; P1B independently recomputes numerics under its AC4."
+    }
+  ],
+  "allowed_files": [
+    "docs/specs/ccm-memory-graph-v2.md",
+    "src/keon/cortex/envelope/taxonomy.py",
+    "src/keon/cortex/ingress/models_v2.py",
+    "tests/test_ccm_contracts_v2.py",
+    "tests/fixtures/ccm/contracts-v2.json"
+  ],
+  "non_goals": [
+    "No implementation, tools, repository access, delegation, follow-up, execution, approval or file changes here.",
+    "No migrations, HTTP/api.py wiring, storage/privacy workers, live resolver/verifier/receipt authority, scoring implementation, runtime multi-parent conversion or changed legacy event IDs.",
+    "No imports, cloud/credentials, key provider/store, actual shred, deployment, OPMEM/Gateway edits, generated snapshots or unrelated configuration.",
+    "No claimed tests, live interoperability, SQL enforcement, traversal, erasure or overall readiness."
+  ],
+  "flags": [
+    "Accepted S01-S12 and amended AC6 override conflicting v4; historical planning grants confer no authority.",
+    "Human tree approval is reported, not independently verified; Gate 2 and implementation GO remain separate. This artifact changes nothing.",
+    "Missing implementation inputs: existing taxonomy/ingress/ID validators and named tests; complete referenced laws; P1C Required wire behavior; exact pre-P1A baseline evidence. Observed HEAD is not an admitted clean base.",
+    "No exact spec hash was supplied. Future mechanics require separately pinned artifacts, applicable reviews, registration, admitted route and enforceable budgets. Additional required paths need amendment."
+  ]
+}

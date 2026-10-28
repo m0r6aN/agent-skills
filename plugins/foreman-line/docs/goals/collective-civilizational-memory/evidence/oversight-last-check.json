@@ -1,0 +1,23 @@
+{
+  "checkedAtUtc": "2026-10-22T14:03:19.2878864Z",
+  "coordinator": "ccm-coordinator-20261020-fresh-01",
+  "sessionPath": "C:\\Users\\clint\\.pi\\agent\\sessions\\--D--Repos-agent-skills-plugins-foreman-line--\\2026-10-20T11-09-26-624Z_ccm-coordinator-20261020-fresh-01.jsonl",
+  "latestSavedResponseUtc": "2026-10-20T11:15:02.348Z",
+  "sessionBytes": 462510,
+  "ownershipAcknowledged": true,
+  "verifiedDraftCommit": "d6c4adce4bad3b37e496afd3a7db48b525461bb2",
+  "verifiedSourcePinCount": 20,
+  "readiness": "P1A-D/P2A/P2B accepted and merged. Credential incident OPEN; local Docker token saved replacement and normal-project-template scoped auth PASS401/401/200. Shared ChatGPT/Codex app parent still stale with live sibling sessions; full app relaunch at coordinated quiet boundary required before native inheritance reconciliation. Native Pi/profile/worker admission unproven. Affected routes/workers HELD; safe AST preparation continues.",
+  "communication": "Supported originating owner chat messaging active; sole coordinator fresh-01 retained. Historical saved-session metadata below remains last observed, not current live state.",
+  "action": "Read exact gateway-normal-config-refresh-20261022.json; runbook updated. Sole originating operator performed controlled check and stopped owned PID14036/no listener. No oversight duplicate check/restart or provider request. User action is coordinated shared-app exit/relaunch after preserving work, then named environment verification; no blanket approval request.",
+  "expiresAtUtc": "2026-10-21T09:50:52Z",
+  "originatingChatCursor": "557e797e-0b38-413b-be4a-08d0e2458061:93",
+  "monitoringStatus": "PAUSED",
+  "verifiedP1AMerge": "cc3a6defa78849b8df8795c58ac65866f31179d5",
+  "verificationMode": "Manual oversight reconciliation; automation remains paused",
+  "verifiedP1BMerge": "241358c664fbbceb140a45c0da40c48f6c1135c0",
+  "verifiedP1CMerge": "3d44cf5b8b3fb38a857dd1607159a665c1c3b310",
+  "verifiedP1DMerge": "6139ddd8802540829eebce07215106e4b16ca360",
+  "verifiedP2AMerge": "76fa7c6eda6a4859e7d3a64815c760a77d4c07f0",
+  "verifiedP2BMerge": "3a7c30b5cab7198b3ad6e7ff3b881bead8af823d"
+}

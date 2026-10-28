@@ -1,0 +1,19 @@
+{
+  "atUtc": "2026-10-24T16:01:36.370491+00:00",
+  "authority": "Existing owner non-destructive decisions/approvals, current next parcel authorization and Gate2 at most one focused repair",
+  "repairOrdinal": 1,
+  "maximum": 1,
+  "scope": "Test-only correction of existing-field frozen-wrapper assertion and independent Git tree record byte arithmetic; no validator or contract behavior change",
+  "sourceAuthor": "Disclosed scoped local operator contribution",
+  "sourceHashesBefore": {
+    "src/keon/cortex/pipeline/ccm_git.py": "6f09412558cfdf64139533af1292212feae675caf77574dc2472c02c112777af",
+    "tests/test_ccm_git.py": "2748e795e1a3437386d3dbbb0e8adf0c33fcf376258903ea855fdeeb72b837ff",
+    "docs/specs/ccm-git-snapshot-v1.md": "db246bf1ea15929a987288699ce9e4e27da17d638643be844f5c0a24c7deb586"
+  },
+  "full110SourceReservationRetained": true,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD",
+  "maxAdditionalSourcePosts": 0,
+  "reviewsRequired": 2,
+  "nextMaterialFindingStops": true
+}

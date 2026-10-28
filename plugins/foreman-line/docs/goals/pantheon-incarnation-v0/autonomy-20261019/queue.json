@@ -1,0 +1,154 @@
+{
+  "schema": "pantheon.queue.proposal.v1",
+  "status": "PROPOSED",
+  "parcels": [
+    {
+      "id": "P00",
+      "title": "Bootstrap qualification and plan review",
+      "dependsOn": [],
+      "executionMode": "bootstrap",
+      "component": "coordinator",
+      "reviewCount": 1,
+      "status": "pending",
+      "specRef": null,
+      "allowedFiles": null,
+      "sourceHead": null,
+      "evidenceRefs": []
+    },
+    {
+      "id": "P01",
+      "title": "Foreman mandate workflow and contracts",
+      "dependsOn": [
+        "P00"
+      ],
+      "executionMode": "bootstrap",
+      "component": "foreman",
+      "reviewCount": 2,
+      "status": "pending",
+      "specRef": null,
+      "allowedFiles": null,
+      "sourceHead": null,
+      "evidenceRefs": []
+    },
+    {
+      "id": "P02",
+      "title": "Restricted Runtime host",
+      "dependsOn": [
+        "P01"
+      ],
+      "executionMode": "bootstrap",
+      "component": "runtime",
+      "reviewCount": 2,
+      "status": "pending",
+      "specRef": null,
+      "allowedFiles": null,
+      "sourceHead": null,
+      "evidenceRefs": []
+    },
+    {
+      "id": "P03",
+      "title": "Transactional custody and budget",
+      "dependsOn": [
+        "P02"
+      ],
+      "executionMode": "bootstrap",
+      "component": "foreman-state",
+      "reviewCount": 2,
+      "status": "pending",
+      "specRef": null,
+      "allowedFiles": null,
+      "sourceHead": null,
+      "evidenceRefs": []
+    },
+    {
+      "id": "P04",
+      "title": "Runtime Docker and provider broker",
+      "dependsOn": [
+        "P03"
+      ],
+      "executionMode": "bootstrap",
+      "component": "runtime",
+      "reviewCount": 2,
+      "status": "pending",
+      "specRef": null,
+      "allowedFiles": null,
+      "sourceHead": null,
+      "evidenceRefs": []
+    },
+    {
+      "id": "P05",
+      "title": "Foreman terminal and merge integration",
+      "dependsOn": [
+        "P04"
+      ],
+      "executionMode": "bootstrap",
+      "component": "foreman",
+      "reviewCount": 2,
+      "status": "pending",
+      "specRef": null,
+      "allowedFiles": null,
+      "sourceHead": null,
+      "evidenceRefs": []
+    },
+    {
+      "id": "P06",
+      "title": "Cortex integration",
+      "dependsOn": [
+        "P05"
+      ],
+      "executionMode": "runtime",
+      "component": "pantheon-cortex-adapter",
+      "reviewCount": 2,
+      "status": "pending",
+      "specRef": null,
+      "allowedFiles": null,
+      "sourceHead": null,
+      "evidenceRefs": []
+    },
+    {
+      "id": "P07",
+      "title": "Useful evidence-summary change",
+      "dependsOn": [
+        "P06"
+      ],
+      "executionMode": "runtime",
+      "component": "pantheon",
+      "reviewCount": 1,
+      "status": "pending",
+      "specRef": null,
+      "allowedFiles": null,
+      "sourceHead": null,
+      "evidenceRefs": []
+    },
+    {
+      "id": "P08",
+      "title": "Second-laptop worker demonstration",
+      "dependsOn": [
+        "P07"
+      ],
+      "executionMode": "runtime",
+      "component": "pantheon-worker",
+      "reviewCount": 2,
+      "status": "pending",
+      "specRef": null,
+      "allowedFiles": null,
+      "sourceHead": null,
+      "evidenceRefs": []
+    },
+    {
+      "id": "P09",
+      "title": "Independent reconstruction and closure",
+      "dependsOn": [
+        "P08"
+      ],
+      "executionMode": "runtime",
+      "component": "independent-verifier",
+      "reviewCount": 1,
+      "status": "pending",
+      "specRef": null,
+      "allowedFiles": null,
+      "sourceHead": null,
+      "evidenceRefs": []
+    }
+  ]
+}

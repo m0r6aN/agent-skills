@@ -1,0 +1,109 @@
+{
+  "record": "GenSpark hold release (append-only)",
+  "recordedAt": "2026-10-26T20:15Z",
+  "recordedBy": "Foreman OAB coordinator (Grok Bot executor) acting under Clint's authorization",
+  "authority": "Clint (owner), human-typed message pt20u, 2026-10-26 ~15:50 EDT",
+  "verbatim": "Ratify and raise the cap to $300. I'm not sure what holds exist against genspark credits, but those sessions are most certainly dead, so we can reclaim their holds.",
+  "balanceRefresh": {
+    "atUtc": "2026-10-26T20:09:25Z",
+    "credit_balance": 9046.5,
+    "method": "GET https://www.genspark.ai/api/tool_cli/me (read-only, no inference)",
+    "evidence": "C:/Users/clint/foreman-runs/keon-oab-20261026/genspark-balance-20261026.json"
+  },
+  "releases": [
+    {
+      "id": "REL-1",
+      "owner": "CCM coordinator Pi 01a173be-ccaf-704b-9f61-858f7a129595",
+      "source": "agent-skills/plugins/foreman-line/docs/goals/collective-civilizational-memory/evidence/p3c3-preparation-financial-closure-20261025.json totalFutureExposureReserve",
+      "held": 7225.524,
+      "released": 7130.924,
+      "retained": 94.6,
+      "retainedReason": "GenSparkOriginalUnknown 94.6 (owner-autonomous-next-steps-20261021.json) stays recorded as unknown outcome; not resolved by balance",
+      "liveness": "STOPPED per p3c3-stop-report-20261025.md; last goal-dir write 2026-10-25 11:56 EDT; Pi session file last write 2026-10-25 11:57 EDT; no process found 2026-10-26",
+      "note": "Non-GenSpark API unknown USD 0.17192 also stays recorded as unknown."
+    },
+    {
+      "id": "REL-2",
+      "owner": "CCM P3C2 phase (same coordinator)",
+      "source": "Pantheon/.work/genspark-readiness-20261025/snapshot.json foreignRemainingAllowance",
+      "held": 699.5,
+      "released": 699.5,
+      "retained": 0,
+      "liveness": "P3C2 accepted/Stage F closed; admission expired 2026-10-26T04:00Z; coordinator dead (above)"
+    },
+    {
+      "id": "REL-3",
+      "owner": "GenSpark readiness lane, Codex 01a17394-ee93-7061-9cb3-0c0d3c1ad843",
+      "source": "Pantheon/.work/genspark-readiness-20261025/final-ledger.json estimate excess",
+      "held": 3.757875,
+      "released": 3.757875,
+      "retained": 0,
+      "liveness": "CLOSED_NO_MORE_INFERENCE 2026-10-25; rollout last write 2026-10-25 21:54 EDT; no process"
+    },
+    {
+      "id": "REL-4",
+      "owner": "genspark-engineering-offload router, Codex 01a15bae-8750-7331-9529-e5d6db453d30",
+      "source": "Pantheon/docs/INITIATIVES/genspark-offload/STATE.json unsettled_billing_reserve",
+      "held": 138.8,
+      "released": 138.8,
+      "retained": 0,
+      "liveness": "rollout archived (archived_sessions, last write 2026-10-24 07:20 EDT); automation 'genspark-engineering-offload' absent from ~/.codex/automations; heartbeat notLoaded; no process"
+    },
+    {
+      "id": "KEEP-1",
+      "owner": "genspark-offload router",
+      "source": "STATE.json new_unknown_registry_reservation",
+      "held": 5,
+      "released": 0,
+      "retained": 5,
+      "retainedReason": "labelled unknown; kept as unknown"
+    },
+    {
+      "id": "MIRROR-1",
+      "owner": "genspark-offload router",
+      "source": "STATE.json shared_external_total_hold 2522.3745 (444.6 uncertain + 677.7745 completed-estimate + others)",
+      "held": 2522.3745,
+      "released": 0,
+      "retained": 0,
+      "note": "Mirror of other owners' (CCM) holds, superseded by CCM REL-1 accounting; not counted separately to avoid double release"
+    },
+    {
+      "id": "MIRROR-2",
+      "owner": "KEO-238 custody anchor observation",
+      "source": "runtime-1000-allowance.json new_observed_P2C_holds 575.433 / unmapped 433.2",
+      "note": "Observations of CCM P2C holds, included in REL-1; not separately released. File belongs to live KEO-238 lane, untouched."
+    },
+    {
+      "id": "FORECAST-1",
+      "owner": "Pi 9a75528d pi-successor",
+      "source": ".coordinator/pi-successor-9a75528d-*",
+      "note": "Route reforecast 11320 was a forecast, not a reserve; session dir last write 2026-10-24 18:13 EDT; no session file/process. Nothing to release."
+    },
+    {
+      "id": "UNTOUCHED-1",
+      "owner": "KEO-238 live coordinator Codex 01a1752d-330b-74b1-ae16-b36394c289aa",
+      "source": "genspark-priority-reservation.json 300 (75 unknown HTTP 524 + 225) and custody step allowance",
+      "released": 0,
+      "note": "Live owner (rollout write 2026-10-26 07:36 EDT). Not touched per instruction; 75 stays UNKNOWN (balance does not resolve it)."
+    },
+    {
+      "id": "POLICY",
+      "source": "floor",
+      "retained": 1000,
+      "note": "1,000-credit protected floor is policy, kept."
+    }
+  ],
+  "totalReleased": 7972.981875,
+  "retainedUnknown": {
+    "ccm": 94.6,
+    "router": 5,
+    "keo238_untouched": 75
+  },
+  "freeHeadroomEstimate": {
+    "formula": "9046.5 - floor 1000 - unknown 94.6 - 5 - KEO-238 untouched 300 (conservative)",
+    "value": 7646.9
+  },
+  "historyDeleted": false,
+  "billingSettlementClaimed": false,
+  "providerSideEffect": "none (provider has no hold API; holds are local accounting)"
+}

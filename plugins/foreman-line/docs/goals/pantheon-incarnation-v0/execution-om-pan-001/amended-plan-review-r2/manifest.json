@@ -1,0 +1,116 @@
+{
+  "schema": "pantheon.amended-plan-packet.v1",
+  "id": "OM-PAN-001-PLAN-R2",
+  "createdAt": "2026-10-19T14:10:22.054Z",
+  "mandateManifestSha256": "ca6645f02284dca74b17a9500ec0482552bb192e785f1d76ae0be1f4f9532f82",
+  "packetSha256": "9e8f01b195af7d733eb371dbabb7d63d954cc63a5826de387e6e46fa7bf1aae9",
+  "packetBytes": 160908,
+  "attemptCreated": false,
+  "files": [
+    {
+      "label": "OM-PAN-001/CHARTER.md",
+      "file": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\autonomy-20261019\\CHARTER.md",
+      "bytes": 7612,
+      "sha256": "601d5b5986f7798ed1e6414b3b0e4a3ae368838366bf906143630ec5bda2ec1e"
+    },
+    {
+      "label": "OM-PAN-001/MANDATE.md",
+      "file": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\autonomy-20261019\\MANDATE.md",
+      "bytes": 11804,
+      "sha256": "e889ba52ee12495721c0ba176de5ea04e44689e9d7baee822cb701d15e7b4f28"
+    },
+    {
+      "label": "OM-PAN-001/WORKFLOW-AMENDMENTS.md",
+      "file": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\autonomy-20261019\\WORKFLOW-AMENDMENTS.md",
+      "bytes": 8587,
+      "sha256": "a871e79f268ef6f377561e8d77da357583a9c9b86a876c1275bf1f030b07d83f"
+    },
+    {
+      "label": "OM-PAN-001/RUNTIME-PATH.md",
+      "file": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\autonomy-20261019\\RUNTIME-PATH.md",
+      "bytes": 11046,
+      "sha256": "7817cd05bef51659fbf2a3396e2ea51199c4a614fd2d7c26831b9649d3936332"
+    },
+    {
+      "label": "OM-PAN-001/OWNERSHIP.md",
+      "file": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\autonomy-20261019\\OWNERSHIP.md",
+      "bytes": 6417,
+      "sha256": "b7cd6768a82f82237dccc5ad9b452f6bab8b3f8fa2b385ad668589201d45d24d"
+    },
+    {
+      "label": "OM-PAN-001/MODEL-ACCOUNTING.md",
+      "file": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\autonomy-20261019\\MODEL-ACCOUNTING.md",
+      "bytes": 7762,
+      "sha256": "7ec99a0b7bd05c0a24eedc7971f9d481c199236fb8750fc605ca68e177e3a7ec"
+    },
+    {
+      "label": "OM-PAN-001/QUEUE.md",
+      "file": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\autonomy-20261019\\QUEUE.md",
+      "bytes": 10344,
+      "sha256": "fd18a8220d8bfe9113437446df9ae9afb870c2be1b9b8b278c8b27b13bd0e35c"
+    },
+    {
+      "label": "OM-PAN-001/LOOP.md",
+      "file": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\autonomy-20261019\\LOOP.md",
+      "bytes": 6362,
+      "sha256": "4e8750c948a08fb520530d3010548be5c7abde7a5a80b62a6f8a87e46c016939"
+    },
+    {
+      "label": "OM-PAN-001/DOGFOOD.md",
+      "file": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\autonomy-20261019\\DOGFOOD.md",
+      "bytes": 6267,
+      "sha256": "80d627dd7cea614aacf1be854ff59fe96fd8dc86e2425e556a23754a89384803"
+    },
+    {
+      "label": "OM-PAN-001/BOOTSTRAP.md",
+      "file": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\autonomy-20261019\\BOOTSTRAP.md",
+      "bytes": 8728,
+      "sha256": "17402923146da21ac52886ed53942c4e80c0ca4ea37a9311eb6fcbf2121e7936"
+    },
+    {
+      "label": "preserved/original-charter.md",
+      "file": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\charter.md",
+      "bytes": 24077,
+      "sha256": "a99a4b06aad10e642c8076ee3f3ff075062a331e46772644a6dba4f0cf3416e1"
+    },
+    {
+      "label": "preserved/Amendment-01.md",
+      "file": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\docs\\goals\\pantheon-incarnation-v0\\amendment-01-early-development-device-PROPOSED.md",
+      "bytes": 9847,
+      "sha256": "c7b70e6ded64aea8e424b29de90aa790c0bdfae8cd289897e830fa5a4dfd9f25"
+    },
+    {
+      "label": "source/Foreman-production-terminal.ts",
+      "file": "D:\\Repos\\agent-skills\\plugins\\foreman-line\\dispatch\\src\\pmc-launch\\pi-runtime-port.ts",
+      "bytes": 33260,
+      "sha256": "2cf2fa23278bc9adf80b550e0bb7a2ab175893165d8da747576a9fd13f724db4"
+    },
+    {
+      "label": "source/Runtime-launch-readiness.cs",
+      "file": "D:/Repos/keon-omega/keon-systems/src/Keon.Runtime.Api/LaunchReadiness.cs",
+      "bytes": 4317,
+      "sha256": "0d7deb299d09b3070f5314ae9df1c8722419d42ed98b2cbd94e33065aa6a5ffa"
+    }
+  ],
+  "requestSha256": "5483950685f254aa400303c9adf5e072f7abd89f6642eca466175e151a89ba47",
+  "requestBytes": 163043,
+  "supersedes": "OM-PAN-001-PLAN-R1",
+  "requiredCoverage": [
+    "intent preservation",
+    "first-proof isolation",
+    "independent verification",
+    "Runtime authority/enforcement",
+    "credential/identity boundary",
+    "cumulative budget and unknown sends",
+    "crash/succession/fencing",
+    "Cortex versus transactional state",
+    "bootstrap dependency and limits",
+    "merge rules",
+    "two-machine scope",
+    "human interruptions",
+    "missing dependencies",
+    "unnecessary complexity"
+  ],
+  "originalPacketSha256": "43264651db23bf95ff8ddcd4375dd9ebc8ce4b1b0dda7dc2e510693a2f96abdc",
+  "sourceSectionsSha256": "a7ebc8157aa15f7651bd99387013a9c424af1016f198233b19fa91434d7e0bdd"
+}

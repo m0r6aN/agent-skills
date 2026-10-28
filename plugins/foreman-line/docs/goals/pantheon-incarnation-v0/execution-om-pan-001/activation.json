@@ -1,0 +1,31 @@
+{
+  "schema": "pantheon.mandate.activation.v1",
+  "id": "OM-PAN-001",
+  "status": "RATIFIED_BOOTSTRAP_ACTIVE",
+  "activatedAt": "2026-10-19T13:38:02.935Z",
+  "expiresAt": "2026-11-02T13:38:02.935Z",
+  "ownerSessionId": "01a15424-1fd5-77a2-a73a-d92a60a5de34",
+  "releasedOwnerSessionId": "01a151ad-3cea-70cf-9dfc-233a9da3dd00",
+  "packageManifestSha256": "ca6645f02284dca74b17a9500ec0482552bb192e785f1d76ae0be1f4f9532f82",
+  "ratificationRef": "owner-ratification.json",
+  "runtimeAuthorityGrantRef": null,
+  "runtimeReady": false,
+  "bootstrapLockRef": "bootstrap-owner.json",
+  "newApiAllowanceUsd": 75,
+  "bootstrapApiAllowanceUsd": 25,
+  "priorUncertaintyHoldUsd": 5,
+  "newApiCalls": 0,
+  "newApiExposureUsd": 0,
+  "bootstrapNativeBuilderSessions": 2,
+  "accountQualified": false,
+  "autoReloadOffVerified": true,
+  "currentParcel": "P00",
+  "holds": [
+    "LIVE_SENDER_UNQUALIFIED",
+    "PLAN_REVIEW_PENDING"
+  ],
+  "autoReloadEvidenceRef": "auto-reload-off.png",
+  "accountMetadataQualified": true,
+  "credentialBindingRef": "pantheon-om-pan-001-anthropic-default",
+  "accountMetadataRef": "account-metadata-3/qualification.json"
+}

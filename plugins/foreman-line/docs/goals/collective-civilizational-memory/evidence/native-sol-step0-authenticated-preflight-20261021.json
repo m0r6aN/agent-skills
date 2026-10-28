@@ -1,0 +1,24 @@
+{
+  "nativeOAuthStatus": "ready",
+  "authType": "oauth",
+  "credentialReference": "private symlink to existing auth store; no token copied or emitted",
+  "tmuxVersion": "tmux 3.8",
+  "ownedTmuxSession": "ccm-p1a-sol-step0-b7oamsof",
+  "root": "/home/cmorgan76/.ccm-p1a-sol-controls-20261021-b7oamsof",
+  "model": {
+    "provider": "openai",
+    "id": "gpt-6.1-sol",
+    "api": "openai-responses",
+    "baseUrl": "https://api.openai.com/v1",
+    "maxTokens": 1536
+  },
+  "state": {
+    "autoCompactionEnabled": false,
+    "messageCount": 0,
+    "pendingMessageCount": 0,
+    "isStreaming": false
+  },
+  "inputSubmitted": false,
+  "profileSettingsSha256": "125bad470a88bb09ea75e5fbaab948cd3d55d0e8e573f359cb0acbcbfa4dc1da",
+  "modelOverrideSha256": "5f055fbcd783d89003d3cbfc31eac3ad61a620922d43a1209c30602ebe71708b"
+}

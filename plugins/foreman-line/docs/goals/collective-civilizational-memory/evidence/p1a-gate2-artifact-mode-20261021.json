@@ -1,0 +1,47 @@
+{
+  "decidedAtUtc": "2026-10-21T16:47:34.091294+00:00",
+  "decision": "GATE_2_DISPATCH_APPROVED_FOR_CCM_P1A_ARTIFACT_MODE_ONLY",
+  "decisionMaker": "Originating oversight acting under Clinton Morgan transferable Context authority, not claiming personal human tree approval on his behalf",
+  "authorityEvidence": [
+    "coordinator-transfer-2026-10-20.md",
+    "oversight-2026-10-20.md",
+    "Direct owner message in oversight chat 01a158b8-93f8-7423-b5b6-aaca46092870: Keep it moving, brother. Finish qualifying the builder and reviewers under my existing authorization. If you need a new spending decision, bring me one concrete proposal with the amount and scope."
+  ],
+  "goalCustodian": "ccm-coordinator-20261020-fresh-01",
+  "scope": "CCM-P1A only; artifact proposal/apply/test/review workflow under exact envelope. No native agent profile admission, P1B/C/D dispatch, new spending commitment, import, merge or deployment.",
+  "qualificationEvidence": "evidence/r08-artifact-mode-qualification-20261021.json",
+  "adoptedEnvelope": "evidence/r08-p1a-delivery-envelope-20261021.json",
+  "profileBinding": "builder-architecture/frontier requirements retained; actual remote worker has zero tools/repository authority. Host is the sole scoped effect operator. Emitted Claude settings are administrative metadata and not falsely claimed loaded by the remote worker.",
+  "dataAndCostBasis": "Existing owner-authorized GenSpark paid allowance across the three projects; fixed reviewed sender, no new credentials/billing/credit purchases or raised limits. Same prepaid unit accounting, per-run100/day300/cumulative9000 and1000 reserve. Internal P1A ceiling700 is a self-imposed subset, not a new owner dollar grant.",
+  "approvedScope": {
+    "subjectHash": "9431a8649c2c1125da28e3e4a62f3d9cb15d69b8a1f83dd9c7b1291e8a9c2f96",
+    "originalSpecCommit": "d6c4adce4bad3b37e496afd3a7db48b525461bb2",
+    "originalSpecSha256": "2db53117a6d990355cff5c0cf7f09a058bcf2a78c55b35a659395ae9b45f2dd8",
+    "approvalWorkflow": "34014809-a177-4946-a29c-a71be1f311fe"
+  },
+  "activation": {
+    "activeSpecSha256": "e11b0da82f80b4dd1a993ae3993951782360f1a5adb791a14f438a12c6ce55e1",
+    "onlyChange": "Frontmatter status: draft -> active",
+    "materialScopeChange": false,
+    "originalApprovalHashStillMatchesActiveBytes": false,
+    "provenance": "Original human-approved scope is retained unchanged at original commit. This separately authorized metadata-only Gate 2 activation is not a new Stage-A receipt or a fabricated current-bytes match. No other spec field or body changed."
+  },
+  "base": "efb5f4bcead899332f4f35f5e0b3a181eb988d2c",
+  "baseRefresh": "Fresh origin/main; selected taxonomy/ingress/IDs/core/six baseline suites unchanged from old base; fresh snapshot238pass source unchanged.",
+  "worktree": "D:/Repos/ccm-worktrees/cortex-p1a",
+  "branch": "feat/foreman-line-ccm-p1a",
+  "emitterSetup": "Root HEAD remains old base and dirty checkout untouched. Create one temporary detached operator bootstrap at the accepted new base, invoke the shipped emitter from that verified HEAD, then remove only the clean operator bootstrap. Parcel has exactly one branch/worktree.",
+  "beforeImplementation": [
+    "Verify actual emitted HEAD/settings/profile audit and clean tracked source",
+    "Run existing baseline in actual worktree and retain output/counts/source hashes",
+    "Fresh formal Step 0 against pinned packet must restate seven AC, five paths, exact base/worktree/branch and all flags; oversight must explicitly dispose it before code effects"
+  ],
+  "step0": "NOT YET RUN; no implementation GO from this Gate 2 alone",
+  "stopConditions": [
+    "Daily/run/effort/reserve budget does not cover conservative next phase",
+    "Missing/model-mismatched/incomplete/over-limit response, uncertain prior attempt or changed source/price/entitlement",
+    "Unlisted path, real requirement gap, frozen contract or security issue outside parcel",
+    "One focused repair exhausted, test-count tripwire or inability to validate"
+  ],
+  "nativeQualificationExclusions": "Native ChatGPT CLI rejects exact model, tested env API credential rejected401; no further native/auth probe. Pi direct profile bridge remains unqualified; no new launcher/platform work."
+}

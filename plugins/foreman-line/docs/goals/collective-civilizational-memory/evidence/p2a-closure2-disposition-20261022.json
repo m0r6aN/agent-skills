@@ -1,0 +1,40 @@
+{
+  "atUtc": "2026-10-22T04:43:52.866565+00:00",
+  "authority": "Owner direct blanket non-destructive decisions/approvals incl GenSpark increases; explicit delegated finite disposition, not new human receipt",
+  "reason": "Both first closure responses exhausted configured6144 tokens, reported finish_reason length and incomplete JSON. No completed closure verdict. Preserve originals/full350 each. One fresh pair only; no automatic retry or fallback.",
+  "failedClosureReservationsRetained": 700,
+  "failedClosureReportedCredits": 294.8,
+  "priorInitialConservative": 225.02425,
+  "newPairMax": 700,
+  "resultingWholeParcelGuard": 1625.02425,
+  "wholeP2ACeiling": 2000,
+  "sharedNY20261022Ceiling": 4000,
+  "expiresAtUtc": "2026-10-23T04:00:00Z",
+  "model": "claude-opus-5-5",
+  "effort": "low",
+  "configuredOutputTokens": 8192,
+  "configuredSocketSeconds": 180,
+  "perSeatCreditCap": 350,
+  "answerTargetWords": 500,
+  "unchanged": [
+    "full source/workorder coverage",
+    "two independent completed reviewers",
+    "floor1000",
+    "effort9000",
+    "all older unknown reservations",
+    "no source repair or merge before passing reviews/checks",
+    "foreign ledger read-only/700excess retained"
+  ],
+  "newOpenAIAPICalls": 0,
+  "nativeAccountUsage": "Unknown/separate",
+  "packets": {
+    "closure2-A-input.txt": {
+      "bytes": 75273,
+      "sha256": "4de263d3ca9076119853a1fa32e27688724ada07837e2c1ba34393091ea8d8fa"
+    },
+    "closure2-B-input.txt": {
+      "bytes": 75313,
+      "sha256": "2ae752a447010b28a3d68b99d79b01853961b0c8ceeb3dd6597c5d34387afa6f"
+    }
+  }
+}

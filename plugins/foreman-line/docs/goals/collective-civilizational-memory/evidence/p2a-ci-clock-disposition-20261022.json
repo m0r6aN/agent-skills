@@ -1,0 +1,81 @@
+{
+  "atUtc": "2026-10-22T04:47:15.752915+00:00",
+  "pr": 87,
+  "sourceHead": "cb794ba7c51dd3508c90832a892aaa2490894993",
+  "failedRun": 39723811217,
+  "passedBranchRun": 39723806561,
+  "failedTest": "tests/test_gravity_recall_http.py::test_gravity_orders_after_relevance_then_shard_id",
+  "observedCIRun": "1failed/2889passed/137skipped;3027 combined identities including accepted PR85 extra test;all33 scrubber tests pass",
+  "diagnosis": "Existing test assumes equal observation gravity but performs two ingests and recall using unfrozen server clock. Across a whole-second boundary recency forces differ, so relevance->gravity->id correctly ranks newer observation before shard-id tie. Deterministic private clock injection reproduces same failure without importing scrubber. Actual CI boundary timestamps are not present, so this proves the existing failure mechanism, not the exact CI clock trace.",
+  "original267PinsUnchanged": true,
+  "productionOrTestFilesChanged": false,
+  "inMemoryClockInjectionOnly": true,
+  "scrubberNotImported": true,
+  "controlledCases": [
+    {
+      "mode": "same_second",
+      "serverTimes": [
+        "2026-10-22T04:00:00.001000+00:00",
+        "2026-10-22T04:00:00.001000+00:00",
+        "2026-10-22T04:00:00.001000+00:00"
+      ],
+      "first": "9598bd702c9bbc8e417185344b2e4ced6fb09360858812da359078a3e10a25d1",
+      "second": "b3881b72b3f028366b186b617abe412ba41dc2aaa0b1bfa9c323d9de6ddd323a",
+      "actualOrder": [
+        "9598bd702c9bbc8e417185344b2e4ced6fb09360858812da359078a3e10a25d1",
+        "b3881b72b3f028366b186b617abe412ba41dc2aaa0b1bfa9c323d9de6ddd323a"
+      ],
+      "sortedIds": [
+        "9598bd702c9bbc8e417185344b2e4ced6fb09360858812da359078a3e10a25d1",
+        "b3881b72b3f028366b186b617abe412ba41dc2aaa0b1bfa9c323d9de6ddd323a"
+      ],
+      "testTieAssertionPasses": true,
+      "scores": [
+        {
+          "id": "9598bd702c9bbc8e417185344b2e4ced6fb09360858812da359078a3e10a25d1",
+          "gravity": 0.2683010746090859,
+          "relevance": 1.0
+        },
+        {
+          "id": "b3881b72b3f028366b186b617abe412ba41dc2aaa0b1bfa9c323d9de6ddd323a",
+          "gravity": 0.2683010746090859,
+          "relevance": 1.0
+        }
+      ]
+    },
+    {
+      "mode": "cross_second",
+      "serverTimes": [
+        "2026-10-22T04:00:00.999000+00:00",
+        "2026-10-22T04:00:01.001000+00:00",
+        "2026-10-22T04:00:01.002000+00:00"
+      ],
+      "first": "9598bd702c9bbc8e417185344b2e4ced6fb09360858812da359078a3e10a25d1",
+      "second": "b3881b72b3f028366b186b617abe412ba41dc2aaa0b1bfa9c323d9de6ddd323a",
+      "actualOrder": [
+        "b3881b72b3f028366b186b617abe412ba41dc2aaa0b1bfa9c323d9de6ddd323a",
+        "9598bd702c9bbc8e417185344b2e4ced6fb09360858812da359078a3e10a25d1"
+      ],
+      "sortedIds": [
+        "9598bd702c9bbc8e417185344b2e4ced6fb09360858812da359078a3e10a25d1",
+        "b3881b72b3f028366b186b617abe412ba41dc2aaa0b1bfa9c323d9de6ddd323a"
+      ],
+      "testTieAssertionPasses": false,
+      "scores": [
+        {
+          "id": "b3881b72b3f028366b186b617abe412ba41dc2aaa0b1bfa9c323d9de6ddd323a",
+          "gravity": 0.2683010746090859,
+          "relevance": 1.0
+        },
+        {
+          "id": "9598bd702c9bbc8e417185344b2e4ced6fb09360858812da359078a3e10a25d1",
+          "gravity": 0.2683010211255143,
+          "relevance": 1.0
+        }
+      ]
+    }
+  ],
+  "ciFailureLogSha256": "1d5e82f551648742175041c7be6022df7b7f88f7511aa0bd6e14d0d88d3cd0c6",
+  "ciFailureExcerpt": "Unit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8494959Z =================================== FAILURES ===================================\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8495685Z ______________ test_gravity_orders_after_relevance_then_shard_id _______________\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8496468Z tests/test_gravity_recall_http.py:198: in test_gravity_orders_after_relevance_then_shard_id\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8497488Z     assert [item[\"shard_id\"] for item in _results(data1)] == sorted([first, second])\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8498382Z E   AssertionError: assert ['b3881b72b3f...78a3e10a25d1'] == ['9598bd702c9...d9de6ddd323a']\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8498995Z E     \nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8499859Z E     At index 0 diff: 'b3881b72b3f028366b186b617abe412ba41dc2aaa0b1bfa9c323d9de6ddd323a' != '9598bd702c9bbc8e417185344b2e4ced6fb09360858812da359078a3e10a25d1'\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8500783Z E     \nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8501126Z E     Full diff:\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8501476Z E       [\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8501954Z E     +     'b3881b72b3f028366b186b617abe412ba41dc2aaa0b1bfa9c323d9de6ddd323a',\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8502670Z E           '9598bd702c9bbc8e417185344b2e4ced6fb09360858812da359078a3e10a25d1',\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8503366Z E     -     'b3881b72b3f028366b186b617abe412ba41dc2aaa0b1bfa9c323d9de6ddd323a',\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8503924Z E       ]\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8504331Z =============================== warnings summary ===============================\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8505079Z ../../../../../opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/fastapi/testclient.py:1\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8506814Z   /opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8508191Z     from starlette.testclient import TestClient as TestClient  # noqa\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8508665Z \nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8509021Z tests/governed/test_cli.py::TestKeysList::test_list_registered_key\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8510423Z   /home/runner/work/keon-cortex/keon-cortex/tests/governed/test_cli.py:94: DeprecationWarning: 'isolated_filesystem' is deprecated and will be removed in Click 9.0. Use 'tempfile.TemporaryDirectory' or pytest's 'tmp_path' fixture with absolute paths instead.\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8511770Z     with runner.isolated_filesystem():\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8512130Z \nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8512507Z -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8513147Z =========================== short test summary info ============================\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8514191Z FAILED tests/test_gravity_recall_http.py::test_gravity_orders_after_relevance_then_shard_id - AssertionError: assert ['b3881b72b3f...78a3e10a25d1'] == ['9598bd702c9...d9de6ddd323a']\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8515352Z   \nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8516157Z   At index 0 diff: 'b3881b72b3f028366b186b617abe412ba41dc2aaa0b1bfa9c323d9de6ddd323a' != '9598bd702c9bbc8e417185344b2e4ced6fb09360858812da359078a3e10a25d1'\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8517057Z   \nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8517593Z   Full diff:\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8517928Z     [\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8518403Z   +     'b3881b72b3f028366b186b617abe412ba41dc2aaa0b1bfa9c323d9de6ddd323a',\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8519106Z         '9598bd702c9bbc8e417185344b2e4ced6fb09360858812da359078a3e10a25d1',\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8519775Z   -     'b3881b72b3f028366b186b617abe412ba41dc2aaa0b1bfa9c323d9de6ddd323a',\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8520311Z     ]\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:48.8520747Z =========== 1 failed, 2889 passed, 137 skipped, 2 warnings in 32.81s ===========\nUnit Tests (3.12)\tRun tests\t2026-10-22T04:42:49.4412342Z ##[error]Process completed with exit code 1.",
+  "disposition": "One bounded failed/cancelled-job diagnostic rerun on SAME source head only; no source/threshold/skip change; all16 exact-head checks and merged-main checks must actually pass. No additional blind rerun; if failure recurs stop for scoped disposition. Timing test is not claimed fixed."
+}

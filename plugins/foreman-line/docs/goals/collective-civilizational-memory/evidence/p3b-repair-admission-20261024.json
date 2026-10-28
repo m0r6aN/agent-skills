@@ -1,0 +1,27 @@
+{
+  "atUtc": "2026-10-24T23:21:24.761576+00:00",
+  "authority": "Standing owner bounded build/repair authority, exact committed Gate2 unchanged",
+  "step0": "ready true noflags",
+  "maximumRepairPosts": 1,
+  "maximumOutputTokens": 20000,
+  "maximumCallReservation": 450,
+  "phaseCap": 1300,
+  "sourceHashes": {
+    "src/keon/cortex/pipeline/ccm_admission.py": "c85764ed0fa5fc1db380ec14bcec6c55ff47cfab64c49a36c3fd230f8bd206c9",
+    "src/keon/cortex/providers/postgres/ccm_graph_schema.py": "cdcedfe988d4d36367c7998f8145f537a399326c509ae9220c413f1d8babc8c9",
+    "src/keon/cortex/providers/postgres/ccm_canonical.py": "0d1dad00689c30812d24b8286f64451bcbb457e658051fb7153a46b042f11528",
+    "tests/test_ccm_admission.py": "920f0ebbe8f07e84c0cb2c9d970317de4eabcf4fcec61d00cd33da92d1a252b4",
+    "tests/test_ccm_canonical_postgres.py": "f959c1daff712bc75a756c4d647ec7ea62fd421303ece3c6daf8bd9e5bd29f71",
+    "docs/specs/ccm-canonical-writers-v1.md": "01dae1f2c3eb3f89b00f5df7c5c99203146f2b722e0f8ffa1e58d33f4ee89d45"
+  },
+  "allowedPaths": [
+    "src/keon/cortex/pipeline/ccm_admission.py",
+    "src/keon/cortex/providers/postgres/ccm_graph_schema.py",
+    "src/keon/cortex/providers/postgres/ccm_canonical.py",
+    "tests/test_ccm_admission.py",
+    "tests/test_ccm_canonical_postgres.py"
+  ],
+  "preserveAllExistingTests": true,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD"
+}

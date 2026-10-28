@@ -1,0 +1,50 @@
+{
+  "atUtc": "2026-10-25T15:54:28.278547+00:00",
+  "base": "a96cc851aad6f98b8dc4695ddd0e7c4c15e18175",
+  "inputBytes": 122742,
+  "inputSha256": "11b8f0531f55805cdebf2655d3faf3f08bb2c33caf5794523ac2ba1529f66faa",
+  "serializedBodyBytes": 125684,
+  "conservativeByteCostEstimate": 196.741875,
+  "maximumPosts": 1,
+  "sourcePostsAdmitted": 0,
+  "sourceRefs": [
+    {
+      "path": "docs/specs/ccm-authority-copies-v1.md",
+      "sha256": "06f4422c6d7e2bb401f167bb7eece4228225f2dd5e794f6970d8b0b889584c3e",
+      "complete": true
+    },
+    {
+      "path": "docs/specs/ccm-deletion-protocol-v1.md",
+      "sha256": "e41aa5faaebb3ebd27ee11c10349148c287d434fe6b9fbb584a5cceabdf4ee58",
+      "complete": true
+    },
+    {
+      "path": "src/keon/cortex/providers/postgres/ccm_graph_schema.py",
+      "sha256": "41eab9c4e18a7fefd51681413359e11539aaaea9a877363cb6da84168d243eb2",
+      "complete": true
+    },
+    {
+      "path": "src/keon/cortex/providers/postgres/document_store.py",
+      "sha256": "94a28ef890b1f372722bcb7c8ec879eba50e57d3456a06c4f2d7279a973a00d5",
+      "complete": true
+    },
+    {
+      "path": "src/keon/cortex_governed/ccm_deletion_authorization.py",
+      "sha256": "49a9ec6c79662dfbfd7da9623929947305c730de78a09387e3471881f4d33812",
+      "complete": true
+    },
+    {
+      "path": "docs/specs/ccm-memory-graph-v2.md",
+      "sha256": "0fb819cf5f96cf05fe1e6ec6bec3b831fb379173bf9e089acffe0458eb6059a2",
+      "complete": false,
+      "lines": [
+        1,
+        230
+      ]
+    }
+  ],
+  "workerDerivedFrom": "p3c2-worker.py",
+  "workerSourceSha256": "c53d2bed906da1fa3fd4630ff4b6d02815e8f2c171a10d085db43b9247e3462b",
+  "workerSha256": "5df3a51ff1bb8464261eded3f0ed373de8a6286230c57a2d93546466e1197877",
+  "changes": "New private phase/directory, only step0 mode cap200/output4000, expiry guard; preserved no-redirect/current catalog/account/foreign/incident-value-equality checks, pre-send reservation and completed-output validation. No held route released."
+}

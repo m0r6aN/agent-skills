@@ -1,0 +1,15 @@
+{
+  "schema": "pantheon.execution-metrics.v1",
+  "at": "2026-10-19T14:03:22.6077044Z",
+  "proofComplete": false,
+  "currentParcel": "P00",
+  "routineHumanApprovalsAfterRatification": 0,
+  "credentialAccessInterventionsAfterRatification": 1,
+  "newProviderInferenceAttempts": 0,
+  "oldReviewAttemptsReplayed": 0,
+  "nativeBootstrapSessionsReserved": 2,
+  "nativePreflightFailuresCaughtBeforeSend": 1,
+  "runtimeAdmittedDispatches": 0,
+  "completedUsefulDevelopmentCycles": 0,
+  "nativePreflightReworkCycles": 1
+}

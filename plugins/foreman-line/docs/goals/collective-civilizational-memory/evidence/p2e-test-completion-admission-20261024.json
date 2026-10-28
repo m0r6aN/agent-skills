@@ -1,0 +1,15 @@
+{
+  "atUtc": "2026-10-24T20:07:11.432932+00:00",
+  "authority": "Standing owner bounded non-destructive repair decisions",
+  "disposition": "Accept CCM-P2E-001: test-only completion of existing focused test repair, no new production implementation/repair or provider source request",
+  "beforeHashes": {
+    "src/keon/cortex/pipeline/ccm_civic.py": "e06b21bd14127c9d901356da50c0696e50832ffb6f2cc754dd06c69441ec5a70",
+    "tests/test_ccm_civic.py": "047267b3992ea2afd783dad9faba317ed2f4a4ea034ef48f074eeec9c5dca51b",
+    "docs/specs/ccm-civic-mapping-v1.md": "bebc694baa1b389eca7c39e2f94f0c8e3e57a968253edf00bf6214a0ae747d12"
+  },
+  "scope": "Only exact canonical262144/262145 schema-valid boundary tests; preserve all existing tests and production/doc bytes",
+  "freshReviewsRequired": 2,
+  "maxReviewPostsTotal": 4,
+  "allReservationsHeld": true,
+  "affectedRoutes": "HELD"
+}

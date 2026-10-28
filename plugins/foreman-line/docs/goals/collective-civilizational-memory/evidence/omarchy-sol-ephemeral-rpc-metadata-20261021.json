@@ -1,0 +1,44 @@
+{
+  "checkedAtUtc": "2026-10-21T18:36:44.601041+00:00",
+  "processPurpose": "ephemeral metadata-only RPC, no prompt",
+  "inferenceRequestsSubmitted": 0,
+  "sessionPersistence": false,
+  "requestedModel": "openai/gpt-6.1-sol",
+  "exitCode": 0,
+  "localMetadataTimeout": false,
+  "model": {
+    "provider": "openai",
+    "id": "gpt-6.1-sol",
+    "api": "openai-responses",
+    "baseUrl": "https://api.openai.com/v1",
+    "contextWindow": 272000,
+    "maxTokens": 128000,
+    "type": "chat",
+    "reasoning": true,
+    "cost": {
+      "input": 2,
+      "output": 10,
+      "cacheRead": 0.1,
+      "cacheWrite": 2.5,
+      "tiers": [
+        {
+          "inputTokensAbove": 272000,
+          "input": 4,
+          "output": 15,
+          "cacheRead": 0.2,
+          "cacheWrite": 5
+        }
+      ]
+    }
+  },
+  "state": {
+    "isStreaming": false,
+    "isCompacting": false,
+    "thinkingLevel": "medium",
+    "messageCount": 0,
+    "pendingMessageCount": 0,
+    "autoCompactionEnabled": true
+  },
+  "errors": [],
+  "stderrPresent": false
+}

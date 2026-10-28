@@ -1,0 +1,1 @@
+{"schema":"pantheon.bootstrap-lock.v1","ownerSessionId":"01a15424-1fd5-77a2-a73a-d92a60a5de34","processId":33896,"processStartedUtc":"2026-10-19T13:37:41.8116339Z","host":"M0R6AN","acquiredAtUtc":"2026-10-19T13:37:42.3263299+00:00","mechanism":"Windows exclusive FileStream; single-host bootstrap only","runtimeLease":false}

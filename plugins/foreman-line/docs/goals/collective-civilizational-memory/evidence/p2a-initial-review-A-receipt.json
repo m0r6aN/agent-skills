@@ -1,0 +1,77 @@
+{
+  "startedAtUtc": "2026-10-22T04:23:22.553541+00:00",
+  "phase": "review-A",
+  "status": "completed_json_offline_fence_recovered_pending_host_validation",
+  "modelRequested": "claude-opus-5-5",
+  "effortRequested": "low",
+  "inputBytes": 52976,
+  "inputSha256": "21d7eaff47621b6477ae2fecdd5f00268e769c7208438d88462cb89cf2a2ce3c",
+  "inputOperationalBound": 57232,
+  "maxOutputTokens": 6144,
+  "creditReservation": 350,
+  "bookedCredits": 103.6695,
+  "operationalEstimatedBoundCredits": 224.972,
+  "creditGuard": {
+    "atUtc": "2026-10-22T04:23:22.551282+00:00",
+    "balance": 7390.8,
+    "plan": "plus",
+    "foreignStateSha256": "d1fa7f1e4e805030972f4623fad014633d2cf45098db59054711d8230db5a33c",
+    "foreignActualPriorAndPhaseGuard": 1452.5,
+    "foreignReservedConservativeGuard": 1600,
+    "foreignOld700Retained": true,
+    "nyDay": "2026-10-22",
+    "preMidnightBalance": 7406.2,
+    "observedDayDelta": 15.399999999999636,
+    "p2aBooked": 0,
+    "p2aRemainingCapacity": 1400,
+    "p2aTotalGuard": 1400,
+    "sharedDayGuard": 3015.3999999999996,
+    "effortGuard": 5693.4,
+    "accountAfterAllGuards": 4390.8,
+    "limits": {
+      "p2a": 1400,
+      "sharedDay": 3200,
+      "effort": 9000,
+      "accountFloor": 1000
+    }
+  },
+  "postsMax": 1,
+  "automaticRetries": 0,
+  "timeoutSeconds": 180,
+  "modelReturned": "claude-opus-5-5",
+  "requestId": "chatcmpl-5512b23e-f6ed-45a1-b0ec-e62d17fa1925",
+  "finishReason": "stop",
+  "usage": {
+    "completion_tokens": 4075,
+    "prompt_tokens": 21398,
+    "total_tokens": 25473,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 1443,
+      "rejected_prediction_tokens": null,
+      "text_tokens": 2632
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "cache_write_tokens": 21394,
+      "text_tokens": 0,
+      "cache_creation_tokens": 21394,
+      "cache_creation_token_details": {
+        "ephemeral_5m_input_tokens": 21394,
+        "ephemeral_1h_input_tokens": 0
+      }
+    },
+    "cache_creation_input_tokens": 21394,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "global",
+    "speed": "standard"
+  },
+  "reportedCredits": 103.4,
+  "finishedAtUtc": "2026-10-22T04:24:04.801748+00:00",
+  "failureClass": "JSONDecodeError",
+  "originalLocalFailure": "JSONDecodeError on fenced complete JSON; raw provider response untouched; no new request",
+  "jsonFenceRemovedOffline": true,
+  "conservativeCatalogCredits": 103.6695
+}

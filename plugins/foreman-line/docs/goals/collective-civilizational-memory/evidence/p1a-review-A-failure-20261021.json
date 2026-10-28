@@ -1,0 +1,73 @@
+{
+  "started": "2026-10-21T20:51:21.1933375Z",
+  "model_requested": "claude-opus-5-5",
+  "prompt_sha256": "9035F091F9A751DA4CAA6DB41132E305CA8D7DDD5FAF6151F8830CF789F000C9",
+  "max_output_tokens": 2304,
+  "tools_granted": [],
+  "status": "incomplete_response_no_automatic_retry",
+  "retry_count": 0,
+  "model_reported": "claude-opus-5-5",
+  "request_id": "chatcmpl-f7162828-a200-44f0-821e-20d583c3a2f3",
+  "finish_reason": "length",
+  "usage": {
+    "completion_tokens": 2304,
+    "prompt_tokens": 37320,
+    "total_tokens": 39624,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 2304,
+      "rejected_prediction_tokens": null,
+      "text_tokens": 0
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "cache_write_tokens": 37316,
+      "text_tokens": 0,
+      "cache_creation_tokens": 37316,
+      "cache_creation_token_details": {
+        "ephemeral_5m_input_tokens": 37316,
+        "ephemeral_1h_input_tokens": 0
+      }
+    },
+    "cache_creation_input_tokens": 37316,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "global",
+    "speed": "standard"
+  },
+  "genspark_usage": {
+    "credits": 127.6,
+    "unit": "credit"
+  },
+  "finished": "2026-10-21T20:51:48.7221382Z",
+  "disposition": "UNSUCCESSFUL: incomplete/all thinking, no review; actual input and per-call credits exceed approved envelope. Do not retry/dispatch B under failed controls.",
+  "expectedInputOperationalMax": 26500,
+  "expectedPerCallMaxCredits": 100,
+  "reservedCredits": 99,
+  "actualInput": 37320,
+  "reportedCredits": 127.6,
+  "conservativeCatalogTokenPriceCredits": 127.9718,
+  "bookedCreditsConservative": 128,
+  "inputEstimateFailure": "Local cl100k/o200k estimates plus20percent were not a provider-input bound. Actual input37320. No proven cause or tokenizer-equivalence claim.",
+  "promptHashReconciliation": {
+    "recordedBeforeWriteLfHash": "f8ac7752c45b5fcea49010c3794122fdec0f6f27597f1924b9cfac8b4f7c544f",
+    "actualSentFileCrLfHash": "9035f091f9a751da4caa6db41132e305ca8d7ddd5faf6151f8830cf789f000c9",
+    "cause": "Windows write_text newline conversion; semantic input unchanged; actualsentfile hash now pinned. CRLF does not explain the full token discrepancy."
+  },
+  "actualBilling": "reported provider credits retained; invoice/account attribution not established",
+  "privateFiles": {
+    "candidate.json": {
+      "bytes": 2,
+      "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+    },
+    "receipt.json": {
+      "bytes": 1358,
+      "sha256": "1c08ca69b3f74dafe0ec29ddbdad9935a42e3e6f7f573d035df2397d5629501e"
+    },
+    "response.json": {
+      "bytes": 1188,
+      "sha256": "388a8f2b261a6af71c2a912884e5a46664eaecbd58182e237139bb3687fbebcc"
+    }
+  }
+}

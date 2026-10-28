@@ -1,0 +1,63 @@
+{
+  "startedAtUtc": "2026-10-22T02:31:33.464598+00:00",
+  "phase": "closure-A",
+  "modelRequested": "claude-opus-5-5",
+  "effortRequested": "low",
+  "outputMax": 6144,
+  "inputBytes": 88654,
+  "inputSha256": "38b350ab06b31493643d516c5366057915333ddda01e8e87ab1244c3dc958247",
+  "inputOperationalBound": 92910,
+  "creditReservation": 350,
+  "modeledAtByteBoundCredits": 323.0865,
+  "status": "completed_json_pending_host_validation",
+  "retries": 0,
+  "requestsMax": 1,
+  "creditGuard": {
+    "balance": 8441.3,
+    "sharedDayUsed": 2474.7,
+    "effortUsed": 2555.0,
+    "P1BBookedBefore": 205.94475,
+    "newCycleBooked": 0,
+    "rawSharedDay": 2474.7,
+    "rawEffort": 2555.0,
+    "ownedPendingAlreadyInSharedLedger": 700,
+    "ourClosureCompletedPlusRemainingHold": 700,
+    "reservationAccounting": "Replace exact named P1B pending hold, retain all unrelated/unknown holds, conservatively count own completed book too"
+  },
+  "httpStatus": 200,
+  "modelReturned": "claude-opus-5-5",
+  "requestId": "chatcmpl-d3fbb71a-bfc2-477a-9953-c9450ffc546d",
+  "finishReason": "stop",
+  "usage": {
+    "completion_tokens": 1804,
+    "prompt_tokens": 36824,
+    "total_tokens": 38628,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": null,
+      "text_tokens": 1804
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "cache_write_tokens": 36820,
+      "text_tokens": 0,
+      "cache_creation_tokens": 36820,
+      "cache_creation_token_details": {
+        "ephemeral_5m_input_tokens": 36820,
+        "ephemeral_1h_input_tokens": 0
+      }
+    },
+    "cache_creation_input_tokens": 36820,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "global",
+    "speed": "standard"
+  },
+  "reportedCredits": 121.0,
+  "conservativeCatalogCredits": 121.11,
+  "bookedCredits": 121.11,
+  "visibleBytes": 4955,
+  "finishedAtUtc": "2026-10-22T02:31:53.721490+00:00"
+}

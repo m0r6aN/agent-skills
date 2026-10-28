@@ -1,0 +1,35 @@
+{
+  "scope": "Diagnostic only: four complete fields in isolated private snapshot; missing normative document means P1A incomplete",
+  "sourceBase": "efb5f4bcead899332f4f35f5e0b3a181eb988d2c",
+  "snapshot": "C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\openai-api-stream-20261021-01\\partial-validation-snapshot",
+  "overlaidFiles": [
+    "src/keon/cortex/envelope/taxonomy.py",
+    "src/keon/cortex/ingress/models_v2.py",
+    "tests/fixtures/ccm/contracts-v2.json",
+    "tests/test_ccm_contracts_v2.py"
+  ],
+  "exitCode": 0,
+  "seconds": 7.439,
+  "outputSha256": "0fd34a85a8dcc3a4f917ad9039846a40439f9fa47bd4e6eebfc849f6abdcf6b2",
+  "argv": [
+    "C:\\Users\\clint\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "-p",
+    "pytest_asyncio.plugin",
+    "-p",
+    "no:cacheprovider",
+    "-q",
+    "--basetemp=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\openai-api-stream-20261021-01\\pytest-tmp",
+    "--junitxml=C:\\Users\\clint\\AppData\\Local\\CCM-RLP-01-A1-private-01a15670\\openai-api-stream-20261021-01\\partial-tests.xml",
+    "tests/test_ccm_contracts_v2.py",
+    "tests/test_ingress_models.py",
+    "tests/inheritance/test_inheritance.py",
+    "tests/gravity/test_contracts.py",
+    "tests/gravity/test_projection_fixtures.py",
+    "tests/test_evidence_envelope.py",
+    "tests/test_shards_v1_1.py"
+  ],
+  "admittedWorktreeMutated": false
+}

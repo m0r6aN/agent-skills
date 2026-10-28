@@ -1,0 +1,23 @@
+{
+  "atUtc": "2026-10-22T05:25:27.124454+00:00",
+  "balance": 6546.0,
+  "plan": "plus",
+  "foreignStateSha256": "99ae576f398fd12c893f8fdc4771482836949bdfba78b0ea2d525b4ba147cd41",
+  "foreignKnownPriorAndPhase": 1452.5,
+  "foreignGuard": 1600,
+  "foreign700ExcessRetained": true,
+  "p2aConservativeAllCallsAndFailed700": 1150.4940000000001,
+  "p2bBooked": 99.28049999999999,
+  "p2bFutureReserved": 0,
+  "observedNYOct22Delta": 860.1999999999998,
+  "sharedDayGuard": 3709.9745000000003,
+  "effortGuard": 6387.9745,
+  "accountAfterGuards": 3696.2254999999996,
+  "limits": {
+    "p2b": 1000,
+    "day20261022": 4800,
+    "effort": 9000,
+    "floor": 1000,
+    "expiresUtc": "2026-10-23T04:00:00Z"
+  }
+}

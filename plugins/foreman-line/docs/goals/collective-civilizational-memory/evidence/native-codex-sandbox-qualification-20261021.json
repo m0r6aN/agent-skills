@@ -1,0 +1,47 @@
+{
+  "syntheticFixture": "C:\\Users\\clint\\AppData\\Local\\Temp\\ccm-native-qualification-20261021-5xsvd15a",
+  "inferenceCalls": 0,
+  "records": [
+    {
+      "profile": ":read-only",
+      "exitCode": 0,
+      "stdout": "{\"read\":true,\"workspaceWrite\":false,\"workspaceWriteError\":\"MethodInvocationException\",\"outsideWrite\":false,\"outsideWriteError\":\"MethodInvocationException\",\"activeCodexConfigWrite\":false,\"activeCodexConfigWriteError\":\"MethodInvocationException\",\"inactiveClaudeSettingsWrite\":false,\"inactiveClaudeSettingsWriteError\":\"MethodInvocationException\"}\n",
+      "stderr": "",
+      "argv": [
+        "D:\\nodejs_symlinks\\node_modules\\@openai\\codex\\node_modules\\@openai\\codex-win32-x64\\vendor\\x86_64-pc-windows-msvc\\bin\\codex.exe",
+        "sandbox",
+        "-P",
+        ":read-only",
+        "-C",
+        "C:\\Users\\clint\\AppData\\Local\\Temp\\ccm-native-qualification-20261021-5xsvd15a\\workspace",
+        "--",
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "-NoLogo",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\clint\\AppData\\Local\\Temp\\ccm-native-qualification-20261021-5xsvd15a\\workspace\\check.ps1"
+      ]
+    },
+    {
+      "profile": ":workspace",
+      "exitCode": 0,
+      "stdout": "{\"read\":true,\"workspaceWrite\":true,\"outsideWrite\":false,\"outsideWriteError\":\"MethodInvocationException\",\"activeCodexConfigWrite\":false,\"activeCodexConfigWriteError\":\"MethodInvocationException\",\"inactiveClaudeSettingsWrite\":true}\n",
+      "stderr": "",
+      "argv": [
+        "D:\\nodejs_symlinks\\node_modules\\@openai\\codex\\node_modules\\@openai\\codex-win32-x64\\vendor\\x86_64-pc-windows-msvc\\bin\\codex.exe",
+        "sandbox",
+        "-P",
+        ":workspace",
+        "-C",
+        "C:\\Users\\clint\\AppData\\Local\\Temp\\ccm-native-qualification-20261021-5xsvd15a\\workspace",
+        "--",
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "-NoLogo",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\clint\\AppData\\Local\\Temp\\ccm-native-qualification-20261021-5xsvd15a\\workspace\\check.ps1"
+      ]
+    }
+  ],
+  "scope": "Native sandbox filesystem behavior only; not model/auth/whole-delivery budget qualification"
+}
