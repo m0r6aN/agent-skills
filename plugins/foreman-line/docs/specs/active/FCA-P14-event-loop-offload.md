@@ -8,7 +8,7 @@ updated: 2026-10-14
 risk: elevated
 surfaces: [plugins/foreman-line/ops-console/src/]
 routing_class: architecture/risk
-permission_profile: null
+verification_class: judgment-required
 ---
 
 # FCA-P14: Event-loop offload

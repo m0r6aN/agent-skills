@@ -13,6 +13,7 @@ surfaces:
   - plugins/foreman-line/docs/specs/
 routing_class: standard-feature
 data_classification: internal
+verification_class: judgment-required
 ---
 
 ## Intent

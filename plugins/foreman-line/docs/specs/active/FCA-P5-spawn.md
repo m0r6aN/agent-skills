@@ -14,7 +14,7 @@ surfaces:
   - plugins/foreman-line/ops-console/src/api.ts
   - plugins/foreman-line/ops-console/src/liveness.ts
 routing_class: architecture/risk
-verification_class: deterministic
+verification_class: judgment-required
 permission_profile: builder-standard
 data_classification: internal
 ---

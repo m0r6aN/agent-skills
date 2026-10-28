@@ -14,6 +14,7 @@ surfaces:
 routing_class: architecture/risk
 permission_profile: builder-standard
 data_classification: public
+verification_class: judgment-required
 ---
 
 # Cerebras Shadow Route Operational Dispatch Completion

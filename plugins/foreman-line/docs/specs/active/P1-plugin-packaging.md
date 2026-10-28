@@ -30,6 +30,7 @@ surfaces:
   - CLAUDE.md
   - .claude-plugin/marketplace.json
 routing_class: architecture/risk
+verification_class: judgment-required
 ---
 
 # P1 — Plugin manifest and skill relocation

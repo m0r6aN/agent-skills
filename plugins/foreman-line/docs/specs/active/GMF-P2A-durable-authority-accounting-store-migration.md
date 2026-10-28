@@ -14,6 +14,7 @@ surfaces:
 routing_class: architecture/risk
 permission_profile: builder-architecture
 data_classification: internal
+verification_class: equivalence-provable
 ---
 
 # GMF-P2A — Durable Runtime authority/accounting store and migration

@@ -17,6 +17,7 @@ surfaces:
 routing_class: architecture/risk
 permission_profile: builder-architecture
 data_classification: internal
+verification_class: equivalence-provable
 ---
 
 ## Intent

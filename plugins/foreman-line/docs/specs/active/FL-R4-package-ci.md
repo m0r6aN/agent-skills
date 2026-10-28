@@ -10,6 +10,7 @@ surfaces: [plugins/foreman-line/, .github/workflows/foreman-line-ci.yml]
 routing_class: architecture/risk
 permission_profile: builder-deps
 data_classification: internal
+verification_class: judgment-required
 ---
 
 ## Intent

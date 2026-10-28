@@ -14,7 +14,7 @@ surfaces:
   - plugins/foreman-line/ops-console/src/api.ts
   - plugins/foreman-line/ops-console/src/guards.ts
 routing_class: architecture/risk
-verification_class: deterministic
+verification_class: equivalence-provable
 permission_profile: builder-standard
 data_classification: internal
 ---

@@ -14,7 +14,7 @@ surfaces:
   - plugins/foreman-line/ops-console/src/status.ts
   - plugins/foreman-line/ops-console/ui/app.js
 routing_class: standard-feature
-verification_class: deterministic
+verification_class: judgment-required
 permission_profile: builder-standard
 data_classification: internal
 ---

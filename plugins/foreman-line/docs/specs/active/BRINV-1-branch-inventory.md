@@ -14,6 +14,7 @@ surfaces:
 routing_class: standard-feature
 permission_profile: builder-standard
 data_classification: internal
+verification_class: judgment-required
 ---
 
 # BRINV-1 — Branch inventory and merge/abandon recommendations

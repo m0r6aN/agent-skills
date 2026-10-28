@@ -17,7 +17,7 @@ surfaces:
 routing_class: implementation/standard
 permission_profile: builder-standard
 data_classification: internal
-verification_class: security-sensitive
+verification_class: judgment-required
 involves:
   - routing-currency-and-merit-jev-alpha
   - routing-currency-and-merit
