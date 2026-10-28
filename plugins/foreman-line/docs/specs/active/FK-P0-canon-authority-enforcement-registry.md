@@ -12,6 +12,7 @@ surfaces: [plugins/foreman-line/authority-registry/**]
 routing_class: architecture/risk
 permission_profile: builder-architecture
 data_classification: internal
+verification_class: judgment-required
 ---
 
 # FK-P0 - Canon Authority and Enforcement Registry

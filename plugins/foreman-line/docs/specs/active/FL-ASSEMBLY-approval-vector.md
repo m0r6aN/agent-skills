@@ -10,6 +10,7 @@ surfaces: [plugins/foreman-line/approval/tests/canonical-parity.test.ts]
 routing_class: architecture/risk
 permission_profile: builder-architecture
 data_classification: internal
+verification_class: judgment-required
 ---
 
 ## Intent

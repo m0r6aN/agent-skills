@@ -15,6 +15,7 @@ surfaces:
 routing_class: architecture/risk
 permission_profile: builder-architecture
 data_classification: internal
+verification_class: judgment-required
 ---
 
 # GMF-P1 — Effect/source/environment/evidence contracts freeze

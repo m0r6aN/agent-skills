@@ -14,6 +14,7 @@ surfaces:
   - plugins/foreman-line/docs/transcripts/wgt-r1-foreman-current-state-reconciliation-handoff.md
 routing_class: architecture/risk
 data_classification: internal
+verification_class: judgment-required
 ---
 
 # WGT-R1 — Foreman current-state and queue reconciliation

@@ -8,6 +8,7 @@ updated: 2026-10-14
 risk: elevated
 surfaces: [plugins/foreman-line/ops-console/src/invoke.ts, plugins/foreman-line/ops-console/src/server.ts, plugins/foreman-line/ops-console/tests/]
 routing_class: architecture/risk
+verification_class: equivalence-provable
 ---
 
 # FCA-P16: Windows portability for ops-console tests and the UNSAFE_ROOT_PATTERN guard

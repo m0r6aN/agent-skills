@@ -17,6 +17,7 @@ surfaces:
 routing_class: architecture/risk
 permission_profile: reviewer-readonly
 data_classification: internal
+verification_class: judgment-required
 ---
 
 # OR-P01 — keon-systems Build Integrity

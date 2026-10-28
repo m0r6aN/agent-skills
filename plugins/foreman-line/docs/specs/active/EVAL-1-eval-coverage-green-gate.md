@@ -14,6 +14,7 @@ surfaces:
   - skills/test-driven-development/SKILL.md
 routing_class: standard-feature
 data_classification: internal
+verification_class: equivalence-provable
 ---
 
 # EVAL-1 — Eval coverage green gate (Tier-2 trigger and routing)
