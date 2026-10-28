@@ -94,6 +94,7 @@ QF-P0 row added 2026-10-14 by the quick-flags QF-P0 shaping session at `draft`; 
 | FK-P2 | [Foreman Kernel - spec-body compiler](done/FK-P2-spec-body-compiler.md) | `done` | `done/` |
 | FK-P9 | [Foreman Kernel - SQLite storage and migration ABI](done/FK-P9-storage-migration-abi.md) | `done` | `done/` |
 | FL-ASSEMBLY | [Preserve canonical vector invariants without freezing receipt implementation](active/FL-ASSEMBLY-approval-vector.md) | `active` | `active/` |
+| FL-BUS-01 | [Agent bus — reliable inter-agent message layer built on per-agent sidecars, with first-class Grok Bot participation (umbrella; ready for Gate 1 ratification)](active/FL-BUS-01-agent-bus.md) | `draft` | `active/` |
 | FL-R1 | [Reject incomplete terminal receipt chains as sealed](active/FL-R1-terminal-seal.md) | `active` | `active/` |
 | FL-R2 | [Parse real active-spec YAML without losing declared risk](active/FL-R2-real-audit-loader.md) | `active` | `active/` |
 | FL-R3 | [Stop PR creation after a failed push](active/FL-R3-push-failure-stop.md) | `active` | `active/` |
