@@ -24,7 +24,7 @@ Produce one canonical, executable memory-contract boundary for CCM: additive tax
 ## Constraints
 
 - Primary repository: `D:/Repos/keon-omega/keon-cortex`. Observed source HEAD: `684785f220c066e8686e160eec2611c727582a00`; this is not a clean-tree or dispatch-base assertion. No implementation dependency. Gate 1/plan review, coordinator lint, Gate 2, process/registration, exact clean base and admitted route/budget remain prerequisites for dispatch.
-- Authority: final v4 plus accepted S01–S12 in the decision register below and the owner-approved C02-D1 scoped AC6/dependency amendment (2026-10-20). Preserve OPMEM D1–D18, Cortex/Postgres authority, Gateway ingress, existing scope/identity law, INV-2/3/5 and Pantheon incarnation law. Memory and caution never grant execution authority.
+- Authority: final v4 plus accepted S01–S12 in the decision register below and the owner-approved C02-D1 scoped AC6/dependency amendment (2026-10-20). Preserve the OPMEM D1–D18 lineage ([Continuity](https://github.com/m0r6aN/continuity/blob/main/docs/opmem-lineage.md)), Cortex/Postgres authority, Gateway ingress, existing scope/identity law, INV-2/3/5 and Pantheon incarnation law. Memory and caution never grant execution authority.
 - Extend canonical enums in `envelope/taxonomy.py`; do not add parallel enums elsewhere. Preserve existing enum values/ranks and old serialized identities. Add `CAUSAL`, `REPULSIVE`, `BUFFERED` and orthogonal `ValidityStatus(valid, contested, stale_code_dependency)`.
 - Add version-specific v2 validation beside existing ingress models, reusing `CandidateProvenance`, `ReceiptAnchor`, clean-text/identifier and scoped-ID contracts. Do not edit v1 ingress behavior, change old hashes, or wire v2 into `api.py`. Projection labels are not source authentication or cryptographic receipt verification.
 - The normative contract document owns Plane-A DDL, state/routing tables and derivative-cleanup/key-custody interfaces; writing that document does not apply migrations or implement those services. Keep the packet under ~16k supplied tokens; source v4 is selective excerpts, not mandatory full history.
@@ -69,7 +69,7 @@ Distinguish untrusted producer assertions from authoritative resolved parent inp
 
 ## Out of Scope
 
-No database migration/application, HTTP wiring, storage workers, live receipt authority, key-store implementation, actual shred, score implementation, multi-parent runtime conversion, source imports, cloud/credential work or edits to OPMEM/Gateway. Multi-parent wire expectations are frozen here; actual Cortex InheritanceEvent/validator backward-compatible extension belongs to P7 and may not change old event IDs here.
+No database migration/application, HTTP wiring, storage workers, live receipt authority, key-store implementation, actual shred, score implementation, multi-parent runtime conversion, source imports, cloud/credential work or edits to Keon Gateway. Multi-parent wire expectations are frozen here; actual Cortex InheritanceEvent/validator backward-compatible extension belongs to P7 and may not change old event IDs here.
 
 ## Context & References
 
@@ -80,7 +80,7 @@ No database migration/application, HTTP wiring, storage workers, live receipt au
 - [Owner delivery handoff](D:/Repos/Pantheon/docs/CONTEXT-SHAPING-HANDOFF.md)
 - [Taxonomy](D:/Repos/keon-omega/keon-cortex/src/keon/cortex/envelope/taxonomy.py)
 - [Existing ingress](D:/Repos/keon-omega/keon-cortex/src/keon/cortex/ingress/models.py)
-- [OPMEM current recorded state](../../goals/operator-developer-cortex-memory/charter.md)
+- [OPMEM lineage (Continuity)](https://github.com/m0r6aN/continuity/blob/main/docs/opmem-lineage.md)
 - [Pantheon law](D:/Repos/Pantheon/docs/COLLECTIVE-INCARNATION.md)
 
 ## Allowed Files

@@ -22,3 +22,5 @@ What is NOT done / outstanding:
 3. Separate scope after CI green: independent architecture/security/process acceptance. Native integration, provider/model/worker execution, live proof, trusted-issuer accounting/custody and operational admission remain unimplemented and unauthorized. IR-A01/OPMEM decisions are not reopened.
 
 Preservation: prototype package bytes, all four historical evidence records, the original prototype worktree (`dd85fd3b…`) and packaging worktree (`d0ee3624…`) are unchanged. No background loop; no downstream dispatch.
+
+> **Historical note (2026-10-31):** the OPMEM (`operator-developer-cortex-memory`) goal records, specs and evidence were removed from this repository; the lineage is summarised at https://github.com/m0r6aN/continuity/blob/main/docs/opmem-lineage.md. Mentions of OPMEM above are historical and unchanged.

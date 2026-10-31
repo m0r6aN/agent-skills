@@ -13,7 +13,7 @@ The owner disposed the Pro/settings facts and scoped data/accounting/native-prov
 
 | Field | Admitted value / bound |
 |---|---|
-| Workflow / purpose | `operator-developer-cortex-memory` / `initial-plan-review` |
+| Workflow / purpose | `internal-plan-review-prototype` / `initial-plan-review` |
 | Lane / role family / sub-role | `L2` / `verifier` / `adversarial-reviewer` |
 | Routing class / tier | `architecture/risk` / frontier |
 | Data class / policy | `internal`; owner's own credential-free initial-review material; exclude customer/client/restricted/regulated data; `owner-accepted-subscription-policy`, NOT ZDR |
@@ -54,7 +54,7 @@ Authority/accounting remain outside model context. Memory, files, issue text, pr
 
 Authentication setup is NOT an outstanding owner decision: the owner reports already-authenticated Pi on Pro with model improvement/paid extra usage off. Accept those as OWNER ATTESTATIONS, not independently inspected settings. No new login/API key, credential copies/export, custom OAuth flow, runtime API-key override, account/config edits, provider emulation or silent billing substitution. Ordinary selected-auth/refresh behavior remains Pi's responsibility after a future admitted launch; this revision instantiates nothing.
 
-The owner ratified `owner-accepted-subscription-policy` for ONLY their own internal credential-free initial OPMEM review packet. It replaces the absolute `data_collection: deny` / `zdr: true` obligation ONLY inside this companion/use-case; it neither edits those values in legacy/global/public-v1 policy nor claims them satisfied. Exclude customer/client/restricted/regulated data and keep `internal` classification. Applicable consumer retention is nonzero (published ordinary improvement-off policy describes 30 days), with disclosed safety-review/feedback exceptions. Opt-out is not unconditional no-training/ZDR. No feedback upload, unrelated history or broader dataset is authorized. Changed settings/terms or out-of-scope content invalidate eligibility.
+The owner ratified `owner-accepted-subscription-policy` for ONLY their own internal credential-free initial plan-review packet. It replaces the absolute `data_collection: deny` / `zdr: true` obligation ONLY inside this companion/use-case; it neither edits those values in legacy/global/public-v1 policy nor claims them satisfied. Exclude customer/client/restricted/regulated data and keep `internal` classification. Applicable consumer retention is nonzero (published ordinary improvement-off policy describes 30 days), with disclosed safety-review/feedback exceptions. Opt-out is not unconditional no-training/ZDR. No feedback upload, unrelated history or broader dataset is authorized. Changed settings/terms or out-of-scope content invalidate eligibility.
 
 Before any native provider invocation, the trusted review host MUST establish:
 
@@ -119,7 +119,7 @@ Plain findings need no native structured-output model capability; host result fo
 
 External bootstrap text is `ir-p0-contract-and-bootstrap-amendment.md` in the task directory. Owner conditionally approved IR-B01 exact ten prototype/two evidence paths and limits; it is DORMANT until whole revised IR-A01 is explicitly ratified first, then Step 0 disposition. Do not re-request unchanged IR-B01 scope. No native provider/worker integration, live proof or operational use is covered.
 
-Later phases require exact manifests, native runtime/platform/issuer/control seams, deterministic negative controls and required independent architecture/security reviews. PUBLIC synthetic proof, provisional review-use exception and ordinary INTERNAL use are separate bounded gates. Fixtures/human offline check are not frontier reviews; this launcher cannot authorize or accept itself. Initial successful OPMEM plan review does not certify the launcher/P0 or supply a two-seat roster.
+Later phases require exact manifests, native runtime/platform/issuer/control seams, deterministic negative controls and required independent architecture/security reviews. PUBLIC synthetic proof, provisional review-use exception and ordinary INTERNAL use are separate bounded gates. Fixtures/human offline check are not frontier reviews; this launcher cannot authorize or accept itself. Initial successful plan review does not certify the launcher/P0 or supply a two-seat roster.
 
 Negative controls: both models' family/identity/native auth/data scope/reasoning/context/capability failures; forged/replayed permits; path/resource escapes/injected tool changes; all-turn cache/reasoning/parent-subcap accounting; quota/extra-use/API substitution; included-quota estimate misrepresented as invoice; accepted-policy falsely refused solely for absent ZDR; out-of-scope data falsely allowed; send/ack crashes; result forgery; unchanged old public-v1 refusals. No implemented test/verification verdict asserted.
 

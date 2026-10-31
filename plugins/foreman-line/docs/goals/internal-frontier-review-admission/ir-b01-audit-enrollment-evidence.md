@@ -57,3 +57,5 @@ These files landed `2026-10-11` in the owner's FCA-P2…P5 ops-console work (`13
 ## Limits
 
 No merge, no merge recommendation while verification/mutation-scope-guard remain red. No native/provider/model/worker execution, no auth/settings/billing action, no live proof, no independent acceptance. The prototype remains an unaccepted offline artifact (`mayInvokeProvider: false`, `runtimeStatus: 'held'`, `provenance: 'untrusted-offline-declarations'` in every assessment). Local green package checks are not repository CI. IR-A01 ratification, OPMEM D1–D18/P0–P10 scope, caps, migration #174/defaults, G6/cloud/Neon holds and archived HRO status are unchanged. All earlier IR-B01/IR-B01-CI grants remain exhausted; this record binds only IR-B01-AUDIT.
+
+> **Historical note (2026-10-31):** the OPMEM (`operator-developer-cortex-memory`) goal records, specs and evidence were removed from this repository; the lineage is summarised at https://github.com/m0r6aN/continuity/blob/main/docs/opmem-lineage.md. Mentions of OPMEM above are historical and unchanged.

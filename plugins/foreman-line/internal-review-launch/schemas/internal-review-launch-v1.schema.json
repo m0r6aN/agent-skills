@@ -41,7 +41,7 @@
       ],
       "properties": {
         "goal": {
-          "const": "operator-developer-cortex-memory"
+          "const": "internal-plan-review-prototype"
         },
         "purpose": {
           "const": "initial-plan-review"
@@ -190,7 +190,7 @@
           "const": "f5ec6cac7736ffb3ef24a0091bf0b56ea9136034"
         },
         "scope": {
-          "const": "operator-developer-cortex-memory/initial-plan-review"
+          "const": "internal-plan-review-prototype/initial-plan-review"
         },
         "subjectManifestDigest": {
           "type": "string",

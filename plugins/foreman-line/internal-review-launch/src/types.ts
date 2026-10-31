@@ -43,7 +43,7 @@ export interface AttemptClaim {
 export interface InternalReviewEnvelope {
   readonly version: 'internal-review-launch/v1'
   readonly identity: {
-    readonly goal: 'operator-developer-cortex-memory'
+    readonly goal: 'internal-plan-review-prototype'
     readonly purpose: 'initial-plan-review'
     readonly taskId: string
     readonly instanceId: string
@@ -75,7 +75,7 @@ export interface InternalReviewEnvelope {
   readonly authority: {
     readonly human: 'Clinton Morgan'
     readonly contractCommit: 'f5ec6cac7736ffb3ef24a0091bf0b56ea9136034'
-    readonly scope: 'operator-developer-cortex-memory/initial-plan-review'
+    readonly scope: 'internal-plan-review-prototype/initial-plan-review'
     readonly subjectManifestDigest: string
     readonly freshInstance: boolean
     readonly permitClaim: 'unclaimed' | 'consumed' | 'unknown'

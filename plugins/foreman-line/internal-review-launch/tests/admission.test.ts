@@ -37,7 +37,7 @@ function fixture(): InternalReviewEnvelope {
   return {
     version: 'internal-review-launch/v1',
     identity: {
-      goal: 'operator-developer-cortex-memory',
+      goal: 'internal-plan-review-prototype',
       purpose: 'initial-plan-review',
       taskId: 'synthetic-task',
       instanceId: '11111111-2222-3333-4444-555555555555',
@@ -63,7 +63,7 @@ function fixture(): InternalReviewEnvelope {
     authority: {
       human: 'Clinton Morgan',
       contractCommit: 'f5ec6cac7736ffb3ef24a0091bf0b56ea9136034',
-      scope: 'operator-developer-cortex-memory/initial-plan-review',
+      scope: 'internal-plan-review-prototype/initial-plan-review',
       subjectManifestDigest: digest,
       freshInstance: true,
       permitClaim: 'unclaimed',

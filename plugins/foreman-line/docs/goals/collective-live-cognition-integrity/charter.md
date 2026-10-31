@@ -254,3 +254,5 @@ Human gates are stop conditions, not agent-completable success conditions. Gate 
 3. Preserve Gateway local-main divergence and dirty monetizable-GA work; create any P7 worktree from pinned `origin/main` only. Hold P7 merge to Gateway `main` for the deployment disposition above.
 
 **Current disposition:** Independent plan-review report received; F1–F16 triaged. D1–D5 and D7–D10 remain locked; scoped D6 amendment B is ratified. Windows baseline is green; Linux baseline is non-green/incomplete (details in `baseline-2026-10-14.md`). P0 is not dispatchable until the Linux baseline blocker is resolved and the cross-platform baseline is complete. No implementation, paid inference, or merge occurred in this update.
+
+> **Historical note (2026-10-31):** the OPMEM (`operator-developer-cortex-memory`) goal records, specs and evidence were removed from this repository; the lineage is summarised at https://github.com/m0r6aN/continuity/blob/main/docs/opmem-lineage.md. Mentions of OPMEM above are historical and unchanged.

@@ -176,8 +176,6 @@ QF-P0 row added 2026-10-14 by the quick-flags QF-P0 shaping session at `draft`; 
 | MRC-12 | [HRO-P4c structured recovery diagnostics — D10's renderer over the existing reason/outcome vocabulary (sanitized, deduplicated stderr diagnostics; machine JSON on stdout; optional disabled-by-default platform-aware notifications with failure isolation)](active/MRC-12-hro-p4c-recovery-diagnostics.md) | `active` | `active/` |
 | MRC-13 | ["PMC-P4 conformance/smoke/rollout gate and serialized legacy-representation removal at the named cutover — static conformance + legacy cutover provable with zero provider calls; synthetic lane smoke, Pi-session installation check, and the versioned model-quality record behind G-LIVE"](active/MRC-13-pmc-p4-conformance-and-legacy-cutover.md) | `active` | `active/` |
 | MRC-20 | [RB-6 catalogue bytes capture (carried nit) — preserved public catalogue GET with digest provenance](active/MRC-20-rb6-catalogue-bytes-capture.md) | `active` | `active/` |
-| OPMEM-H1 | [Remediate vulnerable Gateway native SQLite dependency](done/OPMEM-H1-sqlite-dependency-remediation.md) | `done` | `done/` |
-| OPMEM-P0 | [Operator-developer Cortex memory authority and contract baseline](done/OPMEM-P0-authority-and-contract-baseline.md) | `done` | `done/` |
 | OR-P01 | [Independently verify keon-systems build integrity at 2b6c755](active/OR-P01-keon-systems-build-integrity.md) | `active` | `active/` |
 | OR-P02 | [Restore keon.collective build and test integrity at the ratified current base](active/OR-P02-collective-build-integrity.md) | `active` | `active/` |
 | PMC-P0 | [Pi capability and catalogue baseline](done/PMC-P0-pi-capability-and-catalogue-baseline.md) | `done` | `done/` |

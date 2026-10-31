@@ -27,7 +27,7 @@ a redirect. v1 runs entirely on Clint's PC in local Docker: Redis plus **one bus
 (the sidecar holds the agent's signing key, speaks Redis Streams, and gives the agent local MCP tools), and still
 includes his cloud-hosted, turn-based Grok Bot agents through one **Grok bridge sidecar**, outbound webhook wakes
 and a git mailbox repo. The replayable
-stream becomes audit evidence for receipt chains and, later, the feed for agent-memory checkpoint events.
+stream becomes audit evidence for receipt chains and, later, an optional post-ack `memory_checkpoint` pointer notification (BUS-P9).
 
 > **Shaping note.** Umbrella draft at Stage A. It exceeds SPEC-CONVENTION §6's ~3–4k-token budget on purpose
 > so Gate 1 can ratify D1–D25 in one place. On ratification it splits into `docs/goals/agent-bus/charter.md`
@@ -66,7 +66,7 @@ stream becomes audit evidence for receipt chains and, later, the feed for agent-
   `result`, `release`, `ack`, `observation`. `heartbeat.phase` ∈ `investigating | implementing | reviewing |
   waiting`. `ack` exists for participants that cannot `XACK` directly (Grok agents, D13): the bridge turns it
   into an `XACK` of the referenced entry on the sender's group and keeps the `ack` entry as audit.
-  `memory_checkpoint` is reserved for BUS-P9 and rejected by v1 validators.
+  `memory_checkpoint` is reserved for BUS-P9 (optional post-ack notification, pointers only) and rejected by v1 validators.
 - **D4 — Evidence before action (from Orca, `skill-guides/orchestration/references/recovery-and-cleanup.md`).**
   Silence, an expired heartbeat window, an empty wait, an idle pending entry, a quiet mailbox, or a timeout are
   *checkpoints*: they may emit `observation{kind: stall_suspected}` and wake a human, never cancel, reassign,
@@ -334,7 +334,7 @@ Goal-level exit criteria; each names the evidence a verifier checks. Per-parcel 
   needed).
 - Any change to Orca, the Keon MCP Gateway (its P8 fronting is a Keon-side parcel), keon-cortex, or the agent-memory
   repo; the mailbox is a separate repo.
-- Building the Cortex importer (BUS-P9 only defines the event).
+- Building any consumer or importer of `memory_checkpoint` (BUS-P9 only defines the optional notification; there is no importer and no `cortex-importer` consumer group).
 - Parcel claim/lease/ordering (`parcel-queue-and-claim` owns it); the bus never claims, merges or verifies.
 - Grok Bot's built-in agent-to-agent send as a bus transport.
 - A Grok run coordinator (BUS-P10, after BUS-P8) (D17).
@@ -354,8 +354,8 @@ Goal-level exit criteria; each names the evidence a verifier checks. Per-parcel 
 - A2A Protocol Specification 1.0.0 (patch 1.0.1, 2026-05-28): https://a2a-protocol.org/latest/specification/ ,
   https://github.com/a2aproject/A2A/blob/v1.0.0/specification/a2a.proto
 - Redis Streams commands (BUS-P8 provider reference): https://upstash.com/docs/redis/commands/streams/overview
-- agent-memory `GROK.md`, `CONVENTIONS.md` §4 (key alphabet), §7 (git etiquette reused for the mailbox), §8
-  (Cortex import); `shared/agents.md` (agent ids reused as bus `agentId`s)
+- agent-memory `GROK.md`, `CONVENTIONS.md` §4 (key alphabet), §7 (git etiquette reused for the mailbox);
+  `shared/agents.md` (agent ids reused as bus `agentId`s)
 - Keon MCP Gateway (per `/workspace/keon/KEON-SYSTEMS-ARCHITECTURE.md` §4.2, 2026-10-24): Streamable HTTP
   `POST /mcp`, JWT/API-key auth, fixed tool families routed to Keon backends (optional P8 front end for sidecars, D21)
 
@@ -389,7 +389,7 @@ Goal-level exit criteria; each names the evidence a verifier checks. Per-parcel 
 the agent's sidecar, `<agentId>`; incl. `w.grok:<id>`, whose acks the Grok bridge sidecar performs on the agent's
 behalf), `bridge.grok`, optional `audit`. Readers
 ack entries not addressed to them with no side effect. `fl:runs` — run open/close registry the bridge watches.
-`fl:ask:<agentId>` — D9 tickets. `fl:memory` — reserved for BUS-P9.
+`fl:ask:<agentId>` — D9 tickets. `fl:memory` — reserved for BUS-P9 (optional post-ack `memory_checkpoint` notification).
 
 ### C. A2A TaskState projection (accepted, D25)
 
@@ -659,7 +659,7 @@ signature is never downgraded to "unsigned but accepted".
 | BUS-P6 — Agent cards + agents-as-tools | Registry, A2A cards, per-sidecar `ask_<agent>`/`get_answer` (Grok asks ticketed via mailbox) (AC-14). | elevated / architecture-risk | P4a, P5 |
 | BUS-P7 — Negative controls + exit evidence | Forged wake, spoofed signer, revoked key mid-run, wrong-folder file, duplicate wake, seq gap, PC sleep mid-run, bridge crash between XADD and marker, silence-only stall, secret in message, raw unsigned `XADD`, sidecar kill mid-processing, cross-sidecar token use; evidence manifest (AC-13, AC-16). | critical / architecture-risk | P5, P6 |
 | BUS-P8 — Hosted upgrade (later) | Upstash TLS Redis + ACA containers for sidecars/bridge; Grok-facing bus MCP surface served by sidecars (per-agent auth; verify how Grok Bot scopes a custom MCP credential); optional Keon gateway fronting (D21); per-agent GitHub accounts re-evaluated (D24); keys-off-box for Grok. Config-only for the contract (D14). | critical / architecture-risk | P7 |
-| BUS-P9 — Memory checkpoint events (later) | `memory_checkpoint` `{key, path, commitSha, record_kind}` on `fl:memory` after agent-memory push; `cortex-importer` group reserved. | standard / architecture-risk | P7 |
+| BUS-P9 — Memory checkpoint events (later) | OPTIONAL post-ack `memory_checkpoint` notification on `fl:memory` carrying pointers only: `{profileId, shardId, tag, sourceKind, occurredAt}`. No importer and no `cortex-importer` consumer group; consumers are out of scope. | standard / architecture-risk | P7 |
 | BUS-P10 — Grok run coordinator (later) | Lift D17: a `turn-based` agent may coordinate a run once BUS-P8's hosted bus and Grok-facing MCP tools bring loop latency to turn latency; coordinator-specific windows, wake-on-every-worker-message, and Gate-ownership rules. | critical / architecture-risk | P8 |
 
 ### H. Sidecar specification (D18, D19)

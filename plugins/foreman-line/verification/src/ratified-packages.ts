@@ -28,7 +28,7 @@ export const RATIFIED_PACKAGES = [
   // IR-B01-AUDIT coordinator enrollment (owner-authorized 2026-10-12): the
   // offline internal-review-launch prototype is swept at FULL D19 audit
   // coverage like every other ratified package. Audit inclusion is coverage,
-  // not launcher/runtime/OPMEM acceptance (ir-b01-audit-enrollment-evidence.md).
+  // not launcher/runtime acceptance (ir-b01-audit-enrollment-evidence.md).
   'internal-review-launch',
   'jev-decisions',
   'kernel-import',

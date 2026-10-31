@@ -86,3 +86,5 @@ No automatic receipt/consumer migration, lane re-pin or global policy/auth chang
 ## Return / next safe action
 
 The revision pass ends by returning this exact updated contract/patch and decision mapping. One owner-only condition remains before OFFLINE construction: whole revised IR-A01 exact-head ratification. No repeat IR-B01 scope, Pro/settings, data exception, budget basis, native auth/no-broker or native-reasoning approval request. Provider-use/live-runtime validation remains a later operational gate, not a reason to reopen those disposed owner choices or require a new login/API key.
+
+> **Historical note (2026-10-31):** the OPMEM (`operator-developer-cortex-memory`) goal records, specs and evidence were removed from this repository; the lineage is summarised at https://github.com/m0r6aN/continuity/blob/main/docs/opmem-lineage.md. Mentions of OPMEM above are historical and unchanged.

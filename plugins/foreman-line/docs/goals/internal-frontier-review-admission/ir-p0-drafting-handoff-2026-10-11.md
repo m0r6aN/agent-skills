@@ -42,3 +42,5 @@ IR-B01 is optional offline prototyping only, not a way around that hold. It requ
 ## Do not touch / stop
 
 Preserved bridge plan/advisory, original P0 draft/shaping result, live directive/provider/routing/dispatch/profile/ledger sources, other goals/parked HRO, original main/index and unrelated worktrees, credential/global Pi files, Azure/Neon and historical Git/receipt bytes. Owner/coordinator retains responsibility, with no background worker, loop, polling or wakeup. Stop at this returned draft boundary; no implementing work follows automatically.
+
+> **Historical note (2026-10-31):** the OPMEM (`operator-developer-cortex-memory`) goal records, specs and evidence were removed from this repository; the lineage is summarised at https://github.com/m0r6aN/continuity/blob/main/docs/opmem-lineage.md. Mentions of OPMEM above are historical and unchanged.
