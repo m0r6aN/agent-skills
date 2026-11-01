@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- OPMEM removal (issued_by `grokbot-foreman-line`): the `operator-developer-cortex-memory`
+  goal folder (`docs/goals/`), `OPMEM-P0` / `OPMEM-H1` specs and their shaping-result
+  records (`docs/specs/active|done/`) and their `docs/specs/INDEX.md` rows are removed;
+  lineage is kept at https://github.com/m0r6aN/continuity/blob/main/docs/opmem-lineage.md. The `internal-review-launch`
+  prototype's pinned goal/scope identity is renamed to the neutral
+  `internal-plan-review-prototype` (schema, types, tests, contract doc). `collective-civilizational-memory`
+  links now point at the Continuity lineage doc; former P5a scope lives as Keon Gateway asks
+  A1-A3, A6, A7. FL-BUS-01 BUS-P9 is now an optional post-ack `memory_checkpoint`
+  notification carrying pointers only (`{profileId, shardId, tag, sourceKind, occurredAt}`);
+  the agent-memory importer and `cortex-importer` consumer group are dropped.
 - Pi package (`pi-package/`): run the plugin's skills from a Pi prompt as
   namespaced slash commands — `/foreman-line:goal [<concept>]`,
   `/foreman-line:goal resume <goal-slug>`,

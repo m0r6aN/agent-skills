@@ -45,7 +45,7 @@ Turn the reconciled narrow pilot into a reviewable synthetic-only implementation
 
 - [Approved shaping outline and baseline locators](../../shaping/keon-agenttask-synthetic-readiness-2026-10-15.md)
 - [Spec convention](../../SPEC-CONVENTION.md)
-- [Separate operator/developer memory goal](../../goals/operator-developer-cortex-memory/charter.md)
+- [Operator/developer memory lineage (Continuity)](https://github.com/m0r6aN/continuity/blob/main/docs/opmem-lineage.md)
 - [Separate Collective cognition goal](../../goals/collective-live-cognition-integrity/charter.md)
 - [P1](HKR-P1-synthetic-reconstruction-and-evidence.md)
 - [P2](HKR-P2-custody-classification-and-isolation.md)

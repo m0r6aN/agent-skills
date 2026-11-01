@@ -68,3 +68,5 @@ This is a proposal, not a new ratified Foreman queue or dispatch order. Exact ma
 ## Immediate next action / stop
 
 Defaults 1–3 are ratified, and this coordinator is explicitly assigned the NEW bounded review-admission prerequisite. Its initial static diagnosis/exact change proposal is at `../internal-frontier-review-admission/diagnosis-and-change-proposal.md`; no HRO restart or launch is authorized. Next resolve actual first-party auth/data-policy evidence and the proposed IR-P0 companion/bootstrap contract, then shape GH-P0/exact follow-ons under accepted routes and separately stated migration spend/time envelopes. No model/probe calls are admitted by this work package. Preserve OPMEM scope and higher-priority AgentTask delivery.
+
+> **Historical note (2026-10-31):** the OPMEM (`operator-developer-cortex-memory`) goal records, specs and evidence were removed from this repository; the lineage is summarised at https://github.com/m0r6aN/continuity/blob/main/docs/opmem-lineage.md. Mentions of OPMEM above are historical and unchanged.

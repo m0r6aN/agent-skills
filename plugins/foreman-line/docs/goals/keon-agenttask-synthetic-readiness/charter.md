@@ -131,5 +131,5 @@ At a stop, record current ownership, affected decisions/parcels, evidence/unknow
 - [Parcel-driven development](../../../skills/parcel-driven-development/SKILL.md)
 - [Spec convention](../../SPEC-CONVENTION.md)
 - [Stage A decisions and baseline locators](../../shaping/keon-agenttask-synthetic-readiness-2026-10-15.md)
-- [Separate operator/developer Cortex-memory goal](../operator-developer-cortex-memory/charter.md)
+- [Operator/developer Cortex-memory lineage (Continuity)](https://github.com/m0r6aN/continuity/blob/main/docs/opmem-lineage.md)
 - [Separate Collective live-cognition goal](../collective-live-cognition-integrity/charter.md)

@@ -339,7 +339,7 @@ const E4_SELF_URL = 'import.meta.url'
  * E4_SHIPPED_REGISTRY precedent class), zero `..` hops, never a discovered
  * root. Pinned identity + location + value + cardinality like every E4 site
  * (A2.3/A4.1): a respelling, relocation or extra occurrence fails. Enrollment
- * is audit COVERAGE, not launcher/runtime/OPMEM acceptance
+ * is audit COVERAGE, not launcher/runtime acceptance
  * (ir-b01-audit-enrollment-evidence.md).
  */
 const E4_SHARED_AJV_REQUIRE = "createRequire(import.meta.url)('ajv')"

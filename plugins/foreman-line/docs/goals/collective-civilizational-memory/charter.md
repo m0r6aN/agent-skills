@@ -108,7 +108,7 @@ draft specs. No speculative P2–P8 implementation packets are created here.
 - [Owner-approved C02-D1 scoped amendment and conditional RLP-01-A1 exception](owner-c02-rlp-disposition-2026-10-20.md). C02-D1 changes concrete producer-qualification timing only, not trust rules or numeric weights.
 - [Delivery handoff](D:/Repos/Pantheon/docs/CONTEXT-SHAPING-HANDOFF.md).
 - [Founding law](D:/Repos/Pantheon/docs/FOUNDING-CHARTER.md) and [incarnation law](D:/Repos/Pantheon/docs/COLLECTIVE-INCARNATION.md): owner requirements remain distinct from proposed enforcement mechanisms.
-- [OPMEM charter](../operator-developer-cortex-memory/charter.md), D1–D18, and [P5a hold](../operator-developer-cortex-memory/p5a-shaping-proposal-and-hold-2026-10-14.md). No OPMEM grant, funding or ownership transfers to CCM.
+- [OPMEM lineage (Continuity)](https://github.com/m0r6aN/continuity/blob/main/docs/opmem-lineage.md): D1–D18 and the former P5a hold. P5a scope now lives as Keon Gateway asks A1–A3, A6, A7. No OPMEM-lineage grant, funding or ownership transfers to CCM.
 - [Coordinator charter](../../COORDINATOR-PATTERN.md), [spec convention](../../SPEC-CONVENTION.md), goal/PDD/initiative-coordination skills and frozen package contracts.
 
 The following index preserves v4 decision identities. The linked sources, not
@@ -158,7 +158,7 @@ composer/temporal graph (Wave 1); P6 lifecycle/caution and a separately bounded
 Gateway enforcement packet -> P7 inheritance and P8 connectors (Wave 2).
 P1B supplies P4 mathematics, P1C supplies civic wire, P1D supplies capability
 admission. Shared api.py edits must be serialized under a named integration
-owner in later exact packets. No Gateway/OPMEM owner is assigned by this charter.
+owner in later exact packets. No Keon Gateway owner is assigned by this charter (former P5a scope: Gateway asks A1–A3, A6, A7).
 
 **C02-D1 dependency gate (owner-approved 2026-10-20):** P1A supplies the versioned
 fail-closed provenance-admission contract and fixtures; no concrete high-trust
@@ -263,7 +263,7 @@ unauthorized external action, absent Allowed File, repeated tripwire, security
 finding that cannot close in parcel, weakened tenant/identity/replay isolation,
 unreceipted irreversible effects, or any stored memory/state widening authority.
 Key-service qualification and backup/replica coverage block P3 crypto effects;
-existing Gateway/OPMEM owner acknowledgment blocks scheduling shared enforcement.
+existing Keon Gateway owner acknowledgment (Gateway asks A1–A3, A6, A7) blocks scheduling shared enforcement.
 Do not transfer either foreign coordinator's authority. Holds apply only to
 related work, not to provably orthogonal authorized local preparation.
 

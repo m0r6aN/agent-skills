@@ -53,7 +53,7 @@ Represent versioned multi-parent knowledge references with a nonempty distinct p
 
 ## Out of Scope
 
-No new memory database, Gateway handler/client/Program changes, Cortex InheritanceEvent migration, enforcement workers, boost scoring, incarnation issuance, cloning, approval receipt generation, key management, package dependencies or global serializer configuration. Do not assume ownership of OPMEM P5a. No cloud or actual import.
+No new memory database, Gateway handler/client/Program changes, Cortex InheritanceEvent migration, enforcement workers, boost scoring, incarnation issuance, cloning, approval receipt generation, key management, package dependencies or global serializer configuration. Do not assume ownership of the former OPMEM P5a scope (now Keon Gateway asks A1–A3, A6, A7). No cloud or actual import.
 
 ## Context & References
 
@@ -62,7 +62,7 @@ No new memory database, Gateway handler/client/Program changes, Cortex Inheritan
 - [Identity contracts](D:/Repos/keon-omega/keon.collective/src/Keon.Collective.Abstractions/Society/AgentIdentityContracts.cs)
 - [Civic contracts](D:/Repos/keon-omega/keon.collective/src/Keon.Collective.Abstractions/Society/CivicMemoryContracts.cs)
 - [Incarnation law](D:/Repos/Pantheon/docs/COLLECTIVE-INCARNATION.md)
-- [OPMEM P5a hold](../../goals/operator-developer-cortex-memory/p5a-shaping-proposal-and-hold-2026-10-14.md)
+- [OPMEM lineage and former P5a hold (Continuity)](https://github.com/m0r6aN/continuity/blob/main/docs/opmem-lineage.md)
 
 ## Allowed Files
 

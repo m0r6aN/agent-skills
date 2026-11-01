@@ -181,7 +181,7 @@ replace those gates or the full goal's real integration evidence.
 | Accepted P1A fixture/contract pins for P1B/C/D | Before those dependent builders start, not before P1A starts producing them. Their accepted output artifacts do not need to preexist P1A dispatch. |
 | Real-local and target Postgres/pgvector evidence | P1D real evidence and P4 target enablement; no Neon/DB access request in this foundation-readiness turn. Unit mocks cannot pass that gate. |
 | External erasure-key custody, plaintext/backup/replica coverage | Before P3 crypto effects/erasure completion; P1A only defines interfaces/observable states. No provider selection, claim of destruction or immediate all-copy completion. |
-| Gateway/OPMEM owner acknowledgment and actual caution enforcement | Before shared scheduling/implementation and Wave-2 boundary acceptance. Not a global hold on unrelated Cortex-only P1A contracts. No foreign coordinator assigned. |
+| Keon Gateway owner acknowledgment (Gateway asks A1–A3, A6, A7) and actual caution enforcement | Before shared scheduling/implementation and Wave-2 boundary acceptance. Not a global hold on unrelated Cortex-only P1A contracts. No foreign coordinator assigned. |
 | Collective incarnation/identity collisions and runtime inheritance | Reconcile actual manifests before P1C/P7 overlap; no live incarnation, active pack or authority from a wire fixture. Not an unproved global P1A source collision. |
 | Performance, connector capacity, mass import and live-model smoke | Later named acceptance packets and separately authorized real evidence. The full goal's real-Postgres/wave/scale/deletion/enforcement requirements are preserved, not satisfied by this foundation. |
 

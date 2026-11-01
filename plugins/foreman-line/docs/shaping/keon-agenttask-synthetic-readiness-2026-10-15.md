@@ -58,7 +58,7 @@ Sequence is conservative: no parallel fan-out is approved. P0 freezes interfaces
 
 ## Required Dispositions Before Promotion
 
-1. Bind this initiative against the separately owned `operator-developer-cortex-memory` and `collective-live-cognition-integrity` goals. Reuse only actually available accepted contracts; do not repair their services or assume their grants. Resolve overlapping files/authority before selecting an implementation home.
+1. Bind this initiative against the separately owned operator/developer Cortex-memory lineage (see Continuity `docs/opmem-lineage.md`) and `collective-live-cognition-integrity` goals. Reuse only actually available accepted contracts; do not repair their services or assume their grants. Resolve overlapping files/authority before selecting an implementation home.
 2. Select actual implementation repository/entry points, language/toolchain, durable single-writer store/atomic seam, isolation principals and enforcement path. No new service is presumed. P0 needs approved access to current code/canon and independent source facts, not just this earlier discovery snapshot.
 3. Fill exact per-parcel Allowed Files and verification/evidence paths. Broad `surfaces` metadata is advisory routing, not mutation permission. No wildcard authorizations, placeholders or auto-expansion may survive promotion.
 4. Bind baseline revisions, candidate/dependency/evidence schemas, exception/unknown semantics, synthetic case matrix and ownership. Cases NP-01–NP-11 can have synthetic evidence; NP-12's evaluation structure can be exercised synthetically, but its four-real-conversation requirement cannot pass here. G1's actual sources/grants and S1 eligibility stay pending.
@@ -77,5 +77,5 @@ The two-layer installed shaping self-check validates frontmatter with its frozen
 - [Spec convention](../SPEC-CONVENTION.md)
 - [Shaping skill](../../skills/foreman-shaping/SKILL.md)
 - [Shaping package](../../shaping/README.md)
-- [Existing operator/developer memory goal — separate ownership](../goals/operator-developer-cortex-memory/charter.md)
+- [Operator/developer memory lineage (Continuity) — separate ownership](https://github.com/m0r6aN/continuity/blob/main/docs/opmem-lineage.md)
 - [Existing Collective cognition goal — separate ownership](../goals/collective-live-cognition-integrity/charter.md)

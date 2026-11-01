@@ -52,7 +52,7 @@ export const internalReviewLaunchSchema = {
   ...closed({
     version: fixed('internal-review-launch/v1'),
     identity: closed({
-      goal: fixed('operator-developer-cortex-memory'),
+      goal: fixed('internal-plan-review-prototype'),
       purpose: fixed('initial-plan-review'),
       taskId: text,
       instanceId: uuid,
@@ -88,7 +88,7 @@ export const internalReviewLaunchSchema = {
     authority: closed({
       human: fixed('Clinton Morgan'),
       contractCommit: fixed('f5ec6cac7736ffb3ef24a0091bf0b56ea9136034'),
-      scope: fixed('operator-developer-cortex-memory/initial-plan-review'),
+      scope: fixed('internal-plan-review-prototype/initial-plan-review'),
       subjectManifestDigest: digest,
       freshInstance: bool,
       permitClaim: choices('unclaimed', 'consumed', 'unknown'),
