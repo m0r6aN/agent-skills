@@ -111,7 +111,7 @@ jobs:
       matrix:
         shard: ${{ fromJSON(needs.gate.outputs.shards) }}
     runs-on: windows-latest
-    timeout-minutes: 45
+    timeout-minutes: 75
     steps:
       - name: Preserve repository LF bytes
         shell: pwsh

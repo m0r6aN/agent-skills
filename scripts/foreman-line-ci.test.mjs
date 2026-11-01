@@ -3135,7 +3135,7 @@ test('PAN-CI5 workflow progress upload is separate, always attempted, and preser
   assert.doesNotMatch(wf, /pattern: shard-progress/)
   assert.match(wf, /fail-fast: false/)
   assert.equal(MAX_SHARDS, 4)
-  assert.deepEqual([...wf.matchAll(/timeout-minutes: (\d+)/g)].map((match) => Number(match[1])), [15, 45, 20, 5])
+  assert.deepEqual([...wf.matchAll(/timeout-minutes: (\d+)/g)].map((match) => Number(match[1])), [15, 75, 20, 5])
   assert.equal([...wf.matchAll(/runs-on: windows-latest/g)].length, 4)
   assert.equal([...wf.matchAll(/node-version: '24.19.0'/g)].length, 3)
   assert.match(wf, /permissions:\n  contents: read\n  actions: read/)
