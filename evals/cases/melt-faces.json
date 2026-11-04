@@ -1,0 +1,45 @@
+{
+  "skill_name": "melt-faces",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "/melt-faces this repo and tell me if it's ready for the enterprise demo next week",
+        "top_k": 1
+      },
+      {
+        "prompt": "Tear down our dashboard's UX and design like a top-tier product jury would, what's good and what's bad",
+        "top_k": 3
+      },
+      {
+        "prompt": "Is this web app premium enough to sell to enterprise buyers? Give me an honest product critique",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Review this pull request diff before I merge it",
+        "owner": "code-review-and-quality"
+      },
+      {
+        "prompt": "Build a responsive settings page component with accessible form fields",
+        "owner": "frontend-ui-engineering"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "dialogue_justification": "Grades the reach-honesty and candor rules, which govern what the reviewer says to the user when evidence is limited; the deliverable is the conversation, not file edits.",
+      "prompt": "/melt-faces https://example.com - this is our marketing site, we're pitching it to a Fortune 500 next week. Be honest.",
+      "expected_output": "A review explicitly limited to what a browser can see, with no source-code claims, n/a for dimensions that need the source, and an offer or question to get repo access",
+      "expectations": [
+        "States up front that only the live site is reachable (no source), so findings cover visual, UX, content, accessibility, performance, and client-visible trust signals",
+        "Makes no claims about source code, tests, CI, or server-side behavior it could not observe",
+        "Scores dimensions that need source access as n/a (not visible) instead of guessing numbers",
+        "Asks the user, as a multiple-choice question with a recommended option, whether they can provide repo access or the buyer context",
+        "Uses direct, professional language without padding praise or hedging evidenced findings"
+      ]
+    }
+  ]
+}

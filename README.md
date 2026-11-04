@@ -271,6 +271,7 @@ The commands above are entry points. The pack includes 26 skills total — 25 li
 | [code-simplification](skills/code-simplification/SKILL.md) | Chesterton's Fence, Rule of 500, reduce complexity while preserving exact behavior | Code works but is harder to read or maintain than it should be |
 | [security-and-hardening](skills/security-and-hardening/SKILL.md) | OWASP Top 10 prevention, auth patterns, secrets management, dependency auditing, three-tier boundary system | Handling user input, auth, data storage, or external integrations |
 | [performance-optimization](skills/performance-optimization/SKILL.md) | Measure-first approach - Core Web Vitals targets, profiling workflows, bundle analysis, anti-pattern detection | Performance requirements exist or you suspect regressions |
+| [melt-faces](skills/melt-faces/SKILL.md) | Blunt, evidence-backed premium and enterprise-grade product teardown (UI, UX, IA, a11y, perf, trust, governance, onboarding, AI value), solo or with up to 10 specialist agents. States exactly what it could and couldn't see; returns what's good, what's broken by urgency, and must-have ideas | Before a launch, demo, or enterprise sale, or whenever you ask "is this premium?" |
 
 ### Ship - Deploy with confidence
 
@@ -371,6 +372,7 @@ agent-skills/
 │   ├── code-simplification/           #   Review
 │   ├── security-and-hardening/        #   Review
 │   ├── performance-optimization/      #   Review
+│   ├── melt-faces/                    #   Review
 │   ├── git-workflow-and-versioning/   #   Ship
 │   ├── lumber-jack/                   #   Ship
 │   ├── ci-cd-and-automation/          #   Ship
