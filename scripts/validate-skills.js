@@ -28,9 +28,31 @@ function main() {
     process.exit(1);
   }
 
-  const skillDirs = fs.readdirSync(SKILLS_DIR)
+  // `skills/` also holds non-skill directories: dot-directories (quarantine,
+  // editor state) and containers that hold skills one level down (the synced
+  // cache). Linting those as skills kept CI red on every run, which is how a
+  // real frontmatter error went unnoticed. A directory is a skill iff it has a
+  // SKILL.md; one with neither a SKILL.md nor nested skills is still an error,
+  // so a skill whose file is missing cannot slip through silently.
+  const allDirs = fs.readdirSync(SKILLS_DIR)
     .filter(d => fs.statSync(path.join(SKILLS_DIR, d)).isDirectory())
     .sort();
+
+  const hasNestedSkill = (dir, depth = 0) => {
+    if (depth > 3) return false;
+    return fs.readdirSync(dir, { withFileTypes: true })
+      .filter(entry => entry.isDirectory())
+      .some(entry => {
+        const child = path.join(dir, entry.name);
+        return fs.existsSync(path.join(child, 'SKILL.md')) || hasNestedSkill(child, depth + 1);
+      });
+  };
+
+  const isContainer = d => !fs.existsSync(path.join(SKILLS_DIR, d, 'SKILL.md'))
+    && (d.startsWith('.') || hasNestedSkill(path.join(SKILLS_DIR, d)));
+
+  const skillDirs = allDirs.filter(d => !isContainer(d));
+  const skipped   = allDirs.filter(isContainer);
 
   const knownSkills = new Set(skillDirs);
 
@@ -51,6 +73,10 @@ function main() {
       for (const msg of errors)   console.log(`       ERROR: ${msg}`);
       for (const msg of warnings) console.log(`       WARN:  ${msg}`);
     }
+  }
+
+  for (const dirName of skipped) {
+    console.log(`  ·  ${dirName} (not a skill directory — skipped)`);
   }
 
   const status = totalErrors > 0 ? 'FAILED' : totalWarnings > 0 ? 'PASSED WITH WARNINGS' : 'PASSED';

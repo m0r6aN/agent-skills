@@ -10,6 +10,7 @@
  * Checks (errors block CI):
  *   - SKILL.md exists in every skill directory
  *   - YAML frontmatter present with 'name' and 'description' fields
+ *   - frontmatter values are loadable YAML (no unquoted ': ' → nested mapping)
  *   - frontmatter 'name' matches the directory name
  *   - directory name is lowercase-hyphen-separated (skill-anatomy.md: Naming Conventions)
  *   - description does not exceed 1024 characters
@@ -33,11 +34,12 @@ const KEBAB_CASE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 // A description must state WHEN to use the skill, not just what it does
 // (docs/skill-anatomy.md → Required). Accept the canonical "Use when …"
-// plus the equivalent "Use before/after/during …" phrasings in use today.
+// plus the equivalent "Use before/after/during/while …" phrasings in use
+// today ("Use while writing code that handles input" states a trigger).
 // Reject negated forms ("Do not use when …", "Don't use when …") — those
 // describe exclusions, not trigger conditions.
-const DESCRIPTION_TRIGGER        = /\buse (this )?when\b|\buse (before|after|during)\b/i;
-const DESCRIPTION_TRIGGER_NEGATE = /\b(do not|don't|never) use (this )?(when|before|after|during)\b/i;
+const DESCRIPTION_TRIGGER        = /\buse (this )?when\b|\buse (before|after|during|while)\b/i;
+const DESCRIPTION_TRIGGER_NEGATE = /\b(do not|don't|never) use (this )?(when|before|after|during|while)\b/i;
 
 // Sections every standard SKILL.md must contain.
 // Each entry is an array of acceptable heading strings — the first
@@ -55,8 +57,9 @@ const REQUIRED_SECTIONS = [
 // cannot bypass the validator by editing their own skill file.
 // Every entry must have a documented reason.
 const SECTION_EXEMPT_SKILLS = {
-  'using-agent-skills': 'Meta-skill — orchestrates other skills; When-to-Use and Verification are not applicable to a routing document.',
-  'idea-refine':        'Legacy structure predating skill-anatomy.md — uses How-It-Works/Usage/Anti-patterns instead of standard headings. Tracked for conformance in https://github.com/addyosmani/agent-skills/issues',
+  'using-agent-skills':      'Meta-skill — orchestrates other skills; When-to-Use and Verification are not applicable to a routing document.',
+  'idea-refine':             'Legacy structure predating skill-anatomy.md — uses How-It-Works/Usage/Anti-patterns instead of standard headings. Tracked for conformance in https://github.com/addyosmani/agent-skills/issues',
+  'security-and-hardening':  'Deliberate thin wrapper that hands off to security-review (stated in its first paragraph); the standard sections would duplicate the canonical skill instead of adding a build-time guard.',
 };
 
 // Regex patterns that indicate an explicit cross-skill reference.
@@ -86,23 +89,102 @@ function stripFencedCodeBlocks(content) {
 }
 
 /**
+ * Locate the frontmatter block at the top of a SKILL.md and capture its body.
+ * Shared by the key/value parser and the YAML-legality guard so the two can
+ * never disagree about where frontmatter starts and ends.
+ */
+const FRONTMATTER_BLOCK = /^---[ \t]*\r?\n([\s\S]*?)\r?\n---[ \t]*\r?\n/;
+
+/** A block scalar header: `>`, `|`, optionally with chomping/indent indicators. */
+const BLOCK_SCALAR = /^([>|])([+-]?)(\d*)$/;
+
+/**
  * Parse YAML-style frontmatter from the top of a markdown file.
  * Returns a key→value object, or null if no frontmatter block found.
  * Values are stripped of surrounding quotes.
+ *
+ * Folded (`>`) and literal (`|`) block scalars are joined into a single value,
+ * because a long description is exactly what a block scalar is for. Without
+ * this, converting a description to `>` would leave the value as the literal
+ * `>` and fail the trigger-clause check below.
  */
 function parseFrontmatter(content) {
-  const match = content.match(/^---[ \t]*\r?\n([\s\S]*?)\r?\n---[ \t]*\r?\n/);
+  const match = content.match(FRONTMATTER_BLOCK);
   if (!match) return null;
 
+  const lines  = match[1].split(/\r?\n/);
   const result = {};
-  for (const line of match[1].split(/\r?\n/)) {
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     const colonIdx = line.indexOf(':');
     if (colonIdx === -1) continue;
-    const key   = line.slice(0, colonIdx).trim();
-    const value = line.slice(colonIdx + 1).trim().replace(/^['"]|['"]$/g, '');
-    if (key) result[key] = value;
+
+    const key = line.slice(0, colonIdx).trim();
+    if (!key) continue;
+
+    let value = line.slice(colonIdx + 1).trim();
+    const block = value.match(BLOCK_SCALAR);
+
+    if (block) {
+      const baseIndent = line.match(/^[ \t]*/)[0].length;
+      const body       = [];
+      while (i + 1 < lines.length) {
+        const next   = lines[i + 1];
+        const indent = next.match(/^[ \t]*/)[0].length;
+        if (next.trim() !== '' && indent <= baseIndent) break;
+        body.push(next.trim());
+        i++;
+      }
+      value = body.filter(Boolean).join(block[1] === '|' ? '\n' : ' ').trim();
+    }
+
+    result[key] = value.replace(/^['"]|['"]$/g, '');
   }
+
   return result;
+}
+
+/**
+ * Find frontmatter values that a real YAML parser rejects.
+ *
+ * `description: Recovers worktrees: rescues the rest` is not a string in YAML.
+ * The parser reads `Recovers worktrees` as a key, then fails with "nested
+ * mappings are not allowed in compact mappings". Skill loaders that use a real
+ * YAML parser (pi, Claude) then drop the whole file, while this line-based
+ * parser accepts it — which is how an unquoted colon shipped in lumber-jack and
+ * broke every pi session's skill list.
+ *
+ * Quoted scalars and block scalars are legal and skipped. Narrow on purpose:
+ * a full parser belongs to #428; this guard only closes the gap that silently
+ * invalidates a skill.
+ */
+function findUnquotedColonValues(frontmatter) {
+  const offenders = [];
+  let blockIndent  = null;
+
+  for (const line of frontmatter.split(/\r?\n/)) {
+    // Inside a block scalar a colon is just text — skip its indented body.
+    if (blockIndent !== null) {
+      if (line.trim() === '' || line.match(/^[ \t]*/)[0].length > blockIndent) continue;
+      blockIndent = null;
+    }
+
+    const match = line.match(/^([ \t]*)([A-Za-z0-9_.-]+):(.*)$/);
+    if (!match) continue;
+
+    const [, indent, key, rawValue] = match;
+    const value = rawValue.trim();
+
+    if (BLOCK_SCALAR.test(value)) { blockIndent = indent.length; continue; }
+    if (value === '' || /^['"]/.test(value)) continue;
+
+    // A colon followed by whitespace, or a value ending in one, starts a nested
+    // mapping in YAML. Both make the file unloadable by a real parser.
+    if (/:(?:[ \t]|$)/.test(value)) offenders.push(key);
+  }
+
+  return offenders;
 }
 
 /**
@@ -140,6 +222,19 @@ function lintSkillContent(dirName, content, knownSkills) {
   if (!fm) {
     errors.push('Missing or malformed YAML frontmatter (expected --- block at top of file)');
     return { errors, warnings, exempt };
+  }
+
+  // A value YAML cannot parse is worse than a missing field: the loader rejects
+  // the whole skill, so it never reaches the agent's skill list at all.
+  const frontmatterBlock = content.match(FRONTMATTER_BLOCK);
+  if (frontmatterBlock) {
+    for (const key of findUnquotedColonValues(frontmatterBlock[1])) {
+      errors.push(
+        `Frontmatter '${key}' has an unquoted value containing ': ' — a real YAML parser ` +
+        `reads that as a nested mapping and rejects the file. Quote the value or use a '>' ` +
+        `block scalar (skill-anatomy.md: Frontmatter must load).`
+      );
+    }
   }
 
   if (!fm.name) {

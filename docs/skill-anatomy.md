@@ -31,6 +31,7 @@ description: Guides agents through [task/workflow]. Use when [specific trigger c
 **Rules:**
 - `name`: Lowercase, hyphen-separated. Must match the directory name.
 - `description`: Start with what the skill does in third person, then include one or more clear "Use when" trigger conditions. Include both *what* and *when*. Maximum 1024 characters.
+- Quote the value (or use a `>` block scalar) if the description contains a colon followed by a space. Unquoted, `description: Does X: then Y` is not a string — YAML reads it as a nested mapping and every loader that parses YAML rejects the file, so the skill silently disappears from the agent's skill list. `scripts/validate-skills.js` fails on this shape.
 
 **Why this matters:** Agents discover skills by reading descriptions. The description is injected into the system prompt, so it must tell the agent both what the skill provides and when to activate it. Do not summarize the workflow — if the description contains process steps, the agent may follow the summary instead of reading the full skill.
 

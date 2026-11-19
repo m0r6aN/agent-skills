@@ -1,6 +1,6 @@
 ---
 name: lumber-jack
-description: Recovers leftover, stale, or abandoned git worktrees: rescues uncommitted changes and unpushed code stranded in a worktree as pull requests against the dev branch, then deletes the recovered worktrees and branches so only the base repo and the main branch remain locally. Use when a repo has leftover or stale worktrees to recover, when uncommitted or unpushed code is stranded in a worktree, or when asked to return a repository to just its base checkout and main branch.
+description: "Recovers leftover, stale, or abandoned git worktrees: rescues uncommitted changes and unpushed code stranded in a worktree as pull requests against the dev branch, then deletes the recovered worktrees and branches so only the base repo and the main branch remain locally. Use when a repo has leftover or stale worktrees to recover, when uncommitted or unpushed code is stranded in a worktree, or when asked to return a repository to just its base checkout and main branch."
 ---
 
 # Lumber Jack — Worktree Recovery and Cleanup
