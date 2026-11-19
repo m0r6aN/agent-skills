@@ -17,12 +17,19 @@ else
   git remote add origin "$REMOTE"
 fi
 git push --quiet -u origin "$DEFAULT_BRANCH"
+git --git-dir="$REMOTE" symbolic-ref HEAD "refs/heads/$DEFAULT_BRANCH"
 # Branch-only work already pushed to origin, but not yet handed off for review.
 PUSHED_BRANCH="feat/already-pushed"
 git switch --quiet -c "$PUSHED_BRANCH" "$DEFAULT_BRANCH"
 printf '\n// Branch-only fixture change awaiting its PR handoff.\n' >> "$BASE/lumber-jack/src/export.js"
 git add -A
 git commit --quiet -m "docs: add a pushed but unreviewed fixture change"
+if [ "${1:-}" = stale-pr ]; then
+  git tag fixture-merged-pr-head
+  git push --quiet origin HEAD:refs/heads/dev
+  printf '\n// Follow-up after the first PR merged.\n' >> "$BASE/lumber-jack/src/export.js"
+  git commit --quiet -am "fix: follow up after merge"
+fi
 git push --quiet -u origin "$PUSHED_BRANCH"
 git switch --quiet "$DEFAULT_BRANCH"
 
@@ -38,4 +45,10 @@ git -C "$SIBLING/exporter" add -A
 git -C "$SIBLING/exporter" commit --quiet -m "fix: strip whitespace from export fields"
 # intentionally not pushed
 
-echo "seeded: $SIBLING/reporting (uncommitted), $SIBLING/exporter (unpushed commit), $PUSHED_BRANCH (pushed, no PR), origin at $REMOTE, no dev branch" >&2
+if [ "${1:-}" = stale-pr ]; then
+  git worktree lock --reason 'active reporting session' "$SIBLING/reporting"
+  printf '/private.env\n' >> "$(git rev-parse --git-path info/exclude)"
+  printf 'fixture placeholder\n' > "$SIBLING/exporter/private.env"
+fi
+# A local default tip is not a safe source for creating remote dev.
+git commit --quiet --allow-empty -m "local-only: unpublished default branch work"

@@ -36,57 +36,42 @@ Confirm the target before touching anything: `Operating on <base repo path> (rep
 
 ### 1. Inventory every worktree
 
-From the base repo run `git worktree list --porcelain`. Worktrees can live anywhere — a sibling `<repo>-worktrees/` directory, `.claude/worktrees/`, `/tmp` — so the porcelain list, not a directory listing, is the authoritative inventory. Record for each entry: path, HEAD, branch (or `detached`). The base worktree is never removed. Also list local branches with no worktree: `git branch --list`.
+From the base repo run `git worktree list --porcelain`. Record each path, HEAD, branch (or detached), and any `locked` or `prunable` marker and reason. Keep the base worktree. Skip locked, prunable, unavailable, or possibly active checkouts **and their branches**; report why. Never unlock, prune, or treat a missing directory as proof of abandonment. Compare with `git branch --list` to find branches with no registered worktree.
 
-### 2. Classify worktrees and branch-only refs
+### 2. Classify before changing anything
 
-Classify each non-base worktree and each local branch without a worktree using the corresponding rules below.
+- In each eligible worktree inspect `git status --porcelain=v1 --untracked-files=all --ignored`. Distinguish staged and unstaged tracked changes, untracked files, and ignored paths. Ignored does not mean disposable. If anything looks sensitive or its disposition is unclear, stop for that item **before staging, committing, pushing, or removing it**. Report paths, never contents. Leave its index and files intact pending a decision.
+- Refresh origin before relying on remote reachability. For each eligible HEAD (including branch-only refs), check its own upstream with `git log @{upstream}..HEAD` in its worktree, or use `git log <sha> --not --remotes`. Do not use `--branches`; it includes unrelated local commits. Clean or pushed is not the same as reviewed.
+- Inventory existing PRs for each branch, including closed ones, and classify by the commit gate in step 4. Produce the table (path/branch, SHA, outstanding work, PR or blocker, intended action) before recovery. Never stage or clean the base checkout to satisfy an end-state check.
 
-- **Uncommitted work** — `git status --porcelain` is non-empty. Untracked files count; they are work.
-- **Unpushed work** — commits reachable from this worktree's `HEAD` but not from any remote-tracking ref: `git log HEAD --not --remotes`; when an upstream is configured, use `git log @{upstream}..HEAD`. Do not use `--branches` here; it includes unrelated local branches.
-- **Detached HEAD** — the commits have no branch; recovery uses `recovery/<worktree-dir-name>-<YYYYMMDD>`.
-- **Clean and fully pushed** — no work needs rescuing, but the PR deletion gate still applies before cleanup.
-- **Branch without a worktree** — for each local branch absent from the inventory, check `git log <branch> --not --remotes` (branch-specific) and inspect associated PR state/base (`gh pr list --head <branch> --state all`).
-  Mark pushed/no-PR branches handoff-required; closed-unmerged, wrong-base, or unavailable PR checks are blocked.
+### 3. Rescue eligible work
 
-Produce the classification table before changing anything.
+1. For detached work, first switch to a new, unused recovery branch at its HEAD. If a path has different staged and unstaged versions, keep the checkout for separate recovery rather than overwriting the staged snapshot. Otherwise stage only reviewed, publishable paths, e.g. `git add -- <paths>`. Review the *whole* staged path list with `git diff --cached --name-status`, including previously staged files. Commit with a descriptive message and record the resulting tip. Do not force-add ignored files.
+2. Ensure the PR base exists before pushing recovered work. Fetch origin, resolve its advertised default (`git ls-remote --symref origin HEAD`), and verify its fetched SHA. If remote `dev` is absent, create it **only from that fetched remote default SHA**, never from local default or local `dev`. Use a create-only lease: `git push --force-with-lease=refs/heads/dev: origin <fetched-sha>:refs/heads/dev`. The empty expected value requires the destination not to exist. If the check or push fails, refetch and re-evaluate; never replace an existing target.
+3. Push the reviewed tip to origin without force. If the source is local `dev` with unique commits, push its tip under a new recovery branch name and request a PR **from that branch to dev**, not a direct update of the shared base. Do not switch, rename, or remove protected checkouts to do this.
+4. Reuse a qualifying PR or open one with `gh pr create --base dev --head <remote-branch>`. If PR lookup/creation is blocked, record the exact blocker and branch, plus a compare URL only if the host actually supports it. Keep the item locally.
 
-### 3. Rescue outstanding work (per worktree with anything outstanding)
+### 4. Verify the commit before deleting anything
 
-1. **Commit uncommitted changes** in the worktree: `git add -A`, then commit with a message describing what `git status` showed, e.g. `recover: preserve the reporting export notes`. The recovery commit is the durable record of the rescued work — make it informative.
-2. **Push the branch** (create `recovery/<name>` first if the worktree was detached): `git push -u origin <branch>`.
-3. **Ensure `dev` exists on the remote** — PRs target it. `git fetch origin`; if `origin/dev` is missing, create it from the default branch: `git push origin <default>:dev`. If a local `dev` exists with commits missing from `origin/dev`, push it instead of overwriting.
-4. **Open the PR**: `gh pr create --base dev --head <branch> --title "<summary>" --body "Recovered from worktree <path>: <what was outstanding>"`. Record the PR URL.
-   If `gh` is missing, unauthenticated, or the remote has no hosting provider: report the exact blocker and the compare URL (`<remote>/compare/dev...<branch>`) for that branch. Never invent PR URLs. Do not delete this worktree — it stays until its PR exists.
+Apply the same gate to worktrees and branch-only refs. Record the full SHA to rescue. Verify both:
 
-### 4. Delete worktree and branch — only after that worktree's PR exists
+- A freshly fetched origin ref contains that SHA (`git branch -r --contains <sha>`).
+- The provider identifies an **open or merged** PR for the intended repository, head branch/repository and base `dev`, with **head SHA equal to the rescued SHA**. For GitHub, inspect `gh pr view <number> --json url,state,baseRefName,headRefName,headRepositoryOwner,headRepository,headRefOid`. Record the PR URL and verified SHA. A PR URL, a matching branch name, a closed-unmerged PR, or a merged PR for a previous tip is not proof. A newer pushed tip needs its own qualifying handoff; otherwise keep it.
 
-Deletion gate per worktree and branch: work committed → pushed → **PR created**. Only then:
+Immediately before removal, re-read the worktree registration, branch and HEAD, and repeat the full status check including ignored paths. Stop and reclassify on any change, unresolved files, lock, or failed check. Only then run `git worktree remove <path>` (never force). Before `git branch -d <branch>`, re-read its tip and verify it is still the proven SHA and no worktree uses it. Keep the branch if Git refuses. Do not run repository-wide prune as part of per-item cleanup.
 
-```bash
-git worktree remove <path>   # refuses if dirty — never --force over uncommitted work
-git branch -d <branch>       # refuses if unmerged — never -D to bypass the gate
-git worktree prune
-```
+### 5. Local dev and end state
 
-Before `git branch -d`, prove the commits are on the remote: `git branch -r --contains <head-sha>` must list a remote ref. If it does not, the branch is not deletable — push and PR it first.
-
-### 5. Leftover local branches without worktrees
-
-The same rules apply to local branches from `git branch --list` that are neither the default branch nor `dev`; inspect each branch's PR state and base first. Unpushed commits → push + request a PR to `dev`; fully pushed branches with an open PR to `dev` or a merged PR to `dev` → `git branch -d` only after remote reachability is proven; fully pushed branches without such a PR → request a PR (or report the provider/auth blocker) and preserve the branch. A closed-unmerged or wrong-base PR does not satisfy the deletion gate. Unpushed work is never deleted.
-
-### 6. Local `dev` and end state
-
-If a local `dev` remains and every commit on it is on `origin/dev`, delete the local branch (remote `dev` survives as the PR target). Then run Verification.
+Never delete the default branch. A non-default, unoccupied local `dev` may be removed if its unchanged tip is contained in freshly fetched `origin/dev`. If it has unique work, use the recovery-branch PR path and step 4 gate instead. Leave skipped or blocked items in place and report the partial end state.
 
 ## Common Rationalizations
 
 | Rationalization | Reality |
 |---|---|
-| "It's only untracked files, nothing of value" | Untracked files are work. Commit them in the recovery commit before anything is removed. |
+| "It's only untracked files, nothing of value" | Untracked files are work. Preserve them locally unless reviewed as safe to publish. |
 | "The worktree is clean, so the branch can go too" | A clean worktree says nothing about unpushed commits. Check `git branch -r --contains <head>` before deleting any branch. |
-| "gh is down — the push is enough, delete anyway" | The deletion gate is PR-created, not pushed. Pushed-but-un-PR'd work is untracked for review and easily lost. Report the blocker and keep the worktree. |
-| "dev doesn't exist locally, so skip it" | The PR base must exist on the remote, not locally. Create and push `origin/dev` from the default branch. |
+| "gh is down — the push is enough, delete anyway" | The deletion gate is a qualifying PR for the exact tip, not merely a push. Pushed-but-un-PR'd work is untracked for review and easily lost. Report the blocker and keep the worktree. |
+| "dev doesn't exist locally, so skip it" | The PR base must exist on the remote, not locally. Create it only from the verified, fetched remote default SHA. |
 | "The user wants this fast — commit with a throwaway message" | The recovery commit is the record of what was rescued. Describe what `git status` showed. |
 | "Remove the worktree first, commit afterwards" | Once the worktree is gone, uncommitted work is gone. Commit first, remove second. |
 | "Too many worktrees to classify — start deleting" | The classification table is what makes deletion safe. Twenty minutes of inventory beats irrecoverable loss. |
@@ -94,7 +79,7 @@ If a local `dev` remains and every commit on it is on `origin/dev`, delete the l
 ## Red Flags
 
 - `git worktree remove --force` or `git branch -D` appearing anywhere in the run
-- Deletion commands running before the worktree's PR URL exists
+- Deletion based on a PR URL without checking its state, base, and head SHA
 - Recovery commits with messages like `wip`, `tmp`, or `asdf`
 - Operating on the base worktree or deleting the default branch
 - PR URLs that `gh` did not print
@@ -109,8 +94,8 @@ After the run, confirm and paste evidence for each:
 - [ ] `git worktree list` shows exactly one worktree: the base repo
 - [ ] `git branch --list` shows only the default branch (plus `dev` only if the user chose to keep it)
 - [ ] `git status` in the base repo is clean
-- [ ] Every rescued branch has a PR URL printed by `gh` — or, if PR creation was blocked, that worktree and branch were kept and the report names the exact blocker plus the compare URL
-- [ ] Every deleted branch's HEAD is reachable from a remote ref (`git branch -r --contains <sha>` output)
-- [ ] Final report delivered, one line per worktree: classification (uncommitted / unpushed / both / clean), actions (commit SHA, push, PR URL or blocker), disposition (deleted / kept + reason)
+- [ ] Every rescued branch has a PR URL printed by `gh` — or, if PR creation was blocked, that worktree and branch were kept and the report names the exact blocker (and a compare URL only when supported)
+- [ ] Each recovered deletion records its SHA, containing origin ref and matching PR head SHA; for redundant local `dev`, record containment in `origin/dev` instead
+- [ ] Final report delivered, one line per worktree or branch-only ref: classification (uncommitted / unpushed / both / clean), actions (commit SHA, push, PR URL or blocker), disposition (deleted / kept + reason)
 
 If any checkbox cannot be evidenced, the skill is not done — report the gap instead of declaring completion.
