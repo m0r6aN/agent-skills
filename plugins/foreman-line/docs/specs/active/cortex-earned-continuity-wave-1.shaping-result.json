@@ -1,0 +1,11 @@
+{
+  "parcelSpecRefs": [
+    "plugins/foreman-line/docs/specs/active/CTX-P0-baseline-live-role-and-contract-register.md",
+    "plugins/foreman-line/docs/specs/active/CTX-P2-pinned-trust-verifier.md",
+    "plugins/foreman-line/docs/specs/active/CTX-P3a-db-append-guards-and-role-split.md",
+    "plugins/foreman-line/docs/specs/active/CTX-M1-lifecycle-aware-recall.md",
+    "plugins/foreman-line/docs/specs/active/CTX-M2-shard-identity-roundtrip.md",
+    "plugins/foreman-line/docs/specs/active/CTX-M5-quality-gates-and-regression-harness.md"
+  ],
+  "epics": []
+}

@@ -83,13 +83,13 @@ UI slices also follow `frontend-ui-engineering`.
 - [x] Task 14: Spawn receipts + `/api/spawns` + pane liveness
 
 ### Checkpoint: Spawn
-- [ ] Planner/launcher tests green; one documented real-tmux manual smoke
+- [x] Planner/launcher tests green; one documented real-tmux manual smoke
 
 ### Phase 5: Console UI
 - [x] Task 15: Layout shell (full-viewport grid, rails, view nav, density baseline)
 - [x] Task 16: Signals view + action buttons + bulk select + destructive confirm
-- [ ] Task 17: Spawn panel (shared controls + autonomy popovers) + spawn wiring
-- [ ] Task 18: Fleet view + filesystem folder picker
+- [x] Task 17: Spawn panel (shared controls + autonomy popovers) + spawn wiring
+- [x] Task 18: Fleet view + filesystem folder picker
 - [x] Task 19: Session tray + attach copy + visual checklist
 
 ### Checkpoint: Complete

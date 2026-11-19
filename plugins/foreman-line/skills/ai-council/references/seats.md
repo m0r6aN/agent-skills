@@ -1,5 +1,7 @@
 # Seat Invocations - this machine (Clint's rig "m0r6aN", Windows; verified 2026-10-17, Pi via cmd /c)
 
+Roster routes changed per user direction (seats 1-4 providers/models below); NOT yet re-smoke-tested - run the smoke test and re-measure before trusting the times.
+
 Maintained state, not gospel: if a seat below fails twice, diagnose, fix, and UPDATE this
 file so the next run inherits the fix. All commands assume cwd = the directory containing
 the brief file. Native grok/codex/claude/gemini CLIs are no longer used - every seat runs
@@ -27,8 +29,8 @@ cmd /c pi -p --no-session --no-mcp -ne -ns -nc -np --tools read --provider <prov
   `pi --list-models` spells it (namespaces differ: `anthropic/claude-opus-5.5` on
   OpenRouter uses dots, native/OpenCode ids use dashes).
 - Keep seats family-diverse (charter D5): never two seats from the same model family.
-  Put the charter's adversarial-review rows (gpt-6-astra, claude-opus-5.5) on the
-  adversarial lanes.
+  Put the charter's adversarial-review rows (gpt-6.1-sol, claude-fable-5.2 - with
+  claude-opus-5.5 as the Anthropic fallback) on the adversarial lanes.
 
 ## Roster
 
@@ -37,16 +39,17 @@ Times are the trivial-prompt round trip, not a real brief.
 
 | Seat | Family | Provider | Model:thinking | Measured time | Notes |
 |---|---|---|---|---|---|
-| 1 | OpenAI | `openai` | `gpt-6-astra:high` | ~3s | Adversarial lane (charter frontier/adversarial row). Native OpenAI key works. |
-| 2 | Anthropic | `openrouter` | `anthropic/claude-opus-5.5:high` | ~3s | Adversarial lane. Native `anthropic` fails: 400 "Third-party apps now draw from your extra usage" (Claude plan needs extra-usage credit). `anthropic/claude-sonnet-5.5:high` also OK on OpenRouter (~3s). |
-| 3 | Google | `openrouter` | `google/gemini-4-argon:high` | ~5s | Native `google` fails: API_KEY_INVALID. |
-| 4 | xAI | `openrouter` | `x-ai/grok-4.7:high` | ~2s | Native `xai` fails: 403 team credits/monthly spend limit exhausted. |
+| 1 | OpenAI | `openai` | `gpt-6.1-sol:max` | re-measure | Adversarial lane (charter frontier/adversarial row). Native OpenAI key works. |
+| 2 | Anthropic | `anthropic` | `claude-fable-5.2:high` | re-measure | Adversarial lane. Fallback: `claude-opus-5.5:high` (native id spelling uses dashes: `claude-opus-5-5`). Prior note: native `anthropic` failed 400 "Third-party apps now draw from your extra usage" - retest. |
+| 3 | Google | `google` | `gemini-4-argon:high` | re-measure | Fallback: `opencode-go` (same-family model; resolve id via `pi --list-models`). Prior note: native `google` failed API_KEY_INVALID - retest. |
+| 4 | xAI | `xai` | `grok-4.7:high` | re-measure | Fallback: `opencode-go` (same-family model; resolve id via `pi --list-models`). Prior note: native `xai` failed 403 team credits/monthly spend limit exhausted - retest. |
 | 5 | Xiaomi MiMo (open-weight) | `opencode-go` | `MiMo-v2.6-Pro:high` | ~4s | Passed 2/2 (id is case-insensitive; list spells it `mimo-v2.6-pro`). Fallback: `openrouter` `xiaomi/mimo-v2.6-pro:high` (passed 2/2, 2-6s). Public-data briefs only per open-weight data policy. |
 | 5-alt | Fireworks Ember | `openrouter` | `fireworks/ember-1:high` | ~2s | FALLBACK ROUTE: native `fireworks` `accounts/fireworks/models/ember-1` fails 2/2 with 401 "The API key you provided is invalid." OpenRouter route passed 2/2. Swap in for seat 5 if MiMo is down. |
 
 Known-broken routes on this machine (2026-10-17): all `opencode/*` (401 "Upstream request
-failed: Invalid credential"), `fireworks/*` (401 invalid API key; re-confirmed on ember-1). `opencode-go/*` WORKS (separate key from `opencode`), native `anthropic`,
-`google`, `xai` (see notes). Re-test before switching back.
+failed: Invalid credential"), `fireworks/*` (401 invalid API key; re-confirmed on ember-1). `opencode-go/*` WORKS (separate key from `opencode`). Native `anthropic`, `google`,
+`xai` failed on 2026-10-17 (see roster notes) but are now the PRIMARY routes per user
+direction - retest and update this file if they still fail, then activate the listed fallbacks.
 
 Config note: Pi warns that `C:\Users\clint\.pi\agent\models.json` has invalid schema
 (`providers.anthropic.baseUrl` empty). It did not block requests - native anthropic calls

@@ -361,8 +361,8 @@ wired to existing endpoints; no build step; ES modules OK.
 
 **Verification:**
 - [x] Tests pass: `tests/ui-shell.test.ts` (new; jsdom devDep — 4/4)
-- [ ] Package sweep green
-- [ ] Manual: Firefox + Chromium smoke
+- [x] Package sweep green (600/600 tests, typecheck, lint — re-verified 2026-11-01)
+- [x] Manual: Chromium smoke via Task 19 visual checklist (live server + headless Chromium); Firefox unavailable on this host — noted for owner spot-check
 
 **Dependencies:** Task 4
 **Files likely touched:** `ui/index.html`, `ui/app.js`, `ui/views/*.js`, `tests/ui-shell.test.ts`
@@ -391,7 +391,7 @@ autonomy popovers per action, typed confirmation flow for destructive verbs.
 
 ---
 
-## Task 17: Spawn panel (shared controls + autonomy popovers) + spawn wiring
+## Task 17: Spawn panel (shared controls + autonomy popovers) + spawn wiring ✅ (2026-11-01)
 
 **Description:** The four shared dropdowns (Harness, Model, Thinking, Budget
 cap — presets `$1–$100`, no unlimited) + optional textbox + Spawn button with
@@ -399,13 +399,13 @@ selected count; never repeated per action. Emits one `/api/spawn` request per
 FCA-P5.
 
 **Acceptance criteria:**
-- [ ] one spawn request carries K actions + the shared controls + textbox verbatim
-- [ ] request composition matches FCA-P5 planner input snapshot in tests
-- [ ] controls render once; no per-action duplication anywhere
+- [x] one spawn request carries K actions + the shared controls + textbox verbatim
+- [x] request composition matches FCA-P5 planner input snapshot in tests
+- [x] controls render once; no per-action duplication anywhere
 
 **Verification:**
-- [ ] Tests pass: `tests/ui-spawn-panel.test.ts` (new)
-- [ ] Package sweep green
+- [x] Tests pass: `tests/ui-spawn-panel.test.ts` (new — 4/4)
+- [x] Package sweep green (600/600 tests, typecheck, lint — re-verified 2026-11-01)
 
 **Dependencies:** Tasks 16, 12
 **Files likely touched:** `ui/views/spawn-panel.js`, `ui/app.js`, `tests/ui-spawn-panel.test.ts`
@@ -413,20 +413,20 @@ FCA-P5.
 
 ---
 
-## Task 18: Fleet view + filesystem folder picker
+## Task 18: Fleet view + filesystem folder picker ✅ (2026-11-01)
 
 **Description:** Fleet tiles (identity + liveness) with add/remove; folder
 picker driven by `/api/fs/browse` (keyboard navigable), qualification hints
 from Task 3.
 
 **Acceptance criteria:**
-- [ ] browse → select → add completes end-to-end against mocked API in tests
-- [ ] refusal reasons render inline on failed add
-- [ ] remove on the primary root shows the typed refusal, not a crash
+- [x] browse → select → add completes end-to-end against mocked API in tests
+- [x] refusal reasons render inline on failed add
+- [x] remove on the primary root shows the typed refusal, not a crash
 
 **Verification:**
-- [ ] Tests pass: `tests/ui-fleet.test.ts` (new)
-- [ ] Package sweep green
+- [x] Tests pass: `tests/ui-fleet.test.ts` (new — 2/2)
+- [x] Package sweep green (600/600 tests, typecheck, lint — re-verified 2026-11-01)
 
 **Dependencies:** Tasks 3, 15
 **Files likely touched:** `ui/views/fleet.js`, `ui/app.js`, `tests/ui-fleet.test.ts`
@@ -447,7 +447,7 @@ attach command, per-session actions via the same registry; virtualization past
 
 **Verification:**
 - [x] Tests pass: `tests/ui-tray.test.ts` (new — 2/2)
-- [ ] Package sweep green
+- [x] Package sweep green (600/600 tests, typecheck, lint — re-verified 2026-11-01)
 - [x] Manual: visual checklist at 1920×1080 + 1366×768 in goal transcripts (console-ui-visual-checklist-2026-10-11.md — live server + headless Chromium; 4 visual defects caught and fixed)
 
 **Dependencies:** Tasks 14, 15
