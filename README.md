@@ -65,6 +65,19 @@ npx skills add addyosmani/agent-skills --skill test-driven-development   # red-g
 > a `references/` directory inside the installed skill. This portability gap is
 > tracked in [#361](https://github.com/addyosmani/agent-skills/issues/361).
 
+> **Working from a clone? Link the skills, don't copy them.**
+>
+> ```bash
+> ln -s /path/to/agent-skills/skills/<name> ~/.claude/skills/<name>
+> ```
+>
+> A copy is a fork the moment you make it: `git pull` does not reach it,
+> `node scripts/validate-skills.js` cannot check it, and nothing warns you when
+> it rots — an outdated skill looks exactly like a current one. A link is the
+> checkout, so fixes land everywhere at once. The trade-off is that the clone
+> has to stay where it is: move or delete it and the installed skill disappears
+> with it.
+
 Prefer a native integration? Pick your tool below.
 
 <details>
