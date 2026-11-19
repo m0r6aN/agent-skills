@@ -100,6 +100,15 @@ test('reports a description with no trigger clause', () => {
   assert.match(errors[0], /no 'when to use' trigger/);
 });
 
+test('accepts "Use while …" as a trigger clause', () => {
+  // security-and-hardening states its trigger this way; "while writing code
+  // that handles input" is a when, not a description of what it does.
+  const content = withAllSections(
+    ['---', 'name: alpha', 'description: Secure-coding guardrails. Use while writing code that handles input.', '---'].join('\n')
+  );
+  assert.deepEqual(lintSkillContent('alpha', content, KNOWN).errors, []);
+});
+
 test('reports frontmatter name that disagrees with the directory', () => {
   const content = withAllSections(
     ['---', 'name: beta', 'description: Designs alphas. Use when building one.', '---'].join('\n')
@@ -139,3 +148,41 @@ test('reports a missing frontmatter block', () => {
   assert.equal(errors.length, 1);
   assert.match(errors[0], /Missing or malformed YAML frontmatter/);
 });
+
+// ─── YAML legality guard ─────────────────────────────────────────────────────
+// These cover the guard added in findUnquotedColonValues, not the parser #428
+// replaces: an unquoted `: ` makes the file unloadable for real YAML parsers.
+
+test('reports an unquoted frontmatter value containing ": "', () => {
+  // The shape that shipped in lumber-jack: valid to the line-based parser,
+  // rejected by pi's loader with "Nested mappings are not allowed".
+  const content = withAllSections(
+    ['---', 'name: alpha', 'description: Recovers worktrees: rescues the rest. Use when recovering.', '---'].join('\n')
+  );
+  const { errors } = lintSkillContent('alpha', content, KNOWN);
+
+  assert.equal(errors.length, 1);
+  assert.match(errors[0], /unquoted value containing ': '/);
+});
+
+test('accepts a colon-space inside a quoted description', () => {
+  const content = withAllSections(
+    ['---', 'name: alpha', 'description: "Recovers worktrees: rescues the rest. Use when recovering."', '---'].join('\n')
+  );
+  assert.deepEqual(lintSkillContent('alpha', content, KNOWN).errors, []);
+});
+
+test('accepts and folds a block scalar description', () => {
+  const content = withAllSections([
+    '---',
+    'name: alpha',
+    'description: >',
+    '  Recovers worktrees: rescues the rest.',
+    '  Use when recovering a repository.',
+    '---',
+  ].join('\n'));
+  const { errors } = lintSkillContent('alpha', content, KNOWN);
+
+  assert.deepEqual(errors, [], 'a block scalar is the correct fix for a long description');
+});
+
