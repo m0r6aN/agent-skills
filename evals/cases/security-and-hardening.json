@@ -3,23 +3,23 @@
   "trigger": {
     "positive": [
       {
-        "prompt": "Audit this file upload handler for vulnerabilities",
+        "prompt": "We're changing code that handles user input in the checkout form - what secure-coding guardrails apply while we write it",
         "top_k": 3
       },
       {
-        "prompt": "Is this login flow safe against the OWASP top ten?",
+        "prompt": "I'm adding authentication and session handling - what should I get right while writing the code",
         "top_k": 3
       },
       {
-        "prompt": "Harden the webhook endpoint that fetches user-supplied URLs",
+        "prompt": "We're adding a new dependency - what should I check before writing code against it",
         "top_k": 3
       },
       {
-        "prompt": "Run a dependency audit and triage the findings",
+        "prompt": "I'm wiring an LLM tool call - how do I treat model output as untrusted while building it",
         "top_k": 3
       },
       {
-        "prompt": "Is this new package safe to install? Check for typosquatting and supply chain risk",
+        "prompt": "We're building an external integration that stores personal data - what do I need to get right as I write it",
         "top_k": 3
       }
     ],
@@ -37,16 +37,15 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Harden an endpoint that accepts a user-supplied webhook URL and fetches it server-side.",
-      "expected_output": "Threat-modeled hardening: allowlisting, private-IP blocking, and validated input with tests",
-      "files": [
-        "security-and-hardening"
-      ],
+      "kind": "dialogue",
+      "dialogue_justification": "Grades the threat model and hardening decisions over generated code; the endpoint is a service concern that cannot be exercised in a fixture workspace.",
+      "prompt": "We need a webhook receiver that fetches user-supplied URLs server-side before storing the response. What do you do to harden it?",
+      "expected_output": "Rejects the naive fetch: validates and allowlists the URL scheme/host, blocks private and link-local ranges (SSRF), applies timeouts and response-size limits, avoids reflecting upstream content, and treats the fetched body as untrusted.",
       "expectations": [
-        "Trust boundaries are identified before controls are proposed",
-        "SSRF protections cover private and reserved addresses, not just scheme checks",
-        "Input validation is enforced at the boundary",
-        "No secrets are logged or exposed in errors"
+        "Identifies server-side request forgery as the primary risk and blocks internal/metadata addresses",
+        "Validates the URL rather than fetching it as given",
+        "Applies timeouts and size limits so the fetch cannot be used as a resource-exhaustion vector",
+        "Does not treat the fetched response as trusted content"
       ]
     }
   ]
